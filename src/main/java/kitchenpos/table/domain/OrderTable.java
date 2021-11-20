@@ -32,33 +32,21 @@ public class OrderTable {
     }
 
     public void changeEmpty(boolean empty, TableValidator tableValidator) {
-        validatesTableGroup();
-        tableValidator.validate(this);
-        this.empty = empty;
-    }
-
-    private void validatesTableGroup() {
         if (Objects.nonNull(this.tableGroup)) {
             throw new IllegalArgumentException("주문 테이블이 그룹에 속해있습니다. 그룹을 해제해주세요.");
         }
+        tableValidator.validateOrder(this);
+        this.empty = empty;
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
-        validatesMinusNumberOfGuests(numberOfGuests);
-        validatesEmpty();
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    private void validatesMinusNumberOfGuests(int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException("변경하려는 손님 수는 0이상이어야 합니다.");
         }
-    }
-
-    private void validatesEmpty() {
         if (this.empty) {
             throw new IllegalArgumentException("비어있는 테이블의 손님 수를 변경할 수 없습니다.");
         }
+        this.numberOfGuests = numberOfGuests;
     }
 
     public void assigned(TableGroup tableGroup) {
@@ -70,9 +58,16 @@ public class OrderTable {
     }
 
     public void ungroup(TableValidator tableValidator) {
-        tableValidator.validate(this);
+        tableValidator.validateOrder(this);
         this.tableGroup = null;
         this.empty = false;
+    }
+
+    public Long getTableGroupId() {
+        if (Objects.isNull(tableGroup)) {
+            return null;
+        }
+        return tableGroup.getId();
     }
 
     public Long getId() {

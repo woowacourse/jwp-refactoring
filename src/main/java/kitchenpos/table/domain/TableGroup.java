@@ -33,14 +33,10 @@ public class TableGroup {
     }
 
     public void addOrderTables(List<OrderTable> orderTables) {
-        validatesNumberOfTable(orderTables);
-        this.orderTables = orderTables;
-    }
-
-    private void validatesNumberOfTable(List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException("그룹을 지정하려면 둘 이상의 테이블이 필요합니다.");
         }
+        this.orderTables = orderTables;
     }
 
     public void ungroup(TableValidator tableValidator) {

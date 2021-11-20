@@ -16,7 +16,7 @@ public class TableValidator {
         this.orderRepository = orderRepository;
     }
 
-    public void validate(OrderTable orderTable) {
+    public void validateOrder(OrderTable orderTable) {
         List<Order> orders = orderRepository.findAllByOrderTableId(orderTable.getId());
 
         boolean isCookingOrMeal = orders.stream()

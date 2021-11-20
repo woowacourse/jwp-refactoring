@@ -34,6 +34,7 @@ public class TableService {
         return TableResponse.from(savedTable);
     }
 
+    @Transactional(readOnly = true)
     public List<TableResponse> list() {
         return orderTableRepository.findAll()
                                    .stream()
@@ -44,7 +45,7 @@ public class TableService {
     @Transactional
     public TableResponse changeEmpty(final Long orderTableId, final ChangeTableEmptyRequest request) {
         final OrderTable table = orderTableRepository.findById(orderTableId)
-                                                     .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
+            .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
 
         table.changeEmpty(request.isEmpty(), tableValidator);
         return TableResponse.from(table);
@@ -53,7 +54,7 @@ public class TableService {
     @Transactional
     public TableResponse changeNumberOfGuests(final Long orderTableId, final ChangeTableGuestRequest request) {
         final OrderTable table = orderTableRepository.findById(orderTableId)
-                                                     .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
+            .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
 
         table.changeNumberOfGuests(request.getNumberOfGuests());
         return TableResponse.from(table);

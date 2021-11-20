@@ -1,16 +1,11 @@
 package kitchenpos.domain.table;
 
-import java.util.Collections;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.domain.TableValidator;
 
-import static kitchenpos.fixture.OrderFixture.COOKING_ORDER;
-import static kitchenpos.fixture.TableGroupFixture.GROUP1;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,43 +22,6 @@ class OrderTableTest {
             assertNull(table.getTableGroup());
         });
     }
-
-//    @Test
-//    @DisplayName("테이블의 빈(empty) 여부를 수정할 수 있다.")
-//    void changeEmpty() {
-//        // given
-//        OrderTable table = new OrderTable(1L, null, 4, false);
-//
-//        // when
-//        table.changeEmpty(true);
-//
-//        // then
-//        assertTrue(table.isEmpty());
-//    }
-
-//    @Test
-//    @DisplayName("테이블이 특정 그룹에 속해있다면 빈(empty) 여부를 수정할 수 없다.")
-//    void changeEmptyBelongToGroup() {
-//        // given
-//        OrderTable table = new OrderTable(1L, GROUP1, 4, false);
-//
-//        // when & then
-//        assertThatThrownBy(() -> table.changeEmpty(true))
-//                .isInstanceOf(IllegalArgumentException.class)
-//                .hasMessage("주문 테이블이 그룹에 속해있습니다. 그룹을 해제해주세요.");
-//    }
-//
-//    @Test
-//    @DisplayName("주문 상태가 조리중(COOKING)이나 식사중(MEAL)이라면, 빈(empty) 여부를 수정할 수 없다.")
-//    void changeEmptyCookingOrMeal() {
-//        // given
-//        OrderTable table = new OrderTable(1L, null, 4, false, Collections.singletonList(COOKING_ORDER));
-//
-//        // when & then
-//        assertThatThrownBy(() -> table.changeEmpty(true))
-//                .isInstanceOf(IllegalArgumentException.class)
-//                .hasMessage("주문 상태가 조리중이나 식사중입니다.");
-//    }
 
     @Test
     @DisplayName("테이블의 손님 수를 수정할 수 있다.")
@@ -102,37 +60,6 @@ class OrderTableTest {
                 .hasMessage("비어있는 테이블의 손님 수를 변경할 수 없습니다.");
     }
 
-//    @Test
-//    @DisplayName("그룹을 해제하면 테이블의 그룹이 null이 되고, 비어있지 않게 된다.")
-//    void ungroup() {
-//        // given
-//        OrderTable table = new OrderTable(1L, null, 4, false);
-//
-//        // when
-//        table.ungroup();
-//
-//        // then
-//        assertNull(table.getTableGroup());
-//        assertFalse(table.isEmpty());
-//    }
-//
-//    @Test
-//    @DisplayName("주문 상태가 조리중이나 식사중이라면 그룹을 해제할 수 없다.")
-//    void ungroupWrongStatus() {
-//        // given
-//        OrderTable table = new OrderTable(
-//                1L,
-//                null,
-//                4,
-//                false,
-//                Collections.singletonList(COOKING_ORDER)
-//        );
-//
-//        // when & then
-//        assertThatThrownBy(table::ungroup)
-//                .isInstanceOf(IllegalArgumentException.class)
-//                .hasMessage("주문 상태가 조리중이나 식사중입니다.");
-//    }
 
     @Test
     @DisplayName("테이블이 비어있지 않으면 그룹으로 지정할 수 없습니다.")
@@ -156,10 +83,7 @@ class OrderTableTest {
     void assignedAnotherGroupTable() {
         // given
         OrderTable table = new OrderTable(
-                1L,
-                new TableGroup(),
-                4,
-                true
+                1L, new TableGroup(), 4, true
         );
 
         // when & then
@@ -173,10 +97,7 @@ class OrderTableTest {
     void notEmpty() {
         // given
         OrderTable table = new OrderTable(
-                1L,
-                null,
-                4,
-                true
+                1L, null, 4, true
         );
 
         // when

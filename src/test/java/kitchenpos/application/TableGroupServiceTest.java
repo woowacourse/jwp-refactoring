@@ -173,7 +173,7 @@ class TableGroupServiceTest {
         );
 
         given(tableGroupRepository.findById(anyLong())).willReturn(Optional.of(GROUP2));
-        doThrow(new IllegalArgumentException("주문 상태가 조리중이나 식사중입니다.")).when(tableValidator).validate(any());
+        doThrow(new IllegalArgumentException("주문 상태가 조리중이나 식사중입니다.")).when(tableValidator).validateOrder(any());
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,

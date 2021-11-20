@@ -4,13 +4,13 @@ import kitchenpos.table.domain.OrderTable;
 
 public class TableResponse {
     private Long id;
-    private GroupOfTableResponse tableGroup;
+    private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
-    public TableResponse(Long id, GroupOfTableResponse tableGroupResponse, int numberOfGuests, boolean empty) {
+    public TableResponse(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         this.id = id;
-        this.tableGroup = tableGroupResponse;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -18,7 +18,7 @@ public class TableResponse {
     public static TableResponse from(OrderTable orderTable) {
         return new TableResponse(
                 orderTable.getId(),
-                GroupOfTableResponse.from(orderTable.getTableGroup()),
+                orderTable.getTableGroupId(),
                 orderTable.getNumberOfGuests(),
                 orderTable.isEmpty()
         );
@@ -28,8 +28,8 @@ public class TableResponse {
         return id;
     }
 
-    public GroupOfTableResponse getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
