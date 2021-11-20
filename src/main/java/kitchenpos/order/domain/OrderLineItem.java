@@ -34,6 +34,10 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
+    public void changeMenuId(Long menuId) {
+        this.menuId = menuId;
+    }
+
     public Long getSeq() {
         return seq;
     }

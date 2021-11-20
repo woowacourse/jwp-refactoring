@@ -10,7 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.*;
 import kitchenpos.order.ui.request.ChangeOrderStatusRequest;
@@ -18,7 +17,6 @@ import kitchenpos.order.ui.request.CreateOrderRequest;
 import kitchenpos.order.ui.request.OrderLineItemRequest;
 import kitchenpos.order.ui.response.CreateOrderResponse;
 import kitchenpos.order.ui.response.OrderResponse;
-import kitchenpos.table.domain.OrderTableRepository;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -40,13 +38,7 @@ import static org.mockito.Mockito.doThrow;
 class OrderServiceTest {
 
     @Mock
-    private MenuRepository menuRepository;
-
-    @Mock
     private OrderRepository orderRepository;
-
-    @Mock
-    private OrderTableRepository orderTableRepository;
 
     @Mock
     private OrderValidator orderValidator;

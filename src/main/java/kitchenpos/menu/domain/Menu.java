@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
 
+import org.springframework.data.domain.AbstractAggregateRoot;
+
 @Entity
-public class Menu {
+public class Menu extends AbstractAggregateRoot<Menu> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,6 +24,10 @@ public class Menu {
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu() {
+    }
+
+    public Menu(String name, BigDecimal price) {
+        this(null, name, price, null, new ArrayList<>());
     }
 
     public Menu(String name, BigDecimal price, Long menuGroupId) {
@@ -53,6 +59,7 @@ public class Menu {
     }
 
     public void changeNameAndPrice(String name, BigDecimal price) {
+        registerEvent(new MenuChangedEvent(this.id, new Menu(this.name, this.price, this.menuGroupId)));
         this.name = name;
         this.price = price;
     }

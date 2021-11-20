@@ -58,5 +58,6 @@ public class MenuService {
         final Menu menu = menuRepository.findById(menuId)
                                   .orElseThrow(IllegalArgumentException::new);
         menu.changeNameAndPrice(request.getName(), request.getPrice());
+        menuRepository.save(menu); // Domain Event 발행을 위해
     }
 }

@@ -22,8 +22,8 @@
 #### TODO
 - [x] Package by Feature로 구조 변경
 - [x] 의존성 그려보기
-- [ ] 의존성 관점에서 리팩터링
-    - [ ] 메뉴(Menu)의 이름, 가격 변경시 주문 항목(OrderLineItem)에 영향을 미치지 않게
+- [x] 의존성 관점에서 리팩터링
+    - [x] 메뉴(Menu)의 이름, 가격 변경시 주문 항목(OrderLineItem)에 영향을 미치지 않게
         - [x] 메누 수정 api 추가
     - [x] 클래스 사이 의존 관계 단방향으로 변경(pr에 이유 작성)
         ~~- Menu <-> MenuProduct 단방향으로 변경~~
