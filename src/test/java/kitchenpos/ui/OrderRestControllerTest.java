@@ -16,10 +16,8 @@ import kitchenpos.order.ui.request.ChangeOrderStatusRequest;
 import kitchenpos.order.ui.request.CreateOrderRequest;
 import kitchenpos.order.ui.request.OrderLineItemRequest;
 import kitchenpos.order.ui.response.CreateOrderResponse;
-import kitchenpos.menu.ui.response.MenuResponse;
 import kitchenpos.order.ui.response.OrderLineItemResponse;
 import kitchenpos.order.ui.response.OrderResponse;
-import kitchenpos.table.ui.response.OrderedTableResponse;
 
 import static kitchenpos.fixture.MenuFixture.후라이드_단품;
 import static kitchenpos.fixture.OrderFixture.COMPLETION_ORDER;
