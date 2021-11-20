@@ -1,6 +1,8 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.*;
+import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

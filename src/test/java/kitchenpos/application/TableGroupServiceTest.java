@@ -21,7 +21,6 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.ui.request.TableGroupRequest;
-import kitchenpos.ui.response.OrderTableResponse;
 import kitchenpos.ui.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
