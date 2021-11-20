@@ -11,8 +11,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.exception.InvalidNumberOfGuestsException;
 import kitchenpos.exception.InvalidOrderStatusException;
-import kitchenpos.exception.NumberOfGuestsNegativeException;
 import kitchenpos.exception.OrderTableEmptyException;
 import kitchenpos.exception.OrderTableNotEmptyException;
 import kitchenpos.exception.OrderTableNotFoundException;
@@ -170,7 +170,7 @@ class OrderTableServiceTest {
 
             // when, then
             assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(orderTable.getId(), request))
-                .isExactlyInstanceOf(NumberOfGuestsNegativeException.class);
+                .isExactlyInstanceOf(InvalidNumberOfGuestsException.class);
         }
 
         @DisplayName("orderTableId와 일치하는 OrderTable이 존재하지 않을 경우 예외가 발생한다.")

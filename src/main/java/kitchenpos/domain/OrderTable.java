@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.Objects;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,8 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import kitchenpos.exception.InvalidOrderTableException;
-import kitchenpos.exception.NumberOfGuestsNegativeException;
 import kitchenpos.exception.OrderTableEmptyException;
 import kitchenpos.exception.OrderTableNotEmptyException;
 
@@ -24,8 +23,8 @@ public class OrderTable {
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
-    @NotNull
-    private int numberOfGuests;
+    @Embedded
+    private NumberOfGuests numberOfGuests;
 
     @NotNull
     private boolean empty;
@@ -34,21 +33,18 @@ public class OrderTable {
     }
 
     public OrderTable(int numberOfGuests, boolean empty) {
-        this(null, null, numberOfGuests, empty);
+        this(null, null, new NumberOfGuests(numberOfGuests), empty);
     }
 
     public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+        this(id, tableGroup, new NumberOfGuests(numberOfGuests), empty);
+    }
+
+    public OrderTable(Long id, TableGroup tableGroup, NumberOfGuests numberOfGuests, boolean empty) {
         this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-        validateNegative(numberOfGuests);
-    }
-
-    private void validateNegative(int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new InvalidOrderTableException(String.format("음수 %s는 손님 수가 될 수 없습니다.", numberOfGuests));
-        }
     }
 
     public void groupBy(TableGroup tableGroup) {
@@ -61,11 +57,7 @@ public class OrderTable {
         this.empty = true;
     }
 
-    public void changeNumberOfGuests(int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new NumberOfGuestsNegativeException(String.format("음수 %s는 손님 수로 사용할 수 없습니다.", numberOfGuests));
-        }
-
+    public void changeNumberOfGuests(NumberOfGuests numberOfGuests) {
         if (isEmpty()) {
             throw new OrderTableEmptyException(String.format("%s ID OrderTable이 비어있는 상태입니다.", id));
         }
@@ -96,7 +88,7 @@ public class OrderTable {
     }
 
     public int getNumberOfGuests() {
-        return numberOfGuests;
+        return numberOfGuests.getValue();
     }
 
     public boolean isEmpty() {

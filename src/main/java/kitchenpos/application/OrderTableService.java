@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import java.util.List;
+import kitchenpos.domain.NumberOfGuests;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Orders;
 import kitchenpos.exception.OrderTableNotFoundException;
@@ -50,7 +51,8 @@ public class OrderTableService {
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableGuestsRequest request) {
         OrderTable orderTable = findById(orderTableId);
-        orderTable.changeNumberOfGuests(request.getNumberOfGuests());
+        NumberOfGuests numberOfGuests = new NumberOfGuests(request.getNumberOfGuests());
+        orderTable.changeNumberOfGuests(numberOfGuests);
 
         return OrderTableResponse.from(orderTable);
     }

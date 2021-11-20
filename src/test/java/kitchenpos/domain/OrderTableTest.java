@@ -3,8 +3,7 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.exception.InvalidOrderTableException;
-import kitchenpos.exception.NumberOfGuestsNegativeException;
+import kitchenpos.exception.InvalidNumberOfGuestsException;
 import kitchenpos.exception.OrderTableEmptyException;
 import kitchenpos.exception.OrderTableNotEmptyException;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +18,7 @@ class OrderTableTest {
     void numberOfGuestsException() {
         // when, then
         assertThatThrownBy(() -> new OrderTable(-1, true))
-            .isExactlyInstanceOf(InvalidOrderTableException.class);
+            .isExactlyInstanceOf(InvalidNumberOfGuestsException.class);
     }
 
     @DisplayName("손님 수를 변경할 때")
@@ -31,9 +30,10 @@ class OrderTableTest {
         void emptyException() {
             // given
             OrderTable orderTable = new OrderTable(5, true);
+            NumberOfGuests numberOfGuests = new NumberOfGuests(1);
 
             // when, then
-            assertThatThrownBy(() -> orderTable.changeNumberOfGuests(1))
+            assertThatThrownBy(() -> orderTable.changeNumberOfGuests(numberOfGuests))
                 .isExactlyInstanceOf(OrderTableEmptyException.class);
         }
 
@@ -44,8 +44,8 @@ class OrderTableTest {
             OrderTable orderTable = new OrderTable(5, false);
 
             // when, then
-            assertThatThrownBy(() -> orderTable.changeNumberOfGuests(-1))
-                .isExactlyInstanceOf(NumberOfGuestsNegativeException.class);
+            assertThatThrownBy(() -> orderTable.changeNumberOfGuests(new NumberOfGuests(-1)))
+                .isExactlyInstanceOf(InvalidNumberOfGuestsException.class);
         }
     }
 
