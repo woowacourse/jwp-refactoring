@@ -11,13 +11,11 @@ import org.junit.jupiter.api.Test;
 
 class TablesTest {
 
-    private TableGroup tableGroup;
     private OrderTable orderTable;
     private OrderTable orderTable2;
 
     @BeforeEach
     void setUp() {
-        tableGroup = new TableGroup(1L);
         orderTable = new OrderTable(null, 0, true);
         orderTable2 = new OrderTable(null, 0, true);
     }
@@ -58,7 +56,7 @@ class TablesTest {
     @DisplayName("테이블 조건 검증 실패 - 테이블 그룹이 있는 경우")
     @Test
     void validateConditionFailWhenTableHasTableGroup() {
-        orderTable2 = new OrderTable(tableGroup.getId(), 0, true);
+        orderTable2 = new OrderTable(1L, 0, true);
         Tables tables = new Tables(Arrays.asList(orderTable, orderTable2));
         assertThatThrownBy(tables::validateCondition)
                 .isInstanceOf(IllegalArgumentException.class);
@@ -72,7 +70,7 @@ class TablesTest {
         assertThat(orderTable2.getTableGroupId()).isNull();
         assertThat(orderTable.isEmpty()).isTrue();
         assertThat(orderTable2.isEmpty()).isTrue();
-        tables.changeCondition(tableGroup.getId());
+        tables.changeCondition(1L);
         assertThat(orderTable.getTableGroupId()).isNotNull();
         assertThat(orderTable2.getTableGroupId()).isNotNull();
         assertThat(orderTable.isEmpty()).isFalse();

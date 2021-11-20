@@ -20,13 +20,6 @@ public class TableGroup {
     @CreatedDate
     private LocalDateTime createdDate;
 
-    public TableGroup() {
-    }
-
-    public TableGroup(Long id) {
-        this.id = id;
-    }
-
     public Long getId() {
         return id;
     }

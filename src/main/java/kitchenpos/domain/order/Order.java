@@ -31,7 +31,7 @@ public class Order {
     @CreatedDate
     private LocalDateTime orderedTime;
 
-    public Order() {
+    protected Order() {
     }
 
     public Order(OrderTable orderTable, String orderStatus) {

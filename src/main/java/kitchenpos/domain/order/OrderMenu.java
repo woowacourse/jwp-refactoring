@@ -20,7 +20,7 @@ public class OrderMenu {
     @Column(nullable = false)
     private BigDecimal price;
 
-    public OrderMenu() {
+    protected OrderMenu() {
     }
 
     public OrderMenu(Long id, String name, BigDecimal price) {

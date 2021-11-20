@@ -4,18 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class OrderTableTest {
-
-    private TableGroup tableGroup;
-
-    @BeforeEach
-    void setUp() {
-        tableGroup = new TableGroup(1L);
-    }
 
     @DisplayName("빈 테이블 검증 성공")
     @Test
@@ -44,7 +36,7 @@ class OrderTableTest {
     @DisplayName("빈 테이블 검증 실패")
     @Test
     void validateGroupFail() {
-        OrderTable orderTable = new OrderTable(tableGroup.getId(), 0, true);
+        OrderTable orderTable = new OrderTable(1L, 0, true);
         assertThatThrownBy(orderTable::validateEmpty)
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -60,7 +52,7 @@ class OrderTableTest {
     @DisplayName("테이블 인원 변경 실패")
     @Test
     void changeNumberOfGuestsFail() {
-        OrderTable orderTable = new OrderTable(tableGroup.getId(), 0, true);
+        OrderTable orderTable = new OrderTable(1L, 0, true);
         assertThatThrownBy(() -> orderTable.changeNumberOfGuests(-1))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -79,7 +71,7 @@ class OrderTableTest {
     void changeTableGroup() {
         OrderTable orderTable = new OrderTable(null, 0, false);
         assertThat(orderTable.getTableGroupId()).isNull();
-        orderTable.changeTableGroupId(tableGroup.getId());
+        orderTable.changeTableGroupId(1L);
         assertThat(orderTable.getTableGroupId()).isNotNull();
     }
 
@@ -88,7 +80,7 @@ class OrderTableTest {
     void tableGroupId() {
         OrderTable orderTable = new OrderTable(null, 0, false);
         assertThat(orderTable.getTableGroupId()).isNull();
-        orderTable.changeTableGroupId(tableGroup.getId());
+        orderTable.changeTableGroupId(1L);
         assertThat(orderTable.getTableGroupId()).isNotNull();
     }
 }

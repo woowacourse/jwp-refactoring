@@ -25,7 +25,7 @@ public class Menu {
     @ManyToOne
     private MenuGroup menuGroup;
 
-    public Menu() {
+    protected Menu() {
     }
 
     public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
