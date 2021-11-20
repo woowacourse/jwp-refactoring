@@ -20,13 +20,17 @@ public class TableGroup {
     public TableGroup() {
     }
 
-    public TableGroup() {
-        this(null, LocalDateTime.now());
+    public TableGroup(LocalDateTime localDateTime) {
+        this(null, localDateTime);
     }
 
     public TableGroup(Long id, LocalDateTime createdDate) {
         this.id = id;
         this.createdDate = createdDate;
+    }
+
+    public static TableGroup create(LocalDateTime localDateTime){
+        return new TableGroup(localDateTime);
     }
 
     public Long getId() {

@@ -1,8 +1,8 @@
 package kitchenpos.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -10,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 @Entity
 public class OrderTable {
@@ -23,8 +22,8 @@ public class OrderTable {
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
-    @Column
-    private int numberOfGuests;
+    @Embedded
+    private NumberOfGuests numberOfGuests;
 
     @Column
     private boolean empty;
@@ -43,12 +42,40 @@ public class OrderTable {
     public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
         this.id = id;
         this.tableGroup = tableGroup;
-        this.numberOfGuests = numberOfGuests;
+        this.numberOfGuests = NumberOfGuests.create(numberOfGuests);
         this.empty = empty;
+    }
+
+    public void group(TableGroup tableGroup) {
+        if (this.isFull() || Objects.nonNull(this.tableGroup)) {
+            throw new IllegalArgumentException("테이블에 손님이 있거나 다른 그룹에 속한 테이블은 그룹으로 지정할 수 없습니다.");
+        }
+        empty = false;
+        this.tableGroup = tableGroup;
+    }
+
+    public void ungroup() {
+        tableGroup = null;
+        empty = false;
+    }
+
+    public void changeEmpty(boolean empty) {
+        this.empty = empty;
+    }
+
+    public void changeNumberOfGuests(NumberOfGuests numberOfGuests) {
+        if (isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        this.numberOfGuests = numberOfGuests;
     }
 
     public boolean isEmpty() {
         return empty;
+    }
+
+    public boolean isFull() {
+        return !empty;
     }
 
     public Long getId() {
@@ -60,6 +87,6 @@ public class OrderTable {
     }
 
     public int getNumberOfGuests() {
-        return numberOfGuests;
+        return numberOfGuests.getValue();
     }
 }

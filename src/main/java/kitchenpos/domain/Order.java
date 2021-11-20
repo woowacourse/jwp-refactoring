@@ -42,6 +42,10 @@ public class Order {
         return Objects.equals(OrderStatus.COMPLETION, orderStatus);
     }
 
+    public boolean isNotCompletion(){
+        return !Objects.equals(OrderStatus.COMPLETION, orderStatus);
+    }
+
     public void changeOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }

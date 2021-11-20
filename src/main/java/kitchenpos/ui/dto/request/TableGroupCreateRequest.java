@@ -5,14 +5,14 @@ import static java.util.stream.Collectors.toList;
 import java.util.List;
 import kitchenpos.domain.OrderTable;
 
-public class TableGroupRequest {
+public class TableGroupCreateRequest {
 
     private List<OrderTableRequest> orderTables;
 
-    public TableGroupRequest() {
+    public TableGroupCreateRequest() {
     }
 
-    public TableGroupRequest(List<OrderTableRequest> orderTables) {
+    public TableGroupCreateRequest(List<OrderTableRequest> orderTables) {
         this.orderTables = orderTables;
     }
 
