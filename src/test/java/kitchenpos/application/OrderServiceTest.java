@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -68,20 +69,17 @@ class OrderServiceTest {
         given(orderDao.findAll()).willReturn(Collections.singletonList(order));
 
         // when
-        List<OrderResponse> result = orderService.list();
+        ThrowingCallable throwingCallable = () -> orderService.list();
 
         // then
-        assertThat(result).first()
-            .usingRecursiveComparison()
-            .isEqualTo(order);
+        assertThatCode(throwingCallable)
+            .doesNotThrowAnyException();
     }
 
     @Nested
     class CreateTest {
 
         private List<Long> menuIds;
-
-        private OrderLineItem orderLineItem;
 
         private OrderTable orderTable;
 
@@ -105,11 +103,12 @@ class OrderServiceTest {
                 .name("후라이드+후라이드")
                 .price(new BigDecimal(19000))
                 .menuGroupId(1L)
-                .menuProducts(Collections.singletonList(menuProduct))
+                .menuProducts(menuProduct)
                 .build();
+
             menuIds = Collections.singletonList(menu.getId());
 
-            orderLineItem = OrderLineItemFactory.builder()
+            OrderLineItem orderLineItem = OrderLineItemFactory.builder()
                 .seq(1L)
                 .orderId(1L)
                 .menuId(menu.getId())
@@ -130,6 +129,7 @@ class OrderServiceTest {
                 .build();
 
             savedOrderId = 1L;
+
             savedOrder = OrderFactory.copy(order)
                 .id(savedOrderId)
                 .orderStatus(OrderStatus.COOKING)
@@ -160,8 +160,12 @@ class OrderServiceTest {
             // then
             assertThat(result)
                 .usingRecursiveComparison()
+                .ignoringFields("orderedTime", "orderLineItems")
                 .ignoringFieldsOfTypes(LocalDateTime.class)
                 .isEqualTo(savedOrder);
+            assertThat(result.getOrderLineItems())
+                .usingRecursiveComparison()
+                .isEqualTo(savedOrder.getOrderLineItems().toList());
         }
 
         @DisplayName("Order 생성 실패한다 - orderLineItems 가 비어있는 경우")
@@ -235,8 +239,6 @@ class OrderServiceTest {
 
         private Long orderId;
 
-        private List<OrderLineItem> orderLineItems;
-
         private Order order;
 
         private OrderRequest orderRequest;
@@ -245,7 +247,8 @@ class OrderServiceTest {
         void setUp() {
             orderId = 1L;
 
-            orderLineItems = Collections.singletonList(OrderLineItemFactory.builder().build());
+            List<OrderLineItem> orderLineItems =
+                Collections.singletonList(OrderLineItemFactory.builder().build());
 
             order = OrderFactory.builder()
                 .id(orderId)

@@ -1,13 +1,26 @@
 package kitchenpos.domain;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.persistence.Embeddable;
+import javax.persistence.OneToMany;
 import org.springframework.util.CollectionUtils;
 
+@Embeddable
 public class OrderLineItems {
 
-    private final List<OrderLineItem> orderLineItems;
+    @OneToMany(mappedBy = "orderId")
+    private List<OrderLineItem> orderLineItems;
+
+    protected OrderLineItems() {
+
+    }
+
+    public OrderLineItems(OrderLineItem... orderLineItems) {
+        this(Arrays.asList(orderLineItems));
+    }
 
     public OrderLineItems(List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;

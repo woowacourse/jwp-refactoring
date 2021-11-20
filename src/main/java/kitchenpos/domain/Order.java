@@ -2,13 +2,13 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -17,12 +17,16 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long orderTableId;
+
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+
     private LocalDateTime orderedTime;
-    @OneToMany(mappedBy = "orderId")
-    private List<OrderLineItem> orderLineItems;
+
+    @Embedded
+    private OrderLineItems orderLineItems;
 
     protected Order() {
 
@@ -33,11 +37,11 @@ public class Order {
                  LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems
     ) {
-        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
+        this(null, orderTableId, orderStatus, orderedTime, new OrderLineItems(orderLineItems));
     }
 
     public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
-                 List<OrderLineItem> orderLineItems) {
+                 OrderLineItems orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -77,7 +81,7 @@ public class Order {
         return orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
+    public OrderLineItems getOrderLineItems() {
         return orderLineItems;
     }
 }

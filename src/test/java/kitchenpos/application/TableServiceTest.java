@@ -53,8 +53,6 @@ class TableServiceTest {
     @Nested
     class CreateTest {
 
-        private OrderTable orderTable;
-
         private Long savedOrderTableId;
 
         private OrderTable savedOrderTable;
@@ -63,7 +61,7 @@ class TableServiceTest {
 
         @BeforeEach
         void setUp() {
-            orderTable = OrderTableFactory.builder()
+            OrderTable orderTable = OrderTableFactory.builder()
                 .numberOfGuests(0)
                 .empty(true)
                 .build();
@@ -104,6 +102,7 @@ class TableServiceTest {
     class ModifyTest {
 
         private OrderTable orderTable;
+
         private Long orderTableId;
 
         private OrderTable savedOrderTable;
@@ -120,6 +119,7 @@ class TableServiceTest {
                 .tableGroupId(null)
                 .empty(false)
                 .build();
+
             orderTableId = orderTable.getId();
 
             savedOrderTable = OrderTableFactory.copy(orderTable)

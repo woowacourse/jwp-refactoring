@@ -2,6 +2,7 @@ package kitchenpos.integration.templates;
 
 import java.util.List;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.factory.OrderLineItemFactory;
@@ -20,7 +21,7 @@ public class OrderTemplate {
         this.integrationTemplate = integrationTemplate;
     }
 
-    public ResponseEntity<OrderResponse> create(Long orderTableId, List<OrderLineItem> orderLineItems) {
+    public ResponseEntity<OrderResponse> create(Long orderTableId, OrderLineItems orderLineItems) {
         OrderRequest orderRequest = new OrderRequest(
             null,
             orderTableId,

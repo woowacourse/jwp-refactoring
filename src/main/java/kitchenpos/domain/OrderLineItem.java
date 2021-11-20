@@ -11,8 +11,11 @@ public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
+
     private Long orderId;
+
     private Long menuId;
+
     private long quantity;
 
     protected OrderLineItem() {

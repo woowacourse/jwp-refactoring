@@ -14,7 +14,9 @@ public class TableGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private LocalDateTime createdDate;
+
     @Embedded
     private OrderTables orderTables;
 

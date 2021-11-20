@@ -12,8 +12,11 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long tableGroupId;
+
     private int numberOfGuests;
+
     private boolean empty;
 
     public OrderTable() {

@@ -48,18 +48,15 @@ class TableGroupServiceTest {
     @InjectMocks
     private TableGroupService tableGroupService;
 
-    @Captor
-    ArgumentCaptor<OrderTable> orderTableArgumentCaptor;
-
     @Nested
     class CreateTest {
 
         private OrderTable orderTable1;
-        private OrderTable orderTable2;
-        private List<OrderTable> orderTables;
 
         private OrderTable savedOrderTable1;
+
         private OrderTable savedOrderTable2;
+
         private List<OrderTable> savedOrderTables;
 
         private List<Long> orderTableIds;
@@ -81,14 +78,14 @@ class TableGroupServiceTest {
                 .empty(true)
                 .build();
 
-            orderTable2 = OrderTableFactory.builder()
+            OrderTable orderTable2 = OrderTableFactory.builder()
                 .id(2L)
                 .tableGroupId(null)
                 .numberOfGuests(0)
                 .empty(true)
                 .build();
 
-            orderTables = Arrays.asList(
+            List<OrderTable> orderTables = Arrays.asList(
                 orderTable1,
                 orderTable2
             );
@@ -239,34 +236,31 @@ class TableGroupServiceTest {
     @Nested
     class UngroupTest {
 
-        private OrderTable orderTable1;
-        private OrderTable orderTable2;
         private List<OrderTable> orderTables;
 
         private List<Long> orderTableIds;
 
-        private TableGroup tableGroup;
         private Long tableGroupId;
 
         private List<OrderStatus> notCompletionOrderStatuses;
 
         @BeforeEach
         void setUp() {
-            tableGroup = TableGroupFactory.builder()
+            TableGroup tableGroup = TableGroupFactory.builder()
                 .id(1L)
                 .orderTables(orderTables)
                 .build();
 
             tableGroupId = tableGroup.getId();
 
-            orderTable1 = OrderTableFactory.builder()
+            OrderTable orderTable1 = OrderTableFactory.builder()
                 .id(1L)
                 .tableGroupId(tableGroupId)
                 .numberOfGuests(0)
                 .empty(false)
                 .build();
 
-            orderTable2 = OrderTableFactory.builder()
+            OrderTable orderTable2 = OrderTableFactory.builder()
                 .id(2L)
                 .tableGroupId(tableGroupId)
                 .numberOfGuests(0)

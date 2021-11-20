@@ -3,6 +3,7 @@ package kitchenpos.dto;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 
 public class OrderLineItemResponse {
 
@@ -27,8 +28,8 @@ public class OrderLineItemResponse {
         );
     }
 
-    public static List<OrderLineItemResponse> ofList(List<OrderLineItem> orderLineItems) {
-        return orderLineItems.stream()
+    public static List<OrderLineItemResponse> ofList(OrderLineItems orderLineItems) {
+        return orderLineItems.toList().stream()
             .map(OrderLineItemResponse::of)
             .collect(Collectors.toList());
     }

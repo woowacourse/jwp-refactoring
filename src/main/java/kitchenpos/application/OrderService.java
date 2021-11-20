@@ -52,7 +52,7 @@ public class OrderService {
     }
 
     private void updateOrderLineItems(Order order) {
-        final OrderLineItems orderLineItems = new OrderLineItems(order.getOrderLineItems());
+        final OrderLineItems orderLineItems = order.getOrderLineItems();
         final List<Long> menuIds = orderLineItems.getMenuIds();
 
         orderLineItems.validateSameSize(menuDao.countByIdIn(menuIds));

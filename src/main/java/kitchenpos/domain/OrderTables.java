@@ -15,16 +15,16 @@ public class OrderTables {
     @OneToMany(mappedBy = "tableGroupId")
     private List<OrderTable> orderTables;
 
-    public OrderTables() {
+    protected OrderTables() {
 
+    }
+
+    public OrderTables(OrderTable... orderTables) {
+        this(Arrays.asList(orderTables));
     }
 
     public OrderTables(List<OrderTable> orderTables) {
         this.orderTables = orderTables;
-    }
-
-    public OrderTables(OrderTable... orderTables) {
-        this.orderTables = Arrays.asList(orderTables);
     }
 
     public void connect(TableGroup tableGroup) {
