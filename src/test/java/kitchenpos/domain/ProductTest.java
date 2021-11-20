@@ -55,14 +55,15 @@ class ProductTest {
     @DisplayName("quantity 수 만큼 Product의 가격을 곱해서 반환한다")
     @ParameterizedTest
     @ValueSource(longs = {1, 3, 5})
-    void multiply(long quantity) {
+    void multiply(long value) {
         // given
         Product product = new Product("치즈버거", BigDecimal.valueOf(5_000));
 
         // when
+        Quantity quantity = new Quantity(value);
         Price totalPrice = product.multiplyPrice(quantity);
 
         // then
-        assertThat(totalPrice.getValue()).isEqualTo(product.getPrice().multiply(BigDecimal.valueOf(quantity)));
+        assertThat(totalPrice.getValue()).isEqualTo(product.getPrice().multiply(BigDecimal.valueOf(value)));
     }
 }

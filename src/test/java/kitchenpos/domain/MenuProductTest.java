@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 
 import java.math.BigDecimal;
 import kitchenpos.exception.InvalidMenuProductException;
+import kitchenpos.exception.InvalidQuantityException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -49,7 +50,7 @@ class MenuProductTest {
 
             // when, then
             assertThatCode(() -> new MenuProduct(menu, product, null))
-                .isExactlyInstanceOf(InvalidMenuProductException.class);
+                .isExactlyInstanceOf(InvalidQuantityException.class);
         }
 
         @DisplayName("Quantity가 음수면 예외가 발생한다.")
@@ -62,7 +63,7 @@ class MenuProductTest {
 
             // when, then
             assertThatCode(() -> new MenuProduct(menu, product, -1L))
-                .isExactlyInstanceOf(InvalidMenuProductException.class);
+                .isExactlyInstanceOf(InvalidQuantityException.class);
         }
     }
 

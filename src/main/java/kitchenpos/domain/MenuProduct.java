@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.Objects;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,36 +28,28 @@ public class MenuProduct {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @NotNull
-    private Long quantity;
+    @Embedded
+    private Quantity quantity;
 
     protected MenuProduct() {
     }
 
     public MenuProduct(Menu menu, Product product, Long quantity) {
-        this(null, menu, product, quantity);
+        this(null, menu, product, new Quantity(quantity));
     }
 
-    public MenuProduct(Long seq, Menu menu, Product product, Long quantity) {
+    public MenuProduct(Long seq, Menu menu, Product product, Quantity quantity) {
         this.seq = seq;
         this.menu = menu;
         this.product = product;
         this.quantity = quantity;
         validateNull(this.menu);
         validateNull(this.product);
-        validateQuantity(this.quantity);
     }
 
     private void validateNull(Object object) {
         if (Objects.isNull(object)) {
             throw new InvalidMenuProductException("MenuProduct 정보에 null이 포함되었습니다.");
-        }
-    }
-
-    private void validateQuantity(Long quantity) {
-        validateNull(quantity);
-        if (quantity < 0) {
-            throw new InvalidMenuProductException(String.format("음수 %s는 개수가 될 수 없습니다.", quantity));
         }
     }
 
@@ -76,8 +69,8 @@ public class MenuProduct {
         return product.getId();
     }
 
-    public long getQuantity() {
-        return quantity;
+    public Long getQuantity() {
+        return quantity.getValue();
     }
 
     @Override

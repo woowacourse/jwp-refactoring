@@ -159,7 +159,7 @@
 - [x] 인수테스트 DisplayName 변경하기
 - [ ] BaseEntity 로 중복코드 제거하기
 - [ ] 엔티티 원시값 포장
-  - [ ] quantity
+  - [x] quantity
   - [x] price
   - [x] name
   - [ ] numberOfGuests

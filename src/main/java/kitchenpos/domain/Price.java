@@ -37,8 +37,8 @@ public class Price {
         }
     }
 
-    public Price multiplyQuantity(Long quantity) {
-        BigDecimal result = value.multiply(BigDecimal.valueOf(quantity));
+    public Price multiplyQuantity(Quantity quantity) {
+        BigDecimal result = value.multiply(quantity.getDecimalValue());
 
         return new Price(result);
     }

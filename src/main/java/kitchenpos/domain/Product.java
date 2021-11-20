@@ -38,7 +38,7 @@ public class Product {
         this.price = price;
     }
 
-    public Price multiplyPrice(Long quantity) {
+    public Price multiplyPrice(Quantity quantity) {
         return price.multiplyQuantity(quantity);
     }
 

@@ -29,7 +29,7 @@ public class Name {
     }
 
     private void validateBlank(String value) {
-        if (value.isBlank()) {
+        if (value.replaceAll(" ", "").isEmpty()) {
             throw new InvalidNameException("이름은 공백으로 이루어질 수 없습니다.");
         }
     }

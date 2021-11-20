@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import kitchenpos.exception.InvalidOrderLineItemException;
+import kitchenpos.exception.InvalidQuantityException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,7 @@ class OrderLineItemTest {
 
             // when, then
             assertThatThrownBy(() -> new OrderLineItem(order, menu, null))
-                .isExactlyInstanceOf(InvalidOrderLineItemException.class);
+                .isExactlyInstanceOf(InvalidQuantityException.class);
         }
 
         @DisplayName("Quantity가 음수면 예외가 발생한다.")
@@ -64,7 +65,7 @@ class OrderLineItemTest {
 
             // when, then
             assertThatThrownBy(() -> new OrderLineItem(order, menu, -1L))
-                .isExactlyInstanceOf(InvalidOrderLineItemException.class);
+                .isExactlyInstanceOf(InvalidQuantityException.class);
         }
     }
 }

@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.Objects;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,36 +28,28 @@ public class OrderLineItem {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
-    @NotNull
-    private Long quantity;
+    @Embedded
+    private Quantity quantity;
 
     protected OrderLineItem() {
     }
 
     public OrderLineItem(Order order, Menu menu, Long quantity) {
-        this(null, order, menu, quantity);
+        this(null, order, menu, new Quantity(quantity));
     }
 
-    public OrderLineItem(Long seq, Order order, Menu menu, Long quantity) {
+    public OrderLineItem(Long seq, Order order, Menu menu, Quantity quantity) {
         this.seq = seq;
         this.order = order;
         this.menu = menu;
         this.quantity = quantity;
         validateNull(this.order);
         validateNull(this.menu);
-        validateQuantity(this.quantity);
     }
 
     private void validateNull(Object object) {
         if (Objects.isNull(object)) {
             throw new InvalidOrderLineItemException("OrderLineItem 정보에 null이 포함되었습니다.");
-        }
-    }
-
-    private void validateQuantity(Long quantity) {
-        validateNull(quantity);
-        if (quantity < 0) {
-            throw new InvalidOrderLineItemException(String.format("음수 %s는 개수가 될 수 없습니다.", quantity));
         }
     }
 
@@ -73,7 +66,7 @@ public class OrderLineItem {
     }
 
     public Long getQuantity() {
-        return quantity;
+        return quantity.getValue();
     }
 
     @Override

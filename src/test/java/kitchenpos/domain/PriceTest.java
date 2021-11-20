@@ -56,10 +56,10 @@ class PriceTest {
         Price price = new Price(priceValue);
 
         // when
-        long quantity = 4L;
+        Quantity quantity = new Quantity(4L);
         Price result = price.multiplyQuantity(quantity);
 
         // then
-        assertThat(result.getValue()).isEqualTo(priceValue.multiply(BigDecimal.valueOf(quantity)));
+        assertThat(result.getValue()).isEqualTo(priceValue.multiply(quantity.getDecimalValue()));
     }
 }
