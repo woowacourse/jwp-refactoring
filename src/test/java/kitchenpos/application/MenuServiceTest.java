@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -15,6 +16,7 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
@@ -56,20 +58,21 @@ class MenuServiceTest {
     void list() {
         // given
         MenuProduct menuProduct = MenuProductFactory.builder()
+            .menuId(1L)
             .productId(1L)
             .build();
         Menu menu = MenuFactory.builder()
-            .menuProducts(Collections.singletonList(menuProduct))
+            .id(1L)
+            .menuProducts(menuProduct)
             .build();
         given(menuDao.findAll()).willReturn(Collections.singletonList(menu));
 
         // when
-        List<MenuResponse> result = menuService.list();
+        ThrowingCallable throwingCallable = () -> menuService.list();
 
         // then
-        assertThat(result).first()
-            .usingRecursiveComparison()
-            .isEqualTo(menu);
+        assertThatCode(throwingCallable)
+            .doesNotThrowAnyException();
     }
 
     @Nested
@@ -82,6 +85,8 @@ class MenuServiceTest {
         private Menu menu;
 
         private Long savedMenuId;
+
+        private MenuProduct savedMenuProduct;
 
         private Menu savedMenu;
 
@@ -104,12 +109,18 @@ class MenuServiceTest {
                 .name("후라이드+후라이드")
                 .price(new BigDecimal(19000))
                 .menuGroupId(1L)
-                .menuProducts(Collections.singletonList(menuProduct))
+                .menuProducts(menuProduct)
                 .build();
 
             savedMenuId = 1L;
+
+            savedMenuProduct = MenuProductFactory.copy(menuProduct)
+                .menuId(savedMenuId)
+                .build();
+
             savedMenu = MenuFactory.copy(menu)
                 .id(savedMenuId)
+                .menuProducts(savedMenuProduct)
                 .build();
 
             menuRequest = MenuFactory.dto(menu);
@@ -129,7 +140,6 @@ class MenuServiceTest {
                     return null;
                 }
             );
-            given(menuProductDao.saveAll(anyList())).willReturn(anyList());
 
             // when
             MenuResponse result = menuService.create(menuRequest);
@@ -137,8 +147,11 @@ class MenuServiceTest {
             // then
             assertThat(result)
                 .usingRecursiveComparison()
-                .ignoringExpectedNullFields()
+                .ignoringFields("menuProducts")
                 .isEqualTo(savedMenu);
+            assertThat(result.getMenuProducts())
+                .usingRecursiveComparison()
+                .isEqualTo(savedMenu.getMenuProducts().toList());
         }
 
         @DisplayName("Menu 생성 실패한다 - price 가 null 인 경우")
@@ -158,7 +171,7 @@ class MenuServiceTest {
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
-        @DisplayName("Menu 를 생성한다 - price 가 0인 경우")
+        @DisplayName("Menu 생성 실패한다 - price 가 0인 경우")
         @Test
         void createFail_whenPriceIsNegative() {
             // given
@@ -233,7 +246,7 @@ class MenuServiceTest {
                 .build();
             menu = MenuFactory.copy(menu)
                 .price(new BigDecimal(1001))
-                .menuProducts(Collections.singletonList(menuProduct))
+                .menuProducts(menuProduct)
                 .build();
             menuRequest = MenuFactory.dto(menu);
             given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(true);

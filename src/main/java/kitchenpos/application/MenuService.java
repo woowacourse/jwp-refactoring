@@ -6,7 +6,7 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Products;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
@@ -35,16 +35,14 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
         final Menu menu = menuRequest.toMenu();
+        validateMenuGroupId(menu);
 
-        validate(menu);
+        final Products products = new Products(productDao.findAllById(menu.getProductIds()));
+        menu.comparePrice(products);
+
         menuDao.save(menu);
         saveMenuProducts(menu);
         return MenuResponse.of(menu);
-    }
-
-    private void validate(Menu menu) {
-        validateMenuGroupId(menu);
-        validatePrice(menu);
     }
 
     private void validateMenuGroupId(Menu menu) {
@@ -53,18 +51,11 @@ public class MenuService {
         }
     }
 
-    private void validatePrice(Menu menu) {
-        final Products products = new Products(productDao.findAllById(menu.getProductIds()));
-        menu.validatePrice(products);
-    }
-
     private void saveMenuProducts(Menu menu) {
-        List<MenuProduct> menuProducts = menu.getMenuProducts();
+        MenuProducts menuProducts = menu.getMenuProducts();
 
-        for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menu.getId());
-        }
-        menuProductDao.saveAll(menuProducts);
+        menuProducts.setMenuId(menu);
+        menuProductDao.saveAll(menuProducts.toList());
     }
 
     @Transactional(readOnly = true)

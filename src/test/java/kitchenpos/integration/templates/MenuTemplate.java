@@ -1,8 +1,7 @@
 package kitchenpos.integration.templates;
 
 import java.math.BigDecimal;
-import java.util.List;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
 import kitchenpos.factory.MenuProductFactory;
@@ -23,7 +22,7 @@ public class MenuTemplate {
     public ResponseEntity<MenuResponse> create(String name,
                                                BigDecimal price,
                                                Long menuGroupId,
-                                               List<MenuProduct> menuProducts) {
+                                               MenuProducts menuProducts) {
         MenuRequest menuRequest = new MenuRequest(
             null,
             name,

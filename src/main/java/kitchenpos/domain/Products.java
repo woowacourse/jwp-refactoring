@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class Products {
@@ -8,6 +9,11 @@ public class Products {
 
     public Products(List<Product> products) {
         this.products = products;
+    }
+
+    public BigDecimal totalPrice(MenuProduct menuProduct) {
+        return findById(menuProduct.getProductId())
+            .priceOfQuantity(menuProduct.getQuantity());
     }
 
     public Product findById(Long id) {

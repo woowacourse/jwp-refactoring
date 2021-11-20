@@ -13,7 +13,9 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     private BigDecimal price;
 
     protected Product() {
@@ -28,6 +30,10 @@ public class Product {
         this.id = id;
         this.name = name;
         this.price = price;
+    }
+
+    public BigDecimal priceOfQuantity(long quantity) {
+        return price.multiply(BigDecimal.valueOf(quantity));
     }
 
     public void validatePrice() {

@@ -70,6 +70,7 @@ class ProductServiceTest {
                 .build();
 
             savedProductId = 1L;
+
             savedProduct = ProductFactory.copy(product)
                 .id(1L)
                 .build();

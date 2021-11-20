@@ -3,6 +3,7 @@ package kitchenpos.factory;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.dto.MenuProductRequest;
 
 public class MenuProductFactory {
@@ -45,8 +46,8 @@ public class MenuProductFactory {
         );
     }
 
-    public static List<MenuProductRequest> dtoList(List<MenuProduct> menuProducts) {
-        return menuProducts.stream()
+    public static List<MenuProductRequest> dtoList(MenuProducts menuProducts) {
+        return menuProducts.toList().stream()
             .map(MenuProductFactory::dto)
             .collect(Collectors.toList());
     }
