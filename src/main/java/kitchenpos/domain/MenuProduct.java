@@ -62,7 +62,7 @@ public class MenuProduct {
     }
 
     public BigDecimal productTotalPrice() {
-        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
+        return product.multiplyPrice(quantity);
     }
 
     public Long getSeq() {

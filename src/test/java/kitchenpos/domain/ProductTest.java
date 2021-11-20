@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
@@ -7,6 +8,8 @@ import kitchenpos.exception.InvalidProductException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @DisplayName("Product 단위 테스트")
 class ProductTest {
@@ -46,5 +49,19 @@ class ProductTest {
             assertThatThrownBy(() -> new Product("치즈버거", BigDecimal.valueOf(-1)))
                 .isExactlyInstanceOf(InvalidProductException.class);
         }
+    }
+
+    @DisplayName("quantity 수 만큼 Product의 가격을 곱해서 반환한다")
+    @ParameterizedTest
+    @ValueSource(longs = {1, 3, 5})
+    void multiply(long quantity) {
+        // given
+        Product product = new Product("치즈버거", BigDecimal.valueOf(5_000));
+
+        // when
+        BigDecimal totalPrice = product.multiplyPrice(quantity);
+
+        // then
+        assertThat(totalPrice).isEqualTo(product.getPrice().multiply(BigDecimal.valueOf(quantity)));
     }
 }
