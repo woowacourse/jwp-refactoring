@@ -4,16 +4,14 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.menu.ui.request.CreateMenuRequest;
 import kitchenpos.menu.ui.request.MenuProductRequest;
 import kitchenpos.menu.ui.response.MenuResponse;
@@ -29,9 +27,9 @@ import static kitchenpos.fixture.MenuProductFixture.강정치킨_한마리_메�
 import static kitchenpos.fixture.ProductFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 
 @DisplayName("MenuService 단위 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -41,10 +39,7 @@ class MenuServiceTest {
     private MenuRepository menuRepository;
 
     @Mock
-    private MenuGroupRepository menuGroupRepository;
-
-    @Mock
-    private ProductRepository productRepository;
+    private MenuValidator menuValidator;
 
     @InjectMocks
     private MenuService menuService;
@@ -60,8 +55,6 @@ class MenuServiceTest {
                 Collections.singletonList(new MenuProductRequest(강정치킨.getId(), 1))
         );
         Menu expected = new Menu(1L, "강정", BigDecimal.valueOf(15000), 추천메뉴.getId(), Collections.singletonList(강정치킨_한마리_메뉴상품));
-        given(menuGroupRepository.existsById(anyLong())).willReturn(true);
-        given(productRepository.findById(anyLong())).willReturn(Optional.of(강정치킨));
         given(menuRepository.save(any(Menu.class))).willReturn(expected);
 
         // when
@@ -86,7 +79,6 @@ class MenuServiceTest {
                         new MenuProductRequest(양념치킨.getId(), 1)
                 )
         );
-        given(menuGroupRepository.existsById(anyLong())).willReturn(true);
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -107,7 +99,6 @@ class MenuServiceTest {
                         new MenuProductRequest(양념치킨.getId(), 1)
                 )
         );
-        given(menuGroupRepository.existsById(anyLong())).willReturn(true);
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -128,9 +119,8 @@ class MenuServiceTest {
                         new MenuProductRequest(양념치킨.getId(), 1)
                 )
         );
-        given(menuGroupRepository.existsById(anyLong())).willReturn(true);
-        given(productRepository.findById(후라이드치킨.getId())).willReturn(Optional.of(후라이드치킨));
-        given(productRepository.findById(양념치킨.getId())).willReturn(Optional.of(양념치킨));
+        doThrow(new IllegalArgumentException("메뉴의 가격은 제품 단품의 합보다 클 수 없습니다."))
+                .when(menuValidator).validatePrice(anyList(), any());
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -151,7 +141,8 @@ class MenuServiceTest {
                         new MenuProductRequest(양념치킨.getId(), 1)
                 )
         );
-        given(menuGroupRepository.existsById(anyLong())).willReturn(false);
+        doThrow(new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다."))
+                .when(menuValidator).validateMenuGroup(anyLong());
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -172,7 +163,8 @@ class MenuServiceTest {
                         new MenuProductRequest(양념치킨.getId(), 1)
                 )
         );
-        given(menuGroupRepository.existsById(anyLong())).willReturn(true);
+        doThrow(new IllegalArgumentException("상품이 존재하지 않습니다."))
+                .when(menuValidator).validatePrice(anyList(), any());
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,

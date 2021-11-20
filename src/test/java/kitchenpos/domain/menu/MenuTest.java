@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -56,21 +56,5 @@ class MenuTest {
         )
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("메뉴의 가격은 비어있을 수 없고 0 이상이어야 합니다.");
-    }
-
-    @Test
-    @DisplayName("메뉴의 가격이 메뉴를 구성하는 실제 제품들을 단품으로 주문하였을 때의 가격 합보다 크면 메뉴를 생성할 수 없다.")
-    void addMenuProductsExpensivePrice() {
-        // given
-        Menu menu = new Menu(
-                "양념 반 + 후라이드 반",
-                BigDecimal.valueOf(34001),
-                추천메뉴.getId());
-        List<MenuProduct> menuProducts = Arrays.asList(후라이드치킨_한마리_메뉴상품, 양념치킨_한마리_메뉴상품); // 후라이드 치킨 17000원, 양념 치킨 17000원
-
-        // when & then
-        assertThatThrownBy(() -> menu.addMenuProducts(menuProducts, BigDecimal.valueOf(34000)))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("메뉴의 가격은 제품 단품의 합보다 클 수 없습니다.");
     }
 }

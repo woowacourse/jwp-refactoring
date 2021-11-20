@@ -47,10 +47,8 @@ public class Menu {
         }
     }
 
-    public void addMenuProducts(List<MenuProduct> menuProducts, BigDecimal sum) {
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException("메뉴의 가격은 제품 단품의 합보다 클 수 없습니다.");
-        }
+    public void addMenuProducts(List<MenuProduct> menuProducts, MenuValidator menuValidator) {
+        menuValidator.validatePrice(menuProducts, price);
         this.menuProducts = menuProducts;
     }
 

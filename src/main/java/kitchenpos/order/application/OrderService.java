@@ -31,23 +31,22 @@ public class OrderService {
     @Transactional
     public CreateOrderResponse create(final CreateOrderRequest request) {
         orderValidator.validateTable(request.getOrderTableId());
-
-        final Order order = new Order(request.getOrderTableId());
-        final List<OrderLineItem> orderLineItems = getOrderLineItems(order, request);
-        order.addOrderLineItem(orderLineItems);
-
+        final Order order = getOrder(request);
         final Order savedOrder = orderRepository.save(order);
         return CreateOrderResponse.from(savedOrder);
     }
 
-    private List<OrderLineItem> getOrderLineItems(Order order, CreateOrderRequest request) {
-        return request.getOrderLineItems()
-                      .stream()
-                      .map(item -> {
-                          orderValidator.validateMenu(item.getMenuId());
-                          return new OrderLineItem(order, item.getMenuId(), item.getQuantity());
-                      })
-                      .collect(Collectors.toList());
+    private Order getOrder(CreateOrderRequest request) {
+        final Order order = new Order(request.getOrderTableId());
+        List<OrderLineItem> orderLineItems = request.getOrderLineItems()
+                                             .stream()
+                                             .map(item -> {
+                                                 orderValidator.validateMenu(item.getMenuId());
+                                                 return new OrderLineItem(order, item.getMenuId(), item.getQuantity());
+                                             })
+                                             .collect(Collectors.toList());
+        order.addOrderLineItem(orderLineItems);
+        return order;
     }
 
     @Transactional(readOnly = true)
