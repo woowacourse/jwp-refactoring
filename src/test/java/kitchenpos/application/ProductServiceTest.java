@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.exception.InvalidNameException;
-import kitchenpos.exception.InvalidProductException;
+import kitchenpos.exception.InvalidPriceException;
 import kitchenpos.ui.request.ProductRequest;
 import kitchenpos.ui.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -60,7 +60,7 @@ class ProductServiceTest {
 
             // when, then
             assertThatThrownBy(() -> productService.create(request))
-                .isExactlyInstanceOf(InvalidProductException.class);
+                .isExactlyInstanceOf(InvalidPriceException.class);
         }
 
         @DisplayName("price가 음수인 경우 예외가 발생한다.")
@@ -71,7 +71,7 @@ class ProductServiceTest {
 
             // when, then
             assertThatThrownBy(() -> productService.create(request))
-                .isExactlyInstanceOf(InvalidProductException.class);
+                .isExactlyInstanceOf(InvalidPriceException.class);
         }
     }
 

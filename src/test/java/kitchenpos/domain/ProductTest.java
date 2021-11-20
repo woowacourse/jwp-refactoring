@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import kitchenpos.exception.InvalidNameException;
-import kitchenpos.exception.InvalidProductException;
+import kitchenpos.exception.InvalidPriceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ class ProductTest {
         void priceNullException() {
             // when, then
             assertThatThrownBy(() -> new Product("치즈버거", null))
-                .isExactlyInstanceOf(InvalidProductException.class);
+                .isExactlyInstanceOf(InvalidPriceException.class);
         }
 
         @DisplayName("price가 음수인 경우 예외가 발생한다.")
@@ -48,7 +48,7 @@ class ProductTest {
         void priceNegativeException() {
             // when, then
             assertThatThrownBy(() -> new Product("치즈버거", BigDecimal.valueOf(-1)))
-                .isExactlyInstanceOf(InvalidProductException.class);
+                .isExactlyInstanceOf(InvalidPriceException.class);
         }
     }
 
@@ -60,9 +60,9 @@ class ProductTest {
         Product product = new Product("치즈버거", BigDecimal.valueOf(5_000));
 
         // when
-        BigDecimal totalPrice = product.multiplyPrice(quantity);
+        Price totalPrice = product.multiplyPrice(quantity);
 
         // then
-        assertThat(totalPrice).isEqualTo(product.getPrice().multiply(BigDecimal.valueOf(quantity)));
+        assertThat(totalPrice.getValue()).isEqualTo(product.getPrice().multiply(BigDecimal.valueOf(quantity)));
     }
 }

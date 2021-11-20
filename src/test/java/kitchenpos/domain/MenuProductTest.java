@@ -76,9 +76,9 @@ class MenuProductTest {
         MenuProduct menuProduct = new MenuProduct(menu, product, 4L);
 
         // when
-        BigDecimal totalPrice2 = menuProduct.productTotalPrice();
+        Price totalPrice = menuProduct.productTotalPrice();
 
         // then
-        assertThat(totalPrice2).isEqualTo(BigDecimal.valueOf(20_000));
+        assertThat(totalPrice.getValue()).isEqualTo(BigDecimal.valueOf(20_000));
     }
 }

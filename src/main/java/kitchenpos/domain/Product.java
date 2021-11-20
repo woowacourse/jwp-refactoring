@@ -7,8 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
-import kitchenpos.exception.InvalidProductException;
 
 @Entity
 public class Product {
@@ -20,8 +18,8 @@ public class Product {
     @Embedded
     private Name name;
 
-    @NotNull
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     protected Product() {
     }
@@ -31,35 +29,17 @@ public class Product {
     }
 
     public Product(Long id, String name, BigDecimal price) {
-        this(id, new Name(name), price);
+        this(id, new Name(name), new Price(price));
     }
 
-    public Product(Long id, Name name, BigDecimal price) {
+    public Product(Long id, Name name, Price price) {
         this.id = id;
         this.name = name;
         this.price = price;
-        validatePrice(this.price);
     }
 
-    private void validatePrice(BigDecimal price) {
-        validateNull(price);
-        validateNegative(price);
-    }
-
-    private void validateNull(Object object) {
-        if (Objects.isNull(object)) {
-            throw new InvalidProductException("Product 정보에 null이 포함되었습니다.");
-        }
-    }
-
-    private void validateNegative(BigDecimal price) {
-        if (price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidProductException(String.format("Product price는 음수일 수 없습니다. (%s)", price));
-        }
-    }
-
-    public BigDecimal multiplyPrice(Long quantity) {
-        return price.multiply(BigDecimal.valueOf(quantity));
+    public Price multiplyPrice(Long quantity) {
+        return price.multiplyQuantity(quantity);
     }
 
     public Long getId() {
@@ -71,7 +51,7 @@ public class Product {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 
     @Override

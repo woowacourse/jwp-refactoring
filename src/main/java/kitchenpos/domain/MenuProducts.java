@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.exception.InvalidMenuPriceException;
 
 public class MenuProducts {
@@ -12,13 +13,22 @@ public class MenuProducts {
     }
 
     public void validateMenuPrice(Price menuPrice) {
-        Price productsPrice = Price.of(menuProducts);
+        Prices prices = getMenuTotalPrices();
+        Price totalPrice = prices.sumAll();
 
-        if (menuPrice.isBiggerThan(productsPrice)) {
+        if (menuPrice.isBiggerThan(totalPrice)) {
             throw new InvalidMenuPriceException(
-                String.format("메뉴의 가격 %s이 상품 가격의 합 %s보다 큽니다.", menuPrice.getValue(), productsPrice.getValue())
+                String.format("메뉴의 가격 %s이 상품 가격의 합 %s보다 큽니다.", menuPrice.getValue(), totalPrice.getValue())
             );
         }
+    }
+
+    private Prices getMenuTotalPrices() {
+        List<Price> prices = menuProducts.stream()
+            .map(MenuProduct::productTotalPrice)
+            .collect(Collectors.toList());
+
+        return new Prices(prices);
     }
 
     public List<MenuProduct> toList() {

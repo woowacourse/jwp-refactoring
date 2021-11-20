@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
@@ -30,5 +31,35 @@ class PriceTest {
             assertThatThrownBy(() -> new Price(BigDecimal.valueOf(-1)))
                 .isExactlyInstanceOf(InvalidPriceException.class);
         }
+    }
+
+    @DisplayName("금액이 더 큰지 비교가 가능하다")
+    @Test
+    void isBiggerThan() {
+        // given
+        Price price = new Price(BigDecimal.valueOf(3_000));
+        Price smallerPrice = new Price(BigDecimal.valueOf(2_000));
+        Price equalPrice = new Price(BigDecimal.valueOf(3_000));
+        Price biggerPrice = new Price(BigDecimal.valueOf(5_000));
+
+        // when, then
+        assertThat(price.isBiggerThan(smallerPrice)).isTrue();
+        assertThat(price.isBiggerThan(equalPrice)).isFalse();
+        assertThat(price.isBiggerThan(biggerPrice)).isFalse();
+    }
+
+    @DisplayName("주어진 수량에 곱해진 가격의 반환한다.")
+    @Test
+    void multiplyQuantity() {
+        // given
+        BigDecimal priceValue = BigDecimal.valueOf(3_000);
+        Price price = new Price(priceValue);
+
+        // when
+        long quantity = 4L;
+        Price result = price.multiplyQuantity(quantity);
+
+        // then
+        assertThat(result.getValue()).isEqualTo(priceValue.multiply(BigDecimal.valueOf(quantity)));
     }
 }

@@ -160,7 +160,7 @@
 - [ ] BaseEntity 로 중복코드 제거하기
 - [ ] 엔티티 원시값 포장
   - [ ] quantity
-  - [ ] price
+  - [x] price
   - [x] name
   - [ ] numberOfGuests
 - [x] DTO getter 디미터 법칙
