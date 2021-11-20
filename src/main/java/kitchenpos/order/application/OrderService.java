@@ -87,7 +87,7 @@ public class OrderService {
             OrderLineItemResponse orderLineItemResponse = new OrderLineItemResponse(
                     orderLineItem.getSeq(),
                     orderLineItem.getOrder().getId(),
-                    orderLineItem.getOrderMenuId(),
+                    orderLineItem.getOrderMenu().getId(),
                     orderLineItem.getQuantity()
             );
             orderLineItemResponses.add(orderLineItemResponse);
@@ -105,7 +105,7 @@ public class OrderService {
             );
             OrderLineItem orderLineItem = new OrderLineItem(
                     savedOrder,
-                    savedOrderMenu.getId(),
+                    savedOrderMenu,
                     orderLineItemRequest.getQuantity()
             );
             savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));

@@ -17,7 +17,8 @@ public class OrderLineItem {
     @ManyToOne
     private Order order;
 
-    private Long orderMenuId;
+    @ManyToOne
+    private OrderMenu orderMenu;
 
     @Column(nullable = false)
     private long quantity;
@@ -25,9 +26,9 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Order order, Long orderMenuId, long quantity) {
+    public OrderLineItem(Order order, OrderMenu orderMenu, long quantity) {
         this.order = order;
-        this.orderMenuId = orderMenuId;
+        this.orderMenu = orderMenu;
         this.quantity = quantity;
     }
 
@@ -39,8 +40,8 @@ public class OrderLineItem {
         return order;
     }
 
-    public Long getOrderMenuId() {
-        return orderMenuId;
+    public OrderMenu getOrderMenu() {
+        return orderMenu;
     }
 
     public long getQuantity() {
