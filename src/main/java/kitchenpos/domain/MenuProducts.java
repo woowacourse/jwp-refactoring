@@ -32,6 +32,12 @@ public class MenuProducts {
             .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
+    public void changeMenuInfo(Menu menu) {
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.changeMenuInfo(menu);
+        }
+    }
+
     public List<MenuProduct> toList() {
         return Collections.unmodifiableList(menuProducts);
     }
@@ -40,11 +46,5 @@ public class MenuProducts {
         return menuProducts.stream()
             .map(MenuProduct::getProductId)
             .collect(Collectors.toList());
-    }
-
-    public void setMenuId(Menu menu) {
-        for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menu.getId());
-        }
     }
 }

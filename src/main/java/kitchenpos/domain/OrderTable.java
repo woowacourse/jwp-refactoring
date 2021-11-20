@@ -34,8 +34,8 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void joinGroup(Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public void joinGroup(TableGroup tableGroup) {
+        this.tableGroupId = tableGroup.getId();
         this.empty = false;
     }
 

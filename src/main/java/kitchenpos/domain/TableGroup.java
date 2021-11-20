@@ -38,8 +38,8 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
-    public void createWith(OrderTables savedOrderTables) {
-        setOrderTables(savedOrderTables);
+    public void createWith(OrderTables orderTables) {
+        setOrderTables(orderTables);
         updateCreatedDate();
     }
 
@@ -63,7 +63,7 @@ public class TableGroup {
         return orderTables.getIds();
     }
 
-    public void setOrderTables(OrderTables orderTables) {
+    private void setOrderTables(OrderTables orderTables) {
         this.orderTables = orderTables;
     }
 }

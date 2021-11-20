@@ -54,7 +54,7 @@ public class MenuService {
     private void saveMenuProducts(Menu menu) {
         MenuProducts menuProducts = menu.getMenuProducts();
 
-        menuProducts.setMenuId(menu);
+        menuProducts.changeMenuInfo(menu);
         menuProductDao.saveAll(menuProducts.toList());
     }
 

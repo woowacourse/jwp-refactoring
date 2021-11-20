@@ -52,7 +52,7 @@ public class TableGroupService {
             new OrderTables(orderTableDao.findAllByTableGroupId(tableGroupId));
 
         validateCompletion(orderTables);
-        orderTables.upGroupAll();
+        orderTables.unGroupAll();
     }
 
     private void validateCompletion(OrderTables orderTables) {

@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -34,6 +33,10 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
+    public void changeMenuInfo(Menu menu) {
+        this.menuId = menu.getId();
+    }
+
     public Long getSeq() {
         return seq;
     }
@@ -48,9 +51,5 @@ public class MenuProduct {
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setMenuId(Long menuId) {
-        this.menuId = menuId;
     }
 }

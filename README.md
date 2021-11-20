@@ -23,7 +23,7 @@
 
 ## 요구 사항
 
-- [ ] setter 정리
+- [x] setter 정리
 - [x] ui 레이어어와 service 레이 분리
   - [x] Product
   - [x] OrderTable
@@ -32,11 +32,7 @@
   - [x] Menu
   - [x] MenuGroup
 - [x] JPA 로 마이그레이션, Repository 적용
-- [ ] LazyLoading 변경 고려
-  - [ ] Menu, MenuProduct
 - [ ] 예외 메시지 작성
-- [ ] test template 에서 실제 객체가 아닌 dto 를 사용하도록 리팩토링
-- [ ] test 필드 final 처리
 
 ### 도메인 로직 분리
 - [x] MenuGroupService : 로직이 간단하여 분리할 것이 없음.

@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import kitchenpos.factory.OrderTableFactory;
+import kitchenpos.factory.TableGroupFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,12 +52,15 @@ class OrderTableTest {
     void joinGroup() {
         // given
         Long tableGroupId = 1L;
+        TableGroup tableGroup = TableGroupFactory.builder()
+            .id(tableGroupId)
+            .build();
 
         // when
-        orderTable.joinGroup(tableGroupId);
+        orderTable.joinGroup(tableGroup);
 
         // then
-        assertThat(orderTable.getTableGroupId()).isEqualTo(1L);
+        assertThat(orderTable.getTableGroupId()).isEqualTo(tableGroupId);
         assertThat(orderTable.isEmpty()).isFalse();
     }
 

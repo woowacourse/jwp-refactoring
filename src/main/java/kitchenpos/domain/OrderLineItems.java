@@ -29,7 +29,7 @@ public class OrderLineItems {
     public void updateOrderId(Order order) {
         validateNotEmpty();
         for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(order.getId());
+            orderLineItem.changeOrderInfo(order);
         }
     }
 

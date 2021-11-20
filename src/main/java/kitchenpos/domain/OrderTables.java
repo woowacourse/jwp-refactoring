@@ -31,7 +31,7 @@ public class OrderTables {
         validateMinimumSize();
         validateSameSize(tableGroup.getOrderTables());
         validateGroupable();
-        setTableGroup(tableGroup);
+        connectEachOrderTable(tableGroup);
     }
 
     public void validateMinimumSize() {
@@ -58,9 +58,15 @@ public class OrderTables {
         }
     }
 
-    public void upGroupAll() {
+    public void unGroupAll() {
         for (final OrderTable orderTable : orderTables) {
             orderTable.ungroup();
+        }
+    }
+
+    private void connectEachOrderTable(TableGroup tableGroup) {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.joinGroup(tableGroup);
         }
     }
 
@@ -72,11 +78,5 @@ public class OrderTables {
         return orderTables.stream()
             .map(OrderTable::getId)
             .collect(Collectors.toList());
-    }
-
-    public void setTableGroup(TableGroup tableGroup) {
-        for (OrderTable orderTable : orderTables) {
-            orderTable.joinGroup(tableGroup.getId());
-        }
     }
 }
