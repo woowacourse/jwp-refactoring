@@ -1,4 +1,4 @@
-package kitchenpos.order.domain;
+package kitchenpos.table.domain;
 
 import java.time.LocalDateTime;
 import javax.persistence.Entity;

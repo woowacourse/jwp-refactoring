@@ -1,4 +1,4 @@
-package kitchenpos.acceptance.order;
+package kitchenpos.acceptance.table;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -6,10 +6,10 @@ import java.util.List;
 import kitchenpos.acceptance.AcceptanceTest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.domain.TableGroup;
-import kitchenpos.order.dto.request.OrderTableRequest;
-import kitchenpos.order.dto.response.OrderTableResponse;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.dto.request.OrderTableRequest;
+import kitchenpos.table.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
