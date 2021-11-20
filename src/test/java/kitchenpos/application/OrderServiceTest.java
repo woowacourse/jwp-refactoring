@@ -10,20 +10,28 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.exception.OrderAlreadyCompletionException;
+import kitchenpos.exception.OrderLineItemDuplicateException;
+import kitchenpos.exception.OrderLineItemsEmptyException;
+import kitchenpos.exception.OrderNotFoundException;
+import kitchenpos.exception.OrderTableEmptyException;
+import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.ui.request.MenuProductRequest;
+import kitchenpos.ui.request.MenuRequest;
+import kitchenpos.ui.request.OrderLineItemRequest;
+import kitchenpos.ui.request.OrderRequest;
+import kitchenpos.ui.request.OrderStatusRequest;
+import kitchenpos.ui.response.MenuResponse;
+import kitchenpos.ui.response.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -38,19 +46,19 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuService menuService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @DisplayName("Order를 생성할 때")
     @Nested
@@ -60,134 +68,137 @@ class OrderServiceTest {
         @Test
         void orderLineItemsEmptyException() {
             // given
-            TableGroup tableGroup = tableGroupDao.save(TableGroup을_생성한다());
-            OrderTable orderTable = orderTableDao.save(OrderTable을_생성한다(2, tableGroup.getId()));
-            MenuGroup menuGroup = menuGroupDao.save(MenuGroup을_생성한다("엄청난 그룹"));
+            TableGroup tableGroup = tableGroupRepository.save(TableGroup을_생성한다());
+            OrderTable orderTable = orderTableRepository.save(OrderTable을_생성한다(2, tableGroup));
+            MenuGroup menuGroup = menuGroupRepository.save(MenuGroup을_생성한다("엄청난 그룹"));
 
-            Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
-            Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
-            List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
+            Product 치즈버거 = productRepository.save(Product를_생성한다("치즈버거", 4_000));
+            Product 콜라 = productRepository.save(Product를_생성한다("치즈버거", 1_600));
+            MenuProductRequest 치즈버거_MenuProduct = MenuProductRequest를_생성한다(치즈버거, 1);
+            MenuProductRequest 콜라_MenuProduct = MenuProductRequest를_생성한다(콜라, 1);
+            List<MenuProductRequest> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu = menuDao.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts));
+            MenuResponse menuResponse = menuService.create(MenuRequest를_생성한다("엄청난 메뉴", 5_600, menuGroup, menuProducts));
 
-            Order order = Order를_생성한다(orderTable.getId(), new ArrayList<>());
+            OrderRequest request = OrderRequest를_생성한다(orderTable, new ArrayList<>());
 
             // when, then
-            assertThatThrownBy(() -> orderService.create(order))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.create(request))
+                .isExactlyInstanceOf(OrderLineItemsEmptyException.class);
         }
 
         @DisplayName("동일한 메뉴를 시킬 때 Quantity가 아닌 OrderLineItem을 추가해서 OrderLineItem 개수와 Menu 개수가 다를 경우 예외가 발생한다.")
         @Test
         void orderLineItemCountNonMatchWithMenuException() {
             // given
-            TableGroup tableGroup = tableGroupDao.save(TableGroup을_생성한다());
-            OrderTable orderTable = orderTableDao.save(OrderTable을_생성한다(2, tableGroup.getId()));
-            MenuGroup menuGroup = menuGroupDao.save(MenuGroup을_생성한다("엄청난 그룹"));
+            TableGroup tableGroup = tableGroupRepository.save(TableGroup을_생성한다());
+            OrderTable orderTable = orderTableRepository.save(OrderTable을_생성한다(2, tableGroup));
+            MenuGroup menuGroup = menuGroupRepository.save(MenuGroup을_생성한다("엄청난 그룹"));
 
-            Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
-            Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
-            List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
+            Product 치즈버거 = productRepository.save(Product를_생성한다("치즈버거", 4_000));
+            Product 콜라 = productRepository.save(Product를_생성한다("치즈버거", 1_600));
+            MenuProductRequest 치즈버거_MenuProduct = MenuProductRequest를_생성한다(치즈버거, 1);
+            MenuProductRequest 콜라_MenuProduct = MenuProductRequest를_생성한다(콜라, 1);
+            List<MenuProductRequest> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu = menuDao.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts));
+            MenuResponse menu = menuService.create(MenuRequest를_생성한다("엄청난 메뉴", 5_600, menuGroup, menuProducts));
 
-            OrderLineItem orderLineItem1 = OrderLineItem을_생성한다(menu.getId(), 1);
-            OrderLineItem orderLineItem2 = OrderLineItem을_생성한다(menu.getId(), 1);
+            OrderLineItemRequest itemRequest1 = OrderLineItemRequest를_생성한다(menu, 1);
+            OrderLineItemRequest itemRequest2 = OrderLineItemRequest를_생성한다(menu, 1);
 
-            Order order = Order를_생성한다(orderTable.getId(), Arrays.asList(orderLineItem1, orderLineItem2));
+            OrderRequest request = OrderRequest를_생성한다(orderTable, Arrays.asList(itemRequest1, itemRequest2));
 
             // when, then
-            assertThatThrownBy(() -> orderService.create(order))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.create(request))
+                .isExactlyInstanceOf(OrderLineItemDuplicateException.class);
         }
 
         @DisplayName("orderTable이 실제로 존재하지 않을 경우 예외가 발생한다.")
         @Test
         void orderTableNotFoundException() {
             // given
-            MenuGroup menuGroup = menuGroupDao.save(MenuGroup을_생성한다("엄청난 그룹"));
+            MenuGroup menuGroup = menuGroupRepository.save(MenuGroup을_생성한다("엄청난 그룹"));
 
-            Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
-            Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
-            List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
+            Product 치즈버거 = productRepository.save(Product를_생성한다("치즈버거", 4_000));
+            Product 콜라 = productRepository.save(Product를_생성한다("치즈버거", 1_600));
+            MenuProductRequest 치즈버거_MenuProduct = MenuProductRequest를_생성한다(치즈버거, 1);
+            MenuProductRequest 콜라_MenuProduct = MenuProductRequest를_생성한다(콜라, 1);
+            List<MenuProductRequest> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu1 = menuDao.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts));
-            Menu menu2 = menuDao.save(Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts));
+            MenuResponse menu1 = menuService.create(MenuRequest를_생성한다("엄청난 메뉴", 5_600, menuGroup, menuProducts));
+            MenuResponse menu2 = menuService.create(MenuRequest를_생성한다("색다른 메뉴", 4_600, menuGroup, menuProducts));
 
-            OrderLineItem orderLineItem1 = OrderLineItem을_생성한다(menu1.getId(), 1);
-            OrderLineItem orderLineItem2 = OrderLineItem을_생성한다(menu2.getId(), 1);
+            OrderLineItemRequest itemRequest1 = OrderLineItemRequest를_생성한다(menu1, 1);
+            OrderLineItemRequest itemRequest2 = OrderLineItemRequest를_생성한다(menu2, 1);
 
-            Order order = Order를_생성한다(-1L, Arrays.asList(orderLineItem1, orderLineItem2));
+            OrderTable 없는_테이블 = new OrderTable(-1L, TableGroup.create(), 5, true);
+            OrderRequest request = OrderRequest를_생성한다(없는_테이블, Arrays.asList(itemRequest1, itemRequest2));
 
             // when, then
-            assertThatThrownBy(() -> orderService.create(order))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.create(request))
+                .isExactlyInstanceOf(OrderTableNotFoundException.class);
         }
 
         @DisplayName("Order의 OrderTable의 상태가 이미 Empty일 경우 예외가 발생한다.")
         @Test
         void orderTableStatusEmptyException() {
             // given
-            TableGroup tableGroup = tableGroupDao.save(TableGroup을_생성한다());
-            OrderTable orderTable = orderTableDao.save(OrderTable을_생성한다(2, tableGroup.getId(), true));
-            MenuGroup menuGroup = menuGroupDao.save(MenuGroup을_생성한다("엄청난 그룹"));
+            TableGroup tableGroup = tableGroupRepository.save(TableGroup을_생성한다());
+            OrderTable orderTable = OrderTable을_생성한다(2, tableGroup, false);
+            MenuGroup menuGroup = menuGroupRepository.save(MenuGroup을_생성한다("엄청난 그룹"));
 
-            Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
-            Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
-            List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
+            Product 치즈버거 = productRepository.save(Product를_생성한다("치즈버거", 4_000));
+            Product 콜라 = productRepository.save(Product를_생성한다("치즈버거", 1_600));
+            MenuProductRequest 치즈버거_MenuProduct = MenuProductRequest를_생성한다(치즈버거, 1);
+            MenuProductRequest 콜라_MenuProduct = MenuProductRequest를_생성한다(콜라, 1);
+            List<MenuProductRequest> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu1 = menuDao.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts));
-            Menu menu2 = menuDao.save(Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts));
+            MenuResponse menu1 = menuService.create(MenuRequest를_생성한다("엄청난 메뉴", 5_600, menuGroup, menuProducts));
+            MenuResponse menu2 = menuService.create(MenuRequest를_생성한다("색다른 메뉴", 4_600, menuGroup, menuProducts));
 
-            OrderLineItem orderLineItem1 = OrderLineItem을_생성한다(menu1.getId(), 1);
-            OrderLineItem orderLineItem2 = OrderLineItem을_생성한다(menu2.getId(), 1);
+            OrderLineItemRequest itemRequest1 = OrderLineItemRequest를_생성한다(menu1, 1);
+            OrderLineItemRequest itemRequest2 = OrderLineItemRequest를_생성한다(menu2, 1);
 
-            Order order = Order를_생성한다(orderTable.getId(), Arrays.asList(orderLineItem1, orderLineItem2));
+            orderTable.ungroup();
+            OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+            OrderRequest request = OrderRequest를_생성한다(savedOrderTable, Arrays.asList(itemRequest1, itemRequest2));
 
             // when, then
-            assertThatThrownBy(() -> orderService.create(order))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.create(request))
+                .isExactlyInstanceOf(OrderTableEmptyException.class);
         }
 
         @DisplayName("정상적으로 저장될 경우 orderLineItem도 함께 저장된다.")
         @Test
         void success() {
             // given
-            TableGroup tableGroup = tableGroupDao.save(TableGroup을_생성한다());
-            OrderTable orderTable = orderTableDao.save(OrderTable을_생성한다(2, tableGroup.getId()));
-            MenuGroup menuGroup = menuGroupDao.save(MenuGroup을_생성한다("엄청난 그룹"));
+            TableGroup tableGroup = tableGroupRepository.save(TableGroup을_생성한다());
+            OrderTable orderTable = orderTableRepository.save(OrderTable을_생성한다(2, tableGroup));
+            MenuGroup menuGroup = menuGroupRepository.save(MenuGroup을_생성한다("엄청난 그룹"));
 
-            Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
-            Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
-            List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
+            Product 치즈버거 = productRepository.save(Product를_생성한다("치즈버거", 4_000));
+            Product 콜라 = productRepository.save(Product를_생성한다("치즈버거", 1_600));
+            MenuProductRequest 치즈버거_MenuProduct = MenuProductRequest를_생성한다(치즈버거, 1);
+            MenuProductRequest 콜라_MenuProduct = MenuProductRequest를_생성한다(콜라, 1);
+            List<MenuProductRequest> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu1 = menuDao.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts));
-            Menu menu2 = menuDao.save(Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts));
+            MenuResponse menu1 = menuService.create(MenuRequest를_생성한다("엄청난 메뉴", 5_600, menuGroup, menuProducts));
+            MenuResponse menu2 = menuService.create(MenuRequest를_생성한다("색다른 메뉴", 4_600, menuGroup, menuProducts));
 
-            OrderLineItem orderLineItem1 = OrderLineItem을_생성한다(menu1.getId(), 1);
-            OrderLineItem orderLineItem2 = OrderLineItem을_생성한다(menu2.getId(), 1);
+            OrderLineItemRequest itemRequest1 = OrderLineItemRequest를_생성한다(menu1, 1);
+            OrderLineItemRequest itemRequest2 = OrderLineItemRequest를_생성한다(menu2, 1);
 
-            Order order = Order를_생성한다(orderTable.getId(), Arrays.asList(orderLineItem1, orderLineItem2));
+            OrderRequest request = OrderRequest를_생성한다(orderTable, Arrays.asList(itemRequest1, itemRequest2));
 
             // when
-            Order savedOrder = orderService.create(order);
+            OrderResponse response = orderService.create(request);
 
             // then
-            assertThat(savedOrder.getId()).isNotNull();
-            assertThat(savedOrder.getOrderedTime()).isBeforeOrEqualTo(LocalDateTime.now());
-            assertThat(savedOrder.getOrderStatus()).isEqualTo(COOKING.name());
-            assertThat(savedOrder.getOrderTableId()).isEqualTo(order.getOrderTableId());
-            assertThat(savedOrder.getOrderLineItems()).extracting("seq").isNotEmpty();
+            assertThat(response.getId()).isNotNull();
+            assertThat(response.getOrderedTime()).isBeforeOrEqualTo(LocalDateTime.now());
+            assertThat(response.getOrderStatus()).isEqualTo(COOKING.name());
+            assertThat(response.getOrderTable()).isEqualTo(request.getOrderTable());
+            assertThat(response.getOrderLineItems()).extracting("seq").isNotEmpty();
         }
     }
 
@@ -195,11 +206,11 @@ class OrderServiceTest {
     @Test
     void list() {
         // given
-        List<Order> beforeSavedOrders = orderService.list();
+        List<OrderResponse> beforeSavedOrders = orderService.list();
         beforeSavedOrders.add(orderService를_통해_Order를_생성한다());
 
         // when
-        List<Order> afterSavedOrders = orderService.list();
+        List<OrderResponse> afterSavedOrders = orderService.list();
 
         // then
         assertThat(afterSavedOrders).hasSize(beforeSavedOrders.size());
@@ -215,136 +226,104 @@ class OrderServiceTest {
         @Test
         void noExistOrderIdException() {
             // given
-            Order statusOrder = Status_변화용_Order를_생성한다(COOKING);
+            OrderStatusRequest request = Status_변화용_Request를_생성한다(COOKING);
 
             // when, then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(-1L, statusOrder))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.changeOrderStatus(-1L, request))
+                .isExactlyInstanceOf(OrderNotFoundException.class);
         }
 
         @DisplayName("Order의 상태가 이미 COMPLETION일 경우 예외가 발생한다.")
         @Test
         void alreadyCompletionStatusException() {
             // given
-            Order order = orderService를_통해_Order를_생성한다();
-            Order statusOrder = Status_변화용_Order를_생성한다(COMPLETION);
+            OrderResponse beforeOrderResponse = orderService를_통해_Order를_생성한다();
+            OrderStatusRequest request = Status_변화용_Request를_생성한다(COMPLETION);
 
-            orderService.changeOrderStatus(order.getId(), statusOrder);
+            orderService.changeOrderStatus(beforeOrderResponse.getId(), request);
 
             // when, then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), Status_변화용_Order를_생성한다(COOKING)))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.changeOrderStatus(beforeOrderResponse.getId(), Status_변화용_Request를_생성한다(COOKING)))
+                .isExactlyInstanceOf(OrderAlreadyCompletionException.class);
         }
 
         @DisplayName("Order의 상태가 정상적으로 변경되고 반환된다.")
         @Test
         void success() {
             // given
-            Order order = orderService를_통해_Order를_생성한다();
-            Order statusOrder = Status_변화용_Order를_생성한다(COMPLETION);
+            OrderResponse beforeOrderResponse = orderService를_통해_Order를_생성한다();
+            OrderStatusRequest request = Status_변화용_Request를_생성한다(COMPLETION);
 
             // when
-            Order changedOrder = orderService.changeOrderStatus(order.getId(), statusOrder);
+            OrderResponse response = orderService.changeOrderStatus(beforeOrderResponse.getId(), request);
 
             // then
-            assertThat(changedOrder.getOrderStatus()).isEqualTo(statusOrder.getOrderStatus());
+            assertThat(response.getOrderStatus()).isEqualTo(request.getOrderStatus());
         }
     }
 
-    private Order orderService를_통해_Order를_생성한다() {
-        TableGroup tableGroup = tableGroupDao.save(TableGroup을_생성한다());
-        OrderTable orderTable = orderTableDao.save(OrderTable을_생성한다(2, tableGroup.getId()));
-        MenuGroup menuGroup = menuGroupDao.save(MenuGroup을_생성한다("엄청난 그룹"));
+    private OrderResponse orderService를_통해_Order를_생성한다() {
+        TableGroup tableGroup = tableGroupRepository.save(TableGroup을_생성한다());
+        OrderTable orderTable = orderTableRepository.save(OrderTable을_생성한다(2, tableGroup));
+        MenuGroup menuGroup = menuGroupRepository.save(MenuGroup을_생성한다("엄청난 그룹"));
 
-        Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
-        Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
-        MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
-        MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
-        List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
+        Product 치즈버거 = productRepository.save(Product를_생성한다("치즈버거", 4_000));
+        Product 콜라 = productRepository.save(Product를_생성한다("치즈버거", 1_600));
+        MenuProductRequest 치즈버거_MenuProduct = MenuProductRequest를_생성한다(치즈버거, 1);
+        MenuProductRequest 콜라_MenuProduct = MenuProductRequest를_생성한다(콜라, 1);
+        List<MenuProductRequest> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-        Menu menu1 = menuDao.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts));
-        Menu menu2 = menuDao.save(Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts));
+        MenuResponse menu1 = menuService.create(MenuRequest를_생성한다("엄청난 메뉴", 5_600, menuGroup, menuProducts));
+        MenuResponse menu2 = menuService.create(MenuRequest를_생성한다("색다른 메뉴", 4_600, menuGroup, menuProducts));
 
-        OrderLineItem orderLineItem1 = OrderLineItem을_생성한다(menu1.getId(), 1);
-        OrderLineItem orderLineItem2 = OrderLineItem을_생성한다(menu2.getId(), 1);
+        OrderLineItemRequest itemRequest1 = OrderLineItemRequest를_생성한다(menu1, 1);
+        OrderLineItemRequest itemRequest2 = OrderLineItemRequest를_생성한다(menu2, 1);
 
-        return orderService.create(Order를_생성한다(orderTable.getId(), Arrays.asList(orderLineItem1, orderLineItem2)));
+        return orderService.create(OrderRequest를_생성한다(orderTable, Arrays.asList(itemRequest1, itemRequest2)));
     }
 
-    private Order Order를_생성한다(Long orderTableId, List<OrderLineItem> orderLineItems) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderedTime(LocalDateTime.now());
-
-        return order;
+    private OrderRequest OrderRequest를_생성한다(OrderTable orderTable, List<OrderLineItemRequest> orderLineItems) {
+        return new OrderRequest(orderTable.getId(), orderLineItems);
     }
 
-    private Order Status_변화용_Order를_생성한다(OrderStatus orderStatus) {
-        Order order = new Order();
-        order.setOrderStatus(orderStatus.name());
-
-        return order;
+    private OrderStatusRequest Status_변화용_Request를_생성한다(OrderStatus orderStatus) {
+        return new OrderStatusRequest(orderStatus.name());
     }
 
-    private OrderTable OrderTable을_생성한다(int numberOfGuests, Long tableGroupId) {
-        return OrderTable을_생성한다(numberOfGuests, tableGroupId, false);
+    private OrderTable OrderTable을_생성한다(int numberOfGuests, TableGroup tableGroup) {
+        return OrderTable을_생성한다(numberOfGuests, tableGroup, false);
     }
 
-    private OrderTable OrderTable을_생성한다(int numberOfGuests, Long tableGroupId, boolean isEmpty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setEmpty(isEmpty);
+    private OrderTable OrderTable을_생성한다(int numberOfGuests, TableGroup tableGroup, boolean isEmpty) {
+        OrderTable orderTable = new OrderTable(numberOfGuests, isEmpty);
+        orderTable.groupBy(tableGroup);
 
         return orderTable;
     }
 
     private TableGroup TableGroup을_생성한다() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
-        return tableGroup;
+        return TableGroup.create();
     }
 
-    private OrderLineItem OrderLineItem을_생성한다(Long menuId, long quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-
-        return orderLineItem;
+    private OrderLineItemRequest OrderLineItemRequest를_생성한다(MenuResponse menu, long quantity) {
+        return new OrderLineItemRequest(menu.getId(), quantity);
     }
 
-    private Menu Menu를_생성한다(String name, int price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-
-        return menu;
+    private MenuRequest MenuRequest를_생성한다(String name, int price, MenuGroup menuGroup, List<MenuProductRequest> menuProducts) {
+        return new MenuRequest(name, BigDecimal.valueOf(price), menuGroup.getId(), menuProducts);
     }
 
     private MenuGroup MenuGroup을_생성한다(String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
+        MenuGroup menuGroup = new MenuGroup(name);
 
         return menuGroup;
     }
 
-    private MenuProduct MenuProduct를_생성한다(Long productId, long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-
-        return menuProduct;
+    private MenuProductRequest MenuProductRequest를_생성한다(Product product, long quantity) {
+        return new MenuProductRequest(product.getId(), quantity);
     }
 
     private Product Product를_생성한다(String name, int price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
-
-        return product;
+        return new Product(name, BigDecimal.valueOf(price));
     }
 }

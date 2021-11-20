@@ -4,14 +4,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.exception.InvalidNameException;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.ui.request.MenuGroupRequest;
+import kitchenpos.ui.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 
 @DisplayName("MenuGroup Service 테스트")
 @SpringBootTest
@@ -21,7 +22,7 @@ class MenuGroupServiceTest {
     private MenuGroupService menuGroupService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @DisplayName("MenuGroup을 저장할 때")
     @Nested
@@ -31,27 +32,27 @@ class MenuGroupServiceTest {
         @Test
         void success() {
             // given
-            MenuGroup menuGroup = MenuGroup을_생성한다("인기 메뉴");
+            MenuGroupRequest request = MenuGroupRequest를_생성한다("인기 메뉴");
 
             // when
-            MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+            MenuGroupResponse response = menuGroupService.create(request);
 
             // then
-            assertThat(menuGroupDao.findById(savedMenuGroup.getId())).isPresent();
-            assertThat(savedMenuGroup).usingRecursiveComparison()
+            assertThat(menuGroupRepository.findById(response.getId())).isPresent();
+            assertThat(response).usingRecursiveComparison()
                 .ignoringFields("id")
-                .isEqualTo(savedMenuGroup);
+                .isEqualTo(response);
         }
 
         @DisplayName("name이 Null인 경우 예외가 발생한다.")
         @Test
         void nameNullException() {
             // given
-            MenuGroup menuGroup = MenuGroup을_생성한다(null);
+            MenuGroupRequest request = MenuGroupRequest를_생성한다(null);
 
             // when, then
-            assertThatThrownBy(() -> menuGroupService.create(menuGroup))
-                .isExactlyInstanceOf(DataIntegrityViolationException.class);
+            assertThatThrownBy(() -> menuGroupService.create(request))
+                .isExactlyInstanceOf(InvalidNameException.class);
         }
     }
 
@@ -59,14 +60,14 @@ class MenuGroupServiceTest {
     @Test
     void findAll() {
         // given
-        List<MenuGroup> beforeSavedMenuGroups = menuGroupDao.findAll();
+        List<MenuGroupResponse> beforeSavedMenuGroups = menuGroupService.list();
 
-        beforeSavedMenuGroups.add(menuGroupDao.save(MenuGroup을_생성한다("인기 메뉴")));
-        beforeSavedMenuGroups.add(menuGroupDao.save(MenuGroup을_생성한다("추천 메뉴")));
-        beforeSavedMenuGroups.add(menuGroupDao.save(MenuGroup을_생성한다("주는대로 먹어")));
+        beforeSavedMenuGroups.add(menuGroupService.create(MenuGroupRequest를_생성한다("인기 메뉴")));
+        beforeSavedMenuGroups.add(menuGroupService.create(MenuGroupRequest를_생성한다("추천 메뉴")));
+        beforeSavedMenuGroups.add(menuGroupService.create(MenuGroupRequest를_생성한다("주는대로 먹어")));
 
         // when
-        List<MenuGroup> afterSavedMenuGroups = menuGroupService.list();
+        List<MenuGroupResponse> afterSavedMenuGroups = menuGroupService.list();
 
         // then
         assertThat(afterSavedMenuGroups).hasSize(beforeSavedMenuGroups.size());
@@ -74,10 +75,7 @@ class MenuGroupServiceTest {
             .isEqualTo(beforeSavedMenuGroups);
     }
 
-    private MenuGroup MenuGroup을_생성한다(String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-
-        return menuGroup;
+    private MenuGroupRequest MenuGroupRequest를_생성한다(String name) {
+        return new MenuGroupRequest(name);
     }
 }

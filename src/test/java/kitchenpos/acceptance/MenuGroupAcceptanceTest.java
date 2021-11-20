@@ -1,40 +1,40 @@
 package kitchenpos.acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
 
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.exception.ExceptionResponse;
+import kitchenpos.ui.request.MenuGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
-@DisplayName("MenuGroup 인수 테스트")
+@DisplayName("메뉴그룹 인수 테스트")
 public class MenuGroupAcceptanceTest extends AcceptanceTest {
 
-    @DisplayName("POST /api/menu-groups")
+    @DisplayName("POST /api/menu-groups - 메뉴그룹을 생성할 때")
     @Nested
     class Post {
 
-        @DisplayName("정상적인 경우 상태코드 201이 반환된다.")
+        @DisplayName("정상적인 메뉴그룹 생성에 성공한다.")
         @Test
         void createPost() {
             // given
-            Menu menu = new Menu();
-            menu.setName("킹갓메뉴");
+            MenuGroupRequest request = new MenuGroupRequest("킹갓메뉴그룹");
 
             // when
             ExtractableResponse<Response> response = RestAssured.given()
                 .log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(menu)
+                .body(request)
                 .when().post("/api/menu-groups")
                 .then().log().all()
                 .statusCode(CREATED.value())
@@ -46,28 +46,29 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
             assertThat(response.body()).isNotNull();
         }
 
-        @DisplayName("name이 Null인 경우 상태코드 500이 반환된다.")
+        @DisplayName("이름이 Null인 경우 예외가 발생한다.")
         @Test
         void nameNull() {
             // given
-            Menu menu = new Menu();
+            MenuGroupRequest request = new MenuGroupRequest(null);
 
             // when
             ExtractableResponse<Response> response = RestAssured.given()
                 .log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(menu)
+                .body(request)
                 .when().post("/api/menu-groups")
                 .then().log().all()
-                .statusCode(INTERNAL_SERVER_ERROR.value())
+                .statusCode(BAD_REQUEST.value())
                 .extract();
 
             // then
-            assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
+            assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
+            assertThat(response.as(ExceptionResponse.class)).isNotNull();
         }
     }
 
-    @DisplayName("GET /api/menu-groups - 모든 MenuGroup과 상태코드 200이 반환된다.")
+    @DisplayName("GET /api/menu-groups - 모든 메뉴그룹 목록을 반환 받는다.")
     @Test
     void createGet() {
         // when

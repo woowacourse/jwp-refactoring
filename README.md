@@ -5,6 +5,7 @@
 ### MenuGroups
 - [x] `POST /api/menu-groups` 요청을 통해 MenuGroup을 추가할 수 있다.
     - [x] MenuGroup을 DB에 저장한다.
+    - [x] MenuGroup의 이름은 Null 이어서는 안된다.
 
 - [x] `GET /api/menu-groups` 요청을 통해 MenuGroup 목록을 조회할 수 있다.
     - [x] MenuGroup 리스트를 DB에서 찾아 반환한다.
@@ -106,3 +107,61 @@
 | 단체 지정 | table group | 통합 계산을 위해 개별 주문 테이블을 그룹화하는 기능 |
 | 주문 항목 | order line item | 주문에 속하는 수량이 있는 메뉴 |
 | 매장 식사 | eat in | 포장하지 않고 매장에서 식사하는 것 |
+
+<br>
+
+## 엔티티 단위 테스트
+- [x] Menu
+  - [x] name null, blank
+  - [x] price null, negative
+  - [x] MenuGroup null
+- [x] MenuGroup
+  - [x] name null, blank
+- [x] MenuProduct
+  - [x] menu null
+  - [x] product null
+  - [x] quantity null, negative
+- [x] MenuProducts
+  - [x] menu.price > all(product.price * quantity)
+- [x] Product
+  - [x] name null, blank
+  - [x] price null, negative
+- [x] Price
+  - [x] value null, negative
+- [x] Order
+  - [x] orderTable null
+  - [x] already completion
+- [x] Orders
+  - [x] completed status
+- [x] OrderLineItem
+  - [x] order null
+  - [x] menu null
+  - [x] quantity null, negative
+- [x] OrderLineItems
+  - [x] empty
+  - [x] menu duplicate
+- [x] OrderTable
+  - [x] numberOfGuests negative
+  - [x] groupBy status
+  - [x] ungroup status
+  - [x] changeNumberOfGuests
+    - [x] negative
+    - [x] orderTable status empty
+  - [x] changeEmpty nonNull tableGroup
+- [x] OrderTables
+  - [x] orderTable count < 2
+  - [x] orderTable already not empty or grouped
+  - [x] groupBy
+- [x] TableGroup
+
+## 추가 리팩토링
+- [x] 커스텀 Exception 추가
+- [x] 인수테스트 DisplayName 변경하기
+- [x] 엔티티 원시값 포장
+  - [x] quantity
+  - [x] price
+  - [x] name
+  - [x] numberOfGuests
+- [x] DTO getter 디미터 법칙
+- [ ] OrderTable에서 TableGroup 값에 따라 empty 설정을 해야하는가 고민
+- [x] 서비스 계층 의존 -> 최초의 순환참조 경험 -> Repository 계층 의존하도록 변경
