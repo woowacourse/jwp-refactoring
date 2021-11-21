@@ -44,6 +44,14 @@ public class TestFixtures {
                 .build();
     }
 
+    public static Product createProduct(Long id, String name, Long price) {
+        return Product.builder()
+                .id(id)
+                .name(name)
+                .price(BigDecimal.valueOf(price))
+                .build();
+    }
+
     public static Product updateProduct(Product product, ProductInformationRequest request){
         return Product.builder()
                 .id(product.getId())
@@ -65,6 +73,14 @@ public class TestFixtures {
                 .menu(createMenu())
                 .productId(1L)
                 .quantity(1L)
+                .build();
+    }
+
+    public static MenuProduct createMenuProduct(Long id, Menu menu, Long quantity){
+        return MenuProduct.builder()
+                .menu(menu)
+                .productId(id)
+                .quantity(quantity)
                 .build();
     }
 

@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.application.dtos.MenuResponses;
 import kitchenpos.application.dtos.ProductInformationRequest;
 import kitchenpos.application.dtos.MenuProductRequest;
 import kitchenpos.application.dtos.MenuRequest;
@@ -37,7 +38,7 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuRequest request) {
+    public MenuResponse create(final MenuRequest request) {
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
@@ -51,11 +52,12 @@ public class MenuService {
         menuProducts.updateMenu(savedMenu);
         menuProductRepository.saveAll(menuProducts.getMenuProducts());
 
-        return savedMenu;
+        return new MenuResponse(savedMenu);
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAllJoinFetch();
+    public MenuResponses list() {
+        final List<Menu> menus = menuRepository.findAllJoinFetch();
+        return new MenuResponses(menus);
     }
 
     private List<MenuProduct> menuProductsWith(List<MenuProductRequest> menuProductsRequest) {

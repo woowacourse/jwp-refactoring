@@ -9,16 +9,20 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.TestFixtures;
 import kitchenpos.application.dtos.MenuProductRequest;
 import kitchenpos.application.dtos.MenuRequest;
+import kitchenpos.application.dtos.MenuResponse;
+import kitchenpos.application.dtos.MenuResponses;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
+import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -112,9 +116,10 @@ class MenuServiceTest {
         when(productRepository.findByIdIn(any())).thenReturn(products);
         when(menuRepository.save(any())).thenReturn(savedMenu1);
 
-        final Menu actual = menuService.create(request);
+        final MenuResponse actual = menuService.create(request);
 
-        assertThat(actual).isEqualTo(savedMenu1);
+        assertThat(actual).usingRecursiveComparison()
+                .isEqualTo(new MenuResponse(savedMenu1));
     }
 
     @DisplayName("메뉴의 가격은 0 원 이상이어야 한다")
@@ -136,16 +141,8 @@ class MenuServiceTest {
     @DisplayName("메뉴 상품 목록에서 (상품의 가격 * 메뉴 상품의 갯수) 의 합과 메뉴 그룹의 가격을 비교했을 때, 메뉴 그룹의 가격이 더 크면 안 된다")
     @Test
     void createExceptionSum() {
-        final Product weirdSavedProduct = Product.builder()
-                .name("스프링롤")
-                .price(BigDecimal.valueOf(2000))
-                .id(3L)
-                .build();
-        final MenuProduct weirdMenuProduct = MenuProduct.builder()
-                .menu(savedMenu1)
-                .productId(weirdSavedProduct.getId())
-                .quantity(1L)
-                .build();
+        final Product weirdSavedProduct = TestFixtures.createProduct(3L, "스프링롤", 2000L);
+        final MenuProduct weirdMenuProduct = TestFixtures.createMenuProduct(weirdSavedProduct.getId(), savedMenu1, 1L);
         final MenuProductRequest weirdMenuProductRequest = new MenuProductRequest(
                 weirdMenuProduct.getProductId(), weirdMenuProduct.getQuantity()
         );
@@ -161,10 +158,13 @@ class MenuServiceTest {
     @Test
     void list() {
         final List<Menu> menus = Arrays.asList(savedMenu1, savedMenu2);
+        savedMenu1.updateMenuProducts(new MenuProducts(Collections.singletonList(menuProduct1)));
+        savedMenu2.updateMenuProducts(new MenuProducts(Collections.singletonList(menuProduct2)));
         when(menuRepository.findAllJoinFetch()).thenReturn(menus);
 
-        final List<Menu> actual = menuService.list();
+        final MenuResponses actual = menuService.list();
 
-        assertThat(actual).isEqualTo(menus);
+        assertThat(actual).usingRecursiveComparison()
+                .isEqualTo(new MenuResponses(menus));
     }
 }

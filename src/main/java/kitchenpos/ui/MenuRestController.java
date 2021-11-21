@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.MenuService;
+import kitchenpos.application.dtos.MenuResponses;
 import kitchenpos.application.dtos.ProductInformationRequest;
 import kitchenpos.application.dtos.MenuRequest;
 import kitchenpos.application.dtos.MenuResponse;
@@ -26,19 +27,15 @@ public class MenuRestController {
 
     @PostMapping("/api/menus")
     public ResponseEntity<MenuResponse> create(@RequestBody final MenuRequest request) {
-        final Menu created = menuService.create(request);
-        final URI uri = URI.create("/api/menus/" + created.getId());
+        final MenuResponse response = menuService.create(request);
+        final URI uri = URI.create("/api/menus/" + response.getId());
         return ResponseEntity.created(uri)
-                .body(new MenuResponse(created));
+                .body(response);
     }
 
     @GetMapping("/api/menus")
-    public ResponseEntity<List<MenuResponse>> list() {
-        final List<Menu> menus = menuService.list();
-        final List<MenuResponse> menuResponses = menus.stream()
-                .map(MenuResponse::new)
-                .collect(Collectors.toList());
+    public ResponseEntity<MenuResponses> list() {
         return ResponseEntity.ok()
-                .body(menuResponses);
+                .body(menuService.list());
     }
 }

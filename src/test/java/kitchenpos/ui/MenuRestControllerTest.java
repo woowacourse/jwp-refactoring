@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import kitchenpos.TestFixtures;
 import kitchenpos.application.MenuService;
+import kitchenpos.application.dtos.MenuResponse;
+import kitchenpos.application.dtos.MenuResponses;
 import kitchenpos.domain.Menu;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,7 +41,7 @@ class MenuRestControllerTest {
         final Menu menu = TestFixtures.createMenu();
         menu.updateMenuProducts(Collections.singletonList(TestFixtures.createMenuProduct()));
         final String content = objectMapper.writeValueAsString(TestFixtures.createMenuRequest(menu));
-        when(menuService.create(any())).thenReturn(menu);
+        when(menuService.create(any())).thenReturn(new MenuResponse(menu));
 
         final MockHttpServletResponse response = mockMvc.perform(post("/api/menus")
                         .content(content)
@@ -57,7 +59,7 @@ class MenuRestControllerTest {
     void list() throws Exception {
         final Menu menu = TestFixtures.createMenu();
         menu.updateMenuProducts(Collections.singletonList(TestFixtures.createMenuProduct()));
-        when(menuService.list()).thenReturn(Collections.singletonList(menu));
+        when(menuService.list()).thenReturn(new MenuResponses(Collections.singletonList(menu)));
 
         final MockHttpServletResponse response = mockMvc.perform(get("/api/menus"))
                 .andReturn()
