@@ -24,10 +24,6 @@ public class TableGroup {
         
     }
 
-    public TableGroup(OrderTable[] orderTables) {
-        this(null, null, new OrderTables(orderTables));
-    }
-
     public TableGroup(Long id, LocalDateTime localDateTime, List<OrderTable> orderTables) {
         this(id, localDateTime, new OrderTables(orderTables));
     }
@@ -43,7 +39,7 @@ public class TableGroup {
         updateCreatedDate();
     }
 
-    public void updateCreatedDate() {
+    private void updateCreatedDate() {
         createdDate = LocalDateTime.now();
     }
 

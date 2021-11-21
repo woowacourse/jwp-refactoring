@@ -56,7 +56,7 @@ public class OrderService {
         final List<Long> menuIds = orderLineItems.getMenuIds();
 
         orderLineItems.validateSameSize(menuDao.countByIdIn(menuIds));
-        orderLineItems.updateOrderId(order);
+        orderLineItems.updateOrderInfo(order);
         orderLineItemDao.saveAll(orderLineItems.toList());
     }
 

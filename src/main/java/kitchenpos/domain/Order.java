@@ -40,8 +40,12 @@ public class Order {
         this(null, orderTableId, orderStatus, orderedTime, new OrderLineItems(orderLineItems));
     }
 
-    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
-                 OrderLineItems orderLineItems) {
+    public Order(Long id,
+                 Long orderTableId,
+                 OrderStatus orderStatus,
+                 LocalDateTime orderedTime,
+                 OrderLineItems orderLineItems
+    ) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -54,7 +58,7 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public void validateNotCompleted() {
+    private void validateNotCompleted() {
         if (OrderStatus.COMPLETION.equals(orderStatus)) {
             throw new IllegalArgumentException();
         }

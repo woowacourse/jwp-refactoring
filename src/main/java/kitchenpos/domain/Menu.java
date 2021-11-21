@@ -47,9 +47,9 @@ public class Menu {
         validatePriceRange(totalProductPrice);
     }
 
-    public void validatePriceRange(BigDecimal upperInclusive) {
+    private void validatePriceRange(BigDecimal upperInclusive) {
         validateMenuPriceGreaterThanOrEqualToZero();
-        validateProductTotalPriceLessThanOrEqualTo(upperInclusive);
+        validateMenuPriceLessThanOrEqualTo(upperInclusive);
     }
 
     private void validateMenuPriceGreaterThanOrEqualToZero() {
@@ -58,8 +58,8 @@ public class Menu {
         }
     }
 
-    private void validateProductTotalPriceLessThanOrEqualTo(BigDecimal sum) {
-        if (price.compareTo(sum) > 0) {
+    private void validateMenuPriceLessThanOrEqualTo(BigDecimal upperLimit) {
+        if (price.compareTo(upperLimit) > 0) {
             throw new IllegalArgumentException();
         }
     }

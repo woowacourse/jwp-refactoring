@@ -31,7 +31,9 @@ public class OrderTables {
         validateMinimumSize();
         validateSameSize(tableGroup.getOrderTables());
         validateGroupable();
+
         connectEachOrderTable(tableGroup);
+        tableGroup.createWith(this);
     }
 
     public void validateMinimumSize() {
@@ -40,7 +42,7 @@ public class OrderTables {
         }
     }
 
-    public void validateSameSize(OrderTables other) {
+    private void validateSameSize(OrderTables other) {
         if (orderTables.size() != other.orderTables.size()) {
             throw new IllegalArgumentException();
         }
@@ -58,15 +60,15 @@ public class OrderTables {
         }
     }
 
-    public void unGroupAll() {
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.ungroup();
-        }
-    }
-
     private void connectEachOrderTable(TableGroup tableGroup) {
         for (OrderTable orderTable : orderTables) {
             orderTable.joinGroup(tableGroup);
+        }
+    }
+
+    public void unGroupAll() {
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.ungroup();
         }
     }
 

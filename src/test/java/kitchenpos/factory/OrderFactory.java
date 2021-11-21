@@ -76,7 +76,7 @@ public class OrderFactory {
         return this;
     }
 
-    public OrderFactory orderLineItems(List<OrderLineItem> orderLineItems) {
+    public OrderFactory orderLineItems(OrderLineItem... orderLineItems) {
         this.orderLineItems = new OrderLineItems(orderLineItems);
         return this;
     }

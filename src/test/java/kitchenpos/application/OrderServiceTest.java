@@ -20,6 +20,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderRequest;
@@ -61,10 +62,8 @@ class OrderServiceTest {
     @Test
     void list() {
         // given
-        List<OrderLineItem> orderLineItems =
-            Collections.singletonList(OrderLineItemFactory.builder().build());
         Order order = OrderFactory.builder()
-            .orderLineItems(orderLineItems)
+            .orderLineItems(OrderLineItemFactory.builder().build())
             .build();
         given(orderDao.findAll()).willReturn(Collections.singletonList(order));
 
@@ -125,7 +124,7 @@ class OrderServiceTest {
                 .orderTableId(orderTable.getId())
                 .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.now())
-                .orderLineItems(Collections.singletonList(orderLineItem))
+                .orderLineItems(orderLineItem)
                 .build();
 
             savedOrderId = 1L;
@@ -173,7 +172,7 @@ class OrderServiceTest {
         void createFail_whenOrderLineItemDoesNotExist() {
             // given
             order = OrderFactory.copy(order)
-                .orderLineItems(Collections.emptyList())
+                .orderLineItems()
                 .build();
             orderRequest = OrderFactory.dto(order);
 
@@ -247,15 +246,12 @@ class OrderServiceTest {
         void setUp() {
             orderId = 1L;
 
-            List<OrderLineItem> orderLineItems =
-                Collections.singletonList(OrderLineItemFactory.builder().build());
-
             order = OrderFactory.builder()
                 .id(orderId)
                 .orderTableId(1L)
                 .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.now())
-                .orderLineItems(orderLineItems)
+                .orderLineItems(OrderLineItemFactory.builder().build())
                 .build();
 
             orderRequest = OrderFactory.dto(order);

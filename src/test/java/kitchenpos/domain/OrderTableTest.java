@@ -1,9 +1,11 @@
 package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.factory.OrderTableFactory;
 import kitchenpos.factory.TableGroupFactory;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,6 +47,39 @@ class OrderTableTest {
 
         // then
         assertThat(orderTable.getNumberOfGuests()).isEqualTo(changedNumberOfGuests);
+    }
+
+    @DisplayName("OrderTable 의 numberOfGuests 정보 변경 실패 - 변경할 손님의 수가 음수인 경우")
+    @Test
+    void changeNumberOfGuestsFail_whenNumberOfGuestsIsNegative() {
+        // given
+        int changedNumberOfGuests = -1;
+
+        // when
+        ThrowingCallable throwingCallable =
+            () -> orderTable.changeNumberOfGuests(changedNumberOfGuests);
+
+        // then
+        assertThatThrownBy(throwingCallable)
+            .isExactlyInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("OrderTable 의 numberOfGuests 정보 변경 실패 - 테이블이 비어있는 경우")
+    @Test
+    void changeNumberOfGuestsFail_whenOrderTableIsNotEmpty() {
+        // given
+        orderTable = OrderTableFactory.copy(orderTable)
+            .empty(true)
+            .build();
+        int changedNumberOfGuests = 2;
+
+        // when
+        ThrowingCallable throwingCallable =
+            () -> orderTable.changeNumberOfGuests(changedNumberOfGuests);
+
+        // then
+        assertThatThrownBy(throwingCallable)
+            .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("그룹에 OrderTable 을 포함시킨다")

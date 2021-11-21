@@ -26,7 +26,7 @@ public class OrderLineItems {
         this.orderLineItems = orderLineItems;
     }
 
-    public void updateOrderId(Order order) {
+    public void updateOrderInfo(Order order) {
         validateNotEmpty();
         for (final OrderLineItem orderLineItem : orderLineItems) {
             orderLineItem.changeOrderInfo(order);

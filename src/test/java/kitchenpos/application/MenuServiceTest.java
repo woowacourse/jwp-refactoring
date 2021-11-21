@@ -189,11 +189,11 @@ class MenuServiceTest {
         }
         @DisplayName("Menu 생성 실패한다 - price 가 음수인 경우")
         @ParameterizedTest(name = "{displayName} : {arguments}")
-        @ValueSource(ints = {-1, -10, -100})
-        void createFail_whenPriceIsNegative(int val) {
+        @ValueSource(ints = {-1, -100, -1000000})
+        void createFail_whenPriceIsNegative(int value) {
             // given
             menu = MenuFactory.copy(menu)
-                .price(new BigDecimal(val))
+                .price(new BigDecimal(value))
                 .build();
             menuRequest = MenuFactory.dto(menu);
 

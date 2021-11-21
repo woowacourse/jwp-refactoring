@@ -1,7 +1,6 @@
 package kitchenpos.factory;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
@@ -62,7 +61,7 @@ public class TableGroupFactory {
         return this;
     }
 
-    public TableGroupFactory orderTables(List<OrderTable> orderTables) {
+    public TableGroupFactory orderTables(OrderTable... orderTables) {
         this.orderTables = new OrderTables(orderTables);
         return this;
     }

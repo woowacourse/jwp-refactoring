@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,8 +24,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -85,11 +81,6 @@ class TableGroupServiceTest {
                 .empty(true)
                 .build();
 
-            List<OrderTable> orderTables = Arrays.asList(
-                orderTable1,
-                orderTable2
-            );
-
             orderTableIds = Arrays.asList(
                 orderTable1.getId(),
                 orderTable2.getId()
@@ -105,14 +96,14 @@ class TableGroupServiceTest {
             );
 
             tableGroup = TableGroupFactory.builder()
-                .orderTables(orderTables)
+                .orderTables(orderTable1, orderTable2)
                 .build();
 
             savedTableGroupId = 1L;
 
             savedTableGroup = TableGroupFactory.copy(tableGroup)
                 .id(savedTableGroupId)
-                .orderTables(savedOrderTables)
+                .orderTables(savedOrderTable1, savedOrderTable2)
                 .build();
 
             tableGroupRequest = TableGroupFactory.dto(tableGroup);
@@ -146,7 +137,7 @@ class TableGroupServiceTest {
         void createFail_whenOrderTablesAreEmpty() {
             // given
             tableGroup = TableGroupFactory.copy(tableGroup)
-                .orderTables(Collections.emptyList())
+                .orderTables()
                 .build();
             tableGroupRequest = TableGroupFactory.dto(tableGroup);
 
@@ -163,7 +154,7 @@ class TableGroupServiceTest {
         void createFail_whenOrderTablesAreLessThanTwo() {
             // given
             tableGroup = TableGroupFactory.copy(tableGroup)
-                .orderTables(Collections.singletonList(orderTable1))
+                .orderTables(orderTable1)
                 .build();
             tableGroupRequest = TableGroupFactory.dto(tableGroup);
 
@@ -246,13 +237,6 @@ class TableGroupServiceTest {
 
         @BeforeEach
         void setUp() {
-            TableGroup tableGroup = TableGroupFactory.builder()
-                .id(1L)
-                .orderTables(orderTables)
-                .build();
-
-            tableGroupId = tableGroup.getId();
-
             OrderTable orderTable1 = OrderTableFactory.builder()
                 .id(1L)
                 .tableGroupId(tableGroupId)
@@ -276,6 +260,13 @@ class TableGroupServiceTest {
                 orderTable1.getId(),
                 orderTable2.getId()
             );
+
+            TableGroup tableGroup = TableGroupFactory.builder()
+                .id(1L)
+                .orderTables(orderTable1, orderTable2)
+                .build();
+
+            tableGroupId = tableGroup.getId();
 
             notCompletionOrderStatuses = Arrays.asList(
                 OrderStatus.COOKING,

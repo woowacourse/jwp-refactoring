@@ -31,19 +31,17 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
         final TableGroup tableGroup = tableGroupRequest.toTableGroup();
-        final OrderTables orderTables = orderTablesOf(tableGroup);
 
-        tableGroup.createWith(orderTables);
+        connectOrderTables(tableGroup);
         tableGroupDao.save(tableGroup);
         return TableGroupResponse.of(tableGroup);
     }
 
-    private OrderTables orderTablesOf(TableGroup tableGroup) {
+    private void connectOrderTables(TableGroup tableGroup) {
         final OrderTables orderTables =
             new OrderTables(orderTableDao.findAllByIdIn(tableGroup.getOrderTableIds()));
 
         orderTables.connect(tableGroup);
-        return orderTables;
     }
 
     @Transactional
@@ -53,6 +51,7 @@ public class TableGroupService {
 
         validateCompletion(orderTables);
         orderTables.unGroupAll();
+        tableGroupDao.deleteById(tableGroupId);
     }
 
     private void validateCompletion(OrderTables orderTables) {
