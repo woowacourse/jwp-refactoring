@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import kitchenpos.application.dtos.GuestNumberRequest;
 import kitchenpos.application.dtos.MenuProductRequest;
 import kitchenpos.application.dtos.MenuRequest;
 import kitchenpos.application.dtos.OrderLineItemRequest;
@@ -155,6 +156,15 @@ public class TestFixtures {
                 .tableGroupId(1L)
                 .numberOfGuests(2)
                 .empty(false)
+                .build();
+    }
+
+    public static OrderTable updateOrderTableGuestNumber(OrderTable orderTable, GuestNumberRequest request) {
+        return OrderTable.builder()
+                .id(orderTable.getId())
+                .tableGroupId(orderTable.getTableGroupId())
+                .numberOfGuests(request.getNumberOfGuests())
+                .empty(orderTable.isEmpty())
                 .build();
     }
 

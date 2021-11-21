@@ -1,9 +1,10 @@
 package kitchenpos.application;
 
 import java.util.Arrays;
-import java.util.List;
 import kitchenpos.application.dtos.GuestNumberRequest;
 import kitchenpos.application.dtos.OrderTableRequest;
+import kitchenpos.application.dtos.OrderTableResponse;
+import kitchenpos.application.dtos.OrderTableResponses;
 import kitchenpos.application.dtos.TableEmptyRequest;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -23,17 +24,17 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTableRequest request) {
+    public OrderTableResponse create(final OrderTableRequest request) {
         final OrderTable orderTable = orderTableWith(request);
-        return orderTableRepository.save(orderTable);
+        return new OrderTableResponse(orderTableRepository.save(orderTable));
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public OrderTableResponses list() {
+        return new OrderTableResponses(orderTableRepository.findAll());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final TableEmptyRequest request) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final TableEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         savedOrderTable.checkTableGroupId();
@@ -45,17 +46,17 @@ public class TableService {
 
         savedOrderTable.updateEmpty(request.getEmpty());
 
-        return orderTableRepository.save(savedOrderTable);
+        return new OrderTableResponse(orderTableRepository.save(savedOrderTable));
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final GuestNumberRequest request) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final GuestNumberRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         savedOrderTable.checkValidity();
         savedOrderTable.updateNumberOfGuests(request.getNumberOfGuests());
 
-        return orderTableRepository.save(savedOrderTable);
+        return new OrderTableResponse(orderTableRepository.save(savedOrderTable));
     }
 
     private OrderTable orderTableWith(OrderTableRequest request) {

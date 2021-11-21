@@ -10,8 +10,11 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.TestFixtures;
 import kitchenpos.application.dtos.GuestNumberRequest;
 import kitchenpos.application.dtos.OrderTableRequest;
+import kitchenpos.application.dtos.OrderTableResponse;
+import kitchenpos.application.dtos.OrderTableResponses;
 import kitchenpos.application.dtos.TableEmptyRequest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.OrderRepository;
@@ -57,8 +60,9 @@ public class TableServiceTest {
         final OrderTableRequest request = new OrderTableRequest(orderTable1.getId());
         when(orderTableRepository.save(any())).thenReturn(orderTable1);
 
-        final OrderTable actual = tableService.create(request);
-        assertThat(actual).isEqualTo(orderTable1);
+        final OrderTableResponse actual = tableService.create(request);
+        assertThat(actual).usingRecursiveComparison()
+                .isEqualTo(new OrderTableResponse(orderTable1));
     }
 
     @DisplayName("주문 테이블 목록을 조회할 수 있다")
@@ -66,7 +70,8 @@ public class TableServiceTest {
     void list() {
         when(orderTableRepository.findAll()).thenReturn(orderTables);
 
-        assertThat(tableService.list()).isEqualTo(orderTables);
+        assertThat(tableService.list()).usingRecursiveComparison()
+                .isEqualTo(new OrderTableResponses(orderTables));
     }
 
     @DisplayName("주문 테이블을 비울 수 있다")
@@ -123,6 +128,8 @@ public class TableServiceTest {
         final GuestNumberRequest request = new GuestNumberRequest(0);
 
         when(orderTableRepository.findById(anyLong())).thenReturn(Optional.of(orderTable1));
+        when(orderTableRepository.save(any())).thenReturn(
+                TestFixtures.updateOrderTableGuestNumber(orderTable1, request));
 
         assertThatCode(() -> tableService.changeNumberOfGuests(anyLong(), request)).doesNotThrowAnyException();
     }
