@@ -1,11 +1,11 @@
 package kitchenpos.product.application;
 
-import kitchenpos.product.application.dto.ProductInformationRequest;
-import kitchenpos.product.domain.MenuProductEvent;
 import kitchenpos.element.Price;
+import kitchenpos.product.application.dto.ProductInformationRequest;
 import kitchenpos.product.application.dto.ProductRequest;
 import kitchenpos.product.application.dto.ProductResponse;
 import kitchenpos.product.application.dto.ProductResponses;
+import kitchenpos.product.domain.MenuProductEvent;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.repository.ProductRepository;
 import org.springframework.context.ApplicationEventPublisher;

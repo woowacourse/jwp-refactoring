@@ -16,7 +16,6 @@ import kitchenpos.menugroup.application.dto.MenuGroupRequest;
 import kitchenpos.menugroup.application.dto.MenuGroupResponse;
 import kitchenpos.menugroup.application.dto.MenuGroupResponses;
 import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menugroup.ui.MenuGroupRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

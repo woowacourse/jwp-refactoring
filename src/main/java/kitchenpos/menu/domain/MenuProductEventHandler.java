@@ -1,8 +1,6 @@
 package kitchenpos.menu.domain;
 
 import kitchenpos.element.Price;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.repository.MenuProductRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.product.domain.MenuProductEvent;

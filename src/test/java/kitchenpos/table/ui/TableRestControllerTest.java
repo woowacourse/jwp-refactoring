@@ -15,7 +15,6 @@ import kitchenpos.table.application.TableService;
 import kitchenpos.table.application.dto.OrderTableResponse;
 import kitchenpos.table.application.dto.OrderTableResponses;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.ui.TableRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

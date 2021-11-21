@@ -15,7 +15,6 @@ import kitchenpos.product.application.dto.ProductRequest;
 import kitchenpos.product.application.dto.ProductResponse;
 import kitchenpos.product.application.dto.ProductResponses;
 import kitchenpos.product.domain.Product;
-import kitchenpos.product.ui.ProductRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
