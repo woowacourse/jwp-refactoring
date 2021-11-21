@@ -173,9 +173,6 @@ public class TestFixtures {
     }
 
     public static TableGroupResponse createTableGroupResponse() {
-        final TableGroup tableGroup = createTableGroup();
-        return new TableGroupResponse(tableGroup,
-                Arrays.asList(createOrderTable(1L, tableGroup.getId()), createOrderTable(2L, tableGroup.getId()))
-        );
+        return new TableGroupResponse(createTableGroup());
     }
 }

@@ -13,8 +13,8 @@
   - handle repository에 따라 분리
 
 ### 패키지간 단방향 설정
-- [ ] TableGroup 리스트 반환 제거하는 방향으로 수정
-- [ ] OrderStatus validate 로직 DI 방식으로 의존성 역전 설정
+- [x] TableGroup 리스트 반환 제거하는 방향으로 수정
+- [x] OrderStatus validate 로직 DI 방식으로 의존성 역전 설정
   - TableGroup
   - Table(OrderTable)
 
