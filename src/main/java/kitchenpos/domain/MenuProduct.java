@@ -1,9 +1,25 @@
 package kitchenpos.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class MenuProduct {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    private Long menuId;
-    private Long productId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Menu menu;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Product product;
+
     private long quantity;
 
     public MenuProduct() {
@@ -11,8 +27,8 @@ public class MenuProduct {
 
     private MenuProduct (MenuProductBuilder menuProductBuilder) {
         this.seq = menuProductBuilder.seq;
-        this.menuId = menuProductBuilder.menuId;
-        this.productId = menuProductBuilder.productId;
+        this.menu = menuProductBuilder.menu;
+        this.product = menuProductBuilder.product;
         this.quantity = menuProductBuilder.quantity;
     }
 
@@ -20,38 +36,22 @@ public class MenuProduct {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    public Menu getMenu() {
+        return menu;
     }
 
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(final Long productId) {
-        this.productId = productId;
+    public Product getProduct() {
+        return product;
     }
 
     public long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
-    }
-
     public static class MenuProductBuilder {
         private Long seq;
-        private Long menuId;
-        private Long productId;
+        private Menu menu;
+        private Product product;
         private long quantity;
 
         public MenuProductBuilder setSeq(Long seq) {
@@ -59,13 +59,13 @@ public class MenuProduct {
             return this;
         }
 
-        public MenuProductBuilder setMenuId(Long menuId) {
-            this.menuId = menuId;
+        public MenuProductBuilder setMenu(Menu menu) {
+            this.menu = menu;
             return this;
         }
 
-        public MenuProductBuilder setProductId(Long productId) {
-            this.productId = productId;
+        public MenuProductBuilder setProduct(Product product) {
+            this.product = product;
             return this;
         }
 

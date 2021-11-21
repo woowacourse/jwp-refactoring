@@ -21,7 +21,7 @@ public class MenuGroupResponse {
         return name;
     }
 
-    public static MenuGroupResponse toDto(MenuGroup menuGroup) {
+    public static MenuGroupResponse create(MenuGroup menuGroup) {
         return new MenuGroupResponse(menuGroup.getId(), menuGroup.getName());
     }
 

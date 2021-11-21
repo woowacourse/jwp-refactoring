@@ -9,16 +9,9 @@ import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@ExtendWith(MockitoExtension.class)
-@Transactional
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends ServiceTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
@@ -35,10 +28,10 @@ class MenuGroupServiceTest {
         MenuGroupResponse actual = menuGroupService
                 .create(MenuGroupRequest.create(menuGroup));
 
-        MenuGroupResponse expected = MenuGroupResponse.toDto(new MenuGroup.MenuGroupBuilder()
-                .setId(actual.getId())
-                .setName("치킨")
-                .build());
+        MenuGroupResponse expected = MenuGroupResponse.create(new MenuGroup.MenuGroupBuilder()
+                                        .setId(actual.getId())
+                                        .setName("치킨")
+                                        .build());
 
         //then
         assertThat(actual).isEqualTo(expected);
@@ -50,7 +43,7 @@ class MenuGroupServiceTest {
         //given
         MenuGroup menuGroup1 = new MenuGroup.MenuGroupBuilder()
                                     .setId(1L)
-                                    .setName("두마리메뉴")
+                                    .setName("치킨")
                                     .build();
 
         MenuGroup menuGroup2 = new MenuGroup.MenuGroupBuilder()
@@ -58,24 +51,19 @@ class MenuGroupServiceTest {
                                     .setName("한마리메뉴")
                                     .build();
 
-        MenuGroup menuGroup3 = new MenuGroup.MenuGroupBuilder()
-                                    .setId(3L)
-                                    .setName("순살파닭두마리메뉴")
-                                    .build();
+        menuGroupService.create(MenuGroupRequest.create(menuGroup1));
+        menuGroupService.create(MenuGroupRequest.create(menuGroup2));
 
-        MenuGroup menuGroup4 = new MenuGroup.MenuGroupBuilder()
-                                    .setId(4L)
-                                    .setName("신메뉴")
-                                    .build();
-
-        List<MenuGroupResponse> expected = List.of(menuGroup1, menuGroup2, menuGroup3, menuGroup4).stream()
-                                            .map(MenuGroupResponse::toDto)
+        List<MenuGroupResponse> expected = List.of(menuGroup1, menuGroup2).stream()
+                                            .map(MenuGroupResponse::create)
                                             .collect(Collectors.toList());
 
         //when
         List<MenuGroupResponse> actual = menuGroupService.list();
-        //then
 
-        assertThat(actual).isEqualTo(expected);
+        //then
+        assertThat(actual).hasSize(2);
+        assertThat(actual.get(0).getName()).isEqualTo(expected.get(0).getName());
+        assertThat(actual.get(1).getName()).isEqualTo(expected.get(1).getName());
     }
 }

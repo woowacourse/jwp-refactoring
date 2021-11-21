@@ -2,71 +2,104 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import kitchenpos.exception.NotChangeCompletionStatusException;
+import kitchenpos.exception.OrderEmptyException;
 
+@Entity(name = "orders")
 public class Order {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long orderTableId;
-    private String orderStatus;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_table_id")
+    private OrderTable orderTable;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
+
+    @Column
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+
+    @Embedded
+    private OrderLineItems orderLineItems;
 
     public Order() {
     }
 
     public Order(OrderBuilder orderBuilder) {
         this.id = orderBuilder.id;
-        this.orderTableId = orderBuilder.orderTableId;
+        this.orderTable = orderBuilder.orderTable;
         this.orderStatus = orderBuilder.orderStatus;
         this.orderedTime = orderBuilder.orderedTime;
-        this.orderLineItems = orderBuilder.orderLineItems;
+        changeOrderLineItems(orderBuilder.orderLineItems);
+    }
+
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        if (this.orderStatus.isCompletion()) {
+            throw new NotChangeCompletionStatusException();
+        }
+
+        this.orderStatus = orderStatus;
+    }
+
+    public boolean isEmptyOrderLineItems() {
+        return orderLineItems.isEmpty();
+    }
+
+    public void changeOrderLineItems(List<OrderLineItem> orderLineItems) {
+        if (orderLineItems.isEmpty()) {
+            throw new OrderEmptyException();
+        }
+
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.changeOrder(this);
+        }
+
+        this.orderLineItems = OrderLineItems.create(orderLineItems);
+    }
+
+    public boolean isNotCompletion() {
+        return !orderStatus.isCompletion();
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public Long getOrderTableId() {
-        return orderTableId;
-    }
-
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
     public String getOrderStatus() {
-        return orderStatus;
-    }
-
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
+        return orderStatus.name();
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+        return orderLineItems.getOrderLineItems();
     }
 
     public static class OrderBuilder {
 
         private Long id;
-        private Long orderTableId;
-        private String orderStatus;
+        private OrderTable orderTable;
+        private OrderStatus orderStatus;
         private LocalDateTime orderedTime;
         private List<OrderLineItem> orderLineItems;
 
@@ -75,13 +108,13 @@ public class Order {
             return this;
         }
 
-        public OrderBuilder setOrderTableId(Long orderTableId) {
-            this.orderTableId = orderTableId;
+        public OrderBuilder setOrderTable(OrderTable orderTable) {
+            this.orderTable = orderTable;
             return this;
         }
 
         public OrderBuilder setOrderStatus(String orderStatus) {
-            this.orderStatus = orderStatus;
+            this.orderStatus = OrderStatus.findByString(orderStatus);
             return this;
         }
 

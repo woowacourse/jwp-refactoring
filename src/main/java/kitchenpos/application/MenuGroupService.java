@@ -22,14 +22,14 @@ public class MenuGroupService {
         MenuGroup menuGroup = menuGroupRequest.toEntity();
         MenuGroup save = menuGroupRepository.save(menuGroup);
 
-        return MenuGroupResponse.toDto(save);
+        return MenuGroupResponse.create(save);
     }
 
     public List<MenuGroupResponse> list() {
         List<MenuGroup> list = menuGroupRepository.findAll();
 
         return list.stream()
-                .map(MenuGroupResponse::toDto)
+                .map(MenuGroupResponse::create)
                 .collect(Collectors.toList());
     }
 }
