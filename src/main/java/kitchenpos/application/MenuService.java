@@ -3,11 +3,11 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dtos.MenuResponses;
-import kitchenpos.application.dtos.ProductInformationRequest;
 import kitchenpos.application.dtos.MenuProductRequest;
 import kitchenpos.application.dtos.MenuRequest;
 import kitchenpos.application.dtos.MenuResponse;
+import kitchenpos.application.dtos.MenuResponses;
+import kitchenpos.application.dtos.ProductInformationRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProducts;
@@ -80,7 +80,6 @@ public class MenuService {
     public MenuResponse update(Long menuId, ProductInformationRequest request) {
         final Menu menu = menuRepository.findById(menuId)
                 .orElseThrow(IllegalArgumentException::new);
-
 
         return new MenuResponse(menu);
     }

@@ -5,10 +5,10 @@ import java.util.List;
 import kitchenpos.application.dtos.GuestNumberRequest;
 import kitchenpos.application.dtos.OrderTableRequest;
 import kitchenpos.application.dtos.TableEmptyRequest;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

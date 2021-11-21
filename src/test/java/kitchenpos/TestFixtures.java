@@ -12,8 +12,6 @@ import kitchenpos.application.dtos.OrderLineItemRequest;
 import kitchenpos.application.dtos.OrderRequest;
 import kitchenpos.application.dtos.OrderTableRequest;
 import kitchenpos.application.dtos.ProductInformationRequest;
-import kitchenpos.application.dtos.ProductResponse;
-import kitchenpos.application.dtos.ProductResponses;
 import kitchenpos.application.dtos.TableGroupRequest;
 import kitchenpos.application.dtos.TableGroupResponse;
 import kitchenpos.domain.Menu;
@@ -52,7 +50,7 @@ public class TestFixtures {
                 .build();
     }
 
-    public static Product updateProduct(Product product, ProductInformationRequest request){
+    public static Product updateProduct(Product product, ProductInformationRequest request) {
         return Product.builder()
                 .id(product.getId())
                 .name(request.getName())
@@ -76,7 +74,7 @@ public class TestFixtures {
                 .build();
     }
 
-    public static MenuProduct createMenuProduct(Long id, Menu menu, Long quantity){
+    public static MenuProduct createMenuProduct(Long id, Menu menu, Long quantity) {
         return MenuProduct.builder()
                 .menu(menu)
                 .productId(id)

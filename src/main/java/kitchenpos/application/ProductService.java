@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.util.List;
 import kitchenpos.application.dtos.ProductInformationRequest;
 import kitchenpos.application.dtos.ProductRequest;
 import kitchenpos.application.dtos.ProductResponse;
