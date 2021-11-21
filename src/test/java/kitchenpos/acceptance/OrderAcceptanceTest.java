@@ -1,5 +1,7 @@
 package kitchenpos.acceptance;
 
+import kitchenpos.menu.ui.request.MenuChangeRequest;
+import kitchenpos.menu.ui.response.MenuResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderMenu;
@@ -17,6 +19,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
@@ -214,5 +217,43 @@ class OrderAcceptanceTest extends AcceptanceTest {
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @DisplayName("Menu가 바뀌더라도, 이전에 했던 주문의 OrderMenu는 변하면 안된다")
+    @Test
+    void orderMenuStaySameIfMenuChanged() {
+        // given
+        OrderLineItemRequest 주문_요청_아이템1 = new OrderLineItemRequest();
+        주문_요청_아이템1.setMenuId(한마리메뉴_중_후라이드치킨.getId());
+        주문_요청_아이템1.setQuantity(1L);
+
+        OrderLineItemRequest 주문_요청_아이템2 = new OrderLineItemRequest();
+        주문_요청_아이템2.setMenuId(두마리메뉴_중_양념치킨_간장치킨.getId());
+        주문_요청_아이템2.setQuantity(1L);
+
+        OrderRequest 주문_요청 = new OrderRequest();
+        주문_요청.setOrderTableId(차있는_주문_테이블.getId());
+        주문_요청.setOrderLineItems(Arrays.asList(주문_요청_아이템1, 주문_요청_아이템2));
+
+        // when
+        ResponseEntity<OrderResponse> response = testRestTemplate.postForEntity("/api/orders", 주문_요청, OrderResponse.class);
+
+        final String 변경전_메뉴_이름 = 한마리메뉴_중_후라이드치킨.getName();
+        final BigDecimal 변경전_메뉴_가격 = 한마리메뉴_중_후라이드치킨.getPrice();
+
+        final Long 바꿀_메뉴_ID = 한마리메뉴_중_후라이드치킨.getId();
+        final MenuChangeRequest menuChangeRequest = new MenuChangeRequest();
+        menuChangeRequest.setId(바꿀_메뉴_ID);
+        menuChangeRequest.setName("에드특별메뉴");
+        menuChangeRequest.setPrice(BigDecimal.valueOf(10000L));
+
+        testRestTemplate.postForEntity("/api/change-menu", menuChangeRequest, MenuResponse.class);
+
+        // then
+        OrderResponse 주문_응답 = response.getBody();
+        final Long 주문_메뉴_ID = 주문_응답.getOrderLineItems().get(0).getOrderMenuId();
+        final OrderMenu 주문한_메뉴 = orderMenuRepository.findById(주문_메뉴_ID).get();
+        assertThat(주문한_메뉴.getName()).isEqualTo(변경전_메뉴_이름);
+        assertThat(주문한_메뉴.getPrice()).isEqualByComparingTo(변경전_메뉴_가격);
     }
 }

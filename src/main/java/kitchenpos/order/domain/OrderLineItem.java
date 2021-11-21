@@ -1,6 +1,7 @@
 package kitchenpos.order.domain;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 public class OrderLineItem {
@@ -41,6 +42,10 @@ public class OrderLineItem {
 
     public String getOrderMenuName() {
         return orderMenu.getName();
+    }
+
+    public BigDecimal getOrderMenuPrice() {
+        return orderMenu.getPrice();
     }
 
     public long getQuantity() {
