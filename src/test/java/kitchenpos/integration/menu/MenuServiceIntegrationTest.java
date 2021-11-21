@@ -23,13 +23,8 @@ class MenuServiceIntegrationTest extends IntegrationTest {
 
         Product savedProduct = productService.create(product);
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(7L);
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(3);
-
         Menu menu = new Menu("얌 프라이", BigDecimal.valueOf(8000, 2), 4L);
-        menu.add(Collections.singletonList(menuProduct));
+        menu.add(Collections.singletonList(new MenuProduct(savedProduct.getId(), 1)));
 
         // when
         Menu savedMenu = menuService.create(menu);
@@ -44,44 +39,18 @@ class MenuServiceIntegrationTest extends IntegrationTest {
     @DisplayName("메뉴의 가격이 올바르지 않으면 등록할 수 없다. - null인 경우")
     @Test
     void create_InvalidPriceWithNull_Fail() {
-        // given
-        Product product = new Product("얌 프라이", BigDecimal.valueOf(8000, 2));
-
-        Product savedProduct = productService.create(product);
-
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(7L);
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(3);
-
-        Menu menu = new Menu("얌 프라이", 4L);
-        menu.add(Collections.singletonList(menuProduct));
-
         // when
         // then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> new Menu("얌 프라이", null, 4L))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴의 가격이 올바르지 않으면 등록할 수 없다. - 0 이하인 경우")
     @Test
     void create_InvalidPriceWithNegative_Fail() {
-        // given
-        Product product = new Product("얌 프라이", BigDecimal.valueOf(8000, 2));
-
-        Product savedProduct = productService.create(product);
-
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(7L);
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(3);
-
-        Menu menu = new Menu("얌 프라이", BigDecimal.valueOf(-1), 4L);
-        menu.add(Collections.singletonList(menuProduct));
-
         // when
         // then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> new Menu("얌 프라이", BigDecimal.valueOf(-1), 4L))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -93,13 +62,8 @@ class MenuServiceIntegrationTest extends IntegrationTest {
 
         Product savedProduct = productService.create(product);
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(7L);
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(3);
-
         Menu menu = new Menu("얌 프라이", BigDecimal.valueOf(8000), 100L);
-        menu.add(Collections.singletonList(menuProduct));
+        menu.add(Collections.singletonList(new MenuProduct(savedProduct.getId(), 1)));
 
         // when
         // then
@@ -120,50 +84,6 @@ class MenuServiceIntegrationTest extends IntegrationTest {
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("메뉴의 수량이 올바르지 않으면 등록할 수 없다. - 0개인 경우")
-    @Test
-    void create_InvalidQuantityWithZero_Fail() {
-        // given
-        Product product = new Product("얌 프라이", BigDecimal.valueOf(8000, 2));
-
-        Product savedProduct = productService.create(product);
-
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(7L);
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(0);
-
-        Menu menu = new Menu("얌 프라이", BigDecimal.valueOf(8000, 2), 4L);
-        menu.add(Collections.singletonList(menuProduct));
-
-        // when
-        // then
-        assertThatThrownBy(() -> menuService.create(menu))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("메뉴의 수량이 올바르지 않으면 등록할 수 없다. - 0개 이하인 경우")
-    @Test
-    void create_InvalidQuantityWithNegative_Fail() {
-        // given
-        Product product = new Product("얌 프라이", BigDecimal.valueOf(8000, 2));
-
-        Product savedProduct = productService.create(product);
-
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(7L);
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(-2);
-
-        Menu menu = new Menu("얌 프라이", BigDecimal.valueOf(8000, 2), 4L);
-        menu.add(Collections.singletonList(menuProduct));
-
-        // when
-        // then
-        assertThatThrownBy(() -> menuService.create(menu))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("메뉴의 목록을 조회할 수 있다.")
     @Test
     void list_Valid_Success() {
@@ -172,13 +92,8 @@ class MenuServiceIntegrationTest extends IntegrationTest {
 
         Product savedProduct = productService.create(product);
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(7L);
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(3);
-
         Menu menu = new Menu("얌 프라이", BigDecimal.valueOf(8000, 2), 4L);
-        menu.add(Collections.singletonList(menuProduct));
+        menu.add(Collections.singletonList(new MenuProduct(savedProduct.getId(), 1)));
 
         Menu savedMenu = menuService.create(menu);
 
