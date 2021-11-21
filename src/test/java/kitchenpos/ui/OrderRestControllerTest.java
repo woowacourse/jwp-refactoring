@@ -13,6 +13,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import kitchenpos.TestFixtures;
 import kitchenpos.application.OrderService;
+import kitchenpos.application.dtos.OrderResponse;
+import kitchenpos.application.dtos.OrderResponses;
 import kitchenpos.application.dtos.OrderStatusRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -42,7 +44,7 @@ class OrderRestControllerTest {
     void create() throws Exception {
         final Order order = TestFixtures.createOrder();
         final String content = objectMapper.writeValueAsString(TestFixtures.createOrderRequest(order));
-        when(orderService.create(any())).thenReturn(order);
+        when(orderService.create(any())).thenReturn(new OrderResponse(order));
 
         final MockHttpServletResponse response = mockMvc.perform(post("/api/orders")
                         .content(content)
@@ -60,7 +62,7 @@ class OrderRestControllerTest {
     void list() throws Exception {
         final Order order = TestFixtures.createOrder();
         order.updateOrderLineItems(Collections.singletonList(createOrderLineItem(1L)));
-        when(orderService.list()).thenReturn(Collections.singletonList(order));
+        when(orderService.list()).thenReturn(new OrderResponses(Collections.singletonList(order)));
 
         final MockHttpServletResponse response = mockMvc.perform(get("/api/orders"))
                 .andReturn()
@@ -74,7 +76,7 @@ class OrderRestControllerTest {
         final Order order = TestFixtures.createOrder();
         order.updateOrderLineItems(Collections.singletonList(createOrderLineItem(1L)));
         final String content = objectMapper.writeValueAsString(new OrderStatusRequest(OrderStatus.MEAL.name()));
-        when(orderService.changeOrderStatus(any(), any())).thenReturn(order);
+        when(orderService.changeOrderStatus(any(), any())).thenReturn(new OrderResponse(order));
 
         final MockHttpServletResponse response = mockMvc.perform(put("/api/orders/" + order.getId() + "/order-status")
                         .content(content)

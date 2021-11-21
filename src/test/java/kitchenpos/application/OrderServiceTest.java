@@ -12,6 +12,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.application.dtos.OrderLineItemRequest;
 import kitchenpos.application.dtos.OrderRequest;
+import kitchenpos.application.dtos.OrderResponse;
+import kitchenpos.application.dtos.OrderResponses;
 import kitchenpos.application.dtos.OrderStatusRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -91,9 +93,10 @@ class OrderServiceTest {
         when(orderTableRepository.findById(any())).thenReturn(Optional.of(orderTable));
         when(orderRepository.save(any())).thenReturn(savedOrder);
 
-        final Order actual = orderService.create(orderRequest);
+        final OrderResponse actual = orderService.create(orderRequest);
 
-        assertThat(actual).isEqualTo(savedOrder);
+        assertThat(actual).usingRecursiveComparison()
+                .isEqualTo(new OrderResponse(savedOrder));
     }
 
     @DisplayName("주문 항목의 목록이 비어있으면 안 된다")
@@ -150,8 +153,9 @@ class OrderServiceTest {
 
         when(orderRepository.findAll()).thenReturn(orders);
 
-        final List<Order> actual = orderService.list();
-        assertThat(actual).isEqualTo(orders);
+        final OrderResponses actual = orderService.list();
+        assertThat(actual).usingRecursiveComparison()
+                .isEqualTo(new OrderResponses(orders));
     }
 
     @DisplayName("주문의 상태를 바꿀 수 있다")
@@ -164,8 +168,9 @@ class OrderServiceTest {
 
         when(orderRepository.findById(any())).thenReturn(Optional.of(savedOrder));
 
-        final Order actual = orderService.changeOrderStatus(any(), orderStatusRequest);
-        assertThat(actual).isEqualTo(savedOrder);
+        final OrderResponse actual = orderService.changeOrderStatus(any(), orderStatusRequest);
+        assertThat(actual).usingRecursiveComparison()
+                .isEqualTo(new OrderResponse(savedOrder));
     }
 
     @DisplayName("기존에 저장되어 있는 주문이 있어야 한다")

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dtos.OrderLineItemRequest;
 import kitchenpos.application.dtos.OrderRequest;
+import kitchenpos.application.dtos.OrderResponse;
+import kitchenpos.application.dtos.OrderResponses;
 import kitchenpos.application.dtos.OrderStatusRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -38,7 +40,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderRequest request) {
+    public OrderResponse create(final OrderRequest request) {
         final OrderLineItems orderLineItems = new OrderLineItems(orderLineItemsWith(request));
         orderLineItems.checkSize(menuRepository.countByIdIn(orderLineItems.getMenuIds()));
 
@@ -52,22 +54,22 @@ public class OrderService {
         savedOrder.updateOrderLineItems(orderLineItems);
         orderLineItemRepository.saveAll(orderLineItems.getOrderLineItems());
 
-        return savedOrder;
+        return new OrderResponse(savedOrder);
     }
 
-    public List<Order> list() {
-        return orderRepository.findAll();
+    public OrderResponses list() {
+        return new OrderResponses(orderRepository.findAll());
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderStatusRequest request) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
         final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
         savedOrder.updateOrderStatus(orderStatus.name());
 
-        return savedOrder;
+        return new OrderResponse(savedOrder);
     }
 
     private Order orderWith(OrderTable orderTable) {
