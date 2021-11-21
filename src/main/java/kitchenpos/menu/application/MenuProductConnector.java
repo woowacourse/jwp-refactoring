@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Objects;
 
 @Component
-public class MenuProductValidator {
+public class MenuProductConnector {
 
     private final ProductRepository productRepository;
 
-    public MenuProductValidator(ProductRepository productRepository) {
+    public MenuProductConnector(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 

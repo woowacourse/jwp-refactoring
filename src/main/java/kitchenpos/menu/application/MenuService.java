@@ -18,16 +18,16 @@ import java.util.List;
 public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final MenuProductValidator menuProductValidator;
+    private final MenuProductConnector menuProductConnector;
 
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-            final MenuProductValidator menuProductValidator
+            final MenuProductConnector menuProductConnector
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.menuProductValidator = menuProductValidator;
+        this.menuProductConnector = menuProductConnector;
     }
 
     @Transactional
@@ -35,7 +35,7 @@ public class MenuService {
         final MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
         final List<MenuProduct> menuProducts = generateMenuProducts(menuRequest.getMenuProducts());
-        menuProductValidator.validateMenuProducts(menuProducts, menuRequest.getPrice());
+        menuProductConnector.validateMenuProducts(menuProducts, menuRequest.getPrice());
 
         final Menu menu = new Menu.Builder()
                 .name(menuRequest.getName())
@@ -52,7 +52,7 @@ public class MenuService {
         final List<MenuProduct> menuProducts = new ArrayList<>();
 
         for (MenuProductRequest menuProductRequest : menuProductRequests) {
-            menuProductValidator.validateProductId(menuProductRequest.getProductId());
+            menuProductConnector.validateProductId(menuProductRequest.getProductId());
 
             final MenuProduct menuProduct = new MenuProduct.Builder()
                     .productId(menuProductRequest.getProductId())
