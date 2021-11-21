@@ -28,11 +28,8 @@ class MenuServiceIntegrationTest extends IntegrationTest {
         menuProduct.setProductId(savedProduct.getId());
         menuProduct.setQuantity(3);
 
-        Menu menu = new Menu();
-        menu.setName("얌 프라이");
-        menu.setPrice(BigDecimal.valueOf(8000, 2));
-        menu.setMenuGroupId(4L);
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
+        Menu menu = new Menu("얌 프라이", BigDecimal.valueOf(8000, 2), 4L);
+        menu.add(Collections.singletonList(menuProduct));
 
         // when
         Menu savedMenu = menuService.create(menu);
@@ -57,10 +54,8 @@ class MenuServiceIntegrationTest extends IntegrationTest {
         menuProduct.setProductId(savedProduct.getId());
         menuProduct.setQuantity(3);
 
-        Menu menu = new Menu();
-        menu.setName("얌 프라이");
-        menu.setMenuGroupId(4L);
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
+        Menu menu = new Menu("얌 프라이", 4L);
+        menu.add(Collections.singletonList(menuProduct));
 
         // when
         // then
@@ -81,11 +76,8 @@ class MenuServiceIntegrationTest extends IntegrationTest {
         menuProduct.setProductId(savedProduct.getId());
         menuProduct.setQuantity(3);
 
-        Menu menu = new Menu();
-        menu.setName("얌 프라이");
-        menu.setPrice(BigDecimal.valueOf(-1));
-        menu.setMenuGroupId(4L);
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
+        Menu menu = new Menu("얌 프라이", BigDecimal.valueOf(-1), 4L);
+        menu.add(Collections.singletonList(menuProduct));
 
         // when
         // then
@@ -106,11 +98,8 @@ class MenuServiceIntegrationTest extends IntegrationTest {
         menuProduct.setProductId(savedProduct.getId());
         menuProduct.setQuantity(3);
 
-        Menu menu = new Menu();
-        menu.setName("얌 프라이");
-        menu.setPrice(BigDecimal.valueOf(8000));
-        menu.setMenuGroupId(100L);
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
+        Menu menu = new Menu("얌 프라이", BigDecimal.valueOf(8000), 100L);
+        menu.add(Collections.singletonList(menuProduct));
 
         // when
         // then
@@ -122,11 +111,8 @@ class MenuServiceIntegrationTest extends IntegrationTest {
     @Test
     void create_NonExistingMenuProduct_Fail() {
         // given
-        Menu menu = new Menu();
-        menu.setName("얌 프라이");
-        menu.setPrice(BigDecimal.valueOf(8000));
-        menu.setMenuGroupId(4L);
-        menu.setMenuProducts(Collections.emptyList());
+        Menu menu = new Menu("얌 프라이", BigDecimal.valueOf(8000), 4L);
+        menu.add(Collections.emptyList());
 
         // when
         // then
@@ -147,11 +133,8 @@ class MenuServiceIntegrationTest extends IntegrationTest {
         menuProduct.setProductId(savedProduct.getId());
         menuProduct.setQuantity(0);
 
-        Menu menu = new Menu();
-        menu.setName("얌 프라이");
-        menu.setPrice(BigDecimal.valueOf(8000, 2));
-        menu.setMenuGroupId(4L);
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
+        Menu menu = new Menu("얌 프라이", BigDecimal.valueOf(8000, 2), 4L);
+        menu.add(Collections.singletonList(menuProduct));
 
         // when
         // then
@@ -172,11 +155,8 @@ class MenuServiceIntegrationTest extends IntegrationTest {
         menuProduct.setProductId(savedProduct.getId());
         menuProduct.setQuantity(-2);
 
-        Menu menu = new Menu();
-        menu.setName("얌 프라이");
-        menu.setPrice(BigDecimal.valueOf(8000, 2));
-        menu.setMenuGroupId(4L);
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
+        Menu menu = new Menu("얌 프라이", BigDecimal.valueOf(8000, 2), 4L);
+        menu.add(Collections.singletonList(menuProduct));
 
         // when
         // then
@@ -197,11 +177,8 @@ class MenuServiceIntegrationTest extends IntegrationTest {
         menuProduct.setProductId(savedProduct.getId());
         menuProduct.setQuantity(3);
 
-        Menu menu = new Menu();
-        menu.setName("얌 프라이");
-        menu.setPrice(BigDecimal.valueOf(8000, 2));
-        menu.setMenuGroupId(4L);
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
+        Menu menu = new Menu("얌 프라이", BigDecimal.valueOf(8000, 2), 4L);
+        menu.add(Collections.singletonList(menuProduct));
 
         Menu savedMenu = menuService.create(menu);
 
