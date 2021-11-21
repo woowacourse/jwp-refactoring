@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import kitchenpos.application.dto.request.ProductRequest;
-import kitchenpos.application.dto.response.ProductResponse;
+import kitchenpos.application.dto.request.product.ProductRequest;
+import kitchenpos.application.dto.response.product.ProductResponse;
 import kitchenpos.exception.InvalidPriceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

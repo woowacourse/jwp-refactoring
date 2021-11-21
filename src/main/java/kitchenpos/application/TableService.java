@@ -2,11 +2,11 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.request.OrderTableEmptyRequest;
-import kitchenpos.application.dto.request.OrderTableGuestsRequest;
-import kitchenpos.application.dto.request.OrderTableRequest;
-import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.application.dto.request.table.OrderTableEmptyRequest;
+import kitchenpos.application.dto.request.table.OrderTableGuestsRequest;
+import kitchenpos.application.dto.request.table.OrderTableRequest;
+import kitchenpos.application.dto.response.table.OrderTableResponse;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.exception.NotFoundOrderTableException;
 import org.springframework.stereotype.Service;

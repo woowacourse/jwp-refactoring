@@ -5,11 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.request.MenuProductRequest;
-import kitchenpos.application.dto.request.MenuRequest;
-import kitchenpos.application.dto.response.MenuResponse;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
+import kitchenpos.application.dto.request.menu.MenuProductRequest;
+import kitchenpos.application.dto.request.menu.MenuRequest;
+import kitchenpos.application.dto.response.menu.MenuResponse;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.product.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.exception.InvalidMenuProductsPriceException;
