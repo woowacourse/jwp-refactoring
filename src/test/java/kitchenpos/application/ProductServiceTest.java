@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
+@DisplayName("메뉴 그룹 서비스 통합 테스트")
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest
 class ProductServiceTest {
@@ -47,7 +48,7 @@ class ProductServiceTest {
 
         @DisplayName("[실패] 가격이 null 이면 예외 발생")
         @Test
-        void create_nullPrice_ExceptionThrown() {
+        void create_NullPrice_ExceptionThrown() {
             // given
             ProductRequestDto product = newProduct(null);
 
@@ -60,7 +61,7 @@ class ProductServiceTest {
 
         @DisplayName("[실패] 가격이 음수면 예외 발생")
         @Test
-        void create_negativePrice_ExceptionThrown() {
+        void create_NegativePrice_ExceptionThrown() {
             // given
             ProductRequestDto product = newProduct(BigDecimal.valueOf(-10));
 

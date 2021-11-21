@@ -7,6 +7,10 @@ public class OrderTableGuestRequestDto {
     private OrderTableGuestRequestDto() {
     }
 
+    public OrderTableGuestRequestDto(int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
+    }
+
     public int getNumberOfGuests() {
         return numberOfGuests;
     }

@@ -35,6 +35,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
+@DisplayName("메뉴 그룹 서비스 통합 테스트")
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest
 class TableGroupServiceTest {
@@ -74,7 +75,7 @@ class TableGroupServiceTest {
         @DisplayName("[실패] 주문테이블이 비었거나 1개라면 예외 발생")
         @ParameterizedTest
         @ValueSource(ints = {0, 1})
-        void create_noneOrOneOrderTable_ExceptionThrown(int numOfTables) {
+        void create_NoneOrOneOrderTable_ExceptionThrown(int numOfTables) {
             // given
             List<Long> tables = new ArrayList<>();
             for (int i = 0; i < numOfTables; i++) {
@@ -92,7 +93,7 @@ class TableGroupServiceTest {
 
         @DisplayName("[실패] 주문테이블이 존재하지 않으면 예외 발생")
         @Test
-        void create_notExistingOrderTable_ExceptionThrown() {
+        void create_NotExistingOrderTable_ExceptionThrown() {
             // given
             TableGroupRequestDto tableGroup = newTableGroup(
                 Arrays.asList(saveAndReturnOrderTableId(true), INVALID_ID)
@@ -107,7 +108,7 @@ class TableGroupServiceTest {
 
         @DisplayName("[실패] 주문테이블이 빈 테이블이 아니면 예외 발생")
         @Test
-        void create_emptyOrderTable_ExceptionThrown() {
+        void create_EmptyOrderTable_ExceptionThrown() {
             // given
             TableGroupRequestDto tableGroup = newTableGroup(
                 Arrays.asList(saveAndReturnOrderTableId(true), saveAndReturnOrderTableId(false))
@@ -122,7 +123,7 @@ class TableGroupServiceTest {
 
         @DisplayName("[실패] 주문테이블이 다른 테이블 그룹에 속해있다면 예외 발생")
         @Test
-        void create_GroupTableIdNotNullOrderTable_ExceptionThrown() {
+        void create_GroupTableIdNotNull_ExceptionThrown() {
             // given
             Long includeInAnotherGroupTableId =
                 tableGroupService.create(newTableGroup()).getOrderTables().get(0).getId();

@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
+@DisplayName("메뉴 그룹 서비스 통합 테스트")
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest
 class MenuGroupServiceTest {
@@ -22,7 +23,7 @@ class MenuGroupServiceTest {
 
     @DisplayName("[성공] 새로운 메뉴 그룹을 등록")
     @Test
-    void create_success() {
+    void create_Success() {
         // given
         MenuGroupRequestDto menuGroup = newMenuGroup();
 
@@ -36,7 +37,7 @@ class MenuGroupServiceTest {
 
     @DisplayName("[성공] 메뉴 그룹 리스트 조회")
     @Test
-    void list_success() {
+    void list_Success() {
         // given
         int previousMenuGroupsCount = menuGroupService.list().size();
         menuGroupService.create(newMenuGroup());

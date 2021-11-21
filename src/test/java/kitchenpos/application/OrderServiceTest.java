@@ -32,6 +32,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
+@DisplayName("메뉴 그룹 서비스 통합 테스트")
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest
 class OrderServiceTest {
@@ -50,7 +51,7 @@ class OrderServiceTest {
 
         @DisplayName("[성공] 새로운 주문 등록")
         @Test
-        void create_success() {
+        void create_Success() {
             // given
             OrderRequestDto order = newOrder();
 
@@ -70,7 +71,7 @@ class OrderServiceTest {
 
         @DisplayName("[실패] 주문항목이 비어있을 경우 예외 발생")
         @Test
-        void create_emptyOrderLineItems_ExceptionThrwon() {
+        void create_EmptyOrderLineItems_ExceptionThrown() {
             // given
             OrderRequestDto order = newOrderWithEmptyOrderLine();
 

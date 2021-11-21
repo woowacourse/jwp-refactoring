@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
+@DisplayName("메뉴 그룹 서비스 통합 테스트")
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest
 class MenuServiceTest {
@@ -29,7 +30,7 @@ class MenuServiceTest {
 
     @DisplayName("[성공] 새로운 메뉴 틍록")
     @Test
-    void create_success() {
+    void create_Success() {
         // given
         MenuRequestDto menu = newMenu();
 
@@ -50,7 +51,7 @@ class MenuServiceTest {
 
     @DisplayName("[실패] 가격이 null 이면 예외 발생")
     @Test
-    void create_nullPrice_ExceptionThrown() {
+    void create_NullPrice_ExceptionThrown() {
         // given
         MenuRequestDto menu = newMenu(null);
 
@@ -63,7 +64,7 @@ class MenuServiceTest {
 
     @DisplayName("[실패] 가격이 0보다 작으면 예외 발생")
     @Test
-    void create_negativePrice_ExceptionThrown() {
+    void create_NegativePrice_ExceptionThrown() {
         // given
         MenuRequestDto menu = newMenu(BigDecimal.valueOf(-5));
 
@@ -76,7 +77,7 @@ class MenuServiceTest {
 
     @DisplayName("[실패] 메뉴 가격이 개별 상품 가격의 합보다 비싸면 예외 발생")
     @Test
-    void create_tooExpensivePrice_ExceptionThrown() {
+    void create_TooExpensivePrice_ExceptionThrown() {
         // given
         MenuRequestDto menu = newMenu(BigDecimal.valueOf(50_000));
 
@@ -89,7 +90,7 @@ class MenuServiceTest {
 
     @DisplayName("[실패] 존재하지 않는 메뉴 그룹 ID면 예외 발생")
     @Test
-    void create_invalidMenuGroupId_ExceptionThrown() {
+    void create_InvalidMenuGroupId_ExceptionThrown() {
         // given
         MenuRequestDto menu = newMenuWithGroupId(100L);
 
@@ -102,7 +103,7 @@ class MenuServiceTest {
 
     @DisplayName("[성공] 전체 메뉴 조회")
     @Test
-    void list_success() {
+    void list_Success() {
         // given
         int previousSize = menuService.list().size();
         menuService.create(newMenu());
