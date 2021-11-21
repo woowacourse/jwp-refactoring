@@ -7,7 +7,7 @@ public class OrderTables {
 
     private List<OrderTable> orderTables;
 
-    public OrderTables() {
+    protected OrderTables() {
     }
 
     public OrderTables(List<OrderTable> orderTables) {

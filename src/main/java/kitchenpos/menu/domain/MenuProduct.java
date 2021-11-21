@@ -19,7 +19,7 @@ public class MenuProduct {
 
     private Long quantity;
 
-    public MenuProduct() {
+    protected MenuProduct() {
     }
 
     private MenuProduct(Builder builder) {

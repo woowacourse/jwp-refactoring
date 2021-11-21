@@ -11,7 +11,7 @@ public class OrderLineItems {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderLineItem> orderLineItems;
 
-    public OrderLineItems() {
+    protected OrderLineItems() {
     }
 
     public OrderLineItems(List<OrderLineItem> orderLineItems) {

@@ -11,7 +11,7 @@ public class MenuProducts {
     @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
     private List<MenuProduct> menuProducts;
 
-    public MenuProducts() {
+    protected MenuProducts() {
     }
 
     public MenuProducts(List<MenuProduct> menuProducts) {

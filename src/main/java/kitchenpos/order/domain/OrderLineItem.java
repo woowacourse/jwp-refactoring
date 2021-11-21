@@ -17,7 +17,7 @@ public class OrderLineItem {
 
     private Long quantity;
 
-    public OrderLineItem() {
+    protected OrderLineItem() {
     }
 
     private OrderLineItem(Builder builder) {
