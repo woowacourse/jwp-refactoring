@@ -1,5 +1,7 @@
 package kitchenpos.menu.application;
 
+import kitchenpos.exception.BadRequestException;
+import kitchenpos.exception.ErrorType;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.repository.ProductRepository;
@@ -20,17 +22,17 @@ public class MenuProductConnector {
 
     public void validateProductId(Long productId) {
         if (!productRepository.existsById(productId)) {
-            throw new IllegalArgumentException();
+            throw new BadRequestException(ErrorType.PRODUCT_NOT_FOUND);
         }
     }
 
     public void validateMenuProducts(List<MenuProduct> menuProducts, BigDecimal price) {
         if (Objects.isNull(menuProducts)) {
-            throw new IllegalArgumentException();
+            throw new BadRequestException(ErrorType.MENU_PRODUCT_EMPTY);
         }
         BigDecimal menuProductsPrice = calculateMenuProductsPrice(menuProducts);
         if (price.compareTo(menuProductsPrice) > 0) {
-            throw new IllegalArgumentException();
+            throw new BadRequestException(ErrorType.MENU_PRODUCT_PRICE_ERROR);
         }
     }
 
@@ -38,7 +40,7 @@ public class MenuProductConnector {
         BigDecimal totalPriceOfSingleMenuProduct = BigDecimal.ZERO;
         for (MenuProduct menuProduct : menuProducts) {
             final Product product = productRepository.findById(menuProduct.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
+                    .orElseThrow(() -> new BadRequestException(ErrorType.PRODUCT_NOT_FOUND));
             final BigDecimal menuProductPrice = product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity()));
             totalPriceOfSingleMenuProduct = totalPriceOfSingleMenuProduct.add(menuProductPrice);
         }

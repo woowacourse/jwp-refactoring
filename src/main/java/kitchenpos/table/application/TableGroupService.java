@@ -1,5 +1,7 @@
 package kitchenpos.table.application;
 
+import kitchenpos.exception.BadRequestException;
+import kitchenpos.exception.ErrorType;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTables;
 import kitchenpos.table.domain.TableGroup;
@@ -56,7 +58,7 @@ public class TableGroupService {
 
     private OrderTables findOrderTables(List<OrderTableIdRequest> orderTableIdRequests) {
         if (CollectionUtils.isEmpty(orderTableIdRequests) || orderTableIdRequests.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new BadRequestException(ErrorType.TABLE_GROUP_ERROR);
         }
 
         final List<Long> orderTableIds = orderTableIdRequests.stream()
@@ -71,7 +73,7 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new BadRequestException(ErrorType.TABLE_NOT_FOUND));
 
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroup(tableGroup);
         for (OrderTable orderTable : orderTables) {

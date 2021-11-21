@@ -1,5 +1,8 @@
 package kitchenpos.order.domain;
 
+import kitchenpos.exception.BadRequestException;
+import kitchenpos.exception.ErrorType;
+
 import java.util.List;
 
 public class Orders {
@@ -20,6 +23,6 @@ public class Orders {
         if (order.isCompleted()) {
             return;
         }
-        throw new IllegalArgumentException();
+        throw new BadRequestException(ErrorType.ORDER_NOT_COMPLETED);
     }
 }

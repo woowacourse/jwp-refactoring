@@ -60,7 +60,7 @@ class ProductAcceptanceTest extends AcceptanceTest {
         ResponseEntity<ProductResponse> responseEntity = testRestTemplate.postForEntity("/api/products", 강정치킨, ProductResponse.class);
 
         // then
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @DisplayName("새로운 상품을 등록할 때, 가격이 음수이면 안된다.")
@@ -75,6 +75,6 @@ class ProductAcceptanceTest extends AcceptanceTest {
         ResponseEntity<ProductResponse> responseEntity = testRestTemplate.postForEntity("/api/products", 강정치킨, ProductResponse.class);
 
         // then
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 }

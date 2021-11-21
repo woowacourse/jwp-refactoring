@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import kitchenpos.exception.BadRequestException;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.product.domain.Product;
@@ -52,7 +53,7 @@ class MenuTest {
                 .menuGroup(null)
                 .menuProducts(Arrays.asList(menuProduct))
                 .build()
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(BadRequestException.class);
 
         assertThatThrownBy(() -> new Menu.Builder()
                 .id(1L)
@@ -61,7 +62,7 @@ class MenuTest {
                 .menuGroup(null)
                 .menuProducts(Arrays.asList(menuProduct))
                 .build()
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(BadRequestException.class);
     }
 
     @DisplayName("메뉴를 구성하는 MenuProduct의 가격의 총합보다 같거나 싸게 Menu의 Price를 책정해야 한다.")

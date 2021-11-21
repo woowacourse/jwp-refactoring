@@ -176,7 +176,7 @@ class TableAcceptanceTest extends AcceptanceTest {
                 HttpMethod.PUT, new HttpEntity<>(변경할_주문_테이블_EMPTY_요청), Void.class);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @DisplayName("매장에서 주문이 발생하는 테이블 중 tableId에 해당하는 테이블의 empty 여부를 변경시, 해당 테이블이 TableGroup이 있다면 변경할 수 없다.")
@@ -192,7 +192,7 @@ class TableAcceptanceTest extends AcceptanceTest {
                 HttpMethod.PUT, new HttpEntity<>(변경할_주문_테이블_EMPTY_요청), Void.class);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @DisplayName("매장에서 주문이 발생하는 테이블 중 tableId에 해당하는 테이블의 number-of-guest를 변경한다")
@@ -225,7 +225,7 @@ class TableAcceptanceTest extends AcceptanceTest {
                 HttpMethod.PUT, new HttpEntity<>(변경할_주문_테이블_손님_요청), Void.class);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @DisplayName("매장에서 주문이 발생하는 테이블 중 tableId에 해당하는 테이블의 number-of-guest를 변경시, 이미 비워진 테이블이라면 안된다")
@@ -247,6 +247,6 @@ class TableAcceptanceTest extends AcceptanceTest {
                 HttpMethod.PUT, new HttpEntity<>(변경할_주문_테이블_손님_요청), Void.class);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 }

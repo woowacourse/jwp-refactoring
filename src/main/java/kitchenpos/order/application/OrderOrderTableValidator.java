@@ -1,5 +1,7 @@
 package kitchenpos.order.application;
 
+import kitchenpos.exception.BadRequestException;
+import kitchenpos.exception.ErrorType;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Component;
@@ -14,9 +16,9 @@ public class OrderOrderTableValidator {
 
     public void validateOrderTable(Long orderTableId) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new BadRequestException(ErrorType.TABLE_NOT_FOUND));
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new BadRequestException(ErrorType.TABLE_EMPTY_ERROR);
         }
     }
 }

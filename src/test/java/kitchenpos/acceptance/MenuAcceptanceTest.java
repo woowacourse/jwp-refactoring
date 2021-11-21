@@ -1,5 +1,6 @@
 package kitchenpos.acceptance;
 
+import kitchenpos.exception.dto.ExceptionResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.ui.request.MenuChangeRequest;
 import kitchenpos.menu.ui.request.MenuProductRequest;
@@ -87,7 +88,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
         ResponseEntity<MenuResponse> response = testRestTemplate.postForEntity("/api/menus", 두마리메뉴_후라이드_양념치킨, MenuResponse.class);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @DisplayName("메뉴의 이름과 가격을 변경할 수 있다.")
@@ -124,7 +125,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
         ResponseEntity<MenuResponse> response = testRestTemplate.postForEntity("/api/change-menu", menuChangeRequest, MenuResponse.class);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @DisplayName("메뉴의 가격을 변경 시, 가격이 음수이면 안된다.")
@@ -141,6 +142,6 @@ class MenuAcceptanceTest extends AcceptanceTest {
         ResponseEntity<MenuResponse> response = testRestTemplate.postForEntity("/api/change-menu", menuChangeRequest, MenuResponse.class);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 }

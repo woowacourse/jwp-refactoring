@@ -1,5 +1,8 @@
 package kitchenpos.product.domain;
 
+import kitchenpos.exception.BadRequestException;
+import kitchenpos.exception.ErrorType;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,7 +31,7 @@ public class Product {
 
     private void validatePrice(BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new BadRequestException(ErrorType.PRODUCT_PRICE_ERROR);
         }
     }
 

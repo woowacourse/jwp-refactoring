@@ -1,5 +1,8 @@
 package kitchenpos.menu.domain;
 
+import kitchenpos.exception.BadRequestException;
+import kitchenpos.exception.ErrorType;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
@@ -36,7 +39,7 @@ public class Menu {
 
     private void validatePrice(BigDecimal price) {
         if (Objects.isNull(price) || (price.compareTo(BigDecimal.ZERO) < 0)) {
-            throw new IllegalArgumentException();
+            throw new BadRequestException(ErrorType.MENU_PRICE_ERROR);
         }
     }
 

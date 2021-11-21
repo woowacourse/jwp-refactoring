@@ -1,5 +1,7 @@
 package kitchenpos.table.domain;
 
+import kitchenpos.exception.BadRequestException;
+import kitchenpos.exception.ErrorType;
 import kitchenpos.order.domain.Orders;
 
 import javax.persistence.*;
@@ -39,17 +41,17 @@ public class OrderTable {
 
     public void changeEmpty(Boolean empty) {
         if (Objects.nonNull(this.tableGroup)) {
-            throw new IllegalArgumentException();
+            throw new BadRequestException(ErrorType.TABLE_GROUP_NOT_NULL);
         }
         this.empty = empty;
     }
 
     public void changeNumberOfGuests(Integer numberOfGuests) {
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new BadRequestException(ErrorType.TABLE_NUMBER_OF_GUEST_ERROR);
         }
         if (this.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new BadRequestException(ErrorType.TABLE_EMPTY_ERROR);
         }
         this.numberOfGuests = numberOfGuests;
     }

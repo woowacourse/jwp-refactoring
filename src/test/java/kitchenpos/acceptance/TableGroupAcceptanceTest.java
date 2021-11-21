@@ -145,7 +145,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         ResponseEntity<TableGroupResponse> response = testRestTemplate.postForEntity("/api/table-groups", 유효하지_않은_테이블_그룹_요청, TableGroupResponse.class);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @DisplayName("테이블 그룹 요청에 담긴 주문 테이블 ID가 중복된다면, 예외가 발생한다.")
@@ -167,7 +167,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         ResponseEntity<TableGroupResponse> response = testRestTemplate.postForEntity("/api/table-groups", 테이블_그룹_요청, TableGroupResponse.class);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @DisplayName("그룹화 하려는 주문 테이블이 비어있지 않다면, 그룹화할 수 없다.")
@@ -197,7 +197,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         ResponseEntity<TableGroupResponse> response = testRestTemplate.postForEntity("/api/table-groups", 테이블_그룹_요청, TableGroupResponse.class);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @DisplayName("그룹화 하려는 주문 테이블이 이미 그룹화되어 있다면, 그룹화할 수 없다.")
@@ -221,7 +221,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         ResponseEntity<TableGroupResponse> response = testRestTemplate.postForEntity("/api/table-groups", 테이블_그룹_요청, TableGroupResponse.class);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @DisplayName("통합 계산을 위해 개별 테이블을 그룹화하는 tableGroupId에 해당하는 테이블 그룹을 삭제한다")
@@ -268,6 +268,6 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
                 HttpMethod.DELETE, HttpEntity.EMPTY, Void.class);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 }

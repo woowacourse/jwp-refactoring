@@ -1,5 +1,8 @@
 package kitchenpos.table.domain;
 
+import kitchenpos.exception.BadRequestException;
+import kitchenpos.exception.ErrorType;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -23,8 +26,11 @@ public class OrderTables {
     }
 
     private void validateRegisterTableGroupPossible(OrderTable orderTable) {
-        if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
+        if (!orderTable.isEmpty()) {
+            throw new BadRequestException(ErrorType.TABLE_NOT_EMPTY_ERROR);
+        }
+        if (Objects.nonNull(orderTable.getTableGroup())) {
+            throw new BadRequestException(ErrorType.TABLE_GROUP_NOT_NULL);
         }
     }
 
@@ -34,7 +40,7 @@ public class OrderTables {
 
     public void checkSameSize(int size) {
         if (size != orderTables.size()) {
-            throw new IllegalArgumentException();
+            throw new BadRequestException(ErrorType.TABLE_GROUP_DUPLICATED);
         }
     }
 }

@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import kitchenpos.exception.BadRequestException;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.order.domain.OrderMenu;
@@ -73,7 +74,7 @@ class OrderTest {
                 .orderedTime(LocalDateTime.MAX)
                 .orderLineItems(null)
                 .build()
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(BadRequestException.class);
     }
 
     @DisplayName("주문 생성 시 orderLineItem의 메뉴는 중복되면 안된다.")
@@ -85,7 +86,7 @@ class OrderTest {
                 .orderedTime(LocalDateTime.MAX)
                 .orderLineItems(Arrays.asList(orderLineItem, orderLineItem))
                 .build()
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(BadRequestException.class);
     }
 
     @DisplayName("주문 생성 시 orderLineItem의 OrderStutus는 꼭 Cooking이어야 한다.")
@@ -97,7 +98,7 @@ class OrderTest {
                 .orderedTime(LocalDateTime.MAX)
                 .orderLineItems(Arrays.asList(orderLineItem))
                 .build()
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(BadRequestException.class);
 
         assertThatThrownBy(() -> new Order.Builder()
                 .orderTableId(orderTable.getId())
@@ -105,7 +106,7 @@ class OrderTest {
                 .orderedTime(LocalDateTime.MAX)
                 .orderLineItems(Arrays.asList(orderLineItem))
                 .build()
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(BadRequestException.class);
     }
 
     @DisplayName("주문의 OrderStatus가 Complete라면 변경할 수 없다")
@@ -120,6 +121,6 @@ class OrderTest {
         order.changeOrderStatus(OrderStatus.COMPLETION);
 
         assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.MEAL))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 }

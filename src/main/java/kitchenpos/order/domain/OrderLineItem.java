@@ -44,10 +44,6 @@ public class OrderLineItem {
         return orderMenu.getName();
     }
 
-    public BigDecimal getOrderMenuPrice() {
-        return orderMenu.getPrice();
-    }
-
     public long getQuantity() {
         return quantity;
     }

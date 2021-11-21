@@ -1,5 +1,7 @@
 package kitchenpos.order.domain;
 
+import kitchenpos.exception.BadRequestException;
+import kitchenpos.exception.ErrorType;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
@@ -41,13 +43,13 @@ public class Order {
 
     private void validateOrderLineItems(List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
+            throw new BadRequestException(ErrorType.ORDER_LINE_ITEM_EMPTY);
         }
         final Set<String> orderedMenus = orderLineItems.stream()
                 .map(OrderLineItem::getOrderMenuName)
                 .collect(Collectors.toSet());
         if (orderedMenus.size() != orderLineItems.size()) {
-            throw new IllegalArgumentException();
+            throw new BadRequestException(ErrorType.ORDER_LINE_ITEM_DUPLICATED);
         }
     }
 
@@ -55,12 +57,12 @@ public class Order {
         if (orderStatus.equals(OrderStatus.COOKING)) {
             return;
         }
-        throw new IllegalArgumentException();
+        throw new BadRequestException(ErrorType.ORDER_NOT_COOKING);
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
         if (this.orderStatus.equals(OrderStatus.COMPLETION)) {
-            throw new IllegalArgumentException();
+            throw new BadRequestException(ErrorType.ORDER_ALREADY_COMPLETED);
         }
         this.orderStatus = orderStatus;
     }

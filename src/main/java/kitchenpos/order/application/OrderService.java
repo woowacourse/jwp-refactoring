@@ -1,5 +1,7 @@
 package kitchenpos.order.application;
 
+import kitchenpos.exception.BadRequestException;
+import kitchenpos.exception.ErrorType;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderMenu;
@@ -76,6 +78,6 @@ public class OrderService {
 
     private Order findOrder(Long orderId) {
         return orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new BadRequestException(ErrorType.ORDER_NOT_FOUND));
     }
 }

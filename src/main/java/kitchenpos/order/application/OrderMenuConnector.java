@@ -1,5 +1,7 @@
 package kitchenpos.order.application;
 
+import kitchenpos.exception.BadRequestException;
+import kitchenpos.exception.ErrorType;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.OrderMenu;
@@ -18,13 +20,13 @@ public class OrderMenuConnector {
 
     public void validateMenuId(Long menuId) {
         if (!menuRepository.existsById(menuId)) {
-            throw new IllegalArgumentException();
+            throw new BadRequestException(ErrorType.MENU_NOT_FOUND);
         }
     }
 
     public OrderMenu generateOrderMenu(Long menuId) {
         final Menu foundMenu = menuRepository.findById(menuId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new BadRequestException(ErrorType.MENU_NOT_FOUND));
         final OrderMenu orderMenu = new OrderMenu(foundMenu.getName(), foundMenu.getPrice());
         return orderMenuRepository.save(orderMenu);
     }

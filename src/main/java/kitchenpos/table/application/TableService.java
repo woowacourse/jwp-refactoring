@@ -1,5 +1,7 @@
 package kitchenpos.table.application;
 
+import kitchenpos.exception.BadRequestException;
+import kitchenpos.exception.ErrorType;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.table.ui.request.OrderTableEmptyRequest;
@@ -59,6 +61,6 @@ public class TableService {
 
     private OrderTable findOrderTable(Long orderTableId) {
         return orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new BadRequestException(ErrorType.TABLE_NOT_FOUND));
     }
 }
