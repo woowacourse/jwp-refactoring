@@ -8,6 +8,11 @@ public class OrderTableRequestDto {
     private OrderTableRequestDto() {
     }
 
+    public OrderTableRequestDto(int numberOfGuests, Boolean empty) {
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
     public int getNumberOfGuests() {
         return numberOfGuests;
     }

@@ -9,6 +9,8 @@ import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.exception.CannotChangeOrderTableEmpty;
 import kitchenpos.exception.InvalidOrderTableException;
+import kitchenpos.ui.dto.request.table.OrderTableEmptyRequestDto;
+import kitchenpos.ui.dto.request.table.OrderTableGuestRequestDto;
 import kitchenpos.ui.dto.request.table.OrderTableRequestDto;
 import kitchenpos.ui.dto.response.table.OrderTableResponseDto;
 import org.springframework.stereotype.Service;
@@ -55,11 +57,11 @@ public class TableService {
 
     @Transactional
     public OrderTableResponseDto changeEmpty(final Long orderTableId,
-        final OrderTableRequestDto orderTableRequestDto) {
+        final OrderTableEmptyRequestDto orderTableEmptyRequestDto) {
         final OrderTable orderTable = findOrderTableById(orderTableId);
 
         orderRepository.findByOrderTableId(orderTableId).ifPresent(this::validateIfCompleteOrder);
-        orderTable.changeEmptyStatus(orderTableRequestDto.getEmpty());
+        orderTable.changeEmptyStatus(orderTableEmptyRequestDto.isEmpty());
 
         return new OrderTableResponseDto(
             orderTable.getId(),
@@ -77,9 +79,9 @@ public class TableService {
 
     @Transactional
     public OrderTableResponseDto changeNumberOfGuests(final Long orderTableId,
-        final OrderTableRequestDto orderTableRequestDto) {
+        final OrderTableGuestRequestDto orderTableGuestRequestDto) {
         final OrderTable orderTable = findOrderTableById(orderTableId);
-        orderTable.changeNumberOfGuests(orderTableRequestDto.getNumberOfGuests());
+        orderTable.changeNumberOfGuests(orderTableGuestRequestDto.getNumberOfGuests());
 
         return new OrderTableResponseDto(
             orderTable.getId(),

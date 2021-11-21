@@ -7,6 +7,10 @@ public class OrderStatusRequestDto {
     private OrderStatusRequestDto() {
     }
 
+    public OrderStatusRequestDto(String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
     public String getOrderStatus() {
         return orderStatus;
     }

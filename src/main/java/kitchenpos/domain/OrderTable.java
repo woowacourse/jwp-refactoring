@@ -10,7 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import kitchenpos.exception.CannotChangeOrderTableEmpty;
 import kitchenpos.exception.CannotChangeOrderTableGuest;
-import kitchenpos.exception.CannotUngroupTableException;
 
 @Entity
 public class OrderTable {
@@ -47,7 +46,7 @@ public class OrderTable {
     }
 
     public boolean canCreateTableGroup() {
-        return this.isEmpty() && Objects.isNull(tableGroup.getId());
+        return this.isEmpty() && Objects.isNull(tableGroup);
     }
 
     public void includeInTableGroup(TableGroup tableGroup) {
@@ -73,7 +72,7 @@ public class OrderTable {
         }
 
         if (this.empty) {
-            throw new CannotUngroupTableException();
+            throw new CannotChangeOrderTableGuest();
         }
 
         this.numberOfGuests = numberOfGuests;
@@ -92,6 +91,10 @@ public class OrderTable {
     }
 
     public Long getTableGroupId() {
+        if (Objects.isNull(this.tableGroup)) {
+            return null;
+        }
+
         return this.tableGroup.getId();
     }
 }

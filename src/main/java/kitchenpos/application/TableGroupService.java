@@ -12,6 +12,7 @@ import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.exception.CannotUngroupTableException;
 import kitchenpos.exception.InvalidOrderTableException;
 import kitchenpos.exception.InvalidTableGroupException;
+import kitchenpos.exception.InvalidTableGroupSizeException;
 import kitchenpos.ui.dto.request.table.TableGroupRequestDto;
 import kitchenpos.ui.dto.response.table.OrderTableResponseDto;
 import kitchenpos.ui.dto.response.table.TableGroupResponseDto;
@@ -40,7 +41,7 @@ public class TableGroupService {
         List<Long> orderTableIds = tableGroupRequestDto.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTableIds)) {
-            throw new IllegalArgumentException();
+            throw new InvalidTableGroupSizeException();
         }
 
         final List<OrderTable> orderTables = orderTableRepository.findAllById(orderTableIds);
@@ -82,6 +83,6 @@ public class TableGroupService {
     }
 
     private boolean validateIfCompleteOrders(List<Order> orders) {
-        return orders.stream().anyMatch(order -> order.isNotCompletion());
+        return orders.stream().anyMatch(Order::isNotCompletion);
     }
 }

@@ -5,18 +5,24 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.exception.CannotUngroupTableException;
+import kitchenpos.exception.InvalidOrderTableException;
+import kitchenpos.exception.InvalidTableGroupException;
+import kitchenpos.exception.InvalidTableGroupSizeException;
+import kitchenpos.ui.dto.request.order.OrderLineItemRequestDto;
+import kitchenpos.ui.dto.request.order.OrderRequestDto;
+import kitchenpos.ui.dto.request.order.OrderStatusRequestDto;
+import kitchenpos.ui.dto.request.table.OrderTableEmptyRequestDto;
+import kitchenpos.ui.dto.request.table.OrderTableRequestDto;
+import kitchenpos.ui.dto.request.table.TableGroupRequestDto;
+import kitchenpos.ui.dto.response.order.OrderResponseDto;
+import kitchenpos.ui.dto.response.table.OrderTableResponseDto;
+import kitchenpos.ui.dto.response.table.TableGroupResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,6 +31,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
@@ -38,10 +45,10 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private TableService tableService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderService orderService;
 
     @DisplayName("테이블 그룹 생성 테스트")
     @Nested
@@ -51,10 +58,10 @@ class TableGroupServiceTest {
         @Test
         void create_Success() {
             // given
-            TableGroup tableGroup = newTableGroup();
+            TableGroupRequestDto tableGroup = newTableGroup();
 
             // when
-            TableGroup createdTableGroup = tableGroupService.create(tableGroup);
+            TableGroupResponseDto createdTableGroup = tableGroupService.create(tableGroup);
 
             // then
             assertThat(createdTableGroup.getId()).isNotNull();
@@ -69,63 +76,66 @@ class TableGroupServiceTest {
         @ValueSource(ints = {0, 1})
         void create_noneOrOneOrderTable_ExceptionThrown(int numOfTables) {
             // given
-            TableGroup tableGroup = newTableGroup();
-            List<OrderTable> tables = new ArrayList<>();
-
+            List<Long> tables = new ArrayList<>();
             for (int i = 0; i < numOfTables; i++) {
-                tables.add(saveAndReturnOrderTable(true));
+                tables.add(saveAndReturnOrderTableId(true));
             }
 
-            tableGroup.setOrderTables(tables);
+            TableGroupRequestDto tableGroup = newTableGroup(tables);
 
             // when
             // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidTableGroupSizeException.class)
+                .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.BAD_REQUEST);
         }
 
         @DisplayName("[실패] 주문테이블이 존재하지 않으면 예외 발생")
         @Test
         void create_notExistingOrderTable_ExceptionThrown() {
             // given
-            TableGroup tableGroup = newTableGroup();
-            tableGroup.getOrderTables().get(0).setId(INVALID_ID);
+            TableGroupRequestDto tableGroup = newTableGroup(
+                Arrays.asList(saveAndReturnOrderTableId(true), INVALID_ID)
+            );
 
             // when
             // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidOrderTableException.class)
+                .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.BAD_REQUEST);
         }
 
         @DisplayName("[실패] 주문테이블이 빈 테이블이 아니면 예외 발생")
         @Test
         void create_emptyOrderTable_ExceptionThrown() {
             // given
-            TableGroup tableGroup = newTableGroup();
-            tableGroup.setOrderTables(
-                Arrays.asList(saveAndReturnOrderTable(true), saveAndReturnOrderTable(false)));
+            TableGroupRequestDto tableGroup = newTableGroup(
+                Arrays.asList(saveAndReturnOrderTableId(true), saveAndReturnOrderTableId(false))
+            );
 
             // when
             // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidTableGroupException.class)
+                .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.BAD_REQUEST);
         }
 
         @DisplayName("[실패] 주문테이블이 다른 테이블 그룹에 속해있다면 예외 발생")
         @Test
         void create_GroupTableIdNotNullOrderTable_ExceptionThrown() {
             // given
-            TableGroup defaultTableGroup = tableGroupService.create(newTableGroup());
-            OrderTable includeInAnotherGroupTable = defaultTableGroup.getOrderTables().get(0);
+            Long includeInAnotherGroupTableId =
+                tableGroupService.create(newTableGroup()).getOrderTables().get(0).getId();
 
-            TableGroup tableGroup = newTableGroup();
-            tableGroup.setOrderTables(
-                Arrays.asList(saveAndReturnOrderTable(true), includeInAnotherGroupTable));
+            TableGroupRequestDto tableGroup = newTableGroup(
+                Arrays.asList(saveAndReturnOrderTableId(true), includeInAnotherGroupTableId)
+            );
 
             // when
             // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidTableGroupException.class)
+                .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -137,15 +147,10 @@ class TableGroupServiceTest {
         @Test
         void ungroup_Success() {
             // given
-            TableGroup tableGroup = tableGroupService.create(newTableGroup());
+            TableGroupResponseDto tableGroup = tableGroupService.create(newTableGroup());
 
-            List<OrderTable> tables =
-                orderTableDao.findAllByTableGroupId(tableGroup.getId());
-
-            tables.forEach(table -> {
-                table.setEmpty(false);
-                orderTableDao.save(table);
-                saveOrderForOrderTable(table.getId(), OrderStatus.COMPLETION);
+            tableGroup.getOrderTables().forEach(table -> {
+                makeOrderAndChangeOrderStatus(table.getId(), OrderStatus.COMPLETION);
             });
 
             // when
@@ -159,55 +164,49 @@ class TableGroupServiceTest {
         @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
         void ungroup_CookingOrMealTable_ExceptionThrown(OrderStatus orderStatus) {
             // given
-            TableGroup tableGroup = tableGroupService.create(newTableGroup());
+            TableGroupResponseDto tableGroup = tableGroupService.create(newTableGroup());
 
-            List<OrderTable> tables =
-                orderTableDao.findAllByTableGroupId(tableGroup.getId());
-
-            tables.forEach(table -> {
-                table.setEmpty(false);
-                orderTableDao.save(table);
-                saveOrderForOrderTable(table.getId(), orderStatus);
+            tableGroup.getOrderTables().forEach(table -> {
+                makeOrderAndChangeOrderStatus(table.getId(), orderStatus);
             });
 
             // when
             // then
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CannotUngroupTableException.class)
+                .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.BAD_REQUEST);
+        }
+
+        private void makeOrderAndChangeOrderStatus(Long id, OrderStatus orderStatus) {
+            OrderResponseDto order = orderService.create(
+                new OrderRequestDto(id, Collections.singletonList(newOrderLineItem()))
+            );
+
+            orderService.changeOrderStatus(
+                order.getId(), new OrderStatusRequestDto(orderStatus.name())
+            );
+        }
+
+        private OrderLineItemRequestDto newOrderLineItem() {
+            return new OrderLineItemRequestDto(1L, 1L);
         }
     }
 
-    private TableGroup newTableGroup() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup
-            .setOrderTables(Arrays.asList(saveAndReturnOrderTable(true), saveAndReturnOrderTable(true)));
-
-        return tableGroup;
+    private TableGroupRequestDto newTableGroup() {
+        return new TableGroupRequestDto(
+            Arrays.asList(saveAndReturnOrderTableId(true), saveAndReturnOrderTableId(true))
+        );
     }
 
-    private OrderTable saveAndReturnOrderTable(boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(empty);
-
-        return orderTableDao.save(orderTable);
+    private TableGroupRequestDto newTableGroup(List<Long> orderTableIds) {
+        return new TableGroupRequestDto(orderTableIds);
     }
 
-    private void saveOrderForOrderTable(Long tableId, OrderStatus orderStatus) {
-        Order order = new Order();
-        order.setOrderTableId(tableId);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(orderStatus.name());
-        order.setOrderLineItems(Collections.singletonList(newOrderLineItem()));
+    private Long saveAndReturnOrderTableId(boolean empty) {
+        OrderTableResponseDto orderTable =
+            tableService.create(new OrderTableRequestDto(0, true));
 
-        orderDao.save(order);
-    }
-
-    private OrderLineItem newOrderLineItem() {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1);
-
-        return orderLineItem;
+        OrderTableEmptyRequestDto orderTableEmptyRequestDto = new OrderTableEmptyRequestDto(empty);
+        return tableService.changeEmpty(orderTable.getId(), orderTableEmptyRequestDto).getId();
     }
 }

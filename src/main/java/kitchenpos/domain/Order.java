@@ -13,11 +13,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import kitchenpos.exception.CannotChangeOrderStatus;
 import kitchenpos.exception.InvalidOrderException;
 import org.springframework.util.CollectionUtils;
 
 @Entity
+@Table(name = "orders")
 public class Order {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +35,7 @@ public class Order {
     private LocalDateTime orderedTime;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "order_line_item_id")
+    @JoinColumn(name = "order_id")
     private List<OrderLineItem> orderLineItems;
 
     public Order() {

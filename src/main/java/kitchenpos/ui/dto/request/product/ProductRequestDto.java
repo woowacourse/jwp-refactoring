@@ -10,6 +10,11 @@ public class ProductRequestDto {
     private ProductRequestDto() {
     }
 
+    public ProductRequestDto(String name, BigDecimal price) {
+        this.name = name;
+        this.price = price;
+    }
+
     public String getName() {
         return name;
     }

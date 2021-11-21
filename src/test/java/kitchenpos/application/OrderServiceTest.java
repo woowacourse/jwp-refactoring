@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.sun.org.apache.xpath.internal.operations.Or;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -10,11 +11,24 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.exception.CannotChangeOrderStatus;
+import kitchenpos.exception.InvalidMenuException;
+import kitchenpos.exception.InvalidOrderException;
+import kitchenpos.exception.InvalidOrderTableException;
+import kitchenpos.ui.dto.request.order.OrderLineItemRequestDto;
+import kitchenpos.ui.dto.request.order.OrderRequestDto;
+import kitchenpos.ui.dto.request.order.OrderStatusRequestDto;
+import kitchenpos.ui.dto.request.table.OrderTableEmptyRequestDto;
+import kitchenpos.ui.dto.request.table.OrderTableRequestDto;
+import kitchenpos.ui.dto.response.order.OrderLineItemResponseDto;
+import kitchenpos.ui.dto.response.order.OrderResponseDto;
+import kitchenpos.ui.dto.response.table.OrderTableResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
@@ -38,17 +52,17 @@ class OrderServiceTest {
         @Test
         void create_success() {
             // given
-            Order order = newOrder();
+            OrderRequestDto order = newOrder();
 
             // when
-            Order createdOrder = orderService.create(order);
+            OrderResponseDto createdOrder = orderService.create(order);
 
             // then
             assertThat(createdOrder.getId()).isNotNull();
             assertThat(createdOrder).extracting("orderTableId", "orderStatus")
                 .contains(order.getOrderTableId(), "COOKING");
             assertThat(createdOrder.getOrderLineItems().stream()
-                .map(OrderLineItem::getSeq)
+                .map(OrderLineItemResponseDto::getSeq)
                 .filter(Objects::nonNull)
                 .count())
                 .isEqualTo(order.getOrderLineItems().size());
@@ -58,55 +72,52 @@ class OrderServiceTest {
         @Test
         void create_emptyOrderLineItems_ExceptionThrwon() {
             // given
-            Order order = newOrder();
-            order.setOrderLineItems(Collections.emptyList());
+            OrderRequestDto order = newOrderWithEmptyOrderLine();
 
             // when
             // then
             assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidOrderException.class)
+                .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.BAD_REQUEST);
         }
 
         @DisplayName("[실패] 주문항목의 메뉴가 존재하지 않을 경우 예외 발생")
         @Test
         void create_InvalidMenu_ExceptionThrown() {
             // given
-            OrderLineItem invalidMenuItem = newOrderLineItem();
-            invalidMenuItem.setMenuId(INVALID_ID);
-
-            Order order = newOrder();
-            order.setOrderLineItems(Collections.singletonList(invalidMenuItem));
+            OrderRequestDto order = newOrderWithInvalidMenu();
 
             // when
             // then
             assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidMenuException.class)
+                .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.BAD_REQUEST);
         }
 
         @DisplayName("[실패] 주문항목의 주문 테이블이 존재하지 않을 경우 예외 발생")
         @Test
         void create_InvalidOrderTable_ExceptionThrown() {
             // given
-            Order order = newOrder();
-            order.setOrderTableId(INVALID_ID);
+            OrderRequestDto order = newOrderWithInvalidTable();
 
             // when
             // then
             assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidOrderTableException.class)
+                .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.BAD_REQUEST);
         }
 
         @DisplayName("[실패] 주문항목의 주문 테이블이 비어있을 경우 예외 발생")
         @Test
         void create_EmptyOrderTable_ExceptionThrown() {
             // given
-            Order order = newOrder();
-            order.setOrderTableId(saveAndReturnOrderTable(true).getId());
+            OrderRequestDto order = newOrderWithEmptyTable();
 
             // when
             // then
             assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidOrderException.class)
+                .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -117,12 +128,11 @@ class OrderServiceTest {
         @Test
         void changeOrderStatus_Success() {
             // given
-            Order order = orderService.create(newOrder());
-            Order orderWithTargetStatus = newOrder();
-            orderWithTargetStatus.setOrderStatus(OrderStatus.MEAL.name());
+            OrderResponseDto order = orderService.create(newOrder());
+            OrderStatusRequestDto orderStatusRequestDto = new OrderStatusRequestDto(OrderStatus.MEAL.name());
 
             // when
-            Order result = orderService.changeOrderStatus(order.getId(), orderWithTargetStatus);
+            OrderResponseDto result = orderService.changeOrderStatus(order.getId(), orderStatusRequestDto);
 
             // then
             assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
@@ -132,34 +142,32 @@ class OrderServiceTest {
         @Test
         void changeOrderStatus_InvalidOrderId_ExceptionThrown() {
             // given
-            Order orderWithTargetStatus = newOrder();
-            orderWithTargetStatus.setOrderStatus(OrderStatus.MEAL.name());
+            OrderStatusRequestDto orderStatusRequestDto = new OrderStatusRequestDto(OrderStatus.MEAL.name());
 
             // when
             // then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(INVALID_ID, orderWithTargetStatus))
-                .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.changeOrderStatus(INVALID_ID, orderStatusRequestDto))
+                .isInstanceOf(InvalidOrderException.class)
+                .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.BAD_REQUEST);
         }
 
-        @DisplayName("[실패] 주문 ID가 유효하지 않으면 예외 발생")
+        @DisplayName("[실패] 주문이 Completion 상태라면 예외 발생")
         @Test
         void changeOrderStatus_CompletionOrderStatus_ExceptionThrown() {
             // given
-            Order completedOrder = newOrder();
-            completedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
-
-            Long completedOrderId =
-                orderService.changeOrderStatus(
-                    orderService.create(newOrder()).getId(), completedOrder
-                ).getId();
-
-            Order orderWithTargetStatus = newOrder();
-            orderWithTargetStatus.setOrderStatus(OrderStatus.MEAL.name());
+            OrderResponseDto order = orderService.create(newOrder());
+            orderService.changeOrderStatus(
+                order.getId(),
+                new OrderStatusRequestDto(OrderStatus.COMPLETION.name())
+            );
+            OrderStatusRequestDto orderStatusRequestDto =
+                new OrderStatusRequestDto(OrderStatus.MEAL.name());
 
             // when
             // then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(completedOrderId, orderWithTargetStatus))
-                .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), orderStatusRequestDto))
+                .isInstanceOf(CannotChangeOrderStatus.class)
+                .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -171,32 +179,56 @@ class OrderServiceTest {
         orderService.create(newOrder());
 
         // when
-        List<Order> result = orderService.list();
+        List<OrderResponseDto> result = orderService.list();
 
         // then
         assertThat(result).hasSize(previousSize + 1);
     }
 
-    private Order newOrder() {
-        Order order = new Order();
-        order.setOrderTableId(saveAndReturnOrderTable(false).getId());
-        order.setOrderLineItems(Collections.singletonList(newOrderLineItem()));
-
-        return order;
+    private OrderRequestDto newOrder() {
+        return new OrderRequestDto(
+            saveAndReturnOrderTableId(false),
+            Collections.singletonList(newOrderLineItem())
+        );
     }
 
-    private OrderLineItem newOrderLineItem() {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1);
-
-        return orderLineItem;
+    private OrderRequestDto newOrderWithEmptyOrderLine() {
+        return new OrderRequestDto(
+            saveAndReturnOrderTableId(false),
+            null
+        );
     }
 
-    private OrderTable saveAndReturnOrderTable(boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(empty);
+    private OrderRequestDto newOrderWithInvalidMenu() {
+        return new OrderRequestDto(
+            saveAndReturnOrderTableId(false),
+            Collections.singletonList(new OrderLineItemRequestDto(INVALID_ID, 1L))
+        );
+    }
 
-        return tableService.create(orderTable);
+    private OrderRequestDto newOrderWithInvalidTable() {
+        return new OrderRequestDto(
+            INVALID_ID,
+            Collections.singletonList(newOrderLineItem())
+        );
+    }
+
+    private OrderRequestDto newOrderWithEmptyTable() {
+        return new OrderRequestDto(
+            saveAndReturnOrderTableId(true),
+            Collections.singletonList(newOrderLineItem())
+        );
+    }
+
+    private OrderLineItemRequestDto newOrderLineItem() {
+        return new OrderLineItemRequestDto(1L, 1L);
+    }
+
+    private Long saveAndReturnOrderTableId(boolean empty) {
+        OrderTableResponseDto orderTable =
+            tableService.create(new OrderTableRequestDto(0, true));
+
+        OrderTableEmptyRequestDto orderTableEmptyRequestDto = new OrderTableEmptyRequestDto(empty);
+        return tableService.changeEmpty(orderTable.getId(), orderTableEmptyRequestDto).getId();
     }
 }

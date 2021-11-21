@@ -2,12 +2,12 @@ package kitchenpos.ui.dto.request.table;
 
 public class OrderTableGuestRequestDto {
 
-    private Long numberOfGuests;
+    private int numberOfGuests;
 
     private OrderTableGuestRequestDto() {
     }
 
-    public Long getNumberOfGuests() {
+    public int getNumberOfGuests() {
         return numberOfGuests;
     }
 }

@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
+import java.util.Objects;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -13,7 +14,7 @@ import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.exception.InvalidMenuException;
 import kitchenpos.exception.InvalidOrderException;
 import kitchenpos.exception.InvalidOrderTableException;
-import kitchenpos.ui.dto.request.order.OrderLineItemDto;
+import kitchenpos.ui.dto.request.order.OrderLineItemRequestDto;
 import kitchenpos.ui.dto.request.order.OrderRequestDto;
 import kitchenpos.ui.dto.request.order.OrderStatusRequestDto;
 import kitchenpos.ui.dto.response.order.OrderLineItemResponseDto;
@@ -21,6 +22,7 @@ import kitchenpos.ui.dto.response.order.OrderResponseDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 @Service
 public class OrderService {
 
@@ -40,8 +42,7 @@ public class OrderService {
     @Transactional
     public OrderResponseDto create(final OrderRequestDto orderRequestDto) {
         final OrderTable orderTable = findOrderTableById(orderRequestDto);
-        final List<OrderLineItem> orderLineItems = toOrderLineItems(
-            orderRequestDto.getOrderLineItems());
+        final List<OrderLineItem> orderLineItems = toOrderLineItems(orderRequestDto);
 
         final Order order = new Order(orderTable, orderLineItems);
         final Order created = orderRepository.save(order);
@@ -54,13 +55,18 @@ public class OrderService {
             .orElseThrow(InvalidOrderTableException::new);
     }
 
-    private List<OrderLineItem> toOrderLineItems(List<OrderLineItemDto> orderLineItems) {
+    private List<OrderLineItem> toOrderLineItems(OrderRequestDto orderRequestDto) {
+        List<OrderLineItemRequestDto> orderLineItems = orderRequestDto.getOrderLineItems();
+        if (Objects.isNull(orderLineItems)) {
+            throw new InvalidOrderException();
+        }
+
         return orderLineItems.stream()
             .map(this::getOrderLineItem)
             .collect(toList());
     }
 
-    private OrderLineItem getOrderLineItem(OrderLineItemDto orderLineItemDto) {
+    private OrderLineItem getOrderLineItem(OrderLineItemRequestDto orderLineItemDto) {
         final Menu menu = menuRepository.findById(orderLineItemDto.getMenuId())
             .orElseThrow(InvalidMenuException::new);
 

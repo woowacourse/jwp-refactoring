@@ -3,6 +3,8 @@ package kitchenpos.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.TableService;
+import kitchenpos.ui.dto.request.table.OrderTableEmptyRequestDto;
+import kitchenpos.ui.dto.request.table.OrderTableGuestRequestDto;
 import kitchenpos.ui.dto.request.table.OrderTableRequestDto;
 import kitchenpos.ui.dto.response.table.OrderTableResponseDto;
 import org.springframework.http.ResponseEntity;
@@ -45,10 +47,10 @@ public class TableRestController {
     @PutMapping("/api/tables/{orderTableId}/empty")
     public ResponseEntity<OrderTableResponseDto> changeEmpty(
         @PathVariable final Long orderTableId,
-        @RequestBody final OrderTableRequestDto orderTableRequestDto
+        @RequestBody final OrderTableEmptyRequestDto orderTableEmptyRequestDto
     ) {
         OrderTableResponseDto responseDto = tableService
-            .changeEmpty(orderTableId, orderTableRequestDto);
+            .changeEmpty(orderTableId, orderTableEmptyRequestDto);
 
         return ResponseEntity.ok()
             .body(responseDto)
@@ -58,11 +60,11 @@ public class TableRestController {
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
     public ResponseEntity<OrderTableResponseDto> changeNumberOfGuests(
         @PathVariable final Long orderTableId,
-        @RequestBody final OrderTableRequestDto orderTableRequestDto
+        @RequestBody final OrderTableGuestRequestDto orderTableGuestRequestDto
     ) {
         OrderTableResponseDto responseDto = tableService.changeNumberOfGuests(
             orderTableId,
-            orderTableRequestDto
+            orderTableGuestRequestDto
         );
 
         return ResponseEntity.ok()

@@ -30,11 +30,11 @@ public class Menu {
     private MenuGroup menuGroup;
 
     @OneToMany(
-        mappedBy = "menu",
         fetch = FetchType.LAZY,
         cascade = CascadeType.PERSIST,
         orphanRemoval = true
     )
+    @JoinColumn(name = "menu_id")
     private List<MenuProduct> menuProducts;
 
     public Menu() {

@@ -7,6 +7,10 @@ public class MenuGroupRequestDto {
     private MenuGroupRequestDto() {
     }
 
+    public MenuGroupRequestDto(String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }

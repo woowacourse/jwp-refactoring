@@ -6,12 +6,15 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.exception.InvalidPriceException;
+import kitchenpos.ui.dto.request.product.ProductRequestDto;
+import kitchenpos.ui.dto.response.product.ProductResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
@@ -30,10 +33,10 @@ class ProductServiceTest {
         @Test
         void create_Success() {
             // given
-            Product product = newProduct();
+            ProductRequestDto product = newProduct();
 
             // when
-            Product savedProduct = productService.create(product);
+            ProductResponseDto savedProduct = productService.create(product);
 
             // then
             assertThat(savedProduct.getId()).isNotNull();
@@ -46,26 +49,27 @@ class ProductServiceTest {
         @Test
         void create_nullPrice_ExceptionThrown() {
             // given
-            Product product = newProduct();
-            product.setPrice(null);
+            ProductRequestDto product = newProduct(null);
 
             // when
             // then
             assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidPriceException.class)
+                .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.BAD_REQUEST);
         }
 
         @DisplayName("[실패] 가격이 음수면 예외 발생")
         @Test
         void create_negativePrice_ExceptionThrown() {
             // given
-            Product product = newProduct();
-            product.setPrice(BigDecimal.valueOf(-10));
+            ProductRequestDto product = newProduct(BigDecimal.valueOf(-10));
 
             // when
             // then
             assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidPriceException.class)
+                .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.BAD_REQUEST);
+            ;
         }
     }
 
@@ -77,17 +81,17 @@ class ProductServiceTest {
         productService.create(newProduct());
 
         // when
-        List<Product> result = productService.list();
+        List<ProductResponseDto> result = productService.list();
 
         // then
         assertThat(result).hasSize(previousSize + 1);
     }
 
-    private Product newProduct() {
-        Product product = new Product();
-        product.setName("새로운 상품");
-        product.setPrice(BigDecimal.valueOf(15_000));
+    private ProductRequestDto newProduct() {
+        return newProduct(BigDecimal.valueOf(25_000));
+    }
 
-        return product;
+    private ProductRequestDto newProduct(BigDecimal price) {
+        return new ProductRequestDto("새로운 상품", price);
     }
 }

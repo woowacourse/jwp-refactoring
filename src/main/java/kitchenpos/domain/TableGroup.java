@@ -20,7 +20,7 @@ public class TableGroup {
 
     private LocalDateTime createdDate;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order_table_id")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
 
     public TableGroup() {
