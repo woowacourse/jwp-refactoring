@@ -96,3 +96,35 @@
         ]
     }
     ```
+
+----
+
+#### POST: /api/change-menu
+- 메뉴의 이름, 가격을 변경한다
+- **요청**
+    ```json
+    {
+        "id" : 1,
+        "name" : "에드메뉴",
+        "price" : 1500
+    }
+    ```
+
+- **응답**
+    - Status Code: 201
+    ```json
+    {
+        "id": 1,
+        "name": "에드메뉴",
+        "price": 1500,
+        "menuGroupId": 2,
+        "menuProducts": [
+            {
+                "seq": 1,
+                "menuId": 1,
+                "productId": 1,
+                "quantity": 1
+            }
+        ]
+    }
+    ```

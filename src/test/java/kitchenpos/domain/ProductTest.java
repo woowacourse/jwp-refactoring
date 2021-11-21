@@ -1,12 +1,13 @@
 package kitchenpos.domain;
 
+import kitchenpos.exception.BadRequestException;
+import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 class ProductTest {
 
@@ -17,12 +18,12 @@ class ProductTest {
                 new Product.Builder()
                         .price(null)
                         .build())
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(BadRequestException.class);
 
         assertThatThrownBy(() ->
                 new Product.Builder()
                         .price(BigDecimal.valueOf(-10000))
                         .build())
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 }

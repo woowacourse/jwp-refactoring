@@ -1,5 +1,14 @@
 package kitchenpos.domain;
 
+import kitchenpos.exception.BadRequestException;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.domain.OrderMenu;
+import kitchenpos.product.domain.Product;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +27,7 @@ class OrderTest {
             .build();
 
     private final MenuProduct menuProduct = new MenuProduct.Builder()
-            .product(product)
+            .productId(product.getId())
             .quantity(1L)
             .build();
 
@@ -36,7 +45,7 @@ class OrderTest {
             .build();
 
     private final OrderLineItem orderLineItem = new OrderLineItem.Builder()
-            .menu(menu)
+            .orderMenu(new OrderMenu(menu.getName(), menu.getPrice()))
             .quantity(1L)
             .build();
 
@@ -44,13 +53,13 @@ class OrderTest {
     @Test
     void createOrderWithBuilder() {
         final Order order = new Order.Builder()
-                .orderTable(orderTable)
+                .orderTableId(orderTable.getId())
                 .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.MAX)
                 .orderLineItems(Arrays.asList(orderLineItem))
                 .build();
 
-        assertThat(order.getOrderTable()).isEqualTo(orderTable);
+        assertThat(order.getOrderTableId()).isEqualTo(orderTable.getId());
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
         assertThat(order.getOrderedTime()).isEqualTo(LocalDateTime.MAX);
         assertThat(order.getOrderLineItems()).hasSize(1);
@@ -60,51 +69,51 @@ class OrderTest {
     @Test
     void orderLineItemCantBeNull() {
         assertThatThrownBy(() -> new Order.Builder()
-                .orderTable(orderTable)
+                .orderTableId(orderTable.getId())
                 .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.MAX)
                 .orderLineItems(null)
                 .build()
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(BadRequestException.class);
     }
 
     @DisplayName("주문 생성 시 orderLineItem의 메뉴는 중복되면 안된다.")
     @Test
     void orderLineItemMenuShouldNotDuplicate() {
         assertThatThrownBy(() -> new Order.Builder()
-                .orderTable(orderTable)
+                .orderTableId(orderTable.getId())
                 .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.MAX)
                 .orderLineItems(Arrays.asList(orderLineItem, orderLineItem))
                 .build()
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(BadRequestException.class);
     }
 
     @DisplayName("주문 생성 시 orderLineItem의 OrderStutus는 꼭 Cooking이어야 한다.")
     @Test
     void orderLineItemMenuShouldBeCooking() {
         assertThatThrownBy(() -> new Order.Builder()
-                .orderTable(orderTable)
+                .orderTableId(orderTable.getId())
                 .orderStatus(OrderStatus.MEAL)
                 .orderedTime(LocalDateTime.MAX)
                 .orderLineItems(Arrays.asList(orderLineItem))
                 .build()
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(BadRequestException.class);
 
         assertThatThrownBy(() -> new Order.Builder()
-                .orderTable(orderTable)
+                .orderTableId(orderTable.getId())
                 .orderStatus(OrderStatus.COMPLETION)
                 .orderedTime(LocalDateTime.MAX)
                 .orderLineItems(Arrays.asList(orderLineItem))
                 .build()
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(BadRequestException.class);
     }
 
     @DisplayName("주문의 OrderStatus가 Complete라면 변경할 수 없다")
     @Test
     void orderStatusCannotChangeToComplete() {
         final Order order = new Order.Builder()
-                .orderTable(orderTable)
+                .orderTableId(orderTable.getId())
                 .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.MAX)
                 .orderLineItems(Arrays.asList(orderLineItem))
@@ -112,6 +121,6 @@ class OrderTest {
         order.changeOrderStatus(OrderStatus.COMPLETION);
 
         assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.MEAL))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 }

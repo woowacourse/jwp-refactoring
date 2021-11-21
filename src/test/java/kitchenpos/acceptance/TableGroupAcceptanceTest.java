@@ -1,9 +1,15 @@
 package kitchenpos.acceptance;
 
-import kitchenpos.domain.*;
-import kitchenpos.ui.request.OrderTableIdRequest;
-import kitchenpos.ui.request.TableGroupRequest;
-import kitchenpos.ui.response.TableGroupResponse;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderMenu;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTables;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.ui.request.OrderTableIdRequest;
+import kitchenpos.table.ui.request.TableGroupRequest;
+import kitchenpos.table.ui.response.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +18,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
@@ -46,22 +51,26 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
                 .empty(true)
                 .build();
 
+        OrderTables 주문_테이블들 = new OrderTables(Arrays.asList(주문_테이블1, 주문_테이블2));
+
         테이블_그룹 = new TableGroup.Builder()
                 .createdDate(LocalDateTime.now())
-                .orderTables(new OrderTables(Arrays.asList(주문_테이블1, 주문_테이블2)))
                 .build();
+        주문_테이블들.registerTableGroup(테이블_그룹);
         tableGroupRepository.save(테이블_그룹);
-        orderTableRepository.save(주문_테이블1);
-        orderTableRepository.save(주문_테이블2);
+        orderTableRepository.saveAll(주문_테이블들.getOrderTables());
+
+        final OrderMenu 한마리메뉴_중_후라이드치킨_오더메뉴1 = new OrderMenu(한마리메뉴_중_후라이드치킨.getName(), 한마리메뉴_중_후라이드치킨.getPrice());
+        orderMenuRepository.save(한마리메뉴_중_후라이드치킨_오더메뉴1);
 
         주문_테이블1_한마리메뉴_중_후라이트치킨 = new OrderLineItem.Builder()
-                .menu(한마리메뉴_중_후라이드치킨)
+                .orderMenu(한마리메뉴_중_후라이드치킨_오더메뉴1)
                 .order(null)
                 .quantity(1L)
                 .build();
 
         주문1 = new Order.Builder()
-                .orderTable(주문_테이블1)
+                .orderTableId(주문_테이블1.getId())
                 .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.now())
                 .orderLineItems(Arrays.asList(주문_테이블1_한마리메뉴_중_후라이트치킨))
@@ -70,14 +79,17 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         orderRepository.save(주문1);
         orderLineItemRepository.save(주문_테이블1_한마리메뉴_중_후라이트치킨);
 
+        final OrderMenu 한마리메뉴_중_후라이드치킨_오더메뉴2 = new OrderMenu(한마리메뉴_중_후라이드치킨.getName(), 한마리메뉴_중_후라이드치킨.getPrice());
+        orderMenuRepository.save(한마리메뉴_중_후라이드치킨_오더메뉴2);
+
         주문_테이블2_한마리메뉴_중_후라이트치킨 = new OrderLineItem.Builder()
-                .menu(한마리메뉴_중_후라이드치킨)
+                .orderMenu(한마리메뉴_중_후라이드치킨_오더메뉴2)
                 .order(null)
                 .quantity(1L)
                 .build();
 
         주문2 = new Order.Builder()
-                .orderTable(주문_테이블2)
+                .orderTableId(주문_테이블2.getId())
                 .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.now())
                 .orderLineItems(Arrays.asList(주문_테이블2_한마리메뉴_중_후라이트치킨))
@@ -133,7 +145,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         ResponseEntity<TableGroupResponse> response = testRestTemplate.postForEntity("/api/table-groups", 유효하지_않은_테이블_그룹_요청, TableGroupResponse.class);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @DisplayName("테이블 그룹 요청에 담긴 주문 테이블 ID가 중복된다면, 예외가 발생한다.")
@@ -155,7 +167,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         ResponseEntity<TableGroupResponse> response = testRestTemplate.postForEntity("/api/table-groups", 테이블_그룹_요청, TableGroupResponse.class);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @DisplayName("그룹화 하려는 주문 테이블이 비어있지 않다면, 그룹화할 수 없다.")
@@ -185,7 +197,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         ResponseEntity<TableGroupResponse> response = testRestTemplate.postForEntity("/api/table-groups", 테이블_그룹_요청, TableGroupResponse.class);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @DisplayName("그룹화 하려는 주문 테이블이 이미 그룹화되어 있다면, 그룹화할 수 없다.")
@@ -209,7 +221,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         ResponseEntity<TableGroupResponse> response = testRestTemplate.postForEntity("/api/table-groups", 테이블_그룹_요청, TableGroupResponse.class);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @DisplayName("통합 계산을 위해 개별 테이블을 그룹화하는 tableGroupId에 해당하는 테이블 그룹을 삭제한다")
@@ -230,14 +242,25 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     @DisplayName("통합 계산을 위해 개별 테이블을 그룹화하는 tableGroupId에 해당하는 테이블 그룹을 삭제할 때, 테이블 그룹의 테이블들의 주문 상태가 COMPLETION이 아니면 에러가 발생한다.")
     @Test
     void cannotDeleteTableGroupWhenTableOrderIsNotCompletion() {
-        // when
+        // given
+        final OrderMenu 한마리메뉴_중_후라이드치킨_오더메뉴3 = new OrderMenu(한마리메뉴_중_후라이드치킨.getName(), 한마리메뉴_중_후라이드치킨.getPrice());
+        orderMenuRepository.save(한마리메뉴_중_후라이드치킨_오더메뉴3);
+
+        OrderLineItem 새로운_주문_아이템 = new OrderLineItem.Builder()
+                .orderMenu(한마리메뉴_중_후라이드치킨_오더메뉴3)
+                .order(null)
+                .quantity(1L)
+                .build();
+
         Order 요리중인_주문 = new Order.Builder()
-                .orderTable(주문_테이블1)
+                .orderTableId(주문_테이블1.getId())
                 .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.now())
-                .orderLineItems(Arrays.asList(주문_테이블1_한마리메뉴_중_후라이트치킨))
+                .orderLineItems(Arrays.asList(새로운_주문_아이템))
                 .build();
+
         orderRepository.save(요리중인_주문);
+
         Long 테이블_그룹1_ID = 테이블_그룹.getId();
 
         // when
@@ -245,6 +268,6 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
                 HttpMethod.DELETE, HttpEntity.EMPTY, Void.class);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 }

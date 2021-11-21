@@ -1,8 +1,7 @@
 package kitchenpos.acceptance;
 
-import kitchenpos.domain.Product;
-import kitchenpos.ui.request.ProductRequest;
-import kitchenpos.ui.response.ProductResponse;
+import kitchenpos.product.ui.request.ProductRequest;
+import kitchenpos.product.ui.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -61,7 +60,7 @@ class ProductAcceptanceTest extends AcceptanceTest {
         ResponseEntity<ProductResponse> responseEntity = testRestTemplate.postForEntity("/api/products", 강정치킨, ProductResponse.class);
 
         // then
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @DisplayName("새로운 상품을 등록할 때, 가격이 음수이면 안된다.")
@@ -76,6 +75,6 @@ class ProductAcceptanceTest extends AcceptanceTest {
         ResponseEntity<ProductResponse> responseEntity = testRestTemplate.postForEntity("/api/products", 강정치킨, ProductResponse.class);
 
         // then
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 }

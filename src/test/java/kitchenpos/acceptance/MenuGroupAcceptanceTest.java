@@ -1,7 +1,7 @@
 package kitchenpos.acceptance;
 
-import kitchenpos.ui.request.MenuGroupRequest;
-import kitchenpos.ui.response.MenuGroupResponse;
+import kitchenpos.menu.ui.request.MenuGroupRequest;
+import kitchenpos.menu.ui.response.MenuGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

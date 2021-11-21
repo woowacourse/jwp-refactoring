@@ -1,11 +1,18 @@
 package kitchenpos.acceptance;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
-import kitchenpos.repository.*;
-import kitchenpos.ui.response.OrderLineItemResponse;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.domain.repository.OrderMenuRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.menu.domain.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.repository.MenuProductRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.product.domain.repository.ProductRepository;
+import kitchenpos.order.domain.repository.OrderLineItemRepository;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.table.domain.repository.OrderTableRepository;
+import kitchenpos.table.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,6 +52,9 @@ public abstract class AcceptanceTest {
 
     @Autowired
     protected TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    protected OrderMenuRepository orderMenuRepository;
 
     protected MenuGroup 한마리메뉴;
     protected MenuGroup 두마리메뉴;
@@ -92,7 +102,7 @@ public abstract class AcceptanceTest {
 
         한마리메뉴_후라이드치킨 = new MenuProduct.Builder()
                 .menu(null)
-                .product(후라이드치킨)
+                .productId(후라이드치킨.getId())
                 .quantity(1L)
                 .build();
 
@@ -107,13 +117,13 @@ public abstract class AcceptanceTest {
 
         두마리메뉴_양념치킨 = new MenuProduct.Builder()
                 .menu(null)
-                .product(양념치킨)
+                .productId(양념치킨.getId())
                 .quantity(1L)
                 .build();
 
         두마리메뉴_간장치킨 = new MenuProduct.Builder()
                 .menu(null)
-                .product(간장치킨)
+                .productId(간장치킨.getId())
                 .quantity(1L)
                 .build();
 

@@ -24,7 +24,7 @@
                 {
                     "seq": 1,
                     "orderId": 1,
-                    "menuId": 1,
+                    "orderMenuId": 1,
                     "quantity": 1
                 }
             ]
@@ -42,7 +42,7 @@
       "orderTableId": 1,
       "orderLineItems": [
         {
-          "menuId": 1,
+          "orderMenuId": 1,
           "quantity": 1
         }
       ]
@@ -61,7 +61,7 @@
             {
                 "seq": 1,
                 "orderId": 1,
-                "menuId": 1,
+                "orderMenuId": 1,
                 "quantity": 1
             }
         ]
@@ -91,7 +91,7 @@
             {
                 "seq": 1,
                 "orderId": 1,
-                "menuId": 1,
+                "orderMenuId": 1,
                 "quantity": 1
             }
         ]
