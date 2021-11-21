@@ -56,7 +56,7 @@ public class TableService {
                     "orderTableId : " + orderTableId + "는 테이블 그룹에 속해 있어 상태 변경이 불가능합니다.");
         }
 
-        final Orders orders = Orders.create(orderRepository.findAllByTableGroup(savedOrderTable));
+        final Orders orders = Orders.create(orderRepository.findAllByOrderTable(savedOrderTable));
         orders.validateCompleted();
 
         savedOrderTable.changeEmpty(orderTableChangeEmptyRequest.getEmpty());

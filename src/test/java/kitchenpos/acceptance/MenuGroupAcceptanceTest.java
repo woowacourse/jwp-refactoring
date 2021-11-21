@@ -1,28 +1,18 @@
-package kitchenpos.application;
+package kitchenpos.acceptance;
 
+import kitchenpos.AcceptanceTest;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.fixture.MenuGroupFixture;
-import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.ui.dto.request.MenuGroupRequest;
 import kitchenpos.ui.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("MenuGroupService 테스트")
-@SpringBootTest
-public class MenuGroupServiceTest {
-
-    @Autowired
-    private MenuGroupService menuGroupService;
-
-    @Autowired
-    private MenuGroupRepository menuGroupRepository;
+public class MenuGroupAcceptanceTest extends AcceptanceTest {
 
     private final MenuGroupFixture menuGroupFixture = new MenuGroupFixture();
 
@@ -34,10 +24,9 @@ public class MenuGroupServiceTest {
         MenuGroup expected = menuGroupFixture.메뉴그룹_생성("메뉴그룹1");
 
         // when
-        MenuGroupResponse response = menuGroupService.create(메뉴그룹1_생성_요청);
+        MenuGroupResponse response = 메뉴그룹_등록(메뉴그룹1_생성_요청);
 
         // then
-        assertThat(menuGroupRepository.findById(response.getId())).isPresent();
         assertThat(response).usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(expected);
@@ -51,15 +40,22 @@ public class MenuGroupServiceTest {
         MenuGroupRequest 메뉴그룹2_생성_요청 = menuGroupFixture.메뉴그룹_생성_요청("메뉴그룹2");
 
 
-        List<MenuGroupResponse> expected = menuGroupFixture.메뉴그룹_응답_리스트_생성(menuGroupService.create(메뉴그룹1_생성_요청), menuGroupService.create(메뉴그룹2_생성_요청));
+        List<MenuGroupResponse> expected = menuGroupFixture.메뉴그룹_응답_리스트_생성(메뉴그룹_등록(메뉴그룹1_생성_요청), 메뉴그룹_등록(메뉴그룹2_생성_요청));
 
         // when
-        List<MenuGroupResponse> actual = menuGroupService.list();
+        List<MenuGroupResponse> actual = 메뉴그룹_리스트_조회();
 
         // then
         assertThat(actual).hasSize(expected.size());
         assertThat(actual).usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(expected);
+    }
+
+    public List<MenuGroupResponse> 메뉴그룹_리스트_조회(){
+        return request()
+                .get("/api/menu-groups")
+                .build()
+                .convertBodyToList(MenuGroupResponse.class);
     }
 }

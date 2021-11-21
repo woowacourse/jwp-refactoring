@@ -14,13 +14,21 @@ public class MenuGroup {
     protected MenuGroup() {
     }
 
-    public MenuGroup(String name) {
+    private MenuGroup(String name) {
         this(null, name);
     }
 
-    public MenuGroup(Long id, String name) {
+    private MenuGroup(Long id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public static MenuGroup create(String name){
+        return new MenuGroup(name);
+    }
+
+    public static MenuGroup create(Long id, String name){
+        return new MenuGroup(id, name);
     }
 
     public Long getId() {

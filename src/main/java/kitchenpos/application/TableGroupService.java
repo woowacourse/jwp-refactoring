@@ -9,6 +9,7 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
+import kitchenpos.ui.dto.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +31,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupCreateRequest tableGroupCreateRequest) {
+    public TableGroupResponse create(final TableGroupCreateRequest tableGroupCreateRequest) {
         final OrderTables orderTables = OrderTables
                 .create(tableGroupCreateRequest.getOrderTables());
         final OrderTables savedOrderTables = OrderTables
@@ -40,7 +41,7 @@ public class TableGroupService {
         final TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create(LocalDateTime.now()));
         savedOrderTables.group(savedTableGroup);
 
-        return savedTableGroup;
+        return TableGroupResponse.create(savedTableGroup);
     }
 
     @Transactional
@@ -49,7 +50,7 @@ public class TableGroupService {
                 .orElseThrow(() -> new IllegalArgumentException("tableGroupId : " + tableGroupId + "는 존재하지 않는 테이블그룹입니다."));
         final OrderTables orderTables = OrderTables.create(orderTableRepository.findAllByTableGroup(tableGroup));
         for (OrderTable orderTable : orderTables.getOrderTables()) {
-            Orders orders = Orders.create(orderRepository.findAllByTableGroup(orderTable));
+            Orders orders = Orders.create(orderRepository.findAllByOrderTable(orderTable));
             orders.validateCompleted();
         }
         orderTables.ungroup();
