@@ -90,13 +90,13 @@ class MenuServiceTest {
                 .build();
         menuProduct1 = MenuProduct.builder()
                 .id(1L)
-                .menu(savedMenu1)
+                .menuId(savedMenu1.getId())
                 .productId(savedProduct1.getId())
                 .quantity(1L)
                 .build();
         menuProduct2 = MenuProduct.builder()
                 .id(2L)
-                .menu(savedMenu2)
+                .menuId(savedMenu2.getId())
                 .productId(savedProduct2.getId())
                 .quantity(1L)
                 .build();

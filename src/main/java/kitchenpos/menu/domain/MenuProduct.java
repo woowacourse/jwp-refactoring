@@ -13,10 +13,10 @@ import javax.persistence.ManyToOne;
 public class MenuProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @Column(name = "menu_product_id")
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
+    @Column
+    private Long menuId;
     @Column(nullable = false)
     private Long productId;
     @Column(nullable = false)
@@ -27,7 +27,7 @@ public class MenuProduct {
 
     private MenuProduct(Builder builder) {
         this.id = builder.id;
-        this.menu = builder.menu;
+        this.menuId = builder.menuId;
         this.productId = builder.productId;
         this.quantity = builder.quantity;
     }
@@ -36,13 +36,13 @@ public class MenuProduct {
         return new Builder();
     }
 
-    public void updateMenu(Menu menu) {
-        this.menu = menu;
+    public void updateMenuId(Long menuId) {
+        this.menuId = menuId;
     }
 
     public static class Builder {
         private Long id;
-        private Menu menu;
+        private Long menuId;
         private Long productId;
         private long quantity;
 
@@ -51,7 +51,7 @@ public class MenuProduct {
 
         public Builder of(MenuProduct menuProduct) {
             this.id = menuProduct.id;
-            this.menu = menuProduct.menu;
+            this.menuId = menuProduct.menuId;
             this.productId = menuProduct.productId;
             this.quantity = menuProduct.quantity;
             return this;
@@ -62,8 +62,8 @@ public class MenuProduct {
             return this;
         }
 
-        public Builder menu(Menu menu) {
-            this.menu = menu;
+        public Builder menuId(Long menuId) {
+            this.menuId = menuId;
             return this;
         }
 
@@ -87,7 +87,7 @@ public class MenuProduct {
     }
 
     public Long getMenuId() {
-        return menu.getId();
+        return menuId;
     }
 
     public Long getProductId() {

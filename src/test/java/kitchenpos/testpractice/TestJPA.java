@@ -33,7 +33,7 @@ public class TestJPA {
 
         Menu menu = menuRepository.findById(1L).get();
         final List<MenuProduct> all = menuProductRepository.findAll();
-        all.forEach(menuProduct -> menuProduct.updateMenu(menu));
+        all.forEach(menuProduct -> menuProduct.updateMenuId(menu.getId()));
         menu.updateMenuProducts(all);
 
         testEntityManager.flush();

@@ -69,7 +69,7 @@ public class TestFixtures {
     public static MenuProduct createMenuProduct() {
         return MenuProduct.builder()
                 .id(1L)
-                .menu(createMenu())
+                .menuId(createMenu().getId())
                 .productId(1L)
                 .quantity(1L)
                 .build();
@@ -77,7 +77,7 @@ public class TestFixtures {
 
     public static MenuProduct createMenuProduct(Long id, Menu menu, Long quantity) {
         return MenuProduct.builder()
-                .menu(menu)
+                .menuId(menu.getId())
                 .productId(id)
                 .quantity(quantity)
                 .build();

@@ -20,7 +20,7 @@
 
 ### 클래스간 단방향 설정
 - [ ] Order. List<OrderLineItem> -> OneToMany 단방향 설정
-- [ ] Menu. List<MenuProduct> -> OneToMany 단방향 설정
+- [x] Menu. List<MenuProduct> -> OneToMany 단방향 설정
 ---
 - [ ] step3에서 order과 menu 사이의 관계 미션 구현
 - [ ] 멀티모듈 내용 프로젝트에 적용(step4)

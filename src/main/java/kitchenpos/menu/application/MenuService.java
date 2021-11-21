@@ -49,7 +49,7 @@ public class MenuService {
         final List<Product> savedProducts = productRepository.findByIdIn(menuProducts.getProductIds());
         menuProducts.checkValidityOfMenuPrice(savedProducts, savedMenu.getPrice());
         savedMenu.updateMenuProducts(menuProducts);
-        menuProducts.updateMenu(savedMenu);
+        menuProducts.updateMenu(savedMenu.getId());
         menuProductRepository.saveAll(menuProducts.getMenuProducts());
 
         return new MenuResponse(savedMenu);

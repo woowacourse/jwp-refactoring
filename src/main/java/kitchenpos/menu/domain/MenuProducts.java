@@ -6,12 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.product.domain.Product;
 
 @Embeddable
 public class MenuProducts {
-    @OneToMany(mappedBy = "menu")
+    @OneToMany
+    @JoinColumn(name = "id")
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public MenuProducts() {
@@ -52,7 +54,7 @@ public class MenuProducts {
         }
     }
 
-    public void updateMenu(Menu menu) {
-        menuProducts.forEach(it -> it.updateMenu(menu));
+    public void updateMenu(Long menuId) {
+        menuProducts.forEach(it -> it.updateMenuId(menuId));
     }
 }
