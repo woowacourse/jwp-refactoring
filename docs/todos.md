@@ -7,8 +7,8 @@
 ![의존성 그래프 작성](./image/리팩터링미션_의존성그래프.jpg)
 ---
 ### 패키지 분리
-- [ ] Price: element 패키지를 만들어 분리
-- [ ] Event
+- [x] Price: element 패키지를 만들어 분리
+- [x] Event
   - Product 패키지로 이동
   - handle repository에 따라 분리
 
