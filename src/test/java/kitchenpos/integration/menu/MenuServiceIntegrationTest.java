@@ -19,9 +19,7 @@ class MenuServiceIntegrationTest extends IntegrationTest {
     @Test
     void create_Valid_Success() {
         // given
-        Product product = new Product();
-        product.setName("얌 프라이");
-        product.setPrice(BigDecimal.valueOf(8000, 2));
+        Product product = new Product("얌 프라이", BigDecimal.valueOf(8000, 2));
 
         Product savedProduct = productService.create(product);
 
@@ -50,9 +48,7 @@ class MenuServiceIntegrationTest extends IntegrationTest {
     @Test
     void create_InvalidPriceWithNull_Fail() {
         // given
-        Product product = new Product();
-        product.setName("얌 프라이");
-        product.setPrice(BigDecimal.valueOf(8000, 2));
+        Product product = new Product("얌 프라이", BigDecimal.valueOf(8000, 2));
 
         Product savedProduct = productService.create(product);
 
@@ -76,9 +72,7 @@ class MenuServiceIntegrationTest extends IntegrationTest {
     @Test
     void create_InvalidPriceWithNegative_Fail() {
         // given
-        Product product = new Product();
-        product.setName("얌 프라이");
-        product.setPrice(BigDecimal.valueOf(8000, 2));
+        Product product = new Product("얌 프라이", BigDecimal.valueOf(8000, 2));
 
         Product savedProduct = productService.create(product);
 
@@ -103,9 +97,7 @@ class MenuServiceIntegrationTest extends IntegrationTest {
     @Test
     void create_NonExistingMenuGroup_Fail() {
         // given
-        Product product = new Product();
-        product.setName("얌 프라이");
-        product.setPrice(BigDecimal.valueOf(8000, 2));
+        Product product = new Product("얌 프라이", BigDecimal.valueOf(8000, 2));
 
         Product savedProduct = productService.create(product);
 
@@ -146,9 +138,7 @@ class MenuServiceIntegrationTest extends IntegrationTest {
     @Test
     void create_InvalidQuantityWithZero_Fail() {
         // given
-        Product product = new Product();
-        product.setName("얌 프라이");
-        product.setPrice(BigDecimal.valueOf(8000, 2));
+        Product product = new Product("얌 프라이", BigDecimal.valueOf(8000, 2));
 
         Product savedProduct = productService.create(product);
 
@@ -173,9 +163,7 @@ class MenuServiceIntegrationTest extends IntegrationTest {
     @Test
     void create_InvalidQuantityWithNegative_Fail() {
         // given
-        Product product = new Product();
-        product.setName("얌 프라이");
-        product.setPrice(BigDecimal.valueOf(8000, 2));
+        Product product = new Product("얌 프라이", BigDecimal.valueOf(8000, 2));
 
         Product savedProduct = productService.create(product);
 
@@ -200,9 +188,7 @@ class MenuServiceIntegrationTest extends IntegrationTest {
     @Test
     void list_Valid_Success() {
         // given
-        Product product = new Product();
-        product.setName("얌 프라이");
-        product.setPrice(BigDecimal.valueOf(8000, 2));
+        Product product = new Product("얌 프라이", BigDecimal.valueOf(8000, 2));
 
         Product savedProduct = productService.create(product);
 
