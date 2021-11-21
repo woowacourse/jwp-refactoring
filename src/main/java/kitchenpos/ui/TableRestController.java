@@ -7,7 +7,6 @@ import kitchenpos.application.dtos.OrderTableRequest;
 import kitchenpos.application.dtos.OrderTableResponse;
 import kitchenpos.application.dtos.OrderTableResponses;
 import kitchenpos.application.dtos.TableEmptyRequest;
-import kitchenpos.domain.OrderTable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
