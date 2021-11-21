@@ -28,10 +28,8 @@ class TableGroupServiceIntegrationTest extends IntegrationTest {
 
     @BeforeEach
     void setUp() {
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(5L);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(6L);
+        OrderTable orderTable1 = new OrderTable(5L, null, 2, false);
+        OrderTable orderTable2 = new OrderTable(6L, null, 2, false);
 
         orderTables = new ArrayList<>();
         orderTables.addAll(Arrays.asList(orderTable1, orderTable2));
@@ -50,7 +48,7 @@ class TableGroupServiceIntegrationTest extends IntegrationTest {
         // then
         assertThat(savedTableGroup)
             .usingRecursiveComparison()
-            .ignoringFields("id", "orderTables.tableGroupId")
+            .ignoringFields("id", "orderTables.tableGroupId", "orderTables.numberOfGuests")
             .isEqualTo(tableGroup);
     }
 
@@ -71,8 +69,7 @@ class TableGroupServiceIntegrationTest extends IntegrationTest {
     @Test
     void create_NonExistingOrderTables_Fail() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(15L);
+        OrderTable orderTable = new OrderTable(15L, null, 0, true);
 
         orderTables.add(orderTable);
 
@@ -89,9 +86,7 @@ class TableGroupServiceIntegrationTest extends IntegrationTest {
     @Test
     void create_AlreadyGrouping_Fail() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(4);
-        orderTable.setEmpty(false);
+        OrderTable orderTable = new OrderTable(4, false);
 
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
@@ -130,10 +125,7 @@ class TableGroupServiceIntegrationTest extends IntegrationTest {
 
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(savedTableGroup.getId());
-        orderTable.setNumberOfGuests(4);
-        orderTable.setEmpty(false);
+        OrderTable orderTable = new OrderTable(savedTableGroup.getId(), 4, false);
 
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 

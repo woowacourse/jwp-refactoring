@@ -3,7 +3,6 @@ package kitchenpos.integration.table;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -21,9 +20,7 @@ class TableServiceIntegrationTest extends IntegrationTest {
     @Test
     void create_Valid_Success() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+        OrderTable orderTable = new OrderTable(2, false);
 
         // when
         OrderTable savedOrderTable = tableService.create(orderTable);
@@ -52,15 +49,11 @@ class TableServiceIntegrationTest extends IntegrationTest {
     @Test
     void changeEmpty_Valid_Success() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+        OrderTable orderTable = new OrderTable(2, false);
 
         OrderTable savedOrderTable = tableService.create(orderTable);
 
-        OrderTable targetOrderTable = new OrderTable();
-        targetOrderTable.setNumberOfGuests(0);
-        targetOrderTable.setEmpty(true);
+        OrderTable targetOrderTable = new OrderTable(0, true);
 
         // when
         OrderTable changedOrderTable = tableService
@@ -74,9 +67,7 @@ class TableServiceIntegrationTest extends IntegrationTest {
     @Test
     void changeEmpty_NonExistingOrderTable_Fail() {
         // given
-        OrderTable targetOrderTable = new OrderTable();
-        targetOrderTable.setNumberOfGuests(0);
-        targetOrderTable.setEmpty(true);
+        OrderTable targetOrderTable = new OrderTable(0, true);
 
         // when
         // then
@@ -88,12 +79,8 @@ class TableServiceIntegrationTest extends IntegrationTest {
     @Test
     void changeEmpty_GroupingOrderTable_Fail() {
         // given
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setNumberOfGuests(0);
-        orderTable1.setEmpty(true);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setNumberOfGuests(0);
-        orderTable2.setEmpty(true);
+        OrderTable orderTable1 = new OrderTable(0, true);
+        OrderTable orderTable2 = new OrderTable(0, true);
 
         OrderTable savedOrderTable1 = tableService.create(orderTable1);
         OrderTable savedOrderTable2 = tableService.create(orderTable2);
@@ -103,7 +90,7 @@ class TableServiceIntegrationTest extends IntegrationTest {
 
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
-        savedOrderTable1.setTableGroupId(savedTableGroup.getId());
+        savedOrderTable1.changeTableGroupId(savedTableGroup.getId());
 
         // when
         // then
@@ -116,9 +103,7 @@ class TableServiceIntegrationTest extends IntegrationTest {
     @Test
     void changeEmpty_InvalidOrderStatus_Fail() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+        OrderTable orderTable = new OrderTable(2, false);
 
         OrderTable savedOrderTable = tableService.create(orderTable);
 
@@ -131,9 +116,7 @@ class TableServiceIntegrationTest extends IntegrationTest {
 
         orderService.create(order);
 
-        OrderTable targetOrderTable = new OrderTable();
-        targetOrderTable.setNumberOfGuests(0);
-        targetOrderTable.setEmpty(true);
+        OrderTable targetOrderTable = new OrderTable(0, true);
 
         // when
         // then
@@ -146,15 +129,11 @@ class TableServiceIntegrationTest extends IntegrationTest {
     @Test
     void changeNumberOfGuests_Valid_Success() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(6);
-        orderTable.setEmpty(false);
+        OrderTable orderTable = new OrderTable(6, false);
 
         OrderTable savedOrderTable = tableService.create(orderTable);
 
-        OrderTable targetOrderTable = new OrderTable();
-        targetOrderTable.setNumberOfGuests(0);
-        targetOrderTable.setEmpty(true);
+        OrderTable targetOrderTable = new OrderTable(0, true);
 
         // when
         OrderTable changedOrderTable = tableService
@@ -168,15 +147,11 @@ class TableServiceIntegrationTest extends IntegrationTest {
     @Test
     void changeNumberOfGuests_Negative_Fail() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(6);
-        orderTable.setEmpty(false);
+        OrderTable orderTable = new OrderTable(6, false);
 
         OrderTable savedOrderTable = tableService.create(orderTable);
 
-        OrderTable targetOrderTable = new OrderTable();
-        targetOrderTable.setNumberOfGuests(-4);
-        targetOrderTable.setEmpty(true);
+        OrderTable targetOrderTable = new OrderTable(-4, true);
 
         // when
         // then
@@ -189,9 +164,7 @@ class TableServiceIntegrationTest extends IntegrationTest {
     @Test
     void changeNumberOfGuests_NonExistingOrderTable_Fail() {
         // given
-        OrderTable targetOrderTable = new OrderTable();
-        targetOrderTable.setNumberOfGuests(0);
-        targetOrderTable.setEmpty(true);
+        OrderTable targetOrderTable = new OrderTable(0, true);
 
         // when
         // then
@@ -203,15 +176,11 @@ class TableServiceIntegrationTest extends IntegrationTest {
     @Test
     void changeNumberOfGuests_EmptyOrderTable_Fail() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
+        OrderTable orderTable = new OrderTable(0, true);
 
         OrderTable savedOrderTable = tableService.create(orderTable);
 
-        OrderTable targetOrderTable = new OrderTable();
-        targetOrderTable.setNumberOfGuests(0);
-        targetOrderTable.setEmpty(true);
+        OrderTable targetOrderTable = new OrderTable(0, true);
 
         // when
         // then

@@ -29,9 +29,7 @@ class OrderServiceIntegrationTest extends IntegrationTest {
 
     @BeforeEach
     void setUp() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+        OrderTable orderTable = new OrderTable(2, false);
 
         savedOrderTable = tableService.create(orderTable);
 
