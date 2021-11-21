@@ -4,13 +4,13 @@ import java.util.List;
 
 public class TableGroupRequestDto {
 
-    private List<OrderTableDto> orderTables;
+    private List<Long> orderTables;
 
 
     private TableGroupRequestDto() {
     }
 
-    public List<OrderTableDto> getOrderTables() {
+    public List<Long> getOrderTables() {
         return orderTables;
     }
 }

@@ -1,11 +1,8 @@
 package kitchenpos.ui;
 
-import static java.util.stream.Collectors.toList;
-
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.request.table.OrderTableRequestDto;
 import kitchenpos.ui.dto.response.table.OrderTableResponseDto;
 import org.springframework.http.ResponseEntity;
@@ -28,14 +25,9 @@ public class TableRestController {
     public ResponseEntity<OrderTableResponseDto> create(
         @RequestBody final OrderTableRequestDto orderTableRequestDto
     ) {
-        final OrderTable created = tableService.create(new OrderTable(
-            orderTableRequestDto.getNumberOfGuests(),
-            orderTableRequestDto.getEmpty()
-        ));
+        OrderTableResponseDto responseDto = tableService.create(orderTableRequestDto);
 
-        OrderTableResponseDto responseDto = getOrderTableResponseDto(created);
-
-        final URI uri = URI.create("/api/tables/" + created.getId());
+        final URI uri = URI.create("/api/tables/" + responseDto.getId());
         return ResponseEntity.created(uri)
             .body(responseDto)
             ;
@@ -43,23 +35,11 @@ public class TableRestController {
 
     @GetMapping("/api/tables")
     public ResponseEntity<List<OrderTableResponseDto>> list() {
-        List<OrderTable> orderTables = tableService.list();
-        List<OrderTableResponseDto> responseDtos = orderTables.stream()
-            .map(this::getOrderTableResponseDto)
-            .collect(toList());
+        List<OrderTableResponseDto> responseDtos = tableService.list();
 
         return ResponseEntity.ok()
             .body(responseDtos)
             ;
-    }
-
-    private OrderTableResponseDto getOrderTableResponseDto(OrderTable created) {
-        return new OrderTableResponseDto(
-            created.getId(),
-            created.getTableGroupId(),
-            created.getNumberOfGuests(),
-            created.isEmpty()
-        );
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")
@@ -67,16 +47,8 @@ public class TableRestController {
         @PathVariable final Long orderTableId,
         @RequestBody final OrderTableRequestDto orderTableRequestDto
     ) {
-        OrderTable changed = tableService.changeEmpty(
-            orderTableId, new OrderTable(orderTableRequestDto.getEmpty())
-        );
-
-        OrderTableResponseDto responseDto = new OrderTableResponseDto(
-            changed.getId(),
-            changed.getTableGroupId(),
-            changed.getNumberOfGuests(),
-            changed.isEmpty()
-        );
+        OrderTableResponseDto responseDto = tableService
+            .changeEmpty(orderTableId, orderTableRequestDto);
 
         return ResponseEntity.ok()
             .body(responseDto)
@@ -88,16 +60,9 @@ public class TableRestController {
         @PathVariable final Long orderTableId,
         @RequestBody final OrderTableRequestDto orderTableRequestDto
     ) {
-        OrderTable changed = tableService.changeNumberOfGuests(
+        OrderTableResponseDto responseDto = tableService.changeNumberOfGuests(
             orderTableId,
-            new OrderTable(orderTableRequestDto.getNumberOfGuests())
-        );
-
-        OrderTableResponseDto responseDto = new OrderTableResponseDto(
-            changed.getId(),
-            changed.getTableGroupId(),
-            changed.getNumberOfGuests(),
-            changed.isEmpty()
+            orderTableRequestDto
         );
 
         return ResponseEntity.ok()
