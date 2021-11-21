@@ -1,5 +1,7 @@
 package kitchenpos.acceptance;
 
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.ui.request.MenuChangeRequest;
 import kitchenpos.menu.ui.request.MenuProductRequest;
 import kitchenpos.menu.ui.request.MenuRequest;
 import kitchenpos.menu.ui.response.MenuResponse;
@@ -83,6 +85,60 @@ class MenuAcceptanceTest extends AcceptanceTest {
 
         // when
         ResponseEntity<MenuResponse> response = testRestTemplate.postForEntity("/api/menus", 두마리메뉴_후라이드_양념치킨, MenuResponse.class);
+
+        // then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @DisplayName("메뉴의 이름과 가격을 변경할 수 있다.")
+    @Test
+    void changeMenuNameAndPrice() {
+        // given
+        final Long 바꿀_메뉴_ID = 한마리메뉴_중_후라이드치킨.getId();
+        final MenuChangeRequest menuChangeRequest = new MenuChangeRequest();
+        menuChangeRequest.setId(바꿀_메뉴_ID);
+        menuChangeRequest.setName("에드특별메뉴");
+        menuChangeRequest.setPrice(BigDecimal.valueOf(10000L));
+
+        // when
+        testRestTemplate.postForEntity("/api/change-menu", menuChangeRequest, MenuResponse.class);
+
+        // then
+        final Menu menu = menuRepository.findById(바꿀_메뉴_ID).get();
+        assertThat(menu.getId()).isEqualTo(바꿀_메뉴_ID);
+        assertThat(menu.getName()).isEqualTo("에드특별메뉴");
+        assertThat(menu.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(10000L));
+    }
+
+    @DisplayName("메뉴의 가격을 변경 시, 기존의 메뉴에 포함된 Product들의 가격들의 총합보다 클 수 없다.")
+    @Test
+    void changeMenuPrice() {
+        // given
+        final Long 바꿀_메뉴_ID = 한마리메뉴_중_후라이드치킨.getId();
+        final MenuChangeRequest menuChangeRequest = new MenuChangeRequest();
+        menuChangeRequest.setId(바꿀_메뉴_ID);
+        menuChangeRequest.setName("에드특별메뉴");
+        menuChangeRequest.setPrice(BigDecimal.valueOf(50000L));
+
+        // when
+        ResponseEntity<MenuResponse> response = testRestTemplate.postForEntity("/api/change-menu", menuChangeRequest, MenuResponse.class);
+
+        // then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @DisplayName("메뉴의 가격을 변경 시, 가격이 음수이면 안된다.")
+    @Test
+    void cannotChangeMenuPriceBelowZero() {
+        // given
+        final Long 바꿀_메뉴_ID = 한마리메뉴_중_후라이드치킨.getId();
+        final MenuChangeRequest menuChangeRequest = new MenuChangeRequest();
+        menuChangeRequest.setId(바꿀_메뉴_ID);
+        menuChangeRequest.setName("에드특별메뉴");
+        menuChangeRequest.setPrice(BigDecimal.valueOf(-100L));
+
+        // when
+        ResponseEntity<MenuResponse> response = testRestTemplate.postForEntity("/api/change-menu", menuChangeRequest, MenuResponse.class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);

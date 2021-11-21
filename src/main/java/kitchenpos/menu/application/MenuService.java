@@ -5,6 +5,7 @@ import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.menu.ui.request.MenuChangeRequest;
 import kitchenpos.menu.ui.request.MenuProductRequest;
 import kitchenpos.menu.ui.request.MenuRequest;
 import kitchenpos.menu.ui.response.MenuResponse;
@@ -66,5 +67,16 @@ public class MenuService {
     public List<MenuResponse> list() {
         final List<Menu> menus = menuRepository.findAllFetchJoinMenuProducts();
         return MenuResponse.toList(menus);
+    }
+
+    @Transactional
+    public MenuResponse changeMenu(MenuChangeRequest menuChangeRequest) {
+        final Menu menu = menuRepository.findById(menuChangeRequest.getId())
+                .orElseThrow(IllegalArgumentException::new);
+        menu.changeName(menuChangeRequest.getName());
+        menuProductConnector.validateMenuProducts(menu.getMenuProducts(), menuChangeRequest.getPrice());
+        menu.changePrice(menuChangeRequest.getPrice());
+        menuRepository.save(menu);
+        return MenuResponse.of(menu);
     }
 }

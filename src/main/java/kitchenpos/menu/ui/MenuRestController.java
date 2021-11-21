@@ -1,6 +1,7 @@
 package kitchenpos.menu.ui;
 
 import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.ui.request.MenuChangeRequest;
 import kitchenpos.menu.ui.request.MenuRequest;
 import kitchenpos.menu.ui.response.MenuResponse;
 import org.springframework.http.ResponseEntity;
@@ -34,5 +35,11 @@ public class MenuRestController {
         return ResponseEntity.ok()
                 .body(menuService.list())
                 ;
+    }
+
+    @PostMapping("/api/change-menu")
+    public ResponseEntity<MenuResponse> changeMenu(@RequestBody final MenuChangeRequest menuChangeRequest) {
+        final MenuResponse changed = menuService.changeMenu(menuChangeRequest);
+        return ResponseEntity.ok(changed);
     }
 }
