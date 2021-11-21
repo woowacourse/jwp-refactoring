@@ -14,8 +14,7 @@ class MenuGroupServiceIntegrationTest extends IntegrationTest {
     @Test
     void create_Valid_Success() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("시즌 메뉴");
+        MenuGroup menuGroup = new MenuGroup("시즌 메뉴");
 
         // when
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
@@ -31,8 +30,7 @@ class MenuGroupServiceIntegrationTest extends IntegrationTest {
     @Test
     void list_Valid_Success() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("시즌 메뉴");
+        MenuGroup menuGroup = new MenuGroup("시즌 메뉴");
 
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
