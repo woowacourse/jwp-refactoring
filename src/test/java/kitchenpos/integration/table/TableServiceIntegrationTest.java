@@ -127,9 +127,8 @@ class TableServiceIntegrationTest extends IntegrationTest {
         orderLineItem.setMenuId(2L);
         orderLineItem.setQuantity(1);
 
-        Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
+        Order order = new Order(savedOrderTable.getId());
+        order.add(Collections.singletonList(orderLineItem));
 
         orderService.create(order);
 
