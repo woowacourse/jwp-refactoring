@@ -51,10 +51,10 @@ public class MenuService {
                 .collect(Collectors.toList());
     }
 
-    private MenuProduct getMenuProduct(MenuProductRequest menuProduct) {
-        final Product product = productRepository.findById(menuProduct.getProductId())
-                .orElseThrow(() -> new NoSuchElementException("해당 상품이 존재하지 않습니다. id: " + menuProduct.getProductId()));
-        return new MenuProduct(product, menuProduct.getQuantity());
+    private MenuProduct getMenuProduct(MenuProductRequest request) {
+        final Product product = productRepository.findById(request.getProductId())
+                .orElseThrow(() -> new NoSuchElementException("해당 상품이 존재하지 않습니다. id: " + request.getProductId()));
+        return new MenuProduct(product, request.getQuantity());
     }
 
     @Transactional(readOnly = true)
