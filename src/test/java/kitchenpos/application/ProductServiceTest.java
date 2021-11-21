@@ -4,18 +4,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.TestFixtures;
 import kitchenpos.application.dtos.ProductInformationRequest;
 import kitchenpos.application.dtos.ProductRequest;
-import kitchenpos.domain.MenuProductEvent;
+import kitchenpos.application.dtos.ProductResponse;
+import kitchenpos.application.dtos.ProductResponses;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -51,10 +50,10 @@ class ProductServiceTest {
 
         when(productRepository.save(any())).thenReturn(savedProduct);
 
-        final Product actual = productService.create(request);
+        final ProductResponse actual = productService.create(request);
         assertAll(
                 () -> assertThat(actual.getId()).isEqualTo(1L),
-                () -> assertThat(actual.getPrice()).isEqualTo(BigDecimal.valueOf(1500)),
+                () -> assertThat(actual.getPrice()).isEqualTo(1500),
                 () -> assertThat(actual.getName()).isEqualTo("컵누들")
         );
     }
@@ -78,24 +77,27 @@ class ProductServiceTest {
     @DisplayName("상품의 목록을 조회할 수 있다")
     @Test
     void list() {
-        final Product product1 = new Product();
-        final Product product2 = new Product();
+        final Product product1 = TestFixtures.createProduct(1L);
+        final Product product2 = TestFixtures.createProduct(2L);
         final List<Product> products = Arrays.asList(product1, product2);
 
         when(productRepository.findAll()).thenReturn(products);
 
-        final List<Product> actual = productService.list();
-        assertThat(actual).containsExactly(product1, product2);
+        final ProductResponses actual = productService.list();
+        assertThat(actual.getProducts()).usingRecursiveComparison()
+                .isEqualTo(Arrays.asList(new ProductResponse(product1), new ProductResponse(product2)));
     }
 
     @DisplayName("상품의 가격을 변경한다")
     @Test
     void update() {
         final ProductInformationRequest request = new ProductInformationRequest("이름변경", 30000L);
-        when(productRepository.findById(any())).thenReturn(Optional.of(new Product()));
+        final Product product = TestFixtures.createProduct();
+        when(productRepository.findById(any())).thenReturn(Optional.of(product));
+        when(productRepository.save(any())).thenReturn(TestFixtures.updateProduct(product, request));
 
-        final Product product = productService.update(1L, request);
+        final ProductResponse actual = productService.update(1L, request);
 
-        assertThat(product.getPrice()).isEqualTo(BigDecimal.valueOf(request.getPrice()));
+        assertThat(actual.getPrice()).isEqualTo(request.getPrice());
     }
 }

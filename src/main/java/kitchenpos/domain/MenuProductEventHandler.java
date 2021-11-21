@@ -4,6 +4,9 @@ import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 public class MenuProductEventHandler {
@@ -16,7 +19,7 @@ public class MenuProductEventHandler {
         this.menuRepository = menuRepository;
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void handle(MenuProductEvent event) {
         final MenuProduct menuProduct = menuProductRepository.findByProductId(event.getProductId())
                 .orElseThrow(IllegalArgumentException::new);

@@ -3,6 +3,8 @@ package kitchenpos.application;
 import java.util.List;
 import kitchenpos.application.dtos.ProductInformationRequest;
 import kitchenpos.application.dtos.ProductRequest;
+import kitchenpos.application.dtos.ProductResponse;
+import kitchenpos.application.dtos.ProductResponses;
 import kitchenpos.domain.MenuProductEvent;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
@@ -23,23 +25,22 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final ProductRequest request) {
+    public ProductResponse create(final ProductRequest request) {
         final Product product = productWith(request);
-        return productRepository.save(product);
+        return new ProductResponse(productRepository.save(product));
     }
 
-    public List<Product> list() {
-        return productRepository.findAll();
+    public ProductResponses list() {
+        return new ProductResponses(productRepository.findAll());
     }
 
     @Transactional
-    public Product update(final Long productId, final ProductInformationRequest request) {
+    public ProductResponse update(final Long productId, final ProductInformationRequest request) {
         final Product product = productRepository.findById(productId)
                 .orElseThrow(IllegalArgumentException::new);
         product.updatePrice(request.getPrice());
         eventPublisher.publishEvent(new MenuProductEvent(product.getId(), product.getPrice()));
-        productRepository.save(product);
-        return product;
+        return new ProductResponse(productRepository.save(product));
     }
 
     private Product productWith(ProductRequest request) {

@@ -11,6 +11,9 @@ import kitchenpos.application.dtos.MenuRequest;
 import kitchenpos.application.dtos.OrderLineItemRequest;
 import kitchenpos.application.dtos.OrderRequest;
 import kitchenpos.application.dtos.OrderTableRequest;
+import kitchenpos.application.dtos.ProductInformationRequest;
+import kitchenpos.application.dtos.ProductResponse;
+import kitchenpos.application.dtos.ProductResponses;
 import kitchenpos.application.dtos.TableGroupRequest;
 import kitchenpos.application.dtos.TableGroupResponse;
 import kitchenpos.domain.Menu;
@@ -30,6 +33,22 @@ public class TestFixtures {
                 .id(1L)
                 .name("상품이름")
                 .price(BigDecimal.valueOf(1000))
+                .build();
+    }
+
+    public static Product createProduct(Long id) {
+        return Product.builder()
+                .id(id)
+                .name("상품이름")
+                .price(BigDecimal.valueOf(1000))
+                .build();
+    }
+
+    public static Product updateProduct(Product product, ProductInformationRequest request){
+        return Product.builder()
+                .id(product.getId())
+                .name(request.getName())
+                .price(BigDecimal.valueOf(request.getPrice()))
                 .build();
     }
 

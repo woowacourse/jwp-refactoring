@@ -1,13 +1,11 @@
 package kitchenpos.ui;
 
 import java.net.URI;
-import java.util.List;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.dtos.ProductInformationRequest;
 import kitchenpos.application.dtos.ProductRequest;
 import kitchenpos.application.dtos.ProductResponse;
 import kitchenpos.application.dtos.ProductResponses;
-import kitchenpos.domain.Product;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,23 +24,22 @@ public class ProductRestController {
 
     @PostMapping("/api/products")
     public ResponseEntity<ProductResponse> create(@RequestBody final ProductRequest productRequest) {
-        final Product created = productService.create(productRequest);
-        final URI uri = URI.create("/api/products/" + created.getId());
+        final ProductResponse response = productService.create(productRequest);
+        final URI uri = URI.create("/api/products/" + response.getId());
         return ResponseEntity.created(uri)
-                .body(new ProductResponse(created));
+                .body(response);
     }
 
     @GetMapping("/api/products")
     public ResponseEntity<ProductResponses> list() {
-        final List<Product> products = productService.list();
+        final ProductResponses responses = productService.list();
         return ResponseEntity.ok()
-                .body(new ProductResponses(products));
+                .body(responses);
     }
 
     @PutMapping("/api/products/{productId}")
     public ResponseEntity<ProductResponse> update(@PathVariable final Long productId,
-                                                  @RequestBody final ProductInformationRequest request){
-        final Product product = productService.update(productId, request);
-        return ResponseEntity.ok(new ProductResponse(product));
+                                                  @RequestBody final ProductInformationRequest request) {
+        return ResponseEntity.ok(productService.update(productId, request));
     }
 }

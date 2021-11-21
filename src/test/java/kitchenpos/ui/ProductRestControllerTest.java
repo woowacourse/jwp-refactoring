@@ -12,6 +12,8 @@ import java.util.Collections;
 import kitchenpos.TestFixtures;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.dtos.ProductRequest;
+import kitchenpos.application.dtos.ProductResponse;
+import kitchenpos.application.dtos.ProductResponses;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,7 +41,7 @@ class ProductRestControllerTest {
     void create() throws Exception {
         final String content = objectMapper.writeValueAsString(new ProductRequest());
         final Product product = TestFixtures.createProduct();
-        when(productService.create(any())).thenReturn(product);
+        when(productService.create(any())).thenReturn(new ProductResponse(product));
 
         final MockHttpServletResponse response = mockMvc.perform(post("/api/products")
                         .content(content)
@@ -55,7 +57,9 @@ class ProductRestControllerTest {
 
     @Test
     void list() throws Exception {
-        when(productService.list()).thenReturn(Collections.singletonList(TestFixtures.createProduct()));
+        when(productService.list()).thenReturn(
+                new ProductResponses(Collections.singletonList(TestFixtures.createProduct()))
+        );
 
         final MockHttpServletResponse response = mockMvc.perform(get("/api/products"))
                 .andReturn()
