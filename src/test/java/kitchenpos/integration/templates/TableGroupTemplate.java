@@ -1,7 +1,5 @@
 package kitchenpos.integration.templates;
 
-import java.util.List;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupRequest;

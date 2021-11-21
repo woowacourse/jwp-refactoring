@@ -12,15 +12,14 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderLineItemRepository;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderRequest;
@@ -44,16 +43,16 @@ import org.springframework.test.util.ReflectionTestUtils;
 class OrderServiceTest {
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @InjectMocks
     private OrderService orderService;
@@ -65,7 +64,7 @@ class OrderServiceTest {
         Order order = OrderFactory.builder()
             .orderLineItems(OrderLineItemFactory.builder().build())
             .build();
-        given(orderDao.findAll()).willReturn(Collections.singletonList(order));
+        given(orderRepository.findAll()).willReturn(Collections.singletonList(order));
 
         // when
         ThrowingCallable throwingCallable = () -> orderService.list();
@@ -141,17 +140,17 @@ class OrderServiceTest {
         @Test
         void create() {
             // given
-            given(menuDao.countByIdIn(menuIds)).willReturn(1L);
-            given(orderTableDao.findById(order.getOrderTableId()))
+            given(menuRepository.countByIdIn(menuIds)).willReturn(1L);
+            given(orderTableRepository.findById(order.getOrderTableId()))
                 .willReturn(Optional.of(orderTable));
-            given(orderDao.save(any(Order.class))).willAnswer(
+            given(orderRepository.save(any(Order.class))).willAnswer(
                 invocation -> {
                     Order toSave = invocation.getArgument(0);
                     ReflectionTestUtils.setField(toSave, "id", savedOrderId);
                     return null;
                 }
             );
-            given(orderLineItemDao.saveAll(anyList())).willReturn(anyList());
+            given(orderLineItemRepository.saveAll(anyList())).willReturn(anyList());
 
             // when
             OrderResponse result = orderService.create(orderRequest);
@@ -188,9 +187,9 @@ class OrderServiceTest {
         @Test
         void createFail_whenOrderLineItemCountIsNotEqualToMenuCount() {
             // given
-            given(orderTableDao.findById(order.getOrderTableId()))
+            given(orderTableRepository.findById(order.getOrderTableId()))
                 .willReturn(Optional.of(orderTable));
-            given(menuDao.countByIdIn(menuIds)).willReturn(0L);
+            given(menuRepository.countByIdIn(menuIds)).willReturn(0L);
 
             // when
             ThrowingCallable throwingCallable = () -> orderService.create(orderRequest);
@@ -204,7 +203,7 @@ class OrderServiceTest {
         @Test
         void createFail_whenOrderTableDoesNotExist() {
             // given
-            given(orderTableDao.findById(order.getOrderTableId())).willReturn(Optional.empty());
+            given(orderTableRepository.findById(order.getOrderTableId())).willReturn(Optional.empty());
 
             // when
             ThrowingCallable throwingCallable = () -> orderService.create(orderRequest);
@@ -221,7 +220,7 @@ class OrderServiceTest {
             orderTable = OrderTableFactory.copy(orderTable)
                 .empty(true)
                 .build();
-            given(orderTableDao.findById(order.getOrderTableId()))
+            given(orderTableRepository.findById(order.getOrderTableId()))
                 .willReturn(Optional.of(orderTable));
 
             // when
@@ -261,7 +260,7 @@ class OrderServiceTest {
         @Test
         void changeOrderStatus() {
             // given
-            given(orderDao.findById(orderId)).willReturn(Optional.of(order));
+            given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
 
             // when
             OrderResponse result = orderService.changeOrderStatus(orderId, orderRequest);
@@ -274,7 +273,7 @@ class OrderServiceTest {
         @Test
         void changeOrderStatusFail_whenOrderDoesNotExist() {
             // given
-            given(orderDao.findById(orderId)).willReturn(Optional.empty());
+            given(orderRepository.findById(orderId)).willReturn(Optional.empty());
 
             // when
             ThrowingCallable throwingCallable =
@@ -292,7 +291,7 @@ class OrderServiceTest {
             order = OrderFactory.copy(order)
                 .orderStatus(OrderStatus.COMPLETION)
                 .build();
-            given(orderDao.findById(orderId)).willReturn(Optional.of(order));
+            given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
 
             // when
             ThrowingCallable throwingCallable =

@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuProductRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Products;
@@ -15,21 +15,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
-    private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
-    private final MenuProductDao menuProductDao;
-    private final ProductDao productDao;
+    private final MenuRepository menuRepository;
+    private final MenuGroupRepository menuGroupRepository;
+    private final MenuProductRepository menuProductRepository;
+    private final ProductRepository productRepository;
 
     public MenuService(
-            final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao,
-            final MenuProductDao menuProductDao,
-            final ProductDao productDao
+            final MenuRepository menuRepository,
+            final MenuGroupRepository menuGroupRepository,
+            final MenuProductRepository menuProductRepository,
+            final ProductRepository productRepository
     ) {
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
-        this.productDao = productDao;
+        this.menuRepository = menuRepository;
+        this.menuGroupRepository = menuGroupRepository;
+        this.menuProductRepository = menuProductRepository;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -37,16 +37,16 @@ public class MenuService {
         final Menu menu = menuRequest.toMenu();
         validateMenuGroupId(menu);
 
-        final Products products = new Products(productDao.findAllById(menu.getProductIds()));
+        final Products products = new Products(productRepository.findAllById(menu.getProductIds()));
         menu.comparePrice(products);
 
-        menuDao.save(menu);
+        menuRepository.save(menu);
         saveMenuProducts(menu);
         return MenuResponse.of(menu);
     }
 
     private void validateMenuGroupId(Menu menu) {
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
+        if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
     }
@@ -55,12 +55,12 @@ public class MenuService {
         MenuProducts menuProducts = menu.getMenuProducts();
 
         menuProducts.changeMenuInfo(menu);
-        menuProductDao.saveAll(menuProducts.toList());
+        menuProductRepository.saveAll(menuProducts.toList());
     }
 
     @Transactional(readOnly = true)
     public List<MenuResponse> list() {
-        final List<Menu> menus = menuDao.findAll();
+        final List<Menu> menus = menuRepository.findAll();
         return MenuResponse.ofList(menus);
     }
 }

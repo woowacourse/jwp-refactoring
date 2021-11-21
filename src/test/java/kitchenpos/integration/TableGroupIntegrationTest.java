@@ -4,7 +4,6 @@ import static kitchenpos.integration.templates.TableGroupTemplate.TABLE_GROUP_UR
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
-import java.util.Arrays;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;

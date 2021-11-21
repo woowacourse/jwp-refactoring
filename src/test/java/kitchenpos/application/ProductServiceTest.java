@@ -8,7 +8,7 @@ import static org.mockito.BDDMockito.given;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
@@ -27,7 +27,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 class ProductServiceTest {
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private ProductService productService;
@@ -41,7 +41,7 @@ class ProductServiceTest {
             .name("닭")
             .price(new BigDecimal(1000))
             .build();
-        given(productDao.findAll()).willReturn(Collections.singletonList(product));
+        given(productRepository.findAll()).willReturn(Collections.singletonList(product));
 
         // when
         final List<ProductResponse> result = productService.list();
@@ -82,7 +82,7 @@ class ProductServiceTest {
         @Test
         void create() {
             // given
-            given(productDao.save(any(Product.class))).willAnswer(
+            given(productRepository.save(any(Product.class))).willAnswer(
                 invocation -> {
                     Product toSave = invocation.getArgument(0);
                     ReflectionTestUtils.setField(toSave, "id", savedProductId);

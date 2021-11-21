@@ -9,9 +9,9 @@ import static org.mockito.BDDMockito.given;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -33,13 +33,13 @@ import org.springframework.test.util.ReflectionTestUtils;
 class TableGroupServiceTest {
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Mock
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @InjectMocks
     private TableGroupService tableGroupService;
@@ -113,8 +113,8 @@ class TableGroupServiceTest {
         @Test
         void create() {
             // given
-            given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(savedOrderTables);
-            given(tableGroupDao.save(any(TableGroup.class))).willAnswer(
+            given(orderTableRepository.findAllByIdIn(orderTableIds)).willReturn(savedOrderTables);
+            given(tableGroupRepository.save(any(TableGroup.class))).willAnswer(
                 invocation -> {
                     TableGroup toSave = invocation.getArgument(0);
                     ReflectionTestUtils.setField(toSave, "id", savedTableGroupId);
@@ -170,7 +170,7 @@ class TableGroupServiceTest {
         @Test
         void createFail_whenOrderTableDoesNotExist() {
             // given
-            given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(
+            given(orderTableRepository.findAllByIdIn(orderTableIds)).willReturn(
                 Collections.singletonList(savedOrderTable1));
 
             // when
@@ -192,7 +192,7 @@ class TableGroupServiceTest {
                 savedOrderTable1,
                 savedOrderTable2
             );
-            given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(savedOrderTables);
+            given(orderTableRepository.findAllByIdIn(orderTableIds)).willReturn(savedOrderTables);
 
             // when
             ThrowingCallable throwingCallable = () -> tableGroupService.create(tableGroupRequest);
@@ -213,7 +213,7 @@ class TableGroupServiceTest {
                 savedOrderTable1,
                 savedOrderTable2
             );
-            given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(savedOrderTables);
+            given(orderTableRepository.findAllByIdIn(orderTableIds)).willReturn(savedOrderTables);
 
             // when
             ThrowingCallable throwingCallable = () -> tableGroupService.create(tableGroupRequest);
@@ -278,8 +278,8 @@ class TableGroupServiceTest {
         @Test
         void ungroup() {
             // given
-            given(orderTableDao.findAllByTableGroupId(tableGroupId)).willReturn(orderTables);
-            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
+            given(orderTableRepository.findAllByTableGroupId(tableGroupId)).willReturn(orderTables);
+            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds,
                 notCompletionOrderStatuses
             )).willReturn(false);
@@ -296,8 +296,8 @@ class TableGroupServiceTest {
         @Test
         void ungroupFail_whenOrderTableStatusIsNotCompletion() {
             // given
-            given(orderTableDao.findAllByTableGroupId(tableGroupId)).willReturn(orderTables);
-            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
+            given(orderTableRepository.findAllByTableGroupId(tableGroupId)).willReturn(orderTables);
+            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds,
                 notCompletionOrderStatuses
             )).willReturn(true);

@@ -1,7 +1,5 @@
 package kitchenpos.integration.templates;
 
-import java.util.List;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItems;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderResponse;

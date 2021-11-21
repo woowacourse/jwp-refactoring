@@ -32,7 +32,6 @@
   - [x] Menu
   - [x] MenuGroup
 - [x] JPA 로 마이그레이션, Repository 적용
-- [ ] 예외 메시지 작성
 
 ### 도메인 로직 분리
 - [x] MenuGroupService : 로직이 간단하여 분리할 것이 없음.

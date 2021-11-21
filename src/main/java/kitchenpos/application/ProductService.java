@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
@@ -10,10 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductService {
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
-    public ProductService(final ProductDao productDao) {
-        this.productDao = productDao;
+    public ProductService(final ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -21,13 +21,13 @@ public class ProductService {
         final Product product = productRequest.toProduct();
 
         product.validatePrice();
-        productDao.save(product);
+        productRepository.save(product);
         return ProductResponse.of(product);
     }
 
     @Transactional(readOnly = true)
     public List<ProductResponse> list() {
-        List<Product> products = productDao.findAll();
+        List<Product> products = productRepository.findAll();
         return ProductResponse.listOf(products);
     }
 }

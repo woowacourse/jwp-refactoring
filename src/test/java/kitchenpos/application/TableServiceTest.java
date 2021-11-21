@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -11,8 +10,8 @@ import static org.mockito.Mockito.verify;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableRequest;
@@ -32,10 +31,10 @@ import org.springframework.test.util.ReflectionTestUtils;
 class TableServiceTest {
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @InjectMocks
     private TableService tableService;
@@ -47,7 +46,7 @@ class TableServiceTest {
         tableService.list();
 
         // then
-        verify(orderTableDao, times(1)).findAll();
+        verify(orderTableRepository, times(1)).findAll();
     }
 
     @Nested
@@ -80,7 +79,7 @@ class TableServiceTest {
         @Test
         void create() {
             // given
-            given(orderTableDao.save(any(OrderTable.class))).willAnswer(
+            given(orderTableRepository.save(any(OrderTable.class))).willAnswer(
                 invocation -> {
                     OrderTable toSave = invocation.getArgument(0);
                     ReflectionTestUtils.setField(toSave, "id", savedOrderTableId);
@@ -137,8 +136,8 @@ class TableServiceTest {
         @Test
         void changeEmpty() {
             // given
-            given(orderTableDao.findById(orderTableId)).willReturn(Optional.of(savedOrderTable));
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(
+            given(orderTableRepository.findById(orderTableId)).willReturn(Optional.of(savedOrderTable));
+            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId,
                 notCompletionOrderStatuses
             )).willReturn(false);
@@ -156,7 +155,7 @@ class TableServiceTest {
         @Test
         void changeEmpty_whenOrderTableDoesNotExist() {
             // given
-            given(orderTableDao.findById(orderTableId)).willReturn(Optional.empty());
+            given(orderTableRepository.findById(orderTableId)).willReturn(Optional.empty());
 
             // when // then
             assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTableRequest))
@@ -170,7 +169,7 @@ class TableServiceTest {
             savedOrderTable = OrderTableFactory.builder()
                 .tableGroupId(1L)
                 .build();
-            given(orderTableDao.findById(orderTableId)).willReturn(Optional.of(savedOrderTable));
+            given(orderTableRepository.findById(orderTableId)).willReturn(Optional.of(savedOrderTable));
 
             // when // then
             assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTableRequest))
@@ -181,8 +180,8 @@ class TableServiceTest {
         @Test
         void changeEmpty_whenOrderStatusIsNotCompletion() {
             // given
-            given(orderTableDao.findById(orderTableId)).willReturn(Optional.of(savedOrderTable));
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(
+            given(orderTableRepository.findById(orderTableId)).willReturn(Optional.of(savedOrderTable));
+            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId,
                 notCompletionOrderStatuses
             )).willReturn(true);
@@ -196,7 +195,7 @@ class TableServiceTest {
         @Test
         void changeNumberOfGuests() {
             // given
-            given(orderTableDao.findById(orderTableId)).willReturn(Optional.of(savedOrderTable));
+            given(orderTableRepository.findById(orderTableId)).willReturn(Optional.of(savedOrderTable));
 
             // when
             OrderTableResponse result =
@@ -229,7 +228,7 @@ class TableServiceTest {
         @Test
         void changeNumberOfGuests_whenOrderTableDoesNotExist() {
             // given
-            given(orderTableDao.findById(orderTableId)).willReturn(Optional.empty());
+            given(orderTableRepository.findById(orderTableId)).willReturn(Optional.empty());
 
             // when
             final ThrowingCallable throwingCallable =
@@ -247,7 +246,7 @@ class TableServiceTest {
             savedOrderTable = OrderTableFactory.builder()
                 .empty(true)
                 .build();
-            given(orderTableDao.findById(orderTableId)).willReturn(Optional.of(savedOrderTable));
+            given(orderTableRepository.findById(orderTableId)).willReturn(Optional.of(savedOrderTable));
 
             // when
             final ThrowingCallable throwingCallable =

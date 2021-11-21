@@ -4,19 +4,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuProductRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
@@ -39,16 +36,16 @@ import org.springframework.test.util.ReflectionTestUtils;
 class MenuServiceTest {
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Mock
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private MenuService menuService;
@@ -65,7 +62,7 @@ class MenuServiceTest {
             .id(1L)
             .menuProducts(menuProduct)
             .build();
-        given(menuDao.findAll()).willReturn(Collections.singletonList(menu));
+        given(menuRepository.findAll()).willReturn(Collections.singletonList(menu));
 
         // when
         ThrowingCallable throwingCallable = () -> menuService.list();
@@ -130,10 +127,10 @@ class MenuServiceTest {
         @Test
         void create() {
             // given
-            given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(true);
-            given(productDao.findAllById(menu.getProductIds()))
+            given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(true);
+            given(productRepository.findAllById(menu.getProductIds()))
                 .willReturn(Collections.singletonList(product));
-            given(menuDao.save(any(Menu.class))).willAnswer(
+            given(menuRepository.save(any(Menu.class))).willAnswer(
                 invocation -> {
                     Menu toSave = invocation.getArgument(0);
                     ReflectionTestUtils.setField(toSave, "id", savedMenuId);
@@ -209,7 +206,7 @@ class MenuServiceTest {
         @Test
         void createFail_whenMenuGroupIsNotExisting() {
             // given
-            given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(false);
+            given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(false);
 
             // when
             ThrowingCallable throwingCallable = () -> menuService.create(menuRequest);
@@ -223,8 +220,8 @@ class MenuServiceTest {
         @Test
         void createFail_whenProductDoesNotExist() {
             // given
-            given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(true);
-            given(productDao.findAllById(menu.getProductIds())).willReturn(Collections.emptyList());
+            given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(true);
+            given(productRepository.findAllById(menu.getProductIds())).willReturn(Collections.emptyList());
 
             // when
             ThrowingCallable throwingCallable = () -> menuService.create(menuRequest);
@@ -249,8 +246,8 @@ class MenuServiceTest {
                 .menuProducts(menuProduct)
                 .build();
             menuRequest = MenuFactory.dto(menu);
-            given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(true);
-            given(productDao.findAllById(menu.getProductIds()))
+            given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(true);
+            given(productRepository.findAllById(menu.getProductIds()))
                 .willReturn(Collections.singletonList(product));
 
             // when
