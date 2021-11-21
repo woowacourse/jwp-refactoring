@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -8,6 +8,8 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.dtos.MenuGroupRequest;
+import kitchenpos.application.dtos.MenuGroupResponse;
+import kitchenpos.application.dtos.MenuGroupResponses;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +40,7 @@ class MenuGroupServiceTest {
 
         when(menuGroupRepository.save(any())).thenReturn(savedMenuGroup);
 
-        final MenuGroup actual = menuGroupService.create(request);
+        final MenuGroupResponse actual = menuGroupService.create(request);
         assertThat(actual.getId()).isEqualTo(1L);
         assertAll(
                 () -> assertThat(actual.getId()).isEqualTo(1L),
@@ -55,7 +57,8 @@ class MenuGroupServiceTest {
 
         when(menuGroupRepository.findAll()).thenReturn(menuGroups);
 
-        final List<MenuGroup> actual = menuGroupService.list();
-        assertThat(actual).containsExactly(menuGroup1, menuGroup2);
+        final MenuGroupResponses actual = menuGroupService.list();
+        assertThat(actual.getMenuGroupResponses()).usingRecursiveComparison()
+                .isEqualTo(Arrays.asList(menuGroup1, menuGroup2));
     }
 }

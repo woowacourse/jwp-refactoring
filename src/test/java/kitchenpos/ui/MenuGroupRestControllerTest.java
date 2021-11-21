@@ -13,6 +13,8 @@ import java.util.Collections;
 import kitchenpos.TestFixtures;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.dtos.MenuGroupRequest;
+import kitchenpos.application.dtos.MenuGroupResponse;
+import kitchenpos.application.dtos.MenuGroupResponses;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,7 +42,7 @@ class MenuGroupRestControllerTest {
     void create() throws Exception {
         final String content = objectMapper.writeValueAsString(new MenuGroupRequest("메뉴그룹이름"));
         final MenuGroup menuGroup = TestFixtures.createMenuGroup();
-        when(menuGroupService.create(any())).thenReturn(menuGroup);
+        when(menuGroupService.create(any())).thenReturn(new MenuGroupResponse(menuGroup));
 
         final MockHttpServletResponse response = mockMvc.perform(post("/api/menu-groups")
                         .content(content)
@@ -56,7 +58,9 @@ class MenuGroupRestControllerTest {
 
     @Test
     void list() throws Exception {
-        when(menuGroupService.list()).thenReturn(Collections.singletonList(TestFixtures.createMenuGroup()));
+        when(menuGroupService.list()).thenReturn(
+                new MenuGroupResponses(Collections.singletonList(TestFixtures.createMenuGroup()))
+        );
 
         final MockHttpServletResponse response = mockMvc.perform(get("/api/menu-groups"))
                 .andReturn()
