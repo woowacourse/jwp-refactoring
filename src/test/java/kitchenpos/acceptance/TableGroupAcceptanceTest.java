@@ -2,6 +2,7 @@ package kitchenpos.acceptance;
 
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderMenu;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTables;
@@ -59,8 +60,11 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         tableGroupRepository.save(테이블_그룹);
         orderTableRepository.saveAll(주문_테이블들.getOrderTables());
 
+        final OrderMenu 한마리메뉴_중_후라이드치킨_오더메뉴1 = new OrderMenu(한마리메뉴_중_후라이드치킨.getName(), 한마리메뉴_중_후라이드치킨.getPrice());
+        orderMenuRepository.save(한마리메뉴_중_후라이드치킨_오더메뉴1);
+
         주문_테이블1_한마리메뉴_중_후라이트치킨 = new OrderLineItem.Builder()
-                .menuId(한마리메뉴_중_후라이드치킨.getId())
+                .orderMenu(한마리메뉴_중_후라이드치킨_오더메뉴1)
                 .order(null)
                 .quantity(1L)
                 .build();
@@ -75,8 +79,11 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         orderRepository.save(주문1);
         orderLineItemRepository.save(주문_테이블1_한마리메뉴_중_후라이트치킨);
 
+        final OrderMenu 한마리메뉴_중_후라이드치킨_오더메뉴2 = new OrderMenu(한마리메뉴_중_후라이드치킨.getName(), 한마리메뉴_중_후라이드치킨.getPrice());
+        orderMenuRepository.save(한마리메뉴_중_후라이드치킨_오더메뉴2);
+
         주문_테이블2_한마리메뉴_중_후라이트치킨 = new OrderLineItem.Builder()
-                .menuId(한마리메뉴_중_후라이드치킨.getId())
+                .orderMenu(한마리메뉴_중_후라이드치킨_오더메뉴2)
                 .order(null)
                 .quantity(1L)
                 .build();
@@ -236,8 +243,11 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void cannotDeleteTableGroupWhenTableOrderIsNotCompletion() {
         // given
+        final OrderMenu 한마리메뉴_중_후라이드치킨_오더메뉴3 = new OrderMenu(한마리메뉴_중_후라이드치킨.getName(), 한마리메뉴_중_후라이드치킨.getPrice());
+        orderMenuRepository.save(한마리메뉴_중_후라이드치킨_오더메뉴3);
+
         OrderLineItem 새로운_주문_아이템 = new OrderLineItem.Builder()
-                .menuId(한마리메뉴_중_후라이드치킨.getId())
+                .orderMenu(한마리메뉴_중_후라이드치킨_오더메뉴3)
                 .order(null)
                 .quantity(1L)
                 .build();

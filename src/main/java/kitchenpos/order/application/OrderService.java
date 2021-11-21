@@ -2,6 +2,7 @@ package kitchenpos.order.application;
 
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderMenu;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.ui.request.OrderLineItemRequest;
@@ -19,16 +20,16 @@ import java.util.List;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderOrderTableValidator orderOrderTableValidator;
-    private final OrderMenuValidator orderMenuValidator;
+    private final OrderMenuConnector orderMenuConnector;
 
     public OrderService(
             final OrderRepository orderRepository,
             final OrderOrderTableValidator orderOrderTableValidator,
-            final OrderMenuValidator orderMenuValidator
+            final OrderMenuConnector orderMenuConnector
     ) {
         this.orderRepository = orderRepository;
         this.orderOrderTableValidator = orderOrderTableValidator;
-        this.orderMenuValidator = orderMenuValidator;
+        this.orderMenuConnector = orderMenuConnector;
     }
 
     @Transactional
@@ -49,10 +50,11 @@ public class OrderService {
     private List<OrderLineItem> generateOrderLineItems(List<OrderLineItemRequest> orderLineItemRequests) {
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
-            orderMenuValidator.validateMenuId(orderLineItemRequest.getMenuId());
+            orderMenuConnector.validateMenuId(orderLineItemRequest.getMenuId());
+            final OrderMenu orderMenu = orderMenuConnector.generateOrderMenu(orderLineItemRequest.getMenuId());
 
             final OrderLineItem orderLineItem = new OrderLineItem.Builder()
-                    .menuId(orderLineItemRequest.getMenuId())
+                    .orderMenu(orderMenu)
                     .quantity(orderLineItemRequest.getQuantity())
                     .build();
             orderLineItems.add(orderLineItem);

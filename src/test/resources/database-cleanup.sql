@@ -5,7 +5,7 @@ ALTER TABLE order_line_item
     DROP CONSTRAINT fk_order_line_item_orders;
 
 ALTER TABLE order_line_item
-    DROP CONSTRAINT fk_order_line_item_menu;
+    DROP CONSTRAINT fk_order_line_item_order_menu;
 
 ALTER TABLE menu
     DROP CONSTRAINT fk_menu_menu_group;
@@ -23,6 +23,7 @@ TRUNCATE TABLE table_group;
 TRUNCATE TABLE order_table;
 TRUNCATE TABLE orders;
 TRUNCATE TABLE order_line_item;
+TRUNCATE TABLE order_menu;
 TRUNCATE TABLE menu_product;
 TRUNCATE TABLE menu;
 TRUNCATE TABLE product;
@@ -37,8 +38,8 @@ ALTER TABLE order_line_item
         FOREIGN KEY (order_id) REFERENCES orders (id);
 
 ALTER TABLE order_line_item
-    ADD CONSTRAINT fk_order_line_item_menu
-        FOREIGN KEY (menu_id) REFERENCES menu (id);
+    ADD CONSTRAINT fk_order_line_item_order_menu
+        FOREIGN KEY (order_menu_id) REFERENCES order_menu (id);
 
 ALTER TABLE menu
     ADD CONSTRAINT fk_menu_menu_group

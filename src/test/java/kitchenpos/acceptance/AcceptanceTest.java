@@ -3,6 +3,7 @@ package kitchenpos.acceptance;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.domain.repository.OrderMenuRepository;
 import kitchenpos.product.domain.Product;
 import kitchenpos.menu.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuProductRepository;
@@ -51,6 +52,9 @@ public abstract class AcceptanceTest {
 
     @Autowired
     protected TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    protected OrderMenuRepository orderMenuRepository;
 
     protected MenuGroup 한마리메뉴;
     protected MenuGroup 두마리메뉴;

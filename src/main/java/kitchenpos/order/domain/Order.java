@@ -43,8 +43,8 @@ public class Order {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
         }
-        final Set<Long> orderedMenus = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
+        final Set<String> orderedMenus = orderLineItems.stream()
+                .map(OrderLineItem::getOrderMenuName)
                 .collect(Collectors.toSet());
         if (orderedMenus.size() != orderLineItems.size()) {
             throw new IllegalArgumentException();

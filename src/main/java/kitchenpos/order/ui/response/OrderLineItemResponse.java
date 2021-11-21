@@ -8,13 +8,13 @@ import java.util.stream.Collectors;
 public class OrderLineItemResponse {
     private final Long seq;
     private final Long orderId;
-    private final Long menuId;
+    private final Long orderMenuId;
     private final Long quantity;
 
-    public OrderLineItemResponse(Long seq, Long orderId, Long menuId, Long quantity) {
+    public OrderLineItemResponse(Long seq, Long orderId, Long orderMenuId, Long quantity) {
         this.seq = seq;
         this.orderId = orderId;
-        this.menuId = menuId;
+        this.orderMenuId = orderMenuId;
         this.quantity = quantity;
     }
 
@@ -22,7 +22,7 @@ public class OrderLineItemResponse {
         return new OrderLineItemResponse(
                 orderLineItem.getSeq(),
                 orderLineItem.getOrderId(),
-                orderLineItem.getMenuId(),
+                orderLineItem.getOrderMenuId(),
                 orderLineItem.getQuantity()
         );
     }
@@ -41,8 +41,8 @@ public class OrderLineItemResponse {
         return orderId;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public Long getOrderMenuId() {
+        return orderMenuId;
     }
 
     public Long getQuantity() {

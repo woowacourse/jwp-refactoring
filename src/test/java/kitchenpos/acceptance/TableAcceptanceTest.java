@@ -2,6 +2,7 @@ package kitchenpos.acceptance;
 
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderMenu;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTables;
@@ -76,8 +77,11 @@ class TableAcceptanceTest extends AcceptanceTest {
         orderTableRepository.save(테이블_그룹_없음_주문_테이블2);
         orderTableRepository.saveAll(주문_테이블들.getOrderTables());
 
+        final OrderMenu 한마리메뉴_중_후라이드치킨_오더메뉴1 = new OrderMenu(한마리메뉴_중_후라이드치킨.getName(), 한마리메뉴_중_후라이드치킨.getPrice());
+        orderMenuRepository.save(한마리메뉴_중_후라이드치킨_오더메뉴1);
+
         주문_테이블1_한마리메뉴_중_후라이트치킨  = new OrderLineItem.Builder()
-                .menuId(한마리메뉴_중_후라이드치킨.getId())
+                .orderMenu(한마리메뉴_중_후라이드치킨_오더메뉴1)
                 .order(주문_테이블1_요리중인_주문)
                 .quantity(1L)
                 .build();
@@ -91,8 +95,11 @@ class TableAcceptanceTest extends AcceptanceTest {
         orderRepository.save(주문_테이블1_요리중인_주문);
         orderLineItemRepository.save(주문_테이블1_한마리메뉴_중_후라이트치킨);
 
+        final OrderMenu 한마리메뉴_중_후라이드치킨_오더메뉴2 = new OrderMenu(한마리메뉴_중_후라이드치킨.getName(), 한마리메뉴_중_후라이드치킨.getPrice());
+        orderMenuRepository.save(한마리메뉴_중_후라이드치킨_오더메뉴2);
+
         주문_테이블2_한마리메뉴_중_후라이트치킨  = new OrderLineItem.Builder()
-                .menuId(한마리메뉴_중_후라이드치킨.getId())
+                .orderMenu(한마리메뉴_중_후라이드치킨_오더메뉴2)
                 .order(주문_테이블2_식사중인_주문)
                 .quantity(1L)
                 .build();

@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.domain.OrderMenu;
 import kitchenpos.product.domain.Product;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
@@ -43,7 +44,7 @@ class OrderTest {
             .build();
 
     private final OrderLineItem orderLineItem = new OrderLineItem.Builder()
-            .menuId(menu.getId())
+            .orderMenu(new OrderMenu(menu.getName(), menu.getPrice()))
             .quantity(1L)
             .build();
 
