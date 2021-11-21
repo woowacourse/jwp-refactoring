@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -17,9 +19,8 @@ import kitchenpos.table.application.dto.OrderTableResponse;
 import kitchenpos.table.application.dto.OrderTableResponses;
 import kitchenpos.table.application.dto.TableEmptyRequest;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.table.domain.OrderValidator;
 import kitchenpos.table.domain.repository.OrderTableRepository;
-import kitchenpos.table.application.TableService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,10 +33,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class TableServiceTest {
     @Mock
-    private OrderRepository orderRepository;
+    private OrderTableRepository orderTableRepository;
 
     @Mock
-    private OrderTableRepository orderTableRepository;
+    private OrderValidator orderValidator;
 
     @InjectMocks
     private TableService tableService;
@@ -80,7 +81,7 @@ public class TableServiceTest {
     void changeEmpty() {
         final TableEmptyRequest request = new TableEmptyRequest(true);
         when(orderTableRepository.findById(anyLong())).thenReturn(Optional.of(orderTable1));
-        when(orderRepository.existsByOrderTableIdAndOrderStatusIn(any(), any())).thenReturn(false);
+        doNothing().when(orderValidator).validate(any());
         when(orderTableRepository.save(any())).thenReturn(orderTable1);
 
         assertThatCode(() -> tableService.changeEmpty(anyLong(), request)).doesNotThrowAnyException();
@@ -94,7 +95,6 @@ public class TableServiceTest {
 
         assertThatThrownBy(() -> tableService.changeEmpty(anyLong(), request))
                 .isInstanceOf(IllegalArgumentException.class);
-
     }
 
     @DisplayName("주문 테이블의 단체 지정이 되어 있지 않으면 예외가 발생한다.")
@@ -112,12 +112,12 @@ public class TableServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("주문 테이블의 주문이 있고, 주문 상태가 `COOKING`, `MEAL`인 것이 있다면 예외가 발생한다")
+    @DisplayName("orderValidator 에서 예외가 발생하면 예외가 발생한다")
     @Test
     void clearExceptionExistsAndStatus() {
         final TableEmptyRequest request = new TableEmptyRequest(true);
         when(orderTableRepository.findById(anyLong())).thenReturn(Optional.of(orderTable1));
-        when(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), any())).thenReturn(true);
+        doThrow(IllegalArgumentException.class).when(orderValidator).validate(any());
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class);

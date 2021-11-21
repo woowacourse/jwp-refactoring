@@ -1,7 +1,6 @@
 package kitchenpos.order.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -17,7 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-@DisplayName("테이블 그룹지정 해제")
+@DisplayName("테이블 그룹지정 해제시, order, orderTable 유효성 검사후 ungroup 한다.")
 @ExtendWith(MockitoExtension.class)
 class TableGroupEraserTest {
 

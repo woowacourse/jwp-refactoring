@@ -1,26 +1,25 @@
 package kitchenpos.table.application;
 
-import java.util.Arrays;
 import kitchenpos.table.application.dto.GuestNumberRequest;
 import kitchenpos.table.application.dto.OrderTableRequest;
 import kitchenpos.table.application.dto.OrderTableResponse;
 import kitchenpos.table.application.dto.OrderTableResponses;
 import kitchenpos.table.application.dto.TableEmptyRequest;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.table.domain.OrderValidator;
 import kitchenpos.table.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderValidator orderValidator;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository,
+                        final OrderValidator orderValidator) {
         this.orderTableRepository = orderTableRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
@@ -38,12 +37,7 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         savedOrderTable.checkTableGroupId();
-
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
+        orderValidator.validate(orderTableId);
         savedOrderTable.updateEmpty(request.getEmpty());
 
         return new OrderTableResponse(orderTableRepository.save(savedOrderTable));

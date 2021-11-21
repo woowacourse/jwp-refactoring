@@ -19,7 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-@DisplayName("테이블그룹 생성시 주문의 유효성 검사 및 생성")
+@DisplayName("테이블그룹 생성시 주문의 유효성 검사 후, 생성한다")
 @ExtendWith(MockitoExtension.class)
 class TableGroupCreatorTest {
 
