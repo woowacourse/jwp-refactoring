@@ -1,137 +1,117 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.product.Product;
+import kitchenpos.ui.dto.menu.MenuRequest;
+import kitchenpos.ui.dto.menu.MenuResponse;
+import kitchenpos.ui.dto.menuproduct.MenuProductRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
-import static kitchenpos.MenuFixture.createMenu;
-import static kitchenpos.MenuFixture.createMenuProduct;
-import static kitchenpos.ProductFixture.createProduct;
+import static kitchenpos.MenuFixture.*;
+import static kitchenpos.ProductFixture.createProduct1;
+import static kitchenpos.ProductFixture.createProduct2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-class MenuServiceTest {
+class MenuServiceTest extends EntityManagerSupport {
 
-    @Mock
-    private MenuDao menuDao;
-
-    @Mock
-    private MenuGroupDao menuGroupDao;
-
-    @Mock
-    private ProductDao productDao;
-
-    @Mock
-    private MenuProductDao menuProductDao;
-
-    @InjectMocks
+    @Autowired
     private MenuService menuService;
-
-    @DisplayName("메뉴 목록을 조회할 수 있다.")
-    @Test
-    void list() {
-        Menu menu1 = createMenu();
-        Menu menu2 = createMenu();
-        when(menuDao.findAll()).thenReturn(Arrays.asList(menu1, menu2));
-
-        List<Menu> actual = menuService.list();
-
-        assertAll(
-                () -> assertThat(actual).hasSize(2),
-                () -> assertThat(actual).containsExactly(menu1, menu2)
-        );
-    }
 
     @DisplayName("메뉴 생성은")
     @Nested
-    class Create {
+    class Create extends EntityManagerSupport {
 
-        private Menu menu;
-        private Product product;
+        private MenuGroup menuGroup1;
+        private Product product1;
+        private Product product2;
+
+        private MenuRequest request;
+        private MenuProductRequest menuProductRequest;
 
         @BeforeEach
         void beforeAll() {
-            menu = createMenu();
-            product = createProduct();
-        }
-
-        @DisplayName("가격이 0원 미만일 경우 생성할 수 없다.")
-        @Test
-        void createExceptionIfPriceZero() {
-            menu.setPrice(BigDecimal.valueOf(-1000));
-
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
+            menuGroup1 = save(createMenuGroup1());
+            product1 = save(createProduct1());
+            product2 = save(createProduct2());
+            menuProductRequest = new MenuProductRequest(PRODUCT_ID, MENU_QUANTITY);
         }
 
         @DisplayName("존재하지 않는 메뉴 그룹에 속한 경우 생성할 수 없다.")
         @Test
         void createExceptionIfNotExistGroup() {
-            when(menuGroupDao.existsById(any())).thenReturn(false);
+            request = new MenuRequest(MENU_NAME1, MENU_PRICE, 0L, Collections.singletonList(menuProductRequest));
 
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(request))
+                    .isInstanceOf(NoSuchElementException.class);
         }
 
         @DisplayName("존재하지 않는 상품을 포함한 경우 생성할 수 없다.")
         @Test
         void createExceptionIfNotExistProduct() {
-            menu.setMenuProducts(Arrays.asList(createMenuProduct(product), createMenuProduct(product)));
-            when(menuGroupDao.existsById(any())).thenReturn(true);
-            when(productDao.findById(any())).thenReturn(Optional.empty());
+            menuProductRequest = new MenuProductRequest(0L, MENU_QUANTITY);
+            request = new MenuRequest(MENU_NAME1, MENU_PRICE, menuGroup1.getId(), Collections.singletonList(menuProductRequest));
 
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(request))
+                    .isInstanceOf(NoSuchElementException.class);
         }
 
         @DisplayName("메뉴 가격이 메뉴 상품 가격의 총합보다 클 수 없다.")
         @Test
         void createExceptionIfExceedPrice() {
-            product.setId(1L);
-            product.setPrice(BigDecimal.ONE);
-            menu.setPrice(BigDecimal.TEN);
-            menu.setMenuProducts(Arrays.asList(createMenuProduct(product, 1), createMenuProduct(product, 2)));
-            when(menuGroupDao.existsById(any())).thenReturn(true);
-            when(productDao.findById(any())).thenReturn(Optional.of(product));
+            request = new MenuRequest(MENU_NAME1, BigDecimal.valueOf(100000), menuGroup1.getId(), Arrays.asList(new MenuProductRequest(product1.getId(), 1), new MenuProductRequest(product2.getId(), 2)));
 
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("조건을 만족하는 경우 생성할 수 있다.")
         @Test
         void create() {
-            product.setId(1L);
-            product.setPrice(BigDecimal.TEN);
-            menu.setPrice(BigDecimal.ONE);
-            menu.setMenuProducts(Arrays.asList(createMenuProduct(product, 1), createMenuProduct(product, 2)));
-            when(menuGroupDao.existsById(any())).thenReturn(true);
-            when(productDao.findById(any())).thenReturn(Optional.of(product));
-            when(menuDao.save(any())).thenReturn(createMenu(1L));
-            when(menuProductDao.save(any())).thenReturn(createMenuProduct(product, 1));
+            request = new MenuRequest(MENU_NAME1, MENU_PRICE, menuGroup1.getId(), Arrays.asList(new MenuProductRequest(product1.getId(), 1), new MenuProductRequest(product2.getId(), 2)));
 
-            assertDoesNotThrow(() -> menuService.create(menu));
+            final MenuResponse actual = menuService.create(request);
+
+            assertAll(
+                    () -> assertThat(actual.getId()).isNotNull(),
+                    () -> assertThat(actual.getName()).isEqualTo(MENU_NAME1),
+                    () -> assertThat(actual.getPrice()).isEqualTo(MENU_PRICE),
+                    () -> assertThat(actual.getMenuGroup().getName()).isEqualTo(menuGroup1.getName()),
+                    () -> assertThat(actual.getMenuProducts()).hasSize(2)
+            );
         }
+    }
+
+    @DisplayName("메뉴 목록을 조회할 수 있다.")
+    @Test
+    void list() {
+        final MenuGroup menuGroup1 = save(createMenuGroup1());
+        final MenuGroup menuGroup2 = save(createMenuGroup2());
+        final Product product1 = save(createProduct1());
+        final Product product2 = save(createProduct2());
+        final Menu menu1 = save(createMenu1(menuGroup1, Collections.singletonList(product1)));
+        final Menu menu2 = save(createMenu2(menuGroup2, Collections.singletonList(product2)));
+
+        final List<MenuResponse> actual = menuService.list();
+
+        assertAll(
+                () -> assertThat(actual).hasSize(2),
+                () -> assertThat(actual.get(0).getId()).isEqualTo(menu1.getId()),
+                () -> assertThat(actual.get(0).getMenuProducts()).hasSize(1),
+                () -> assertThat(actual.get(1).getId()).isEqualTo(menu2.getId()),
+                () -> assertThat(actual.get(0).getMenuProducts()).hasSize(1)
+        );
     }
 }

@@ -1,150 +1,147 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.TableGroup;
+import kitchenpos.domain.product.Product;
+import kitchenpos.ui.dto.order.OrderTableIdRequest;
+import kitchenpos.ui.dto.tablegroup.TableGroupRequest;
+import kitchenpos.ui.dto.tablegroup.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
+import static kitchenpos.MenuFixture.createMenu1;
+import static kitchenpos.MenuFixture.createMenuGroup1;
+import static kitchenpos.OrderFixture.createOrder;
+import static kitchenpos.OrderFixture.createOrderLineItem;
+import static kitchenpos.ProductFixture.createProduct1;
 import static kitchenpos.TableFixture.createOrderTable;
-import static kitchenpos.TableFixture.createTableGroup;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-class TableGroupServiceTest {
+class TableGroupServiceTest extends EntityManagerSupport {
 
-    @Mock
-    private OrderDao orderDao;
-
-    @Mock
-    private OrderTableDao orderTableDao;
-
-    @Mock
-    private TableGroupDao tableGroupDao;
-
-    @InjectMocks
+    @Autowired
     private TableGroupService tableGroupService;
 
     @DisplayName("단체 지정을 생성은")
     @Nested
-    class Create {
+    class Create extends EntityManagerSupport {
 
-        private TableGroup tableGroup;
+        private TableGroupRequest request;
         private OrderTable orderTable1;
         private OrderTable orderTable2;
 
         @BeforeEach
         void setUp() {
-            tableGroup = createTableGroup();
-            orderTable1 = createOrderTable();
-            orderTable1.setEmpty(true);
-            orderTable2 = createOrderTable();
-            orderTable2.setEmpty(true);
-        }
-
-        private TableGroup subject() {
-            return tableGroupService.create(tableGroup);
+            orderTable1 = save(createOrderTable(true));
+            orderTable2 = save(createOrderTable(true));
         }
 
         @DisplayName("주문 테이블의 개수가 2 미만일 경우 생성할 수 없다.")
         @Test
         void createIfLessThanTwo() {
-            tableGroup.setOrderTables(Collections.singletonList(createOrderTable()));
+            request = new TableGroupRequest(Collections.singletonList(new OrderTableIdRequest(orderTable1.getId())));
 
-            assertThatThrownBy(this::subject).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableGroupService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("존재하지 않는 주문 테이블이 포함되어 있는 경우 생성할 수 없다.")
         @Test
         void createIfHasNotExistOrderTable() {
-            tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2));
-            when(orderTableDao.findAllByIdIn(any())).thenReturn(Collections.singletonList(orderTable1));
+            request = new TableGroupRequest(Arrays.asList(
+                    new OrderTableIdRequest(0L), new OrderTableIdRequest(0L)));
 
-            assertThatThrownBy(this::subject).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableGroupService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("주문 테이블들이 빈 테이블이 아닌 경우 생성할 수 없다.")
         @Test
         void createIfNotEmptyOrderTable() {
-            orderTable1.setEmpty(false);
-            List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
-            tableGroup.setOrderTables(orderTables);
-            when(orderTableDao.findAllByIdIn(any())).thenReturn(orderTables);
+            orderTable2 = save(createOrderTable(false));
+            request = new TableGroupRequest(Arrays.asList(
+                    new OrderTableIdRequest(orderTable1.getId()), new OrderTableIdRequest(orderTable2.getId())));
 
-            assertThatThrownBy(this::subject).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableGroupService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("단체 지정에 이미 속해있는 주문 테이블을 포함할 경우 생성할 수 없다.")
         @Test
         void createIfAlreadyInTableGroup() {
-            orderTable1.setTableGroupId(1L);
-            List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
-            tableGroup.setOrderTables(orderTables);
-            when(orderTableDao.findAllByIdIn(any())).thenReturn(orderTables);
+            final TableGroup tableGroup = save(new TableGroup());
+            orderTable2 = save(createOrderTable(tableGroup));
+            request = new TableGroupRequest(Arrays.asList(
+                    new OrderTableIdRequest(orderTable1.getId()), new OrderTableIdRequest(orderTable2.getId())));
 
-            assertThatThrownBy(this::subject).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableGroupService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("조건을 만족하는 경우 생성할 수 있다.")
         @Test
         void create() {
-            List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
-            tableGroup.setOrderTables(orderTables);
-            when(orderTableDao.findAllByIdIn(any())).thenReturn(orderTables);
-            when(tableGroupDao.save(any())).thenReturn(tableGroup);
-            when(orderTableDao.save(any())).thenReturn(createOrderTable());
+            request = new TableGroupRequest(Arrays.asList(
+                    new OrderTableIdRequest(orderTable1.getId()), new OrderTableIdRequest(orderTable2.getId())));
 
-            assertDoesNotThrow(this::subject);
+            final TableGroupResponse actual = tableGroupService.create(request);
+
+            assertAll(
+                    () -> assertThat(actual.getId()).isNotNull(),
+                    () -> assertThat(actual.getCreatedDate()).isNotNull(),
+                    () -> assertThat(actual.getOrderTables()).hasSize(2),
+                    () -> assertThat(actual.getOrderTables().get(0).isEmpty()).isFalse(),
+                    () -> assertThat(actual.getOrderTables().get(1).isEmpty()).isFalse()
+            );
         }
     }
 
     @DisplayName("단체 지정 해제는")
     @Nested
-    class Ungroup {
+    class Ungroup extends EntityManagerSupport {
 
-        private final List<Long> orderTableIds = Arrays.asList(1L, 2L);
-        private final Long tableGroupId = 1L;
+        private MenuGroup menuGroup;
+        private Product product;
+        private Menu menu;
+        private TableGroup tableGroup;
+        private OrderTable orderTable;
 
         @BeforeEach
         void setUp() {
-            OrderTable orderTable1 = createOrderTable(1L);
-            OrderTable orderTable2 = createOrderTable(2L);
-            when(orderTableDao.findAllByTableGroupId(any())).thenReturn(Arrays.asList(orderTable1, orderTable2));
+            menuGroup = save(createMenuGroup1());
+            product = save(createProduct1());
+            menu = save(createMenu1(menuGroup, Collections.singletonList(product)));
+            tableGroup = save(new TableGroup());
+            orderTable = save(createOrderTable(tableGroup));
         }
 
         @DisplayName("조리, 식사 상태의 주문 테이블을 포함한 경우 해제할 수 없다.")
         @Test
         void ungroupException() {
-            when(orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                    orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).thenReturn(true);
+            save(createOrder(orderTable, OrderStatus.COOKING, Collections.singletonList(createOrderLineItem(menu))));
 
-            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
+            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("조건을 만족하는 경우 해제할 수 있다.")
         @Test
         void ungroup() {
-            when(orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                    orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).thenReturn(false);
+            save(createOrder(orderTable, OrderStatus.COMPLETION, Collections.singletonList(createOrderLineItem(menu))));
 
-            assertDoesNotThrow(() -> tableGroupService.ungroup(tableGroupId));
+            assertDoesNotThrow(() -> tableGroupService.ungroup(tableGroup.getId()));
         }
     }
 }

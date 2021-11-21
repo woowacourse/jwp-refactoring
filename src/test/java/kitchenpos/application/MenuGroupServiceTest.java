@@ -1,55 +1,47 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.ui.dto.menugroup.MenuGroupRequest;
+import kitchenpos.ui.dto.menugroup.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
 import java.util.List;
 
-import static kitchenpos.MenuFixture.createMenuGroup;
+import static kitchenpos.MenuFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends EntityManagerSupport {
 
-    @Mock
-    private MenuGroupDao menuGroupDao;
-
-    @InjectMocks
+    @Autowired
     private MenuGroupService menuGroupService;
 
     @DisplayName("메뉴 그룹을 생성할 수 있다.")
     @Test
     void create() {
-        MenuGroup menuGroup = createMenuGroup();
-        when(menuGroupDao.save(menuGroup)).thenReturn(createMenuGroup(1L));
+        final MenuGroupRequest request = new MenuGroupRequest(MENU_GROUP_NAME1);
 
-        MenuGroup actual = menuGroupService.create(menuGroup);
+        final MenuGroupResponse actual = menuGroupService.create(request);
 
-        assertDoesNotThrow(() -> menuGroupService.create(menuGroup));
+        assertThat(actual.getName()).isEqualTo(MENU_GROUP_NAME1);
     }
 
     @DisplayName("메뉴 그룹 목록을 조회할 수 있다.")
     @Test
     void list() {
-        MenuGroup menuGroup1 = createMenuGroup();
-        MenuGroup menuGroup2 = createMenuGroup();
-        when(menuGroupDao.findAll()).thenReturn(Arrays.asList(menuGroup1, menuGroup2));
+        final MenuGroup menuGroup1 = save(createMenuGroup1());
+        final MenuGroup menuGroup2 = save(createMenuGroup2());
 
-        List<MenuGroup> actual = menuGroupService.list();
+        final List<MenuGroupResponse> actual = menuGroupService.list();
 
         assertAll(
                 () -> assertThat(actual).hasSize(2),
-                () -> assertThat(actual).containsExactly(menuGroup1, menuGroup2)
+                () -> assertThat(actual.get(0).getId()).isEqualTo(menuGroup1.getId()),
+                () -> assertThat(actual.get(0).getName()).isEqualTo(menuGroup1.getName()),
+                () -> assertThat(actual.get(1).getId()).isEqualTo(menuGroup2.getId()),
+                () -> assertThat(actual.get(1).getName()).isEqualTo(menuGroup2.getName())
         );
     }
 }

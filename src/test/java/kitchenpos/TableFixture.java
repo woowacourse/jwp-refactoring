@@ -1,35 +1,28 @@
 package kitchenpos;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.TableGroup;
 
-import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TableFixture {
 
     private static final int NUMBER_OF_GUEST = 10;
-    private static final LocalDateTime CREATE_DATE = LocalDateTime.now();
 
     public static OrderTable createOrderTable() {
-        return createOrderTable(null);
+        return createOrderTable(false);
     }
 
-    public static OrderTable createOrderTable(Long id) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(NUMBER_OF_GUEST);
-        orderTable.setEmpty(false);
-        orderTable.setId(id);
-        return orderTable;
+    public static OrderTable createOrderTable(TableGroup tableGroup) {
+        return new OrderTable(tableGroup, NUMBER_OF_GUEST, false);
     }
 
-    public static TableGroup createTableGroup() {
-        return createTableGroup(null);
+    public static OrderTable createOrderTable(boolean empty) {
+        return new OrderTable(NUMBER_OF_GUEST, empty);
     }
 
-    public static TableGroup createTableGroup(Long id) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(id);
-        tableGroup.setCreatedDate(CREATE_DATE);
-        return tableGroup;
+    public static OrderTable createOrderTable(TableGroup tableGroup, boolean empty) {
+        return new OrderTable(tableGroup, NUMBER_OF_GUEST, empty);
     }
 }
