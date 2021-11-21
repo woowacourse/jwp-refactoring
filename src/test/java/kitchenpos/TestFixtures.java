@@ -92,11 +92,22 @@ public class TestFixtures {
                 .build();
     }
 
+    public static Menu createMenu(Long id) {
+        return Menu.builder()
+                .id(id)
+                .name("메뉴이름")
+                .price(BigDecimal.valueOf(1000))
+                .menuGroupId(createMenuGroup().getId())
+                .build();
+    }
+
     public static OrderLineItem createOrderLineItem(Long id) {
         return OrderLineItem.builder()
                 .id(id)
                 .order(createOrder().getId())
                 .menuId(1L)
+                .menuName("메뉴이름1")
+                .menuPrice(BigDecimal.valueOf(1000L))
                 .quantity(1L)
                 .build();
     }

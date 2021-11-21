@@ -5,11 +5,13 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import kitchenpos.TestFixtures;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.application.dto.OrderLineItemRequest;
 import kitchenpos.order.application.dto.OrderRequest;
@@ -62,11 +64,15 @@ class OrderServiceTest {
         final OrderLineItem orderLineItem1 = OrderLineItem.builder()
                 .order(order.getId())
                 .menuId(1L)
+                .menuName("메뉴1")
+                .menuPrice(BigDecimal.valueOf(1000L))
                 .quantity(1L)
                 .build();
         final OrderLineItem orderLineItem2 = OrderLineItem.builder()
                 .order(order.getId())
                 .menuId(2L)
+                .menuName("메뉴2")
+                .menuPrice(BigDecimal.valueOf(1000L))
                 .quantity(2L)
                 .build();
         final List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem1, orderLineItem2);
@@ -89,6 +95,7 @@ class OrderServiceTest {
                 .of(order)
                 .id(1L)
                 .build();
+        when(menuRepository.findAllById(any())).thenReturn(Arrays.asList(TestFixtures.createMenu(1L), TestFixtures.createMenu(2L)));
         when(menuRepository.countByIdIn(any())).thenReturn(2L);
         when(orderTableRepository.findById(any())).thenReturn(Optional.of(orderTable));
         when(orderRepository.save(any())).thenReturn(savedOrder);
@@ -110,6 +117,7 @@ class OrderServiceTest {
     @DisplayName("주문 항목의 갯수와 메뉴 id의 갯수가 일치하여야 한다")
     @Test
     void createExceptionVerifySize() {
+        when(menuRepository.findAllById(any())).thenReturn(Arrays.asList(TestFixtures.createMenu(1L), TestFixtures.createMenu(2L)));
         when(menuRepository.countByIdIn(any())).thenReturn(Long.MAX_VALUE);
 
         assertThatThrownBy(() -> orderService.create(orderRequest)).isInstanceOf(IllegalArgumentException.class);
@@ -118,6 +126,7 @@ class OrderServiceTest {
     @DisplayName("주문 테이블이 존재해야 한다")
     @Test
     void createExceptionTableExists() {
+        when(menuRepository.findAllById(any())).thenReturn(Arrays.asList(TestFixtures.createMenu(1L), TestFixtures.createMenu(2L)));
         when(menuRepository.countByIdIn(any())).thenReturn(2L);
         when(orderTableRepository.findById(order.getOrderTableId())).thenReturn(Optional.empty());
 
@@ -131,7 +140,7 @@ class OrderServiceTest {
                 .of(orderTable)
                 .empty(true)
                 .build();
-
+        when(menuRepository.findAllById(any())).thenReturn(Arrays.asList(TestFixtures.createMenu(1L), TestFixtures.createMenu(2L)));
         when(menuRepository.countByIdIn(any())).thenReturn(2L);
         when(orderTableRepository.findById(order.getOrderTableId())).thenReturn(Optional.of(savedOrderTable));
 

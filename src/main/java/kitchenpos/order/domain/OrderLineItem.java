@@ -1,5 +1,6 @@
 package kitchenpos.order.domain;
 
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,6 +20,10 @@ public class OrderLineItem {
     private Long menuId;
     @Column(nullable = false)
     private Long quantity;
+    @Column(nullable = false)
+    private String menuName;
+    @Column(nullable = false)
+    private BigDecimal menuPrice;
 
     public OrderLineItem() {
     }
@@ -28,6 +33,8 @@ public class OrderLineItem {
         this.orderId = builder.orderId;
         this.menuId = builder.menuId;
         this.quantity = builder.quantity;
+        this.menuName = builder.menuName;
+        this.menuPrice = builder.menuPrice;
     }
 
     public static Builder builder() {
@@ -38,7 +45,9 @@ public class OrderLineItem {
         private Long id;
         private Long orderId;
         private Long menuId;
-        private long quantity;
+        private Long quantity;
+        private String menuName;
+        private BigDecimal menuPrice;
 
         private Builder() {
         }
@@ -48,6 +57,8 @@ public class OrderLineItem {
             this.orderId = orderLineItem.orderId;
             this.menuId = orderLineItem.menuId;
             this.quantity = orderLineItem.quantity;
+            this.menuName = orderLineItem.menuName;
+            this.menuPrice = orderLineItem.menuPrice;
             return this;
         }
 
@@ -75,6 +86,15 @@ public class OrderLineItem {
             return new OrderLineItem(this);
         }
 
+        public Builder menuName(String menuName) {
+            this.menuName =  menuName;
+            return this;
+        }
+
+        public Builder menuPrice(BigDecimal menuPrice){
+            this.menuPrice = menuPrice;
+            return this;
+        }
     }
 
     public Long getId() {
@@ -97,4 +117,11 @@ public class OrderLineItem {
         return quantity;
     }
 
+    public String getMenuName() {
+        return menuName;
+    }
+
+    public BigDecimal getMenuPrice() {
+        return menuPrice;
+    }
 }

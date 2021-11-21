@@ -2,7 +2,10 @@ package kitchenpos.order.application;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.application.dto.OrderLineItemRequest;
 import kitchenpos.order.application.dto.OrderRequest;
@@ -80,16 +83,24 @@ public class OrderService {
                 .build();
     }
 
-    private OrderLineItem orderLineItemWith(OrderLineItemRequest orderLineItem) {
+    private OrderLineItem orderLineItemWith(OrderLineItemRequest orderLineItem, Menu menu) {
         return OrderLineItem.builder()
                 .menuId(orderLineItem.getMenuId())
                 .quantity(orderLineItem.getQuantity())
+                .menuName(menu.getName())
+                .menuPrice(menu.getPrice())
                 .build();
     }
 
     private List<OrderLineItem> orderLineItemsWith(OrderRequest request) {
+        final List<Long> menuIds = request.getOrderLineItems().stream()
+                .map(OrderLineItemRequest::getMenuId)
+                .collect(Collectors.toList());
+        final List<Menu> menus = menuRepository.findAllById(menuIds);
+        final Map<Long, Menu> menuStorage = menus.stream()
+                .collect(Collectors.toMap(Menu::getId, Function.identity()));
         return request.getOrderLineItems().stream()
-                .map(this::orderLineItemWith)
+                .map(it -> orderLineItemWith(it, menuStorage.get(it.getMenuId())))
                 .collect(Collectors.toList());
     }
 }
