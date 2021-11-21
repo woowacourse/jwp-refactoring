@@ -95,7 +95,7 @@ public class TestFixtures {
     public static OrderLineItem createOrderLineItem(Long id) {
         return OrderLineItem.builder()
                 .id(id)
-                .order(createOrder())
+                .order(createOrder().getId())
                 .menuId(1L)
                 .quantity(1L)
                 .build();

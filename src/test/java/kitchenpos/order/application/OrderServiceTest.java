@@ -60,12 +60,12 @@ class OrderServiceTest {
                 .orderStatus(OrderStatus.COMPLETION.name())
                 .build();
         final OrderLineItem orderLineItem1 = OrderLineItem.builder()
-                .order(order)
+                .order(order.getId())
                 .menuId(1L)
                 .quantity(1L)
                 .build();
         final OrderLineItem orderLineItem2 = OrderLineItem.builder()
-                .order(order)
+                .order(order.getId())
                 .menuId(2L)
                 .quantity(2L)
                 .build();

@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import org.springframework.util.CollectionUtils;
 
 @Embeddable
 public class OrderLineItems {
-    @OneToMany(mappedBy = "order")
+    @OneToMany
+    @JoinColumn(name = "id")
     private List<OrderLineItem> orderLineItems;
 
     public OrderLineItems() {
@@ -43,6 +45,6 @@ public class OrderLineItems {
     }
 
     public void updateOrderId(Order order) {
-        orderLineItems.forEach(it -> it.updateOrder(order));
+        orderLineItems.forEach(it -> it.updateOrderId(order.getId()));
     }
 }

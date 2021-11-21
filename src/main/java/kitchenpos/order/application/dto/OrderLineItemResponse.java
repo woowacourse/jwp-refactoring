@@ -10,7 +10,7 @@ public class OrderLineItemResponse {
 
     public OrderLineItemResponse(OrderLineItem orderLineItem) {
         this.id = orderLineItem.getId();
-        this.orderId = orderLineItem.getOrder();
+        this.orderId = orderLineItem.getOrderId();
         this.menuId = orderLineItem.getMenuId();
         this.quantity = orderLineItem.getQuantity();
     }
