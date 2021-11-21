@@ -1,7 +1,9 @@
 package kitchenpos.domain;
 
-import kitchenpos.repository.MenuProductRepository;
-import kitchenpos.repository.MenuRepository;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.repository.MenuProductRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
