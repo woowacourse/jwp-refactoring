@@ -99,8 +99,7 @@ class TableServiceIntegrationTest extends IntegrationTest {
         OrderTable savedOrderTable2 = tableService.create(orderTable2);
 
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        tableGroup.setOrderTables(Arrays.asList(savedOrderTable1, savedOrderTable2));
+        tableGroup.add(Arrays.asList(savedOrderTable1, savedOrderTable2));
 
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 

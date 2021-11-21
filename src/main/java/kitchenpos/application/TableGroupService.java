@@ -52,8 +52,6 @@ public class TableGroupService {
             }
         }
 
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         final Long tableGroupId = savedTableGroup.getId();
@@ -62,7 +60,7 @@ public class TableGroupService {
             savedOrderTable.setEmpty(false);
             orderTableDao.save(savedOrderTable);
         }
-        savedTableGroup.setOrderTables(savedOrderTables);
+        savedTableGroup.add(savedOrderTables);
 
         return savedTableGroup;
     }

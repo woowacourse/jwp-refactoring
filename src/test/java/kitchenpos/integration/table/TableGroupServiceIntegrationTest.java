@@ -42,7 +42,7 @@ class TableGroupServiceIntegrationTest extends IntegrationTest {
     void create_Valid_Success() {
         // given
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
+        tableGroup.add(orderTables);
 
         // when
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
@@ -59,7 +59,7 @@ class TableGroupServiceIntegrationTest extends IntegrationTest {
     void create_InvalidOrderTables_Fail() {
         // given
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Collections.emptyList());
+        tableGroup.add(Collections.emptyList());
 
         // when
         // then
@@ -77,7 +77,7 @@ class TableGroupServiceIntegrationTest extends IntegrationTest {
         orderTables.add(orderTable);
 
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
+        tableGroup.add(orderTables);
 
         // when
         // then
@@ -98,7 +98,7 @@ class TableGroupServiceIntegrationTest extends IntegrationTest {
         orderTables.add(savedOrderTable);
 
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
+        tableGroup.add(orderTables);
 
         // when
         // then
@@ -111,7 +111,7 @@ class TableGroupServiceIntegrationTest extends IntegrationTest {
     void ungroup_Valid_Success() {
         // given
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
+        tableGroup.add(orderTables);
 
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
@@ -126,7 +126,7 @@ class TableGroupServiceIntegrationTest extends IntegrationTest {
     void ungroup_InvalidOrderStatus_Fail() {
         // given
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
+        tableGroup.add(orderTables);
 
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
