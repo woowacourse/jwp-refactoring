@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.TestFixtures;
+import kitchenpos.MenuFixture;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.menu.application.dto.MenuProductRequest;
@@ -141,7 +141,7 @@ class MenuServiceTest {
     @DisplayName("메뉴 상품 목록에서 (상품의 가격 * 메뉴 상품의 갯수) 의 합과 메뉴 그룹의 가격을 비교했을 때, 메뉴 그룹의 가격이 더 크면 안 된다")
     @Test
     void createExceptionSum() {
-        final MenuProduct weirdMenuProduct = TestFixtures.createMenuProduct(1L, savedMenu1, 1L);
+        final MenuProduct weirdMenuProduct = MenuFixture.createMenuProduct(1L, savedMenu1, 1L);
         final MenuProductRequest weirdMenuProductRequest = new MenuProductRequest(
                 weirdMenuProduct.getProductId(), weirdMenuProduct.getQuantity()
         );

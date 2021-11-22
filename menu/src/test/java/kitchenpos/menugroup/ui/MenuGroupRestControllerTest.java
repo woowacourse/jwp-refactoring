@@ -1,4 +1,5 @@
-package kitchenpos.menu.ui;
+package kitchenpos.menugroup.ui;
+
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -9,11 +10,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
-import kitchenpos.TestFixtures;
-import kitchenpos.menu.application.MenuService;
-import kitchenpos.menu.application.dto.MenuResponse;
-import kitchenpos.menu.application.dto.MenuResponses;
-import kitchenpos.menu.domain.Menu;
+import kitchenpos.MenuFixture;
+import kitchenpos.menugroup.application.MenuGroupService;
+import kitchenpos.menugroup.application.dto.MenuGroupRequest;
+import kitchenpos.menugroup.application.dto.MenuGroupResponse;
+import kitchenpos.menugroup.application.dto.MenuGroupResponses;
+import kitchenpos.menugroup.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +26,9 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
-@DisplayName("메뉴 api")
-@WebMvcTest(MenuRestController.class)
-class MenuRestControllerTest {
+@DisplayName("메뉴 그룹 api")
+@WebMvcTest(MenuGroupRestController.class)
+class MenuGroupRestControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -34,16 +36,15 @@ class MenuRestControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private MenuService menuService;
+    private MenuGroupService menuGroupService;
 
     @Test
     void create() throws Exception {
-        final Menu menu = TestFixtures.createMenu();
-        menu.updateMenuProducts(Collections.singletonList(TestFixtures.createMenuProduct()));
-        final String content = objectMapper.writeValueAsString(TestFixtures.createMenuRequest(menu));
-        when(menuService.create(any())).thenReturn(new MenuResponse(menu));
+        final String content = objectMapper.writeValueAsString(new MenuGroupRequest("메뉴그룹이름"));
+        final MenuGroup menuGroup = MenuFixture.createMenuGroup();
+        when(menuGroupService.create(any())).thenReturn(new MenuGroupResponse(menuGroup));
 
-        final MockHttpServletResponse response = mockMvc.perform(post("/api/menus")
+        final MockHttpServletResponse response = mockMvc.perform(post("/api/menu-groups")
                         .content(content)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn()
@@ -51,17 +52,17 @@ class MenuRestControllerTest {
 
         assertAll(
                 () -> assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value()),
-                () -> assertThat(response.getHeader("Location")).isEqualTo("/api/menus/" + menu.getId())
+                () -> assertThat(response.getHeader("Location")).isEqualTo("/api/menu-groups/" + menuGroup.getId())
         );
     }
 
     @Test
     void list() throws Exception {
-        final Menu menu = TestFixtures.createMenu();
-        menu.updateMenuProducts(Collections.singletonList(TestFixtures.createMenuProduct()));
-        when(menuService.list()).thenReturn(new MenuResponses(Collections.singletonList(menu)));
+        when(menuGroupService.list()).thenReturn(
+                new MenuGroupResponses(Collections.singletonList(MenuFixture.createMenuGroup()))
+        );
 
-        final MockHttpServletResponse response = mockMvc.perform(get("/api/menus"))
+        final MockHttpServletResponse response = mockMvc.perform(get("/api/menu-groups"))
                 .andReturn()
                 .getResponse();
 
