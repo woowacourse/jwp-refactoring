@@ -29,35 +29,30 @@ public class MenuAcceptanceTest extends AcceptanceTest {
     private final ProductFixture productFixture = new ProductFixture();
     private final MenuGroupFixture menuGroupFixture = new MenuGroupFixture();
 
-    private ProductResponse 상품1_응답;
-    private ProductResponse 상품2_응답;
-    private MenuProductRequest 메뉴_상품1_요청;
-    private MenuProductRequest 메뉴_상품2_요청;
-    private List<MenuProductRequest> 메뉴_상품들_요청_리스트;
+    private List<MenuProductRequest> 메뉴_상품_요청_리스트;
     private MenuGroupResponse 메뉴그룹1_응답;
 
     @BeforeEach
     void setup() {
-        상품1_응답 = 상품_등록(productFixture.상품_생성_요청("상품1", BigDecimal.valueOf(1000)));
-        상품2_응답 = 상품_등록(productFixture.상품_생성_요청("상품2", BigDecimal.valueOf(2000)));
-        메뉴_상품1_요청 = menuProductFixture.메뉴_상품_생성_요청(상품1_응답.getId(), 1L);
-        메뉴_상품2_요청 = menuProductFixture.메뉴_상품_생성_요청(상품2_응답.getId(), 1L);
-        메뉴_상품들_요청_리스트 = menuProductFixture.메뉴_상품_요청_리스트_생성(메뉴_상품1_요청, 메뉴_상품2_요청);
         메뉴그룹1_응답 = 메뉴그룹_등록(menuGroupFixture.메뉴그룹_생성_요청("메뉴그룹1"));
+        ProductResponse 상품1_응답 = 상품_등록(productFixture.상품_생성_요청("상품1", BigDecimal.valueOf(1000)));
+        ProductResponse 상품2_응답 = 상품_등록(productFixture.상품_생성_요청("상품2", BigDecimal.valueOf(2000)));
+        MenuProductRequest 메뉴_상품1_요청 = menuProductFixture.메뉴_상품_생성_요청(상품1_응답.getId(), 1L);
+        MenuProductRequest 메뉴_상품2_요청 = menuProductFixture.메뉴_상품_생성_요청(상품2_응답.getId(), 1L);
+        메뉴_상품_요청_리스트 = menuProductFixture.메뉴_상품_요청_리스트_생성(메뉴_상품1_요청, 메뉴_상품2_요청);
     }
 
     @Test
     @DisplayName("메뉴 생성 테스트 - 성공")
     public void createTest() throws Exception {
         // given
-        MenuRequest 메뉴1_요청 = menuFixture.메뉴_생성_요청("메뉴1", BigDecimal.valueOf(1000), 메뉴그룹1_응답.getId(), 메뉴_상품들_요청_리스트);
+        MenuRequest 메뉴1_요청 = menuFixture.메뉴_생성_요청("메뉴1", BigDecimal.valueOf(1000), 메뉴그룹1_응답.getId(), 메뉴_상품_요청_리스트);
 
         // when
         MenuResponse 메뉴1_응답 = 메뉴_등록(메뉴1_요청);
 
         // then
         assertThat(메뉴1_응답).usingRecursiveComparison()
-                .ignoringFields("id")
                 .isEqualTo(MenuResponse.create(menuFixture.메뉴_조회(메뉴1_응답.getId())));
     }
 
@@ -65,8 +60,8 @@ public class MenuAcceptanceTest extends AcceptanceTest {
     @DisplayName("모든 메뉴 조회 테스트 - 성공")
     public void listTest() throws Exception {
         // given
-        MenuRequest 메뉴1_생성_요청 = menuFixture.메뉴_생성_요청("메뉴1", BigDecimal.valueOf(1000), 메뉴그룹1_응답.getId(), 메뉴_상품들_요청_리스트);
-        MenuRequest 메뉴2_생성_요청 = menuFixture.메뉴_생성_요청("메뉴2", BigDecimal.valueOf(2000), 메뉴그룹1_응답.getId(), 메뉴_상품들_요청_리스트);
+        MenuRequest 메뉴1_생성_요청 = menuFixture.메뉴_생성_요청("메뉴1", BigDecimal.valueOf(1000), 메뉴그룹1_응답.getId(), 메뉴_상품_요청_리스트);
+        MenuRequest 메뉴2_생성_요청 = menuFixture.메뉴_생성_요청("메뉴2", BigDecimal.valueOf(2000), 메뉴그룹1_응답.getId(), 메뉴_상품_요청_리스트);
 
         List<MenuResponse> expected = menuFixture.메뉴_응답_리스트_생성(메뉴_등록(메뉴1_생성_요청), 메뉴_등록(메뉴2_생성_요청));
 

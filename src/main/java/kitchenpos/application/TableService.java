@@ -33,8 +33,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse create(final OrderTableCreateRequest orderTableCreateRequest) {
-        return OrderTableResponse
-                .create(orderTableRepository.save(orderTableCreateRequest.toEntity()));
+        return OrderTableResponse.create(orderTableRepository.save(orderTableCreateRequest.toEntity()));
     }
 
     public List<OrderTableResponse> list() {

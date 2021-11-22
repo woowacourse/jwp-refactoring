@@ -12,12 +12,15 @@ import static java.util.stream.Collectors.toList;
 public class OrderResponse {
 
     private Long id;
-    private OrderTableResponse orderTable;
-    private OrderStatus orderStatus;
+    private Long orderTable;
+    private String orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItemResponse> orderLineItems;
 
-    private OrderResponse(Long id, OrderTableResponse orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItemResponse> orderLineItems) {
+    private OrderResponse() {
+    }
+
+    private OrderResponse(Long id, Long orderTable, String orderStatus, LocalDateTime orderedTime, List<OrderLineItemResponse> orderLineItems) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
@@ -28,28 +31,22 @@ public class OrderResponse {
     public static OrderResponse create(Order order, List<OrderLineItem> orderLineItems) {
         return new OrderResponse(
                 order.getId(),
-                OrderTableResponse.create(order.getOrderTable()),
-                order.getOrderStatus(), order.getOrderedTime(),
-                getOrderLineItemResponses(orderLineItems)
+                order.getOrderTableId(),
+                order.getOrderStatus(),
+                order.getOrderedTime(),
+                OrderLineItemResponse.of(orderLineItems)
         );
     }
-
-    private static List<OrderLineItemResponse> getOrderLineItemResponses(List<OrderLineItem> orderLineItems) {
-        return orderLineItems.stream()
-                .map(OrderLineItemResponse::create)
-                .collect(toList());
-    }
-
 
     public Long getId() {
         return id;
     }
 
-    public OrderTableResponse getOrderTable() {
+    public Long getOrderTable() {
         return orderTable;
     }
 
-    public OrderStatus getOrderStatus() {
+    public String getOrderStatus() {
         return orderStatus;
     }
 

@@ -49,8 +49,16 @@ public class OrderLineItem {
         return order;
     }
 
+    public Long getOrderId() {
+        return order.getId();
+    }
+
     public Menu getMenu() {
         return menu;
+    }
+
+    public Long getMenuId() {
+        return menu.getId();
     }
 
     public Long getQuantity() {

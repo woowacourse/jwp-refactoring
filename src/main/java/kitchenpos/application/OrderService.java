@@ -1,13 +1,8 @@
 package kitchenpos.application;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.List;
-import java.util.Objects;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
@@ -18,6 +13,10 @@ import kitchenpos.ui.dto.request.OrderCreatedRequest;
 import kitchenpos.ui.dto.response.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class OrderService {
@@ -36,15 +35,10 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderCreatedRequest orderCreatedRequest) {
-
         final OrderTable orderTable = orderTableRepository.findById(orderCreatedRequest.getOrderTableId())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        orderCreatedRequest.getOrderTableId() + " 테이블이 존재하지 않습니다."));
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException(orderTable.getId() + " 테이블은 비어있어 주문할 수 없습니다.");
-        }
+                .orElseThrow(() -> new IllegalArgumentException(orderCreatedRequest.getOrderTableId() + " 테이블이 존재하지 않습니다."));
 
-        final Order order = new Order(orderTable);
+        final Order order = Order.create(orderTable);
         final Order savedOrder = orderRepository.save(order);
 
         final List<OrderLineItem> orderLineItems = orderCreatedRequest.getOrderLineItemRequests()
@@ -73,7 +67,7 @@ public class OrderService {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Id : " + orderId + "인 주문이 존재하지 않습니다."));
 
-        if(savedOrder.isCompletion()){
+        if (savedOrder.isCompletion()) {
             throw new IllegalArgumentException("orderId : " + orderId + " : 완료된 주문은 상태를 변경할 수 없습니다.");
         }
 

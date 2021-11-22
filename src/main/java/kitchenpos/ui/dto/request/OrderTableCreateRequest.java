@@ -16,7 +16,7 @@ public class OrderTableCreateRequest {
     }
 
     public OrderTable toEntity() {
-        return new OrderTable(numberOfGuests, empty);
+        return OrderTable.create(numberOfGuests, empty);
     }
 
     public int getNumberOfGuests() {

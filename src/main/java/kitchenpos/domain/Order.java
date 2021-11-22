@@ -27,15 +27,30 @@ public class Order {
     protected Order() {
     }
 
-    public Order(OrderTable orderTable) {
+    private Order(OrderTable orderTable) {
         this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now());
     }
 
-    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
+    private Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        validateEmptyOrderTable(orderTable);
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+    }
+
+    public static Order create(OrderTable orderTable){
+        return new Order(orderTable);
+    }
+
+    public static Order create(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime){
+        return new Order(id, orderTable, orderStatus, orderedTime);
+    }
+
+    private void validateEmptyOrderTable(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException(orderTable.getId() + " 테이블은 비어있어 주문할 수 없습니다.");
+        }
     }
 
     public boolean isCompletion(){
@@ -58,8 +73,12 @@ public class Order {
         return orderTable;
     }
 
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
+    public Long getOrderTableId() {
+        return orderTable.getId();
+    }
+
+    public String getOrderStatus() {
+        return orderStatus.name();
     }
 
     public LocalDateTime getOrderedTime() {

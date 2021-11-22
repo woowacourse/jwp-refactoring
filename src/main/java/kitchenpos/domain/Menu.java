@@ -80,6 +80,10 @@ public class Menu {
         return menuGroup;
     }
 
+    public Long getMenuGroupId() {
+        return menuGroup.getId();
+    }
+
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }

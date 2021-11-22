@@ -2,16 +2,23 @@ package kitchenpos.ui.dto.response;
 
 import kitchenpos.domain.OrderTable;
 
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 public class OrderTableResponse {
 
     private Long id;
-    private TableGroupResponse tableGroup;
+    private Long tableGroup;
     private int numberOfGuests;
     private boolean empty;
 
+    private OrderTableResponse() {
+    }
+
     private OrderTableResponse(
             Long id,
-            TableGroupResponse tableGroup,
+            Long tableGroup,
             int numberOfGuests,
             boolean empty
     ) {
@@ -24,17 +31,23 @@ public class OrderTableResponse {
     public static OrderTableResponse create(OrderTable orderTable) {
         return new OrderTableResponse(
                 orderTable.getId(),
-                TableGroupResponse.create(orderTable.getTableGroup()),
+                orderTable.getTableGroupId(),
                 orderTable.getNumberOfGuests(),
                 orderTable.isEmpty()
         );
+    }
+
+    public static List<OrderTableResponse> of(List<OrderTable> orderTables) {
+        return orderTables.stream()
+                .map(OrderTableResponse::create)
+                .collect(toList());
     }
 
     public Long getId() {
         return id;
     }
 
-    public TableGroupResponse getTableGroup() {
+    public Long getTableGroup() {
         return tableGroup;
     }
 

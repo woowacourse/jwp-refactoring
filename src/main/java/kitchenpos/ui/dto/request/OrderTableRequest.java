@@ -18,7 +18,7 @@ public class OrderTableRequest {
     }
 
     public OrderTable toEntity() {
-        return new OrderTable(id, numberOfGuests, empty);
+        return OrderTable.create(id, numberOfGuests, empty);
     }
 
     public Long getId() {

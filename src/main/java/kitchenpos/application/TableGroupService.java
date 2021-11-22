@@ -41,7 +41,7 @@ public class TableGroupService {
         final TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create(LocalDateTime.now()));
         savedOrderTables.group(savedTableGroup);
 
-        return TableGroupResponse.create(savedTableGroup);
+        return TableGroupResponse.create(savedTableGroup, savedOrderTables.getOrderTables());
     }
 
     @Transactional
