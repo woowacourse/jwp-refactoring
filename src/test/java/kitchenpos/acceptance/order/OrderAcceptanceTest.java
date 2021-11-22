@@ -6,15 +6,15 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.acceptance.AcceptanceTest;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.OrderLineItemRequest;
-import kitchenpos.dto.OrderRequest;
-import kitchenpos.dto.OrderResponse;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.Product;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.dto.request.OrderLineItemRequest;
+import kitchenpos.order.dto.request.OrderRequest;
+import kitchenpos.order.dto.response.OrderResponse;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -128,7 +128,7 @@ class OrderAcceptanceTest extends AcceptanceTest {
     @DisplayName("주문 목록 조회")
     @Test
     void list() {
-        Order order = new Order(savedOrderTable, OrderStatus.COOKING.name());
+        Order order = new Order(savedOrderTable.getId(), OrderStatus.COOKING.name());
         orderRepository.save(order);
 
         ResponseEntity<List<Order>> responseEntity = testRestTemplate.exchange(
@@ -150,7 +150,7 @@ class OrderAcceptanceTest extends AcceptanceTest {
     @DisplayName("주문 상태 변경 성공")
     @Test
     void changeOrderStatus() {
-        Order order = new Order(savedOrderTable, OrderStatus.COOKING.name());
+        Order order = new Order(savedOrderTable.getId(), OrderStatus.COOKING.name());
         orderRepository.save(order);
         Order savedOrder = orderRepository.save(order);
         OrderRequest orderRequest = new OrderRequest(OrderStatus.MEAL.name());
@@ -164,7 +164,7 @@ class OrderAcceptanceTest extends AcceptanceTest {
     @DisplayName("주문 상태 변경 실패 - 잘못된 주문 아이디")
     @Test
     void changeOrderStatusByIncorrectOrderId() {
-        Order order = new Order(savedOrderTable, OrderStatus.COOKING.name());
+        Order order = new Order(savedOrderTable.getId(), OrderStatus.COOKING.name());
         orderRepository.save(order);
         Order savedOrder = orderRepository.save(order);
         OrderRequest orderRequest = new OrderRequest(OrderStatus.MEAL.name());
@@ -181,7 +181,7 @@ class OrderAcceptanceTest extends AcceptanceTest {
     @DisplayName("주문 상태 변경 실패 - 잘못된 주문 상태")
     @Test
     void changeOrderStatusByIncorrectOrderState() {
-        Order order = new Order(savedOrderTable, OrderStatus.COMPLETION.name());
+        Order order = new Order(savedOrderTable.getId(), OrderStatus.COMPLETION.name());
         orderRepository.save(order);
         Order savedOrder = orderRepository.save(order);
         OrderRequest orderRequest = new OrderRequest(OrderStatus.MEAL.name());

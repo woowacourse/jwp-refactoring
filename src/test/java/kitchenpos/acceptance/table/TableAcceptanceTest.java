@@ -4,12 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import kitchenpos.acceptance.AcceptanceTest;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.OrderTableRequest;
-import kitchenpos.dto.OrderTableResponse;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.dto.request.OrderTableRequest;
+import kitchenpos.table.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
@@ -102,7 +102,7 @@ class TableAcceptanceTest extends AcceptanceTest {
     void changeEmptyWhenTableHasTableGroupId() {
         TableGroup tableGroup = new TableGroup();
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        OrderTable table = new OrderTable(savedTableGroup, 0, true);
+        OrderTable table = new OrderTable(savedTableGroup.getId(), 0, true);
         OrderTable savedTable = orderTableRepository.save(table);
         OrderTableRequest orderTableRequest = new OrderTableRequest(false);
 
@@ -121,7 +121,7 @@ class TableAcceptanceTest extends AcceptanceTest {
     void changeEmptyWhenOrderIsCompletion() {
         OrderTable table = new OrderTable(null, 0, true);
         OrderTable savedTable = orderTableRepository.save(table);
-        Order order = new Order(savedTable, OrderStatus.COMPLETION.name());
+        Order order = new Order(savedTable.getId(), OrderStatus.COMPLETION.name());
         orderRepository.save(order);
         OrderTableRequest orderTableRequest = new OrderTableRequest(false);
 
@@ -142,7 +142,7 @@ class TableAcceptanceTest extends AcceptanceTest {
     void changeEmptyWhenOrderIsCooking() {
         OrderTable table = new OrderTable(null, 0, true);
         OrderTable savedTable = orderTableRepository.save(table);
-        Order order = new Order(savedTable, OrderStatus.COOKING.name());
+        Order order = new Order(savedTable.getId(), OrderStatus.COOKING.name());
         orderRepository.save(order);
         OrderTableRequest orderTableRequest = new OrderTableRequest(false);
 
@@ -162,7 +162,7 @@ class TableAcceptanceTest extends AcceptanceTest {
         OrderTable table = new OrderTable(null, 0, true);
         OrderTable savedTable = orderTableRepository.save(table);
         OrderTableRequest orderTableRequest = new OrderTableRequest(false);
-        Order order = new Order(savedTable, OrderStatus.MEAL.name());
+        Order order = new Order(savedTable.getId(), OrderStatus.MEAL.name());
         orderRepository.save(order);
 
         ResponseEntity<Void> responseEntity = testRestTemplate.exchange(
