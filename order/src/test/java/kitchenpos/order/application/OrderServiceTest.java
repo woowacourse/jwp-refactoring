@@ -95,7 +95,8 @@ class OrderServiceTest {
                 .of(order)
                 .id(1L)
                 .build();
-        when(menuRepository.findAllById(any())).thenReturn(Arrays.asList(TestFixtures.createMenu(1L), TestFixtures.createMenu(2L)));
+        when(menuRepository.findAllById(any())).thenReturn(
+                Arrays.asList(TestFixtures.createMenu(1L), TestFixtures.createMenu(2L)));
         when(menuRepository.countByIdIn(any())).thenReturn(2L);
         when(orderTableRepository.findById(any())).thenReturn(Optional.of(orderTable));
         when(orderRepository.save(any())).thenReturn(savedOrder);
@@ -117,7 +118,8 @@ class OrderServiceTest {
     @DisplayName("주문 항목의 갯수와 메뉴 id의 갯수가 일치하여야 한다")
     @Test
     void createExceptionVerifySize() {
-        when(menuRepository.findAllById(any())).thenReturn(Arrays.asList(TestFixtures.createMenu(1L), TestFixtures.createMenu(2L)));
+        when(menuRepository.findAllById(any())).thenReturn(
+                Arrays.asList(TestFixtures.createMenu(1L), TestFixtures.createMenu(2L)));
         when(menuRepository.countByIdIn(any())).thenReturn(Long.MAX_VALUE);
 
         assertThatThrownBy(() -> orderService.create(orderRequest)).isInstanceOf(IllegalArgumentException.class);
@@ -126,7 +128,8 @@ class OrderServiceTest {
     @DisplayName("주문 테이블이 존재해야 한다")
     @Test
     void createExceptionTableExists() {
-        when(menuRepository.findAllById(any())).thenReturn(Arrays.asList(TestFixtures.createMenu(1L), TestFixtures.createMenu(2L)));
+        when(menuRepository.findAllById(any())).thenReturn(
+                Arrays.asList(TestFixtures.createMenu(1L), TestFixtures.createMenu(2L)));
         when(menuRepository.countByIdIn(any())).thenReturn(2L);
         when(orderTableRepository.findById(order.getOrderTableId())).thenReturn(Optional.empty());
 
@@ -140,7 +143,8 @@ class OrderServiceTest {
                 .of(orderTable)
                 .empty(true)
                 .build();
-        when(menuRepository.findAllById(any())).thenReturn(Arrays.asList(TestFixtures.createMenu(1L), TestFixtures.createMenu(2L)));
+        when(menuRepository.findAllById(any())).thenReturn(
+                Arrays.asList(TestFixtures.createMenu(1L), TestFixtures.createMenu(2L)));
         when(menuRepository.countByIdIn(any())).thenReturn(2L);
         when(orderTableRepository.findById(order.getOrderTableId())).thenReturn(Optional.of(savedOrderTable));
 

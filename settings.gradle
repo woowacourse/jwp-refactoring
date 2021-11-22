@@ -3,4 +3,5 @@ include 'app'
 include 'product'
 include 'table'
 include 'menu'
+include 'order'
 

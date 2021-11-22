@@ -76,7 +76,8 @@ class OrderRestControllerTest {
         final Order order = TestFixtures.createOrder();
         order.updateOrderLineItems(Collections.singletonList(createOrderLineItem(1L)));
         final String content = objectMapper.writeValueAsString(new OrderStatusRequest(OrderStatus.MEAL.name()));
-        when(orderService.changeOrderStatus(any(), any())).thenReturn(new OrderResponse(order));
+        when(orderService.changeOrderStatus(any(), any()))
+                .thenReturn(new OrderResponse(order));
 
         final MockHttpServletResponse response = mockMvc.perform(put("/api/orders/" + order.getId() + "/order-status")
                         .content(content)
