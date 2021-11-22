@@ -47,6 +47,10 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
+    public boolean isNotCompleted() {
+        return !orderStatus.equals(OrderStatus.COMPLETION.name());
+    }
+
     public Long getId() {
         return id;
     }

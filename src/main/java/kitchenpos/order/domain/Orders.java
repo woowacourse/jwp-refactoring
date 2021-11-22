@@ -11,14 +11,12 @@ public class Orders {
     }
 
     public void validateChangeEmpty() {
-        if (isNotAllCompletion()) {
+        if (isNotAllCompleted()) {
             throw new IllegalArgumentException();
         }
     }
 
-    private boolean isNotAllCompletion() {
-        return values.stream()
-                .anyMatch(order -> order.getOrderStatus().equals(OrderStatus.COOKING.name())
-                        || order.getOrderStatus().equals(OrderStatus.MEAL.name()));
+    private boolean isNotAllCompleted() {
+        return values.stream().anyMatch(Order::isNotCompleted);
     }
 }
