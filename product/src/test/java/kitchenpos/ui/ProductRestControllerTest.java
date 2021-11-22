@@ -1,4 +1,4 @@
-package kitchenpos.product.ui;
+package kitchenpos.ui;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -9,16 +9,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
-import kitchenpos.TestFixtures;
-import kitchenpos.product.application.ProductService;
-import kitchenpos.product.application.dto.ProductRequest;
-import kitchenpos.product.application.dto.ProductResponse;
-import kitchenpos.product.application.dto.ProductResponses;
-import kitchenpos.product.domain.Product;
+import kitchenpos.ProductTestFixture;
+import kitchenpos.application.ProductService;
+import kitchenpos.application.dto.ProductRequest;
+import kitchenpos.application.dto.ProductResponse;
+import kitchenpos.application.dto.ProductResponses;
+import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,7 +41,7 @@ class ProductRestControllerTest {
     @Test
     void create() throws Exception {
         final String content = objectMapper.writeValueAsString(new ProductRequest());
-        final Product product = TestFixtures.createProduct();
+        final Product product = ProductTestFixture.createProduct();
         when(productService.create(any())).thenReturn(new ProductResponse(product));
 
         final MockHttpServletResponse response = mockMvc.perform(post("/api/products")
@@ -58,7 +59,7 @@ class ProductRestControllerTest {
     @Test
     void list() throws Exception {
         when(productService.list()).thenReturn(
-                new ProductResponses(Collections.singletonList(TestFixtures.createProduct()))
+                new ProductResponses(Collections.singletonList(ProductTestFixture.createProduct()))
         );
 
         final MockHttpServletResponse response = mockMvc.perform(get("/api/products"))

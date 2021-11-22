@@ -1,8 +1,8 @@
-package kitchenpos.product.application.dto;
+package kitchenpos.application.dto;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.product.domain.Product;
+import kitchenpos.domain.Product;
 
 public class ProductResponses {
     private final List<ProductResponse> products;

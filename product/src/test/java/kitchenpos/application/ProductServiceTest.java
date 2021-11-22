@@ -1,4 +1,4 @@
-package kitchenpos.product.application;
+package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -10,13 +10,13 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.TestFixtures;
-import kitchenpos.product.application.dto.ProductInformationRequest;
-import kitchenpos.product.application.dto.ProductRequest;
-import kitchenpos.product.application.dto.ProductResponse;
-import kitchenpos.product.application.dto.ProductResponses;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.repository.ProductRepository;
+import kitchenpos.ProductTestFixture;
+import kitchenpos.application.dto.ProductInformationRequest;
+import kitchenpos.application.dto.ProductRequest;
+import kitchenpos.application.dto.ProductResponse;
+import kitchenpos.application.dto.ProductResponses;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -77,8 +77,8 @@ class ProductServiceTest {
     @DisplayName("상품의 목록을 조회할 수 있다")
     @Test
     void list() {
-        final Product product1 = TestFixtures.createProduct(1L);
-        final Product product2 = TestFixtures.createProduct(2L);
+        final Product product1 = ProductTestFixture.createProduct(1L);
+        final Product product2 = ProductTestFixture.createProduct(2L);
         final List<Product> products = Arrays.asList(product1, product2);
 
         when(productRepository.findAll()).thenReturn(products);
@@ -92,9 +92,9 @@ class ProductServiceTest {
     @Test
     void update() {
         final ProductInformationRequest request = new ProductInformationRequest("이름변경", 30000L);
-        final Product product = TestFixtures.createProduct();
+        final Product product = ProductTestFixture.createProduct();
         when(productRepository.findById(any())).thenReturn(Optional.of(product));
-        when(productRepository.save(any())).thenReturn(TestFixtures.updateProduct(product, request));
+        when(productRepository.save(any())).thenReturn(ProductTestFixture.updateProduct(product, request));
 
         final ProductResponse actual = productService.update(1L, request);
 

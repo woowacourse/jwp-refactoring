@@ -1,13 +1,13 @@
-package kitchenpos.product.application;
+package kitchenpos.application;
 
-import kitchenpos.element.Price;
-import kitchenpos.product.application.dto.ProductInformationRequest;
-import kitchenpos.product.application.dto.ProductRequest;
-import kitchenpos.product.application.dto.ProductResponse;
-import kitchenpos.product.application.dto.ProductResponses;
-import kitchenpos.product.domain.MenuProductEvent;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.repository.ProductRepository;
+import kitchenpos.application.dto.ProductInformationRequest;
+import kitchenpos.application.dto.ProductRequest;
+import kitchenpos.application.dto.ProductResponse;
+import kitchenpos.application.dto.ProductResponses;
+import kitchenpos.domain.MenuProductEvent;
+import kitchenpos.domain.Price;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.ProductRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

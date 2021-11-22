@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.TestFixtures;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.menu.application.dto.MenuProductRequest;
 import kitchenpos.menu.application.dto.MenuRequest;
 import kitchenpos.menu.application.dto.MenuResponse;
@@ -21,8 +23,6 @@ import kitchenpos.menu.domain.repository.MenuProductRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -141,8 +141,7 @@ class MenuServiceTest {
     @DisplayName("메뉴 상품 목록에서 (상품의 가격 * 메뉴 상품의 갯수) 의 합과 메뉴 그룹의 가격을 비교했을 때, 메뉴 그룹의 가격이 더 크면 안 된다")
     @Test
     void createExceptionSum() {
-        final Product weirdSavedProduct = TestFixtures.createProduct(3L, "스프링롤", 2000L);
-        final MenuProduct weirdMenuProduct = TestFixtures.createMenuProduct(weirdSavedProduct.getId(), savedMenu1, 1L);
+        final MenuProduct weirdMenuProduct = TestFixtures.createMenuProduct(1L, savedMenu1, 1L);
         final MenuProductRequest weirdMenuProductRequest = new MenuProductRequest(
                 weirdMenuProduct.getProductId(), weirdMenuProduct.getQuantity()
         );

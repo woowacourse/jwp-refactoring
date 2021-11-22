@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import kitchenpos.product.domain.Product;
+import kitchenpos.domain.Product;
 
 @Embeddable
 public class MenuProducts {

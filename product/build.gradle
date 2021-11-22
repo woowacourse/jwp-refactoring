@@ -30,29 +30,3 @@ dependencies {
 test {
     useJUnitPlatform()
 }
-
-subprojects {
-    group 'camp.nextstep.edu'
-    version '1.0'
-
-    apply plugin: 'java'
-    apply plugin: 'spring-boot'
-    apply plugin: 'io.spring.dependency-management'
-
-    sourceCompatibility = JavaVersion.VERSION_11
-
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        testCompile group: 'junit', name: 'junit', version: '4.12'
-    }
-}
-
-project(':app') {
-    dependencies {
-        compile project(':product')
-    }
-}
-
