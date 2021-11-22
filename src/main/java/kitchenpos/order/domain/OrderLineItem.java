@@ -28,8 +28,8 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Order order, final Menu menu, final long quantity) {
-        this(null, order, new OrderMenu(menu), new Quantity(quantity));
+    public OrderLineItem(final Order order, final OrderMenu orderMenu, final long quantity) {
+        this(null, order, orderMenu, new Quantity(quantity));
     }
 
     public OrderLineItem(final Long seq, final Order order, final OrderMenu orderMenu,

@@ -14,27 +14,28 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.name.Name;
+import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.application.OrderService;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.price.Price;
-import kitchenpos.product.domain.Product;
-import kitchenpos.table.domain.TableGroup;
-import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.OrderLineItemRepository;
+import kitchenpos.order.domain.OrderMenu;
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.order.dto.OrderRequest.OrderLineItemRequest;
-import kitchenpos.order.dto.OrderStatusRequest;
 import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.dto.OrderResponse.OrderLineItemResponse;
+import kitchenpos.order.dto.OrderStatusRequest;
+import kitchenpos.price.Price;
+import kitchenpos.product.domain.Product;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -78,9 +79,11 @@ public class OrderServiceTest extends ServiceTest {
             ))
         );
         order1 = new Order(1L, orderTable, OrderStatus.COOKING);
-        orderLineItemOfOrder1 = new OrderLineItem(order1, menu, 2L);
+        orderLineItemOfOrder1 = new OrderLineItem(order1,
+            new OrderMenu(menu.getId(), menu.getName(), menu.getPrice()), 2L);
         order2 = new Order(2L, orderTable2, OrderStatus.COOKING);
-        orderLineItemOfOrder2 = new OrderLineItem(order2, menu, 2L);
+        orderLineItemOfOrder2 = new OrderLineItem(order2,
+            new OrderMenu(menu.getId(), menu.getName(), menu.getPrice()), 2L);
     }
 
     @DisplayName("주문 등록")
@@ -104,7 +107,8 @@ public class OrderServiceTest extends ServiceTest {
             for (int seq = 1; seq <= orderLineItems.size(); seq++) {
                 OrderLineItem orderLineItem = orderLineItems.get(seq - 1);
                 result.add(
-                    new OrderLineItem((long) seq, orderLineItem.getOrder(), orderLineItem.getOrderMenu(),
+                    new OrderLineItem((long) seq, orderLineItem.getOrder(),
+                        orderLineItem.getOrderMenu(),
                         orderLineItem.getQuantity())
                 );
             }

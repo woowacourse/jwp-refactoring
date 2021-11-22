@@ -8,25 +8,26 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.product.domain.Product;
-import kitchenpos.menugroup.domain.MenuGroupRepository;
-import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.OrderLineItemRepository;
+import kitchenpos.order.domain.OrderMenu;
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.order.dto.OrderRequest.OrderLineItemRequest;
-import kitchenpos.order.dto.OrderStatusRequest;
 import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.dto.OrderResponse.OrderLineItemResponse;
+import kitchenpos.order.dto.OrderStatusRequest;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -79,7 +80,9 @@ public class OrderApiTest extends ApiTest {
         );
         orderTable = orderTableRepository.save(new OrderTable(0, false));
         order = orderRepository.save(new Order(orderTable));
-        orderLineItems.add(orderLineItemRepository.save(new OrderLineItem(order, menu, 1L)));
+        orderLineItems.add(orderLineItemRepository.save(
+            new OrderLineItem(order, new OrderMenu(menu.getId(), menu.getName(), menu.getPrice()),
+                1L)));
     }
 
     @DisplayName("주문 등록")

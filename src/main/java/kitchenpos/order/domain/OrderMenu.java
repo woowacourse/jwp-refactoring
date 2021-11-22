@@ -18,10 +18,6 @@ public class OrderMenu {
     protected OrderMenu() {
     }
 
-    public OrderMenu(final Menu menu) {
-        this(menu.getId(), menu.getName(), menu.getPrice());
-    }
-
     public OrderMenu(final Long menuId, final Name name, final Price price) {
         this.menuId = menuId;
         this.name = name;
