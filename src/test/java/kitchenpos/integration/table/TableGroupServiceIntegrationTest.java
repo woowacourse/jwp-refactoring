@@ -8,28 +8,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.Orders;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Orders;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.integration.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class TableGroupServiceIntegrationTest extends IntegrationTest {
 
     private List<OrderTable> orderTables;
 
-    @Autowired
-    private OrderTableRepository orderTableRepository;
-
     @BeforeEach
     void setUp() {
-        OrderTable orderTable1 = new OrderTable(5L, null, 2, false);
-        OrderTable orderTable2 = new OrderTable(6L, null, 2, false);
+        OrderTable orderTable1 = new OrderTable(5L, 2, false);
+        OrderTable orderTable2 = new OrderTable(6L, 2, false);
 
         orderTables = new ArrayList<>();
         orderTables.addAll(Arrays.asList(orderTable1, orderTable2));
@@ -69,7 +64,7 @@ class TableGroupServiceIntegrationTest extends IntegrationTest {
     @Test
     void create_NonExistingOrderTables_Fail() {
         // given
-        OrderTable orderTable = new OrderTable(15L, null, 0, true);
+        OrderTable orderTable = new OrderTable(15L, 0, true);
 
         orderTables.add(orderTable);
 
@@ -88,9 +83,7 @@ class TableGroupServiceIntegrationTest extends IntegrationTest {
         // given
         OrderTable orderTable = new OrderTable(4, false);
 
-        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-
-        orderTables.add(savedOrderTable);
+        orderTables.add(orderTable);
 
         TableGroup tableGroup = new TableGroup();
         tableGroup.add(orderTables);
@@ -125,11 +118,7 @@ class TableGroupServiceIntegrationTest extends IntegrationTest {
 
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
-        OrderTable orderTable = new OrderTable(savedTableGroup.getId(), 4, false);
-
-        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-
-        Orders orders = new Orders(savedOrderTable.getId());
+        Orders orders = new Orders(orderTables.get(0).getId());
         orders.add(Collections.singletonList(new OrderLineItem(3L, 1)));
 
         ordersService.create(orders);

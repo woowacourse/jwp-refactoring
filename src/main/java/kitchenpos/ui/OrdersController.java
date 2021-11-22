@@ -28,14 +28,12 @@ public class OrdersController {
         final Orders created = ordersService.create(orders);
         final URI uri = URI.create("/api/orders/" + created.getId());
 
-        return ResponseEntity.created(uri)
-            .body(created);
+        return ResponseEntity.created(uri).body(created);
     }
 
     @GetMapping
     public ResponseEntity<List<Orders>> list() {
-        return ResponseEntity.ok()
-            .body(ordersService.list());
+        return ResponseEntity.ok().body(ordersService.list());
     }
 
     @PutMapping("/{orderId}/order-status")

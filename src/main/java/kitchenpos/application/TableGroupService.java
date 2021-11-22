@@ -4,31 +4,32 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.domain.repository.OrdersRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.OrdersRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 @Service
+@Transactional(readOnly = true)
 public class TableGroupService {
 
     private final OrdersRepository ordersRepository;
     private final OrderTableRepository orderTableRepository;
-    private final TableGroupDao tableGroupDao;
+    private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(
         final OrdersRepository ordersRepository,
         final OrderTableRepository orderTableRepository,
-        final TableGroupDao tableGroupDao
+        final TableGroupRepository tableGroupRepository
     ) {
         this.ordersRepository = ordersRepository;
         this.orderTableRepository = orderTableRepository;
-        this.tableGroupDao = tableGroupDao;
+        this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
@@ -50,16 +51,14 @@ public class TableGroupService {
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
+            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
                 throw new IllegalArgumentException();
             }
         }
 
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        final Long tableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.create(tableGroupId);
             orderTableRepository.save(savedOrderTable);
         }
         savedTableGroup.add(savedOrderTables);
@@ -69,19 +68,26 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        TableGroup findTableGroup = tableGroupRepository.findById(tableGroupId)
+            .orElseThrow(IllegalAccessError::new);
+
+        final List<OrderTable> orderTables = orderTableRepository
+            .findAllByTableGroupId(tableGroupId);
+
+        findTableGroup.remove(orderTables);
 
         final List<Long> orderTableIds = orderTables.stream()
             .map(OrderTable::getId)
             .collect(Collectors.toList());
 
         if (ordersRepository.existsByOrderTableIdInAndOrderStatusIn(
-            orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            orderTableIds,
+            Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))
+        ) {
             throw new IllegalArgumentException();
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.ungroup();
             orderTableRepository.save(orderTable);
         }
     }

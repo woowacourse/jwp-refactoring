@@ -3,13 +3,11 @@ package kitchenpos.integration.table;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.Orders;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.Orders;
 import kitchenpos.integration.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -73,30 +71,6 @@ class TableServiceIntegrationTest extends IntegrationTest {
         // then
         assertThatThrownBy(() -> tableService.changeEmpty(100L, targetOrderTable))
             .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("테이블 상태는 주문 테이블이 단체 지정되어 있으면 변경할 수 없다.")
-    @Test
-    void changeEmpty_GroupingOrderTable_Fail() {
-        // given
-        OrderTable orderTable1 = new OrderTable(0, true);
-        OrderTable orderTable2 = new OrderTable(0, true);
-
-        OrderTable savedOrderTable1 = tableService.create(orderTable1);
-        OrderTable savedOrderTable2 = tableService.create(orderTable2);
-
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.add(Arrays.asList(savedOrderTable1, savedOrderTable2));
-
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
-
-        savedOrderTable1.changeTableGroupId(savedTableGroup.getId());
-
-        // when
-        // then
-        assertThatThrownBy(
-            () -> tableService.changeEmpty(savedOrderTable1.getId(), savedOrderTable2)
-        ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블 상태는 주문 상태가 `조리` 또는 `식사`면 변경할 수 없다.")
