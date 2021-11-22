@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrderValidator {
 
-    private OrderTableRepository orderTableRepository;
+    private final OrderTableRepository orderTableRepository;
 
     public OrderValidator(final OrderTableRepository orderTableRepository) {
         this.orderTableRepository = orderTableRepository;

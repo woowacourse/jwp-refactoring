@@ -1,16 +1,15 @@
 package kitchenpos.menu.domain;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import kitchenpos.price.Price;
 
 @Embeddable
-public class MenuProducts {
+public class MenuProducts implements Iterable<MenuProduct> {
 
     @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "menu_id")
@@ -28,13 +27,12 @@ public class MenuProducts {
         elements.add(menuProduct);
     }
 
-    public Price totalPrice() {
-        return elements.stream()
-            .map(MenuProduct::getPrice)
-            .reduce(new Price(BigDecimal.ZERO), Price::add);
-    }
-
     public List<MenuProduct> getElements() {
         return elements;
+    }
+
+    @Override
+    public Iterator<MenuProduct> iterator() {
+        return elements.iterator();
     }
 }

@@ -11,6 +11,7 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.order.domain.Order;
@@ -64,6 +65,9 @@ public class OrderApiTest extends ApiTest {
     @Autowired
     private OrderValidator orderValidator;
 
+    @Autowired
+    private MenuValidator menuValidator;
+
     private Menu menu;
     private OrderTable orderTable;
     private Order order;
@@ -79,7 +83,8 @@ public class OrderApiTest extends ApiTest {
         Product product = productRepository.save(new Product("후라이드치킨", BigDecimal.valueOf(16000)));
         menu = menuRepository.save(
             new Menu("후라이드치킨", BigDecimal.valueOf(16000), menuGroup,
-                new MenuProducts(Collections.singletonList(new MenuProduct(product, 2L)))
+                new MenuProducts(Collections.singletonList(new MenuProduct(product.getId(), 2L))),
+                menuValidator
             )
         );
         orderTable = orderTableRepository.save(new OrderTable(0, false));

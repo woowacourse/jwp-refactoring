@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
@@ -48,22 +49,25 @@ public class TableGroupServiceTest extends ServiceTest {
     @Mock
     private TableEmptyChangeService tableEmptyChangeService;
 
+    @Mock
+    private MenuValidator menuValidator;
+
     @InjectMocks
     private TableGroupService tableGroupService;
 
     private OrderTable orderTable1;
     private OrderTable orderTable2;
-    private Menu menu;
 
     @BeforeEach
     void setUp() {
         orderTable1 = new OrderTable(1L, null, 4, true);
         orderTable2 = new OrderTable(2L, null, 4, true);
-        menu = new Menu(1L, new Name("후라이드치킨"), new Price(BigDecimal.valueOf(16000)),
+        Menu menu = new Menu(1L, new Name("후라이드치킨"), new Price(BigDecimal.valueOf(16000)),
             new MenuGroup(1L, "치킨"),
             new MenuProducts(Collections.singletonList(
-                new MenuProduct(new Product("후라이드치킨", BigDecimal.valueOf(16000)), 2L)
-            ))
+                new MenuProduct(1L, 2L)
+            )),
+            menuValidator
         );
     }
 

@@ -19,6 +19,7 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.name.Name;
 import kitchenpos.order.application.OrderService;
@@ -59,6 +60,9 @@ public class OrderServiceTest extends ServiceTest {
     @Mock
     private OrderValidator orderValidator;
 
+    @Mock
+    private MenuValidator menuValidator;
+
     @InjectMocks
     private OrderService orderService;
 
@@ -78,8 +82,9 @@ public class OrderServiceTest extends ServiceTest {
         menu = new Menu(1L, new Name("후라이드치킨"), new Price(BigDecimal.valueOf(16000)),
             menuGroup,
             new MenuProducts(Collections.singletonList(
-                new MenuProduct(new Product("후라이드치킨", BigDecimal.valueOf(16000)), 2L)
-            ))
+                new MenuProduct(1L, 2L)
+            )),
+            menuValidator
         );
         order1 = new Order(1L, orderTable.getId(), OrderStatus.COOKING);
         orderLineItemOfOrder1 = new OrderLineItem(order1,

@@ -3,6 +3,8 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -15,19 +17,18 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
-import kitchenpos.name.Name;
-import kitchenpos.price.Price;
-import kitchenpos.product.domain.Product;
-import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.menu.dto.MenuRequest;
 import kitchenpos.menu.dto.MenuRequest.MenuProductRequest;
 import kitchenpos.menu.dto.MenuResponse;
 import kitchenpos.menu.dto.MenuResponse.MenuProductResponse;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.name.Name;
+import kitchenpos.price.Price;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -42,7 +43,7 @@ public class MenuServiceTest extends ServiceTest {
     private MenuGroupRepository menuGroupRepository;
 
     @Mock
-    private ProductRepository productRepository;
+    private MenuValidator menuValidator;
 
     @InjectMocks
     private MenuService menuService;
@@ -61,14 +62,12 @@ public class MenuServiceTest extends ServiceTest {
         when(menuRepository.save(any(Menu.class))).thenAnswer(invocation -> {
             Menu menu = invocation.getArgument(0);
             return new Menu(menuId, menu.getName(), menu.getPrice(), menu.getMenuGroup(),
-                newMenuProductsOf(menu, seq, menuId));
+                newMenuProductsOf(menu, seq, menuId), menuValidator);
         });
         when(menuGroupRepository.findById(request.getMenuGroupId())).thenReturn(
             Optional.of(new MenuGroup(menuGroupId, "두마리메뉴"))
         );
-        when(productRepository.findById(productId)).thenAnswer(invocation ->
-            Optional.of(new Product(productId, "후라이드", BigDecimal.valueOf(16000)))
-        );
+        doNothing().when(menuValidator).validate(any());
 
         MenuResponse actual = menuService.create(request);
         MenuResponse expected = new MenuResponse(menuId, request.getName(), request.getPrice(),
@@ -87,11 +86,7 @@ public class MenuServiceTest extends ServiceTest {
                 .stream()
                 .map(menuProduct -> new MenuProduct(
                     seq,
-                    new Product(
-                        menuProduct.getProduct().getId(),
-                        "후라이드",
-                        BigDecimal.valueOf(16000)
-                    ),
+                    menuProduct.getProductId(),
                     2L
                 )).collect(Collectors.toList())
         );
@@ -124,9 +119,7 @@ public class MenuServiceTest extends ServiceTest {
         when(menuGroupRepository.findById(menuToCreate.getMenuGroupId())).thenReturn(
             Optional.of(new MenuGroup(1L, "두마리메뉴"))
         );
-        when(productRepository.findById(1L)).thenAnswer(
-            invocation -> Optional.of(new Product(1L, "후라이드", BigDecimal.valueOf(16000)))
-        );
+        doThrow(IllegalArgumentException.class).when(menuValidator).validate(any());
 
         assertThatThrownBy(() -> menuService.create(menuToCreate)).isExactlyInstanceOf(
             IllegalArgumentException.class
@@ -160,7 +153,7 @@ public class MenuServiceTest extends ServiceTest {
         when(menuGroupRepository.findById(menuToCreate.getMenuGroupId())).thenReturn(
             Optional.of(new MenuGroup(1L, "두마리메뉴"))
         );
-        when(productRepository.findById(1L)).thenAnswer(invocation -> Optional.empty());
+        doThrow(IllegalArgumentException.class).when(menuValidator).validate(any());
 
         assertThatThrownBy(() -> menuService.create(menuToCreate)).isExactlyInstanceOf(
             IllegalArgumentException.class);
@@ -173,15 +166,17 @@ public class MenuServiceTest extends ServiceTest {
         Menu friedChicken = new Menu(1L, new Name("후라이드치킨"), new Price(BigDecimal.valueOf(16000)),
             menuGroup,
             new MenuProducts(Collections.singletonList(
-                new MenuProduct(new Product(1L, "후라이드치킨", BigDecimal.valueOf(16000)), 2L)
-            ))
+                new MenuProduct(1L, 2L)
+            )),
+            menuValidator
         );
         Menu seasonedSpicyChicken = new Menu(2L, new Name("후라이드치킨"),
             new Price(BigDecimal.valueOf(16000)),
             menuGroup,
             new MenuProducts(Collections.singletonList(
-                new MenuProduct(new Product(2L, "양념치킨", BigDecimal.valueOf(16000)), 2L)
-            ))
+                new MenuProduct(2L, 2L)
+            )),
+            menuValidator
         );
         List<Menu> menus = Arrays.asList(friedChicken, seasonedSpicyChicken);
         when(menuRepository.findAll()).thenReturn(menus);

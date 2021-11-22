@@ -8,17 +8,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
-import kitchenpos.product.domain.Product;
-import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.menu.dto.MenuRequest;
 import kitchenpos.menu.dto.MenuRequest.MenuProductRequest;
 import kitchenpos.menu.dto.MenuResponse;
 import kitchenpos.menu.dto.MenuResponse.MenuProductResponse;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import org.assertj.core.util.BigDecimalComparator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,6 +41,9 @@ public class MenuApiTest extends ApiTest {
     @Autowired
     private MenuRepository menuRepository;
 
+    @Autowired
+    private MenuValidator menuValidator;
+
     private MenuGroup menuGroup;
     private List<Product> products;
     private List<Menu> menus;
@@ -58,10 +62,16 @@ public class MenuApiTest extends ApiTest {
 
         menus.add(menuRepository.save(new Menu("후라이드치킨", BigDecimal.valueOf(16000),
             menuGroup,
-            new MenuProducts(Collections.singletonList(new MenuProduct(products.get(0), 1))))));
+            new MenuProducts(
+                Collections.singletonList(new MenuProduct(products.get(0).getId(), 1))
+            ),
+            menuValidator)));
         menus.add(menuRepository.save(new Menu("양념치킨", BigDecimal.valueOf(16000),
             menuGroup,
-            new MenuProducts(Collections.singletonList(new MenuProduct(products.get(1), 1))))));
+            new MenuProducts(
+                Collections.singletonList(new MenuProduct(products.get(1).getId(), 1))
+            ),
+            menuValidator)));
     }
 
     @DisplayName("메뉴 등록")
