@@ -8,7 +8,7 @@ public class OrderTableRequest {
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTableRequest() {
+    private OrderTableRequest() {
     }
 
     public OrderTableRequest(Long id, int numberOfGuests, boolean empty) {

@@ -99,6 +99,9 @@ public class OrderTable {
     }
 
     public Long getTableGroupId() {
+        if (Objects.isNull(tableGroup)) {
+            return null;
+        }
         return tableGroup.getId();
     }
 

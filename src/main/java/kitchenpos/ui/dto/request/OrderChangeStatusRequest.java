@@ -6,7 +6,10 @@ public class OrderChangeStatusRequest {
 
     private OrderStatus orderStatus;
 
-    private OrderChangeStatusRequest(OrderStatus orderStatus) {
+    private OrderChangeStatusRequest() {
+    }
+
+    public OrderChangeStatusRequest(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 
