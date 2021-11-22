@@ -19,6 +19,7 @@ import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderMenu;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.order.dto.OrderRequest.OrderLineItemRequest;
 import kitchenpos.order.dto.OrderResponse;
@@ -60,6 +61,9 @@ public class OrderApiTest extends ApiTest {
     @Autowired
     private OrderLineItemRepository orderLineItemRepository;
 
+    @Autowired
+    private OrderValidator orderValidator;
+
     private Menu menu;
     private OrderTable orderTable;
     private Order order;
@@ -79,7 +83,9 @@ public class OrderApiTest extends ApiTest {
             )
         );
         orderTable = orderTableRepository.save(new OrderTable(0, false));
-        order = orderRepository.save(new Order(orderTable));
+        order = new Order(orderTable.getId());
+        order.place(orderValidator);
+        order = orderRepository.save(order);
         orderLineItems.add(orderLineItemRepository.save(
             new OrderLineItem(order, new OrderMenu(menu.getId(), menu.getName(), menu.getPrice()),
                 1L)));

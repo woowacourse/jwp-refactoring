@@ -136,7 +136,7 @@ public class TableServiceTest extends ServiceTest {
     @DisplayName("조리나 식사 상태인 주문 테이블의 빈 상태를 수정할 경우 예외 처리")
     @Test
     void changeEmptyWithCookingOrMealStatus() {
-        new Order(orderTable1);
+        new Order(orderTable1.getId());
         when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable1));
         when(tableEmptyChangeService.canChangeEmpty(any())).thenReturn(false);
 

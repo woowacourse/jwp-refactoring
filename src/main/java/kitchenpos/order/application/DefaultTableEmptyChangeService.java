@@ -26,7 +26,7 @@ public class DefaultTableEmptyChangeService implements TableEmptyChangeService {
 
     private boolean existWithOrderTableAndContainsOrderStatusIn(final OrderTable orderTable,
                                                                final List<OrderStatus> orderStatuses) {
-        List<Order> orders = orderRepository.findAllByOrderTable(orderTable);
+        List<Order> orders = orderRepository.findAllByOrderTableId(orderTable.getId());
 
         return orders.stream()
             .anyMatch(order -> order.isOrderStatusIn(orderStatuses));

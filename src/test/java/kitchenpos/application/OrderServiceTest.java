@@ -3,6 +3,8 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,6 +28,7 @@ import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderMenu;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.order.dto.OrderRequest.OrderLineItemRequest;
 import kitchenpos.order.dto.OrderResponse;
@@ -54,7 +57,7 @@ public class OrderServiceTest extends ServiceTest {
     private OrderLineItemRepository orderLineItemRepository;
 
     @Mock
-    private OrderTableRepository orderTableRepository;
+    private OrderValidator orderValidator;
 
     @InjectMocks
     private OrderService orderService;
@@ -78,10 +81,10 @@ public class OrderServiceTest extends ServiceTest {
                 new MenuProduct(new Product("후라이드치킨", BigDecimal.valueOf(16000)), 2L)
             ))
         );
-        order1 = new Order(1L, orderTable, OrderStatus.COOKING);
+        order1 = new Order(1L, orderTable.getId(), OrderStatus.COOKING);
         orderLineItemOfOrder1 = new OrderLineItem(order1,
             new OrderMenu(menu.getId(), menu.getName(), menu.getPrice()), 2L);
-        order2 = new Order(2L, orderTable2, OrderStatus.COOKING);
+        order2 = new Order(2L, orderTable2.getId(), OrderStatus.COOKING);
         orderLineItemOfOrder2 = new OrderLineItem(order2,
             new OrderMenu(menu.getId(), menu.getName(), menu.getPrice()), 2L);
     }
@@ -89,7 +92,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 등록")
     @Test
     void create() {
-        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable));
+        doNothing().when(orderValidator).validateOrderTable(any());
         when(menuRepository.findAllById(any())).thenReturn(
             Collections.singletonList(menu)
         );
@@ -97,7 +100,7 @@ public class OrderServiceTest extends ServiceTest {
             Order order = invocation.getArgument(0);
             return new Order(
                 1L,
-                order.getOrderTable(),
+                order.getOrderTableId(),
                 order.getOrderStatus()
             );
         });
@@ -132,7 +135,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 항목이 0개인 주문 등록할 경우 예외 처리")
     @Test
     void createWithoutOrderLineItems() {
-        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable));
+        doNothing().when(orderValidator).validateOrderTable(any());
         OrderRequest orderRequest = new OrderRequest(1L, Collections.emptyList());
 
         assertThatThrownBy(() -> orderService.create(orderRequest)).isExactlyInstanceOf(
@@ -143,8 +146,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("등록되지 않은 메뉴로 주문 등록할 경우 예외 처리")
     @Test
     void createWithNotFoundMenu() {
-        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable));
-        when(menuRepository.findAllById(any())).thenReturn(Collections.emptyList());
+        doThrow(IllegalArgumentException.class).when(orderValidator).validateOrderTable(any());
 
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
         OrderRequest orderRequest = new OrderRequest(
@@ -160,8 +162,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("등록되지 않은 테이블에 주문 등록할 경우 예외 처리")
     @Test
     void createWithNotFoundOrderTable() {
-        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable));
-        when(orderTableRepository.findById(1L)).thenReturn(Optional.empty());
+        doThrow(IllegalArgumentException.class).when(orderValidator).validateOrderTable(any());
 
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
         OrderRequest orderRequest = new OrderRequest(
@@ -242,7 +243,7 @@ public class OrderServiceTest extends ServiceTest {
         when(orderRepository.findById(idToChange)).thenReturn(Optional.of(
             new Order(
                 1L,
-                orderTable,
+                orderTable.getId(),
                 OrderStatus.COMPLETION
             )
         ));

@@ -12,11 +12,10 @@ import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderMenu;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.dto.OrderStatusRequest;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,24 +26,24 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final OrderValidator orderValidator;
 
     public OrderService(final MenuRepository menuRepository,
                         final OrderRepository orderRepository,
                         final OrderLineItemRepository orderLineItemRepository,
-                        final OrderTableRepository orderTableRepository) {
+                        final OrderValidator orderValidator) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
-        OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
-            .orElseThrow(IllegalArgumentException::new);
+        Order order = new Order(orderRequest.getOrderTableId());
+        order.place(orderValidator);
 
-        Order savedOrder = orderRepository.save(new Order(orderTable));
+        Order savedOrder = orderRepository.save(order);
         List<OrderLineItem> orderLineItems = orderLineItemRepository.saveAll(
             newOrderLineItems(savedOrder, orderRequest)
         );

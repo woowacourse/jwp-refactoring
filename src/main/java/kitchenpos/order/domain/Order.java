@@ -23,9 +23,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
-    @JoinColumn(name = "order_table_id")
-    @ManyToOne
-    private OrderTable orderTable;
+    private Long orderTableId;
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
     @CreatedDate
@@ -34,24 +32,19 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final OrderTable orderTable) {
-        this(null, orderTable, OrderStatus.COOKING);
+    public Order(final Long orderTableId) {
+        this(null, orderTableId, null);
     }
 
-    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus) {
-        validateOrderTable(orderTable);
+    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus) {
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
     }
 
-    private void validateOrderTable(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException(String.format(
-                "빈 상태의 테이블에는 주문을 추가할 수 없습니다.(table id: %d)",
-                orderTable.getId()
-            ));
-        }
+    public void place(final OrderValidator orderValidator) {
+        orderValidator.validateOrderTable(this);
+        changeOrder(OrderStatus.COOKING);
     }
 
     public void changeOrder(final OrderStatus newOrderStatus) {
@@ -70,8 +63,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {
