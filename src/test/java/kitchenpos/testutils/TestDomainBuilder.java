@@ -7,6 +7,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -40,6 +41,10 @@ public class TestDomainBuilder {
 
     public static OrderTableBuilder orderTableBuilder() {
         return new OrderTableBuilder();
+    }
+
+    public static TableGroupBuilder tableGroupBuilder() {
+        return new TableGroupBuilder();
     }
 
     public static class ProductBuilder {
@@ -284,6 +289,35 @@ public class TestDomainBuilder {
             orderTable.setNumberOfGuests(numberOfGuests);
             orderTable.setEmpty(empty);
             return orderTable;
+        }
+    }
+
+    public static class TableGroupBuilder {
+        private Long id;
+        private LocalDateTime createdDate;
+        private List<OrderTable> orderTables;
+
+        public TableGroupBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public TableGroupBuilder createdDate(LocalDateTime createdDate) {
+            this.createdDate = createdDate;
+            return this;
+        }
+
+        public TableGroupBuilder orderTables(List<OrderTable> orderTables) {
+            this.orderTables = orderTables;
+            return this;
+        }
+
+        public TableGroup build() {
+            TableGroup tableGroup = new TableGroup();
+            tableGroup.setId(id);
+            tableGroup.setCreatedDate(createdDate);
+            tableGroup.setOrderTables(orderTables);
+            return tableGroup;
         }
     }
 }
