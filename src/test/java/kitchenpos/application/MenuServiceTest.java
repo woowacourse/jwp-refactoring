@@ -5,7 +5,6 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,11 +24,12 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static kitchenpos.testutils.TestDomainBuilder.menuBuilder;
-import static kitchenpos.testutils.TestDomainBuilder.menuGroupBuilder;
 import static kitchenpos.testutils.TestDomainBuilder.menuProductBuilder;
 import static kitchenpos.testutils.TestDomainBuilder.productBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
@@ -56,73 +56,65 @@ class MenuServiceTest {
     private MenuService menuService;
 
     private Product friedChickenProduct, seasoningChickenProduct;
-    private MenuGroup doubleQuantityMenuGroup, singleQuantityMenuGroup;
-    private Menu friedChickenMenu, seasoningChickenMenu;
-    private MenuProduct singleFriedChickenMenuProduct, singleSeasoningChickenProduct;
+    private Long doubleQuantityMenuGroupId;
 
     @BeforeEach
     void setUp() {
-        initializeData();
+        friedChickenProduct = productBuilder()
+                .id(1L)
+                .name("후라이드")
+                .price(BigDecimal.valueOf(16000))
+                .build();
+        seasoningChickenProduct = productBuilder()
+                .id(2L)
+                .name("양념치킨")
+                .price(BigDecimal.valueOf(16000))
+                .build();
+        doubleQuantityMenuGroupId = 1L;
     }
 
     @DisplayName("메뉴를 생성한다.")
     @Test
     void create() {
         // given
-        MenuProduct newMenuProduct = menuProductBuilder()
+        MenuProduct newMenuProduct1 = menuProductBuilder()
                 .productId(friedChickenProduct.getId())
-                .quantity(2)
+                .quantity(1)
                 .build();
+        MenuProduct newMenuProduct2 = menuProductBuilder()
+                .productId(seasoningChickenProduct.getId())
+                .quantity(1)
+                .build();
+
         Menu newMenu = menuBuilder()
-                .name("후라이드+후라이드")
+                .name("후라이드+양념")
                 .price(BigDecimal.valueOf(19000))
-                .menuGroupId(doubleQuantityMenuGroup.getId())
-                .menuProducts(Collections.singletonList(newMenuProduct))
+                .menuGroupId(doubleQuantityMenuGroupId)
+                .menuProducts(Arrays.asList(newMenuProduct1, newMenuProduct2))
                 .build();
 
-        Menu savedMenu = menuBuilder()
-                .id(3L)
-                .name("후라이드+후라이드")
-                .price(BigDecimal.valueOf(19000))
-                .menuGroupId(doubleQuantityMenuGroup.getId())
-                .build();
-        Menu composedMenu = menuBuilder()
-                .id(3L)
-                .name("후라이드+후라이드")
-                .price(BigDecimal.valueOf(19000))
-                .menuGroupId(doubleQuantityMenuGroup.getId())
-                .build();
-        MenuProduct expectedMenuProduct = menuProductBuilder()
-                .seq(3L)
-                .menuId(composedMenu.getId())
-                .productId(friedChickenProduct.getId())
-                .quantity(2)
-                .build();
-        composedMenu.setMenuProducts(Collections.singletonList(expectedMenuProduct));
-
-        given(
-                menuGroupDao.existsById(newMenu.getMenuGroupId())
-        ).willReturn(true);
-        given(
-                productDao.findById(newMenuProduct.getProductId())
-        ).willReturn(Optional.ofNullable(friedChickenProduct));
-        given(
-                menuDao.save(newMenu)
-        ).willReturn(savedMenu);
-        given(
-                menuProductDao.save(newMenuProduct)
-        ).willReturn(expectedMenuProduct);
+        given(menuGroupDao.existsById(newMenu.getMenuGroupId()))
+                .willReturn(true);
+        given(productDao.findById(anyLong())).willReturn(
+                Optional.ofNullable(friedChickenProduct),
+                Optional.ofNullable(seasoningChickenProduct)
+        );
+        given(menuDao.save(newMenu)).willReturn(newMenu);
+        given(menuProductDao.save(any(MenuProduct.class))).willReturn(
+                newMenuProduct1, newMenuProduct2
+        );
 
         // when
         Menu menu = menuService.create(newMenu);
 
         // then
-        assertThat(menu).usingRecursiveComparison().isEqualTo(composedMenu);
+        assertThat(menu.getMenuProducts()).isNotNull();
+        assertThat(menu.getMenuProducts()).extracting(MenuProduct::getMenuId).isNotNull();
 
-        then(menuGroupDao).should(times(1)).existsById(newMenu.getMenuGroupId());
-        then(productDao).should(times(1)).findById(newMenuProduct.getProductId());
+        then(menuGroupDao).should(times(1)).existsById(doubleQuantityMenuGroupId);
+        then(productDao).should(times(2)).findById(anyLong());
         then(menuDao).should(times(1)).save(newMenu);
-        then(menuProductDao).should(times(1)).save(newMenuProduct);
+        then(menuProductDao).should(times(2)).save(any(MenuProduct.class));
     }
 
     @DisplayName("메뉴 생성에 실패한다 - 가격은 null 이거나 음수일 수 없다.")
@@ -137,17 +129,16 @@ class MenuServiceTest {
         Menu newMenu = menuBuilder()
                 .name("후라이드+후라이드")
                 .price(price)
-                .menuGroupId(doubleQuantityMenuGroup.getId())
+                .menuGroupId(doubleQuantityMenuGroupId)
                 .menuProducts(Collections.singletonList(newMenuProduct))
                 .build();
 
         // when, then
         assertThatThrownBy(() -> menuService.create(newMenu))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(menuGroupDao).should(never()).existsById(newMenu.getMenuGroupId());
-        then(productDao).should(never()).findById(newMenuProduct.getProductId());
-        then(menuDao).should(never()).save(newMenu);
-        then(menuProductDao).should(never()).save(newMenuProduct);
+
+        then(menuDao).should(never()).save(any());
+        then(menuProductDao).should(never()).save(any());
     }
 
     private static Stream<BigDecimal> invalidPriceSource() {
@@ -173,18 +164,15 @@ class MenuServiceTest {
                 .menuProducts(Collections.singletonList(newMenuProduct))
                 .build();
 
-        given(
-                menuGroupDao.existsById(NON_EXISTENT_ID)
-        ).willReturn(false);
+        given(menuGroupDao.existsById(NON_EXISTENT_ID))
+                .willReturn(false);
 
         // when, then
         assertThatThrownBy(() -> menuService.create(newMenu))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(menuGroupDao).should(times(1)).existsById(newMenu.getMenuGroupId());
 
-        then(productDao).should(never()).findById(newMenuProduct.getProductId());
-        then(menuDao).should(never()).save(newMenu);
-        then(menuProductDao).should(never()).save(newMenuProduct);
+        then(menuDao).should(never()).save(any());
+        then(menuProductDao).should(never()).save(any());
     }
 
     @DisplayName("메뉴 생성에 실패한다 - 메뉴 상품 리스트가 가지고 있는 상품은 모두 존재해야 한다.")
@@ -198,25 +186,21 @@ class MenuServiceTest {
         Menu newMenu = menuBuilder()
                 .name("후라이드+후라이드")
                 .price(BigDecimal.valueOf(19000))
-                .menuGroupId(doubleQuantityMenuGroup.getId())
+                .menuGroupId(doubleQuantityMenuGroupId)
                 .menuProducts(Collections.singletonList(newMenuProduct))
                 .build();
 
-        given(
-                menuGroupDao.existsById(newMenu.getMenuGroupId())
-        ).willReturn(true);
-        given(
-                productDao.findById(newMenuProduct.getProductId())
-        ).willReturn(Optional.empty());
+        given(menuGroupDao.existsById(doubleQuantityMenuGroupId))
+                .willReturn(true);
+        given(productDao.findById(NON_EXISTENT_ID))
+                .willReturn(Optional.empty());
 
         // when, then
         assertThatThrownBy(() -> menuService.create(newMenu))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(menuGroupDao).should(times(1)).existsById(newMenu.getMenuGroupId());
-        then(productDao).should(times(1)).findById(NON_EXISTENT_ID);
 
-        then(menuDao).should(never()).save(newMenu);
-        then(menuProductDao).should(never()).save(newMenuProduct);
+        then(menuDao).should(never()).save(any());
+        then(menuProductDao).should(never()).save(any());
     }
 
     @DisplayName("메뉴 생성에 실패한다 - 메뉴 상품 리스트의 ∑(상품가격 * 수량)이 추가할 메뉴의 가격보다 작거나 같아야 한다.")
@@ -230,112 +214,50 @@ class MenuServiceTest {
         Menu newMenu = menuBuilder()
                 .name("후라이드+후라이드")
                 .price(BigDecimal.valueOf(32001))
-                .menuGroupId(doubleQuantityMenuGroup.getId())
+                .menuGroupId(doubleQuantityMenuGroupId)
                 .menuProducts(Collections.singletonList(newMenuProduct))
                 .build();
 
-        given(
-                menuGroupDao.existsById(newMenu.getMenuGroupId())
-        ).willReturn(true);
-        given(
-                productDao.findById(newMenuProduct.getProductId())
-        ).willReturn(Optional.ofNullable(friedChickenProduct));
+        given(menuGroupDao.existsById(doubleQuantityMenuGroupId))
+                .willReturn(true);
+        given(productDao.findById(newMenuProduct.getProductId()))
+                .willReturn(Optional.ofNullable(friedChickenProduct));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(newMenu))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(menuGroupDao).should(times(1)).existsById(newMenu.getMenuGroupId());
-        then(productDao).should(times(1)).findById(newMenuProduct.getProductId());
 
-        then(menuDao).should(never()).save(newMenu);
-        then(menuProductDao).should(never()).save(newMenuProduct);
+        then(menuDao).should(never()).save(any());
+        then(menuProductDao).should(never()).save(any());
     }
 
     @DisplayName("전체 메뉴의 리스트를 가져온다.")
     @Test
     void list() {
         // given
-        Menu savedFriedChickenMenu = menuBuilder()
-                .id(friedChickenMenu.getId())
-                .name("후라이드치킨")
-                .price(BigDecimal.valueOf(16000))
-                .menuGroupId(singleQuantityMenuGroup.getId())
+        Menu menu1 = menuBuilder()
+                .id(1L)
+                .build();
+        Menu menu2 = menuBuilder()
+                .id(2L)
                 .build();
 
-        Menu savedSeasoningChickenMenu = menuBuilder()
-                .id(seasoningChickenMenu.getId())
-                .name("양념치킨")
-                .price(BigDecimal.valueOf(16000))
-                .menuGroupId(singleQuantityMenuGroup.getId())
+        MenuProduct menuProduct = menuProductBuilder()
                 .build();
 
-        List<Menu> savedMenus = Arrays.asList(savedFriedChickenMenu, savedSeasoningChickenMenu);
-
-        given(menuDao.findAll()).willReturn(savedMenus);
-        given(
-                menuProductDao.findAllByMenuId(friedChickenMenu.getId())
-        ).willReturn(Collections.singletonList(singleFriedChickenMenuProduct));
-        given(
-                menuProductDao.findAllByMenuId(seasoningChickenMenu.getId())
-        ).willReturn(Collections.singletonList(singleSeasoningChickenProduct));
+        given(menuDao.findAll()).willReturn(
+                Arrays.asList(menu1, menu2)
+        );
+        given(menuProductDao.findAllByMenuId(anyLong()))
+                .willReturn(Collections.singletonList(menuProduct));
 
         // when
         List<Menu> menus = menuService.list();
 
         // then
-        assertThat(menus)
-                .usingElementComparatorIgnoringFields("price")
-                .containsExactly(friedChickenMenu, seasoningChickenMenu);
-    }
+        assertThat(menus).extracting(Menu::getMenuProducts).isNotNull();
 
-    private void initializeData() {
-        friedChickenProduct = productBuilder()
-                .id(1L)
-                .name("후라이드")
-                .price(BigDecimal.valueOf(16000))
-                .build();
-        seasoningChickenProduct = productBuilder()
-                .id(2L)
-                .name("양념치킨")
-                .price(BigDecimal.valueOf(16000))
-                .build();
-
-        doubleQuantityMenuGroup = menuGroupBuilder()
-                .id(1L)
-                .name("두마리메뉴")
-                .build();
-        singleQuantityMenuGroup = menuGroupBuilder()
-                .id(2L)
-                .name("한마리메뉴")
-                .build();
-
-        friedChickenMenu = menuBuilder()
-                .id(1L)
-                .name("후라이드치킨")
-                .price(BigDecimal.valueOf(16000))
-                .menuGroupId(singleQuantityMenuGroup.getId())
-                .build();
-        seasoningChickenMenu = menuBuilder()
-                .id(2L)
-                .name("양념치킨")
-                .price(BigDecimal.valueOf(16000))
-                .menuGroupId(singleQuantityMenuGroup.getId())
-                .build();
-
-        singleFriedChickenMenuProduct = menuProductBuilder()
-                .seq(1L)
-                .menuId(friedChickenMenu.getId())
-                .productId(friedChickenProduct.getId())
-                .quantity(1)
-                .build();
-        singleSeasoningChickenProduct = menuProductBuilder()
-                .seq(2L)
-                .menuId(seasoningChickenMenu.getId())
-                .productId(seasoningChickenProduct.getId())
-                .quantity(1)
-                .build();
-
-        friedChickenMenu.setMenuProducts(Collections.singletonList(singleFriedChickenMenuProduct));
-        seasoningChickenMenu.setMenuProducts(Collections.singletonList(singleSeasoningChickenProduct));
+        then(menuDao).should(times(1)).findAll();
+        then(menuProductDao).should(times(2)).findAllByMenuId(anyLong());
     }
 }
