@@ -3,7 +3,10 @@ package kitchenpos.table.service;
 import java.util.List;
 
 public class TableGroupRequest {
-    private final List<OrderTableId> orderTables;
+    private List<OrderTableId> orderTables;
+
+    public TableGroupRequest() {
+    }
 
     public TableGroupRequest(List<OrderTableId> orderTables) {
         this.orderTables = orderTables;
@@ -14,7 +17,10 @@ public class TableGroupRequest {
     }
 
     public static class OrderTableId {
-        private final Long id;
+        private Long id;
+
+        public OrderTableId() {
+        }
 
         public OrderTableId(Long id) {
             this.id = id;

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import kitchenpos.table.service.TableValidator;
-import org.springframework.util.CollectionUtils;
 
 public class OrderTables {
     private static final int GROUP_TABLE_MIN_SIZE = 2;
@@ -17,7 +16,7 @@ public class OrderTables {
     }
 
     private void validateTableGroupSize(List<OrderTable> orderTables) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < GROUP_TABLE_MIN_SIZE) {
+        if (orderTables.isEmpty() || orderTables.size() < GROUP_TABLE_MIN_SIZE) {
             throw new IllegalArgumentException();
         }
     }

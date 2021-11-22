@@ -117,3 +117,6 @@
 - TableValidator를 interface로 구현하고 이 구현체를 Order부분에 위치 (아래의 의존관계를 풀어주기 위해)
     - TableValidator -> Order의 의존성이 존재 (Order -> OrderTable -> Order)
     - TableGroupValidator -> Order의 의존성이 존재 (Order -> OrderTable -> TableGroup -> Order)
+
+### Step4
+- `@RequestBody`의 기본 생성자가 없어서, 에러. 다른 부분에서는 왜 정상 동작할까?
