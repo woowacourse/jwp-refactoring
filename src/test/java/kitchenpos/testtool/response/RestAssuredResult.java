@@ -1,14 +1,12 @@
 package kitchenpos.testtool.response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class RestAssuredResult implements HttpResponse {
@@ -31,20 +29,7 @@ public class RestAssuredResult implements HttpResponse {
     public <T> List<T> convertBodyToList(Class<T> tClass) {
         final String json = response.asString();
         try {
-            final JsonNode jsonNode = objectMapper.readTree(json);
-
-            final List<T> list = new ArrayList<>();
-            final Iterator<JsonNode> data = jsonNode.withArray("data").elements();
-
-            data.forEachRemaining(dataNode -> {
-                try {
-                    final T hello = objectMapper.treeToValue(dataNode, tClass);
-                    list.add(hello);
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                }
-            });
-            return list;
+            return objectMapper.readValue(json, objectMapper.getTypeFactory().constructCollectionType(List.class, tClass));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return new ArrayList<>();
