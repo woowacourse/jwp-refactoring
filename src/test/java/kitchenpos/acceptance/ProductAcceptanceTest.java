@@ -14,9 +14,9 @@ import org.springframework.http.MediaType;
 
 public class ProductAcceptanceTest extends AcceptanceTest {
 
-    private static final ProductRequest 강정치킨 = new ProductRequest("강정치킨", BigDecimal.valueOf(17000));
-    private static final ProductRequest 양념치킨 = new ProductRequest("양념치킨", BigDecimal.valueOf(16000));
-    private static final ProductRequest 간장치킨 = new ProductRequest("간장치킨", BigDecimal.valueOf(18000));
+    public static final ProductRequest 강정치킨 = new ProductRequest("강정치킨", BigDecimal.valueOf(17000));
+    public static final ProductRequest 양념치킨 = new ProductRequest("양념치킨", BigDecimal.valueOf(16000));
+    public static final ProductRequest 간장치킨 = new ProductRequest("간장치킨", BigDecimal.valueOf(18000));
 
     public static ExtractableResponse<Response> PRODUCT_생성_요청(ProductRequest productRequest) {
         return RestAssured.given()

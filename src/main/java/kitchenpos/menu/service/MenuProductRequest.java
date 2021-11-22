@@ -1,8 +1,11 @@
 package kitchenpos.menu.service;
 
 public class MenuProductRequest {
-    private final Long productId;
-    private final Long quantity;
+    private Long productId;
+    private Long quantity;
+
+    public MenuProductRequest() {
+    }
 
     public MenuProductRequest(Long productId, Long quantity) {
         this.productId = productId;

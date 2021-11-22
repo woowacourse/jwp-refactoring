@@ -2,8 +2,8 @@ package kitchenpos.menu.service;
 
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,11 +24,9 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
         Menu menu = menuMapper.mapFrom(menuRequest);
-
-        if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
         menuRepository.save(menu);
+
+        menu.configureMenuProducts(menuMapper.menuProductsFrom(menuRequest));
         return MenuResponse.of(menu);
     }
 

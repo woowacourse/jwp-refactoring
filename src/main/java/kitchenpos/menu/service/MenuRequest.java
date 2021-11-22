@@ -4,17 +4,20 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class MenuRequest {
-    private final String name;
-    private final BigDecimal price;
-    private final Long menuGroupId;
-    private final List<MenuProductRequest> menuProductRequests;
+    private String name;
+    private BigDecimal price;
+    private Long menuGroupId;
+    private List<MenuProductRequest> menuProducts;
+
+    public MenuRequest() {
+    }
 
     public MenuRequest(String name, BigDecimal price, Long menuGroupId,
-                       List<MenuProductRequest> menuProductRequests) {
+                       List<MenuProductRequest> menuProducts) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProductRequests = menuProductRequests;
+        this.menuProducts = menuProducts;
     }
 
     public String getName() {
@@ -29,7 +32,7 @@ public class MenuRequest {
         return menuGroupId;
     }
 
-    public List<MenuProductRequest> getMenuProductRequests() {
-        return menuProductRequests;
+    public List<MenuProductRequest> getMenuProducts() {
+        return menuProducts;
     }
 }

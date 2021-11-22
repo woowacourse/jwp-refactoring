@@ -72,7 +72,7 @@ class MenuServiceTest {
         MenuResponse saved = menuService.create(input);
 
         assertNotNull(saved.getId());
-        assertThat(saved.getMenuProducts()).hasSize(input.getMenuProductRequests().size());
+        assertThat(saved.getMenuProducts()).hasSize(input.getMenuProducts().size());
         assertThat(saved.getPrice()).isEqualByComparingTo(sumOfMenuProduct);
     }
 
