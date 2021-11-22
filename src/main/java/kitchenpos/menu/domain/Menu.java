@@ -6,8 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.name.Name;
 import kitchenpos.price.Price;
@@ -22,26 +20,25 @@ public class Menu {
     private Name name;
     @Embedded
     private Price price;
-    @ManyToOne
-    @JoinColumn(name = "menu_group_id")
-    private MenuGroup menuGroup;
+
+    private Long menuGroupId;
     @Embedded
     private MenuProducts menuProducts;
 
     protected Menu() {
     }
 
-    public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup,
+    public Menu(final String name, final BigDecimal price, final Long menuGroupId,
                 final MenuProducts menuProducts, final MenuValidator menuValidator) {
-        this(null, new Name(name), new Price(price), menuGroup, menuProducts, menuValidator);
+        this(null, new Name(name), new Price(price), menuGroupId, menuProducts, menuValidator);
     }
 
-    public Menu(final Long id, final Name name, final Price price, final MenuGroup menuGroup,
+    public Menu(final Long id, final Name name, final Price price, final Long menuGroupId,
                 final MenuProducts menuProducts, final MenuValidator menuValidator) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
         menuValidator.validate(this);
     }
@@ -58,8 +55,8 @@ public class Menu {
         return price;
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public MenuProducts getMenuProducts() {

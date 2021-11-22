@@ -12,7 +12,7 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menu.domain.MenuValidator;
-import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.name.Name;
 import kitchenpos.price.Price;
 import kitchenpos.product.domain.Product;
@@ -30,6 +30,9 @@ public class MenuValidatorTest {
     @Mock
     private ProductRepository productRepository;
 
+    @Mock
+    private MenuGroupRepository menuGroupRepository;
+
     @InjectMocks
     private MenuValidator menuValidator;
 
@@ -40,7 +43,7 @@ public class MenuValidatorTest {
 
         assertThatIllegalArgumentException().isThrownBy(() -> menuValidator.validate(
             new Menu(1L, new Name("후라이드치킨"), new Price(BigDecimal.valueOf(16000)),
-                new MenuGroup(1L, "두마리메뉴"),
+                1L,
                 new MenuProducts(Collections.singletonList(
                     new MenuProduct(1L, 2L)
                 )),
@@ -55,10 +58,11 @@ public class MenuValidatorTest {
         when(productRepository.findById(any())).thenReturn(
             Optional.of(new Product("후라이드", BigDecimal.valueOf(7500)))
         );
+        when(menuGroupRepository.existsById(any())).thenReturn(true);
 
         assertThatIllegalArgumentException().isThrownBy(() -> menuValidator.validate(
             new Menu(1L, new Name("후라이드치킨"), new Price(BigDecimal.valueOf(16000)),
-                new MenuGroup(1L, "두마리메뉴"),
+                1L,
                 new MenuProducts(Collections.singletonList(
                     new MenuProduct(1L, 2L)
                 )),
@@ -73,15 +77,35 @@ public class MenuValidatorTest {
         when(productRepository.findById(any())).thenReturn(
             Optional.of(new Product("후라이드", BigDecimal.valueOf(8000)))
         );
+        when(menuGroupRepository.existsById(any())).thenReturn(true);
 
         assertThatCode(() -> menuValidator.validate(
             new Menu(1L, new Name("후라이드치킨"), new Price(BigDecimal.valueOf(16000)),
-                new MenuGroup(1L, "두마리메뉴"),
+                1L,
                 new MenuProducts(Collections.singletonList(
                     new MenuProduct(1L, 2L)
                 )),
                 menuValidator
             )
         )).doesNotThrowAnyException();
+    }
+
+    @DisplayName("존재하지 않는 메뉴 그룹의 경우 예외 처리")
+    @Test
+    void notFoundMenuGroup() {
+        when(productRepository.findById(any())).thenReturn(
+            Optional.of(new Product("후라이드", BigDecimal.valueOf(8000)))
+        );
+        when(menuGroupRepository.existsById(any())).thenReturn(false);
+
+        assertThatIllegalArgumentException().isThrownBy(() -> menuValidator.validate(
+            new Menu(1L, new Name("후라이드치킨"), new Price(BigDecimal.valueOf(16000)),
+                1L,
+                new MenuProducts(Collections.singletonList(
+                    new MenuProduct(1L, 2L)
+                )),
+                menuValidator
+            )
+        ));
     }
 }

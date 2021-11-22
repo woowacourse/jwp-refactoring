@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
@@ -40,9 +39,6 @@ public class MenuServiceTest extends ServiceTest {
     private MenuRepository menuRepository;
 
     @Mock
-    private MenuGroupRepository menuGroupRepository;
-
-    @Mock
     private MenuValidator menuValidator;
 
     @InjectMocks
@@ -61,12 +57,9 @@ public class MenuServiceTest extends ServiceTest {
         );
         when(menuRepository.save(any(Menu.class))).thenAnswer(invocation -> {
             Menu menu = invocation.getArgument(0);
-            return new Menu(menuId, menu.getName(), menu.getPrice(), menu.getMenuGroup(),
+            return new Menu(menuId, menu.getName(), menu.getPrice(), menu.getMenuGroupId(),
                 newMenuProductsOf(menu, seq, menuId), menuValidator);
         });
-        when(menuGroupRepository.findById(request.getMenuGroupId())).thenReturn(
-            Optional.of(new MenuGroup(menuGroupId, "두마리메뉴"))
-        );
         doNothing().when(menuValidator).validate(any());
 
         MenuResponse actual = menuService.create(request);
@@ -116,9 +109,6 @@ public class MenuServiceTest extends ServiceTest {
             1L,
             Collections.singletonList(new MenuProductRequest(1L, 2))
         );
-        when(menuGroupRepository.findById(menuToCreate.getMenuGroupId())).thenReturn(
-            Optional.of(new MenuGroup(1L, "두마리메뉴"))
-        );
         doThrow(IllegalArgumentException.class).when(menuValidator).validate(any());
 
         assertThatThrownBy(() -> menuService.create(menuToCreate)).isExactlyInstanceOf(
@@ -134,9 +124,7 @@ public class MenuServiceTest extends ServiceTest {
             BigDecimal.valueOf(19000),
             1L,
             Collections.singletonList(new MenuProductRequest(1L, 2)));
-        when(menuGroupRepository.findById(menuToCreate.getMenuGroupId())).thenReturn(
-            Optional.empty()
-        );
+        doThrow(IllegalArgumentException.class).when(menuValidator).validate(any());
 
         assertThatThrownBy(() -> menuService.create(menuToCreate)).isExactlyInstanceOf(
             IllegalArgumentException.class);
@@ -150,9 +138,6 @@ public class MenuServiceTest extends ServiceTest {
             BigDecimal.valueOf(19000),
             1L,
             Collections.singletonList(new MenuProductRequest(1L, 2)));
-        when(menuGroupRepository.findById(menuToCreate.getMenuGroupId())).thenReturn(
-            Optional.of(new MenuGroup(1L, "두마리메뉴"))
-        );
         doThrow(IllegalArgumentException.class).when(menuValidator).validate(any());
 
         assertThatThrownBy(() -> menuService.create(menuToCreate)).isExactlyInstanceOf(
@@ -164,7 +149,7 @@ public class MenuServiceTest extends ServiceTest {
     void list() {
         MenuGroup menuGroup = new MenuGroup(1L, "두마리메뉴");
         Menu friedChicken = new Menu(1L, new Name("후라이드치킨"), new Price(BigDecimal.valueOf(16000)),
-            menuGroup,
+            menuGroup.getId(),
             new MenuProducts(Collections.singletonList(
                 new MenuProduct(1L, 2L)
             )),
@@ -172,7 +157,7 @@ public class MenuServiceTest extends ServiceTest {
         );
         Menu seasonedSpicyChicken = new Menu(2L, new Name("후라이드치킨"),
             new Price(BigDecimal.valueOf(16000)),
-            menuGroup,
+            menuGroup.getId(),
             new MenuProducts(Collections.singletonList(
                 new MenuProduct(2L, 2L)
             )),

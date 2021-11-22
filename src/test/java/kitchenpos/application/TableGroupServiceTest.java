@@ -7,31 +7,21 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuValidator;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.MenuProducts;
-import kitchenpos.name.Name;
-import kitchenpos.order.domain.Order;
 import kitchenpos.table.application.TableEmptyChangeService;
+import kitchenpos.table.application.TableGroupService;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.price.Price;
-import kitchenpos.product.domain.Product;
-import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.TableGroupRepository;
+import kitchenpos.table.dto.OrderTableResponse;
 import kitchenpos.table.dto.TableGroupRequest;
 import kitchenpos.table.dto.TableGroupRequest.OrderTableOfGroupRequest;
-import kitchenpos.table.dto.OrderTableResponse;
 import kitchenpos.table.dto.TableGroupResponse;
-import kitchenpos.table.application.TableGroupService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,9 +39,6 @@ public class TableGroupServiceTest extends ServiceTest {
     @Mock
     private TableEmptyChangeService tableEmptyChangeService;
 
-    @Mock
-    private MenuValidator menuValidator;
-
     @InjectMocks
     private TableGroupService tableGroupService;
 
@@ -62,13 +49,6 @@ public class TableGroupServiceTest extends ServiceTest {
     void setUp() {
         orderTable1 = new OrderTable(1L, null, 4, true);
         orderTable2 = new OrderTable(2L, null, 4, true);
-        Menu menu = new Menu(1L, new Name("후라이드치킨"), new Price(BigDecimal.valueOf(16000)),
-            new MenuGroup(1L, "치킨"),
-            new MenuProducts(Collections.singletonList(
-                new MenuProduct(1L, 2L)
-            )),
-            menuValidator
-        );
     }
 
     @DisplayName("단체 지정 저장")

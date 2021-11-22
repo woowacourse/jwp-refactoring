@@ -36,9 +36,7 @@ import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.dto.OrderResponse.OrderLineItemResponse;
 import kitchenpos.order.dto.OrderStatusRequest;
 import kitchenpos.price.Price;
-import kitchenpos.product.domain.Product;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -69,7 +67,6 @@ public class OrderServiceTest extends ServiceTest {
     private OrderTable orderTable;
     private Order order1;
     private OrderLineItem orderLineItemOfOrder1;
-    private Order order2;
     private OrderLineItem orderLineItemOfOrder2;
     private Menu menu;
 
@@ -80,7 +77,7 @@ public class OrderServiceTest extends ServiceTest {
         new TableGroup(1L, Arrays.asList(orderTable, orderTable2));
         MenuGroup menuGroup = new MenuGroup("치킨");
         menu = new Menu(1L, new Name("후라이드치킨"), new Price(BigDecimal.valueOf(16000)),
-            menuGroup,
+            menuGroup.getId(),
             new MenuProducts(Collections.singletonList(
                 new MenuProduct(1L, 2L)
             )),
@@ -89,7 +86,7 @@ public class OrderServiceTest extends ServiceTest {
         order1 = new Order(1L, orderTable.getId(), OrderStatus.COOKING);
         orderLineItemOfOrder1 = new OrderLineItem(order1,
             new OrderMenu(menu.getId(), menu.getName(), menu.getPrice()), 2L);
-        order2 = new Order(2L, orderTable2.getId(), OrderStatus.COOKING);
+        Order order2 = new Order(2L, orderTable2.getId(), OrderStatus.COOKING);
         orderLineItemOfOrder2 = new OrderLineItem(order2,
             new OrderMenu(menu.getId(), menu.getName(), menu.getPrice()), 2L);
     }

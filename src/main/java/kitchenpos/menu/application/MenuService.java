@@ -21,26 +21,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
 
     private final MenuRepository menuRepository;
-    private final MenuGroupRepository menuGroupRepository;
     private final MenuValidator menuValidator;
 
     public MenuService(final MenuRepository menuRepository,
-                       final MenuGroupRepository menuGroupRepository,
                        final MenuValidator menuValidator) {
         this.menuRepository = menuRepository;
-        this.menuGroupRepository = menuGroupRepository;
         this.menuValidator = menuValidator;
     }
 
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
-        MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
-            .orElseThrow(() -> new IllegalArgumentException(
-                String.format("존재하지 않는 메뉴 그룹입니다. (id: %d)", menuRequest.getMenuGroupId())
-            ));
-
         MenuProducts menuProducts = newMenuProducts(menuRequest);
-        Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup,
+        Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuRequest.getMenuGroupId(),
             menuProducts, menuValidator);
 
         return MenuResponse.from(menuRepository.save(menu));

@@ -3,6 +3,7 @@ package kitchenpos.menu.domain;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 import org.springframework.stereotype.Component;
@@ -11,9 +12,12 @@ import org.springframework.stereotype.Component;
 public class MenuValidator {
 
     private final ProductRepository productRepository;
+    private final MenuGroupRepository menuGroupRepository;
 
-    public MenuValidator(final ProductRepository productRepository) {
+    public MenuValidator(final ProductRepository productRepository,
+                         final MenuGroupRepository menuGroupRepository) {
         this.productRepository = productRepository;
+        this.menuGroupRepository = menuGroupRepository;
     }
 
     public void validate(final Menu menu) {
@@ -21,6 +25,7 @@ public class MenuValidator {
     }
 
     private void validate(final Menu menu, final Map<Product, Long> quantityPerProduct) {
+        validateToExistMenuGroup(menu.getMenuGroupId());
         BigDecimal price = menu.getPrice().getValue();
         BigDecimal totalMenuProductsPrice = getTotalMenuProductsPrice(quantityPerProduct);
         if (price.compareTo(totalMenuProductsPrice) > 0) {
@@ -29,6 +34,14 @@ public class MenuValidator {
                 price.intValue(),
                 totalMenuProductsPrice.intValue()
             ));
+        }
+    }
+
+    private void validateToExistMenuGroup(final Long menuGroupId) {
+        if (!menuGroupRepository.existsById(menuGroupId)) {
+            throw new IllegalArgumentException(
+                String.format("존재하지 않는 메뉴 그룹입니다. (id: %d)", menuGroupId)
+            );
         }
     }
 

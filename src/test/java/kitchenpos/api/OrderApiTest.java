@@ -82,7 +82,7 @@ public class OrderApiTest extends ApiTest {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
         Product product = productRepository.save(new Product("후라이드치킨", BigDecimal.valueOf(16000)));
         menu = menuRepository.save(
-            new Menu("후라이드치킨", BigDecimal.valueOf(16000), menuGroup,
+            new Menu("후라이드치킨", BigDecimal.valueOf(16000), menuGroup.getId(),
                 new MenuProducts(Collections.singletonList(new MenuProduct(product.getId(), 2L))),
                 menuValidator
             )

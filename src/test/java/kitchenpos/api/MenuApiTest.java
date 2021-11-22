@@ -61,13 +61,13 @@ public class MenuApiTest extends ApiTest {
         products.add(productRepository.save(new Product("양념치킨", BigDecimal.valueOf(16000))));
 
         menus.add(menuRepository.save(new Menu("후라이드치킨", BigDecimal.valueOf(16000),
-            menuGroup,
+            menuGroup.getId(),
             new MenuProducts(
                 Collections.singletonList(new MenuProduct(products.get(0).getId(), 1))
             ),
             menuValidator)));
         menus.add(menuRepository.save(new Menu("양념치킨", BigDecimal.valueOf(16000),
-            menuGroup,
+            menuGroup.getId(),
             new MenuProducts(
                 Collections.singletonList(new MenuProduct(products.get(1).getId(), 1))
             ),
@@ -110,7 +110,7 @@ public class MenuApiTest extends ApiTest {
         List<MenuResponse> expected = new ArrayList<>();
         for (Menu menuToAdd : menus) {
             MenuResponse menu = new MenuResponse(menuToAdd.getId(), menuToAdd.getName().getValue(),
-                menuToAdd.getPrice().getValue(), menuToAdd.getMenuGroup().getId(),
+                menuToAdd.getPrice().getValue(), menuToAdd.getMenuGroupId(),
                 MenuProductResponse.listFrom(menuToAdd)
             );
             expected.add(menu);
