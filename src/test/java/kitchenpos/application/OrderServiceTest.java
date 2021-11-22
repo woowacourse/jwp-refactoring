@@ -104,7 +104,6 @@ class OrderServiceTest {
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
         assertThat(order.getOrderedTime()).isNotNull();
         assertThat(order.getOrderLineItems()).isNotNull();
-        assertThat(order.getOrderLineItems()).extracting(OrderLineItem::getOrderId).isNotNull();
 
         then(menuDao).should(times(1)).countByIdIn(anyList());
         then(orderTableDao).should(times(1)).findById(orderTableId);
@@ -245,7 +244,7 @@ class OrderServiceTest {
         List<Order> orders = orderService.list();
 
         // then
-        assertThat(orders).extracting(Order::getOrderLineItems).isNotNull();
+        assertThat(orders).extracting(Order::getOrderLineItems).isNotEmpty();
 
         then(orderDao).should(times(1)).findAll();
         then(orderLineItemDao).should(times(2)).findAllByOrderId(anyLong());

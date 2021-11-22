@@ -87,6 +87,7 @@ class MenuServiceTest {
                 .build();
 
         Menu newMenu = menuBuilder()
+                .id(1L)
                 .name("후라이드+양념")
                 .price(BigDecimal.valueOf(19000))
                 .menuGroupId(doubleQuantityMenuGroupId)
@@ -109,7 +110,7 @@ class MenuServiceTest {
 
         // then
         assertThat(menu.getMenuProducts()).isNotNull();
-        assertThat(menu.getMenuProducts()).extracting(MenuProduct::getMenuId).isNotNull();
+        assertThat(menu.getMenuProducts()).extracting(MenuProduct::getMenuId).doesNotContainNull();
 
         then(menuGroupDao).should(times(1)).existsById(doubleQuantityMenuGroupId);
         then(productDao).should(times(2)).findById(anyLong());
@@ -255,7 +256,7 @@ class MenuServiceTest {
         List<Menu> menus = menuService.list();
 
         // then
-        assertThat(menus).extracting(Menu::getMenuProducts).isNotNull();
+        assertThat(menus).extracting(Menu::getMenuProducts).isNotEmpty();
 
         then(menuDao).should(times(1)).findAll();
         then(menuProductDao).should(times(2)).findAllByMenuId(anyLong());
