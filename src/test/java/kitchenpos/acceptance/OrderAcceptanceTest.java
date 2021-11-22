@@ -54,6 +54,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         OrderLineItemRequest 주문_메뉴2_요청 = orderLineItemFixture.주문_메뉴_생성_요청(메뉴2_응답.getId(), 1L);
         주문_메뉴_요청_리스트 = orderLineItemFixture.주문_메뉴_요청_리스트_생성(주문_메뉴1_요청, 주문_메뉴2_요청);
         주문_테이블1_응답 = 주문_테이블_등록(orderTableFixture.주문_테이블_생성_요청(2, true));
+        주문_테이블_착석(주문_테이블1_응답.getId(), orderTableFixture.주문_테이블_착석_요청(false));
     }
 
     @Test
@@ -74,12 +75,20 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     @Test
     @DisplayName("주문 리스트 조회 테스트 - 성공")
     void listTest() {
+        // given
 
+        //when
+
+        //then
     }
 
     @Test
     @DisplayName("주문 상태 변경 테스트 - 성공")
     void changeOrderStatus() {
+        // given
 
+        //when
+
+        //then
     }
 }

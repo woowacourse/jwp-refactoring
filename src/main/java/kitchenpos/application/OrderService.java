@@ -38,15 +38,14 @@ public class OrderService {
         final OrderTable orderTable = orderTableRepository.findById(orderCreatedRequest.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException(orderCreatedRequest.getOrderTableId() + " 테이블이 존재하지 않습니다."));
 
-        final Order order = Order.create(orderTable);
-        final Order savedOrder = orderRepository.save(order);
+        final Order savedOrder = orderRepository.save(Order.create(orderTable));
 
         final List<OrderLineItem> orderLineItems = orderCreatedRequest.getOrderLineItemRequests()
                 .stream()
                 .map(orderLineItemRequest -> {
                     final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
                             .orElseThrow(() -> new IllegalArgumentException("Menu id : " + orderLineItemRequest.getMenuId() + "는 등록되지 않아 주문할 수 없습니다."));
-                    return new OrderLineItem(savedOrder, menu, orderLineItemRequest.getQuantity());
+                    return OrderLineItem.create(savedOrder, menu, orderLineItemRequest.getQuantity());
                 })
                 .collect(toList());
 

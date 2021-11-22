@@ -92,4 +92,13 @@ public class AcceptanceTest {
                 .build()
                 .convertBodyToList(OrderTableResponse.class);
     }
+
+    protected OrderTableResponse 주문_테이블_착석(Long orderTableId, OrderTableChangeEmptyRequest request) {
+        return request()
+                .put("/api/tables/" + orderTableId + "/empty", request)
+                .build()
+                .convertBody(OrderTableResponse.class);
+    }
 }
+
+

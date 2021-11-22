@@ -1,9 +1,5 @@
 package kitchenpos.application;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.List;
-import java.util.Objects;
 import kitchenpos.domain.NumberOfGuests;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Orders;
@@ -15,6 +11,11 @@ import kitchenpos.ui.dto.request.OrderTableCreateRequest;
 import kitchenpos.ui.dto.response.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Objects;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @Transactional(readOnly = true)
@@ -44,15 +45,15 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse changeEmpty(final Long orderTableId,
-            final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest) {
+    public OrderTableResponse changeEmpty(
+            final Long orderTableId,
+            final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest
+    ) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "orderTableId : " + orderTableId + "는 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("orderTableId : " + orderTableId + "는 존재하지 않습니다."));
 
         if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException(
-                    "orderTableId : " + orderTableId + "는 테이블 그룹에 속해 있어 상태 변경이 불가능합니다.");
+            throw new IllegalArgumentException("orderTableId : " + orderTableId + "는 테이블 그룹에 속해 있어 상태 변경이 불가능합니다.");
         }
 
         final Orders orders = Orders.create(orderRepository.findAllByOrderTable(savedOrderTable));
