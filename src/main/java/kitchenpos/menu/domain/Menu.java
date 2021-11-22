@@ -61,7 +61,7 @@ public class Menu {
         return menuProducts;
     }
 
-    public void configureMenuProducts(List<MenuProduct> menuProducts) {
+    public void configure(List<MenuProduct> menuProducts) {
         if (price.compareTo(sum(menuProducts)) > 0) {
             throw new IllegalArgumentException();
         }

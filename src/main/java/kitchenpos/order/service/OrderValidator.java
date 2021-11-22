@@ -31,7 +31,7 @@ public class OrderValidator {
             throw new IllegalArgumentException();
         }
 
-        if (order.getOrderTable().isEmpty()) {
+        if (!order.getOrderTable().isEmpty()) {
             throw new IllegalArgumentException();
         }
     }

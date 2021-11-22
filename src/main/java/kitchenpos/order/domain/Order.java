@@ -1,6 +1,7 @@
 package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -9,7 +10,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import kitchenpos.order.service.OrderValidator;
@@ -25,28 +25,32 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "order_id")
-    private List<OrderLineItem> orderLineItems;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
     }
 
-    public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, null, LocalDateTime.now(), orderLineItems);
+    public Order(OrderTable orderTable) {
+        this(null, orderTable, null, LocalDateTime.now());
     }
 
-    public Order(OrderTable orderTable, String orderStatus, List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, OrderStatus.valueOf(orderStatus), LocalDateTime.now(), orderLineItems);
+    public Order(OrderTable orderTable, String orderStatus) {
+        this(null, orderTable, OrderStatus.valueOf(orderStatus), LocalDateTime.now());
     }
 
-    private Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
-                  List<OrderLineItem> orderLineItems) {
+    private Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+    }
+
+    public void configure(List<OrderLineItem> orderLineItems) {
+        this.orderLineItems.addAll(orderLineItems);
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.setOrder(this);
+        }
     }
 
     public void register(OrderValidator orderValidator) {

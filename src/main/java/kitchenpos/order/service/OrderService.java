@@ -3,7 +3,6 @@ package kitchenpos.order.service;
 import java.util.List;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.Order.OrderStatus;
-import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,15 +10,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderMapper orderMapper;
     private final OrderValidator orderValidator;
 
     public OrderService(OrderRepository orderRepository,
-                        OrderLineItemRepository orderLineItemRepository,
-                        OrderMapper orderMapper, OrderValidator orderValidator) {
+                        OrderMapper orderMapper,
+                        OrderValidator orderValidator) {
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderMapper = orderMapper;
         this.orderValidator = orderValidator;
     }
@@ -27,8 +24,8 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
         Order order = orderMapper.mapFrom(orderRequest);
+        order.configure(orderMapper.orderLineItemList(orderRequest));
         order.register(orderValidator);
-
         orderRepository.save(order);
         return OrderResponse.of(order);
     }

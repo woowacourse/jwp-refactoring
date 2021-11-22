@@ -24,9 +24,8 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
         Menu menu = menuMapper.mapFrom(menuRequest);
+        menu.configure(menuMapper.menuProductsFrom(menuRequest));
         menuRepository.save(menu);
-
-        menu.configureMenuProducts(menuMapper.menuProductsFrom(menuRequest));
         return MenuResponse.of(menu);
     }
 

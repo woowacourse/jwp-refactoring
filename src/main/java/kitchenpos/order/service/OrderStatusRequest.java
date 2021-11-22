@@ -1,7 +1,10 @@
 package kitchenpos.order.service;
 
 public class OrderStatusRequest {
-    private final String orderStatus;
+    private String orderStatus;
+
+    public OrderStatusRequest() {
+    }
 
     public OrderStatusRequest(String orderStatus) {
         this.orderStatus = orderStatus;
