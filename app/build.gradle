@@ -2,6 +2,11 @@ plugins {
     id 'org.springframework.boot' version '2.3.3.RELEASE'
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
     id 'java'
+    id 'application'
+}
+
+application {
+    mainClass = 'kitchenpos.Application'
 }
 
 group 'camp.nextstep.edu'
@@ -15,6 +20,8 @@ repositories {
 }
 
 dependencies {
+    implementation project(':product')
+
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -27,32 +34,6 @@ dependencies {
     testImplementation 'org.assertj.assertj-core:3.21.0'
 }
 
-test {
+tasks.named('test') {
     useJUnitPlatform()
 }
-
-subprojects {
-    group 'camp.nextstep.edu'
-    version '1.0'
-
-    apply plugin: 'java'
-    apply plugin: 'spring-boot'
-    apply plugin: 'io.spring.dependency-management'
-
-    sourceCompatibility = JavaVersion.VERSION_11
-
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        testCompile group: 'junit', name: 'junit', version: '4.12'
-    }
-}
-
-project(':app') {
-    dependencies {
-        compile project(':product')
-    }
-}
-
