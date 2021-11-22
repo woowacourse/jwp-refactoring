@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.ProductTestFixture;
+import kitchenpos.ProductFixture;
 import kitchenpos.application.dto.ProductInformationRequest;
 import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.application.dto.ProductResponse;
@@ -77,8 +77,8 @@ class ProductServiceTest {
     @DisplayName("상품의 목록을 조회할 수 있다")
     @Test
     void list() {
-        final Product product1 = ProductTestFixture.createProduct(1L);
-        final Product product2 = ProductTestFixture.createProduct(2L);
+        final Product product1 = ProductFixture.createProduct(1L);
+        final Product product2 = ProductFixture.createProduct(2L);
         final List<Product> products = Arrays.asList(product1, product2);
 
         when(productRepository.findAll()).thenReturn(products);
@@ -92,9 +92,9 @@ class ProductServiceTest {
     @Test
     void update() {
         final ProductInformationRequest request = new ProductInformationRequest("이름변경", 30000L);
-        final Product product = ProductTestFixture.createProduct();
+        final Product product = ProductFixture.createProduct();
         when(productRepository.findById(any())).thenReturn(Optional.of(product));
-        when(productRepository.save(any())).thenReturn(ProductTestFixture.updateProduct(product, request));
+        when(productRepository.save(any())).thenReturn(ProductFixture.updateProduct(product, request));
 
         final ProductResponse actual = productService.update(1L, request);
 

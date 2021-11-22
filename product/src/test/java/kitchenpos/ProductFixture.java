@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import kitchenpos.application.dto.ProductInformationRequest;
 import kitchenpos.domain.Product;
 
-public class ProductTestFixture {
+public class ProductFixture {
 
     public static Product createProduct() {
         return Product.builder()
