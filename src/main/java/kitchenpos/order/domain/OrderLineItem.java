@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 @Entity
 public class OrderLineItem {
@@ -17,7 +18,7 @@ public class OrderLineItem {
     @ManyToOne
     private Order order;
 
-    @ManyToOne
+    @OneToOne
     private OrderMenu orderMenu;
 
     @Column(nullable = false)
