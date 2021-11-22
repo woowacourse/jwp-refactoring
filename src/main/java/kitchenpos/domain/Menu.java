@@ -26,12 +26,12 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+    private Menu(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroup, menuProducts);
     }
 
-    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup,
-                List<MenuProduct> menuProducts) {
+    private Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup,
+                 List<MenuProduct> menuProducts) {
         validatesPrice(price);
         this.id = id;
         this.name = name;
@@ -39,6 +39,14 @@ public class Menu {
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
         validateMenuProductsPrice();
+    }
+
+    public static Menu create(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        return new Menu(name, price, menuGroup, menuProducts);
+    }
+
+    public static Menu create(Long id, String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        return new Menu(id, name, price, menuGroup, menuProducts);
     }
 
     private void validatesPrice(BigDecimal price) {

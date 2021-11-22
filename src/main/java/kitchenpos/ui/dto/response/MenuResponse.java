@@ -8,6 +8,7 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 public class MenuResponse {
+    
     private Long id;
     private String name;
     private BigDecimal price;

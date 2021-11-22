@@ -29,7 +29,7 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
         // then
         assertThat(response).usingRecursiveComparison()
                 .ignoringFields("id")
-                .isEqualTo(expected);
+                .isEqualTo(MenuGroupResponse.create(expected));
     }
 
     @Test
@@ -38,7 +38,6 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
         // given
         MenuGroupRequest 메뉴그룹1_생성_요청 = menuGroupFixture.메뉴그룹_생성_요청("메뉴그룹1");
         MenuGroupRequest 메뉴그룹2_생성_요청 = menuGroupFixture.메뉴그룹_생성_요청("메뉴그룹2");
-
 
         List<MenuGroupResponse> expected = menuGroupFixture.메뉴그룹_응답_리스트_생성(메뉴그룹_등록(메뉴그룹1_생성_요청), 메뉴그룹_등록(메뉴그룹2_생성_요청));
 
@@ -50,12 +49,5 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
         assertThat(actual).usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(expected);
-    }
-
-    public List<MenuGroupResponse> 메뉴그룹_리스트_조회(){
-        return request()
-                .get("/api/menu-groups")
-                .build()
-                .convertBodyToList(MenuGroupResponse.class);
     }
 }

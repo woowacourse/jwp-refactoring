@@ -9,6 +9,15 @@ public class MenuProductResponse {
     private final Long productId;
     private final Long quantity;
 
+    private MenuProductResponse(MenuProduct menuProduct) {
+        this(
+                menuProduct.getSeq(),
+                menuProduct.getMenu().getId(),
+                menuProduct.getProduct().getId(),
+                menuProduct.getQuantity()
+        );
+    }
+
     private MenuProductResponse(
             Long seq,
             Long menuId,
@@ -19,15 +28,6 @@ public class MenuProductResponse {
         this.menuId = menuId;
         this.productId = productId;
         this.quantity = quantity;
-    }
-
-    private MenuProductResponse(MenuProduct menuProduct) {
-        this(
-                menuProduct.getSeq(),
-                menuProduct.getMenu().getId(),
-                menuProduct.getProduct().getId(),
-                menuProduct.getQuantity()
-        );
     }
 
     public static MenuProductResponse create(MenuProduct menuProduct) {

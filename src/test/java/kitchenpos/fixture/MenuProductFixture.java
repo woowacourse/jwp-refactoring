@@ -1,28 +1,29 @@
-//package kitchenpos.fixture;
-//
-//import java.util.Arrays;
-//import java.util.List;
-//import kitchenpos.domain.MenuProduct;
-//
-//public class MenuProductFixture {
-//
-//    public MenuProduct 메뉴_상품_생성(Long productId, long quantity) {
-//        MenuProduct menuProduct = new MenuProduct();
-//        menuProduct.setProductId(productId);
-//        menuProduct.setQuantity(quantity);
-//        return menuProduct;
-//    }
-//
-//    public MenuProduct 메뉴_상품_생성(Long seq, Long menuId, Long productId, long quantity) {
-//        MenuProduct menuProduct = new MenuProduct();
-//        menuProduct.setSeq(seq);
-//        menuProduct.setMenuId(menuId);
-//        menuProduct.setProductId(productId);
-//        menuProduct.setQuantity(quantity);
-//        return menuProduct;
-//    }
-//
-//    public List<MenuProduct> 메뉴_상품_리스트_생성(MenuProduct... menuProducts) {
-//        return Arrays.asList(menuProducts);
-//    }
-//}
+package kitchenpos.fixture;
+
+import java.util.Arrays;
+import java.util.List;
+
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.request.MenuProductRequest;
+import kitchenpos.ui.dto.response.MenuProductResponse;
+
+public class MenuProductFixture {
+
+    public MenuProductRequest 메뉴_상품_생성_요청(Long productId, Long quantity) {
+        return new MenuProductRequest(productId, quantity);
+    }
+
+    public MenuProduct 메뉴_상품_생성(Long seq, Menu menu, Product product, Long quantity) {
+        return MenuProduct.create(seq, menu, product, quantity);
+    }
+
+    public List<MenuProductRequest> 메뉴_상품_요청_리스트_생성(MenuProductRequest... menuProductRequests) {
+        return Arrays.asList(menuProductRequests);
+    }
+
+    public List<MenuProductResponse> 메뉴_상품_리스트_생성(MenuProductResponse... menuProductResponses) {
+        return Arrays.asList(menuProductResponses);
+    }
+}
