@@ -2,6 +2,7 @@ package kitchenpos.menu.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import kitchenpos.product.domain.Product;
@@ -9,9 +10,8 @@ import kitchenpos.product.domain.Product;
 @Entity
 public class MenuProduct {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-
     @ManyToOne
     private Product product;
     private long quantity;
