@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
-import kitchenpos.TestFixtures;
+import kitchenpos.TableFixture;
 import kitchenpos.tablegroup.application.TableGroupService;
 import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -36,10 +36,11 @@ class TableGroupRestControllerTest {
 
     @Test
     void create() throws Exception {
-        final TableGroup tableGroup = TestFixtures.createTableGroup();
+        final TableGroup tableGroup = TableFixture.createTableGroup();
         final String content = objectMapper.writeValueAsString(
-                TestFixtures.createTableGroupRequest(Arrays.asList(1L, 2L)));
-        when(tableGroupService.create(any())).thenReturn(TestFixtures.createTableGroupResponse());
+                TableFixture.createTableGroupRequest(Arrays.asList(1L, 2L)));
+        when(tableGroupService.create(any()))
+                .thenReturn(TableFixture.createTableGroupResponse());
 
         final MockHttpServletResponse response = mockMvc.perform(post("/api/table-groups")
                         .content(content)
@@ -49,7 +50,8 @@ class TableGroupRestControllerTest {
 
         assertAll(
                 () -> assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value()),
-                () -> assertThat(response.getHeader("Location")).isEqualTo("/api/table-groups/" + tableGroup.getId())
+                () -> assertThat(response.getHeader("Location"))
+                        .isEqualTo("/api/table-groups/" + tableGroup.getId())
         );
     }
 

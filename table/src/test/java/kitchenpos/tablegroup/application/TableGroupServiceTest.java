@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import kitchenpos.TestFixtures;
+import kitchenpos.TableFixture;
 import kitchenpos.tablegroup.application.dto.TableGroupRequest;
 import kitchenpos.tablegroup.application.dto.TableGroupResponse;
 import kitchenpos.tablegroup.domain.TableCreatable;
@@ -48,7 +48,7 @@ class TableGroupServiceTest {
         tableGroup = TableGroup.builder()
                 .createdDate(LocalDateTime.now())
                 .build();
-        tableGroupRequest = TestFixtures.createTableGroupRequest(Arrays.asList(1L, 2L));
+        tableGroupRequest = TableFixture.createTableGroupRequest(Arrays.asList(1L, 2L));
     }
 
     @DisplayName("단체 지정을 등록할 수 있다")
@@ -68,10 +68,12 @@ class TableGroupServiceTest {
     @DisplayName("tableCreator 에서 예외가 발생하면 그룹생성이 되지 않는다")
     @Test
     void createException() {
-        when(tableGroupRepository.save(any())).thenReturn(TestFixtures.createTableGroup());
-        doThrow(IllegalArgumentException.class).when(tableCreator).create(any(), any());
+        when(tableGroupRepository.save(any())).thenReturn(TableFixture.createTableGroup());
+        doThrow(IllegalArgumentException.class).when(tableCreator)
+                .create(any(), any());
 
-        assertThatThrownBy(() -> tableGroupService.create(any())).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(any()))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("단체 지정을 해제할 수 있다")
@@ -87,6 +89,7 @@ class TableGroupServiceTest {
     void ungroupExceptionExistsAndStatus() {
         doThrow(IllegalArgumentException.class).when(tableEraser).ungroup(any());
 
-        assertThatThrownBy(() -> tableGroupService.ungroup(any())).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.ungroup(any()))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

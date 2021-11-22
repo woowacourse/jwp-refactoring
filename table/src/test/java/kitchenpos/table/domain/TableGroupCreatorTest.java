@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.TestFixtures;
+import kitchenpos.TableFixture;
 import kitchenpos.table.application.dto.OrderTableRequest;
 import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.tablegroup.application.dto.TableGroupRequest;
@@ -40,7 +40,7 @@ class TableGroupCreatorTest {
                 .empty(true)
                 .build();
         final List<OrderTable> orderTables = Arrays.asList(wrongOrderTable, normalOrderTable);
-        final TableGroupRequest tableGroupRequest = TestFixtures.createTableGroupRequest(Arrays.asList(1L, 2L));
+        final TableGroupRequest tableGroupRequest = TableFixture.createTableGroupRequest(Arrays.asList(1L, 2L));
 
         when(orderTableRepository.findAllByIdIn(any())).thenReturn(orderTables);
 
@@ -71,7 +71,7 @@ class TableGroupCreatorTest {
                 .id(3L)
                 .empty(true)
                 .build();
-        final TableGroupRequest request = TestFixtures.createTableGroupRequest(
+        final TableGroupRequest request = TableFixture.createTableGroupRequest(
                 Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId())
         );
         final List<OrderTable> savedOrderTables = Arrays.asList(savedOrderTable1, savedOrderTable2, orderTable3);
@@ -92,7 +92,7 @@ class TableGroupCreatorTest {
                 .empty(true)
                 .build();
         final List<OrderTable> savedOrderTables = Arrays.asList(savedOrderTable1, savedOrderTable2);
-        final TableGroupRequest request = TestFixtures.createTableGroupRequest(
+        final TableGroupRequest request = TableFixture.createTableGroupRequest(
                 Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId())
         );
         when(orderTableRepository.findAllByIdIn(any())).thenReturn(savedOrderTables);
@@ -114,7 +114,7 @@ class TableGroupCreatorTest {
                 .tableGroupId(1L)
                 .build();
         final List<OrderTable> savedOrderTables = Arrays.asList(savedOrderTable1, savedOrderTable2);
-        final TableGroupRequest request = TestFixtures.createTableGroupRequest(
+        final TableGroupRequest request = TableFixture.createTableGroupRequest(
                 Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId())
         );
 
