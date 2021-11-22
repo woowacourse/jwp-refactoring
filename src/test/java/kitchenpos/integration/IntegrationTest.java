@@ -2,7 +2,7 @@ package kitchenpos.integration;
 
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.MenuService;
-import kitchenpos.application.OrderService;
+import kitchenpos.application.OrdersService;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
@@ -24,7 +24,7 @@ public abstract class IntegrationTest {
     protected MenuService menuService;
 
     @Autowired
-    protected OrderService orderService;
+    protected OrdersService ordersService;
 
     @Autowired
     protected TableService tableService;

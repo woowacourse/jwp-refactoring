@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.Orders;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -107,14 +107,10 @@ class TableServiceIntegrationTest extends IntegrationTest {
 
         OrderTable savedOrderTable = tableService.create(orderTable);
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(2L);
-        orderLineItem.setQuantity(1);
+        Orders orders = new Orders(savedOrderTable.getId());
+        orders.add(Collections.singletonList(new OrderLineItem(2L, 1)));
 
-        Order order = new Order(savedOrderTable.getId());
-        order.add(Collections.singletonList(orderLineItem));
-
-        orderService.create(order);
+        ordersService.create(orders);
 
         OrderTable targetOrderTable = new OrderTable(0, true);
 

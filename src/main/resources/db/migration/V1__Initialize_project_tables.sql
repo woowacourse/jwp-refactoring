@@ -8,7 +8,7 @@ CREATE TABLE orders (
 
 CREATE TABLE order_line_item (
     seq BIGINT(20) NOT NULL AUTO_INCREMENT,
-    order_id BIGINT(20) NOT NULL,
+    orders_id BIGINT(20),
     menu_id BIGINT(20) NOT NULL,
     quantity BIGINT(20) NOT NULL,
     PRIMARY KEY (seq)
@@ -30,7 +30,7 @@ CREATE TABLE menu_group (
 
 CREATE TABLE menu_product (
     seq BIGINT(20) NOT NULL AUTO_INCREMENT,
-    menu_id BIGINT(20) NOT NULL,
+    menu_id BIGINT(20),
     product_id BIGINT(20) NOT NULL,
     quantity BIGINT(20) NOT NULL,
     PRIMARY KEY (seq)
@@ -63,7 +63,7 @@ ALTER TABLE orders
 
 ALTER TABLE order_line_item
     ADD CONSTRAINT fk_order_line_item_orders
-        FOREIGN KEY (order_id) REFERENCES orders (id);
+        FOREIGN KEY (orders_id) REFERENCES orders (id);
 
 ALTER TABLE order_line_item
     ADD CONSTRAINT fk_order_line_item_menu

@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.Orders;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -24,7 +24,7 @@ class TableGroupServiceIntegrationTest extends IntegrationTest {
     private List<OrderTable> orderTables;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @BeforeEach
     void setUp() {
@@ -88,7 +88,7 @@ class TableGroupServiceIntegrationTest extends IntegrationTest {
         // given
         OrderTable orderTable = new OrderTable(4, false);
 
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         orderTables.add(savedOrderTable);
 
@@ -127,16 +127,12 @@ class TableGroupServiceIntegrationTest extends IntegrationTest {
 
         OrderTable orderTable = new OrderTable(savedTableGroup.getId(), 4, false);
 
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(3L);
-        orderLineItem.setQuantity(1);
+        Orders orders = new Orders(savedOrderTable.getId());
+        orders.add(Collections.singletonList(new OrderLineItem(3L, 1)));
 
-        Order order = new Order(savedOrderTable.getId());
-        order.add(Collections.singletonList(orderLineItem));
-
-        orderService.create(order);
+        ordersService.create(orders);
 
         // when
         // then

@@ -32,7 +32,6 @@ class MenuServiceIntegrationTest extends IntegrationTest {
         // then
         assertThat(savedMenu)
             .usingRecursiveComparison()
-            .ignoringFields("id", "menuProducts.seq")
             .isEqualTo(menu);
     }
 

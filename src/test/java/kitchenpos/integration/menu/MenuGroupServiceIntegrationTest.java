@@ -22,7 +22,6 @@ class MenuGroupServiceIntegrationTest extends IntegrationTest {
         // then
         assertThat(savedMenuGroup)
             .usingRecursiveComparison()
-            .ignoringFields("id")
             .isEqualTo(menuGroup);
     }
 
