@@ -1,70 +1,69 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.request.menu.MenuGroupRequest;
+import kitchenpos.application.dto.response.menu.MenuGroupResponse;
+import kitchenpos.domain.menu.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@ExtendWith(MockitoExtension.class)
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends ServiceTest {
 
-    @InjectMocks
+    @Autowired
     private MenuGroupService menuGroupService;
-
-    @Mock
-    private MenuGroupDao menuGroupDao;
 
     @DisplayName("메뉴 그룹을 등록한다.")
     @Test
     void create() {
         //given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("치킨");
-        MenuGroup expected = new MenuGroup();
-        expected.setId(1L);
-        expected.setName("치킨");
+        MenuGroup menuGroup = new MenuGroup.MenuGroupBuilder()
+                                .setName("치킨")
+                                .build();
 
-        given(menuGroupDao.save(menuGroup))
-                .willReturn(expected);
         //when
-        MenuGroup actual = menuGroupService.create(menuGroup);
+        MenuGroupResponse actual = menuGroupService
+                .create(MenuGroupRequest.create(menuGroup));
+
+        MenuGroupResponse expected = MenuGroupResponse.create(new MenuGroup.MenuGroupBuilder()
+                                        .setId(actual.getId())
+                                        .setName("치킨")
+                                        .build());
+
         //then
         assertThat(actual).isEqualTo(expected);
-
-        verify(menuGroupDao, times(1)).save(menuGroup);
     }
 
     @DisplayName("메뉴 그룹 목록을 불러온다.")
     @Test
     void list() {
         //given
-        MenuGroup menuGroupChicken = new MenuGroup();
-        menuGroupChicken.setId(1L);
-        menuGroupChicken.setName("치킨");
-        MenuGroup menuGroupPizza = new MenuGroup();
-        menuGroupPizza.setId(2L);
-        menuGroupPizza.setName("피자");
+        MenuGroup menuGroup1 = new MenuGroup.MenuGroupBuilder()
+                                    .setId(1L)
+                                    .setName("치킨")
+                                    .build();
 
-        List<MenuGroup> expected = List.of(menuGroupChicken, menuGroupPizza);
+        MenuGroup menuGroup2 = new MenuGroup.MenuGroupBuilder()
+                                    .setId(2L)
+                                    .setName("한마리메뉴")
+                                    .build();
 
-        given(menuGroupDao.findAll())
-                .willReturn(expected);
+        menuGroupService.create(MenuGroupRequest.create(menuGroup1));
+        menuGroupService.create(MenuGroupRequest.create(menuGroup2));
+
+        List<MenuGroupResponse> expected = List.of(menuGroup1, menuGroup2).stream()
+                                            .map(MenuGroupResponse::create)
+                                            .collect(Collectors.toList());
+
         //when
-        List<MenuGroup> actual = menuGroupService.list();
+        List<MenuGroupResponse> actual = menuGroupService.list();
+
         //then
-
-        assertThat(actual).isEqualTo(expected);
-
-        verify(menuGroupDao, times(1)).findAll();
+        assertThat(actual).hasSize(2);
+        assertThat(actual.get(0).getName()).isEqualTo(expected.get(0).getName());
+        assertThat(actual.get(1).getName()).isEqualTo(expected.get(1).getName());
     }
 }

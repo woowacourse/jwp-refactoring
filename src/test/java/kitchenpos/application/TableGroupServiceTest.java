@@ -2,220 +2,177 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.application.dto.request.table.OrderTableIdRequest;
+import kitchenpos.application.dto.request.table.TableGroupRequest;
+import kitchenpos.application.dto.response.table.TableGroupResponse;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItem.OrderLineItemBuilder;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.exception.InvalidOrderTableSizeException;
+import kitchenpos.exception.NotFoundOrderTableException;
+import kitchenpos.exception.OrderTableEmptyGroupIdException;
+import kitchenpos.exception.UnGroupNotCompletionException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@ExtendWith(MockitoExtension.class)
-class TableGroupServiceTest {
+class TableGroupServiceTest extends ServiceTest {
 
-    @InjectMocks
+    @Autowired
     private TableGroupService tableGroupService;
 
-    @Mock
-    private OrderDao orderDao;
+    @Autowired
+    private OrderTableRepository orderTableRepository;
 
-    @Mock
-    private OrderTableDao orderTableDao;
+    private static OrderTable savedOrderTable1;
+    private static OrderTable savedOrderTable2;
 
-    @Mock
-    private TableGroupDao tableGroupDao;
+    @BeforeEach
+    void setUp() {
+
+        OrderLineItem orderLineItem = new OrderLineItemBuilder()
+                .setQuantity(4)
+                .build();
+
+        Order order = new Order.OrderBuilder()
+                .setOrderStatus(OrderStatus.COMPLETION.name())
+                .setOrderLineItems(List.of(orderLineItem))
+                .build();
+
+        OrderTable orderTable1 = new OrderTable.OrderTableBuilder()
+                .setNumberOfGuests(4)
+                .setOrders(List.of(order))
+                .setEmpty(true)
+                .build();
+        OrderTable orderTable2 = new OrderTable.OrderTableBuilder()
+                .setNumberOfGuests(3)
+                .setOrders(List.of(order))
+                .setEmpty(true)
+                .build();
+
+        savedOrderTable1 = orderTableRepository.save(orderTable1);
+        savedOrderTable2 = orderTableRepository.save(orderTable2);
+    }
 
     @DisplayName("단체 지정을 등록할 수 있다.")
     @Test
     void create() {
         //given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(1L);
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(
+                        new OrderTableIdRequest(savedOrderTable1.getId()),
+                        new OrderTableIdRequest(savedOrderTable2.getId()))
+        );
 
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(true);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(true);
-
-        List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
-
-        tableGroup.setOrderTables(orderTables);
-
-        given(orderTableDao.findAllByIdIn(List.of(orderTable1.getId(), orderTable2.getId())))
-                .willReturn(orderTables);
-        given(tableGroupDao.save(tableGroup))
-                .willReturn(tableGroup);
         //when
-
-        TableGroup actual = tableGroupService.create(tableGroup);
+        TableGroupResponse actual = tableGroupService.create(tableGroupRequest);
         //then
-        assertThat(actual).isEqualTo(tableGroup);
-
-        verify(orderTableDao, times(1)).findAllByIdIn(anyList());
-        verify(tableGroupDao, times(1)).save(tableGroup);
-        verify(orderTableDao, times(2)).save(any());
+        assertThat(actual.getOrderTableResponses().get(0).getNumberOfGuests()).isEqualTo(4);
+        assertThat(actual.getOrderTableResponses().get(1).getNumberOfGuests()).isEqualTo(3);
     }
 
     @DisplayName("단체 지정 등록 실패 - 주문 테이블이 없거나 하나인 경우")
     @Test
     void createFailInvalidOrderTableCount() {
         //given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Collections.emptyList());
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(
+                new OrderTableIdRequest(savedOrderTable1.getId()))
+        );
         //when
         //then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("단체 지정시 주문 테이블은 두 개 이상이여야합니다.");
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+                .isInstanceOf(InvalidOrderTableSizeException.class);
     }
 
     @DisplayName("단체 지정 등록 실패 - 존재하지 않는 주문 테이블인 경우")
     @Test
     void createFailNotExistOrderTable() {
         //given
-        TableGroup tableGroup = new TableGroup();
-
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-
-        List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
-        tableGroup.setOrderTables(orderTables);
-
-        given(orderTableDao.findAllByIdIn(List.of(1L, 2L)))
-                .willReturn(List.of(orderTable1));
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(
+                new OrderTableIdRequest(savedOrderTable1.getId()),
+                new OrderTableIdRequest(1000L))
+        );
         //when
         //then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("존재하지 않는 주문 테이블입니다.");
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+                .isInstanceOf(NotFoundOrderTableException.class);
     }
 
-    @DisplayName("단체 지정 등록 실패 - 빈 테이블이 아닐 경우")
+    @DisplayName("단체 지정 등록 실패 - 빈 테이블이 아닌 경우")
     @Test
     void createFailNotEmptyTable() {
         //given
-        TableGroup tableGroup = new TableGroup();
+        OrderTable notEmptyOrderTable = new OrderTable.OrderTableBuilder()
+                .setEmpty(false)
+                .setNumberOfGuests(4)
+                .build();
 
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(false);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
+        OrderTable savedNotEmptyOrderTable = orderTableRepository.save(notEmptyOrderTable);
 
-        List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
-        tableGroup.setOrderTables(orderTables);
-
-        given(orderTableDao.findAllByIdIn(List.of(1L, 2L)))
-                .willReturn(List.of(orderTable1, orderTable2));
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(
+                new OrderTableIdRequest(savedOrderTable1.getId()),
+                new OrderTableIdRequest(savedNotEmptyOrderTable.getId()))
+        );
         //when
         //then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("빈 테이블이 아니거나 그룹 테이블 ID가 null이 아닙니다.");
-    }
-
-    @DisplayName("단체 지정 등록 실패 - 그룹테이블이 null일 경우")
-    @Test
-    void createFailNonNullGroupTable() {
-        //given
-        TableGroup tableGroup = new TableGroup();
-
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(true);
-        orderTable1.setTableGroupId(1L);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(true);
-
-        List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
-        tableGroup.setOrderTables(orderTables);
-
-        given(orderTableDao.findAllByIdIn(List.of(1L, 2L)))
-                .willReturn(List.of(orderTable1, orderTable2));
-        //when
-        //then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("빈 테이블이 아니거나 그룹 테이블 ID가 null이 아닙니다.");
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+                .isInstanceOf(OrderTableEmptyGroupIdException.class);
     }
 
     @DisplayName("단체 지정을 해제할 수 있다.")
     @Test
     void ungroup() {
         //given
-        Long tableGroupId = 1L;
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(
+                new OrderTableIdRequest(savedOrderTable1.getId()),
+                new OrderTableIdRequest(savedOrderTable2.getId()))
+        );
 
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setTableGroupId(1L);
-        orderTable1.setEmpty(false);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(false);
-        orderTable2.setTableGroupId(1L);
-
-        given(orderTableDao.findAllByTableGroupId(tableGroupId))
-                .willReturn(List.of(orderTable1, orderTable2));
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                List.of(1L, 2L),
-                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
-                .willReturn(false);
+        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
         //when
-        tableGroupService.ungroup(tableGroupId);
+        tableGroupService.ungroup(tableGroupResponse.getId());
         //then
-        verify(orderTableDao, times(1)).findAllByTableGroupId(tableGroupId);
-        verify(orderDao, times(1)).existsByOrderTableIdInAndOrderStatusIn(
-                List.of(1L, 2L),
-                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()));
-        verify(orderTableDao, times(2)).save(any());
+        assertThat(savedOrderTable1.getTableGroup()).isNull();
+        assertThat(savedOrderTable2.getTableGroup()).isNull();
+        assertThat(savedOrderTable1.isEmpty()).isFalse();
+        assertThat(savedOrderTable2.isEmpty()).isFalse();
     }
 
     @DisplayName("단체 지정을 해제 실패 - 계산 완료가 안된 테이블이 있는 경우")
     @Test
     void ungroupFailExistNotCompletionTable() {
         //given
-        Long tableGroupId = 1L;
+        OrderLineItem orderLineItem = new OrderLineItemBuilder()
+                .setQuantity(4)
+                .build();
 
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setTableGroupId(1L);
-        orderTable1.setEmpty(false);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(false);
-        orderTable2.setTableGroupId(1L);
+        Order orderWithOrderStatusMeal = new Order.OrderBuilder()
+                .setOrderStatus(OrderStatus.MEAL.name())
+                .setOrderLineItems(List.of(orderLineItem))
+                .build();
 
-        given(orderTableDao.findAllByTableGroupId(tableGroupId))
-                .willReturn(List.of(orderTable1, orderTable2));
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                List.of(1L, 2L),
-                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
-                .willReturn(true);
+        OrderTable orderTableWithOrderStatusMeal = new OrderTable.OrderTableBuilder()
+                .setNumberOfGuests(4)
+                .setOrders(List.of(orderWithOrderStatusMeal))
+                .setEmpty(true)
+                .build();
+
+        OrderTable savedOrderTableWithOrderStatusMeal = orderTableRepository.save(orderTableWithOrderStatusMeal);
+
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(
+                new OrderTableIdRequest(savedOrderTable1.getId()),
+                new OrderTableIdRequest(savedOrderTableWithOrderStatusMeal.getId()))
+        );
+
+        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
         //when
         //then
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("계산 완료 상태가 아닌 주문 테이블이 있을 경우 단체 지정을 해제할 수 없습니다.");
-
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.getId()))
+                .isInstanceOf(UnGroupNotCompletionException.class);
     }
 }

@@ -2,58 +2,42 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.application.dto.request.product.ProductRequest;
+import kitchenpos.application.dto.response.product.ProductResponse;
+import kitchenpos.exception.InvalidPriceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@ExtendWith(MockitoExtension.class)
-class ProductServiceTest {
+class ProductServiceTest extends ServiceTest {
 
-    @InjectMocks
+    @Autowired
     private ProductService productService;
-
-    @Mock
-    private ProductDao productDao;
 
     @DisplayName("상품을 등록한다.")
     @Test
     void create() {
         //given
-        Product product = new Product();
-        product.setId(1L);
-        product.setName("떡볶이");
-        product.setPrice(new BigDecimal(3500));
-
-        given(productDao.save(product))
-                .willReturn(product);
+        ProductRequest productRequest = new ProductRequest("떡볶이", 3500);
 
         //when
-        Product actual = productService.create(product);
+        ProductResponse actual = productService.create(productRequest);
         //then
-        assertThat(actual).isEqualTo(product);
+        assertThat(actual.getName()).isEqualTo("떡볶이");
+        assertThat(actual.getPrice()).isEqualTo(new BigDecimal(3500));
     }
 
     @DisplayName("상품을 등록 실패 - 유효하지 않은 가격일 경우")
     @Test
     void createFailInvalidPrice() {
         //given
-        Product product = new Product();
-        product.setId(1L);
-        product.setName("떡볶이");
-        product.setPrice(new BigDecimal(-3500));
+        ProductRequest productRequest = new ProductRequest("떡볶이", -3500);
 
         //when
         //then
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("유효하지 않은 가격입니다.");
+        assertThatThrownBy(() -> productService.create(productRequest))
+                .isInstanceOf(InvalidPriceException.class);
     }
 }
