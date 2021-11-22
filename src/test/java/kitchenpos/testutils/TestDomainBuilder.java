@@ -3,9 +3,13 @@ package kitchenpos.testutils;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class TestDomainBuilder {
@@ -24,6 +28,18 @@ public class TestDomainBuilder {
 
     public static MenuProductBuilder menuProductBuilder() {
         return new MenuProductBuilder();
+    }
+
+    public static OrderBuilder orderBuilder() {
+        return new OrderBuilder();
+    }
+
+    public static OrderLineItemBuilder orderLineItemBuilder() {
+        return new OrderLineItemBuilder();
+    }
+
+    public static OrderTableBuilder orderTableBuilder() {
+        return new OrderTableBuilder();
     }
 
     public static class ProductBuilder {
@@ -153,6 +169,121 @@ public class TestDomainBuilder {
             menuProduct.setProductId(productId);
             menuProduct.setQuantity(quantity);
             return menuProduct;
+        }
+    }
+
+    public static class OrderBuilder {
+        private Long id;
+        private Long orderTableId;
+        private String orderStatus;
+        private LocalDateTime orderedTime;
+        private List<OrderLineItem> orderLineItems;
+
+        public OrderBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public OrderBuilder orderTableId(Long orderTableId) {
+            this.orderTableId = orderTableId;
+            return this;
+        }
+
+        public OrderBuilder orderStatus(String orderStatus) {
+            this.orderStatus = orderStatus;
+            return this;
+        }
+
+        public OrderBuilder orderedTime(LocalDateTime orderedTime) {
+            this.orderedTime = orderedTime;
+            return this;
+        }
+
+        public OrderBuilder orderLineItems(List<OrderLineItem> orderLineItems) {
+            this.orderLineItems = orderLineItems;
+            return this;
+        }
+
+        public Order build() {
+            Order order = new Order();
+            order.setId(id);
+            order.setOrderTableId(orderTableId);
+            order.setOrderStatus(orderStatus);
+            order.setOrderedTime(orderedTime);
+            order.setOrderLineItems(orderLineItems);
+            return order;
+        }
+    }
+
+    public static class OrderLineItemBuilder {
+        private Long seq;
+        private Long orderId;
+        private Long menuId;
+        private long quantity;
+
+        public OrderLineItemBuilder seq(Long seq) {
+            this.seq = seq;
+            return this;
+        }
+
+        public OrderLineItemBuilder orderId(Long orderId) {
+            this.orderId = orderId;
+            return this;
+        }
+
+        public OrderLineItemBuilder menuId(Long menuId) {
+            this.menuId = menuId;
+            return this;
+        }
+
+        public OrderLineItemBuilder quantity(long quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+
+        public OrderLineItem build() {
+            OrderLineItem orderLineItem = new OrderLineItem();
+            orderLineItem.setSeq(seq);
+            orderLineItem.setOrderId(orderId);
+            orderLineItem.setMenuId(menuId);
+            orderLineItem.setQuantity(quantity);
+            return orderLineItem;
+        }
+    }
+
+    public static class OrderTableBuilder {
+        private Long id;
+        private Long tableGroupId;
+        private int numberOfGuests;
+        private boolean empty;
+
+        public OrderTableBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public OrderTableBuilder tableGroupId(Long tableGroupId) {
+            this.tableGroupId = tableGroupId;
+            return this;
+        }
+
+        public OrderTableBuilder numberOfGuests(int numberOfGuests) {
+            this.numberOfGuests = numberOfGuests;
+            return this;
+        }
+
+        public OrderTableBuilder empty(boolean empty) {
+            this.empty = empty;
+            return this;
+        }
+
+        public OrderTable build() {
+            OrderTable orderTable = new OrderTable();
+            orderTable.setId(id);
+            orderTable.setTableGroupId(tableGroupId);
+            orderTable.setNumberOfGuests(numberOfGuests);
+            orderTable.setEmpty(empty);
+            return orderTable;
         }
     }
 }
