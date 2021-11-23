@@ -45,7 +45,7 @@ public class TableGroupService {
             throw new NoSuchOrderTableException();
         }
 
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        TableGroup tableGroup = new TableGroup();
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         for (final OrderTable orderTable : orderTables) {

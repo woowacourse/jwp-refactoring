@@ -1,5 +1,8 @@
 package kitchenpos.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -7,27 +10,24 @@ import java.util.List;
 
 @Entity
 @Table(name = "table_group")
+@EntityListeners(AuditingEntityListener.class)
 public class TableGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdDate;
 
     @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables = new ArrayList<>();
 
-    protected TableGroup() {
+    public TableGroup() {
     }
 
-    public TableGroup(LocalDateTime createdDate) {
-        this(null, createdDate);
-    }
-
-    public TableGroup(Long id, LocalDateTime createdDate) {
+    public TableGroup(Long id) {
         this.id = id;
-        this.createdDate = createdDate;
     }
 
     public Long getId() {

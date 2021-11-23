@@ -51,7 +51,7 @@ class TableGroupServiceTest {
         OrderTable orderTable1 = new OrderTable(1L, null, 1, true);
         OrderTable orderTable2 = new OrderTable(2L, null, 1, true);
 
-        TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now());
+        TableGroup tableGroup = new TableGroup(1L);
 
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
 
@@ -147,7 +147,7 @@ class TableGroupServiceTest {
     @DisplayName("단체에 지정하려는 테이블 중에 이미 그룹에 지정된 객체가 있다면 예외가 발생한다.")
     void createFailWhenTableHasNoTableGroupId() {
         // given
-        TableGroup anotherTableGroup = new TableGroup(LocalDateTime.now());
+        TableGroup anotherTableGroup = new TableGroup();
 
         OrderTable orderTable1 = new OrderTable(1L, anotherTableGroup, 1, true);
         OrderTable orderTable2 = new OrderTable(2L, anotherTableGroup, 1, true);

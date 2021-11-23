@@ -126,7 +126,7 @@ class TableServiceTest {
     void changeEmptyFailWhenGroupIdExists() {
         // given
         long targetOrderTableId = 1L;
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        TableGroup tableGroup = new TableGroup();
 
         int numberOfGuests = 1;
 
