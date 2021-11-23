@@ -11,14 +11,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class MenuGroupServiceTest extends ServiceTest {
 
-    private final MenuGroup menuGroup = new MenuGroup(null, "메뉴 그룹");
-
     @Autowired
     private MenuGroupService menuGroupService;
 
     @Test
     @DisplayName("메뉴 그룹 생성")
     void createTest() {
+
+        // given
+        final MenuGroup menuGroup = new MenuGroup(null, "메뉴 그룹");
 
         // when
         final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);

@@ -1,8 +1,7 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -11,20 +10,19 @@ import org.junit.jupiter.api.Test;
 
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupRequest;
+import org.assertj.core.api.ThrowableAssert;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class TableGroupServiceTest extends ServiceTest {
 
-    private final TableGroup tableGroup;
+    private final TableGroupRequest tableGroup;
 
     public TableGroupServiceTest() {
-        final OrderTable firstOrderTable = new OrderTable(2L, null, 1, true);
-        final OrderTable secondOrderTable = new OrderTable(3L, null, 1, true);
-        final List<OrderTable> orderTables = Arrays.asList(firstOrderTable, secondOrderTable);
-        this.tableGroup = new TableGroup(null, LocalDateTime.now(), orderTables);
+        this.tableGroup = Fixtures.makeTableGroup();
     }
 
     @Autowired
@@ -45,6 +43,37 @@ class TableGroupServiceTest extends ServiceTest {
 
         // then
         assertThat(tableGroupDao.findAll()).contains(savedTableGroup);
+    }
+
+    @Test
+    @DisplayName("테이블 그룹 생성 실패 - 빈 테이블 항목")
+    void createTestFailEmptyItem() {
+
+        // given
+        TableGroupRequest emptyTableGroup = new TableGroupRequest(new ArrayList<>());
+
+        // when
+        ThrowableAssert.ThrowingCallable callable = () -> tableGroupService.create(emptyTableGroup);
+
+        // then
+        assertThatIllegalArgumentException().isThrownBy(callable)
+                                            .withMessage("테이블 비어있거나 2보다 작습니다.");
+    }
+
+    @Test
+    @DisplayName("테이블 그룹 생성 실패 - 테이블 수 불일치")
+    void createTestFailEmpty() {
+
+        // given
+        TableGroupRequest emptyTableGroup = new TableGroupRequest(Arrays.asList(1L, 2L, 3L, 10L));
+
+
+        // when
+        ThrowableAssert.ThrowingCallable callable = () -> tableGroupService.create(emptyTableGroup);
+
+        // then
+        assertThatIllegalArgumentException().isThrownBy(callable)
+                                            .withMessage("저장된 테이블 수와 요청 테이블 수가 일치하지 않습니다.");
     }
 
     @Test

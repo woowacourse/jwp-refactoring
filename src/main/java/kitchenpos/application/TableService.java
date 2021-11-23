@@ -1,32 +1,30 @@
 package kitchenpos.application;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import kitchenpos.dto.OrderTableRequest;
 
 @Service
 public class TableService {
-    private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
+    private final OrderDao orderDao;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
+    public TableService(OrderTableDao orderTableDao, OrderDao orderDao) {
         this.orderTableDao = orderTableDao;
+        this.orderDao = orderDao;
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-
-        return orderTableDao.save(orderTable);
+    public OrderTable create(final OrderTableRequest orderTableRequest) {
+        return orderTableDao.save(orderTableRequest.toEntity());
     }
 
     public List<OrderTable> list() {
@@ -34,41 +32,37 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+    public OrderTable changeEmpty(final Long orderTableId, final boolean empty) {
+        final OrderTable savedOrderTable = findById(orderTableId);
+        validateStatus(orderTableId);
+        savedOrderTable.changeEmpty(empty);
+        return savedOrderTable;
+    }
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
+    private void validateStatus(Long orderTableId) {
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+            throw new IllegalArgumentException("조리 혹은 식사 중에는 빈 테이블로 변경할 수 없습니다.");
         }
-
-        savedOrderTable.setEmpty(orderTable.isEmpty());
-
-        return orderTableDao.save(savedOrderTable);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+    public OrderTable changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
+        final OrderTable savedOrderTable = findById(orderTableId);
+        savedOrderTable.changeNumberOfGuests(numberOfGuests);
+        return savedOrderTable;
+    }
 
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
+    public OrderTable findById(Long orderTableId) {
+        return orderTableDao.findById(orderTableId)
+                            .orElseThrow(() -> new IllegalArgumentException("OrderTableId에 해당하는 주문 테이블이 존재하지 않습니다."));
+    }
 
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+    public List<OrderTable> findAllByIdIn(List<Long> orderTableIds) {
+        return orderTableDao.findAllByIdIn(orderTableIds);
+    }
 
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
-        return orderTableDao.save(savedOrderTable);
+    public List<OrderTable> findAllByTableGroupId(Long tableGroupId) {
+        return orderTableDao.findAllByTableGroupId(tableGroupId);
     }
 }

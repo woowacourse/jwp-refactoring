@@ -2,57 +2,38 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import javax.persistence.Entity;
 
-public class Product {
-    private Long id;
+@Entity
+public class Product extends BaseEntity {
+
     private String name;
+
     private BigDecimal price;
 
-    public Product() {
-    }
+    public Product() {}
 
     public Product(Long id, String name, BigDecimal price) {
-        this.id = id;
+        super(id);
         this.name = name;
         this.price = price;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
+    public void validatePrice() {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("가격은 음수가 될 수 없습니다.");
+        }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof Product))
-            return false;
-        Product product = (Product) o;
-        return Objects.equals(getId(), product.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
+    public BigDecimal calculatePrice(Long quantity) {
+        return price.multiply(BigDecimal.valueOf(quantity));
     }
 }

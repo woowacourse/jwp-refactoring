@@ -1,8 +1,7 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -10,21 +9,20 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderRequest;
+import org.assertj.core.api.ThrowableAssert;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class OrderServiceTest extends ServiceTest {
 
-    private final Order cookingOrder;
-    private final Order completionOrder;
+    private final OrderRequest cookingOrder;
 
     public OrderServiceTest() {
-        final List<OrderLineItem> orderLineItems = Arrays.asList(new OrderLineItem(null, null, 1L, 1L));
-        this.cookingOrder = new Order(null, 1L, COOKING.name(), LocalDateTime.now(), orderLineItems);
-        this.completionOrder = new Order(null, 1L, COMPLETION.name(), LocalDateTime.now(), orderLineItems);
+        this.cookingOrder = Fixtures.makeOrder();
     }
 
     @Autowired
@@ -42,6 +40,53 @@ class OrderServiceTest extends ServiceTest {
     }
 
     @Test
+    @DisplayName("주문 생성 실패 - 주문 항목이 비어있음")
+    void createFailIfRequestIsEmptyTest() {
+
+        // given
+        final OrderRequest orderRequest = new OrderRequest(1L, new ArrayList<>());
+
+        // when
+        ThrowableAssert.ThrowingCallable callable = () -> orderService.create(orderRequest);
+
+        // then
+        assertThatIllegalArgumentException().isThrownBy(callable)
+                                            .withMessage("주문 항목이 비어있습니다.");
+    }
+
+    @Test
+    @DisplayName("주문 생성 실패 - 저장되어 있는 메뉴보다 더 많은 메뉴가 입력")
+    void createFailInputIsMoreThanSaveTest() {
+
+        // given
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(10L, 1L);
+        final OrderRequest orderRequest = new OrderRequest(1L, Collections.singletonList(orderLineItemRequest));
+
+        // when
+        ThrowableAssert.ThrowingCallable callable = () -> orderService.create(orderRequest);
+
+        // then
+        assertThatIllegalArgumentException().isThrownBy(callable)
+                                            .withMessage("저장되어 있는 메뉴보다 더 많은 메뉴가 입력되었습니다.");
+    }
+
+    @Test
+    @DisplayName("주문 생성 실패 - 빈 주문 테이블")
+    void createFailIfOrderTableIsEmptyTest() {
+
+        // given
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
+        final OrderRequest orderRequest = new OrderRequest(2L, Collections.singletonList(orderLineItemRequest));
+
+        // when
+        ThrowableAssert.ThrowingCallable callable = () -> orderService.create(orderRequest);
+
+        // then
+        assertThatIllegalArgumentException().isThrownBy(callable)
+                                            .withMessage("주문 테이블이 비어있습니다.");
+    }
+
+    @Test
     @DisplayName("주문 상태 변경")
     void changeOrderStatusTest() {
 
@@ -49,9 +94,9 @@ class OrderServiceTest extends ServiceTest {
         final Order savedCookingOrder = orderService.create(cookingOrder);
 
         // when
-        final Order changedOrder = orderService.changeOrderStatus(savedCookingOrder.getId(), completionOrder);
+        final Order changedOrder = orderService.changeOrderStatus(savedCookingOrder.getId(), OrderStatus.COMPLETION);
 
         // then
-        assertThat(changedOrder.getOrderStatus()).isEqualTo(completionOrder.getOrderStatus());
+        assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION);
     }
 }

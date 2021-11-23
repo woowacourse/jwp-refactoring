@@ -1,67 +1,77 @@
 package kitchenpos.domain;
 
+import java.util.List;
 import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
-public class OrderTable {
-    private Long id;
-    private Long tableGroupId;
+@Entity
+public class OrderTable extends BaseEntity {
+
+    @ManyToOne
+    private TableGroup tableGroup;
+
+    @OneToMany(mappedBy = "orderTable")
+    private List<Order> orders;
+
     private int numberOfGuests;
+
     private boolean empty;
 
-    public OrderTable() {
-    }
+    public OrderTable() {}
 
-    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
-        this.id = id;
-        this.tableGroupId = tableGroupId;
+    public OrderTable(Long id, TableGroup tableGroup, List<Order> orders, int numberOfGuests, boolean empty) {
+        super(id);
+        this.tableGroup = tableGroup;
+        this.orders = orders;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public Long getId() {
-        return id;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public List<Order> getOrders() {
+        return orders;
     }
 
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
     public boolean isEmpty() {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void changeEmpty(boolean empty) {
+        if (Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException("주문 테이블 그룹에 속해 있어 변경할 수 없습니다.");
+        }
+
         this.empty = empty;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof OrderTable))
-            return false;
-        OrderTable that = (OrderTable) o;
-        return Objects.equals(getId(), that.getId());
+    public void changeNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("손님의 수는 0 이상이어야 합니다.");
+        }
+
+        if (isEmpty()) {
+            throw new IllegalArgumentException("빈 테이블은 손님의 수를 변경할 수 없습니다.");
+        }
+
+        this.numberOfGuests = numberOfGuests;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
+    public void group(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+        this.empty = false;
+    }
+
+    public void ungroup() {
+        this.tableGroup = null;
+        this.empty = false;
     }
 }

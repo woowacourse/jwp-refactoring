@@ -8,12 +8,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ProductServiceTest extends ServiceTest {
-
-    private final Product product = new Product(null, "당수육", BigDecimal.valueOf(10000));
 
     @Autowired
     private ProductService productService;
@@ -22,8 +21,11 @@ class ProductServiceTest extends ServiceTest {
     @DisplayName("상품 등록")
     void createTest() {
 
+        // given
+        final ProductRequest productRequest = Fixtures.makeProduct();
+
         // when
-        final Product savedProduct = productService.create(product);
+        final Product savedProduct = productService.create(productRequest);
 
         // then
         assertThat(productService.list()).contains(savedProduct);
