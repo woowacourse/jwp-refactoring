@@ -1,8 +1,6 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.ui.dto.request.OrderCreatedRequest;
 import kitchenpos.ui.dto.request.OrderLineItemRequest;
@@ -30,7 +28,6 @@ public class OrderFixture {
     }
 
     public Order 주문_조회(Long id) {
-        return orderRepository.findById(id)
-                .orElseThrow(IllegalArgumentException::new);
+        return orderRepository.getOne(id);
     }
 }

@@ -2,8 +2,6 @@ package kitchenpos.testtool.util;
 
 import org.springframework.http.HttpMethod;
 
-import java.util.Map;
-
 public class RequestDto {
 
     private final HttpMethod httpMethod;

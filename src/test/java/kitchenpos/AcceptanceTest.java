@@ -2,6 +2,7 @@ package kitchenpos;
 
 import kitchenpos.testtool.RequestBuilder;
 import kitchenpos.testtool.request.RequestApi;
+import kitchenpos.testtool.response.HttpResponse;
 import kitchenpos.ui.dto.request.*;
 import kitchenpos.ui.dto.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,6 +106,26 @@ public class AcceptanceTest {
                 .put("/api/tables/" + orderTableId + "/empty", request)
                 .build()
                 .convertBody(OrderTableResponse.class);
+    }
+
+    protected OrderTableResponse 주문_테이블_인원_변경(Long orderTableId, OrderTableChangeGuestRequest request) {
+        return request()
+                .put("/api/tables/" + orderTableId + "/number-of-guests", request)
+                .build()
+                .convertBody(OrderTableResponse.class);
+    }
+
+    protected TableGroupResponse 테이블_그룹_등록(TableGroupCreateRequest request) {
+        return request()
+                .post("/api/table-groups", request)
+                .build()
+                .convertBody(TableGroupResponse.class);
+    }
+
+    protected HttpResponse 테이블_그룹_해제(Long tableGroupId) {
+        return request()
+                .delete("/api/table-groups/" + tableGroupId)
+                .build();
     }
 }
 

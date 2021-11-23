@@ -29,8 +29,9 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     private OrderLineItemFixture orderLineItemFixture;
     @Autowired
     private ProductFixture productFixture;
+    @Autowired
+    private OrderTableFixture orderTableFixture;
 
-    private final OrderTableFixture orderTableFixture = new OrderTableFixture();
     private final MenuProductFixture menuProductFixture = new MenuProductFixture();
     private final MenuGroupFixture menuGroupFixture = new MenuGroupFixture();
 

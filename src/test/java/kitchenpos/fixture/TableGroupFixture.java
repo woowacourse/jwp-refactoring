@@ -1,33 +1,33 @@
-//package kitchenpos.fixture;
-//
-//import java.time.LocalDateTime;
-//import java.util.Arrays;
-//import java.util.List;
-//import kitchenpos.domain.OrderTable;
-//import kitchenpos.domain.TableGroup;
-//
-//public class TableGroupFixture {
-//
-//    public TableGroup 테이블_그룹_생성(LocalDateTime localDateTime, List<OrderTable> orderTables) {
-//        TableGroup tableGroup = new TableGroup();
-//        tableGroup.setCreatedDate(localDateTime);
-//        tableGroup.setOrderTables(orderTables);
-//        return tableGroup;
-//    }
-//
-//    public TableGroup 테이블_그룹_생성(
-//            Long id,
-//            LocalDateTime localDateTime,
-//            List<OrderTable> orderTables
-//    ) {
-//        TableGroup tableGroup = new TableGroup();
-//        tableGroup.setId(id);
-//        tableGroup.setCreatedDate(localDateTime);
-//        tableGroup.setOrderTables(orderTables);
-//        return tableGroup;
-//    }
-//
-//    public List<TableGroup> 테이블_그룹_리스트_생성(TableGroup... tableGroups) {
-//        return Arrays.asList(tableGroups);
-//    }
-//}
+package kitchenpos.fixture;
+
+import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.ui.dto.request.OrderTableRequest;
+import kitchenpos.ui.dto.request.TableGroupCreateRequest;
+import kitchenpos.ui.dto.response.TableGroupResponse;
+import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.List;
+
+@Component
+public class TableGroupFixture {
+
+    private final TableGroupRepository tableGroupRepository;
+
+    public TableGroupFixture(TableGroupRepository tableGroupRepository) {
+        this.tableGroupRepository = tableGroupRepository;
+    }
+
+    public TableGroupCreateRequest 테이블_그룹_생성_요청(List<OrderTableRequest> orderTableRequests) {
+        return new TableGroupCreateRequest(orderTableRequests);
+    }
+
+    public TableGroup 테이블_그룹_조회(Long id) {
+        return tableGroupRepository.getOne(id);
+    }
+
+    public List<TableGroupResponse> 테이블_그룹_응답_리스트_생성(TableGroupResponse... tableGroupResponses) {
+        return Arrays.asList(tableGroupResponses);
+    }
+}

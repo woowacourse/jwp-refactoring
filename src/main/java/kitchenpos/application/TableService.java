@@ -70,14 +70,13 @@ public class TableService {
             final OrderTableChangeGuestRequest orderTableChangeGuestRequest
     ) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "orderTableId : " + orderTableId + "는 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("orderTableId : " + orderTableId + "는 존재하지 않습니다."));
 
         final NumberOfGuests numberOfGuests = NumberOfGuests
                 .create(orderTableChangeGuestRequest.getNumberOfGuests());
 
         if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블이 비어있으면 인원 수 변경이 불가능합니다.");
         }
 
         savedOrderTable.changeNumberOfGuests(numberOfGuests);

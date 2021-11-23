@@ -31,7 +31,7 @@ public class OrderLineItemFixture {
         return Arrays.asList(orderLineItemResponses);
     }
 
-    public List<OrderLineItem> 특정_주문에_따른_주문_메뉴들_조회(Order order){
+    public List<OrderLineItem> 특정_주문에_따른_주문_메뉴들_조회(Order order) {
         return orderLineItemRepository.findAllByOrder(order);
     }
 }

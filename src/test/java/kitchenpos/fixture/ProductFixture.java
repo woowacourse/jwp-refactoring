@@ -1,13 +1,14 @@
 package kitchenpos.fixture;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.dto.request.ProductRequest;
 import kitchenpos.ui.dto.response.ProductResponse;
 import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class ProductFixture {
