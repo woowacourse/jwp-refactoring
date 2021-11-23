@@ -1,4 +1,6 @@
 spring:
+  flyway:
+    enabled: true
   h2:
     console:
       enabled: true
@@ -7,6 +9,8 @@ spring:
       hibernate:
         format_sql: true
     show-sql: true
+    hibernate:
+      ddl-auto: validate
 
 logging:
   level:

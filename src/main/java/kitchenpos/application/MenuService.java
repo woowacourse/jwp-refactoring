@@ -36,9 +36,9 @@ public class MenuService {
 
     @Transactional
     public Menu create(final Menu menu) {
-        if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
+//        if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
+//            throw new IllegalArgumentException();
+//        }
 
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
 
