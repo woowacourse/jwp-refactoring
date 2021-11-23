@@ -2,11 +2,10 @@ package kitchenpos.acceptance;
 
 import kitchenpos.AcceptanceTest;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.fixture.*;
 import kitchenpos.ui.dto.request.MenuProductRequest;
-import kitchenpos.ui.dto.request.MenuRequest;
+import kitchenpos.ui.dto.request.OrderChangeStatusRequest;
 import kitchenpos.ui.dto.request.OrderCreatedRequest;
 import kitchenpos.ui.dto.request.OrderLineItemRequest;
 import kitchenpos.ui.dto.response.*;
@@ -37,6 +36,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     private List<MenuProductRequest> 메뉴_상품_요청_리스트;
     private List<OrderLineItemRequest> 주문_메뉴_요청_리스트;
     private OrderTableResponse 주문_테이블1_응답;
+    private OrderCreatedRequest 주문1_생성_요청;
 
     @BeforeEach
     void setup() {
@@ -53,21 +53,18 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         OrderLineItemRequest 주문_메뉴1_요청 = orderLineItemFixture.주문_메뉴_생성_요청(메뉴1_응답.getId(), 1L);
         OrderLineItemRequest 주문_메뉴2_요청 = orderLineItemFixture.주문_메뉴_생성_요청(메뉴2_응답.getId(), 1L);
         주문_메뉴_요청_리스트 = orderLineItemFixture.주문_메뉴_요청_리스트_생성(주문_메뉴1_요청, 주문_메뉴2_요청);
-        주문_테이블1_응답 = 주문_테이블_등록(orderTableFixture.주문_테이블_생성_요청(2, true));
-        주문_테이블_착석(주문_테이블1_응답.getId(), orderTableFixture.주문_테이블_착석_요청(false));
+        주문_테이블1_응답 = 주문_테이블_등록(orderTableFixture.주문_테이블_생성_요청(2, false));
+        주문1_생성_요청 = orderFixture.주문_생성_요청(주문_테이블1_응답.getId(), 주문_메뉴_요청_리스트);
     }
 
     @Test
     @DisplayName("주문 생성 테스트 - 성공")
     void createTest() {
-        // given
-        OrderCreatedRequest 주문1_생성_요청 = orderFixture.주문_생성_요청(주문_테이블1_응답.getId(), 주문_메뉴_요청_리스트);
-
-        //when
+        // when
         OrderResponse 주문1_응답 = 주문_등록(주문1_생성_요청);
         Order 주문1 = orderFixture.주문_조회(주문1_응답.getId());
 
-        //then
+        // then
         assertThat(주문1_응답).usingRecursiveComparison()
                 .isEqualTo(OrderResponse.create(주문1, orderLineItemFixture.특정_주문에_따른_주문_메뉴들_조회(주문1)));
     }
@@ -76,19 +73,32 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     @DisplayName("주문 리스트 조회 테스트 - 성공")
     void listTest() {
         // given
+        OrderTableResponse 주문_테이블2_응답 = 주문_테이블_등록(orderTableFixture.주문_테이블_생성_요청(4, false));
+        OrderCreatedRequest 주문2_생성_요청 = orderFixture.주문_생성_요청(주문_테이블2_응답.getId(), 주문_메뉴_요청_리스트);
+        List<OrderResponse> expected = orderFixture.주문_응답_리스트_생성(주문_등록(주문1_생성_요청), 주문_등록(주문2_생성_요청));
 
-        //when
+        // when
+        List<OrderResponse> actual = 주문_리스트_조회();
 
-        //then
+        // then
+        assertThat(actual).hasSize(expected.size());
+        assertThat(actual).usingRecursiveComparison()
+                .isEqualTo(expected);
     }
 
     @Test
     @DisplayName("주문 상태 변경 테스트 - 성공")
     void changeOrderStatus() {
         // given
+        OrderResponse 주문1_응답 = 주문_등록(주문1_생성_요청);
+        Long 주문1_id = 주문1_응답.getId();
+        OrderChangeStatusRequest 주문1_식사완료_요청 = new OrderChangeStatusRequest(OrderStatus.COMPLETION);
 
-        //when
+        // when
+        OrderResponse 주문1_식사완료 = 주문_상태_변경(주문1_id, 주문1_식사완료_요청);
 
-        //then
+
+        // then
+        assertThat(주문1_식사완료.getOrderStatus()).isEqualTo(주문1_식사완료_요청.getOrderStatus().name());
     }
 }

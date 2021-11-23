@@ -71,7 +71,6 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         // then
         assertThat(actual).hasSize(expected.size());
         assertThat(actual).usingRecursiveComparison()
-                .ignoringFields("id")
                 .isEqualTo(expected);
     }
 }

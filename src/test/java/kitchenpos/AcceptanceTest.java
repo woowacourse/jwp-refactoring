@@ -79,6 +79,13 @@ public class AcceptanceTest {
                 .convertBodyToList(OrderResponse.class);
     }
 
+    protected OrderResponse 주문_상태_변경(Long orderId, OrderChangeStatusRequest request) {
+        return request()
+                .put("/api/orders/" + orderId + "/order-status", request)
+                .build()
+                .convertBody(OrderResponse.class);
+    }
+
     protected OrderTableResponse 주문_테이블_등록(OrderTableCreateRequest request) {
         return request()
                 .post("/api/tables", request)
