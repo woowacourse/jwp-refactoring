@@ -25,7 +25,7 @@ public class ProductAssembler {
         );
     }
 
-    public static List<ProductResponse> productResponses(List<ProductResponseDto> responseDtos) {
+    public static List<ProductResponse> productsResponse(List<ProductResponseDto> responseDtos) {
         return responseDtos.stream()
             .map(ProductAssembler::productResponse)
             .collect(toList());
