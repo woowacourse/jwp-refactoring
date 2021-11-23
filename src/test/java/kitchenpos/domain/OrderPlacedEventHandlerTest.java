@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderValidator;
+import kitchenpos.tableordered.domain.OrderTableOrderedEventHandler;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -18,13 +18,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class OrderValidatorTest {
+public class OrderPlacedEventHandlerTest {
 
     @Mock
     private OrderTableRepository orderTableRepository;
 
     @InjectMocks
-    private OrderValidator orderValidator;
+    private OrderTableOrderedEventHandler orderTableOrderedEventHandler;
 
     @DisplayName("빈 상태 테이블 검증")
     @Test
@@ -36,7 +36,7 @@ public class OrderValidatorTest {
         );
 
         assertThatIllegalArgumentException().isThrownBy(
-            () -> orderValidator.validateOrderTable(new Order(1L))
+            () -> orderTableOrderedEventHandler.validateOrderTable(new Order(1L))
         );
     }
 
@@ -50,7 +50,7 @@ public class OrderValidatorTest {
         );
 
         assertThatCode(
-            () -> orderValidator.validateOrderTable(new Order(1L))
+            () -> orderTableOrderedEventHandler.validateOrderTable(new Order(1L))
         ).doesNotThrowAnyException();
     }
 }

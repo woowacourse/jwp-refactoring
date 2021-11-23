@@ -10,12 +10,14 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderMenu;
+import kitchenpos.order.domain.OrderPlacedEvent;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderValidator;
+import kitchenpos.tableordered.domain.OrderTableOrderedEventHandler;
 import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.dto.OrderStatusRequest;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,22 +28,22 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
-    private final OrderValidator orderValidator;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public OrderService(final MenuRepository menuRepository,
                         final OrderRepository orderRepository,
                         final OrderLineItemRepository orderLineItemRepository,
-                        final OrderValidator orderValidator) {
+                        final ApplicationEventPublisher applicationEventPublisher) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
-        this.orderValidator = orderValidator;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
         Order order = new Order(orderRequest.getOrderTableId());
-        order.place(orderValidator);
+        applicationEventPublisher.publishEvent(new OrderPlacedEvent(order));
 
         Order savedOrder = orderRepository.save(order);
         List<OrderLineItem> orderLineItems = orderLineItemRepository.saveAll(

@@ -27,9 +27,9 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderMenu;
+import kitchenpos.order.domain.OrderPlacedEvent;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.order.dto.OrderRequest.OrderLineItemRequest;
 import kitchenpos.order.dto.OrderResponse;
@@ -43,6 +43,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.context.ApplicationEventPublisher;
 
 public class OrderServiceTest extends ServiceTest {
 
@@ -56,7 +57,7 @@ public class OrderServiceTest extends ServiceTest {
     private OrderLineItemRepository orderLineItemRepository;
 
     @Mock
-    private OrderValidator orderValidator;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Mock
     private MenuValidator menuValidator;
@@ -94,7 +95,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 등록")
     @Test
     void create() {
-        doNothing().when(orderValidator).validateOrderTable(any());
+        doNothing().when(applicationEventPublisher).publishEvent(any(OrderPlacedEvent.class));
         when(menuRepository.findAllById(any())).thenReturn(
             Collections.singletonList(menu)
         );
@@ -137,7 +138,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 항목이 0개인 주문 등록할 경우 예외 처리")
     @Test
     void createWithoutOrderLineItems() {
-        doNothing().when(orderValidator).validateOrderTable(any());
+        doNothing().when(applicationEventPublisher).publishEvent(any(OrderPlacedEvent.class));
         OrderRequest orderRequest = new OrderRequest(1L, Collections.emptyList());
 
         assertThatThrownBy(() -> orderService.create(orderRequest)).isExactlyInstanceOf(
@@ -148,7 +149,8 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("등록되지 않은 메뉴로 주문 등록할 경우 예외 처리")
     @Test
     void createWithNotFoundMenu() {
-        doThrow(IllegalArgumentException.class).when(orderValidator).validateOrderTable(any());
+        doThrow(IllegalArgumentException.class).when(applicationEventPublisher)
+            .publishEvent(any(OrderPlacedEvent.class));
 
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
         OrderRequest orderRequest = new OrderRequest(
@@ -164,7 +166,8 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("등록되지 않은 테이블에 주문 등록할 경우 예외 처리")
     @Test
     void createWithNotFoundOrderTable() {
-        doThrow(IllegalArgumentException.class).when(orderValidator).validateOrderTable(any());
+        doThrow(IllegalArgumentException.class).when(applicationEventPublisher)
+            .publishEvent(any(OrderPlacedEvent.class));
 
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
         OrderRequest orderRequest = new OrderRequest(

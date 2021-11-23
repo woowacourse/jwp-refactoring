@@ -10,9 +10,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import kitchenpos.table.domain.OrderTable;
+import kitchenpos.tableordered.domain.OrderTableOrderedEventHandler;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -33,18 +31,13 @@ public class Order {
     }
 
     public Order(final Long orderTableId) {
-        this(null, orderTableId, null);
+        this(null, orderTableId, OrderStatus.COOKING);
     }
 
     public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
-    }
-
-    public void place(final OrderValidator orderValidator) {
-        orderValidator.validateOrderTable(this);
-        changeOrder(OrderStatus.COOKING);
     }
 
     public void changeOrder(final OrderStatus newOrderStatus) {
