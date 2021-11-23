@@ -5,16 +5,20 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.ProductRepository;
+import kitchenpos.testtool.RequestBuilder;
 import kitchenpos.ui.dto.request.ProductRequest;
 import kitchenpos.ui.dto.response.ProductResponse;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProductFixture {
+@Profile("test")
+public class ProductFixture extends DefaultFixture {
 
     private final ProductRepository productRepository;
 
-    public ProductFixture(ProductRepository productRepository) {
+    public ProductFixture(RequestBuilder requestBuilder, ProductRepository productRepository) {
+        super(requestBuilder);
         this.productRepository = productRepository;
     }
 
@@ -30,5 +34,17 @@ public class ProductFixture {
         return Arrays.asList(productResponses);
     }
 
+    public ProductResponse 상품_등록(ProductRequest request) {
+        return request()
+                .post("/api/products", request)
+                .build()
+                .convertBody(ProductResponse.class);
+    }
 
+    public List<ProductResponse> 상품_리스트_조회() {
+        return request()
+                .get("/api/products")
+                .build()
+                .convertBodyToList(ProductResponse.class);
+    }
 }

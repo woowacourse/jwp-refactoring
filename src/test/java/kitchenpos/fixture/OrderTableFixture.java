@@ -4,19 +4,24 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.testtool.RequestBuilder;
 import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.ui.dto.request.OrderTableChangeGuestRequest;
 import kitchenpos.ui.dto.request.OrderTableCreateRequest;
 import kitchenpos.ui.dto.request.OrderTableRequest;
 import kitchenpos.ui.dto.response.OrderTableResponse;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderTableFixture {
+@Profile("test")
+public class OrderTableFixture extends DefaultFixture {
 
     private final OrderTableRepository orderTableRepository;
 
-    public OrderTableFixture(OrderTableRepository orderTableRepository) {
+    public OrderTableFixture(RequestBuilder requestBuilder,
+            OrderTableRepository orderTableRepository) {
+        super(requestBuilder);
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -50,5 +55,39 @@ public class OrderTableFixture {
 
     public List<OrderTable> 주문_테이블_리스트_조회_ByIds(List<Long> ids) {
         return orderTableRepository.findAllByIdIn(ids);
+    }
+
+    public OrderTableResponse 주문_테이블_등록(OrderTableCreateRequest request) {
+        return request()
+                .post("/api/tables", request)
+                .build()
+                .convertBody(OrderTableResponse.class);
+    }
+
+    public List<OrderTableResponse> 주문_테이블_리스트_조회() {
+        return request()
+                .get("/api/tables")
+                .build()
+                .convertBodyToList(OrderTableResponse.class);
+    }
+
+    public OrderTableResponse 주문_테이블_착석(
+            Long orderTableId,
+            OrderTableChangeEmptyRequest request
+    ) {
+        return request()
+                .put("/api/tables/" + orderTableId + "/empty", request)
+                .build()
+                .convertBody(OrderTableResponse.class);
+    }
+
+    public OrderTableResponse 주문_테이블_인원_변경(
+            Long orderTableId,
+            OrderTableChangeGuestRequest request
+    ) {
+        return request()
+                .put("/api/tables/" + orderTableId + "/number-of-guests", request)
+                .build()
+                .convertBody(OrderTableResponse.class);
     }
 }

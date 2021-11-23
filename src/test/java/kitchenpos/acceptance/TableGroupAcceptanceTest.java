@@ -24,8 +24,10 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
     @BeforeEach
     public void setUp() {
 
-        OrderTableResponse 주문_테이블1_응답 = 주문_테이블_등록(orderTableFixture.주문_테이블_생성_요청(2, true));
-        OrderTableResponse 주문_테이블2_응답 = 주문_테이블_등록(orderTableFixture.주문_테이블_생성_요청(4, true));
+        OrderTableResponse 주문_테이블1_응답 = orderTableFixture
+                .주문_테이블_등록(orderTableFixture.주문_테이블_생성_요청(2, true));
+        OrderTableResponse 주문_테이블2_응답 = orderTableFixture
+                .주문_테이블_등록(orderTableFixture.주문_테이블_생성_요청(4, true));
         주문_테이블1_요청 = orderTableFixture.주문_테이블_요청(주문_테이블1_응답.getId(), 주문_테이블1_응답.getNumberOfGuests(),
                 주문_테이블1_응답.isEmpty());
         주문_테이블2_요청 = orderTableFixture.주문_테이블_요청(주문_테이블2_응답.getId(), 주문_테이블2_응답.getNumberOfGuests(),
@@ -43,7 +45,7 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
         TableGroupCreateRequest 테이블_그룹1_생성_요청 = tableGroupFixture.테이블_그룹_생성_요청(주문_테이블_요청들);
 
         // when
-        TableGroupResponse 테이블_그룹1_응답 = 테이블_그룹_등록(테이블_그룹1_생성_요청);
+        TableGroupResponse 테이블_그룹1_응답 = tableGroupFixture.테이블_그룹_등록(테이블_그룹1_생성_요청);
 
         // then
         assertThat(테이블_그룹1_응답).usingRecursiveComparison()
@@ -57,13 +59,10 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
     public void ungroupTest() throws Exception {
         // given
         TableGroupCreateRequest 테이블_그룹1_생성_요청 = tableGroupFixture.테이블_그룹_생성_요청(주문_테이블_요청들);
-        List<Long> 주문_테이블_Ids = 주문_테이블_요청들.stream()
-                .map(OrderTableRequest::getId)
-                .collect(Collectors.toList());
-        TableGroupResponse 테이블_그룹1_응답 = 테이블_그룹_등록(테이블_그룹1_생성_요청);
+        TableGroupResponse 테이블_그룹1_응답 = tableGroupFixture.테이블_그룹_등록(테이블_그룹1_생성_요청);
 
         // when
-        HttpResponse response = 테이블_그룹_해제(테이블_그룹1_응답.getId());
+        HttpResponse response = tableGroupFixture.테이블_그룹_해제(테이블_그룹1_응답.getId());
 
         // then
         assertThat(response.statusCode()).isEqualTo(NO_CONTENT);

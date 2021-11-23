@@ -21,7 +21,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
         OrderTableCreateRequest 주문_테이블1_생성_요청 = orderTableFixture.주문_테이블_생성_요청(2, true);
 
         //when
-        OrderTableResponse 주문_테이블1_응답 = 주문_테이블_등록(주문_테이블1_생성_요청);
+        OrderTableResponse 주문_테이블1_응답 = orderTableFixture.주문_테이블_등록(주문_테이블1_생성_요청);
 
         //then
         assertThat(주문_테이블1_응답).usingRecursiveComparison()
@@ -35,11 +35,13 @@ public class TableAcceptanceTest extends AcceptanceTest {
         //given
         OrderTableCreateRequest 주문_테이블1_생성_요청 = orderTableFixture.주문_테이블_생성_요청(2, true);
         OrderTableCreateRequest 주문_테이블2_생성_요청 = orderTableFixture.주문_테이블_생성_요청(4, true);
-        List<OrderTableResponse> expected = orderTableFixture
-                .주문_테이블_응답_리스트_생성(주문_테이블_등록(주문_테이블1_생성_요청), 주문_테이블_등록(주문_테이블2_생성_요청));
+        List<OrderTableResponse> expected = orderTableFixture.주문_테이블_응답_리스트_생성(
+                orderTableFixture.주문_테이블_등록(주문_테이블1_생성_요청),
+                orderTableFixture.주문_테이블_등록(주문_테이블2_생성_요청)
+        );
 
         //when
-        List<OrderTableResponse> actual = 주문_테이블_리스트_조회();
+        List<OrderTableResponse> actual = orderTableFixture.주문_테이블_리스트_조회();
 
         //then
         assertThat(actual).hasSize(expected.size());
@@ -52,11 +54,11 @@ public class TableAcceptanceTest extends AcceptanceTest {
     public void changeEmpty() throws Exception {
         //given
         OrderTableCreateRequest 주문_테이블1_생성_요청 = orderTableFixture.주문_테이블_생성_요청(2, true);
-        OrderTableResponse 주문_테이블1_응답 = 주문_테이블_등록(주문_테이블1_생성_요청);
+        OrderTableResponse 주문_테이블1_응답 = orderTableFixture.주문_테이블_등록(주문_테이블1_생성_요청);
         OrderTableChangeEmptyRequest 손님_착석_요청 = orderTableFixture.주문_테이블_Empty_Change_요청(false);
 
         //when
-        OrderTableResponse 주문_테이블_착석 = 주문_테이블_착석(주문_테이블1_응답.getId(), 손님_착석_요청);
+        OrderTableResponse 주문_테이블_착석 = orderTableFixture.주문_테이블_착석(주문_테이블1_응답.getId(), 손님_착석_요청);
 
         //then
         assertEquals(주문_테이블_착석.isEmpty(), false);
@@ -67,11 +69,12 @@ public class TableAcceptanceTest extends AcceptanceTest {
     public void changeNumberOfGuests() throws Exception {
         //given
         OrderTableCreateRequest 주문_테이블1_생성_요청 = orderTableFixture.주문_테이블_생성_요청(2, false);
-        OrderTableResponse 주문_테이블1_응답 = 주문_테이블_등록(주문_테이블1_생성_요청);
+        OrderTableResponse 주문_테이블1_응답 = orderTableFixture.주문_테이블_등록(주문_테이블1_생성_요청);
         OrderTableChangeGuestRequest 인원_변경_요청 = orderTableFixture.주문_테이블_인원_변경_요청(5);
 
         //when
-        OrderTableResponse 주문_테이블_인원_변경 = 주문_테이블_인원_변경(주문_테이블1_응답.getId(), 인원_변경_요청);
+        OrderTableResponse 주문_테이블_인원_변경 = orderTableFixture
+                .주문_테이블_인원_변경(주문_테이블1_응답.getId(), 인원_변경_요청);
 
         //then
         assertEquals(주문_테이블_인원_변경.getNumberOfGuests(), 5);

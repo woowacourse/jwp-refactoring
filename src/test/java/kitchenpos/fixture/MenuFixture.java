@@ -5,17 +5,21 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.testtool.RequestBuilder;
 import kitchenpos.ui.dto.request.MenuProductRequest;
 import kitchenpos.ui.dto.request.MenuRequest;
 import kitchenpos.ui.dto.response.MenuResponse;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MenuFixture {
+@Profile("test")
+public class MenuFixture extends DefaultFixture {
 
     private final MenuRepository menuRepository;
 
-    public MenuFixture(MenuRepository menuRepository) {
+    public MenuFixture(RequestBuilder requestBuilder, MenuRepository menuRepository) {
+        super(requestBuilder);
         this.menuRepository = menuRepository;
     }
 
@@ -35,5 +39,19 @@ public class MenuFixture {
 
     public List<MenuResponse> 메뉴_응답_리스트_생성(MenuResponse... menuResponses) {
         return Arrays.asList(menuResponses);
+    }
+
+    public MenuResponse 메뉴_등록(MenuRequest request) {
+        return request()
+                .post("/api/menus", request)
+                .build()
+                .convertBody(MenuResponse.class);
+    }
+
+    public List<MenuResponse> 메뉴_리스트_조회() {
+        return request()
+                .get("/api/menus")
+                .build()
+                .convertBodyToList(MenuResponse.class);
     }
 }

@@ -20,7 +20,7 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
         MenuGroup expected = menuGroupFixture.메뉴그룹_생성("메뉴그룹1");
 
         // when
-        MenuGroupResponse response = 메뉴그룹_등록(메뉴그룹1_생성_요청);
+        MenuGroupResponse response = menuGroupFixture.메뉴그룹_등록(메뉴그룹1_생성_요청);
 
         // then
         assertThat(response).usingRecursiveComparison()
@@ -35,11 +35,13 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
         MenuGroupRequest 메뉴그룹1_생성_요청 = menuGroupFixture.메뉴그룹_생성_요청("메뉴그룹1");
         MenuGroupRequest 메뉴그룹2_생성_요청 = menuGroupFixture.메뉴그룹_생성_요청("메뉴그룹2");
 
-        List<MenuGroupResponse> expected = menuGroupFixture
-                .메뉴그룹_응답_리스트_생성(메뉴그룹_등록(메뉴그룹1_생성_요청), 메뉴그룹_등록(메뉴그룹2_생성_요청));
+        List<MenuGroupResponse> expected = menuGroupFixture.메뉴그룹_응답_리스트_생성(
+                menuGroupFixture.메뉴그룹_등록(메뉴그룹1_생성_요청),
+                menuGroupFixture.메뉴그룹_등록(메뉴그룹2_생성_요청)
+        );
 
         // when
-        List<MenuGroupResponse> actual = 메뉴그룹_리스트_조회();
+        List<MenuGroupResponse> actual = menuGroupFixture.메뉴그룹_리스트_조회();
 
         // then
         assertThat(actual).hasSize(expected.size());

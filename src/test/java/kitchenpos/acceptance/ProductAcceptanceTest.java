@@ -19,7 +19,7 @@ public class ProductAcceptanceTest extends AcceptanceTest {
         ProductRequest 치킨_생성_요청 = productFixture.상품_생성_요청("치킨", BigDecimal.TEN);
 
         // when
-        ProductResponse actual = 상품_등록(치킨_생성_요청);
+        ProductResponse actual = productFixture.상품_등록(치킨_생성_요청);
 
         // then
         assertThat(actual).usingRecursiveComparison()
@@ -32,10 +32,13 @@ public class ProductAcceptanceTest extends AcceptanceTest {
         // given
         ProductRequest 치킨_생성_요청 = productFixture.상품_생성_요청("치킨", BigDecimal.TEN);
         ProductRequest 피자_생성_요청 = productFixture.상품_생성_요청("피자", BigDecimal.TEN);
-        List<ProductResponse> expected = productFixture.상품_리스트_생성(상품_등록(치킨_생성_요청), 상품_등록(피자_생성_요청));
+        List<ProductResponse> expected = productFixture.상품_리스트_생성(
+                productFixture.상품_등록(치킨_생성_요청),
+                productFixture.상품_등록(피자_생성_요청)
+        );
 
         // when
-        List<ProductResponse> actual = 상품_리스트_조회();
+        List<ProductResponse> actual = productFixture.상품_리스트_조회();
 
         // then
         assertThat(actual).hasSize(expected.size());

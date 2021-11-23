@@ -29,22 +29,24 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
     @BeforeEach
     void setup() {
-        ProductResponse 상품1_응답 = 상품_등록(productFixture.상품_생성_요청("상품1", BigDecimal.valueOf(1000)));
-        ProductResponse 상품2_응답 = 상품_등록(productFixture.상품_생성_요청("상품2", BigDecimal.valueOf(2000)));
+        ProductResponse 상품1_응답 = productFixture
+                .상품_등록(productFixture.상품_생성_요청("상품1", BigDecimal.valueOf(1000)));
+        ProductResponse 상품2_응답 = productFixture
+                .상품_등록(productFixture.상품_생성_요청("상품2", BigDecimal.valueOf(2000)));
         MenuProductRequest 메뉴_상품1_요청 = menuProductFixture.메뉴_상품_생성_요청(상품1_응답.getId(), 1L);
         MenuProductRequest 메뉴_상품2_요청 = menuProductFixture.메뉴_상품_생성_요청(상품2_응답.getId(), 1L);
         메뉴_상품_요청_리스트 = menuProductFixture.메뉴_상품_요청_리스트_생성(메뉴_상품1_요청, 메뉴_상품2_요청);
 
-        MenuGroupResponse 메뉴그룹1_응답 = 메뉴그룹_등록(menuGroupFixture.메뉴그룹_생성_요청("메뉴그룹1"));
-        MenuResponse 메뉴1_응답 = 메뉴_등록(menuFixture
+        MenuGroupResponse 메뉴그룹1_응답 = menuGroupFixture.메뉴그룹_등록(menuGroupFixture.메뉴그룹_생성_요청("메뉴그룹1"));
+        MenuResponse 메뉴1_응답 = menuFixture.메뉴_등록(menuFixture
                 .메뉴_생성_요청("메뉴1", BigDecimal.valueOf(1000), 메뉴그룹1_응답.getId(), 메뉴_상품_요청_리스트));
-        MenuResponse 메뉴2_응답 = 메뉴_등록(menuFixture
+        MenuResponse 메뉴2_응답 = menuFixture.메뉴_등록(menuFixture
                 .메뉴_생성_요청("메뉴2", BigDecimal.valueOf(2000), 메뉴그룹1_응답.getId(), 메뉴_상품_요청_리스트));
 
         OrderLineItemRequest 주문_메뉴1_요청 = orderLineItemFixture.주문_메뉴_생성_요청(메뉴1_응답.getId(), 1L);
         OrderLineItemRequest 주문_메뉴2_요청 = orderLineItemFixture.주문_메뉴_생성_요청(메뉴2_응답.getId(), 1L);
         주문_메뉴_요청_리스트 = orderLineItemFixture.주문_메뉴_요청_리스트_생성(주문_메뉴1_요청, 주문_메뉴2_요청);
-        주문_테이블1_응답 = 주문_테이블_등록(orderTableFixture.주문_테이블_생성_요청(2, false));
+        주문_테이블1_응답 = orderTableFixture.주문_테이블_등록(orderTableFixture.주문_테이블_생성_요청(2, false));
         주문1_생성_요청 = orderFixture.주문_생성_요청(주문_테이블1_응답.getId(), 주문_메뉴_요청_리스트);
     }
 
@@ -52,7 +54,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     @DisplayName("주문 생성 테스트 - 성공")
     void createTest() {
         // when
-        OrderResponse 주문1_응답 = 주문_등록(주문1_생성_요청);
+        OrderResponse 주문1_응답 = orderFixture.주문_등록(주문1_생성_요청);
         Order 주문1 = orderFixture.주문_조회(주문1_응답.getId());
 
         // then
@@ -65,13 +67,14 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     @DisplayName("주문 리스트 조회 테스트 - 성공")
     void listTest() {
         // given
-        OrderTableResponse 주문_테이블2_응답 = 주문_테이블_등록(orderTableFixture.주문_테이블_생성_요청(4, false));
+        OrderTableResponse 주문_테이블2_응답 = orderTableFixture
+                .주문_테이블_등록(orderTableFixture.주문_테이블_생성_요청(4, false));
         OrderCreatedRequest 주문2_생성_요청 = orderFixture.주문_생성_요청(주문_테이블2_응답.getId(), 주문_메뉴_요청_리스트);
         List<OrderResponse> expected = orderFixture
-                .주문_응답_리스트_생성(주문_등록(주문1_생성_요청), 주문_등록(주문2_생성_요청));
+                .주문_응답_리스트_생성(orderFixture.주문_등록(주문1_생성_요청), orderFixture.주문_등록(주문2_생성_요청));
 
         // when
-        List<OrderResponse> actual = 주문_리스트_조회();
+        List<OrderResponse> actual = orderFixture.주문_리스트_조회();
 
         // then
         assertThat(actual).hasSize(expected.size());
@@ -83,12 +86,12 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     @DisplayName("주문 상태 변경 테스트 - 성공")
     void changeOrderStatus() {
         // given
-        OrderResponse 주문1_응답 = 주문_등록(주문1_생성_요청);
+        OrderResponse 주문1_응답 = orderFixture.주문_등록(주문1_생성_요청);
         Long 주문1_id = 주문1_응답.getId();
         OrderChangeStatusRequest 주문1_식사완료_요청 = new OrderChangeStatusRequest(OrderStatus.COMPLETION);
 
         // when
-        OrderResponse 주문1_식사완료 = 주문_상태_변경(주문1_id, 주문1_식사완료_요청);
+        OrderResponse 주문1_식사완료 = orderFixture.주문_상태_변경(주문1_id, 주문1_식사완료_요청);
 
         // then
         assertThat(주문1_식사완료.getOrderStatus()).isEqualTo(주문1_식사완료_요청.getOrderStatus().name());
