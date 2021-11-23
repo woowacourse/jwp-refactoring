@@ -4,8 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.generic.Money;
 import kitchenpos.product.domain.Product;
 
 @Entity
@@ -13,9 +13,7 @@ public class MenuProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    @ManyToOne
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
+
     @ManyToOne
     private Product product;
     private long quantity;
@@ -41,7 +39,7 @@ public class MenuProduct {
         return quantity;
     }
 
-    public void setMenu(Menu menu) {
-        this.menu = menu;
+    public Money calculatePrice() {
+        return product.calculatePrice(quantity);
     }
 }

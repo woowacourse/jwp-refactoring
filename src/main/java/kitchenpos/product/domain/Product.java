@@ -1,11 +1,11 @@
 package kitchenpos.product.domain;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import kitchenpos.generic.Money;
 
 @Entity
 public class Product {
@@ -13,19 +13,16 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private BigDecimal price;
+    private Money price;
 
     protected Product() {
     }
 
     public Product(String name, BigDecimal price) {
-        this(null, name, price);
+        this(null, name, new Money(price));
     }
 
-    private Product(Long id, String name, BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
+    private Product(Long id, String name, Money price) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -39,7 +36,11 @@ public class Product {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Money getPrice() {
         return price;
+    }
+
+    public Money calculatePrice(long times) {
+        return price.times(times);
     }
 }
