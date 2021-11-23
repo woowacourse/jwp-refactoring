@@ -45,7 +45,7 @@ public class MenuService {
         MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(NoSuchMenuGroupException::new);
 
-        List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProductRequests();
+        List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProducts();
 
         List<Long> menuProductsId = menuProductRequests.stream()
                 .map(MenuProductRequest::getProductId)
