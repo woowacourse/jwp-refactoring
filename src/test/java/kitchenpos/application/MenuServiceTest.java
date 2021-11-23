@@ -23,14 +23,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -73,8 +73,8 @@ class MenuServiceTest {
 
         given(menuGroupRepository.findById(anyLong()))
                 .willReturn(Optional.of(menuGroup));
-        given(productRepository.findById(anyLong()))
-                .willReturn(Optional.of(product));
+        given(productRepository.findAllById(anyList()))
+                .willReturn(Collections.singletonList(product));
         given(menuRepository.save(any(Menu.class)))
                 .willReturn(savedMenu);
         given(menuProductRepository.save(any(MenuProduct.class)))
@@ -131,11 +131,11 @@ class MenuServiceTest {
         MenuProductRequest menuProductRequest = new MenuProductRequest(1L, productQuantity);
         MenuRequest menuRequest = new MenuRequest(menuName, menuPrice, 1L, Arrays.asList(menuProductRequest));
 
-        Product product = new Product("productName", productPrice);
+        Product product = new Product(1L, "productName", productPrice);
         given(menuGroupRepository.findById(anyLong()))
                 .willReturn(Optional.of(mock(MenuGroup.class)));
-        given(productRepository.findById(anyLong()))
-                .willReturn(Optional.of(product));
+        given(productRepository.findAllById(anyList()))
+                .willReturn(Collections.singletonList(product));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuRequest))
