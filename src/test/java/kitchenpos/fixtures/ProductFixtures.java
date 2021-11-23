@@ -1,9 +1,9 @@
 package kitchenpos.fixtures;
 
 import java.math.BigDecimal;
-import kitchenpos.application.dto.ProductRequest;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
+import kitchenpos.product.service.dto.ProductRequest;
+import kitchenpos.common.Price;
+import kitchenpos.product.domain.Product;
 
 public class ProductFixtures {
 

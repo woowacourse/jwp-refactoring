@@ -6,11 +6,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.OrderTableRequest;
-import kitchenpos.application.dto.TableGroupRequest;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.ordertable.service.dto.OrderTableRequest;
+import kitchenpos.tablegroup.service.dto.TableGroupRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.tablegroup.domain.TableGroup;
 
 public class TableFixtures {
 

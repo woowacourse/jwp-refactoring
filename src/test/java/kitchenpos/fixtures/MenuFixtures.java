@@ -4,13 +4,13 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.MenuProductRequest;
-import kitchenpos.application.dto.MenuRequest;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
+import kitchenpos.menu.service.dto.MenuProductRequest;
+import kitchenpos.menu.service.dto.MenuRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.common.Price;
+import kitchenpos.product.domain.Product;
 
 public class MenuFixtures {
 
