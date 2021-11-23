@@ -44,14 +44,24 @@ public class OrderService {
                 )
             )
             .collect(Collectors.toList());
-
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
             .orElseThrow(NoSuchElementException::new);
+        validateCreation(orderTable, orderLineItems);
 
-        final Order savedOrder = orderRepository.save(new Order(orderTable, orderLineItems));
+        final Order savedOrder = orderRepository.save(new Order(request.getOrderTableId(), orderLineItems));
         orderLineItemRepository.saveAll(orderLineItems);
 
         return OrderResponse.of(savedOrder);
+    }
+
+    private void validateCreation(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        if (orderLineItems.isEmpty()) {
+            throw new IllegalStateException("주문 항목이 비어있습니다.");
+        }
+
+        if (orderTable.isEmpty()) {
+            throw new IllegalStateException("빈 테이블입니다.");
+        }
     }
 
     @Transactional(readOnly = true)

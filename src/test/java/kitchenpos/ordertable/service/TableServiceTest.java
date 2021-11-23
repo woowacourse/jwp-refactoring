@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import kitchenpos.fixtures.ServiceTest;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.service.dto.OrderTableRequest;
 import kitchenpos.ordertable.service.dto.OrderTableResponse;
 import kitchenpos.ordertable.domain.OrderTable;
@@ -25,6 +26,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 public class TableServiceTest extends ServiceTest {
+    @Mock
+    private OrderRepository orderRepository;
 
     @Mock
     private OrderTableRepository orderTableRepository;
@@ -63,6 +66,7 @@ public class TableServiceTest extends ServiceTest {
     void 주문_테이블의_상태를_변경한다() {
         given(orderTableRepository.findById(any())).willReturn(Optional.of(emptyTable));
         given(orderTableRepository.save(any())).willReturn(nonEmptyTable);
+        given(orderRepository.findAllByOrderTableId(any())).willReturn(OrderFixtures.createCompletedOrders());
 
         assertDoesNotThrow(() -> tableService.changeEmpty(emptyTable.getId(), false));
         verify(orderTableRepository).save(ArgumentMatchers.refEq(nonEmptyTable, "tableGroup", "orders"));
@@ -76,8 +80,18 @@ public class TableServiceTest extends ServiceTest {
     }
 
     @Test
+    void 상태_변경_시_완료되지_않은_주문이_있으면_예외를_반환한다() {
+        given(orderTableRepository.findById(any())).willReturn(Optional.of(emptyTable));
+        given(orderRepository.findAllByOrderTableId(any())).willReturn(OrderFixtures.createMealOrders());
+
+        IllegalStateException exception = assertThrows(IllegalStateException.class,
+            () -> tableService.changeEmpty(emptyTable.getId(), false));
+        assertThat(exception.getMessage()).isEqualTo("주문 상태가 완료되지 않았습니다.");
+    }
+
+    @Test
     void 주문_테이블의_손님_수를_변경한다() {
-        OrderTable crowdTable = TableFixtures.createOrderTable(1L, null, OrderFixtures.createMealOrders(), 3000, false);
+        OrderTable crowdTable = TableFixtures.createOrderTable(1L, null, 3000, false);
         given(orderTableRepository.findById(any())).willReturn(Optional.of(nonEmptyTable));
         given(orderTableRepository.save(any())).willReturn(crowdTable);
 

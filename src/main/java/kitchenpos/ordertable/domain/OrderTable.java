@@ -1,7 +1,5 @@
 package kitchenpos.ordertable.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -10,9 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.order.domain.Order;
+import kitchenpos.tablegroup.domain.TableGroup;
 
 @Entity
 public class OrderTable {
@@ -25,22 +22,18 @@ public class OrderTable {
     @JoinColumn(name = "table_group_id", foreignKey = @ForeignKey(name = "fk_order_table_table_group"))
     private TableGroup tableGroup;
 
-    @OneToMany(mappedBy = "orderTable")
-    private List<Order> orders = new ArrayList<>();
-
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTable(Long id, TableGroup tableGroup, List<Order> orders, int numberOfGuests, boolean empty) {
+    public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
         this.id = id;
         this.tableGroup = tableGroup;
-        this.orders = orders;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
     public OrderTable(int numberOfGuests, boolean empty) {
-        this(null, null, new ArrayList<>(), numberOfGuests, empty);
+        this(null, null, numberOfGuests, empty);
     }
 
     public OrderTable() {
@@ -60,7 +53,6 @@ public class OrderTable {
         if (this.tableGroup == null) {
             throw new IllegalStateException("아직 단체 지정되지 않은 테이블입니다.");
         }
-        orders.forEach(Order::validateCompleted);
         this.tableGroup = null;
     }
 
@@ -72,7 +64,6 @@ public class OrderTable {
         if (isGrouped()) {
             throw new IllegalStateException("이미 단체 지정된 테이블입니다.");
         }
-        orders.forEach(Order::validateCompleted);
         this.empty = empty;
     }
 
@@ -82,10 +73,6 @@ public class OrderTable {
         }
         validateNotEmpty();
         this.numberOfGuests = numberOfGuests;
-    }
-
-    public void addOrder(Order order) {
-        orders.add(order);
     }
 
     private void validateNotEmpty() {

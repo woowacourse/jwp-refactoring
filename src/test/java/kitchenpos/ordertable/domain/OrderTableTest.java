@@ -47,15 +47,6 @@ class OrderTableTest {
     }
 
     @Test
-    void 해제_시_완료되지_않은_주문이_있으면_예외를_반환한다() {
-        OrderTable groupedTable = TableFixtures.createGroupedOrderTable(true);
-        groupedTable.addOrder(OrderFixtures.createMealOrders().get(0));
-
-        Exception exception = assertThrows(IllegalStateException.class, groupedTable::ungroup);
-        assertThat(exception.getMessage()).isEqualTo("주문 상태가 완료되지 않았습니다.");
-    }
-
-    @Test
     void 테이블_상태를_변경한다() {
         OrderTable orderTable = TableFixtures.createOrderTable(true);
         orderTable.changeEmpty(false);
@@ -69,15 +60,6 @@ class OrderTableTest {
 
         Exception exception = assertThrows(IllegalStateException.class, () -> groupedTable.changeEmpty(false));
         assertThat(exception.getMessage()).isEqualTo("이미 단체 지정된 테이블입니다.");
-    }
-
-    @Test
-    void 상태_변경_시_완료되지_않은_주문이_있으면_예외를_반환한다() {
-        OrderTable orderTable = TableFixtures.createOrderTable(true);
-        orderTable.addOrder(OrderFixtures.createMealOrders().get(0));
-
-        Exception exception = assertThrows(IllegalStateException.class, () -> orderTable.changeEmpty(false));
-        assertThat(exception.getMessage()).isEqualTo("주문 상태가 완료되지 않았습니다.");
     }
 
     @Test

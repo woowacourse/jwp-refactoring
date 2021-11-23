@@ -1,7 +1,5 @@
 package kitchenpos.tablegroup.service;
 
-import static kitchenpos.fixtures.OrderFixtures.createCompletedOrders;
-import static kitchenpos.fixtures.OrderFixtures.createMealOrders;
 import static kitchenpos.fixtures.TableFixtures.createOrderTable;
 import static kitchenpos.fixtures.TableFixtures.createOrderTables;
 import static kitchenpos.fixtures.TableFixtures.createTableGroup;
@@ -16,20 +14,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
+import kitchenpos.fixtures.OrderFixtures;
 import kitchenpos.fixtures.ServiceTest;
+import kitchenpos.fixtures.TableFixtures;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.repository.OrderTableRepository;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.repository.TableGroupRepository;
 import kitchenpos.tablegroup.service.dto.TableGroupRequest;
 import kitchenpos.tablegroup.service.dto.TableGroupResponse;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.fixtures.TableFixtures;
-import kitchenpos.ordertable.repository.OrderTableRepository;
-import kitchenpos.tablegroup.repository.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 class TableGroupServiceTest extends ServiceTest {
+
+    @Mock
+    private OrderRepository orderRepository;
 
     @Mock
     private OrderTableRepository orderTableRepository;
@@ -70,9 +73,10 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void 단체_지정을_해제한다() {
         List<OrderTable> groupedTables = new ArrayList<>();
-        groupedTables.add(createOrderTable(1L, createTableGroup(), createCompletedOrders(), 10, true));
-        groupedTables.add(createOrderTable(2L, createTableGroup(), createCompletedOrders(), 10, true));
+        groupedTables.add(createOrderTable(1L, createTableGroup(), 10, true));
+        groupedTables.add(createOrderTable(2L, createTableGroup(), 10, true));
         given(orderTableRepository.findAllByTableGroupId(any())).willReturn(groupedTables);
+        given(orderRepository.findAllByOrderTableIdIn(any())).willReturn(OrderFixtures.createCompletedOrders());
 
         assertDoesNotThrow(() -> tableGroupService.ungroup(tableGroup.getId()));
         groupedTables
@@ -82,9 +86,10 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void 해제_시_주문_테이블들의_주문_상태가_모두_완료되지_않았으면_예외를_반환한다() {
         List<OrderTable> groupedTables = new ArrayList<>();
-        groupedTables.add(createOrderTable(1L, createTableGroup(), createMealOrders(), 10, true));
-        groupedTables.add(createOrderTable(2L, createTableGroup(), createMealOrders(), 10, true));
+        groupedTables.add(createOrderTable(1L, createTableGroup(), 10, true));
+        groupedTables.add(createOrderTable(2L, createTableGroup(), 10, true));
         given(orderTableRepository.findAllByTableGroupId(any())).willReturn(groupedTables);
+        given(orderRepository.findAllByOrderTableIdIn(any())).willReturn(OrderFixtures.createMealOrders());
 
         assertThrows(IllegalStateException.class, () -> tableGroupService.ungroup(tableGroup.getId()));
     }

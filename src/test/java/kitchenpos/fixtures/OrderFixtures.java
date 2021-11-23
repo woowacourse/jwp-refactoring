@@ -25,14 +25,12 @@ public class OrderFixtures {
         OrderStatus orderStatus,
         List<OrderLineItem> orderLineItems
     ) {
-        return new Order(id, orderTable, orderStatus, LocalDateTime.now(), orderLineItems);
+        return new Order(id, orderTable.getId(), orderStatus, LocalDateTime.now(), orderLineItems);
     }
 
     public static Order createOrder(OrderStatus status) {
-        OrderTable orderTable = new OrderTable(ORDER_TABLE_ID, null, new ArrayList<>(), 10, false);
-        Order order = createOrder(ORDER_ID, orderTable, status, createOrderLineItems());
-        orderTable.addOrder(order);
-        return order;
+        OrderTable orderTable = new OrderTable(ORDER_TABLE_ID, null, 10, false);
+        return createOrder(ORDER_ID, orderTable, status, createOrderLineItems());
     }
 
     public static Order createOrder() {
@@ -55,7 +53,7 @@ public class OrderFixtures {
 
     public static OrderRequest createOrderRequest(Order order) {
         return new OrderRequest(
-            order.getOrderTable().getId(),
+            order.getOrderTableId(),
             order.getOrderStatus(),
             order.getOrderLineItems().stream()
                 .map(item -> new OrderLineItemRequest(item.getMenu().getId(), item.getQuantity()))

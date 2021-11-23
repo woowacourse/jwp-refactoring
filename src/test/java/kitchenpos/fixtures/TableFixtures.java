@@ -21,19 +21,18 @@ public class TableFixtures {
     public static OrderTable createOrderTable(
         Long id,
         TableGroup tableGroup,
-        List<Order> orders,
         int numberOfGuests,
         boolean empty
     ) {
-        return new OrderTable(id, tableGroup, orders, numberOfGuests, empty);
+        return new OrderTable(id, tableGroup, numberOfGuests, empty);
     }
 
     public static OrderTable createOrderTable(boolean empty) {
-        return createOrderTable(ORDER_TABLE_ID, null, createCompletedOrders(), NUMBER_OF_GUESTS, empty);
+        return createOrderTable(ORDER_TABLE_ID, null, NUMBER_OF_GUESTS, empty);
     }
 
     public static OrderTable createGroupedOrderTable(boolean empty) {
-        return createOrderTable(ORDER_TABLE_ID, createTableGroup(), createCompletedOrders(), NUMBER_OF_GUESTS, empty);
+        return createOrderTable(ORDER_TABLE_ID, createTableGroup(), NUMBER_OF_GUESTS, empty);
     }
 
     public static OrderTableRequest createOrderTableRequest(OrderTable orderTable) {
@@ -43,7 +42,7 @@ public class TableFixtures {
     public static List<OrderTable> createOrderTables(boolean empty) {
         List<OrderTable> orderTables = new ArrayList<>();
         orderTables.add(createOrderTable(empty));
-        orderTables.add(createOrderTable(2L, null, createCompletedOrders(), NUMBER_OF_GUESTS, empty));
+        orderTables.add(createOrderTable(2L, null, NUMBER_OF_GUESTS, empty));
         return orderTables;
     }
 
