@@ -21,7 +21,7 @@ public class OrderTable {
     @Column(nullable = false)
     private boolean empty;
 
-    public OrderTable() {
+    protected OrderTable() {
     }
 
     public OrderTable(int numberOfGuests, boolean empty) {

@@ -10,7 +10,7 @@ import java.util.Objects;
 public class Price {
     private BigDecimal price;
 
-    public Price() {
+    protected Price() {
     }
 
     private Price(BigDecimal price) {

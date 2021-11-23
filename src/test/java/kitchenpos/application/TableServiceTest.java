@@ -64,8 +64,8 @@ class TableServiceTest {
     @DisplayName("테이블 목록을 불러올 수 있다.")
     void list() {
         // given
-        OrderTable orderTable1 = new OrderTable();
-        OrderTable orderTable2 = new OrderTable();
+        OrderTable orderTable1 = mock(OrderTable.class);
+        OrderTable orderTable2 = mock(OrderTable.class);
 
         List<OrderTable> expectedTables = Arrays.asList(orderTable1, orderTable2);
         given(orderTableRepository.findAll())

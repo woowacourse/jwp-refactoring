@@ -30,7 +30,7 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
-    public Order() {
+    protected Order() {
     }
 
     public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {

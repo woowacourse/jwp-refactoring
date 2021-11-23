@@ -11,7 +11,7 @@ public class Quantity {
     @Column(name = "quantity", nullable = false)
     private Long quantity;
 
-    public Quantity() {
+    protected Quantity() {
     }
 
     private Quantity(Long quantity) {
