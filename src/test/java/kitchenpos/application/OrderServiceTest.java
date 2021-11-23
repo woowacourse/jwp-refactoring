@@ -8,25 +8,32 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.dto.request.OrderRequest;
-import kitchenpos.dto.request.OrderRequest.OrderLineItemRequest;
-import kitchenpos.dto.request.OrderStatusRequest;
-import kitchenpos.dto.response.OrderResponse;
-import kitchenpos.dto.response.OrderResponse.OrderLineItemResponse;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.name.domain.Name;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItemRepository;
+import kitchenpos.order.domain.OrderMenu;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.dto.OrderRequest;
+import kitchenpos.order.dto.OrderRequest.OrderLineItemRequest;
+import kitchenpos.order.dto.OrderResponse;
+import kitchenpos.order.dto.OrderResponse.OrderLineItemResponse;
+import kitchenpos.order.dto.OrderStatusRequest;
+import kitchenpos.price.domain.Price;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,31 +49,40 @@ public class OrderServiceTest extends ServiceTest {
     private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableRepository orderTableRepository;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @InjectMocks
     private OrderService orderService;
 
-    private OrderTable orderTable1;
+    private OrderTable orderTable;
     private Order order1;
-    private Order order2;
+    private OrderLineItem orderLineItemOfOrder1;
+    private OrderLineItem orderLineItemOfOrder2;
     private Menu menu;
 
     @BeforeEach
     void setUp() {
-        orderTable1 = new OrderTable(1L, null, 4, true);
+        orderTable = new OrderTable(1L, null, 4, true);
         OrderTable orderTable2 = new OrderTable(2L, null, 4, true);
-        new TableGroup(1L, Arrays.asList(orderTable1, orderTable2));
+        new TableGroup(1L, Arrays.asList(orderTable, orderTable2));
         MenuGroup menuGroup = new MenuGroup("치킨");
-        menu = new Menu(1L, "후라이드치킨", BigDecimal.valueOf(16000), menuGroup);
-        order1 = new Order(orderTable1, Collections.singletonList(new OrderLineItem(menu, 2L)));
-        order2 = new Order(orderTable2, Collections.singletonList(new OrderLineItem(menu, 2L)));
+        menu = new Menu(1L, new Name("후라이드치킨"), new Price(BigDecimal.valueOf(16000)),
+            menuGroup.getId(),
+            new MenuProducts(Collections.singletonList(
+                new MenuProduct(1L, 2L)
+            ))
+        );
+        order1 = new Order(1L, orderTable.getId(), OrderStatus.COOKING);
+        orderLineItemOfOrder1 = new OrderLineItem(order1,
+            new OrderMenu(menu.getId(), menu.getName(), menu.getPrice()), 2L);
+        Order order2 = new Order(2L, orderTable2.getId(), OrderStatus.COOKING);
+        orderLineItemOfOrder2 = new OrderLineItem(order2,
+            new OrderMenu(menu.getId(), menu.getName(), menu.getPrice()), 2L);
     }
 
     @DisplayName("주문 등록")
     @Test
     void create() {
-        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable1));
         when(menuRepository.findAllById(any())).thenReturn(
             Collections.singletonList(menu)
         );
@@ -74,10 +90,22 @@ public class OrderServiceTest extends ServiceTest {
             Order order = invocation.getArgument(0);
             return new Order(
                 1L,
-                order.getOrderTable(),
-                order.getOrderStatus(),
-                order.getOrderLineItems()
+                order.getOrderTableId(),
+                order.getOrderStatus()
             );
+        });
+        when(orderLineItemRepository.saveAll(any())).thenAnswer(invocation -> {
+            List<OrderLineItem> orderLineItems = invocation.getArgument(0);
+            List<OrderLineItem> result = new ArrayList<>();
+            for (int seq = 1; seq <= orderLineItems.size(); seq++) {
+                OrderLineItem orderLineItem = orderLineItems.get(seq - 1);
+                result.add(
+                    new OrderLineItem((long) seq, orderLineItem.getOrder(),
+                        orderLineItem.getOrderMenu(),
+                        orderLineItem.getQuantity())
+                );
+            }
+            return result;
         });
 
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
@@ -97,7 +125,6 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 항목이 0개인 주문 등록할 경우 예외 처리")
     @Test
     void createWithoutOrderLineItems() {
-        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable1));
         OrderRequest orderRequest = new OrderRequest(1L, Collections.emptyList());
 
         assertThatThrownBy(() -> orderService.create(orderRequest)).isExactlyInstanceOf(
@@ -105,58 +132,16 @@ public class OrderServiceTest extends ServiceTest {
         );
     }
 
-    @DisplayName("등록되지 않은 메뉴로 주문 등록할 경우 예외 처리")
-    @Test
-    void createWithNotFoundMenu() {
-        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable1));
-        when(menuRepository.findAllById(any())).thenReturn(Collections.emptyList());
-
-        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
-        OrderRequest orderRequest = new OrderRequest(
-            1L,
-            Collections.singletonList(orderLineItemRequest)
-        );
-
-        assertThatThrownBy(() -> orderService.create(orderRequest)).isExactlyInstanceOf(
-            IllegalArgumentException.class
-        );
-    }
-
-    @DisplayName("등록되지 않은 테이블에 주문 등록할 경우 예외 처리")
-    @Test
-    void createWithNotFoundOrderTable() {
-        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable1));
-        when(orderTableRepository.findById(1L)).thenReturn(Optional.empty());
-
-        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
-        OrderRequest orderRequest = new OrderRequest(
-            1L,
-            Collections.singletonList(orderLineItemRequest)
-        );
-        assertThatThrownBy(() -> orderService.create(orderRequest)).isExactlyInstanceOf(
-            IllegalArgumentException.class);
-    }
-
-    @DisplayName("비어있는 테이블에 주문 등록할 경우 예외 처리")
-    @Test
-    void createWithEmptyOrderTable() {
-        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
-        OrderRequest orderRequest = new OrderRequest(
-            1L,
-            Collections.singletonList(orderLineItemRequest)
-        );
-        assertThatThrownBy(() -> orderService.create(orderRequest)).isExactlyInstanceOf(
-            IllegalArgumentException.class);
-    }
-
     @DisplayName("주문 조회")
     @Test
     void list() {
-        List<Order> orders = Arrays.asList(order1, order2);
-        when(orderRepository.findAll()).thenReturn(orders);
+        when(orderLineItemRepository.findAll()).thenReturn(
+            Arrays.asList(orderLineItemOfOrder1, orderLineItemOfOrder2)
+        );
 
         List<OrderResponse> actual = orderService.list();
-        List<OrderResponse> expected = OrderResponse.listFrom(orders);
+        List<OrderResponse> expected = OrderResponse.listFrom(
+            Arrays.asList(orderLineItemOfOrder1, orderLineItemOfOrder2));
 
         assertThat(actual).hasSameSizeAs(expected)
             .usingRecursiveFieldByFieldElementComparator()
@@ -167,8 +152,11 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 상태 수정")
     @Test
     void changeOrderStatus() {
-        long idToChange = 1L;
+        long idToChange = order1.getId();
         when(orderRepository.findById(idToChange)).thenReturn(Optional.of(order1));
+        when(orderLineItemRepository.findAllByOrder(order1)).thenReturn(
+            Collections.singletonList(orderLineItemOfOrder1)
+        );
 
         OrderStatusRequest orderStatusRequest = new OrderStatusRequest(OrderStatus.MEAL.name());
         OrderResponse actual = orderService.changeOrderStatus(idToChange, orderStatusRequest);
@@ -176,23 +164,11 @@ public class OrderServiceTest extends ServiceTest {
             order1.getId(),
             orderStatusRequest.getOrderStatus(),
             order1.getOrderedTime(),
-            OrderLineItemResponse.listFrom(order1.getOrderLineItems())
+            OrderLineItemResponse.listFrom(Collections.singletonList(orderLineItemOfOrder1))
         );
 
         assertThat(actual).usingRecursiveComparison()
             .isEqualTo(expected);
-    }
-
-    @DisplayName("등록되지 않은 주문 상태 수정시 예외 처리")
-    @Test
-    void changeOrderStatusWithNotFoundOrder() {
-        long idToChange = 1L;
-        when(orderRepository.findById(idToChange)).thenReturn(Optional.empty());
-
-        OrderStatusRequest orderStatusRequest = new OrderStatusRequest(OrderStatus.MEAL.name());
-        assertThatThrownBy(
-            () -> orderService.changeOrderStatus(idToChange, orderStatusRequest)
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("계산 완료 상태 주문의 상태 수정시 예외 처리")
@@ -202,9 +178,8 @@ public class OrderServiceTest extends ServiceTest {
         when(orderRepository.findById(idToChange)).thenReturn(Optional.of(
             new Order(
                 1L,
-                orderTable1,
-                OrderStatus.COMPLETION,
-                Collections.singletonList(new OrderLineItem(menu, 2L))
+                orderTable.getId(),
+                OrderStatus.COMPLETION
             )
         ));
 

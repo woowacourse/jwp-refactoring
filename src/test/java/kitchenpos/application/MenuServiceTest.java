@@ -11,20 +11,19 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProducts;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.ProductRepository;
-import kitchenpos.dto.request.MenuRequest;
-import kitchenpos.dto.request.MenuRequest.MenuProductRequest;
-import kitchenpos.dto.response.MenuResponse;
-import kitchenpos.dto.response.MenuResponse.MenuProductResponse;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.dto.MenuRequest;
+import kitchenpos.menu.dto.MenuRequest.MenuProductRequest;
+import kitchenpos.menu.dto.MenuResponse;
+import kitchenpos.menu.dto.MenuResponse.MenuProductResponse;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.name.domain.Name;
+import kitchenpos.price.domain.Price;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -34,12 +33,6 @@ public class MenuServiceTest extends ServiceTest {
 
     @Mock
     private MenuRepository menuRepository;
-
-    @Mock
-    private MenuGroupRepository menuGroupRepository;
-
-    @Mock
-    private ProductRepository productRepository;
 
     @InjectMocks
     private MenuService menuService;
@@ -57,15 +50,9 @@ public class MenuServiceTest extends ServiceTest {
         );
         when(menuRepository.save(any(Menu.class))).thenAnswer(invocation -> {
             Menu menu = invocation.getArgument(0);
-            return new Menu(menuId, menu.getName(), menu.getPrice(), menu.getMenuGroup(),
+            return new Menu(menuId, menu.getName(), menu.getPrice(), menu.getMenuGroupId(),
                 newMenuProductsOf(menu, seq, menuId));
         });
-        when(menuGroupRepository.findById(request.getMenuGroupId())).thenReturn(
-            Optional.of(new MenuGroup(menuGroupId, "두마리메뉴"))
-        );
-        when(productRepository.findById(productId)).thenAnswer(invocation ->
-            Optional.of(new Product(productId, "후라이드", BigDecimal.valueOf(16000)))
-        );
 
         MenuResponse actual = menuService.create(request);
         MenuResponse expected = new MenuResponse(menuId, request.getName(), request.getPrice(),
@@ -84,12 +71,7 @@ public class MenuServiceTest extends ServiceTest {
                 .stream()
                 .map(menuProduct -> new MenuProduct(
                     seq,
-                    new Menu(menuId, menu.getName(), menu.getPrice(), menu.getMenuGroup()),
-                    new Product(
-                        menuProduct.getProduct().getId(),
-                        "후라이드",
-                        BigDecimal.valueOf(16000)
-                    ),
+                    menuProduct.getProductId(),
                     2L
                 )).collect(Collectors.toList())
         );
@@ -110,78 +92,21 @@ public class MenuServiceTest extends ServiceTest {
         );
     }
 
-    @DisplayName("메뉴 가격이 메뉴 상품 가격 합보다 크면 예외 처리")
-    @Test
-    void createWhenPriceOfMenuIsGreaterThanTotalPriceOfMenuProduct() {
-        MenuRequest menuToCreate = new MenuRequest(
-            "후라이드+후라이드",
-            BigDecimal.valueOf(33000),
-            1L,
-            Collections.singletonList(new MenuProductRequest(1L, 2))
-        );
-        when(menuGroupRepository.findById(menuToCreate.getMenuGroupId())).thenReturn(
-            Optional.of(new MenuGroup(1L, "두마리메뉴"))
-        );
-        when(productRepository.findById(1L)).thenAnswer(
-            invocation -> Optional.of(new Product(1L, "후라이드", BigDecimal.valueOf(16000)))
-        );
-
-        assertThatThrownBy(() -> menuService.create(menuToCreate)).isExactlyInstanceOf(
-            IllegalArgumentException.class
-        );
-    }
-
-    @DisplayName("등록되지 않은 메뉴 그룹으로 메뉴 등록시 예외 처리")
-    @Test
-    void createWithNotFoundMenuGroup() {
-        MenuRequest menuToCreate = new MenuRequest(
-            "후라이드+후라이드",
-            BigDecimal.valueOf(19000),
-            1L,
-            Collections.singletonList(new MenuProductRequest(1L, 2)));
-        when(menuGroupRepository.findById(menuToCreate.getMenuGroupId())).thenReturn(
-            Optional.empty()
-        );
-
-        assertThatThrownBy(() -> menuService.create(menuToCreate)).isExactlyInstanceOf(
-            IllegalArgumentException.class);
-    }
-
-    @DisplayName("등록되지 않은 상품으로 메뉴 등록시 예외 처리")
-    @Test
-    void createWithNotFoundProduct() {
-        MenuRequest menuToCreate = new MenuRequest(
-            "후라이드+후라이드",
-            BigDecimal.valueOf(19000),
-            1L,
-            Collections.singletonList(new MenuProductRequest(1L, 2)));
-        when(menuGroupRepository.findById(menuToCreate.getMenuGroupId())).thenReturn(
-            Optional.of(new MenuGroup(1L, "두마리메뉴"))
-        );
-        when(productRepository.findById(1L)).thenAnswer(invocation -> Optional.empty());
-
-        assertThatThrownBy(() -> menuService.create(menuToCreate)).isExactlyInstanceOf(
-            IllegalArgumentException.class);
-    }
-
     @DisplayName("메뉴 조회")
     @Test
     void list() {
         MenuGroup menuGroup = new MenuGroup(1L, "두마리메뉴");
-        Menu friedChicken = new Menu(
-            1L,
-            "후라이드치킨",
-            BigDecimal.valueOf(16000),
-            menuGroup
-        );
-        friedChicken.addProduct(new Product(1L, "후라이드", BigDecimal.valueOf(16000)), 2);
-        Menu seasonedSpicyChicken = new Menu(
-            2L,
-            "양념치킨",
-            BigDecimal.valueOf(16000),
-            menuGroup
-        );
-        seasonedSpicyChicken.addProduct(new Product(2L, "양념치킨", BigDecimal.valueOf(16000)), 2);
+        Menu friedChicken = new Menu(1L, new Name("후라이드치킨"), new Price(BigDecimal.valueOf(16000)),
+            menuGroup.getId(),
+            new MenuProducts(Collections.singletonList(
+                new MenuProduct(1L, 2L)
+            )));
+        Menu seasonedSpicyChicken = new Menu(2L, new Name("후라이드치킨"),
+            new Price(BigDecimal.valueOf(16000)),
+            menuGroup.getId(),
+            new MenuProducts(Collections.singletonList(
+                new MenuProduct(2L, 2L)
+            )));
         List<Menu> menus = Arrays.asList(friedChicken, seasonedSpicyChicken);
         when(menuRepository.findAll()).thenReturn(menus);
 

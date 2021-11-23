@@ -7,24 +7,20 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.repository.TableGroupRepository;
-import kitchenpos.dto.request.TableGroupRequest;
-import kitchenpos.dto.request.TableGroupRequest.OrderTableOfGroupRequest;
-import kitchenpos.dto.response.OrderTableResponse;
-import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.TableGroupRepository;
+import kitchenpos.table.dto.OrderTableResponse;
+import kitchenpos.table.dto.TableGroupRequest;
+import kitchenpos.table.dto.TableGroupRequest.OrderTableOfGroupRequest;
+import kitchenpos.table.dto.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,13 +40,11 @@ public class TableGroupServiceTest extends ServiceTest {
 
     private OrderTable orderTable1;
     private OrderTable orderTable2;
-    private Menu menu;
 
     @BeforeEach
     void setUp() {
         orderTable1 = new OrderTable(1L, null, 4, true);
         orderTable2 = new OrderTable(2L, null, 4, true);
-        menu = new Menu(1L, "후라이드", BigDecimal.valueOf(16000), new MenuGroup(1L, "치킨"));
     }
 
     @DisplayName("단체 지정 저장")
@@ -160,21 +154,6 @@ public class TableGroupServiceTest extends ServiceTest {
             assertThat(orderTable.getTableGroup()).isNull();
             assertThat(orderTable.isEmpty()).isFalse();
         }
-    }
-
-    @DisplayName("조리나 식사 상태인 테이블이 있는 단체 지정을 제거할 경우 예외 처리")
-    @Test
-    void deleteWithNotFoundTableGroup() {
-        long tableGroupId = 1L;
-        TableGroup tableGroup = new TableGroup(
-            tableGroupId,
-            Arrays.asList(orderTable1, orderTable2)
-        );
-        new Order(orderTable1, Collections.singletonList(new OrderLineItem(menu, 2L)));
-        when(tableGroupRepository.findById(tableGroupId)).thenReturn(Optional.of(tableGroup));
-
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
-            .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     private List<Long> convertIdsFromOrderTables(final List<OrderTable> orderTables) {

@@ -7,22 +7,17 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.dto.request.OrderTableEmptyRequest;
-import kitchenpos.dto.request.OrderTableNumberOfGuestsRequest;
-import kitchenpos.dto.request.OrderTableRequest;
-import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.dto.OrderTableEmptyRequest;
+import kitchenpos.table.dto.OrderTableNumberOfGuestsRequest;
+import kitchenpos.table.dto.OrderTableRequest;
+import kitchenpos.table.dto.OrderTableResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -123,19 +118,6 @@ public class TableServiceTest extends ServiceTest {
     @DisplayName("단체로 등록된 주문 테이블의 빈 상태를 수정할 경우 예외 처리")
     @Test
     void changeEmptyWithTableDesignatedAsGroup() {
-        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable1));
-
-        OrderTableEmptyRequest request = new OrderTableEmptyRequest(false);
-        assertThatThrownBy(() -> tableService.changeEmpty(1L, request)).isExactlyInstanceOf(
-            IllegalArgumentException.class
-        );
-    }
-
-    @DisplayName("조리나 식사 상태인 주문 테이블의 빈 상태를 수정할 경우 예외 처리")
-    @Test
-    void changeEmptyWithCookingOrMealStatus() {
-        Menu menu = new Menu(1L, "후라이드", BigDecimal.valueOf(16000), new MenuGroup(1L, "치킨"));
-        new Order(orderTable1, Collections.singletonList(new OrderLineItem(menu, 2L)));
         when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable1));
 
         OrderTableEmptyRequest request = new OrderTableEmptyRequest(false);

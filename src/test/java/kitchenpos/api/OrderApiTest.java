@@ -4,23 +4,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.OrderLineItemRepository;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.dto.request.OrderRequest;
-import kitchenpos.dto.request.OrderRequest.OrderLineItemRequest;
-import kitchenpos.dto.request.OrderStatusRequest;
-import kitchenpos.dto.response.OrderResponse;
-import kitchenpos.dto.response.OrderResponse.OrderLineItemResponse;
+import java.util.List;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItemRepository;
+import kitchenpos.order.domain.OrderMenu;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.dto.OrderRequest;
+import kitchenpos.order.dto.OrderRequest.OrderLineItemRequest;
+import kitchenpos.order.dto.OrderResponse;
+import kitchenpos.order.dto.OrderResponse.OrderLineItemResponse;
+import kitchenpos.order.dto.OrderStatusRequest;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,6 +41,9 @@ import org.springframework.http.ResponseEntity;
 public class OrderApiTest extends ApiTest {
 
     private static final String BASE_URL = "/api/orders";
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;
@@ -53,20 +63,27 @@ public class OrderApiTest extends ApiTest {
     private Menu menu;
     private OrderTable orderTable;
     private Order order;
-    private OrderLineItem orderLineItem;
+    private List<OrderLineItem> orderLineItems;
 
     @Override
     @BeforeEach
     void setUp() throws SQLException {
         super.setUp();
+        orderLineItems = new ArrayList<>();
 
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
-        menu = menuRepository.save(new Menu("후라이드치킨", BigDecimal.valueOf(16000), menuGroup));
-        orderTable = orderTableRepository.save(new OrderTable(0, false));
-        order = orderRepository.save(
-            new Order(orderTable, Collections.singletonList(new OrderLineItem(menu, 1L)))
+        Product product = productRepository.save(new Product("후라이드치킨", BigDecimal.valueOf(16000)));
+        menu = menuRepository.save(
+            new Menu("후라이드치킨", BigDecimal.valueOf(16000), menuGroup.getId(),
+                new MenuProducts(Collections.singletonList(new MenuProduct(product.getId(), 2L)))
+            )
         );
-        orderLineItem = orderLineItemRepository.save(order.getOrderLineItems().get(0));
+        orderTable = orderTableRepository.save(new OrderTable(0, false));
+        order = new Order(orderTable.getId());
+        order = orderRepository.save(order);
+        orderLineItems.add(orderLineItemRepository.save(
+            new OrderLineItem(order, new OrderMenu(menu.getId(), menu.getName(), menu.getPrice()),
+                1L)));
     }
 
     @DisplayName("주문 등록")
@@ -105,10 +122,10 @@ public class OrderApiTest extends ApiTest {
         OrderResponse actualOrderLineItem = response[0];
         assertThat(actualOrderLineItem).usingRecursiveComparison()
             .ignoringFields("orderLineItems")
-            .isEqualTo(OrderResponse.from(order));
+            .isEqualTo(OrderResponse.from(order, orderLineItems));
         assertThat(actualOrderLineItem.getOrderLineItems()).hasSize(1);
         assertThat(actualOrderLineItem.getOrderLineItems().get(0)).usingRecursiveComparison()
-            .isEqualTo(OrderLineItemResponse.from(orderLineItem));
+            .isEqualTo(OrderLineItemResponse.from(orderLineItems.get(0)));
     }
 
     @DisplayName("주문 상태 수정")
@@ -126,8 +143,8 @@ public class OrderApiTest extends ApiTest {
         assertThat(response).usingRecursiveComparison()
             .ignoringFields("orderStatus", "orderLineItems")
             .isEqualTo(order);
-        assertThat(response.getOrderLineItems()).hasSize(1);
+        assertThat(response.getOrderLineItems()).hasSameSizeAs(orderLineItems);
         assertThat(response.getOrderLineItems().get(0)).usingRecursiveComparison()
-            .isEqualTo(OrderLineItemResponse.from(orderLineItem));
+            .isEqualTo(OrderLineItemResponse.from(orderLineItems.get(0)));
     }
 }
