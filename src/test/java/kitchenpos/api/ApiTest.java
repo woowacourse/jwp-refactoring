@@ -51,7 +51,12 @@ public abstract class ApiTest {
         try (Connection connection = jdbcTemplate.getDataSource().getConnection()) {
             DatabaseMetaData metaData = connection.getMetaData();
             List<String> tables = new ArrayList<>();
-            try (ResultSet resultSet = metaData.getTables(null, null, null, new String[]{"TABLE"})) {
+            try (ResultSet resultSet = metaData.getTables(
+                null,
+                null,
+                null,
+                new String[]{"TABLE"}
+            )) {
                 while (resultSet.next()) {
                     tables.add(resultSet.getString("TABLE_NAME"));
                 }
