@@ -1,0 +1,11 @@
+dependencies {
+    implementation project(':domain-menugroup')
+    implementation project(':domain-product')
+}
+
+bootJar {
+    enabled = false
+}
+jar {
+    enabled = true
+}

@@ -1,1 +1,8 @@
 rootProject.name = 'kitchenpos'
+include 'api'
+include 'domain-menu'
+include 'domain-menugroup'
+include 'domain-order'
+include 'domain-table'
+include 'domain-product'
+

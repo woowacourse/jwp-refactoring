@@ -1,0 +1,10 @@
+dependencies {
+    implementation project(':domain-order')
+}
+
+bootJar {
+    enabled = false
+}
+jar {
+    enabled = true
+}

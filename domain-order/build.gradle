@@ -1,0 +1,11 @@
+dependencies {
+    implementation project(':domain-menu')
+    implementation project(':domain-table')
+}
+
+bootJar {
+    enabled = false
+}
+jar {
+    enabled = true
+}
