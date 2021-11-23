@@ -18,13 +18,19 @@ public class OrderMapper {
     }
 
     public Order mapFrom(OrderRequest orderRequest) {
-        OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-        return new Order(orderTable);
+        return new Order(
+                findOrderTableById(orderRequest.getOrderTableId()),
+                orderLineItemList(orderRequest.getOrderLineItems())
+        );
     }
 
-    public List<OrderLineItem> orderLineItemList(OrderRequest orderRequest) {
-        return orderRequest.getOrderLineItems().stream().map(this::toOrderLineItem).collect(Collectors.toList());
+    private OrderTable findOrderTableById(Long tableId) {
+        return orderTableRepository.findById(tableId)
+                .orElseThrow(IllegalArgumentException::new);
+    }
+
+    private List<OrderLineItem> orderLineItemList(List<OrderLineItemRequest> orderLineItemRequests) {
+        return orderLineItemRequests.stream().map(this::toOrderLineItem).collect(Collectors.toList());
     }
 
     private OrderLineItem toOrderLineItem(OrderLineItemRequest orderLineItemRequest) {

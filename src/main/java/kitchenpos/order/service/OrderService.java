@@ -24,7 +24,6 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
         Order order = orderMapper.mapFrom(orderRequest);
-        order.configure(orderMapper.orderLineItemList(orderRequest));
         order.register(orderValidator);
         orderRepository.save(order);
         return OrderResponse.of(order);

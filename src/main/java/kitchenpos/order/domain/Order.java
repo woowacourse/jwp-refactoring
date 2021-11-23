@@ -10,6 +10,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import kitchenpos.order.service.OrderValidator;
@@ -25,32 +26,28 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "order_id")
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
     }
 
-    public Order(OrderTable orderTable) {
-        this(null, orderTable, null, LocalDateTime.now());
+    public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        this(null, orderTable, null, LocalDateTime.now(), orderLineItems);
     }
 
-    public Order(OrderTable orderTable, String orderStatus) {
-        this(null, orderTable, OrderStatus.valueOf(orderStatus), LocalDateTime.now());
+    public Order(OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
+        this(null, orderTable, orderStatus, LocalDateTime.now(), orderLineItems);
     }
 
-    private Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
+    private Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
+                  List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-    }
-
-    public void configure(List<OrderLineItem> orderLineItems) {
         this.orderLineItems.addAll(orderLineItems);
-        for (OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrder(this);
-        }
     }
 
     public void register(OrderValidator orderValidator) {

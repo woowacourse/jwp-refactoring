@@ -132,7 +132,7 @@ class TableGroupServiceTest {
     void ungroupTableGroupOfTableWithNotAllowedOrderStatus(OrderStatus orderStatus) {
         TableGroupResponse tableGroup = tableGroupService.create(tableGroupRequest);
 
-        orderRepository.save(new Order(table1, orderStatus.name()));
+        orderRepository.save(new Order(table1, orderStatus, Collections.emptyList()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
