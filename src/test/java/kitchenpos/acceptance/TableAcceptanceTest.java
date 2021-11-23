@@ -1,14 +1,12 @@
 package kitchenpos.acceptance;
 
 import kitchenpos.AcceptanceTest;
-import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.ui.dto.request.OrderTableChangeGuestRequest;
 import kitchenpos.ui.dto.request.OrderTableCreateRequest;
 import kitchenpos.ui.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -16,9 +14,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TableAcceptanceTest extends AcceptanceTest {
-
-    @Autowired
-    private OrderTableFixture orderTableFixture;
 
     @Test
     @DisplayName("테이블 생성 테스트 - 성공")

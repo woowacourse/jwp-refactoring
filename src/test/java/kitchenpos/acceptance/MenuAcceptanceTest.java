@@ -1,10 +1,6 @@
 package kitchenpos.acceptance;
 
 import kitchenpos.AcceptanceTest;
-import kitchenpos.fixture.MenuFixture;
-import kitchenpos.fixture.MenuGroupFixture;
-import kitchenpos.fixture.MenuProductFixture;
-import kitchenpos.fixture.ProductFixture;
 import kitchenpos.ui.dto.request.MenuProductRequest;
 import kitchenpos.ui.dto.request.MenuRequest;
 import kitchenpos.ui.dto.response.MenuGroupResponse;
@@ -13,7 +9,6 @@ import kitchenpos.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -21,14 +16,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MenuAcceptanceTest extends AcceptanceTest {
-
-    @Autowired
-    private MenuFixture menuFixture;
-    @Autowired
-    private ProductFixture productFixture;
-
-    private final MenuProductFixture menuProductFixture = new MenuProductFixture();
-    private final MenuGroupFixture menuGroupFixture = new MenuGroupFixture();
 
     private List<MenuProductRequest> 메뉴_상품_요청_리스트;
     private MenuGroupResponse 메뉴그룹1_응답;

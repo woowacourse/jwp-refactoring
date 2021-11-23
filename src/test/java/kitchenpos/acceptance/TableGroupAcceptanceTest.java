@@ -1,8 +1,6 @@
 package kitchenpos.acceptance;
 
 import kitchenpos.AcceptanceTest;
-import kitchenpos.fixture.OrderTableFixture;
-import kitchenpos.fixture.TableGroupFixture;
 import kitchenpos.testtool.response.HttpResponse;
 import kitchenpos.ui.dto.request.OrderTableRequest;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
@@ -11,7 +9,6 @@ import kitchenpos.ui.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,11 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 public class TableGroupAcceptanceTest extends AcceptanceTest {
-
-    @Autowired
-    private TableGroupFixture tableGroupFixture;
-    @Autowired
-    private OrderTableFixture orderTableFixture;
 
     private OrderTableRequest 주문_테이블1_요청;
     private OrderTableRequest 주문_테이블2_요청;

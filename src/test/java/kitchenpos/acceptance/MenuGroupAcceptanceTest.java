@@ -2,7 +2,6 @@ package kitchenpos.acceptance;
 
 import kitchenpos.AcceptanceTest;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.ui.dto.request.MenuGroupRequest;
 import kitchenpos.ui.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -13,8 +12,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MenuGroupAcceptanceTest extends AcceptanceTest {
-
-    private final MenuGroupFixture menuGroupFixture = new MenuGroupFixture();
 
     @Test
     @DisplayName("메뉴그룹 생성 테스트 - 성공")

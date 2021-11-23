@@ -1,12 +1,10 @@
 package kitchenpos.acceptance;
 
 import kitchenpos.AcceptanceTest;
-import kitchenpos.fixture.ProductFixture;
 import kitchenpos.ui.dto.request.ProductRequest;
 import kitchenpos.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -14,9 +12,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ProductAcceptanceTest extends AcceptanceTest {
-
-    @Autowired
-    private ProductFixture productFixture;
 
     @Test
     @DisplayName("상품 생성 테스트 - 성공")

@@ -1,5 +1,6 @@
 package kitchenpos;
 
+import kitchenpos.fixture.*;
 import kitchenpos.testtool.RequestBuilder;
 import kitchenpos.testtool.request.RequestApi;
 import kitchenpos.testtool.response.HttpResponse;
@@ -19,6 +20,22 @@ public class AcceptanceTest {
 
     @Autowired
     private RequestBuilder request;
+
+    @Autowired
+    protected MenuFixture menuFixture;
+    @Autowired
+    protected OrderFixture orderFixture;
+    @Autowired
+    protected OrderLineItemFixture orderLineItemFixture;
+    @Autowired
+    protected OrderTableFixture orderTableFixture;
+    @Autowired
+    protected ProductFixture productFixture;
+    @Autowired
+    protected TableGroupFixture tableGroupFixture;
+
+    protected final MenuGroupFixture menuGroupFixture = new MenuGroupFixture();
+    protected final MenuProductFixture menuProductFixture = new MenuProductFixture();
 
     protected RequestApi request() {
         return request.builder();
