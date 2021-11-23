@@ -19,7 +19,7 @@ public class Menu {
     private Long menuGroupId;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "menu_products_id")
+    @JoinColumn(name = "menu_product_id")
     private List<MenuProduct> menuProducts;
 
     protected Menu() {

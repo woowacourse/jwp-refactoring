@@ -1,5 +1,10 @@
 package kitchenpos.application;
 
+import kitchenpos.Menu.application.MenuService;
+import kitchenpos.Menu.domain.Menu;
+import kitchenpos.Menu.domain.MenuGroup;
+import kitchenpos.Menu.domain.MenuProduct;
+import kitchenpos.Menu.domain.Product;
 import kitchenpos.annotation.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,8 +37,8 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        validMenuProduct = new MenuProduct(new Product(1L), 2L);
-        invalidMenuProduct = new MenuProduct(new Product(9999L), 2L);
+        validMenuProduct = new MenuProduct(1L, 2L);
+        invalidMenuProduct = new MenuProduct(9999L, 2L);
     }
 
     @ParameterizedTest
@@ -42,7 +47,7 @@ class MenuServiceTest {
     public void priceException(BigDecimal price) {
         //given & when
         Menu menu = new Menu("invalidMenu", price,
-                new MenuGroup(VALID_MENU_GROUP_ID), Collections.singletonList(validMenuProduct));
+                VALID_MENU_GROUP_ID, Collections.singletonList(validMenuProduct));
 
         //then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -61,7 +66,7 @@ class MenuServiceTest {
     public void menuGroupException() {
         //given & when
         Menu menu = new Menu("invalidMenu", BigDecimal.valueOf(10000),
-                new MenuGroup(INVALID_MENU_GROUP_ID), Collections.singletonList(validMenuProduct));
+                INVALID_MENU_GROUP_ID, Collections.singletonList(validMenuProduct));
 
         //then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -73,7 +78,7 @@ class MenuServiceTest {
     public void emptyMenuProductException() {
         //given & when
         Menu menu = new Menu("invalidMenu", BigDecimal.valueOf(10000),
-                new MenuGroup(VALID_MENU_GROUP_ID), Collections.singletonList(invalidMenuProduct));
+                VALID_MENU_GROUP_ID, Collections.singletonList(invalidMenuProduct));
 
         //then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -85,7 +90,7 @@ class MenuServiceTest {
     public void menuPriceLowerThanProductSumException() {
         //given & when
         Menu menu = new Menu("invalidMenu", BigDecimal.valueOf(32001),
-                new MenuGroup(VALID_MENU_GROUP_ID), Collections.singletonList(validMenuProduct));
+                VALID_MENU_GROUP_ID, Collections.singletonList(validMenuProduct));
 
         //then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -97,26 +102,10 @@ class MenuServiceTest {
     public void enrollMenu() {
         //given & when
         Menu menu = new Menu("validMenu", BigDecimal.valueOf(10000),
-                new MenuGroup(VALID_MENU_GROUP_ID), Collections.singletonList(validMenuProduct));
+                VALID_MENU_GROUP_ID, Collections.singletonList(validMenuProduct));
 
         //then
         assertDoesNotThrow(() -> menuService.create(menu));
-    }
-
-    @Test
-    @DisplayName("Menu 생성 후에 Menu의 MenuProduct 내에 menu_id를 할당해주어야 한다.")
-    public void enrollMenuAndAllocateMenuIdIntoMenuProduct() {
-        //given & when
-        Menu menu = new Menu("validMenu", BigDecimal.valueOf(10000),
-                new MenuGroup(VALID_MENU_GROUP_ID), Collections.singletonList(validMenuProduct));
-
-        //when
-        Menu savedMenu = menuService.create(menu);
-
-        //then
-        for (MenuProduct menuProduct : savedMenu.getMenuProducts()) {
-            assertThat(menuProduct.getMenuId()).isNotNull();
-        }
     }
 
     @Test

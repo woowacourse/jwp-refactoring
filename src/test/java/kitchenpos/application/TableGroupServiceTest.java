@@ -1,5 +1,16 @@
 package kitchenpos.application;
 
+import kitchenpos.Menu.domain.Menu;
+import kitchenpos.Menu.domain.repository.MenuRepository;
+import kitchenpos.Order.application.OrderService;
+import kitchenpos.Order.domain.Order;
+import kitchenpos.Order.domain.OrderLineItem;
+import kitchenpos.Order.domain.OrderStatus;
+import kitchenpos.OrderTable.application.TableGroupService;
+import kitchenpos.OrderTable.application.TableService;
+import kitchenpos.OrderTable.domain.OrderTable;
+import kitchenpos.OrderTable.domain.TableGroup;
+import kitchenpos.OrderTable.domain.repository.OrderTableRepository;
 import kitchenpos.annotation.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,10 +65,10 @@ class TableGroupServiceTest {
     @MethodSource("invalidOrderTables")
     public void invalidOrderTablesException(List<OrderTable> orderTables) {
         //given & when
-        TableGroup tableGroup = new TableGroup(orderTables);
+        TableGroup tableGroup = new TableGroup();
 
         //then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(Arrays.asList(999L, 998L)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -76,14 +88,15 @@ class TableGroupServiceTest {
     @DisplayName("empty 상태가 order_table 이어서는 안된다.")
     public void emptyStatusOrderTableException() {
         //given
-        TableGroup tableGroup = new TableGroup(validOrderTables);
+        List<Long> tableIds = validOrderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
 
         //when
-        OrderTable emptyOrderTable = new OrderTable(false);
-        tableService.changeEmpty(tableGroup.getOrderTables().get(0).getId(), emptyOrderTable);
+        tableService.changeEmpty(tableIds.get(0), false);
 
         //then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableIds))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -91,15 +104,15 @@ class TableGroupServiceTest {
     @DisplayName("다른 table_group에 속한 order_table이 있어서는 안된다.")
     public void includeAlreadyContainedOtherTableGroupOrderTableException() {
         //given
-        TableGroup tableGroup1 = new TableGroup(validOrderTables);
-
-        TableGroup tableGroup2 = new TableGroup(validOrderTables);
+        List<Long> tableIds = validOrderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
 
         //when
-        tableGroupService.create(tableGroup1);
+        tableGroupService.create(tableIds);
 
         //then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup2))
+        assertThatThrownBy(() -> tableGroupService.create(tableIds))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -107,37 +120,24 @@ class TableGroupServiceTest {
     @DisplayName("TableGroup을 등록할 수 있다.")
     public void enrollTableGroup() {
         //given & when
-        TableGroup tableGroup = new TableGroup(validOrderTables);
+        List<Long> tableIds = validOrderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
 
         //then
-        assertDoesNotThrow(() -> tableGroupService.create(tableGroup));
-    }
-
-    @Test
-    @DisplayName("TableGroup 생성 후에 해당 group에 속한 order_table들의 table_group_id에 생성된 TableGroup의 id가 할당되어야 하고," +
-            " empty 필드가 false로 변경되어야 한다.")
-    public void allocatedTableGroupIdAndChangeEmptyStatus() {
-        //given
-        TableGroup tableGroup = new TableGroup(validOrderTables);
-
-        //when
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
-
-        //then
-        for (OrderTable orderTable : savedTableGroup.getOrderTables()) {
-            assertThat(orderTable.getTableGroupId()).isNotNull();
-            assertThat(orderTable.isEmpty()).isFalse();
-        }
+        assertDoesNotThrow(() -> tableGroupService.create(tableIds));
     }
 
     @Test
     @DisplayName("TableGroup을 해제할 수 있다.")
     public void unGroup() {
         //given
-        TableGroup tableGroup = new TableGroup(validOrderTables);
+        List<Long> tableIds = validOrderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
 
         //when
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroup savedTableGroup = tableGroupService.create(tableIds);
 
         //then
         assertDoesNotThrow(() -> tableGroupService.ungroup(savedTableGroup.getId()));
@@ -147,8 +147,10 @@ class TableGroupServiceTest {
     @DisplayName("TableGroup에 속한 order_table이 현재 이용 중이면(COMPLETION이 아니면) 해제할 수 없다.")
     public void cannotUnGrouptWhenTableActivatedException() {
         //given
-        TableGroup tableGroup = new TableGroup(validOrderTables);
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        List<Long> tableIds = validOrderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+        TableGroup savedTableGroup = tableGroupService.create(tableIds);
 
         //when
         Order savedOrder = enrollOrder();
@@ -162,13 +164,15 @@ class TableGroupServiceTest {
     @DisplayName("TableGroup에 속한 order_table이 COMPLETION 이면 해제할 수 있다.")
     public void unGrouptWhenOrderStatusCOMPLETION() {
         //given
-        TableGroup tableGroup = new TableGroup(validOrderTables);
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        List<Long> tableIds = validOrderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+        TableGroup savedTableGroup = tableGroupService.create(tableIds);
 
         //when
         Order savedOrder = enrollOrder();
         Order completedOrder = new Order(OrderStatus.COMPLETION.name());
-        orderService.changeOrderStatus(savedOrder.getId(), completedOrder);
+        orderService.changeOrderStatus(savedOrder.getId(), completedOrder.getOrderStatus());
 
         //then
         assertDoesNotThrow(() -> tableGroupService.ungroup(savedTableGroup.getId()));
@@ -177,8 +181,8 @@ class TableGroupServiceTest {
     private Order enrollOrder() {
         Menu findMenu = menuRepository.findById(1L).get();
         OrderTable findOrderTable = orderTableRepository.findById(1L).get();
-        OrderLineItem orderLineItem = new OrderLineItem(findMenu, 1L);
-        Order order = new Order(findOrderTable, Collections.singletonList(orderLineItem));
+        OrderLineItem orderLineItem = new OrderLineItem(findMenu.getId(), 1L);
+        Order order = new Order(findOrderTable.getId(), Collections.singletonList(orderLineItem));
 
         return orderService.create(order);
     }

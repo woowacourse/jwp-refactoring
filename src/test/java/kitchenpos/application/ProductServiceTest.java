@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.Menu.application.ProductService;
+import kitchenpos.Menu.domain.Product;
 import kitchenpos.annotation.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -2,7 +2,6 @@ package kitchenpos.Order.domain.dto.response;
 
 import kitchenpos.Order.domain.Order;
 import kitchenpos.OrderTable.domain.dto.response.OrderTableResponse;
-import kitchenpos.dto.response.OrderTableResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,13 +9,13 @@ import java.util.stream.Collectors;
 public class OrderResponse {
 
     private Long id;
-    private OrderTableResponse orderTable;
+    private Long orderTableId;
     private String orderStatus;
     private List<OrderLineItemResponse> orderLineItems;
 
-    private OrderResponse(Long id, OrderTableResponse orderTable, String orderStatus, List<OrderLineItemResponse> orderLineItems) {
+    private OrderResponse(Long id, Long orderTableId, String orderStatus, List<OrderLineItemResponse> orderLineItems) {
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderLineItems = orderLineItems;
     }
@@ -28,8 +27,8 @@ public class OrderResponse {
         return id;
     }
 
-    public OrderTableResponse getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public String getOrderStatus() {
@@ -45,7 +44,7 @@ public class OrderResponse {
                 .map(OrderLineItemResponse::toDTO)
                 .collect(Collectors.toList());
 
-        return new OrderResponse(order.getId(), OrderTableResponse.toDTO(order.getOrderTable()),
+        return new OrderResponse(order.getId(), order.getOrderTableId(),
                 order.getOrderStatus(), orderLineItemResponses);
     }
 }
