@@ -1,9 +1,5 @@
-package kitchenpos.tableordered.domain;
+package kitchenpos.table.domain;
 
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderPlacedEvent;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -21,12 +17,12 @@ public class OrderTableOrderedEventHandler {
     @Async
     @EventListener
     @Transactional
-    public void handle(final OrderPlacedEvent orderPlacedEvent) {
-        validateOrderTable(orderPlacedEvent.getOrder());
+    public void handle(final OrderTableOrderedEvent orderTableOrderedEvent) {
+        validateOrderTable(orderTableOrderedEvent);
     }
 
-    public void validateOrderTable(final Order order) {
-        validateOrderTable(getOrderTable(order));
+    public void validateOrderTable(final OrderTableOrderedEvent orderTableOrderedEvent) {
+        validateOrderTable(getOrderTable(orderTableOrderedEvent));
     }
 
     private void validateOrderTable(final OrderTable orderTable) {
@@ -38,8 +34,8 @@ public class OrderTableOrderedEventHandler {
         }
     }
 
-    private OrderTable getOrderTable(final Order order) {
-        return orderTableRepository.findById(order.getOrderTableId())
+    private OrderTable getOrderTable(final OrderTableOrderedEvent orderTableOrderedEvent) {
+        return orderTableRepository.findById(orderTableOrderedEvent.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
     }
 }

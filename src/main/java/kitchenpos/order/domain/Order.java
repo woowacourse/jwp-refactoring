@@ -10,13 +10,14 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import kitchenpos.tableordered.domain.OrderTableOrderedEventHandler;
+import kitchenpos.table.domain.OrderTableOrderedEvent;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity(name = "orders")
-public class Order {
+public class Order extends AbstractAggregateRoot<Order> {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -38,6 +39,7 @@ public class Order {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
+        registerEvent(new OrderTableOrderedEvent(this.orderTableId));
     }
 
     public void changeOrder(final OrderStatus newOrderStatus) {

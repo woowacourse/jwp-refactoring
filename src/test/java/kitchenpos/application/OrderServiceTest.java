@@ -27,7 +27,7 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderMenu;
-import kitchenpos.order.domain.OrderPlacedEvent;
+import kitchenpos.table.domain.OrderTableOrderedEvent;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.dto.OrderRequest;
@@ -55,9 +55,6 @@ public class OrderServiceTest extends ServiceTest {
 
     @Mock
     private OrderLineItemRepository orderLineItemRepository;
-
-    @Mock
-    private ApplicationEventPublisher applicationEventPublisher;
 
     @Mock
     private MenuValidator menuValidator;
@@ -95,7 +92,6 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 등록")
     @Test
     void create() {
-        doNothing().when(applicationEventPublisher).publishEvent(any(OrderPlacedEvent.class));
         when(menuRepository.findAllById(any())).thenReturn(
             Collections.singletonList(menu)
         );
@@ -138,7 +134,6 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 항목이 0개인 주문 등록할 경우 예외 처리")
     @Test
     void createWithoutOrderLineItems() {
-        doNothing().when(applicationEventPublisher).publishEvent(any(OrderPlacedEvent.class));
         OrderRequest orderRequest = new OrderRequest(1L, Collections.emptyList());
 
         assertThatThrownBy(() -> orderService.create(orderRequest)).isExactlyInstanceOf(
@@ -149,9 +144,6 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("등록되지 않은 메뉴로 주문 등록할 경우 예외 처리")
     @Test
     void createWithNotFoundMenu() {
-        doThrow(IllegalArgumentException.class).when(applicationEventPublisher)
-            .publishEvent(any(OrderPlacedEvent.class));
-
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
         OrderRequest orderRequest = new OrderRequest(
             1L,
@@ -166,9 +158,6 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("등록되지 않은 테이블에 주문 등록할 경우 예외 처리")
     @Test
     void createWithNotFoundOrderTable() {
-        doThrow(IllegalArgumentException.class).when(applicationEventPublisher)
-            .publishEvent(any(OrderPlacedEvent.class));
-
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
         OrderRequest orderRequest = new OrderRequest(
             1L,

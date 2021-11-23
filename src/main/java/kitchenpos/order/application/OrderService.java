@@ -10,10 +10,8 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderMenu;
-import kitchenpos.order.domain.OrderPlacedEvent;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.tableordered.domain.OrderTableOrderedEventHandler;
 import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.dto.OrderStatusRequest;
@@ -28,22 +26,18 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
-    private final ApplicationEventPublisher applicationEventPublisher;
 
     public OrderService(final MenuRepository menuRepository,
                         final OrderRepository orderRepository,
-                        final OrderLineItemRepository orderLineItemRepository,
-                        final ApplicationEventPublisher applicationEventPublisher) {
+                        final OrderLineItemRepository orderLineItemRepository) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
-        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
         Order order = new Order(orderRequest.getOrderTableId());
-        applicationEventPublisher.publishEvent(new OrderPlacedEvent(order));
 
         Order savedOrder = orderRepository.save(order);
         List<OrderLineItem> orderLineItems = orderLineItemRepository.saveAll(

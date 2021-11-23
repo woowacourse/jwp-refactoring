@@ -20,7 +20,6 @@ import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderMenu;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.tableordered.domain.OrderTableOrderedEventHandler;
 import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.order.dto.OrderRequest.OrderLineItemRequest;
 import kitchenpos.order.dto.OrderResponse;
