@@ -10,8 +10,8 @@
 ## 2단계 리팩터링 요구 사항
 * 단위 테스트하기 어려운 코드와 단위 테스트 가능한 코드를 분리해 단위 테스트 가능한 코드에 대해 단위 테스트를 구현한다.
   - Spring Data JPA 사용 시 spring.jpa.hibernate.ddl-auto=validate 옵션을 필수로 준다.
-- [ ] JdbcTemplate 대신 JPA를 사용하도록 변경한다.
-- [ ] 모델에 setter 메서드 넣지 않기
+- [x] JdbcTemplate 대신 JPA를 사용하도록 변경한다.
+- [x] 모델에 setter 메서드 넣지 않기
 
 ## 요구 사항
 ### Order API(주문)
