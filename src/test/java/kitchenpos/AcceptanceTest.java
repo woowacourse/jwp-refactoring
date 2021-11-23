@@ -1,17 +1,36 @@
 package kitchenpos;
 
-import kitchenpos.fixture.*;
+import java.util.List;
+import kitchenpos.fixture.MenuFixture;
+import kitchenpos.fixture.MenuGroupFixture;
+import kitchenpos.fixture.MenuProductFixture;
+import kitchenpos.fixture.OrderFixture;
+import kitchenpos.fixture.OrderLineItemFixture;
+import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.fixture.ProductFixture;
+import kitchenpos.fixture.TableGroupFixture;
 import kitchenpos.testtool.RequestBuilder;
 import kitchenpos.testtool.request.RequestApi;
 import kitchenpos.testtool.response.HttpResponse;
-import kitchenpos.ui.dto.request.*;
-import kitchenpos.ui.dto.response.*;
+import kitchenpos.ui.dto.request.MenuGroupRequest;
+import kitchenpos.ui.dto.request.MenuRequest;
+import kitchenpos.ui.dto.request.OrderChangeStatusRequest;
+import kitchenpos.ui.dto.request.OrderCreatedRequest;
+import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.ui.dto.request.OrderTableChangeGuestRequest;
+import kitchenpos.ui.dto.request.OrderTableCreateRequest;
+import kitchenpos.ui.dto.request.ProductRequest;
+import kitchenpos.ui.dto.request.TableGroupCreateRequest;
+import kitchenpos.ui.dto.response.MenuGroupResponse;
+import kitchenpos.ui.dto.response.MenuResponse;
+import kitchenpos.ui.dto.response.OrderResponse;
+import kitchenpos.ui.dto.response.OrderTableResponse;
+import kitchenpos.ui.dto.response.ProductResponse;
+import kitchenpos.ui.dto.response.TableGroupResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -118,14 +137,16 @@ public class AcceptanceTest {
                 .convertBodyToList(OrderTableResponse.class);
     }
 
-    protected OrderTableResponse 주문_테이블_착석(Long orderTableId, OrderTableChangeEmptyRequest request) {
+    protected OrderTableResponse 주문_테이블_착석(Long orderTableId,
+            OrderTableChangeEmptyRequest request) {
         return request()
                 .put("/api/tables/" + orderTableId + "/empty", request)
                 .build()
                 .convertBody(OrderTableResponse.class);
     }
 
-    protected OrderTableResponse 주문_테이블_인원_변경(Long orderTableId, OrderTableChangeGuestRequest request) {
+    protected OrderTableResponse 주문_테이블_인원_변경(Long orderTableId,
+            OrderTableChangeGuestRequest request) {
         return request()
                 .put("/api/tables/" + orderTableId + "/number-of-guests", request)
                 .build()

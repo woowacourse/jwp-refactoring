@@ -17,7 +17,7 @@ public class OrderTables {
 
     private void validateNotEnoughSize(List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException("orderTables가 비어있거나 2개 이하입니다.");
+            throw new IllegalArgumentException("orderTables는 2개 이상의 size여야 합니다.");
         }
     }
 
@@ -33,7 +33,7 @@ public class OrderTables {
 
     public void validateSameSize(OrderTables orderTables) {
         if (this.getSize() != orderTables.getSize()) {
-            throw new IllegalArgumentException("입력받은 테이블 수와 DB에 등록된 테이블 수가 다릅니다.");
+            throw new IllegalArgumentException("입력받은 테이블 수와 비교대상에 등록된 테이블 수가 다릅니다.");
         }
     }
 

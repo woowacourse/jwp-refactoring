@@ -1,8 +1,7 @@
 package kitchenpos.testtool.response;
 
-import org.springframework.http.HttpStatus;
-
 import java.util.List;
+import org.springframework.http.HttpStatus;
 
 public interface HttpResponse {
 

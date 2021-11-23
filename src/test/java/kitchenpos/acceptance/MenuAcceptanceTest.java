@@ -1,5 +1,9 @@
 package kitchenpos.acceptance;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.math.BigDecimal;
+import java.util.List;
 import kitchenpos.AcceptanceTest;
 import kitchenpos.ui.dto.request.MenuProductRequest;
 import kitchenpos.ui.dto.request.MenuRequest;
@@ -9,11 +13,6 @@ import kitchenpos.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.math.BigDecimal;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class MenuAcceptanceTest extends AcceptanceTest {
 
@@ -34,7 +33,8 @@ public class MenuAcceptanceTest extends AcceptanceTest {
     @DisplayName("메뉴 생성 테스트 - 성공")
     public void createTest() throws Exception {
         // given
-        MenuRequest 메뉴1_요청 = menuFixture.메뉴_생성_요청("메뉴1", BigDecimal.valueOf(1000), 메뉴그룹1_응답.getId(), 메뉴_상품_요청_리스트);
+        MenuRequest 메뉴1_요청 = menuFixture
+                .메뉴_생성_요청("메뉴1", BigDecimal.valueOf(1000), 메뉴그룹1_응답.getId(), 메뉴_상품_요청_리스트);
 
         // when
         MenuResponse 메뉴1_응답 = 메뉴_등록(메뉴1_요청);
@@ -48,8 +48,10 @@ public class MenuAcceptanceTest extends AcceptanceTest {
     @DisplayName("모든 메뉴 조회 테스트 - 성공")
     public void listTest() throws Exception {
         // given
-        MenuRequest 메뉴1_생성_요청 = menuFixture.메뉴_생성_요청("메뉴1", BigDecimal.valueOf(1000), 메뉴그룹1_응답.getId(), 메뉴_상품_요청_리스트);
-        MenuRequest 메뉴2_생성_요청 = menuFixture.메뉴_생성_요청("메뉴2", BigDecimal.valueOf(2000), 메뉴그룹1_응답.getId(), 메뉴_상품_요청_리스트);
+        MenuRequest 메뉴1_생성_요청 = menuFixture
+                .메뉴_생성_요청("메뉴1", BigDecimal.valueOf(1000), 메뉴그룹1_응답.getId(), 메뉴_상품_요청_리스트);
+        MenuRequest 메뉴2_생성_요청 = menuFixture
+                .메뉴_생성_요청("메뉴2", BigDecimal.valueOf(2000), 메뉴그룹1_응답.getId(), 메뉴_상품_요청_리스트);
 
         List<MenuResponse> expected = menuFixture.메뉴_응답_리스트_생성(메뉴_등록(메뉴1_생성_요청), 메뉴_등록(메뉴2_생성_요청));
 

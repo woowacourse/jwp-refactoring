@@ -1,13 +1,12 @@
 package kitchenpos.fixture;
 
+import java.util.Arrays;
+import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.request.MenuProductRequest;
 import kitchenpos.ui.dto.response.MenuProductResponse;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class MenuProductFixture {
 

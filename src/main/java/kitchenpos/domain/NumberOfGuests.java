@@ -15,7 +15,7 @@ public class NumberOfGuests {
     }
 
     private NumberOfGuests(int value) {
-        validateNegative(this.value);
+        validateNegative(value);
         this.value = value;
     }
 

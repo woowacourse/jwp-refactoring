@@ -5,13 +5,12 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
+import java.util.Objects;
 import kitchenpos.testtool.response.HttpResponse;
 import kitchenpos.testtool.response.RestAssuredResult;
 import kitchenpos.testtool.util.RequestDto;
 import kitchenpos.testtool.util.TestTool;
 import org.springframework.http.HttpMethod;
-
-import java.util.Objects;
 
 public class RestAssuredExecutor implements TestAdapter {
 
@@ -36,7 +35,8 @@ public class RestAssuredExecutor implements TestAdapter {
     }
 
 
-    private ValidatableResponse urlRequest(RequestSpecification requestSpecification, RequestDto requestDto) {
+    private ValidatableResponse urlRequest(RequestSpecification requestSpecification,
+            RequestDto requestDto) {
         final HttpMethod httpMethod = requestDto.getHttpMethod();
         if (httpMethod.matches("GET")) {
             return requestSpecification.get(requestDto.getUrl(), requestDto.getPathVariables())

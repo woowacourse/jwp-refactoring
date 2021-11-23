@@ -1,5 +1,7 @@
 package kitchenpos.fixture;
 
+import java.util.Arrays;
+import java.util.List;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
@@ -8,9 +10,6 @@ import kitchenpos.ui.dto.request.OrderTableCreateRequest;
 import kitchenpos.ui.dto.request.OrderTableRequest;
 import kitchenpos.ui.dto.response.OrderTableResponse;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
-import java.util.List;
 
 @Component
 public class OrderTableFixture {

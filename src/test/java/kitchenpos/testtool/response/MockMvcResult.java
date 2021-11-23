@@ -2,12 +2,11 @@ package kitchenpos.testtool.response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.HttpStatus;
-import org.springframework.test.web.servlet.ResultActions;
-
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.test.web.servlet.ResultActions;
 
 public class MockMvcResult implements HttpResponse {
 
@@ -36,7 +35,8 @@ public class MockMvcResult implements HttpResponse {
     public <T> List<T> convertBodyToList(Class<T> tClass) {
         try {
             final String json = resultActions.andReturn().getResponse().getContentAsString();
-            return objectMapper.readValue(json, objectMapper.getTypeFactory().constructCollectionType(List.class, tClass));
+            return objectMapper.readValue(json,
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, tClass));
         } catch (UnsupportedEncodingException | JsonProcessingException e) {
             e.printStackTrace();
             return new ArrayList<>();

@@ -1,5 +1,9 @@
 package kitchenpos.acceptance;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.List;
 import kitchenpos.AcceptanceTest;
 import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.ui.dto.request.OrderTableChangeGuestRequest;
@@ -7,11 +11,6 @@ import kitchenpos.ui.dto.request.OrderTableCreateRequest;
 import kitchenpos.ui.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TableAcceptanceTest extends AcceptanceTest {
 
@@ -26,7 +25,8 @@ public class TableAcceptanceTest extends AcceptanceTest {
 
         //then
         assertThat(주문_테이블1_응답).usingRecursiveComparison()
-                .isEqualTo(OrderTableResponse.create(orderTableFixture.주문_테이블_조회(주문_테이블1_응답.getId())));
+                .isEqualTo(
+                        OrderTableResponse.create(orderTableFixture.주문_테이블_조회(주문_테이블1_응답.getId())));
     }
 
     @Test
@@ -35,7 +35,8 @@ public class TableAcceptanceTest extends AcceptanceTest {
         //given
         OrderTableCreateRequest 주문_테이블1_생성_요청 = orderTableFixture.주문_테이블_생성_요청(2, true);
         OrderTableCreateRequest 주문_테이블2_생성_요청 = orderTableFixture.주문_테이블_생성_요청(4, true);
-        List<OrderTableResponse> expected = orderTableFixture.주문_테이블_응답_리스트_생성(주문_테이블_등록(주문_테이블1_생성_요청), 주문_테이블_등록(주문_테이블2_생성_요청));
+        List<OrderTableResponse> expected = orderTableFixture
+                .주문_테이블_응답_리스트_생성(주문_테이블_등록(주문_테이블1_생성_요청), 주문_테이블_등록(주문_테이블2_생성_요청));
 
         //when
         List<OrderTableResponse> actual = 주문_테이블_리스트_조회();

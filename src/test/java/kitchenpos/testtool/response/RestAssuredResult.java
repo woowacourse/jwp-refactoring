@@ -4,10 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.springframework.http.HttpStatus;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.http.HttpStatus;
 
 public class RestAssuredResult implements HttpResponse {
 
@@ -29,7 +28,8 @@ public class RestAssuredResult implements HttpResponse {
     public <T> List<T> convertBodyToList(Class<T> tClass) {
         final String json = response.asString();
         try {
-            return objectMapper.readValue(json, objectMapper.getTypeFactory().constructCollectionType(List.class, tClass));
+            return objectMapper.readValue(json,
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, tClass));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return new ArrayList<>();

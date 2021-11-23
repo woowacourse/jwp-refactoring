@@ -1,15 +1,14 @@
 package kitchenpos.acceptance;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.math.BigDecimal;
+import java.util.List;
 import kitchenpos.AcceptanceTest;
 import kitchenpos.ui.dto.request.ProductRequest;
 import kitchenpos.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.math.BigDecimal;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class ProductAcceptanceTest extends AcceptanceTest {
 

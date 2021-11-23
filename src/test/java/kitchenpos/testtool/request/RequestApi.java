@@ -37,6 +37,7 @@ public class RequestApi {
             Object data,
             Object... pathVariables
     ) {
-        return new RequestOption(httpMethod, url, testTool, testAdapterContainer, data, pathVariables);
+        return new RequestOption(httpMethod, url, testTool, testAdapterContainer, data,
+                pathVariables);
     }
 }

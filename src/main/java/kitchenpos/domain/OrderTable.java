@@ -77,7 +77,7 @@ public class OrderTable {
 
     public void changeNumberOfGuests(NumberOfGuests numberOfGuests) {
         if (isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블이 비어있으면 손님 수 변경이 불가능합니다.");
         }
         this.numberOfGuests = numberOfGuests;
     }

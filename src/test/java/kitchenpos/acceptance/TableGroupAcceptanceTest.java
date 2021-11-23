@@ -1,5 +1,10 @@
 package kitchenpos.acceptance;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.AcceptanceTest;
 import kitchenpos.testtool.response.HttpResponse;
 import kitchenpos.ui.dto.request.OrderTableRequest;
@@ -9,12 +14,6 @@ import kitchenpos.ui.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 public class TableGroupAcceptanceTest extends AcceptanceTest {
 
@@ -27,8 +26,10 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
 
         OrderTableResponse 주문_테이블1_응답 = 주문_테이블_등록(orderTableFixture.주문_테이블_생성_요청(2, true));
         OrderTableResponse 주문_테이블2_응답 = 주문_테이블_등록(orderTableFixture.주문_테이블_생성_요청(4, true));
-        주문_테이블1_요청 = orderTableFixture.주문_테이블_요청(주문_테이블1_응답.getId(), 주문_테이블1_응답.getNumberOfGuests(), 주문_테이블1_응답.isEmpty());
-        주문_테이블2_요청 = orderTableFixture.주문_테이블_요청(주문_테이블2_응답.getId(), 주문_테이블2_응답.getNumberOfGuests(), 주문_테이블2_응답.isEmpty());
+        주문_테이블1_요청 = orderTableFixture.주문_테이블_요청(주문_테이블1_응답.getId(), 주문_테이블1_응답.getNumberOfGuests(),
+                주문_테이블1_응답.isEmpty());
+        주문_테이블2_요청 = orderTableFixture.주문_테이블_요청(주문_테이블2_응답.getId(), 주문_테이블2_응답.getNumberOfGuests(),
+                주문_테이블2_응답.isEmpty());
         주문_테이블_요청들 = orderTableFixture.주문_테이블_요청_리스트_생성(주문_테이블1_요청, 주문_테이블2_요청);
     }
 
@@ -46,7 +47,9 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
 
         // then
         assertThat(테이블_그룹1_응답).usingRecursiveComparison()
-                .isEqualTo(TableGroupResponse.create(tableGroupFixture.테이블_그룹_조회(테이블_그룹1_응답.getId()), orderTableFixture.주문_테이블_리스트_조회_ByIds(주문_테이블_Ids)));
+                .isEqualTo(TableGroupResponse
+                        .create(tableGroupFixture.테이블_그룹_조회(테이블_그룹1_응답.getId()),
+                                orderTableFixture.주문_테이블_리스트_조회_ByIds(주문_테이블_Ids)));
     }
 
     @Test

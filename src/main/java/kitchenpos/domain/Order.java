@@ -54,11 +54,11 @@ public class Order {
     }
 
     public boolean isCompletion(){
-        return Objects.equals(OrderStatus.COMPLETION, orderStatus);
+        return orderStatus.isCompletion();
     }
 
     public boolean isNotCompletion(){
-        return !Objects.equals(OrderStatus.COMPLETION, orderStatus);
+        return orderStatus.isNotCompletion();
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {

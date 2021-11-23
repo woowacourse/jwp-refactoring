@@ -1,14 +1,13 @@
 package kitchenpos.fixture;
 
+import java.util.Arrays;
+import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.ui.dto.request.OrderLineItemRequest;
 import kitchenpos.ui.dto.response.OrderLineItemResponse;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
-import java.util.List;
 
 @Component
 public class OrderLineItemFixture {
@@ -23,11 +22,13 @@ public class OrderLineItemFixture {
         return new OrderLineItemRequest(menuId, quantity);
     }
 
-    public List<OrderLineItemRequest> 주문_메뉴_요청_리스트_생성(OrderLineItemRequest... orderLineItemRequests) {
+    public List<OrderLineItemRequest> 주문_메뉴_요청_리스트_생성(
+            OrderLineItemRequest... orderLineItemRequests) {
         return Arrays.asList(orderLineItemRequests);
     }
 
-    public List<OrderLineItemResponse> 주문_메뉴_리스트_생성(OrderLineItemResponse... orderLineItemResponses) {
+    public List<OrderLineItemResponse> 주문_메뉴_리스트_생성(
+            OrderLineItemResponse... orderLineItemResponses) {
         return Arrays.asList(orderLineItemResponses);
     }
 

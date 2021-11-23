@@ -1,14 +1,13 @@
 package kitchenpos.fixture;
 
+import java.util.Arrays;
+import java.util.List;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.ui.dto.request.OrderTableRequest;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
 import kitchenpos.ui.dto.response.TableGroupResponse;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
-import java.util.List;
 
 @Component
 public class TableGroupFixture {

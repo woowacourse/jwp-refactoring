@@ -33,6 +33,10 @@ public class TableGroup {
         return new TableGroup(localDateTime);
     }
 
+    public static TableGroup create(Long id, LocalDateTime localDateTime){
+        return new TableGroup(id, localDateTime);
+    }
+
     public Long getId() {
         return id;
     }

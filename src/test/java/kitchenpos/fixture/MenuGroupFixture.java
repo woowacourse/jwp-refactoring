@@ -1,11 +1,10 @@
 package kitchenpos.fixture;
 
+import java.util.Arrays;
+import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.ui.dto.request.MenuGroupRequest;
 import kitchenpos.ui.dto.response.MenuGroupResponse;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class MenuGroupFixture {
 

@@ -1,6 +1,7 @@
 package kitchenpos.testtool.executor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Objects;
 import kitchenpos.testtool.response.HttpResponse;
 import kitchenpos.testtool.response.MockMvcResult;
 import kitchenpos.testtool.util.RequestDto;
@@ -14,8 +15,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
-
-import java.util.Objects;
 
 public class MockMvcExecutor implements TestAdapter {
 

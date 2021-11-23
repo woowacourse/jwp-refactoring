@@ -1,5 +1,9 @@
 package kitchenpos.acceptance;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.math.BigDecimal;
+import java.util.List;
 import kitchenpos.AcceptanceTest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -7,15 +11,14 @@ import kitchenpos.ui.dto.request.MenuProductRequest;
 import kitchenpos.ui.dto.request.OrderChangeStatusRequest;
 import kitchenpos.ui.dto.request.OrderCreatedRequest;
 import kitchenpos.ui.dto.request.OrderLineItemRequest;
-import kitchenpos.ui.dto.response.*;
+import kitchenpos.ui.dto.response.MenuGroupResponse;
+import kitchenpos.ui.dto.response.MenuResponse;
+import kitchenpos.ui.dto.response.OrderResponse;
+import kitchenpos.ui.dto.response.OrderTableResponse;
+import kitchenpos.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.math.BigDecimal;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class OrderAcceptanceTest extends AcceptanceTest {
 
@@ -33,8 +36,10 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         메뉴_상품_요청_리스트 = menuProductFixture.메뉴_상품_요청_리스트_생성(메뉴_상품1_요청, 메뉴_상품2_요청);
 
         MenuGroupResponse 메뉴그룹1_응답 = 메뉴그룹_등록(menuGroupFixture.메뉴그룹_생성_요청("메뉴그룹1"));
-        MenuResponse 메뉴1_응답 = 메뉴_등록(menuFixture.메뉴_생성_요청("메뉴1", BigDecimal.valueOf(1000), 메뉴그룹1_응답.getId(), 메뉴_상품_요청_리스트));
-        MenuResponse 메뉴2_응답 = 메뉴_등록(menuFixture.메뉴_생성_요청("메뉴2", BigDecimal.valueOf(2000), 메뉴그룹1_응답.getId(), 메뉴_상품_요청_리스트));
+        MenuResponse 메뉴1_응답 = 메뉴_등록(menuFixture
+                .메뉴_생성_요청("메뉴1", BigDecimal.valueOf(1000), 메뉴그룹1_응답.getId(), 메뉴_상품_요청_리스트));
+        MenuResponse 메뉴2_응답 = 메뉴_등록(menuFixture
+                .메뉴_생성_요청("메뉴2", BigDecimal.valueOf(2000), 메뉴그룹1_응답.getId(), 메뉴_상품_요청_리스트));
 
         OrderLineItemRequest 주문_메뉴1_요청 = orderLineItemFixture.주문_메뉴_생성_요청(메뉴1_응답.getId(), 1L);
         OrderLineItemRequest 주문_메뉴2_요청 = orderLineItemFixture.주문_메뉴_생성_요청(메뉴2_응답.getId(), 1L);
@@ -52,7 +57,8 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         // then
         assertThat(주문1_응답).usingRecursiveComparison()
-                .isEqualTo(OrderResponse.create(주문1, orderLineItemFixture.특정_주문에_따른_주문_메뉴들_조회(주문1)));
+                .isEqualTo(
+                        OrderResponse.create(주문1, orderLineItemFixture.특정_주문에_따른_주문_메뉴들_조회(주문1)));
     }
 
     @Test
@@ -61,7 +67,8 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         // given
         OrderTableResponse 주문_테이블2_응답 = 주문_테이블_등록(orderTableFixture.주문_테이블_생성_요청(4, false));
         OrderCreatedRequest 주문2_생성_요청 = orderFixture.주문_생성_요청(주문_테이블2_응답.getId(), 주문_메뉴_요청_리스트);
-        List<OrderResponse> expected = orderFixture.주문_응답_리스트_생성(주문_등록(주문1_생성_요청), 주문_등록(주문2_생성_요청));
+        List<OrderResponse> expected = orderFixture
+                .주문_응답_리스트_생성(주문_등록(주문1_생성_요청), 주문_등록(주문2_생성_요청));
 
         // when
         List<OrderResponse> actual = 주문_리스트_조회();
@@ -82,7 +89,6 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         // when
         OrderResponse 주문1_식사완료 = 주문_상태_변경(주문1_id, 주문1_식사완료_요청);
-
 
         // then
         assertThat(주문1_식사완료.getOrderStatus()).isEqualTo(주문1_식사완료_요청.getOrderStatus().name());
