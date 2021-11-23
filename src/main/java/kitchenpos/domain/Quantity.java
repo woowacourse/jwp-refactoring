@@ -18,15 +18,15 @@ public class Quantity {
         this.quantity = quantity;
     }
 
+    public static Quantity from(Long quantity) {
+        validate(quantity);
+        return new Quantity(quantity);
+    }
+
     private static void validate(Long quantity) {
         if (Objects.isNull(quantity) || quantity < 0L) {
             throw new InvalideQuantityValueException();
         }
-    }
-
-    public static Quantity from(Long quantity) {
-        validate(quantity);
-        return new Quantity(quantity);
     }
 
     public Long longValue() {
