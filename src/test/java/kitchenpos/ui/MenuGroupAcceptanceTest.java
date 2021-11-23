@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 
-public class MenuGroupAcceptanceTest extends AcceptanceTest {
+class MenuGroupAcceptanceTest extends AcceptanceTest {
     @Test
     @DisplayName("메뉴 그룹 목록을 조회한다.")
     void list() {
