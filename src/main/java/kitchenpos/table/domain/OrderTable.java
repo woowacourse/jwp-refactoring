@@ -8,9 +8,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 @Entity
-public class OrderTable {
+public class OrderTable extends AbstractAggregateRoot<OrderTable> {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -47,6 +48,7 @@ public class OrderTable {
     }
 
     public void changeEmpty(final boolean empty) {
+        registerEvent(new OrderTableEmptyChangedEvent(this));
         validateToChangeEmpty();
         this.empty = empty;
     }

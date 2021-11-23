@@ -6,8 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import kitchenpos.name.Name;
-import kitchenpos.price.Price;
+import kitchenpos.name.domain.Name;
+import kitchenpos.price.domain.Price;
 
 @Entity
 public class Product {

@@ -7,8 +7,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderPlacedEvent;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableOrderedEvent;
 import kitchenpos.table.domain.OrderTableOrderedEventHandler;
 import kitchenpos.table.domain.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -37,7 +37,8 @@ public class OrderTableOrderedEventHandlerTest {
         );
 
         assertThatIllegalArgumentException().isThrownBy(
-            () -> orderTableOrderedEventHandler.validateOrderTable(new OrderTableOrderedEvent(1L))
+            () -> orderTableOrderedEventHandler.validateOrderTable(
+                new OrderPlacedEvent(new Order(1L)))
         );
     }
 
@@ -51,7 +52,8 @@ public class OrderTableOrderedEventHandlerTest {
         );
 
         assertThatCode(
-            () -> orderTableOrderedEventHandler.validateOrderTable(new OrderTableOrderedEvent(1L))
+            () -> orderTableOrderedEventHandler.validateOrderTable(
+                new OrderPlacedEvent(new Order(1L)))
         ).doesNotThrowAnyException();
     }
 }

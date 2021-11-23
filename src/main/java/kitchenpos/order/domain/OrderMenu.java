@@ -2,9 +2,8 @@ package kitchenpos.order.domain;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.name.Name;
-import kitchenpos.price.Price;
+import kitchenpos.name.domain.Name;
+import kitchenpos.price.domain.Price;
 
 @Embeddable
 public class OrderMenu {

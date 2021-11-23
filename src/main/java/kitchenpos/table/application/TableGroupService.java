@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.TableGroupRepository;
 import kitchenpos.table.dto.TableGroupRequest;
 import kitchenpos.table.dto.TableGroupRequest.OrderTableOfGroupRequest;
@@ -18,14 +18,11 @@ public class TableGroupService {
 
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
-    private final TableEmptyChangeService tableEmptyChangeService;
 
     public TableGroupService(final OrderTableRepository orderTableRepository,
-                             final TableGroupRepository tableGroupRepository,
-                             final TableEmptyChangeService tableEmptyChangeService) {
+                             final TableGroupRepository tableGroupRepository) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
-        this.tableEmptyChangeService = tableEmptyChangeService;
     }
 
     @Transactional
@@ -62,15 +59,6 @@ public class TableGroupService {
             .orElseThrow(() -> new IllegalArgumentException(
                 String.format("존재하지 않는 ID 입니다. (id: %d)", tableGroupId)
             ));
-        validateToEmptyOrderTables(tableGroup.getOrderTables());
         tableGroup.removeAllOrderTables();
-    }
-
-    private void validateToEmptyOrderTables(final List<OrderTable> orderTables) {
-        for (final OrderTable orderTable : orderTables) {
-            if (!tableEmptyChangeService.canChangeEmpty(orderTable)) {
-                throw new IllegalArgumentException();
-            }
-        }
     }
 }

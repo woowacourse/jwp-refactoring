@@ -11,7 +11,6 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.menu.dto.MenuRequest;
 import kitchenpos.menu.dto.MenuRequest.MenuProductRequest;
 import kitchenpos.menu.dto.MenuResponse;
@@ -41,9 +40,6 @@ public class MenuApiTest extends ApiTest {
     @Autowired
     private MenuRepository menuRepository;
 
-    @Autowired
-    private MenuValidator menuValidator;
-
     private MenuGroup menuGroup;
     private List<Product> products;
     private List<Menu> menus;
@@ -64,14 +60,12 @@ public class MenuApiTest extends ApiTest {
             menuGroup.getId(),
             new MenuProducts(
                 Collections.singletonList(new MenuProduct(products.get(0).getId(), 1))
-            ),
-            menuValidator)));
+            ))));
         menus.add(menuRepository.save(new Menu("양념치킨", BigDecimal.valueOf(16000),
             menuGroup.getId(),
             new MenuProducts(
                 Collections.singletonList(new MenuProduct(products.get(1).getId(), 1))
-            ),
-            menuValidator)));
+            ))));
     }
 
     @DisplayName("메뉴 등록")

@@ -3,8 +3,6 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -19,15 +17,13 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.name.Name;
+import kitchenpos.name.domain.Name;
 import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderMenu;
-import kitchenpos.table.domain.OrderTableOrderedEvent;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.dto.OrderRequest;
@@ -35,7 +31,7 @@ import kitchenpos.order.dto.OrderRequest.OrderLineItemRequest;
 import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.dto.OrderResponse.OrderLineItemResponse;
 import kitchenpos.order.dto.OrderStatusRequest;
-import kitchenpos.price.Price;
+import kitchenpos.price.domain.Price;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +39,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.context.ApplicationEventPublisher;
 
 public class OrderServiceTest extends ServiceTest {
 
@@ -55,9 +50,6 @@ public class OrderServiceTest extends ServiceTest {
 
     @Mock
     private OrderLineItemRepository orderLineItemRepository;
-
-    @Mock
-    private MenuValidator menuValidator;
 
     @InjectMocks
     private OrderService orderService;
@@ -78,8 +70,7 @@ public class OrderServiceTest extends ServiceTest {
             menuGroup.getId(),
             new MenuProducts(Collections.singletonList(
                 new MenuProduct(1L, 2L)
-            )),
-            menuValidator
+            ))
         );
         order1 = new Order(1L, orderTable.getId(), OrderStatus.COOKING);
         orderLineItemOfOrder1 = new OrderLineItem(order1,
@@ -141,44 +132,6 @@ public class OrderServiceTest extends ServiceTest {
         );
     }
 
-    @DisplayName("등록되지 않은 메뉴로 주문 등록할 경우 예외 처리")
-    @Test
-    void createWithNotFoundMenu() {
-        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
-        OrderRequest orderRequest = new OrderRequest(
-            1L,
-            Collections.singletonList(orderLineItemRequest)
-        );
-
-        assertThatThrownBy(() -> orderService.create(orderRequest)).isExactlyInstanceOf(
-            IllegalArgumentException.class
-        );
-    }
-
-    @DisplayName("등록되지 않은 테이블에 주문 등록할 경우 예외 처리")
-    @Test
-    void createWithNotFoundOrderTable() {
-        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
-        OrderRequest orderRequest = new OrderRequest(
-            1L,
-            Collections.singletonList(orderLineItemRequest)
-        );
-        assertThatThrownBy(() -> orderService.create(orderRequest)).isExactlyInstanceOf(
-            IllegalArgumentException.class);
-    }
-
-    @DisplayName("비어있는 테이블에 주문 등록할 경우 예외 처리")
-    @Test
-    void createWithEmptyOrderTable() {
-        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
-        OrderRequest orderRequest = new OrderRequest(
-            1L,
-            Collections.singletonList(orderLineItemRequest)
-        );
-        assertThatThrownBy(() -> orderService.create(orderRequest)).isExactlyInstanceOf(
-            IllegalArgumentException.class);
-    }
-
     @DisplayName("주문 조회")
     @Test
     void list() {
@@ -216,18 +169,6 @@ public class OrderServiceTest extends ServiceTest {
 
         assertThat(actual).usingRecursiveComparison()
             .isEqualTo(expected);
-    }
-
-    @DisplayName("등록되지 않은 주문 상태 수정시 예외 처리")
-    @Test
-    void changeOrderStatusWithNotFoundOrder() {
-        long idToChange = 1L;
-        when(orderRepository.findById(idToChange)).thenReturn(Optional.empty());
-
-        OrderStatusRequest orderStatusRequest = new OrderStatusRequest(OrderStatus.MEAL.name());
-        assertThatThrownBy(
-            () -> orderService.changeOrderStatus(idToChange, orderStatusRequest)
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("계산 완료 상태 주문의 상태 수정시 예외 처리")

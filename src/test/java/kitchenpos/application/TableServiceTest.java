@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.order.domain.Order;
-import kitchenpos.table.application.TableEmptyChangeService;
 import kitchenpos.table.application.TableService;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
@@ -30,9 +29,6 @@ public class TableServiceTest extends ServiceTest {
 
     @Mock
     private OrderTableRepository orderTableRepository;
-
-    @Mock
-    private TableEmptyChangeService tableEmptyChangeService;
 
     @InjectMocks
     private TableService tableService;
@@ -96,7 +92,6 @@ public class TableServiceTest extends ServiceTest {
     void changeEmpty() {
         OrderTable savedOrderTable = new OrderTable(1L, null, 0, true);
         when(orderTableRepository.findById(1L)).thenReturn(Optional.of(savedOrderTable));
-        when(tableEmptyChangeService.canChangeEmpty(any())).thenReturn(true);
 
         OrderTableEmptyRequest request = new OrderTableEmptyRequest(false);
         OrderTableResponse actual = tableService.changeEmpty(
@@ -125,20 +120,6 @@ public class TableServiceTest extends ServiceTest {
     @Test
     void changeEmptyWithTableDesignatedAsGroup() {
         when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable1));
-        when(tableEmptyChangeService.canChangeEmpty(any())).thenReturn(false);
-
-        OrderTableEmptyRequest request = new OrderTableEmptyRequest(false);
-        assertThatThrownBy(() -> tableService.changeEmpty(1L, request)).isExactlyInstanceOf(
-            IllegalArgumentException.class
-        );
-    }
-
-    @DisplayName("조리나 식사 상태인 주문 테이블의 빈 상태를 수정할 경우 예외 처리")
-    @Test
-    void changeEmptyWithCookingOrMealStatus() {
-        new Order(orderTable1.getId());
-        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable1));
-        when(tableEmptyChangeService.canChangeEmpty(any())).thenReturn(false);
 
         OrderTableEmptyRequest request = new OrderTableEmptyRequest(false);
         assertThatThrownBy(() -> tableService.changeEmpty(1L, request)).isExactlyInstanceOf(

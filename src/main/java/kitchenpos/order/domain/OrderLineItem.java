@@ -1,6 +1,5 @@
 package kitchenpos.order.domain;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,8 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.quantity.Quantity;
+import kitchenpos.quantity.domain.Quantity;
 
 @Entity
 public class OrderLineItem {

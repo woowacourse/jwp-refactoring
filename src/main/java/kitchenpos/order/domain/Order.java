@@ -10,7 +10,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import kitchenpos.table.domain.OrderTableOrderedEvent;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -39,7 +38,7 @@ public class Order extends AbstractAggregateRoot<Order> {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
-        registerEvent(new OrderTableOrderedEvent(this.orderTableId));
+        registerEvent(new OrderPlacedEvent(this));
     }
 
     public void changeOrder(final OrderStatus newOrderStatus) {

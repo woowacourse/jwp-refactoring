@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.table.application.TableEmptyChangeService;
 import kitchenpos.table.application.TableGroupService;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
@@ -35,9 +34,6 @@ public class TableGroupServiceTest extends ServiceTest {
 
     @Mock
     private TableGroupRepository tableGroupRepository;
-
-    @Mock
-    private TableEmptyChangeService tableEmptyChangeService;
 
     @InjectMocks
     private TableGroupService tableGroupService;
@@ -151,7 +147,6 @@ public class TableGroupServiceTest extends ServiceTest {
         );
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
         when(tableGroupRepository.findById(tableGroupId)).thenReturn(Optional.of(tableGroup));
-        when(tableEmptyChangeService.canChangeEmpty(any())).thenReturn(true);
 
         tableGroupService.ungroup(tableGroupId);
 
@@ -159,21 +154,6 @@ public class TableGroupServiceTest extends ServiceTest {
             assertThat(orderTable.getTableGroup()).isNull();
             assertThat(orderTable.isEmpty()).isFalse();
         }
-    }
-
-    @DisplayName("조리나 식사 상태인 테이블이 있는 단체 지정을 제거할 경우 예외 처리")
-    @Test
-    void deleteWithNotFoundTableGroup() {
-        long tableGroupId = 1L;
-        TableGroup tableGroup = new TableGroup(
-            tableGroupId,
-            Arrays.asList(orderTable1, orderTable2)
-        );
-        when(tableGroupRepository.findById(tableGroupId)).thenReturn(Optional.of(tableGroup));
-        when(tableEmptyChangeService.canChangeEmpty(any())).thenReturn(false);
-
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
-            .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     private List<Long> convertIdsFromOrderTables(final List<OrderTable> orderTables) {

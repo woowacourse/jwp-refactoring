@@ -1,31 +1,41 @@
-package kitchenpos.menu.domain;
+package kitchenpos.menuprice;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
+import kitchenpos.menu.domain.MenuRegisteredEvent;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
-public class MenuValidator {
+public class MenuRegisteredWithPriceEventHandler {
 
     private final ProductRepository productRepository;
-    private final MenuGroupRepository menuGroupRepository;
 
-    public MenuValidator(final ProductRepository productRepository,
-                         final MenuGroupRepository menuGroupRepository) {
+    public MenuRegisteredWithPriceEventHandler(final ProductRepository productRepository) {
         this.productRepository = productRepository;
-        this.menuGroupRepository = menuGroupRepository;
     }
 
-    public void validate(final Menu menu) {
+    @Async
+    @EventListener
+    @Transactional
+    public void handle(final MenuRegisteredEvent event) {
+        validate(event);
+    }
+
+    public void validate(final MenuRegisteredEvent event) {
+        Menu menu = event.getMenu();
         validate(menu, getQuantityPerProduct(menu.getMenuProducts()));
     }
 
     private void validate(final Menu menu, final Map<Product, Long> quantityPerProduct) {
-        validateToExistMenuGroup(menu.getMenuGroupId());
         BigDecimal price = menu.getPrice().getValue();
         BigDecimal totalMenuProductsPrice = getTotalMenuProductsPrice(quantityPerProduct);
         if (price.compareTo(totalMenuProductsPrice) > 0) {
@@ -34,14 +44,6 @@ public class MenuValidator {
                 price.intValue(),
                 totalMenuProductsPrice.intValue()
             ));
-        }
-    }
-
-    private void validateToExistMenuGroup(final Long menuGroupId) {
-        if (!menuGroupRepository.existsById(menuGroupId)) {
-            throw new IllegalArgumentException(
-                String.format("존재하지 않는 메뉴 그룹입니다. (id: %d)", menuGroupId)
-            );
         }
     }
 
