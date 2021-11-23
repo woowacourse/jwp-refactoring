@@ -36,10 +36,10 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 테이블을 빈 테이블로 변경할 수 없다."));
 
         if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[ERROR] 빈 상태로 변경하려는 테이블은 테이블 그룹에 속해 있으면 안된다.");
         }
 
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
@@ -57,14 +57,14 @@ public class TableService {
         final int numberOfGuests = orderTable.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[ERROR] 변경하려는 테이블의 인원 수는 0보다 작을 수 없다.");
         }
 
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 테이블의 인원 수를 변경할 수 없다."));
 
         if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[ERROR] 변경하려는 테이블이 비어 있다면 인원 수를 변경할 수 없다.");
         }
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);
