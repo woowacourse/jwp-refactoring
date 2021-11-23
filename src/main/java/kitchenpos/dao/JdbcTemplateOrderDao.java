@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -89,7 +90,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
     private void update(final Order entity) {
         final String sql = "UPDATE orders SET order_status = (:orderStatus) WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("orderStatus", entity.getOrderStatus())
+                .addValue("orderStatus", entity.getOrderStatus().name())
                 .addValue("id", entity.getId());
         jdbcTemplate.update(sql, parameters);
     }
@@ -98,7 +99,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
         final Order entity = new Order();
         entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
         entity.setOrderTableId(resultSet.getLong("order_table_id"));
-        entity.setOrderStatus(resultSet.getString("order_status"));
+        entity.setOrderStatus(OrderStatus.valueOf(resultSet.getString("order_status")));
         entity.setOrderedTime(resultSet.getObject("ordered_time", LocalDateTime.class));
         return entity;
     }
