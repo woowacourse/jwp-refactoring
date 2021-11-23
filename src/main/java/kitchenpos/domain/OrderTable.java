@@ -1,12 +1,9 @@
 package kitchenpos.domain;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderTable {
@@ -15,52 +12,28 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer numberOfGuests;
+    private Long numberOfGuests;
 
     private Boolean empty;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "table_group_id")
+//    private TableGroup tableGroup;
 
     protected OrderTable() {
     }
 
-    public OrderTable(int numberOfGuests, boolean empty) {
-        this(null, numberOfGuests, empty, null);
-    }
-
-    public OrderTable(Long id, int numberOfGuests, boolean empty) {
-        this(id, numberOfGuests, empty, null);
+    public OrderTable(Long numberOfGuests, Boolean empty) {
+        this(null, numberOfGuests, empty);
     }
 
     public OrderTable(
         Long id,
-        Integer numberOfGuests,
-        Boolean empty,
-        TableGroup tableGroup
+        Long numberOfGuests,
+        Boolean empty
     ) {
         this.id = id;
         this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
-        this.tableGroup = tableGroup;
-    }
-
-    public void belongsTo(TableGroup tableGroup) {
-        this.empty = false;
-        this.tableGroup = tableGroup;
-    }
-
-    public void notBelongsTo() {
-        this.empty = true;
-        this.tableGroup = null;
-    }
-
-    public void changeNumberOfGuests(int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    public void changeEmpty(boolean empty) {
         this.empty = empty;
     }
 
@@ -68,15 +41,11 @@ public class OrderTable {
         return id;
     }
 
-    public Integer getNumberOfGuests() {
+    public Long getNumberOfGuests() {
         return numberOfGuests;
     }
 
     public Boolean isEmpty() {
         return empty;
-    }
-
-    public TableGroup getTableGroup() {
-        return tableGroup;
     }
 }

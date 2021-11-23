@@ -1,48 +1,45 @@
-//package kitchenpos.integration.table;
-//
-//import static org.assertj.core.api.Assertions.assertThat;
-//import static org.assertj.core.api.Assertions.assertThatThrownBy;
-//
-//import java.util.Collections;
-//import java.util.List;
-//import kitchenpos.domain.OrderLineItem;
-//import kitchenpos.domain.OrderTable;
-//import kitchenpos.domain.Orders;
-//import kitchenpos.integration.IntegrationTest;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//
-//class TableServiceIntegrationTest extends IntegrationTest {
-//
-//    @DisplayName("테이블을 등록할 수 있다.")
-//    @Test
-//    void create_Valid_Success() {
-//        // given
-//        OrderTable orderTable = new OrderTable(2, false);
-//
-//        // when
-//        OrderTable savedOrderTable = tableService.create(orderTable);
-//
-//        // then
-//        assertThat(savedOrderTable)
-//            .usingRecursiveComparison()
-//            .ignoringFields("id")
-//            .isEqualTo(orderTable);
-//    }
-//
-//    /**
-//     * 여기도 테스트 격리가 잘 안됨
-//     */
-//    @DisplayName("테이블의 목록을 조회할 수 있다.")
-//    @Test
-//    void list_Valid_Success() {
-//        // when
-//        List<OrderTable> orderTables = tableService.list();
-//
-//        // then
-//        assertThat(orderTables).isNotEmpty();
-//    }
-//
+package kitchenpos.integration.table;
+
+import static java.lang.Boolean.FALSE;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+import kitchenpos.application.dto.request.OrderTableRequestDto;
+import kitchenpos.application.dto.response.OrderTableResponseDto;
+import kitchenpos.integration.IntegrationTest;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+class TableServiceIntegrationTest extends IntegrationTest {
+
+    @DisplayName("테이블을 등록할 수 있다.")
+    @Test
+    void create_Valid_Success() {
+        // given
+        OrderTableRequestDto requestDto = new OrderTableRequestDto(2L, FALSE);
+
+        // when
+        OrderTableResponseDto responseDto = tableService.create(requestDto);
+
+        // then
+        assertThat(responseDto.getId()).isNotNull();
+    }
+
+    @DisplayName("테이블의 목록을 조회할 수 있다.")
+    @Test
+    void list_Valid_Success() {
+        // given
+        OrderTableRequestDto requestDto = new OrderTableRequestDto(2L, FALSE);
+
+        tableService.create(requestDto);
+
+        // when
+        List<OrderTableResponseDto> responsesDto = tableService.list();
+
+        // then
+        assertThat(responsesDto).hasSize(1);
+    }
+
 //    @DisplayName("테이블 상태를 변경할 수 있다.")
 //    @Test
 //    void changeEmpty_Valid_Success() {
@@ -158,4 +155,4 @@
 //            () -> tableService.changeNumberOfGuests(savedOrderTable.getId(), targetOrderTable)
 //        ).isInstanceOf(IllegalArgumentException.class);
 //    }
-//}
+}

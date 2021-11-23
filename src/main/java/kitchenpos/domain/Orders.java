@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import static kitchenpos.domain.OrderStatus.COOKING;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,33 +30,36 @@ public class Orders {
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
 
+    @OneToMany(mappedBy = "orders", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+
     protected Orders() {
     }
 
-    public Orders(String orderStatus, LocalDateTime orderedTime) {
-        this(null, orderStatus, orderedTime, null);
+    public Orders(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        this(null, COOKING.name(), LocalDateTime.now(), orderTable, orderLineItems);
     }
 
     public Orders(
         Long id,
         String orderStatus,
         LocalDateTime orderedTime,
-        OrderTable orderTable
+        OrderTable orderTable,
+        List<OrderLineItem> orderLineItems
     ) {
         this.id = id;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderTable = orderTable;
-    }
+        this.orderLineItems = orderLineItems;
 
-    public void changeStatus(String status) {
-        this.orderStatus = status;
-    }
-
-    public void add(List<OrderLineItem> sources) {
-        for (OrderLineItem source : sources) {
-            source.belongsTo(this);
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.belongsTo(this);
         }
+    }
+
+    public void changeOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
     }
 
     public Long getId() {
@@ -71,5 +76,9 @@ public class Orders {
 
     public OrderTable getOrderTable() {
         return orderTable;
+    }
+
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems;
     }
 }

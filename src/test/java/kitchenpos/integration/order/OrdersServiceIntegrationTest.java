@@ -1,180 +1,279 @@
-//package kitchenpos.integration.order;
-//
-//import static kitchenpos.domain.OrderStatus.COMPLETION;
-//import static kitchenpos.domain.OrderStatus.COOKING;
-//import static kitchenpos.domain.OrderStatus.MEAL;
-//import static org.assertj.core.api.Assertions.assertThat;
-//import static org.assertj.core.api.Assertions.assertThatThrownBy;
-//
-//import java.time.LocalDateTime;
-//import java.util.Collections;
-//import java.util.List;
-//import kitchenpos.domain.OrderLineItem;
-//import kitchenpos.domain.OrderTable;
-//import kitchenpos.domain.Orders;
-//import kitchenpos.integration.IntegrationTest;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//
-//class OrdersServiceIntegrationTest extends IntegrationTest {
-//
-//    private OrderTable savedOrderTable;
-//    private OrderLineItem orderLineItem;
-//
-//    @BeforeEach
-//    void setUp() {
-//        OrderTable orderTable = new OrderTable(2, false);
-//
-//        savedOrderTable = tableService.create(orderTable);
-//
-//        orderLineItem = new OrderLineItem(2L, 1);
-//    }
-//
-//    @DisplayName("주문을 등록할 수 있다.")
-//    @Test
-//    void create_Valid_Success() {
-//        // given
-//        Orders orders = new Orders(savedOrderTable.getId(), COOKING.name(), LocalDateTime.now());
-//        orders.add(Collections.singletonList(orderLineItem));
-//
-//        // when
-//        Orders savedOrders = ordersService.create(orders);
-//
-//        // then
-//        assertThat(savedOrders)
-//            .usingRecursiveComparison()
-//            .ignoringFields("id", "orderedTime")
-//            .isEqualTo(orders);
-//    }
-//
-//    @DisplayName("주문의 주문 항목이 존재하지 않으면 등록할 수 없다.")
-//    @Test
-//    void create_NonExistingMenuInOrderLineItems_Fail() {
-//        // given
-//        Orders orders = new Orders(savedOrderTable.getId(), COOKING.name(), LocalDateTime.now());
-//        orders.add(Collections.emptyList());
-//
-//        // when
-//        // then
-//        assertThatThrownBy(() -> ordersService.create(orders))
-//            .isInstanceOf(IllegalArgumentException.class);
-//    }
-//
-//    @DisplayName("주문의 주문 항목에 메뉴가 하나라도 적혀있지 않으면 등록할 수 없다.")
-//    @Test
-//    void create_NonExistingOrderLineItems_Fail() {
-//        // given
-//        Orders orders = new Orders(savedOrderTable.getId(), COOKING.name(), LocalDateTime.now());
-//        orders.add(Collections.singletonList(new OrderLineItem(100L, 1)));
-//
-//        // when
-//        // then
-//        assertThatThrownBy(() -> ordersService.create(orders))
-//            .isInstanceOf(IllegalArgumentException.class);
-//    }
-//
-//    @DisplayName("주문의 주문 테이블이 존재하지 않으면 등록할 수 없다.")
-//    @Test
-//    void create_NonExistingOrderTable_Fail() {
-//        // given
-//        Orders orders = new Orders(100L, COOKING.name(), LocalDateTime.now());
-//        orders.add(Collections.singletonList(orderLineItem));
-//
-//        // when
-//        // then
-//        assertThatThrownBy(() -> ordersService.create(orders))
-//            .isInstanceOf(IllegalArgumentException.class);
-//    }
-//
-//    @DisplayName("주문의 주문 테이블이 비어 있으면(손님이 없으면) 등록할 수 없다.")
-//    @Test
-//    void create_NonExistingGuestsInOrderTable_Fail() {
-//        // given
-//        Orders orders = new Orders(1L, COOKING.name(), LocalDateTime.now());
-//        orders.add(Collections.singletonList(orderLineItem));
-//
-//        // when
-//        // then
-//        assertThatThrownBy(() -> ordersService.create(orders))
-//            .isInstanceOf(IllegalArgumentException.class);
-//    }
-//
-//    @DisplayName("주문의 목록을 조회할 수 있다.")
-//    @Test
-//    void read_Valid_Success() {
-//        // given
-//        Orders order = new Orders(savedOrderTable.getId(), COOKING.name(), LocalDateTime.now());
-//        order.add(Collections.singletonList(orderLineItem));
-//
-//        ordersService.create(order);
-//
-//        // when
-//        List<Orders> orders = ordersService.list();
-//
-//        // then
-//        assertThat(orders).isNotEmpty();
-//    }
-//
-//
-//    @DisplayName("주문 상태를 변경할 수 있다.")
-//    @Test
-//    void changeOrderStatus_Valid_Success() {
-//        // given
-//        Orders orders1 = new Orders(savedOrderTable.getId(), COOKING.name(), LocalDateTime.now());
-//        orders1.add(Collections.singletonList(orderLineItem));
-//        Orders orders2 = new Orders(savedOrderTable.getId(), COOKING.name(), LocalDateTime.now());
-//        orders2.add(Collections.singletonList(orderLineItem));
-//
-//        Orders savedOrders1 = ordersService.create(orders1);
-//        Orders savedOrders2 = ordersService.create(orders2);
-//
-//        savedOrders2.changeStatus(MEAL.name());
-//
-//        // when
-//        Orders changedOrders = ordersService.changeOrderStatus(savedOrders1.getId(), savedOrders2);
-//
-//        // then
-//        assertThat(changedOrders.getOrderStatus()).isEqualTo(savedOrders2.getOrderStatus());
-//    }
-//
-//    @DisplayName("주문 상태는 주문이 존재하지 않으면 변경할 수 없다.")
-//    @Test
-//    void changeOrderStatus_NonExistingOrder_Fail() {
-//        // given
-//        Orders orders = new Orders(savedOrderTable.getId(), COOKING.name(), LocalDateTime.now());
-//        orders.add(Collections.singletonList(orderLineItem));
-//
-//        Orders savedOrders = ordersService.create(orders);
-//
-//        savedOrders.changeStatus(MEAL.name());
-//
-//        // when
-//        // then
-//        assertThatThrownBy(() -> ordersService.changeOrderStatus(Long.MAX_VALUE, savedOrders))
-//            .isInstanceOf(IllegalArgumentException.class);
-//    }
-//
-//    @DisplayName("주문 상태가 `계산 완료`면 변경할 수 없다.")
-//    @Test
-//    void changeOrderStatus_InvalidOrderStatus_Fail() {
-//        // given
-//        Orders orders1 = new Orders(savedOrderTable.getId(), COOKING.name(), LocalDateTime.now());
-//        orders1.add(Collections.singletonList(orderLineItem));
-//        Orders orders2 = new Orders(savedOrderTable.getId(), COOKING.name(), LocalDateTime.now());
-//        orders2.add(Collections.singletonList(orderLineItem));
-//
-//        Orders savedOrders1 = ordersService.create(orders1);
-//        Orders savedOrders2 = ordersService.create(orders2);
-//
-//        savedOrders2.changeStatus(COMPLETION.name());
-//
-//        ordersService.changeOrderStatus(savedOrders1.getId(), savedOrders2);
-//
-//        // when
-//        // then
-//        assertThatThrownBy(() -> ordersService
-//            .changeOrderStatus(savedOrders1.getId(), savedOrders2))
-//            .isInstanceOf(IllegalArgumentException.class);
-//    }
-//}
+package kitchenpos.integration.order;
+
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.domain.OrderStatus.MEAL;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
+import kitchenpos.application.dto.request.MenuGroupRequestDto;
+import kitchenpos.application.dto.request.MenuProductRequestDto;
+import kitchenpos.application.dto.request.MenuRequestDto;
+import kitchenpos.application.dto.request.OrderLineItemRequestDto;
+import kitchenpos.application.dto.request.OrderTableRequestDto;
+import kitchenpos.application.dto.request.OrdersRequestDto;
+import kitchenpos.application.dto.request.OrdersStatusRequestDto;
+import kitchenpos.application.dto.request.ProductRequestDto;
+import kitchenpos.application.dto.response.MenuGroupResponseDto;
+import kitchenpos.application.dto.response.MenuResponseDto;
+import kitchenpos.application.dto.response.OrderTableResponseDto;
+import kitchenpos.application.dto.response.OrdersResponseDto;
+import kitchenpos.application.dto.response.OrdersStatusResponseDto;
+import kitchenpos.application.dto.response.ProductResponseDto;
+import kitchenpos.integration.IntegrationTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+class OrdersServiceIntegrationTest extends IntegrationTest {
+
+    private static final Long QUANTITY = 2L;
+
+    private MenuRequestDto menuRequestDto;
+
+    @BeforeEach
+    void setUp() {
+        ProductResponseDto productResponseDto = productService
+            .create(new ProductRequestDto("얌 프라이", BigDecimal.valueOf(8000)));
+        MenuGroupResponseDto menuGroupResponseDto = menuGroupService
+            .create(new MenuGroupRequestDto("시즌 메뉴"));
+
+        MenuProductRequestDto menuProduct = new MenuProductRequestDto(
+            productResponseDto.getId(),
+            QUANTITY
+        );
+        menuRequestDto = new MenuRequestDto(
+            "얌 프라이",
+            BigDecimal.valueOf(8000),
+            menuGroupResponseDto.getId(),
+            Collections.singletonList(menuProduct)
+        );
+    }
+
+    @DisplayName("주문을 등록할 수 있다.")
+    @Test
+    void create_Valid_Success() {
+        // given
+        MenuResponseDto menuResponseDto = menuService.create(menuRequestDto);
+
+        OrderTableRequestDto orderTableRequestDto = new OrderTableRequestDto(2L, FALSE);
+        OrderTableResponseDto orderTableResponseDto = tableService.create(orderTableRequestDto);
+
+        OrderLineItemRequestDto orderLineItemRequestDto = new OrderLineItemRequestDto(
+            menuResponseDto.getId(),
+            QUANTITY
+        );
+        OrdersRequestDto requestDto = new OrdersRequestDto(
+            orderTableResponseDto.getId(),
+            Collections.singletonList(orderLineItemRequestDto)
+        );
+
+        // when
+        OrdersResponseDto responseDto = ordersService.create(requestDto);
+
+        // then
+        assertThat(responseDto.getId()).isNotNull();
+    }
+
+    @DisplayName("주문의 주문 항목이 존재하지 않으면 등록할 수 없다.")
+    @Test
+    void create_NonExistingMenuInOrderLineItems_Fail() {
+        // given
+        OrderTableRequestDto orderTableRequestDto = new OrderTableRequestDto(2L, FALSE);
+        OrderTableResponseDto orderTableResponseDto = tableService.create(orderTableRequestDto);
+
+        OrdersRequestDto requestDto = new OrdersRequestDto(
+            orderTableResponseDto.getId(),
+            Collections.emptyList()
+        );
+
+        // when
+        // then
+        assertThatThrownBy(() -> ordersService.create(requestDto))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문의 주문 항목에 메뉴가 하나라도 적혀있지 않으면 등록할 수 없다.")
+    @Test
+    void create_NonExistingOrderLineItems_Fail() {
+        // given
+        MenuResponseDto menuResponseDto = menuService.create(menuRequestDto);
+
+        OrderTableRequestDto orderTableRequestDto = new OrderTableRequestDto(2L, FALSE);
+        OrderTableResponseDto orderTableResponseDto = tableService.create(orderTableRequestDto);
+
+        OrderLineItemRequestDto orderLineItemRequestDto = new OrderLineItemRequestDto(
+            Long.MAX_VALUE,
+            QUANTITY
+        );
+        OrdersRequestDto requestDto = new OrdersRequestDto(
+            orderTableResponseDto.getId(),
+            Collections.singletonList(orderLineItemRequestDto)
+        );
+
+        // when
+        // then
+        assertThatThrownBy(() -> ordersService.create(requestDto))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문의 주문 테이블이 존재하지 않으면 등록할 수 없다.")
+    @Test
+    void create_NonExistingOrderTable_Fail() {
+        // given
+        MenuResponseDto menuResponseDto = menuService.create(menuRequestDto);
+
+        OrderLineItemRequestDto orderLineItemRequestDto = new OrderLineItemRequestDto(
+            menuResponseDto.getId(),
+            QUANTITY
+        );
+        OrdersRequestDto requestDto = new OrdersRequestDto(
+            Long.MAX_VALUE,
+            Collections.singletonList(orderLineItemRequestDto)
+        );
+
+        // when
+        // then
+        assertThatThrownBy(() -> ordersService.create(requestDto))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문의 주문 테이블이 비어 있으면(손님이 없으면) 등록할 수 없다.")
+    @Test
+    void create_NonExistingGuestsInOrderTable_Fail() {
+        // given
+        MenuResponseDto menuResponseDto = menuService.create(menuRequestDto);
+
+        OrderTableRequestDto orderTableRequestDto = new OrderTableRequestDto(2L, TRUE);
+        OrderTableResponseDto orderTableResponseDto = tableService.create(orderTableRequestDto);
+
+        OrderLineItemRequestDto orderLineItemRequestDto = new OrderLineItemRequestDto(
+            menuResponseDto.getId(),
+            QUANTITY
+        );
+        OrdersRequestDto requestDto = new OrdersRequestDto(
+            orderTableResponseDto.getId(),
+            Collections.singletonList(orderLineItemRequestDto)
+        );
+
+        // when
+        // then
+        assertThatThrownBy(() -> ordersService.create(requestDto))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문의 목록을 조회할 수 있다.")
+    @Test
+    void read_Valid_Success() {
+        // given
+        MenuResponseDto menuResponseDto = menuService.create(menuRequestDto);
+
+        OrderTableRequestDto orderTableRequestDto = new OrderTableRequestDto(2L, FALSE);
+        OrderTableResponseDto orderTableResponseDto = tableService.create(orderTableRequestDto);
+
+        OrderLineItemRequestDto orderLineItemRequestDto = new OrderLineItemRequestDto(
+            menuResponseDto.getId(),
+            QUANTITY
+        );
+        OrdersRequestDto requestDto = new OrdersRequestDto(
+            orderTableResponseDto.getId(),
+            Collections.singletonList(orderLineItemRequestDto)
+        );
+
+        ordersService.create(requestDto);
+
+        // when
+        List<OrdersResponseDto> responsesDto = ordersService.list();
+
+        // then
+        assertThat(responsesDto).hasSize(1);
+    }
+
+
+    @DisplayName("주문 상태를 변경할 수 있다.")
+    @Test
+    void changeOrderStatus_Valid_Success() {
+        // given
+        MenuResponseDto menuResponseDto = menuService.create(menuRequestDto);
+
+        OrderTableRequestDto orderTableRequestDto = new OrderTableRequestDto(2L, FALSE);
+        OrderTableResponseDto orderTableResponseDto = tableService.create(orderTableRequestDto);
+
+        OrderLineItemRequestDto orderLineItemRequestDto = new OrderLineItemRequestDto(
+            menuResponseDto.getId(),
+            QUANTITY
+        );
+        OrdersRequestDto ordersRequestDto = new OrdersRequestDto(
+            orderTableResponseDto.getId(),
+            Collections.singletonList(orderLineItemRequestDto)
+        );
+
+        OrdersResponseDto ordersResponseDto = ordersService.create(ordersRequestDto);
+
+        OrdersStatusRequestDto requestDto = new OrdersStatusRequestDto(
+            ordersResponseDto.getId(),
+            MEAL.name()
+        );
+
+        // when
+        OrdersStatusResponseDto responseDto = ordersService.changeOrderStatus(requestDto);
+
+        // then
+        assertThat(responseDto.getOrderStatus()).isEqualTo(MEAL.name());
+    }
+
+    @DisplayName("주문 상태는 주문이 존재하지 않으면 변경할 수 없다.")
+    @Test
+    void changeOrderStatus_NonExistingOrder_Fail() {
+        // given
+        OrdersStatusRequestDto requestDto = new OrdersStatusRequestDto(
+            Long.MAX_VALUE,
+            MEAL.name()
+        );
+
+        // when
+        // then
+        assertThatThrownBy(() -> ordersService.changeOrderStatus(requestDto))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문 상태가 `계산 완료`면 변경할 수 없다.")
+    @Test
+    void changeOrderStatus_InvalidOrderStatus_Fail() {
+        // given
+        MenuResponseDto menuResponseDto = menuService.create(menuRequestDto);
+
+        OrderTableRequestDto orderTableRequestDto = new OrderTableRequestDto(2L, FALSE);
+        OrderTableResponseDto orderTableResponseDto = tableService.create(orderTableRequestDto);
+
+        OrderLineItemRequestDto orderLineItemRequestDto = new OrderLineItemRequestDto(
+            menuResponseDto.getId(),
+            QUANTITY
+        );
+        OrdersRequestDto ordersRequestDto = new OrdersRequestDto(
+            orderTableResponseDto.getId(),
+            Collections.singletonList(orderLineItemRequestDto)
+        );
+
+        OrdersResponseDto ordersResponseDto = ordersService.create(ordersRequestDto);
+
+        OrdersStatusRequestDto ordersStatusRequestDto = new OrdersStatusRequestDto(
+            ordersResponseDto.getId(),
+            COMPLETION.name()
+        );
+
+        ordersService.changeOrderStatus(ordersStatusRequestDto);
+
+        OrdersStatusRequestDto requestDto = new OrdersStatusRequestDto(
+            ordersResponseDto.getId(), MEAL.name());
+
+        // when
+        // then
+        assertThatThrownBy(() -> ordersService.changeOrderStatus(requestDto))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+}
