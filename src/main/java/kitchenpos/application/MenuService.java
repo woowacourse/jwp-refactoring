@@ -53,9 +53,6 @@ public class MenuService {
         Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup, menuProducts);
         Menu savedMenu = menuRepository.save(menu);
 
-        // todo 영속성 전이
-        menuProductRepository.saveAll(menuProducts);
-
         return MenuResponse.from(savedMenu);
     }
 
