@@ -39,24 +39,30 @@ public class MenuService {
         final BigDecimal price = menu.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[ERROR] 메뉴 가격은 0원 이상이어야 합니다.");
         }
 
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[ERROR] 메뉴 그룹에 속하지 않은 메뉴는 생성할 수 없습니다.");
         }
 
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
 
+        if (Objects.isNull(menuProducts) || menuProducts.size() == 0) {
+            throw new IllegalArgumentException("[ERROR] 상품없는 메뉴는 등록할 수 없습니다.");
+        }
+
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = productDao.findById(menuProduct.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
+                    .orElseThrow(() ->
+                        new IllegalArgumentException("[ERROR] 존재하지 않는 상품을 메뉴로 등록할 수 없습니다.")
+                    );
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
         if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[ERROR] 메뉴에 속하는 모든 상품 가격의 합은 0원 이상이어야 합니다.");
         }
 
         final Menu savedMenu = menuDao.save(menu);
