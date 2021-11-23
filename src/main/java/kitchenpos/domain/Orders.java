@@ -9,6 +9,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -18,31 +20,31 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long orderTableId;
-
     private String orderStatus;
 
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "orders", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_table_id")
+    private OrderTable orderTable;
 
     protected Orders() {
     }
 
-    public Orders(Long orderTableId) {
-        this(null, orderTableId, null, null);
+    public Orders(String orderStatus, LocalDateTime orderedTime) {
+        this(null, orderStatus, orderedTime, null);
     }
 
-    public Orders(Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
-        this(null, orderTableId, orderStatus, orderedTime);
-    }
-
-    public Orders(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+    public Orders(
+        Long id,
+        String orderStatus,
+        LocalDateTime orderedTime,
+        OrderTable orderTable
+    ) {
         this.id = id;
-        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+        this.orderTable = orderTable;
     }
 
     public void changeStatus(String status) {
@@ -50,7 +52,6 @@ public class Orders {
     }
 
     public void add(List<OrderLineItem> sources) {
-        orderLineItems.addAll(sources);
         for (OrderLineItem source : sources) {
             source.belongsTo(this);
         }
@@ -58,10 +59,6 @@ public class Orders {
 
     public Long getId() {
         return id;
-    }
-
-    public Long getOrderTableId() {
-        return orderTableId;
     }
 
     public String getOrderStatus() {
@@ -72,7 +69,7 @@ public class Orders {
         return orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 }

@@ -10,8 +10,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -28,30 +26,24 @@ public class Menu {
     @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_group_id")
-    private MenuGroup menuGroup;
-
     protected Menu() {
     }
 
     public Menu(String name, BigDecimal price) {
-        this(null, name, price, null, null);
+        this(null, name, price, null);
     }
 
     public Menu(
         Long id,
         String name,
         BigDecimal price,
-        List<MenuProduct> menuProducts,
-        MenuGroup menuGroup
+        List<MenuProduct> menuProducts
     ) {
         validate(price);
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuProducts = menuProducts;
-        this.menuGroup = menuGroup;
     }
 
     private void validate(BigDecimal price) {
@@ -81,9 +73,5 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
     }
 }

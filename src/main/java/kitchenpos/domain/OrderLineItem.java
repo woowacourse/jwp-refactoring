@@ -15,26 +15,28 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    private Long menuId;
-
     private long quantity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "orders_id")
     private Orders orders;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
+
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Long menuId, long quantity) {
-        this(null, menuId, quantity, null);
+    public OrderLineItem(long quantity) {
+        this(null, quantity, null, null);
     }
 
-    public OrderLineItem(Long seq, Long menuId, long quantity, Orders orders) {
+    public OrderLineItem(Long seq, long quantity, Orders orders, Menu menu) {
         this.seq = seq;
-        this.menuId = menuId;
         this.quantity = quantity;
         this.orders = orders;
+        this.menu = menu;
     }
 
     public void belongsTo(Orders orders) {
@@ -45,15 +47,15 @@ public class OrderLineItem {
         return seq;
     }
 
-    public Long getMenuId() {
-        return menuId;
-    }
-
     public long getQuantity() {
         return quantity;
     }
 
     public Orders getOrders() {
         return orders;
+    }
+
+    public Menu getMenu() {
+        return menu;
     }
 }
