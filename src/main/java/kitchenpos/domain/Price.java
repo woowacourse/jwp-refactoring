@@ -2,12 +2,14 @@ package kitchenpos.domain;
 
 import kitchenpos.exception.price.InvalidePriceValueException;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.math.BigDecimal;
 import java.util.Objects;
 
 @Embeddable
 public class Price {
+    @Column(nullable = false)
     private BigDecimal price;
 
     protected Price() {

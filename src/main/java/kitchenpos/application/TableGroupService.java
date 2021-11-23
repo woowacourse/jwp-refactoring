@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -63,15 +62,21 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
+        validateAnyTableHasOngoingOrder(orderTableIds);
+
+        ungroupAllTables(orderTables);
+    }
+
+    private void validateAnyTableHasOngoingOrder(List<Long> orderTableIds) {
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new CannotUnGroupAsOrderStatusException();
         }
+    }
 
+    private void ungroupAllTables(List<OrderTable> orderTables) {
         for (final OrderTable orderTable : orderTables) {
             orderTable.ungroup();
         }
-
-        tableGroupRepository.deleteById(tableGroupId);
     }
 }
