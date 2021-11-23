@@ -1,11 +1,9 @@
 package kitchenpos.table.domain;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
-import org.springframework.data.domain.AbstractAggregateRoot;
 
 @Embeddable
 public class OrderTables {

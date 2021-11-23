@@ -12,8 +12,8 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menu.domain.MenuRegisteredEvent;
-import kitchenpos.name.domain.Name;
 import kitchenpos.menuprice.MenuRegisteredWithPriceEventHandler;
+import kitchenpos.name.domain.Name;
 import kitchenpos.price.domain.Price;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
@@ -38,15 +38,16 @@ public class MenuRegisteredWithPriceEventHandlerTest {
     void notFoundProduct() {
         when(productRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThatIllegalArgumentException().isThrownBy(() -> menuRegisteredWithPriceEventHandler.validate(
-            new MenuRegisteredEvent(
-                new Menu(1L, new Name("후라이드치킨"), new Price(BigDecimal.valueOf(16000)),
-                    1L,
-                    new MenuProducts(Collections.singletonList(
-                        new MenuProduct(1L, 2L)
-                    ))
-                )
-            )));
+        assertThatIllegalArgumentException().isThrownBy(
+            () -> menuRegisteredWithPriceEventHandler.validate(
+                new MenuRegisteredEvent(
+                    new Menu(1L, new Name("후라이드치킨"), new Price(BigDecimal.valueOf(16000)),
+                        1L,
+                        new MenuProducts(Collections.singletonList(
+                            new MenuProduct(1L, 2L)
+                        ))
+                    )
+                )));
     }
 
     @DisplayName("메뉴 가격이 상품 가격의 합보다 클 경우 예외 처리")
@@ -56,15 +57,16 @@ public class MenuRegisteredWithPriceEventHandlerTest {
             Optional.of(new Product("후라이드", BigDecimal.valueOf(7500)))
         );
 
-        assertThatIllegalArgumentException().isThrownBy(() -> menuRegisteredWithPriceEventHandler.validate(
-            new MenuRegisteredEvent(
-                new Menu(1L, new Name("후라이드치킨"), new Price(BigDecimal.valueOf(16000)),
-                    1L,
-                    new MenuProducts(Collections.singletonList(
-                        new MenuProduct(1L, 2L)
-                    ))
-                )
-            )));
+        assertThatIllegalArgumentException().isThrownBy(
+            () -> menuRegisteredWithPriceEventHandler.validate(
+                new MenuRegisteredEvent(
+                    new Menu(1L, new Name("후라이드치킨"), new Price(BigDecimal.valueOf(16000)),
+                        1L,
+                        new MenuProducts(Collections.singletonList(
+                            new MenuProduct(1L, 2L)
+                        ))
+                    )
+                )));
     }
 
     @DisplayName("메뉴 가격과 상품 가격의 합이 같을 경우 예외 처리 하지 않음")
