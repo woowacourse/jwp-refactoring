@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class MenuService {
@@ -48,7 +49,7 @@ public class MenuService {
 
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
 
-        if (Objects.isNull(menuProducts) || menuProducts.size() == 0) {
+        if (Objects.isNull(menuProducts) || CollectionUtils.isEmpty(menuProducts)) {
             throw new IllegalArgumentException("[ERROR] 상품없는 메뉴는 등록할 수 없습니다.");
         }
 
