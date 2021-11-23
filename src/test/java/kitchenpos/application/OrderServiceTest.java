@@ -209,13 +209,16 @@ class OrderServiceTest {
     @DisplayName("주문이 이미 완료된 상태라면 상태를 변경할 수 없다.")
     void changeOrderStatusFailWhenOrderIsCompleted() {
         Order order = new Order(1L, mock(OrderTable.class), OrderStatus.COMPLETION.name(), LocalDateTime.now(), Arrays.asList(mock(OrderLineItem.class)));
+        OrderRequest orderRequest = mock(OrderRequest.class);
 
         // given
         given(orderRepository.findById(anyLong()))
                 .willReturn(Optional.of(order));
+        given(orderRequest.getOrderStatus())
+                .willReturn(OrderStatus.COOKING.name());
 
         // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, mock(OrderRequest.class)))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, orderRequest))
                 .isInstanceOf(CannotChangeOrderStatusAsCompletionException.class);
     }
 

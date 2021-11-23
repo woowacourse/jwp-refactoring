@@ -67,14 +67,10 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderRequest orderRequest) {
-        final Order order = orderRepository.findById(orderId)
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(NoSuchOrderException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), order.getOrderStatus())) {
-            throw new CannotChangeOrderStatusAsCompletionException();
-        }
-
-        final OrderStatus orderStatus = OrderStatus.valueOf(orderRequest.getOrderStatus());
+        OrderStatus orderStatus = OrderStatus.valueOf(orderRequest.getOrderStatus());
         order.changeOrderStatus(orderStatus.name());
 
         return OrderResponse.from(order);

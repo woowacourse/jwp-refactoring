@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import kitchenpos.exception.menu.EmptyOrderLineItemsException;
+import kitchenpos.exception.order.CannotChangeOrderStatusAsCompletionException;
 import kitchenpos.exception.order.CannotPlaceAnOrderAsTableIsEmptyException;
 import org.springframework.util.CollectionUtils;
 
@@ -77,6 +78,9 @@ public class Order {
     }
 
     public void changeOrderStatus(String orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+            throw new CannotChangeOrderStatusAsCompletionException();
+        }
         this.orderStatus = orderStatus;
     }
 }
