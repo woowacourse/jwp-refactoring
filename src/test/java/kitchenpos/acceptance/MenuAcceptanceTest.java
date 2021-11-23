@@ -24,9 +24,10 @@ public class MenuAcceptanceTest extends AcceptanceTest {
 
     @Autowired
     private MenuFixture menuFixture;
+    @Autowired
+    private ProductFixture productFixture;
 
     private final MenuProductFixture menuProductFixture = new MenuProductFixture();
-    private final ProductFixture productFixture = new ProductFixture();
     private final MenuGroupFixture menuGroupFixture = new MenuGroupFixture();
 
     private List<MenuProductRequest> 메뉴_상품_요청_리스트;

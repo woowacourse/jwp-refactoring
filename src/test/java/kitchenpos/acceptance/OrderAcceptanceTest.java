@@ -27,10 +27,11 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     private OrderFixture orderFixture;
     @Autowired
     private OrderLineItemFixture orderLineItemFixture;
+    @Autowired
+    private ProductFixture productFixture;
 
     private final OrderTableFixture orderTableFixture = new OrderTableFixture();
     private final MenuProductFixture menuProductFixture = new MenuProductFixture();
-    private final ProductFixture productFixture = new ProductFixture();
     private final MenuGroupFixture menuGroupFixture = new MenuGroupFixture();
 
     private List<MenuProductRequest> 메뉴_상품_요청_리스트;
