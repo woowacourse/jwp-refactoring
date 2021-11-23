@@ -3,14 +3,13 @@ package kitchenpos.menu.service;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-import kitchenpos.menu.service.dto.MenuRequest;
-import kitchenpos.menu.service.dto.MenuResponse;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuProductRepository;
 import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menu.service.dto.MenuRequest;
+import kitchenpos.menu.service.dto.MenuResponse;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.product.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,8 +36,9 @@ public class MenuService {
     }
 
     public MenuResponse create(final MenuRequest request) {
-        final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-            .orElseThrow(NoSuchElementException::new);
+        if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
+            throw new NoSuchElementException();
+        }
 
         final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
             .map(menuProduct -> new MenuProduct(
@@ -49,7 +49,7 @@ public class MenuService {
             .collect(Collectors.toList());
 
         final Menu savedMenu = menuRepository.save(
-            new Menu(request.getName(), request.getPrice(), menuGroup, menuProducts)
+            new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), menuProducts)
         );
         menuProductRepository.saveAll(menuProducts);
 

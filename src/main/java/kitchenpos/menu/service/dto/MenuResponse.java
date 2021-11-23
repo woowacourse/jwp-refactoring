@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.common.Price;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.service.dto.MenuGroupResponse;
 
 public class MenuResponse {
@@ -11,21 +12,21 @@ public class MenuResponse {
     private Long id;
     private String name;
     private Price price;
-    private MenuGroupResponse menuGroup;
+    private Long menuGroupId;
     private List<MenuProductResponse> menuProducts;
 
-    public MenuResponse(Long id, String name, Price price, MenuGroupResponse menuGroup,
+    public MenuResponse(Long id, String name, Price price, Long menuGroupId,
         List<MenuProductResponse> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
     }
 
     public static MenuResponse of(Menu menu) {
         return new MenuResponse(
-            menu.getId(), menu.getName(), menu.getPrice(), MenuGroupResponse.of(menu.getMenuGroup()),
+            menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(),
             menu.getMenuProducts().stream()
                 .map(MenuProductResponse::of)
                 .collect(Collectors.toList())
@@ -44,8 +45,8 @@ public class MenuResponse {
         return price;
     }
 
-    public MenuGroupResponse getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public List<MenuProductResponse> getMenuProducts() {

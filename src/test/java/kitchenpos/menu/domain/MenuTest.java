@@ -9,8 +9,6 @@ import java.util.List;
 import kitchenpos.common.Price;
 import kitchenpos.fixtures.MenuFixtures;
 import kitchenpos.fixtures.MenuGroupFixtures;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menugroup.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 
@@ -25,11 +23,11 @@ class MenuTest {
             .reduce(Price::sum)
             .orElseGet(() -> Price.ZERO);
 
-        Menu menu = new Menu("name", price, menuGroup, menuProducts);
+        Menu menu = new Menu("name", price, menuGroup.getId(), menuProducts);
         assertAll(
             () -> assertThat(menu.getName()).isEqualTo("name"),
             () -> assertThat(menu.getPrice()).isEqualTo(price),
-            () -> assertThat(menu.getMenuGroup()).isEqualTo(menuGroup),
+            () -> assertThat(menu.getMenuGroupId()).isEqualTo(menuGroup.getId()),
             () -> assertThat(menu.getMenuProducts()).hasSize(menuProducts.size())
         );
     }
@@ -44,6 +42,6 @@ class MenuTest {
             .sum(new Price(BigDecimal.ONE));
 
         assertThrows(IllegalStateException.class,
-            () -> new Menu("name", invalidPrice, MenuGroupFixtures.createMenuGroup(), menuProducts));
+            () -> new Menu("name", invalidPrice, MenuGroupFixtures.createMenuGroup().getId(), menuProducts));
     }
 }

@@ -28,7 +28,7 @@ public class MenuFixtures {
         MenuGroup menuGroup,
         List<MenuProduct> menuProducts
     ) {
-        return new Menu(id, name, new Price(BigDecimal.valueOf(price)), menuGroup, menuProducts);
+        return new Menu(id, name, new Price(BigDecimal.valueOf(price)), menuGroup.getId(), menuProducts);
     }
 
     public static Menu createMenu() {
@@ -47,7 +47,7 @@ public class MenuFixtures {
         return new MenuRequest(
             menu.getName(),
             menu.getPrice(),
-            menu.getMenuGroup().getId(),
+            menu.getMenuGroupId(),
             menu.getMenuProducts().stream()
                 .map(menuProduct -> new MenuProductRequest(menuProduct.getProduct().getId(), menuProduct.getQuantity()))
                 .collect(Collectors.toList())

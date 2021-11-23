@@ -58,7 +58,7 @@ public class MenuServiceTest extends ServiceTest {
 
     @Test
     void 메뉴를_생성한다() {
-        given(menuGroupRepository.findById(any())).willReturn(Optional.of(MenuGroupFixtures.createMenuGroup()));
+        given(menuGroupRepository.existsById(any())).willReturn(true);
         given(productRepository.findById(any())).willReturn(Optional.of(ProductFixtures.createProduct()));
         given(menuRepository.save(any())).willReturn(menu);
         given(menuProductRepository.saveAll(any())).willReturn(MenuFixtures.createMenuProducts());
@@ -70,7 +70,7 @@ public class MenuServiceTest extends ServiceTest {
 
     @Test
     void 메뉴_그룹이_존재하지_않을_경우_예외를_반환한다() {
-        given(menuGroupRepository.findById(any())).willReturn(Optional.empty());
+        given(menuGroupRepository.existsById(any())).willReturn(false);
 
         assertThrows(NoSuchElementException.class, () -> menuService.create(request));
     }

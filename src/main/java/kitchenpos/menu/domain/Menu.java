@@ -20,9 +20,7 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_group_id", foreignKey = @ForeignKey(name = "fk_menu_menu_group"))
-    private MenuGroup menuGroup;
+    private Long menuGroupId;
 
     @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts;
@@ -32,12 +30,12 @@ public class Menu {
 
     private String name;
 
-    public Menu(Long id, String name, Price price, MenuGroup menuGroup,
+    public Menu(Long id, String name, Price price, Long menuGroupId,
         List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
 
         validatePrice(menuProducts);
@@ -46,8 +44,8 @@ public class Menu {
         }
     }
 
-    public Menu(String name, Price price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroup, menuProducts);
+    public Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroupId, menuProducts);
     }
 
     public Menu() {
@@ -68,8 +66,8 @@ public class Menu {
         return id;
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {
