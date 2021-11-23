@@ -1,12 +1,10 @@
 package kitchenpos.order.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItems;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 @Component
 public class OrderValidator {
@@ -17,17 +15,14 @@ public class OrderValidator {
     }
 
     public void validate(Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+        OrderLineItems orderLineItems = order.getOrderLineItems();
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
+        if (orderLineItems.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
+        final List<Long> menuIds = orderLineItems.collectMenuIds();
+        if (!orderLineItems.hasSameSize(menuRepository.countByIdIn(menuIds))) {
             throw new IllegalArgumentException();
         }
 

@@ -30,7 +30,7 @@ public class MenuProducts {
         return Money.sum(menuProducts, MenuProduct::calculatePrice);
     }
 
-    public List<MenuProduct> getMenuProducts() {
+    public List<MenuProduct> toList() {
         return menuProducts;
     }
 }
