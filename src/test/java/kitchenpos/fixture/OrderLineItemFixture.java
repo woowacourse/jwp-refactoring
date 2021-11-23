@@ -2,29 +2,37 @@ package kitchenpos.fixture;
 
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.testtool.RequestBuilder;
+import kitchenpos.ui.dto.request.OrderLineItemRequest;
+import kitchenpos.ui.dto.response.OrderLineItemResponse;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
-public class OrderLineItemFixture {
+@Component
+@Profile("test")
+public class OrderLineItemFixture extends DefaultFixture {
 
+    private OrderLineItemRepository orderLineItemRepository;
 
-    public OrderLineItem 주문_메뉴_생성(Long orderId, Long menuId, int quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-        return orderLineItem;
+    public OrderLineItemFixture(RequestBuilder requestBuilder,
+            OrderLineItemRepository orderLineItemRepository) {
+        super(requestBuilder);
+        this.orderLineItemRepository = orderLineItemRepository;
     }
 
-    public OrderLineItem 주문_메뉴_생성(Long seq, Long orderId, Long menuId, int quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setSeq(seq);
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-        return orderLineItem;
+    public OrderLineItemRequest 주문_메뉴_생성_요청(Long menuId, Long quantity) {
+        return new OrderLineItemRequest(menuId, quantity);
     }
 
-    public List<OrderLineItem> 주문_메뉴_리스트_생성(OrderLineItem... orderLineItems) {
-        return Arrays.asList(orderLineItems);
+    public List<OrderLineItemRequest> 주문_메뉴_요청_리스트_생성(
+            OrderLineItemRequest... orderLineItemRequests) {
+        return Arrays.asList(orderLineItemRequests);
+    }
+
+    public List<OrderLineItem> 특정_주문에_따른_주문_메뉴들_조회(Order order) {
+        return orderLineItemRepository.findAllByOrder(order);
     }
 }

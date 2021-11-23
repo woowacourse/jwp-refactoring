@@ -2,27 +2,28 @@ package kitchenpos.fixture;
 
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
+import kitchenpos.testtool.RequestBuilder;
+import kitchenpos.ui.dto.request.MenuProductRequest;
+import kitchenpos.ui.dto.response.MenuProductResponse;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
-public class MenuProductFixture {
+@Component
+@Profile("test")
+public class MenuProductFixture extends DefaultFixture {
 
-    public MenuProduct 메뉴_상품_생성(Long productId, long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+    public MenuProductFixture(RequestBuilder requestBuilder) {
+        super(requestBuilder);
     }
 
-    public MenuProduct 메뉴_상품_생성(Long seq, Long menuId, Long productId, long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setSeq(seq);
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+    public MenuProductRequest 메뉴_상품_생성_요청(Long productId, Long quantity) {
+        return new MenuProductRequest(productId, quantity);
     }
 
-    public List<MenuProduct> 메뉴_상품_리스트_생성(MenuProduct... menuProducts) {
-        return Arrays.asList(menuProducts);
+    public List<MenuProductRequest> 메뉴_상품_요청_리스트_생성(MenuProductRequest... menuProductRequests) {
+        return Arrays.asList(menuProductRequests);
     }
 }

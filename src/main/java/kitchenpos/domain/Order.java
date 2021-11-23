@@ -1,52 +1,87 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+import org.springframework.util.CollectionUtils;
+
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.*;
 
+@Entity
+@Table(name = "orders")
 public class Order {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long orderTableId;
-    private String orderStatus;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_table_id")
+    private OrderTable orderTable;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
+
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+
+    protected Order() {
+    }
+
+    private Order(OrderTable orderTable) {
+        this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now());
+    }
+
+    private Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        validateEmptyOrderTable(orderTable);
+        this.id = id;
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+    }
+
+    public static Order create(OrderTable orderTable){
+        return new Order(orderTable);
+    }
+
+    public static Order create(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime){
+        return new Order(id, orderTable, orderStatus, orderedTime);
+    }
+
+    private void validateEmptyOrderTable(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException(orderTable.getId() + " 테이블은 비어있어 주문할 수 없습니다.");
+        }
+    }
+
+    public boolean isCompletion(){
+        return orderStatus.isCompletion();
+    }
+
+    public boolean isNotCompletion(){
+        return orderStatus.isNotCompletion();
+    }
+
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
+    }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
     public Long getOrderTableId() {
-        return orderTableId;
-    }
-
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
+        return orderTable.getId();
     }
 
     public String getOrderStatus() {
-        return orderStatus;
-    }
-
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
+        return orderStatus.name();
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 }

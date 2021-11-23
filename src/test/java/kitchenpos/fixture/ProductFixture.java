@@ -4,25 +4,47 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.testtool.RequestBuilder;
+import kitchenpos.ui.dto.request.ProductRequest;
+import kitchenpos.ui.dto.response.ProductResponse;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
-public class ProductFixture {
+@Component
+@Profile("test")
+public class ProductFixture extends DefaultFixture {
 
-    public Product 상품_생성(String name, BigDecimal price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-        return product;
+    private final ProductRepository productRepository;
+
+    public ProductFixture(RequestBuilder requestBuilder, ProductRepository productRepository) {
+        super(requestBuilder);
+        this.productRepository = productRepository;
     }
 
-    public Product 상품_생성(Long id, String name, BigDecimal price) {
-        Product product = new Product();
-        product.setId(id);
-        product.setName(name);
-        product.setPrice(price);
-        return product;
+    public ProductRequest 상품_생성_요청(String name, BigDecimal price) {
+        return new ProductRequest(name, price);
     }
 
-    public List<Product> 상품_리스트_생성(Product... products) {
-        return Arrays.asList(products);
+    public Product 상품_조회(Long id) {
+        return productRepository.getOne(id);
+    }
+
+    public List<ProductResponse> 상품_리스트_생성(ProductResponse... productResponses) {
+        return Arrays.asList(productResponses);
+    }
+
+    public ProductResponse 상품_등록(ProductRequest request) {
+        return request()
+                .post("/api/products", request)
+                .build()
+                .convertBody(ProductResponse.class);
+    }
+
+    public List<ProductResponse> 상품_리스트_조회() {
+        return request()
+                .get("/api/products")
+                .build()
+                .convertBodyToList(ProductResponse.class);
     }
 }

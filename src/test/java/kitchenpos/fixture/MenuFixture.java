@@ -4,41 +4,54 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.testtool.RequestBuilder;
+import kitchenpos.ui.dto.request.MenuProductRequest;
+import kitchenpos.ui.dto.request.MenuRequest;
+import kitchenpos.ui.dto.response.MenuResponse;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
-public class MenuFixture {
+@Component
+@Profile("test")
+public class MenuFixture extends DefaultFixture {
 
-    public Menu 메뉴_생성(
+    private final MenuRepository menuRepository;
+
+    public MenuFixture(RequestBuilder requestBuilder, MenuRepository menuRepository) {
+        super(requestBuilder);
+        this.menuRepository = menuRepository;
+    }
+
+    public MenuRequest 메뉴_생성_요청(
             String name,
             BigDecimal price,
             Long menuGroupId,
-            List<MenuProduct> menuProducts
+            List<MenuProductRequest> menuProducts
     ) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-        return menu;
+        return new MenuRequest(name, price, menuGroupId, menuProducts);
     }
 
-    public Menu 메뉴_생성(
-            Long id,
-            String name,
-            BigDecimal price,
-            Long menuGroupId,
-            List<MenuProduct> menuProducts
-    ) {
-        Menu menu = new Menu();
-        menu.setId(id);
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-        return menu;
+    public Menu 메뉴_조회(Long id) {
+        return menuRepository.findById(id)
+                .orElseThrow(IllegalArgumentException::new);
     }
 
-    public List<Menu> 메뉴_리스트_생성(Menu... menu) {
-        return Arrays.asList(menu);
+    public List<MenuResponse> 메뉴_응답_리스트_생성(MenuResponse... menuResponses) {
+        return Arrays.asList(menuResponses);
+    }
+
+    public MenuResponse 메뉴_등록(MenuRequest request) {
+        return request()
+                .post("/api/menus", request)
+                .build()
+                .convertBody(MenuResponse.class);
+    }
+
+    public List<MenuResponse> 메뉴_리스트_조회() {
+        return request()
+                .get("/api/menus")
+                .build()
+                .convertBodyToList(MenuResponse.class);
     }
 }
