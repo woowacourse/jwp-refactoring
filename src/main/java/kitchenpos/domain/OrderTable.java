@@ -1,9 +1,12 @@
 package kitchenpos.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderTable {
@@ -16,25 +19,31 @@ public class OrderTable {
 
     private Boolean empty;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "table_group_id")
-//    private TableGroup tableGroup;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
 
     protected OrderTable() {
     }
 
     public OrderTable(Long numberOfGuests, Boolean empty) {
-        this(null, numberOfGuests, empty);
+        this(null, numberOfGuests, empty, null);
     }
 
     public OrderTable(
         Long id,
         Long numberOfGuests,
-        Boolean empty
+        Boolean empty,
+        TableGroup tableGroup
     ) {
         this.id = id;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+        this.tableGroup = tableGroup;
+    }
+
+    public void belongsTo(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
     }
 
     public void changeEmpty(Boolean empty) {
@@ -62,5 +71,9 @@ public class OrderTable {
 
     public Boolean getEmpty() {
         return empty;
+    }
+
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 }

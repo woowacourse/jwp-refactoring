@@ -6,6 +6,7 @@ import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
 
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import kitchenpos.application.dto.TableDtoAssembler;
@@ -62,9 +63,9 @@ public class TableService {
     public TableEmptyResponseDto changeEmpty(TableEmptyRequestDto requestDto) {
         OrderTable orderTable = tableRepository.findById(requestDto.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
-//        if (Objects.nonNull(orderTable.getTableGroup())) {
-//            throw new IllegalArgumentException();
-//        }
+        if (Objects.nonNull(orderTable.getTableGroup())) {
+            throw new IllegalArgumentException();
+        }
 
         Orders orders = ordersRepository.findById(requestDto.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
