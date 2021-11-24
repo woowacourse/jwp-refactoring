@@ -1,17 +1,13 @@
 package kitchenpos.application;
 
-import kitchenpos.Order.application.OrderService;
-import kitchenpos.Order.domain.Order;
 import kitchenpos.Order.domain.OrderStatus;
 import kitchenpos.OrderTable.application.TableGroupService;
-import kitchenpos.OrderTable.application.TableService;
 import kitchenpos.OrderTable.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -20,11 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 public class TableServiceTest extends ServiceTest {
 
     @Autowired
-    private TableService tableService;
-    @Autowired
     private TableGroupService tableGroupService;
-    @Autowired
-    private OrderService orderService;
 
     @Test
     @DisplayName("OrderTable을 추가할 수 있다.")
@@ -43,7 +35,7 @@ public class TableServiceTest extends ServiceTest {
         List<OrderTable> orderTables = tableService.list();
 
         //when & then
-        assertThat(orderTables).hasSize(3);
+        assertThat(orderTables).hasSize(4);
     }
 
     @Test
@@ -81,13 +73,9 @@ public class TableServiceTest extends ServiceTest {
     public void changeTableStatusWhenOrderCompleted() {
         //given
         Long orderTableId = emptyFalseOrderTableIds().get(0);
-        Long orderId = orderService.list().stream()
-                .filter(order -> !order.getOrderStatus().equals("COMPLETION"))
-                .map(Order::getId)
-                .collect(Collectors.toList()).get(0);
 
         //when
-        orderService.changeOrderStatus(orderId, OrderStatus.COMPLETION.name());
+        orderService.changeOrderStatus(order.getId(), OrderStatus.COMPLETION.name());
 
         //then
         assertDoesNotThrow(() -> tableService.changeEmpty(orderTableId, true));
@@ -140,19 +128,5 @@ public class TableServiceTest extends ServiceTest {
 
         //then
         assertDoesNotThrow(() -> tableService.changeNumberOfGuests(orderTableId, 5));
-    }
-
-    private List<Long> emptyTrueOrderTableIds() {
-        return tableService.list().stream()
-                .filter(OrderTable::isEmpty)
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-    }
-
-    private List<Long> emptyFalseOrderTableIds() {
-        return tableService.list().stream()
-                .filter(table -> !table.isEmpty())
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
     }
 }
