@@ -14,13 +14,13 @@ import kitchenpos.application.dto.request.MenuGroupRequestDto;
 import kitchenpos.application.dto.request.MenuProductRequestDto;
 import kitchenpos.application.dto.request.MenuRequestDto;
 import kitchenpos.application.dto.request.OrderLineItemRequestDto;
-import kitchenpos.application.dto.request.OrderTableRequestDto;
+import kitchenpos.application.dto.request.TableRequestDto;
 import kitchenpos.application.dto.request.OrdersRequestDto;
 import kitchenpos.application.dto.request.OrdersStatusRequestDto;
 import kitchenpos.application.dto.request.ProductRequestDto;
 import kitchenpos.application.dto.response.MenuGroupResponseDto;
 import kitchenpos.application.dto.response.MenuResponseDto;
-import kitchenpos.application.dto.response.OrderTableResponseDto;
+import kitchenpos.application.dto.response.TableResponseDto;
 import kitchenpos.application.dto.response.OrdersResponseDto;
 import kitchenpos.application.dto.response.OrdersStatusResponseDto;
 import kitchenpos.application.dto.response.ProductResponseDto;
@@ -60,15 +60,15 @@ class OrdersServiceIntegrationTest extends IntegrationTest {
         // given
         MenuResponseDto menuResponseDto = menuService.create(menuRequestDto);
 
-        OrderTableRequestDto orderTableRequestDto = new OrderTableRequestDto(2L, FALSE);
-        OrderTableResponseDto orderTableResponseDto = tableService.create(orderTableRequestDto);
+        TableRequestDto tableRequestDto = new TableRequestDto(2L, FALSE);
+        TableResponseDto tableResponseDto = tableService.create(tableRequestDto);
 
         OrderLineItemRequestDto orderLineItemRequestDto = new OrderLineItemRequestDto(
             menuResponseDto.getId(),
             QUANTITY
         );
         OrdersRequestDto requestDto = new OrdersRequestDto(
-            orderTableResponseDto.getId(),
+            tableResponseDto.getId(),
             Collections.singletonList(orderLineItemRequestDto)
         );
 
@@ -83,11 +83,11 @@ class OrdersServiceIntegrationTest extends IntegrationTest {
     @Test
     void create_NonExistingMenuInOrderLineItems_Fail() {
         // given
-        OrderTableRequestDto orderTableRequestDto = new OrderTableRequestDto(2L, FALSE);
-        OrderTableResponseDto orderTableResponseDto = tableService.create(orderTableRequestDto);
+        TableRequestDto tableRequestDto = new TableRequestDto(2L, FALSE);
+        TableResponseDto tableResponseDto = tableService.create(tableRequestDto);
 
         OrdersRequestDto requestDto = new OrdersRequestDto(
-            orderTableResponseDto.getId(),
+            tableResponseDto.getId(),
             Collections.emptyList()
         );
 
@@ -103,15 +103,15 @@ class OrdersServiceIntegrationTest extends IntegrationTest {
         // given
         MenuResponseDto menuResponseDto = menuService.create(menuRequestDto);
 
-        OrderTableRequestDto orderTableRequestDto = new OrderTableRequestDto(2L, FALSE);
-        OrderTableResponseDto orderTableResponseDto = tableService.create(orderTableRequestDto);
+        TableRequestDto tableRequestDto = new TableRequestDto(2L, FALSE);
+        TableResponseDto tableResponseDto = tableService.create(tableRequestDto);
 
         OrderLineItemRequestDto orderLineItemRequestDto = new OrderLineItemRequestDto(
             Long.MAX_VALUE,
             QUANTITY
         );
         OrdersRequestDto requestDto = new OrdersRequestDto(
-            orderTableResponseDto.getId(),
+            tableResponseDto.getId(),
             Collections.singletonList(orderLineItemRequestDto)
         );
 
@@ -148,15 +148,15 @@ class OrdersServiceIntegrationTest extends IntegrationTest {
         // given
         MenuResponseDto menuResponseDto = menuService.create(menuRequestDto);
 
-        OrderTableRequestDto orderTableRequestDto = new OrderTableRequestDto(2L, TRUE);
-        OrderTableResponseDto orderTableResponseDto = tableService.create(orderTableRequestDto);
+        TableRequestDto tableRequestDto = new TableRequestDto(2L, TRUE);
+        TableResponseDto tableResponseDto = tableService.create(tableRequestDto);
 
         OrderLineItemRequestDto orderLineItemRequestDto = new OrderLineItemRequestDto(
             menuResponseDto.getId(),
             QUANTITY
         );
         OrdersRequestDto requestDto = new OrdersRequestDto(
-            orderTableResponseDto.getId(),
+            tableResponseDto.getId(),
             Collections.singletonList(orderLineItemRequestDto)
         );
 
@@ -172,15 +172,15 @@ class OrdersServiceIntegrationTest extends IntegrationTest {
         // given
         MenuResponseDto menuResponseDto = menuService.create(menuRequestDto);
 
-        OrderTableRequestDto orderTableRequestDto = new OrderTableRequestDto(2L, FALSE);
-        OrderTableResponseDto orderTableResponseDto = tableService.create(orderTableRequestDto);
+        TableRequestDto tableRequestDto = new TableRequestDto(2L, FALSE);
+        TableResponseDto tableResponseDto = tableService.create(tableRequestDto);
 
         OrderLineItemRequestDto orderLineItemRequestDto = new OrderLineItemRequestDto(
             menuResponseDto.getId(),
             QUANTITY
         );
         OrdersRequestDto requestDto = new OrdersRequestDto(
-            orderTableResponseDto.getId(),
+            tableResponseDto.getId(),
             Collections.singletonList(orderLineItemRequestDto)
         );
 
@@ -200,15 +200,15 @@ class OrdersServiceIntegrationTest extends IntegrationTest {
         // given
         MenuResponseDto menuResponseDto = menuService.create(menuRequestDto);
 
-        OrderTableRequestDto orderTableRequestDto = new OrderTableRequestDto(2L, FALSE);
-        OrderTableResponseDto orderTableResponseDto = tableService.create(orderTableRequestDto);
+        TableRequestDto tableRequestDto = new TableRequestDto(2L, FALSE);
+        TableResponseDto tableResponseDto = tableService.create(tableRequestDto);
 
         OrderLineItemRequestDto orderLineItemRequestDto = new OrderLineItemRequestDto(
             menuResponseDto.getId(),
             QUANTITY
         );
         OrdersRequestDto ordersRequestDto = new OrdersRequestDto(
-            orderTableResponseDto.getId(),
+            tableResponseDto.getId(),
             Collections.singletonList(orderLineItemRequestDto)
         );
 
@@ -247,15 +247,15 @@ class OrdersServiceIntegrationTest extends IntegrationTest {
         // given
         MenuResponseDto menuResponseDto = menuService.create(menuRequestDto);
 
-        OrderTableRequestDto orderTableRequestDto = new OrderTableRequestDto(2L, FALSE);
-        OrderTableResponseDto orderTableResponseDto = tableService.create(orderTableRequestDto);
+        TableRequestDto tableRequestDto = new TableRequestDto(2L, FALSE);
+        TableResponseDto tableResponseDto = tableService.create(tableRequestDto);
 
         OrderLineItemRequestDto orderLineItemRequestDto = new OrderLineItemRequestDto(
             menuResponseDto.getId(),
             QUANTITY
         );
         OrdersRequestDto ordersRequestDto = new OrdersRequestDto(
-            orderTableResponseDto.getId(),
+            tableResponseDto.getId(),
             Collections.singletonList(orderLineItemRequestDto)
         );
 

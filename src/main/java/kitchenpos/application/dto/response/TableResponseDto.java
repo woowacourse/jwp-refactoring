@@ -1,10 +1,10 @@
 package kitchenpos.application.dto.response;
 
-public class OrderTableResponseDto {
+public class TableResponseDto {
 
     private Long id;
 
-    public OrderTableResponseDto(Long id) {
+    public TableResponseDto(Long id) {
         this.id = id;
     }
 

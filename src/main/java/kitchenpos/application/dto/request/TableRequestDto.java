@@ -1,11 +1,11 @@
 package kitchenpos.application.dto.request;
 
-public class OrderTableRequestDto {
+public class TableRequestDto {
 
     private Long numberOfGuests;
     private Boolean empty;
 
-    public OrderTableRequestDto(Long numberOfGuests, Boolean empty) {
+    public TableRequestDto(Long numberOfGuests, Boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }

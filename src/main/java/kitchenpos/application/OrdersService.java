@@ -20,7 +20,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Orders;
 import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableRepository;
 import kitchenpos.domain.repository.OrdersRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,18 +35,18 @@ public class OrdersService {
 
     private final MenuRepository menuRepository;
     private final OrdersRepository ordersRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final TableRepository tableRepository;
 
     public OrdersService(
         EntityManager entityManager,
         MenuRepository menuRepository,
         OrdersRepository ordersRepository,
-        OrderTableRepository orderTableRepository
+        TableRepository tableRepository
     ) {
         this.entityManager = entityManager;
         this.menuRepository = menuRepository;
         this.ordersRepository = ordersRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.tableRepository = tableRepository;
     }
 
     @Transactional
@@ -64,9 +64,9 @@ public class OrdersService {
             orderLineItems.add(new OrderLineItem(orderLineItemRequestDto.getQuantity(), menu));
         }
 
-        OrderTable orderTable = orderTableRepository.findById(requestDto.getOrderTableId())
+        OrderTable orderTable = tableRepository.findById(requestDto.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
-        if (TRUE.equals(orderTable.isEmpty())) {
+        if (TRUE.equals(orderTable.getEmpty())) {
             throw new IllegalArgumentException();
         }
 
