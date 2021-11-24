@@ -22,7 +22,7 @@ public class TableGroupResponse {
     }
 
     private static List<TableInGroupResponse> orderTableResponse(TableGroup tableGroup) {
-        return tableGroup.getOrderTables().stream()
+        return tableGroup.getOrderTableLists().stream()
                          .map(TableInGroupResponse::from)
                          .collect(Collectors.toList());
     }

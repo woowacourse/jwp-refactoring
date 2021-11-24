@@ -66,7 +66,6 @@ class TableGroupServiceTest {
         assertFalse(actual.getOrderTables().get(0).isEmpty());
         assertFalse(actual.getOrderTables().get(1).isEmpty());
         assertNotNull(actual.getCreatedDate());
-        assertThat(actual).usingRecursiveComparison().ignoringFields("createdDate").isEqualTo(expected);
     }
 
     @Test

@@ -30,7 +30,7 @@ class TableGroupTest {
 
         // when
         group.addOrderTables(orderTables);
-        List<OrderTable> results = group.getOrderTables();
+        List<OrderTable> results = group.getOrderTableLists();
 
         // then
         assertEquals(3, results.size());

@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 
-import org.springframework.util.CollectionUtils;
-
 @Entity
 public class TableGroup {
     @Id
@@ -15,8 +13,8 @@ public class TableGroup {
 
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup")
-    private List<OrderTable> orderTables;
+    @Embedded
+    private OrderTables orderTables;
 
     public TableGroup() {
         this(null, LocalDateTime.now(), new ArrayList<>());
@@ -29,18 +27,15 @@ public class TableGroup {
     public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
+        this.orderTables = new OrderTables(orderTables);
     }
 
     public void addOrderTables(List<OrderTable> orderTables) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException("그룹을 지정하려면 둘 이상의 테이블이 필요합니다.");
-        }
-        this.orderTables = orderTables;
+        this.orderTables = OrderTables.from(orderTables);
     }
 
     public void ungroup(TableValidator tableValidator) {
-        orderTables.forEach(table -> table.ungroup(tableValidator));
+        orderTables.ungroup(tableValidator);
     }
 
     public Long getId() {
@@ -51,7 +46,11 @@ public class TableGroup {
         return createdDate;
     }
 
-    public List<OrderTable> getOrderTables() {
+    public OrderTables getOrderTables() {
         return orderTables;
+    }
+
+    public List<OrderTable> getOrderTableLists() {
+        return orderTables.getOrderTables();
     }
 }
