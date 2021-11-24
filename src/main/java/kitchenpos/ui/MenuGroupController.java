@@ -3,7 +3,6 @@ package kitchenpos.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.MenuGroupService;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.ui.dto.MenuGroupAssembler;
 import kitchenpos.ui.dto.request.MenuGroupRequest;
 import kitchenpos.ui.dto.response.MenuGroupResponse;

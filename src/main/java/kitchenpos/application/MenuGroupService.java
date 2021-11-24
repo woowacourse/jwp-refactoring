@@ -1,9 +1,8 @@
 package kitchenpos.application;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.application.dto.MenuGroupDtoAssembler;
 import kitchenpos.application.dto.request.MenuGroupRequestDto;
 import kitchenpos.application.dto.response.MenuGroupResponseDto;
