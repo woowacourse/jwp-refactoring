@@ -9,19 +9,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.TableGroupRepository;
-import kitchenpos.dto.request.table.CreateTableGroupRequest;
-import kitchenpos.dto.request.table.TableIdRequest;
-import kitchenpos.dto.response.table.TableGroupResponse;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.domain.*;
+import kitchenpos.table.ui.request.CreateTableGroupRequest;
+import kitchenpos.table.ui.request.TableIdRequest;
+import kitchenpos.table.ui.response.TableGroupResponse;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static kitchenpos.fixture.OrderFixture.COMPLETION_ORDER;
-import static kitchenpos.fixture.OrderFixture.COOKING_ORDER;
 import static kitchenpos.fixture.OrderTableFixture.단일_손님0_테이블1;
 import static kitchenpos.fixture.OrderTableFixture.단일_손님0_테이블2;
 import static kitchenpos.fixture.TableGroupFixture.GROUP1;
@@ -30,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 
 @DisplayName("TableGroupService 단위 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -40,6 +37,9 @@ class TableGroupServiceTest {
 
     @Mock
     private TableGroupRepository tableGroupRepository;
+
+    @Mock
+    private TableValidator tableValidator;
 
     @InjectMocks
     private TableGroupService tableGroupService;
@@ -66,7 +66,6 @@ class TableGroupServiceTest {
         assertFalse(actual.getOrderTables().get(0).isEmpty());
         assertFalse(actual.getOrderTables().get(1).isEmpty());
         assertNotNull(actual.getCreatedDate());
-        assertThat(actual).usingRecursiveComparison().ignoringFields("createdDate").isEqualTo(expected);
     }
 
     @Test
@@ -141,8 +140,8 @@ class TableGroupServiceTest {
     @DisplayName("묶여있는 테이블 그룹을 해제할 수 있다. - 그룹이 해제된 테이블들은 비어 있지 않은 상태가 된다.")
     void ungroup() {
         // given
-        OrderTable table1 = new OrderTable(1L, null, 0, true, Collections.singletonList(COMPLETION_ORDER));
-        OrderTable table2 = new OrderTable(2L, null, 0, true, Collections.singletonList(COMPLETION_ORDER));
+        OrderTable table1 = new OrderTable(1L, null, 0, true);
+        OrderTable table2 = new OrderTable(2L, null, 0, true);
         TableGroup GROUP2 = new TableGroup(
                 2L,
                 LocalDateTime.now(),
@@ -167,12 +166,13 @@ class TableGroupServiceTest {
                 2L,
                 LocalDateTime.now(),
                 Arrays.asList(
-                        new OrderTable(1L, null, 0, true, Collections.singletonList(COOKING_ORDER)),
-                        new OrderTable(2L, null, 0, true, Collections.singletonList(COMPLETION_ORDER))
+                        new OrderTable(1L, null, 0, true),
+                        new OrderTable(2L, null, 0, true)
                 )
         );
 
         given(tableGroupRepository.findById(anyLong())).willReturn(Optional.of(GROUP2));
+        doThrow(new IllegalArgumentException("주문 상태가 조리중이나 식사중입니다.")).when(tableValidator).validateOrder(any());
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,

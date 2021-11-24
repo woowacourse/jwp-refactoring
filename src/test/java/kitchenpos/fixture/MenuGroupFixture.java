@@ -1,6 +1,6 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroup;
 
 public class MenuGroupFixture {
     public static MenuGroup 추천메뉴 = new MenuGroup(1L, "추천 메뉴");

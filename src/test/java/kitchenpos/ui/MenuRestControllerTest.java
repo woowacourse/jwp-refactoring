@@ -10,11 +10,11 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.dto.request.menu.CreateMenuRequest;
-import kitchenpos.dto.request.menu.MenuProductRequest;
-import kitchenpos.dto.response.menu.MenuGroupResponse;
-import kitchenpos.dto.response.menu.MenuProductResponse;
-import kitchenpos.dto.response.menu.MenuResponse;
+import kitchenpos.menu.ui.request.CreateMenuRequest;
+import kitchenpos.menu.ui.request.MenuProductRequest;
+import kitchenpos.menugroup.ui.response.MenuGroupResponse;
+import kitchenpos.menu.ui.response.MenuProductResponse;
+import kitchenpos.menu.ui.response.MenuResponse;
 
 import static kitchenpos.fixture.MenuFixture.더블간장;
 import static kitchenpos.fixture.MenuFixture.양념_단품;
@@ -51,7 +51,7 @@ class MenuRestControllerTest extends ControllerTest {
                 1L,
                 "양념 반 + 후라이드 반",
                 BigDecimal.valueOf(30000),
-                MenuGroupResponse.from(추천메뉴),
+                추천메뉴.getId(),
                 Arrays.asList(
                         MenuProductResponse.from(후라이드치킨_한마리_메뉴상품),
                         MenuProductResponse.from(양념치킨_한마리_메뉴상품))

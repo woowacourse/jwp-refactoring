@@ -18,3 +18,12 @@ Content-Type: application/json
 GET {{host}}/api/menus
 
 ###
+
+###
+PUT {{host}}/api/menus/1
+Content-Type: application/json
+
+{
+  "name": "New 후라이드",
+  "price": 20000
+}

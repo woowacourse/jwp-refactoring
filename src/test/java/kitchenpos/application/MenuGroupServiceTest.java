@@ -7,10 +7,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuGroupRepository;
-import kitchenpos.dto.request.menu.CreateMenuGroupRequest;
-import kitchenpos.dto.response.menu.MenuGroupResponse;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.menugroup.ui.request.CreateMenuGroupRequest;
+import kitchenpos.menugroup.ui.response.MenuGroupResponse;
+import kitchenpos.menugroup.application.MenuGroupService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;

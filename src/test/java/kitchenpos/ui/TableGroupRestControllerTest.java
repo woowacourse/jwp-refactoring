@@ -10,10 +10,10 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.dto.request.table.CreateTableGroupRequest;
-import kitchenpos.dto.request.table.TableIdRequest;
-import kitchenpos.dto.response.table.TableInGroupResponse;
-import kitchenpos.dto.response.table.TableGroupResponse;
+import kitchenpos.table.ui.request.CreateTableGroupRequest;
+import kitchenpos.table.ui.request.TableIdRequest;
+import kitchenpos.table.ui.response.TableInGroupResponse;
+import kitchenpos.table.ui.response.TableGroupResponse;
 
 import static kitchenpos.fixture.OrderTableFixture.단일_손님0_테이블1;
 import static kitchenpos.fixture.OrderTableFixture.단일_손님0_테이블2;

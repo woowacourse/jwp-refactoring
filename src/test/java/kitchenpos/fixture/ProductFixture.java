@@ -1,6 +1,6 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.Product;
+import kitchenpos.product.domain.Product;
 
 public class ProductFixture {
     public static Product 후라이드치킨 = new Product(1L, "후라이드치킨", 17000);

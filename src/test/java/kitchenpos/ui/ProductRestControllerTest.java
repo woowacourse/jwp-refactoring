@@ -10,9 +10,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.domain.Product;
-import kitchenpos.dto.request.product.CreateProductRequest;
-import kitchenpos.dto.response.product.ProductResponse;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.ui.request.CreateProductRequest;
+import kitchenpos.product.ui.response.ProductResponse;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;

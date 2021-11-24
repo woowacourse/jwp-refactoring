@@ -10,12 +10,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import kitchenpos.domain.*;
-import kitchenpos.dto.request.order.ChangeOrderStatusRequest;
-import kitchenpos.dto.request.order.CreateOrderRequest;
-import kitchenpos.dto.request.order.OrderLineItemRequest;
-import kitchenpos.dto.response.order.CreateOrderResponse;
-import kitchenpos.dto.response.order.OrderResponse;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.*;
+import kitchenpos.order.ui.request.ChangeOrderStatusRequest;
+import kitchenpos.order.ui.request.CreateOrderRequest;
+import kitchenpos.order.ui.request.OrderLineItemRequest;
+import kitchenpos.order.ui.response.CreateOrderResponse;
+import kitchenpos.order.ui.response.OrderResponse;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -30,19 +31,17 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 
 @DisplayName("OrderService 단위 테스트")
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
 
     @Mock
-    private MenuRepository menuRepository;
-
-    @Mock
     private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableRepository orderTableRepository;
+    private OrderValidator orderValidator;
 
     @InjectMocks
     private OrderService orderService;
@@ -57,14 +56,12 @@ class OrderServiceTest {
         );
         Order order = new Order(
                 1L,
-                단일_손님2_테이블,
+                단일_손님2_테이블.getId(),
                 OrderStatus.COOKING,
                 LocalDateTime.now(),
-                Collections.singletonList(new OrderLineItem(후라이드_단품, 2))
+                Collections.singletonList(new OrderLineItem(후라이드_단품.getId(), 2))
         );
 
-        given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(단일_손님2_테이블));
-        given(menuRepository.findById(anyLong())).willReturn(Optional.of(후라이드_단품));
         given(orderRepository.save(any(Order.class))).willReturn(order);
 
         // when
@@ -82,7 +79,6 @@ class OrderServiceTest {
                 단일_손님2_테이블.getId(),
                 Collections.emptyList()
         );
-        given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(단일_손님2_테이블));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -98,8 +94,7 @@ class OrderServiceTest {
                 단일_손님2_테이블.getId(),
                 Collections.singletonList(new OrderLineItemRequest(10L, 2))
         );
-        given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(단일_손님2_테이블));
-        given(menuRepository.findById(anyLong())).willReturn(Optional.empty());
+        doThrow(new IllegalArgumentException("등록되지 않은 메뉴는 주문할 수 없습니다.")).when(orderValidator).validateMenu(anyLong());
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -115,7 +110,7 @@ class OrderServiceTest {
                 10L,
                 Collections.singletonList(new OrderLineItemRequest(후라이드_단품.getId(), 2))
         );
-        given(orderTableRepository.findById(anyLong())).willReturn(Optional.empty());
+        doThrow(new IllegalArgumentException("존재하지 않는 테이블은 주문할 수 없습니다.")).when(orderValidator).validateTable(anyLong());
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -131,7 +126,7 @@ class OrderServiceTest {
                 단일_손님0_테이블1.getId(),
                 Collections.singletonList(new OrderLineItemRequest(후라이드_단품.getId(), 2))
         );
-        given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(단일_손님0_테이블1));
+        doThrow(new IllegalArgumentException("빈 테이블은 주문할 수 없습니다.")).when(orderValidator).validateTable(anyLong());
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,

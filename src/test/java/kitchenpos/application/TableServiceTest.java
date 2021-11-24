@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,23 +8,25 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
-import kitchenpos.dto.request.table.ChangeTableEmptyRequest;
-import kitchenpos.dto.request.table.ChangeTableGuestRequest;
-import kitchenpos.dto.request.table.CreateTableRequest;
-import kitchenpos.dto.response.table.TableResponse;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableValidator;
+import kitchenpos.table.ui.request.ChangeTableEmptyRequest;
+import kitchenpos.table.ui.request.ChangeTableGuestRequest;
+import kitchenpos.table.ui.request.CreateTableRequest;
+import kitchenpos.table.ui.response.TableResponse;
+import kitchenpos.table.application.TableService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static kitchenpos.fixture.OrderFixture.COOKING_ORDER;
 import static kitchenpos.fixture.OrderTableFixture.*;
 import static kitchenpos.fixture.TableGroupFixture.GROUP1;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 
 @DisplayName("TableService 단위 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -33,6 +34,9 @@ class TableServiceTest {
 
     @Mock
     private OrderTableRepository orderTableRepository;
+
+    @Mock
+    private TableValidator tableValidator;
 
     @InjectMocks
     private TableService tableService;
@@ -50,7 +54,7 @@ class TableServiceTest {
 
         // then
         assertNotNull(actual);
-        assertNull(actual.getTableGroup().getId());
+        assertNull(actual.getTableGroupId());
     }
 
     @Test
@@ -119,11 +123,11 @@ class TableServiceTest {
                 5L,
                 null,
                 2,
-                false,
-                Collections.singletonList(COOKING_ORDER)
+                false
         );
         ChangeTableEmptyRequest request = new ChangeTableEmptyRequest(false);
         given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(table));
+        doThrow(new IllegalArgumentException("주문 상태가 조리중이나 식사중입니다.")).when(tableValidator).validateOrder(any());
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
