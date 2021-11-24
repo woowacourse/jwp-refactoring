@@ -10,9 +10,6 @@ import java.util.Optional;
 
 public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {
 
-    @Query("select ot from OrderTable ot left join fetch ot.tableGroup where ot.id =:orderTableId")
-    Optional<OrderTable> findByIdWithTableGroup(@Param("orderTableId") Long orderTableId);
-
     List<OrderTable> findAllByIdIn(List<Long> orderTableIds);
 
     List<OrderTable> findAllByTableGroupId(Long tableGroupId);

@@ -7,9 +7,12 @@ spring:
       hibernate:
         format_sql: true
     show-sql: true
-    hibernate:
-      ddl-auto: validate
 
 logging:
   level:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+---
+spring:
+  profiles: test
+  flyway:
+    enabled: false

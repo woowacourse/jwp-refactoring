@@ -12,13 +12,13 @@ import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    boolean existsByOrderTableInAndOrderStatusIn(List<OrderTable> orderTables, List<String> orderStatus);
+    boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<String> orderStatus);
 
-    boolean existsByOrderTableAndOrderStatusIn(OrderTable orderTable, List<String> orderStatus);
+    boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<String> orderStatus);
 
     @EntityGraph(attributePaths = {"orderLineItems"})
     List<Order> findAll();
 
     @EntityGraph(attributePaths = {"orderLineItems"})
-    Optional<Order> findById();
+    Optional<Order> findById(Long id);
 }

@@ -3,9 +3,6 @@ package kitchenpos.OrderTable.application;
 import kitchenpos.Order.domain.OrderStatus;
 import kitchenpos.Order.domain.repository.OrderRepository;
 import kitchenpos.OrderTable.domain.OrderTable;
-import kitchenpos.OrderTable.domain.dto.request.OrderTableChangeEmptyRequest;
-import kitchenpos.OrderTable.domain.dto.request.OrderTableCreateRequest;
-import kitchenpos.OrderTable.domain.dto.response.OrderTableResponse;
 import kitchenpos.OrderTable.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,15 +31,15 @@ public class TableService {
     }
 
     public OrderTable changeEmpty(final Long orderTableId, final boolean empty) {
-        final OrderTable savedOrderTable = orderTableRepository.findByIdWithTableGroup(orderTableId)
+        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         if (savedOrderTable.isBelongToTableGroup()) {
             throw new IllegalArgumentException();
         }
 
-        if (orderRepository.existsByOrderTableAndOrderStatusIn(
-                savedOrderTable, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
+                savedOrderTable.getId(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
 
