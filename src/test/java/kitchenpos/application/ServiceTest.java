@@ -51,6 +51,10 @@ public class ServiceTest {
     protected MenuProduct menuProduct1;
     protected Product product1;
     protected MenuGroup menuGroup;
+    protected OrderTable orderTable1;
+    protected OrderTable orderTable2;
+    protected OrderTable orderTable3;
+    protected OrderTable orderTable4;
 
     @BeforeEach
     void setUp() {
@@ -62,10 +66,10 @@ public class ServiceTest {
         menu = menuRepository.save(new Menu("menu", BigDecimal.valueOf(1000),
                 menuGroup.getId(), Arrays.asList(menuProduct1, menuProduct2)));
 
-        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(10, false));
-        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(10, false));
-        OrderTable orderTable3 = orderTableRepository.save(new OrderTable(20, true));
-        OrderTable orderTable4 = orderTableRepository.save(new OrderTable(20, true));
+        orderTable1 = orderTableRepository.save(new OrderTable(10, false));
+        orderTable2 = orderTableRepository.save(new OrderTable(10, false));
+        orderTable3 = orderTableRepository.save(new OrderTable(20, true));
+        orderTable4 = orderTableRepository.save(new OrderTable(20, true));
         OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1L);
         order = orderService.create(
                 new Order(orderTable1.getId(), Collections.singletonList(orderLineItem))
