@@ -2,21 +2,23 @@ package kitchenpos.domain;
 
 import org.springframework.util.CollectionUtils;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Embeddable;
+import javax.persistence.OneToMany;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Embeddable
 public class OrderLineItems {
-    private final List<OrderLineItem> values;
 
-    public OrderLineItems(List<OrderLineItem> values) {
-        validate(values);
-        this.values = values;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderLineItem> values;
+
+    public OrderLineItems() {
     }
 
-    private void validate(List<OrderLineItem> values) {
-        if (CollectionUtils.isEmpty(values)) {
-            throw new IllegalArgumentException();
-        }
+    public OrderLineItems(List<OrderLineItem> values) {
+        this.values = values;
     }
 
     public boolean isDifferentSize(long size) {

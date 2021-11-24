@@ -1,7 +1,7 @@
 package kitchenpos.ui.dto.order;
 
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderLineItems;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,12 +28,12 @@ public class OrderCreateRequest {
 
     public Order toEntity() {
         return new Order(
-                new OrderTable(orderTableId),
+                orderTableId,
                 null,
                 null,
-                orderLineItems.stream()
+                new OrderLineItems(this.orderLineItems.stream()
                         .map(OrderLineItemRequest::toEntity)
-                        .collect(Collectors.toList())
+                        .collect(Collectors.toList()))
         );
     }
 }

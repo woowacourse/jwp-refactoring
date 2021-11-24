@@ -18,10 +18,10 @@ class OrderLineItemsTest {
         // given
         final Long seq = 1L;
         final Order order = new Order(1L, null, OrderStatus.COOKING.name(), LocalDateTime.now(), null);
-        final Menu menu = new Menu(1L, "피자", new BigDecimal(18000), new MenuGroup(1L, "피자"), null);
+        final Long menuId = 2L;
         final long quantity = 2L;
-        OrderLineItem orderLineItem = new OrderLineItem(seq, order, menu, quantity);
-        OrderLineItem orderLineItem2 = new OrderLineItem(seq, order, menu, quantity);
+        OrderLineItem orderLineItem = new OrderLineItem(seq, order, menuId, quantity);
+        OrderLineItem orderLineItem2 = new OrderLineItem(seq, order, menuId, quantity);
 
         // when
         OrderLineItems orderLineItems = new OrderLineItems(Arrays.asList(orderLineItem, orderLineItem2));
@@ -36,10 +36,10 @@ class OrderLineItemsTest {
         // given
         final Long seq = 1L;
         final Order order = new Order(1L, null, OrderStatus.COOKING.name(), LocalDateTime.now(), null);
-        final Menu menu = new Menu(1L, "피자", new BigDecimal(18000), new MenuGroup(1L, "피자"), null);
+        final Long menuId = 2L;
         final long quantity = 2L;
-        OrderLineItem orderLineItem = new OrderLineItem(seq, order, menu, quantity);
-        OrderLineItem orderLineItem2 = new OrderLineItem(seq, order, menu, quantity);
+        OrderLineItem orderLineItem = new OrderLineItem(seq, order, menuId, quantity);
+        OrderLineItem orderLineItem2 = new OrderLineItem(seq, order, menuId, quantity);
         OrderLineItems orderLineItems = new OrderLineItems(Arrays.asList(orderLineItem, orderLineItem2));
 
         // when
@@ -55,10 +55,10 @@ class OrderLineItemsTest {
         // given
         final Long seq = 1L;
         final Order order = new Order(1L, null, OrderStatus.COOKING.name(), LocalDateTime.now(), null);
-        final Menu menu = new Menu(1L, "피자", new BigDecimal(18000), new MenuGroup(1L, "피자"), null);
+        final Long menuId = 2L;
         final long quantity = 2L;
-        OrderLineItem orderLineItem = new OrderLineItem(seq, order, menu, quantity);
-        OrderLineItem orderLineItem2 = new OrderLineItem(seq, order, menu, quantity);
+        OrderLineItem orderLineItem = new OrderLineItem(seq, order, menuId, quantity);
+        OrderLineItem orderLineItem2 = new OrderLineItem(seq, order, menuId, quantity);
         OrderLineItems orderLineItems = new OrderLineItems(Arrays.asList(orderLineItem, orderLineItem2));
 
         // when
@@ -66,7 +66,7 @@ class OrderLineItemsTest {
 
         // then
         assertThat(menuIds).hasSize(2);
-        assertThat(menuIds).containsExactly(1L, 1L);
+        assertThat(menuIds).containsExactly(2L, 2L);
     }
 
     @DisplayName("connectOrder(): 모든 주문항목에 주문과 연결시켜준다.")
@@ -74,10 +74,10 @@ class OrderLineItemsTest {
     void connectOrder() {
         // given
         final Long seq = 1L;
-        final Menu menu = new Menu(1L, "피자", new BigDecimal(18000), new MenuGroup(1L, "피자"), null);
+        final Long menuId = 2L;
         final long quantity = 2L;
-        OrderLineItem orderLineItem = new OrderLineItem(seq, null, menu, quantity);
-        OrderLineItem orderLineItem2 = new OrderLineItem(seq, null, menu, quantity);
+        OrderLineItem orderLineItem = new OrderLineItem(seq, null, menuId, quantity);
+        OrderLineItem orderLineItem2 = new OrderLineItem(seq, null, menuId, quantity);
         OrderLineItems orderLineItems = new OrderLineItems(Arrays.asList(orderLineItem, orderLineItem2));
         final Order order = new Order(1L, null, OrderStatus.COOKING.name(), LocalDateTime.now(), null);
 

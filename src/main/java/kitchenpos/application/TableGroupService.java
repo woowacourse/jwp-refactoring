@@ -12,8 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 
-;
-
 @Service
 public class TableGroupService {
     private final OrderRepository orderRepository;
@@ -50,10 +48,10 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
-        final List<Long> orderTableIds = orderTables.getOrderTableIds();
+        List<Long> orderTableIds = orderTables.getOrderTableIds();
 
-        if (orderRepository.existsByOrderTableInAndOrderStatusIn(
-                orderTables.getValues(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
         orderTables.ungroupTables();

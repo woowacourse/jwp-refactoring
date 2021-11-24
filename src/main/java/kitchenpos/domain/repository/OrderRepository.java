@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    boolean existsByOrderTableInAndOrderStatusIn(List<OrderTable> orderTable, List<String> orderStatus);
+    boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<String> orderStatus);
 
-    boolean existsByOrderTableAndOrderStatusIn(OrderTable orderTable, List<String> orderStatus);
+    boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<String> orderStatus);
 }

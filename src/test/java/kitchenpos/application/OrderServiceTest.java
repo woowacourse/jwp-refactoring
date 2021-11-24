@@ -37,7 +37,7 @@ class OrderServiceTest extends BaseServiceTest {
         // given
         Menu menu = 메뉴_생성();
         OrderTable table = 활성화된_테이블_생성();
-        OrderLineItem orderLineItem = TestFixtureFactory.주문_항목_생성(menu, 1L);
+        OrderLineItem orderLineItem = TestFixtureFactory.주문_항목_생성(menu.getId(), 1L);
         Order order = TestFixtureFactory.주문_생성(table, orderLineItem);
 
         // when
@@ -48,23 +48,9 @@ class OrderServiceTest extends BaseServiceTest {
         assertThat(savedOrder.getOrderTableId()).isEqualTo(table.getId());
         assertThat(savedOrder.getOrderStatus()).isEqualTo("COOKING");
         assertThat(savedOrder.getOrderedTime()).isNotNull();
-        assertThat(savedOrder.getOrderLineItems())
+        assertThat(savedOrder.getOrderLineItems().getValues())
                 .extracting("order")
                 .contains(savedOrder);
-    }
-
-    @DisplayName("[주문 생성] 주문항목이 없으면 예외가 발생한다.")
-    @Test
-    void createWithoutOrderLineItem() {
-        // given
-        Menu menu = 메뉴_생성();
-        OrderTable table = 활성화된_테이블_생성();
-        OrderLineItem orderLineItem = TestFixtureFactory.주문_항목_생성(menu, 1L);
-        Order order = TestFixtureFactory.주문_생성(table);
-
-        // when then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("[주문 생성] 주문항목에 있는 메뉴가 존재하지 않으면 예외가 발생한다.")
@@ -75,10 +61,10 @@ class OrderServiceTest extends BaseServiceTest {
         OrderLineItem orderLineItem = new OrderLineItemBuilder()
                 .seq(null)
                 .order(null)
-                .menu(new Menu(999999L))
+                .menuId(999999L)
                 .quantity(1L)
                 .build();
-        Order order = TestFixtureFactory.주문_생성(table);
+        Order order = TestFixtureFactory.주문_생성(table, orderLineItem);
 
         // when then
         assertThatThrownBy(() -> orderService.create(order))
@@ -91,7 +77,7 @@ class OrderServiceTest extends BaseServiceTest {
         // given
         Menu menu = 메뉴_생성();
         OrderTable table = TestFixtureFactory.테이블_생성(1L, null, 0, false);
-        OrderLineItem orderLineItem = TestFixtureFactory.주문_항목_생성(menu, 1L);
+        OrderLineItem orderLineItem = TestFixtureFactory.주문_항목_생성(menu.getId(), 1L);
         Order order = TestFixtureFactory.주문_생성(table, orderLineItem);
 
         // when then
@@ -106,7 +92,7 @@ class OrderServiceTest extends BaseServiceTest {
         Menu menu = 메뉴_생성();
         OrderTable table = TestFixtureFactory.빈_테이블_생성();
         OrderTable savedOrderTable = tableService.create(table);
-        OrderLineItem orderLineItem = TestFixtureFactory.주문_항목_생성(menu, 1L);
+        OrderLineItem orderLineItem = TestFixtureFactory.주문_항목_생성(menu.getId(), 1L);
         Order order = TestFixtureFactory.주문_생성(savedOrderTable, orderLineItem);
 
         // when then
@@ -209,7 +195,7 @@ class OrderServiceTest extends BaseServiceTest {
     private Order 주문_생성() {
         Menu menu = 메뉴_생성();
         OrderTable table = 활성화된_테이블_생성();
-        OrderLineItem orderLineItem = TestFixtureFactory.주문_항목_생성(menu, 1L);
+        OrderLineItem orderLineItem = TestFixtureFactory.주문_항목_생성(menu.getId(), 1L);
         Order order = TestFixtureFactory.주문_생성(table, orderLineItem);
         return orderService.create(order);
     }

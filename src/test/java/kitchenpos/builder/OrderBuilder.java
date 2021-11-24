@@ -2,6 +2,7 @@ package kitchenpos.builder;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderTable;
 
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ public class OrderBuilder {
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private OrderLineItems orderLineItems;
 
     public OrderBuilder id(Long id) {
         this.id = id;
@@ -35,7 +36,7 @@ public class OrderBuilder {
         return this;
     }
 
-    public OrderBuilder orderLineItems(List<OrderLineItem> orderLineItems) {
+    public OrderBuilder orderLineItems(OrderLineItems orderLineItems) {
         this.orderLineItems = orderLineItems;
         return this;
     }
@@ -43,7 +44,7 @@ public class OrderBuilder {
     public Order build() {
         return new Order(
                 this.id,
-                new OrderTable(this.orderTableId),
+                this.orderTableId,
                 this.orderStatus,
                 this.orderedTime,
                 this.orderLineItems

@@ -197,7 +197,7 @@ class TableServiceTest extends BaseServiceTest {
         OrderTable activeTable = 활성화_시킨_테이블();
         OrderTable activeAndFourGuestsTable = tableService.changeNumberOfGuests(activeTable.getId(), TestFixtureFactory.테이블_생성(4));
         Menu savedMenu = 메뉴_생성();
-        OrderLineItem orderLineItem = TestFixtureFactory.주문_항목_생성(savedMenu, 1L);
+        OrderLineItem orderLineItem = TestFixtureFactory.주문_항목_생성(savedMenu.getId(), 1L);
         Order order = TestFixtureFactory.주문_생성(activeAndFourGuestsTable, orderLineItem);
         orderService.create(order);
 

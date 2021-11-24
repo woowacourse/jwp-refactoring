@@ -16,27 +16,25 @@ class OrderLineItemTest {
     void create() {
         // given
         final Long seq = 1L;
-        final Order order = new Order(1L, null, OrderStatus.COOKING.name(), LocalDateTime.now(), null);
-        final Menu menu = new Menu(1L, "피자", new BigDecimal(18000), new MenuGroup(1L, "피자"), null);
-        final long quantity = 2L;
+        final Order order = new Order(2L, null, OrderStatus.COOKING.name(), LocalDateTime.now(), null);
+        final Menu menu = new Menu(3L, "피자", new BigDecimal(18000), new MenuGroup(1L, "피자"), null);
+        final long quantity = 4L;
 
         // when
-        OrderLineItem orderLineItem = new OrderLineItem(seq, order, menu, quantity);
+        OrderLineItem orderLineItem = new OrderLineItem(seq, order, menu.getId(), quantity);
 
         // then
-        assertThat(orderLineItem.getSeq()).isEqualTo(seq);
-        assertThat(orderLineItem.getOrder()).isEqualTo(order);
-        assertThat(orderLineItem.getMenu()).isEqualTo(menu);
-        assertThat(orderLineItem.getQuantity()).isEqualTo(quantity);
+        assertThat(orderLineItem.getSeq()).isEqualTo(1L);
+        assertThat(orderLineItem.getOrder()).isEqualTo(new Order(2L, null, OrderStatus.COOKING.name(), LocalDateTime.now(), null));
+        assertThat(orderLineItem.getMenuId()).isEqualTo(3L);
+        assertThat(orderLineItem.getQuantity()).isEqualTo(4L);
     }
 
     @DisplayName("주문과 연결할 수 있다.")
     @Test
     void connectOrder() {
         // given
-        final Menu menu = new Menu(1L, "피자", new BigDecimal(18000), new MenuGroup(1L, "피자"), null);
-        final long quantity = 2L;
-        OrderLineItem orderLineItem = new OrderLineItem(1L, null, menu, quantity);
+        OrderLineItem orderLineItem = new OrderLineItem(1L, null, 2L, 2L);
 
         final Order order = new Order(1L, null, OrderStatus.COOKING.name(), LocalDateTime.now(), null);
 
@@ -45,6 +43,6 @@ class OrderLineItemTest {
 
         // then
         assertThat(orderLineItem.getOrder()).isNotNull();
-        assertThat(orderLineItem.getOrder()).isEqualTo(order);
+        assertThat(orderLineItem.getOrder()).isEqualTo(new Order(1L, null, OrderStatus.COOKING.name(), LocalDateTime.now(), null));
     }
 }

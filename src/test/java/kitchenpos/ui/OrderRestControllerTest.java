@@ -1,10 +1,10 @@
 package kitchenpos.ui;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.builder.OrderBuilder;
 import kitchenpos.builder.OrderLineItemBuilder;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.ui.dto.order.OrderCreateRequest;
 import kitchenpos.ui.dto.order.OrderLineItemRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +35,7 @@ class OrderRestControllerTest extends BaseWebMvcTest {
         orderLineItem1 = new OrderLineItemBuilder()
                 .seq(1L)
                 .order(null)
-                .menu(new Menu(1L))
+                .menuId(1L)
                 .quantity(1L)
                 .build();
 
@@ -44,21 +44,21 @@ class OrderRestControllerTest extends BaseWebMvcTest {
                 .orderTableId(1L)
                 .orderStatus("COOKING")
                 .orderedTime(LocalDateTime.now())
-                .orderLineItems(Arrays.asList(orderLineItem1))
+                .orderLineItems(new OrderLineItems(Arrays.asList(orderLineItem1)))
                 .build();
         orderLineItem1.connectOrder(order1);
 
         orderLineItem2 = new OrderLineItemBuilder()
                 .seq(2L)
                 .order(null)
-                .menu(new Menu(1L))
+                .menuId(1L)
                 .quantity(1L)
                 .build();
 
         orderLineItem3 = new OrderLineItemBuilder()
                 .seq(3L)
                 .order(null)
-                .menu(new Menu(2L))
+                .menuId(2L)
                 .quantity(3L)
                 .build();
 
@@ -67,7 +67,7 @@ class OrderRestControllerTest extends BaseWebMvcTest {
                 .orderTableId(2L)
                 .orderStatus("COOKING")
                 .orderedTime(LocalDateTime.now())
-                .orderLineItems(Arrays.asList(orderLineItem2, orderLineItem3))
+                .orderLineItems(new OrderLineItems(Arrays.asList(orderLineItem2, orderLineItem3)))
                 .build();
         orderLineItem2.connectOrder(order2);
         orderLineItem3.connectOrder(order2);
@@ -146,7 +146,7 @@ class OrderRestControllerTest extends BaseWebMvcTest {
                 .orderTableId(1L)
                 .orderStatus("MEAL")
                 .orderedTime(LocalDateTime.now())
-                .orderLineItems(Arrays.asList(orderLineItem1))
+                .orderLineItems(new OrderLineItems(Arrays.asList(orderLineItem1)))
                 .build();
         given(orderService.changeOrderStatus(any(Long.class), any(Order.class)))
                 .willReturn(changedOrder);

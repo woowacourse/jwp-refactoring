@@ -2,34 +2,31 @@ package kitchenpos.domain;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 
 @Entity(name = "Orders")
 public class Order {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
-
+    private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems;
+    @Embedded
+    private OrderLineItems orderLineItems;
 
     protected Order() {
     }
 
-    public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, orderStatus, orderedTime, orderLineItems);
+    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime, OrderLineItems orderLineItems) {
+        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public Order(Long id, OrderTable orderTable, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime, OrderLineItems orderLineItems) {
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
@@ -39,26 +36,14 @@ public class Order {
         this.id = null;
     }
 
-    public void initOrderStart(OrderTable orderTable) {
-        validateOrder(orderTable);
-        this.orderTable = orderTable;
+    public void startOrder(OrderValidator orderValidator) {
+        orderValidator.validate(this);
         this.orderStatus = OrderStatus.COOKING.name();
         this.orderedTime = LocalDateTime.now();
     }
 
-    private void validateOrder(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    public void validateChangeOrderStatus() {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    public void changeOrderStatus(String orderStatus) {
+    public void changeOrderStatus(OrderValidator orderValidator, String orderStatus) {
+        orderValidator.validateChangeStatus(this);
         this.orderStatus = orderStatus;
     }
 
@@ -66,12 +51,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
-    }
-
     public Long getOrderTableId() {
-        return orderTable.getId();
+        return orderTableId;
     }
 
     public String getOrderStatus() {
@@ -82,7 +63,7 @@ public class Order {
         return orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
+    public OrderLineItems getOrderLineItems() {
         return orderLineItems;
     }
 

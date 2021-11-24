@@ -4,12 +4,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 class OrderTest {
 
@@ -18,18 +16,18 @@ class OrderTest {
     void create() {
         // given
         Long id = 1L;
-        OrderTable orderTable = new OrderTable(1L, null, 4, false);
+        Long orderTableId = 2L;
         String orderStatus = OrderStatus.COOKING.name();
         LocalDateTime orderedTime = LocalDateTime.now();
-        List<OrderLineItem> orderLineItems = new ArrayList<>();
+        List<OrderLineItem> orderLineItems = Collections.singletonList(new OrderLineItem(1L, null, 1L, 1L));
 
         // when
-        Order order = new Order(id, orderTable, orderStatus, orderedTime, orderLineItems);
+        Order order = new Order(id, orderTableId, orderStatus, orderedTime, new OrderLineItems(orderLineItems));
 
         // then
-        assertThat(order.getId()).isEqualTo(id);
-        assertThat(order.getOrderTable()).isEqualTo(orderTable);
-        assertThat(order.getOrderStatus()).isEqualTo(orderStatus);
+        assertThat(order.getId()).isEqualTo(1L);
+        assertThat(order.getOrderTableId()).isEqualTo(2L);
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
         assertThat(order.getOrderedTime()).isEqualTo(orderedTime);
     }
 
@@ -38,11 +36,11 @@ class OrderTest {
     void initId() {
         // given
         Long id = 1L;
-        OrderTable orderTable = new OrderTable(1L, null, 4, false);
+        Long orderTableId = 2L;
         String orderStatus = OrderStatus.COOKING.name();
         LocalDateTime orderedTime = LocalDateTime.now();
-        List<OrderLineItem> orderLineItems = new ArrayList<>();
-        Order order = new Order(id, orderTable, orderStatus, orderedTime, orderLineItems);
+        List<OrderLineItem> orderLineItems = Collections.singletonList(new OrderLineItem(1L, null, 1L, 1L));
+        Order order = new Order(id, orderTableId, orderStatus, orderedTime, new OrderLineItems(orderLineItems));
 
         // when
         order.initId();
@@ -51,21 +49,20 @@ class OrderTest {
         assertThat(order.getId()).isNull();
     }
 
-    @DisplayName("주문 최초 등록 시 상태를 초기화한다.")
+    @DisplayName("주문 시작 초기화 : 주문 최초 등록 시 상태를 초기화한다.")
     @Test
-    void initOrderStart() {
+    void startOrder() {
         // given
         Long id = 1L;
-        OrderTable orderTable = new OrderTable(1L, null, 4, false);
         Order order = new Order(id, null, null, null, null);
+        OrderValidator orderValidator = new OrderValidatorTestImpl();
 
         // when
-        order.initOrderStart(orderTable);
+        order.startOrder(orderValidator);
 
         // then
-        assertThat(order.getOrderTable()).isNotNull();
         assertThat(order.getOrderedTime()).isNotNull();
-        assertThat(order.getOrderStatus()).isNotNull();
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
     }
 
     @DisplayName("changeOrderStatus(): 주문의 상태를 변경할 수 있다.")
@@ -74,26 +71,16 @@ class OrderTest {
         // given
         Long id = 1L;
         Order order = new Order(id, null, null, null, null);
+        OrderValidator orderValidator = new OrderValidatorTestImpl();
 
         // when then
-        order.changeOrderStatus(OrderStatus.COOKING.name());
+        order.changeOrderStatus(orderValidator, OrderStatus.COOKING.name());
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
 
-        order.changeOrderStatus(OrderStatus.MEAL.name());
+        order.changeOrderStatus(orderValidator, OrderStatus.MEAL.name());
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
 
-        order.changeOrderStatus(OrderStatus.COMPLETION.name());
+        order.changeOrderStatus(orderValidator, OrderStatus.COMPLETION.name());
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
-    }
-
-    @DisplayName("validateChangeOrderStatus(): 주문의 상태가 COMPLETION이라면 상태를 변경할 수 없다.")
-    @Test
-    void validateChangeOrderStatus() {
-        // given
-        Order order = new Order(1L, null, OrderStatus.COMPLETION.name(), null, null);
-
-        // when then
-        assertThatThrownBy(order::validateChangeOrderStatus)
-                .isInstanceOf(IllegalArgumentException.class);
     }
 }

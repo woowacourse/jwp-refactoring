@@ -118,14 +118,14 @@ public class TestFixtureFactory {
                 .orderTableId(orderTable.getId())
                 .orderedTime(null)
                 .orderStatus(null)
-                .orderLineItems(Arrays.asList(orderLineItems))
+                .orderLineItems(new OrderLineItems(Arrays.asList(orderLineItems)))
                 .build();
     }
 
-    public static OrderLineItem 주문_항목_생성(Menu menu, long quantity) {
+    public static OrderLineItem 주문_항목_생성(Long menuId, long quantity) {
         return new OrderLineItemBuilder()
                 .seq(null)
-                .menu(menu)
+                .menuId(menuId)
                 .order(null)
                 .quantity(quantity)
                 .build();
