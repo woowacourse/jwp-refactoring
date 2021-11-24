@@ -5,10 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import kitchenpos.AcceptanceTest;
-import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
-import kitchenpos.ui.dto.request.OrderTableChangeGuestRequest;
-import kitchenpos.ui.dto.request.OrderTableCreateRequest;
-import kitchenpos.ui.dto.response.OrderTableResponse;
+import kitchenpos.table.ui.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.table.ui.dto.request.OrderTableChangeGuestRequest;
+import kitchenpos.table.ui.dto.request.OrderTableCreateRequest;
+import kitchenpos.table.ui.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

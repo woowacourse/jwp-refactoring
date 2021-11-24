@@ -4,6 +4,11 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.Orders;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

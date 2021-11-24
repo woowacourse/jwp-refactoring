@@ -2,14 +2,14 @@ package kitchenpos.fixture;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.testtool.RequestBuilder;
-import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
-import kitchenpos.ui.dto.request.OrderTableChangeGuestRequest;
-import kitchenpos.ui.dto.request.OrderTableCreateRequest;
-import kitchenpos.ui.dto.request.OrderTableRequest;
-import kitchenpos.ui.dto.response.OrderTableResponse;
+import kitchenpos.table.ui.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.table.ui.dto.request.OrderTableChangeGuestRequest;
+import kitchenpos.table.ui.dto.request.OrderTableCreateRequest;
+import kitchenpos.table.ui.dto.request.OrderTableRequest;
+import kitchenpos.table.ui.dto.response.OrderTableResponse;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 

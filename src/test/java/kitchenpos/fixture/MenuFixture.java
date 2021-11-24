@@ -3,12 +3,12 @@ package kitchenpos.fixture;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.repository.MenuRepository;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.testtool.RequestBuilder;
-import kitchenpos.ui.dto.request.MenuProductRequest;
-import kitchenpos.ui.dto.request.MenuRequest;
-import kitchenpos.ui.dto.response.MenuResponse;
+import kitchenpos.menu.ui.dto.request.MenuProductRequest;
+import kitchenpos.menu.ui.dto.request.MenuRequest;
+import kitchenpos.menu.ui.dto.response.MenuResponse;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 

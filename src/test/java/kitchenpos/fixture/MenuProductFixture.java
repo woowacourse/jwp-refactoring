@@ -2,12 +2,9 @@ package kitchenpos.fixture;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+
 import kitchenpos.testtool.RequestBuilder;
-import kitchenpos.ui.dto.request.MenuProductRequest;
-import kitchenpos.ui.dto.response.MenuProductResponse;
+import kitchenpos.menu.ui.dto.request.MenuProductRequest;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 

@@ -2,12 +2,11 @@ package kitchenpos.fixture;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.testtool.RequestBuilder;
-import kitchenpos.ui.dto.request.OrderLineItemRequest;
-import kitchenpos.ui.dto.response.OrderLineItemResponse;
+import kitchenpos.order.ui.dto.request.OrderLineItemRequest;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
