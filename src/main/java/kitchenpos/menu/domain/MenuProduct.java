@@ -1,9 +1,6 @@
 package kitchenpos.menu.domain;
 
-import kitchenpos.product.domain.Product;
-
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 @Entity
 public class MenuProduct {
@@ -16,9 +13,8 @@ public class MenuProduct {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @Column
+    private Long productId;
 
     @Column
     private Long quantity;
@@ -26,27 +22,31 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    private MenuProduct(Product product, Long quantity) {
-        this(null, null, product, quantity);
+    private MenuProduct(Long productId, Long quantity) {
+        this(null, null, productId, quantity);
     }
 
-    private MenuProduct(Long seq, Menu menu, Product product, Long quantity) {
+    private MenuProduct(Menu menu, Long productId, Long quantity) {
+        this(null, menu, productId, quantity);
+    }
+
+    private MenuProduct(Long seq, Menu menu, Long productId, Long quantity) {
         this.seq = seq;
         this.menu = menu;
-        this.product = product;
+        this.productId = productId;
         this.quantity = quantity;
     }
 
-    public static MenuProduct create(Product product, Long quantity) {
-        return new MenuProduct(product, quantity);
+    public static MenuProduct create(Long productId, Long quantity) {
+        return new MenuProduct(productId, quantity);
     }
 
-    public static MenuProduct create(Long seq, Menu menu, Product product, Long quantity) {
-        return new MenuProduct(seq, menu, product, quantity);
+    public static MenuProduct create(Menu menu, Long productId, Long quantity) {
+        return new MenuProduct(menu, productId, quantity);
     }
 
-    public BigDecimal totalPrice() {
-        return product.calculatePrice(quantity);
+    public static MenuProduct create(Long seq, Menu menu, Long productId, Long quantity) {
+        return new MenuProduct(seq, menu, productId, quantity);
     }
 
     public void addMenu(Menu menu) {
@@ -61,8 +61,8 @@ public class MenuProduct {
         return menu;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
 
     public Long getQuantity() {

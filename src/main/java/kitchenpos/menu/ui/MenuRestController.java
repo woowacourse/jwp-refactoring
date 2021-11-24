@@ -1,6 +1,7 @@
 package kitchenpos.menu.ui;
 
 import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.ui.dto.request.MenuChangeRequest;
 import kitchenpos.menu.ui.dto.request.MenuRequest;
 import kitchenpos.menu.ui.dto.response.MenuResponse;
 import org.springframework.http.ResponseEntity;
@@ -30,5 +31,14 @@ public class MenuRestController {
     public ResponseEntity<List<MenuResponse>> list() {
         return ResponseEntity.ok()
                 .body(menuService.list());
+    }
+
+    @PutMapping("/{menuId}")
+    public ResponseEntity<Void> changeNamePrice(
+            @PathVariable final Long menuId,
+            @RequestBody final MenuChangeRequest request
+    ) {
+        menuService.changeNamePrice(menuId, request);
+        return ResponseEntity.noContent().build();
     }
 }
