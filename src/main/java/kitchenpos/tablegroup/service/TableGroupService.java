@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Service
 public class TableGroupService {
+
     private static final int MIN_GROUP_SIZE = 2;
 
     private final OrderRepository orderRepository;
@@ -42,7 +43,6 @@ public class TableGroupService {
         savedOrderTables.forEach(it -> it.belongsTo(savedTableGroup.getId()));
 
         return TableGroupResponse.of(savedTableGroup);
-        // orderTable 그룹 도메인 이벤트
     }
 
     private void validateCreation(List<OrderTable> orderTables, List<Long> requestedIds) {

@@ -1,15 +1,10 @@
 package kitchenpos.fixtures;
 
-import static kitchenpos.fixtures.OrderFixtures.createCompletedOrders;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import kitchenpos.ordertable.service.dto.OrderTableRequest;
-import kitchenpos.tablegroup.service.dto.TableGroupRequest;
-import kitchenpos.order.domain.Order;
 import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.service.dto.OrderTableRequest;
 import kitchenpos.tablegroup.domain.TableGroup;
 
 public class TableFixtures {

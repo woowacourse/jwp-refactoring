@@ -10,25 +10,22 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import kitchenpos.fixtures.MenuFixtures;
+import kitchenpos.fixtures.OrderFixtures;
 import kitchenpos.fixtures.ServiceTest;
-import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.fixtures.TableFixtures;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.repository.OrderLineItemRepository;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.service.dto.ChangeOrderStatusRequest;
 import kitchenpos.order.service.dto.OrderRequest;
 import kitchenpos.order.service.dto.OrderResponse;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.fixtures.MenuFixtures;
-import kitchenpos.fixtures.OrderFixtures;
-import kitchenpos.fixtures.TableFixtures;
-import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.order.repository.OrderLineItemRepository;
-import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +33,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 class OrderServiceTest extends ServiceTest {
+
     @Mock
     private MenuRepository menuRepository;
 

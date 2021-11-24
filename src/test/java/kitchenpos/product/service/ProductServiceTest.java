@@ -7,9 +7,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Collections;
+import kitchenpos.fixtures.ProductFixtures;
 import kitchenpos.fixtures.ServiceTest;
 import kitchenpos.product.domain.Product;
-import kitchenpos.fixtures.ProductFixtures;
 import kitchenpos.product.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -11,15 +11,14 @@ import static org.mockito.Mockito.verify;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import kitchenpos.fixtures.OrderFixtures;
 import kitchenpos.fixtures.ServiceTest;
+import kitchenpos.fixtures.TableFixtures;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.order.service.OrderTableServiceImpl;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.repository.OrderTableRepository;
 import kitchenpos.ordertable.service.dto.OrderTableRequest;
 import kitchenpos.ordertable.service.dto.OrderTableResponse;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.fixtures.OrderFixtures;
-import kitchenpos.fixtures.TableFixtures;
-import kitchenpos.ordertable.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -27,6 +26,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 public class OrderTableServiceImplTest extends ServiceTest {
+
     @Mock
     private OrderRepository orderRepository;
 

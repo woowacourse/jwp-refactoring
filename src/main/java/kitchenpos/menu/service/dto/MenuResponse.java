@@ -2,10 +2,8 @@ package kitchenpos.menu.service.dto;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.common.Price;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menugroup.service.dto.MenuGroupResponse;
+import kitchenpos.menu.domain.Menu;
 
 public class MenuResponse {
 

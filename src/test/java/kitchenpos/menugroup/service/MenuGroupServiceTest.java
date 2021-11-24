@@ -6,9 +6,9 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.fixtures.MenuGroupFixtures;
 import kitchenpos.fixtures.ServiceTest;
 import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.fixtures.MenuGroupFixtures;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

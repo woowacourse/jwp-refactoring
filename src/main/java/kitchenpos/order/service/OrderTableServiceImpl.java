@@ -5,11 +5,11 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.repository.OrderTableRepository;
 import kitchenpos.ordertable.service.OrderTableService;
 import kitchenpos.ordertable.service.dto.OrderTableRequest;
 import kitchenpos.ordertable.service.dto.OrderTableResponse;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.ordertable.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +20,7 @@ public class OrderTableServiceImpl implements OrderTableService {
     private final OrderTableRepository orderTableRepository;
     private final OrderRepository orderRepository;
 
-    public OrderTableServiceImpl(final OrderTableRepository orderTableRepository, final  OrderRepository orderRepository) {
+    public OrderTableServiceImpl(final OrderTableRepository orderTableRepository, final OrderRepository orderRepository) {
         this.orderTableRepository = orderTableRepository;
         this.orderRepository = orderRepository;
     }

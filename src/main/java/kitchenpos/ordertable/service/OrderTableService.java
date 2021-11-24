@@ -1,7 +1,6 @@
 package kitchenpos.ordertable.service;
 
 import java.util.List;
-import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.service.dto.OrderTableRequest;
 import kitchenpos.ordertable.service.dto.OrderTableResponse;
 
