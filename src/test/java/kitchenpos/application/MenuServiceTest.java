@@ -2,11 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.Menu.application.MenuService;
 import kitchenpos.Menu.domain.Menu;
-import kitchenpos.Menu.domain.MenuGroup;
 import kitchenpos.Menu.domain.MenuProduct;
-import kitchenpos.Menu.domain.Product;
-import kitchenpos.annotation.IntegrationTest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,23 +19,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-@IntegrationTest
-class MenuServiceTest {
+class MenuServiceTest extends ServiceTest {
 
     @Autowired
     private MenuService menuService;
-
-    private static final Long VALID_MENU_GROUP_ID = 1L;
-    private static final Long INVALID_MENU_GROUP_ID = 1000L;
-
-    private MenuProduct validMenuProduct;
-    private MenuProduct invalidMenuProduct;
-
-    @BeforeEach
-    void setUp() {
-        validMenuProduct = new MenuProduct(1L, 2L);
-        invalidMenuProduct = new MenuProduct(9999L, 2L);
-    }
 
     @ParameterizedTest
     @DisplayName("가격이 올바르지 않으면 Menu를 등록할 수 없다.")
@@ -47,7 +30,7 @@ class MenuServiceTest {
     public void priceException(BigDecimal price) {
         //given & when
         Menu menu = new Menu("invalidMenu", price,
-                VALID_MENU_GROUP_ID, Collections.singletonList(validMenuProduct));
+                menuGroup.getId(), Collections.singletonList(new MenuProduct(product1.getId(), 1L)));
 
         //then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -65,8 +48,8 @@ class MenuServiceTest {
     @DisplayName("존재하는 MenuGroup에 속해있지 않으면 Menu를 등록할 수 없다.")
     public void menuGroupException() {
         //given & when
-        Menu menu = new Menu("invalidMenu", BigDecimal.valueOf(10000),
-                INVALID_MENU_GROUP_ID, Collections.singletonList(validMenuProduct));
+        Menu menu = new Menu("invalidMenu", BigDecimal.valueOf(1000),
+                Long.MAX_VALUE, Collections.singletonList(new MenuProduct(product1.getId(), 1L)));
 
         //then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -77,8 +60,8 @@ class MenuServiceTest {
     @DisplayName("Menu에 속하는 MenuProduct의 Product가 존재하지 않으면 등록할 수 없다.")
     public void emptyMenuProductException() {
         //given & when
-        Menu menu = new Menu("invalidMenu", BigDecimal.valueOf(10000),
-                VALID_MENU_GROUP_ID, Collections.singletonList(invalidMenuProduct));
+        Menu menu = new Menu("invalidMenu", BigDecimal.valueOf(1000),
+                menuGroup.getId(), Collections.singletonList(new MenuProduct(Long.MAX_VALUE, 1L)));
 
         //then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -89,8 +72,8 @@ class MenuServiceTest {
     @DisplayName("Menu의 가격은 Menu에 들어가는 모든 Product 가격들의 합 보다 높아서는 안된다.")
     public void menuPriceLowerThanProductSumException() {
         //given & when
-        Menu menu = new Menu("invalidMenu", BigDecimal.valueOf(32001),
-                VALID_MENU_GROUP_ID, Collections.singletonList(validMenuProduct));
+        Menu menu = new Menu("invalidMenu", BigDecimal.valueOf(1001),
+                menuGroup.getId(), Collections.singletonList(new MenuProduct(product1.getId(), 1L)));
 
         //then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -101,8 +84,8 @@ class MenuServiceTest {
     @DisplayName("Menu를 등록할 수 있다.")
     public void enrollMenu() {
         //given & when
-        Menu menu = new Menu("validMenu", BigDecimal.valueOf(10000),
-                VALID_MENU_GROUP_ID, Collections.singletonList(validMenuProduct));
+        Menu menu = new Menu("validMenu", BigDecimal.valueOf(1000),
+                menuGroup.getId(), Collections.singletonList(new MenuProduct(product1.getId(), 1L)));
 
         //then
         assertDoesNotThrow(() -> menuService.create(menu));
@@ -115,6 +98,6 @@ class MenuServiceTest {
         List<Menu> list = menuService.list();
 
         //then
-        assertThat(list).hasSize(6);
+        assertThat(list).hasSize(1);
     }
 }

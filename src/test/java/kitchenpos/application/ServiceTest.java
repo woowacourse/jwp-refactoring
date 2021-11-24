@@ -48,13 +48,16 @@ public class ServiceTest {
 
     protected Order order;
     protected Menu menu;
+    protected MenuProduct menuProduct1;
+    protected Product product1;
+    protected MenuGroup menuGroup;
 
     @BeforeEach
     void setUp() {
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("bepozMenuGroup"));
-        Product product1 = productRepository.save(new Product("product1", BigDecimal.valueOf(1000)));
+        menuGroup = menuGroupRepository.save(new MenuGroup("bepozMenuGroup"));
+        product1 = productRepository.save(new Product("product1", BigDecimal.valueOf(1000)));
         Product product2 = productRepository.save(new Product("product2", BigDecimal.valueOf(1000)));
-        MenuProduct menuProduct1 = new MenuProduct(product1.getId(), 1);
+        menuProduct1 = new MenuProduct(product1.getId(), 1);
         MenuProduct menuProduct2 = new MenuProduct(product2.getId(), 1);
         menu = menuRepository.save(new Menu("menu", BigDecimal.valueOf(1000),
                 menuGroup.getId(), Arrays.asList(menuProduct1, menuProduct2)));

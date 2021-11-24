@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @SpringBootTest
 @Transactional
-class MenuGroupResponseServiceTest {
+class MenuGroupServiceTest {
 
     @Autowired
     MenuGroupService menuGroupService;
