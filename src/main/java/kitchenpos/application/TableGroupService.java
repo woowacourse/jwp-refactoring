@@ -33,7 +33,7 @@ public class TableGroupService {
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[ERROR] 테이블 그룹에 속할 테이블 수는 적어도 2개 이상이어야 한다.");
         }
 
         final List<Long> orderTableIds = orderTables.stream()
@@ -43,12 +43,12 @@ public class TableGroupService {
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
         if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[ERROR] 테이블 그룹에 속할 테이블은 모두 등록된 테이블이어야 한다.");
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("[ERROR] 테이블 그룹에 속할 테이블들은 모두 비어있어야 한다.");
             }
         }
 
@@ -77,7 +77,7 @@ public class TableGroupService {
 
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[ERROR] 테이블 그룹에 속한 테이블의 주문 상태중 하나라도 COOKING이거나 MEAL이면 해제할 수 없다.");
         }
 
         for (final OrderTable orderTable : orderTables) {
