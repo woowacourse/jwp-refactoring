@@ -32,7 +32,7 @@ public class MenuProductRequest {
 
     public MenuProduct toEntity() {
         return new MenuProduct(
-                new Product(this.productId),
+                this.productId,
                 this.quantity
         );
     }

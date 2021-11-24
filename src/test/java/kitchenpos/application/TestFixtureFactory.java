@@ -39,11 +39,11 @@ public class TestFixtureFactory {
                 .build();
     }
 
-    public static MenuProduct 메뉴상품_매핑_생성(Product product, long quantity) {
+    public static MenuProduct 메뉴상품_매핑_생성(Long productId, long quantity) {
         return new MenuProductBuilder()
                 .seq(null)
                 .menu(null)
-                .product(product)
+                .productId(productId)
                 .quantity(quantity)
                 .build();
     }

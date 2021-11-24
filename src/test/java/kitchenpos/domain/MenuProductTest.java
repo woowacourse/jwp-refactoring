@@ -16,16 +16,16 @@ class MenuProductTest {
         // given
         Long seq = 1L;
         Menu menu = null;
-        Product product = new Product(1L, "바삭치킨", new BigDecimal(16000));
+        Long productId = 1L;
         long quantity = 2;
 
         // when
-        MenuProduct menuProduct = new MenuProduct(seq, menu, product, quantity);
+        MenuProduct menuProduct = new MenuProduct(seq, menu, productId, quantity);
 
         // then
         assertThat(menuProduct.getSeq()).isEqualTo(seq);
         assertThat(menuProduct.getMenu()).isEqualTo(menu);
-        assertThat(menuProduct.getProduct()).isEqualTo(product);
+        assertThat(menuProduct.getProductId()).isEqualTo(productId);
         assertThat(menuProduct.getQuantity()).isEqualTo(quantity);
     }
 
@@ -35,9 +35,9 @@ class MenuProductTest {
         // given
         Long seq = 1L;
         Menu menu = new Menu(1L, "바삭치킨 두 마리", new BigDecimal(20000), 1L, Collections.emptyList());
-        Product product = new Product(1L, "바삭치킨", new BigDecimal(16000));
+        Long productId = 1L;
         long quantity = 2;
-        MenuProduct menuProduct = new MenuProduct(seq, menu, product, quantity);
+        MenuProduct menuProduct = new MenuProduct(seq, menu, productId, quantity);
 
         // when
         Long expectedMenuId = 1L;
@@ -53,9 +53,9 @@ class MenuProductTest {
         // given
         Long seq = 1L;
         Menu menu = null;
-        Product product = new Product(1L, "바삭치킨", new BigDecimal(16000));
+        Long productId = 1L;
         long quantity = 2;
-        MenuProduct menuProduct = new MenuProduct(seq, menu, product, quantity);
+        MenuProduct menuProduct = new MenuProduct(seq, menu, productId, quantity);
 
         Menu connectMenu = new Menu(1L, "바삭치킨 두 마리", new BigDecimal(20000), 1L, Collections.singletonList(menuProduct));
 
@@ -72,15 +72,14 @@ class MenuProductTest {
         // given
         Long seq = 1L;
         Menu menu = new Menu(1L, "바삭치킨 두 마리", new BigDecimal(20000), 1L, Collections.emptyList());
-        Product product = new Product(1L, "바삭치킨", new BigDecimal(16000));
+        Long productId = 1L;
         long quantity = 2;
-        MenuProduct menuProduct = new MenuProduct(seq, menu, product, quantity);
+        MenuProduct menuProduct = new MenuProduct(seq, menu, productId, quantity);
 
         // when
         Long expectedProductId = 1L;
-        Long productId = menuProduct.getProductId();
 
         // then
-        assertThat(productId).isEqualTo(expectedProductId);
+        assertThat(menuProduct.getProductId()).isEqualTo(expectedProductId);
     }
 }

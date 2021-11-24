@@ -34,21 +34,21 @@ class MenuRestControllerTest extends BaseWebMvcTest {
         MenuProduct menuProduct1 = new MenuProductBuilder()
                 .seq(1L)
                 .menu(null)
-                .product(new Product(1L))
+                .productId(1L)
                 .quantity(2L)
                 .build();
 
         MenuProduct menuProduct2 = new MenuProductBuilder()
                 .seq(2L)
                 .menu(null)
-                .product(new Product(1L))
+                .productId(1L)
                 .quantity(1L)
                 .build();
 
         MenuProduct menuProduct3 = new MenuProductBuilder()
                 .seq(3L)
                 .menu(null)
-                .product(new Product(2L))
+                .productId(2L)
                 .quantity(1L)
                 .build();
 

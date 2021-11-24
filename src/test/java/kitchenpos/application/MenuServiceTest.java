@@ -45,7 +45,7 @@ class MenuServiceTest extends BaseServiceTest {
         Product product = TestFixtureFactory.상품_후라이드_치킨();
         savedProduct = productRepository.save(product);
 
-        menuProduct = TestFixtureFactory.메뉴상품_매핑_생성(savedProduct, 1L);
+        menuProduct = TestFixtureFactory.메뉴상품_매핑_생성(savedProduct.getId(), 1L);
 
         menu = TestFixtureFactory.메뉴_후라이드_치킨_한마리(savedMenuGroup.getId(), menuProduct);
     }

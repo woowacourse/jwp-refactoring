@@ -8,7 +8,7 @@ public class MenuProductBuilder {
 
     private Long seq;
     private Menu menu;
-    private Product product;
+    private Long productId;
     private long quantity;
 
     public MenuProductBuilder seq(Long seq) {
@@ -21,8 +21,8 @@ public class MenuProductBuilder {
         return this;
     }
 
-    public MenuProductBuilder product(Product product) {
-        this.product = product;
+    public MenuProductBuilder productId(Long productId) {
+        this.productId = productId;
         return this;
     }
 
@@ -32,6 +32,6 @@ public class MenuProductBuilder {
     }
 
     public MenuProduct build() {
-        return  new MenuProduct(this.seq, this.menu, this.product, this.quantity);
+        return  new MenuProduct(this.seq, this.menu, this.productId, this.quantity);
     }
 }
