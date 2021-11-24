@@ -4,10 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
 import kitchenpos.application.common.factory.OrderTableFactory;
 import kitchenpos.domain.OrderTable;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,9 @@ public class TableServiceIntegrationTest extends IntegrationTest {
 
     @Autowired
     private TableService tableService;
+
+    @Autowired
+    private TableGroupService tableGroupService;
 
     @DisplayName("생성 - 테이블을 생성(등록)할 수 있다.")
     @Test
@@ -50,11 +53,20 @@ public class TableServiceIntegrationTest extends IntegrationTest {
             .containsExactlyInAnyOrder(savedOrderTable1, savedOrderTable2);
     }
 
-    @Disabled
     @DisplayName("빈 테이블로 변경 - 특정 테이블을 빈 테이블로 변경할 수 있다.")
     @Test
     void changeEmpty_success() {
-        //
+        // given
+        OrderTable savedOrderTable = tableService.create(
+            OrderTableFactory.create(5, false)
+        );
+
+        // when
+        savedOrderTable.setEmpty(true);
+        OrderTable changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable);
+
+        // then
+        assertThat(changedOrderTable.isEmpty()).isTrue();
     }
 
     @DisplayName("빈 테이블로 변경 - 존재하지 않는 테이블을 빈 테이블로 변경할 수 없다.")
@@ -68,31 +80,6 @@ public class TableServiceIntegrationTest extends IntegrationTest {
         assertThatThrownBy(() -> tableService.changeEmpty(nonSavedOrderTable.getId(), nonSavedOrderTable))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("[ERROR] 존재하지 않는 테이블을 빈 테이블로 변경할 수 없다.");
-    }
-
-    @Disabled
-    @DisplayName("빈 테이블로 변경 - 빈 상태로 변경하려는 테이블은 어떠한 테이블 그룹에도 속해 있으면 안된다.")
-    @Test
-    void changeEmpty_tableGroup_fail() {
-        // given
-        OrderTable savedOrderTable = tableService.create(
-            OrderTableFactory.create(1, false)
-        );
-
-        // when, then
-        savedOrderTable.setTableGroupId(1L);
-        savedOrderTable.setEmpty(true);
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("[ERROR] 빈 상태로 변경하려는 테이블은 테이블 그룹에 속해 있으면 안된다.");
-    }
-
-    @Disabled
-    @DisplayName("빈 테이블로 변경 - 테이블에 속한 주문의 상태가 COOKING이거나 MEAL이면 빈 상태로 변경할 수 없다.")
-    @Test
-    void changeEmpty_orderStatus_fail() {
-        // given
-
     }
 
     @DisplayName("인원 수 변경 - 특정 테이블의 인원 수를 변경할 수 있다.")
