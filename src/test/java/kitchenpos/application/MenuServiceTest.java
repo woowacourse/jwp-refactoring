@@ -1,46 +1,51 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 
 import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuProductRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
 import kitchenpos.factory.MenuFactory;
 import kitchenpos.factory.MenuProductFactory;
 import kitchenpos.factory.ProductFactory;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @MockitoSettings
 class MenuServiceTest {
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Mock
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private MenuService menuService;
@@ -49,17 +54,22 @@ class MenuServiceTest {
     @Test
     void list() {
         // given
-        MenuProduct menuProduct = MenuProductFactory.builder().build();
-        Menu menu = MenuFactory.builder().build();
-        given(menuDao.findAll()).willReturn(Collections.singletonList(menu));
-        given(menuProductDao.findAllByMenuId(menu.getId())).willReturn(
-            Collections.singletonList(menuProduct));
+        MenuProduct menuProduct = MenuProductFactory.builder()
+            .menuId(1L)
+            .productId(1L)
+            .build();
+        Menu menu = MenuFactory.builder()
+            .id(1L)
+            .menuProducts(menuProduct)
+            .build();
+        given(menuRepository.findAll()).willReturn(Collections.singletonList(menu));
 
         // when
-        List<Menu> result = menuService.list();
+        ThrowingCallable throwingCallable = () -> menuService.list();
 
         // then
-        assertThat(result).containsExactly(menu);
+        assertThatCode(throwingCallable)
+            .doesNotThrowAnyException();
     }
 
     @Nested
@@ -71,7 +81,13 @@ class MenuServiceTest {
 
         private Menu menu;
 
+        private Long savedMenuId;
+
+        private MenuProduct savedMenuProduct;
+
         private Menu savedMenu;
+
+        private MenuRequest menuRequest;
 
         @BeforeEach
         void setUp() {
@@ -90,30 +106,49 @@ class MenuServiceTest {
                 .name("후라이드+후라이드")
                 .price(new BigDecimal(19000))
                 .menuGroupId(1L)
-                .menuProducts(Collections.singletonList(menuProduct))
+                .menuProducts(menuProduct)
+                .build();
+
+            savedMenuId = 1L;
+
+            savedMenuProduct = MenuProductFactory.copy(menuProduct)
+                .menuId(savedMenuId)
                 .build();
 
             savedMenu = MenuFactory.copy(menu)
-                .id(1L)
+                .id(savedMenuId)
+                .menuProducts(savedMenuProduct)
                 .build();
+
+            menuRequest = MenuFactory.dto(menu);
         }
 
         @DisplayName("Menu 를 생성한다")
         @Test
         void create() {
             // given
-            given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(true);
-            given(productDao.findById(menuProduct.getProductId())).willReturn(Optional.of(product));
-            given(menuDao.save(menu)).willReturn(savedMenu);
-            given(menuProductDao.save(menuProduct)).willReturn(menuProduct);
+            given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(true);
+            given(productRepository.findAllById(menu.getProductIds()))
+                .willReturn(Collections.singletonList(product));
+            given(menuRepository.save(any(Menu.class))).willAnswer(
+                invocation -> {
+                    Menu toSave = invocation.getArgument(0);
+                    ReflectionTestUtils.setField(toSave, "id", savedMenuId);
+                    return null;
+                }
+            );
 
             // when
-            Menu result = menuService.create(menu);
+            MenuResponse result = menuService.create(menuRequest);
 
             // then
             assertThat(result)
                 .usingRecursiveComparison()
+                .ignoringFields("menuProducts")
                 .isEqualTo(savedMenu);
+            assertThat(result.getMenuProducts())
+                .usingRecursiveComparison()
+                .isEqualTo(savedMenu.getMenuProducts().toList());
         }
 
         @DisplayName("Menu 생성 실패한다 - price 가 null 인 경우")
@@ -123,33 +158,61 @@ class MenuServiceTest {
             menu = MenuFactory.copy(menu)
                 .price(null)
                 .build();
+            menuRequest = MenuFactory.dto(menu);
 
-            // when // then
-            assertThatThrownBy(() -> menuService.create(menu))
+            // when
+            ThrowingCallable throwingCallable = () -> menuService.create(menuRequest);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
-        @DisplayName("Menu 생성 실패한다 - price 가 음수인 경우")
+        @DisplayName("Menu 생성 실패한다 - price 가 0인 경우")
         @Test
         void createFail_whenPriceIsNegative() {
             // given
             menu = MenuFactory.copy(menu)
-                .price(new BigDecimal(-1))
+                .price(new BigDecimal(0))
                 .build();
+            menuRequest = MenuFactory.dto(menu);
 
-            // when // then
-            assertThatThrownBy(() -> menuService.create(menu))
+            // when
+            ThrowingCallable throwingCallable = () -> menuService.create(menuRequest);
+
+            // then
+            assertThatThrownBy(throwingCallable)
+                .isExactlyInstanceOf(IllegalArgumentException.class);
+        }
+        @DisplayName("Menu 생성 실패한다 - price 가 음수인 경우")
+        @ParameterizedTest(name = "{displayName} : {arguments}")
+        @ValueSource(ints = {-1, -100, -1000000})
+        void createFail_whenPriceIsNegative(int value) {
+            // given
+            menu = MenuFactory.copy(menu)
+                .price(new BigDecimal(value))
+                .build();
+            menuRequest = MenuFactory.dto(menu);
+
+            // when
+            ThrowingCallable throwingCallable = () -> menuService.create(menuRequest);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("Menu 생성 실패한다 - menuGroupId 에 해당하는 menuGroup 이 존재하지 않는 경우")
         @Test
-        void createFail_whenMenuGroupIsNotExising() {
+        void createFail_whenMenuGroupIsNotExisting() {
             // given
-            given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(false);
+            given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(false);
 
-            // when // then
-            assertThatThrownBy(() -> menuService.create(menu))
+            // when
+            ThrowingCallable throwingCallable = () -> menuService.create(menuRequest);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -157,11 +220,14 @@ class MenuServiceTest {
         @Test
         void createFail_whenProductDoesNotExist() {
             // given
-            given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(true);
-            given(productDao.findById(menuProduct.getProductId())).willReturn(Optional.empty());
+            given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(true);
+            given(productRepository.findAllById(menu.getProductIds())).willReturn(Collections.emptyList());
 
-            // when // then
-            assertThatThrownBy(() -> menuService.create(menu))
+            // when
+            ThrowingCallable throwingCallable = () -> menuService.create(menuRequest);
+
+            //then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -177,13 +243,18 @@ class MenuServiceTest {
                 .build();
             menu = MenuFactory.copy(menu)
                 .price(new BigDecimal(1001))
-                .menuProducts(Collections.singletonList(menuProduct))
+                .menuProducts(menuProduct)
                 .build();
-            given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(true);
-            given(productDao.findById(menuProduct.getProductId())).willReturn(Optional.of(product));
+            menuRequest = MenuFactory.dto(menu);
+            given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(true);
+            given(productRepository.findAllById(menu.getProductIds()))
+                .willReturn(Collections.singletonList(product));
 
-            // when // then
-            assertThatThrownBy(() -> menuService.create(menu))
+            // when
+            ThrowingCallable throwingCallable = () -> menuService.create(menuRequest);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
     }

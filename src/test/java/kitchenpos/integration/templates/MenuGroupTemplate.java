@@ -1,27 +1,33 @@
 package kitchenpos.integration.templates;
 
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MenuGroupTemplate extends IntegrationTemplate {
+public class MenuGroupTemplate {
 
     public static final String MENU_GROUP_URL = "/api/menu-groups";
 
-    public ResponseEntity<MenuGroup> create(String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
+    private final IntegrationTemplate integrationTemplate;
 
-        return post(
+    public MenuGroupTemplate(IntegrationTemplate integrationTemplate) {
+        this.integrationTemplate = integrationTemplate;
+    }
+
+    public ResponseEntity<MenuGroup> create(String name) {
+        MenuGroupRequest menuGroupRequest = new MenuGroupRequest(null, name);
+
+        return integrationTemplate.post(
             MENU_GROUP_URL,
-            menuGroup,
+            menuGroupRequest,
             MenuGroup.class
         );
     }
 
     public ResponseEntity<MenuGroup[]> list() {
-        return get(
+        return integrationTemplate.get(
             MENU_GROUP_URL,
             MenuGroup[].class
         );

@@ -23,6 +23,24 @@
 
 ## 요구 사항
 
+- [x] setter 정리
+- [x] ui 레이어어와 service 레이 분리
+  - [x] Product
+  - [x] OrderTable
+  - [x] TableGroup
+  - [x] Order
+  - [x] Menu
+  - [x] MenuGroup
+- [x] JPA 로 마이그레이션, Repository 적용
+
+### 도메인 로직 분리
+- [x] MenuGroupService : 로직이 간단하여 분리할 것이 없음.
+- [x] MenuService
+- [x] OrderService
+- [x] ProductService
+- [x] TableGroupService
+- [x] TableService
+
 ### 통합 테스트
 - [x] /api/menus POST success
 - [x] /api/menus GET success

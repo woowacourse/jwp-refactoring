@@ -2,6 +2,7 @@ package kitchenpos.factory;
 
 import java.math.BigDecimal;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductRequest;
 
 public class ProductFactory {
 
@@ -31,6 +32,10 @@ public class ProductFactory {
         );
     }
 
+    public static ProductRequest dto(Product product) {
+        return new ProductRequest(product.getId(), product.getName(), product.getPrice());
+    }
+
     public ProductFactory id(Long id) {
         this.id = id;
         return this;
@@ -47,10 +52,6 @@ public class ProductFactory {
     }
 
     public Product build() {
-        Product product = new Product();
-        product.setId(id);
-        product.setName(name);
-        product.setPrice(price);
-        return product;
+        return new Product(id, name, price);
     }
 }

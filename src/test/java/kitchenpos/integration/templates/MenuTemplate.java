@@ -1,40 +1,47 @@
 package kitchenpos.integration.templates;
 
 import java.math.BigDecimal;
-import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.factory.MenuFactory;
+import kitchenpos.domain.MenuProducts;
+import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
+import kitchenpos.factory.MenuProductFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MenuTemplate extends IntegrationTemplate {
+public class MenuTemplate {
 
     public static final String MENU_URL = "/api/menus";
 
-    public ResponseEntity<Menu> create(String name,
-                                       BigDecimal price,
-                                       Long menuGroupId,
-                                       List<MenuProduct> menuProducts) {
-        Menu menu = MenuFactory.builder()
-            .name(name)
-            .price(price)
-            .menuGroupId(menuGroupId)
-            .menuProducts(menuProducts)
-            .build();
+    private final IntegrationTemplate integrationTemplate;
 
-        return post(
+    public MenuTemplate(IntegrationTemplate integrationTemplate) {
+        this.integrationTemplate = integrationTemplate;
+    }
+
+    public ResponseEntity<MenuResponse> create(String name,
+                                               BigDecimal price,
+                                               Long menuGroupId,
+                                               MenuProducts menuProducts) {
+        MenuRequest menuRequest = new MenuRequest(
+            null,
+            name,
+            price,
+            menuGroupId,
+            MenuProductFactory.dtoList(menuProducts)
+        );
+
+        return integrationTemplate.post(
             MENU_URL,
-            menu,
-            Menu.class
+            menuRequest,
+            MenuResponse.class
         );
     }
 
-    public ResponseEntity<Menu[]> list() {
-        return get(
+    public ResponseEntity<MenuResponse[]> list() {
+        return integrationTemplate.get(
             MENU_URL,
-            Menu[].class
+            MenuResponse[].class
         );
     }
 }

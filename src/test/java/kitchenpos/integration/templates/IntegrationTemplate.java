@@ -1,6 +1,5 @@
 package kitchenpos.integration.templates;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -10,8 +9,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class IntegrationTemplate {
 
-    @Autowired
-    protected TestRestTemplate testRestTemplate;
+    private final TestRestTemplate testRestTemplate;
+
+    public IntegrationTemplate(TestRestTemplate testRestTemplate) {
+        this.testRestTemplate = testRestTemplate;
+    }
 
     public <T> ResponseEntity<T> get(String url, Class<T> responseType) {
         return testRestTemplate.getForEntity(
@@ -20,7 +22,7 @@ public class IntegrationTemplate {
         );
     }
 
-    public <T> ResponseEntity<T> post(String url, T request, Class<T> responseType) {
+    public <T, P> ResponseEntity<P> post(String url, T request, Class<P> responseType) {
         return testRestTemplate.postForEntity(
             url,
             request,
@@ -28,8 +30,8 @@ public class IntegrationTemplate {
         );
     }
 
-    public <T, P> ResponseEntity<T> put(String url, P pathVariable, T request,
-                                        Class<T> responseType) {
+    public <T, P, E> ResponseEntity<P> put(String url, E pathVariable, T request,
+                                        Class<P> responseType) {
         return testRestTemplate.exchange(
             url,
             HttpMethod.PUT,

@@ -2,14 +2,18 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
-import kitchenpos.dao.ProductDao;
+import java.util.Collections;
+import java.util.List;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductRequest;
+import kitchenpos.dto.ProductResponse;
 import kitchenpos.factory.ProductFactory;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,51 +21,77 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @MockitoSettings
 class ProductServiceTest {
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private ProductService productService;
 
+    @DisplayName("모든 Product 를 조회한다")
     @Test
     void list() {
+        // given
+        Product product = ProductFactory.builder()
+            .id(1L)
+            .name("닭")
+            .price(new BigDecimal(1000))
+            .build();
+        given(productRepository.findAll()).willReturn(Collections.singletonList(product));
+
         // when
-        productService.list();
+        final List<ProductResponse> result = productService.list();
 
         // then
-        verify(productDao, times(1)).findAll();
+        assertThat(result).first()
+            .usingRecursiveComparison()
+            .isEqualTo(product);
     }
 
     @Nested
     class CreateTest {
 
-        Product product;
+        private Product product;
 
-        Product savedProduct;
+        private Long savedProductId;
+
+        private Product savedProduct;
+
+        private ProductRequest productRequest;
 
         @BeforeEach
         void setUp() {
             product = ProductFactory.builder()
                 .price(new BigDecimal(17000))
                 .build();
+
+            savedProductId = 1L;
+
             savedProduct = ProductFactory.copy(product)
                 .id(1L)
                 .build();
 
+            productRequest = ProductFactory.dto(product);
         }
 
         @DisplayName("Product 를 생성한다")
         @Test
         void create() {
             // given
-            given(productDao.save(product)).willReturn(savedProduct);
+            given(productRepository.save(any(Product.class))).willAnswer(
+                invocation -> {
+                    Product toSave = invocation.getArgument(0);
+                    ReflectionTestUtils.setField(toSave, "id", savedProductId);
+                    return null;
+                }
+            );
 
             // when
-            Product result = productService.create(product);
+            ProductResponse result = productService.create(productRequest);
 
             // then
             assertThat(result)
@@ -76,9 +106,13 @@ class ProductServiceTest {
             product = ProductFactory.copy(product)
                 .price(null)
                 .build();
+            productRequest = ProductFactory.dto(product);
 
-            // when // then
-            assertThatThrownBy(() -> productService.create(product))
+            // when
+            ThrowingCallable throwingCallable = () -> productService.create(productRequest);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -89,9 +123,13 @@ class ProductServiceTest {
             product = ProductFactory.copy(product)
                 .price(new BigDecimal(-1))
                 .build();
+            productRequest = ProductFactory.dto(product);
 
-            // when // given
-            assertThatThrownBy(() -> productService.create(product))
+            // when
+            ThrowingCallable throwingCallable = () -> productService.create(productRequest);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
     }

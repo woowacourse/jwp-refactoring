@@ -1,32 +1,35 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderLineItemRepository;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderRequest;
+import kitchenpos.dto.OrderResponse;
 import kitchenpos.factory.MenuFactory;
 import kitchenpos.factory.MenuProductFactory;
 import kitchenpos.factory.OrderFactory;
 import kitchenpos.factory.OrderLineItemFactory;
 import kitchenpos.factory.OrderTableFactory;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -34,21 +37,22 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @MockitoSettings
 class OrderServiceTest {
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @InjectMocks
     private OrderService orderService;
@@ -57,84 +61,109 @@ class OrderServiceTest {
     @Test
     void list() {
         // given
-        OrderLineItem orderLineItem = OrderLineItemFactory.builder().build();
-        Order order = OrderFactory.builder().build();
-        given(orderDao.findAll()).willReturn(Collections.singletonList(order));
-        given(orderLineItemDao.findAllByOrderId(order.getId())).willReturn(
-            Collections.singletonList(orderLineItem));
+        Order order = OrderFactory.builder()
+            .orderLineItems(OrderLineItemFactory.builder().build())
+            .build();
+        given(orderRepository.findAll()).willReturn(Collections.singletonList(order));
 
         // when
-        List<Order> result = orderService.list();
+        ThrowingCallable throwingCallable = () -> orderService.list();
 
         // then
-        assertThat(result).containsExactly(order);
+        assertThatCode(throwingCallable)
+            .doesNotThrowAnyException();
     }
 
     @Nested
     class CreateTest {
 
-        MenuProduct menuProduct;
-        Menu menu;
-        List<Long> menuIds;
-        OrderLineItem orderLineItem;
-        OrderTable orderTable;
-        Order order;
-        Order savedOrder;
+        private List<Long> menuIds;
+
+        private OrderTable orderTable;
+
+        private Order order;
+
+        private Long savedOrderId;
+
+        private Order savedOrder;
+
+        private OrderRequest orderRequest;
 
         @BeforeEach
         void setUp() {
-            menuProduct = MenuProductFactory.builder()
+            MenuProduct menuProduct = MenuProductFactory.builder()
                 .productId(1L)
                 .quantity(1L)
                 .build();
 
-            menu = MenuFactory.builder()
+            Menu menu = MenuFactory.builder()
                 .id(1L)
                 .name("후라이드+후라이드")
                 .price(new BigDecimal(19000))
                 .menuGroupId(1L)
-                .menuProducts(Collections.singletonList(menuProduct))
+                .menuProducts(menuProduct)
                 .build();
+
             menuIds = Collections.singletonList(menu.getId());
 
-            orderLineItem = OrderLineItemFactory.builder()
+            OrderLineItem orderLineItem = OrderLineItemFactory.builder()
+                .seq(1L)
+                .orderId(1L)
                 .menuId(menu.getId())
                 .quantity(1L)
                 .build();
 
             orderTable = OrderTableFactory.builder()
+                .id(1L)
                 .numberOfGuests(2)
                 .empty(false)
                 .build();
 
             order = OrderFactory.builder()
                 .orderTableId(orderTable.getId())
-                .orderLineItems(Collections.singletonList(orderLineItem))
+                .orderStatus(OrderStatus.COOKING)
+                .orderedTime(LocalDateTime.now())
+                .orderLineItems(orderLineItem)
                 .build();
 
+            savedOrderId = 1L;
+
             savedOrder = OrderFactory.copy(order)
-                .id(1L)
-                .orderStatus(OrderStatus.COOKING.name())
+                .id(savedOrderId)
+                .orderStatus(OrderStatus.COOKING)
                 .build();
+
+            orderRequest = OrderFactory.dto(order);
         }
 
         @DisplayName("Order 를 생성한다")
         @Test
         void create() {
             // given
-            given(menuDao.countByIdIn(menuIds)).willReturn(1L);
-            given(orderTableDao.findById(order.getOrderTableId())).willReturn(
-                Optional.of(orderTable));
-            given(orderDao.save(order)).willReturn(savedOrder);
-            given(orderLineItemDao.save(orderLineItem)).willReturn(orderLineItem);
+            given(menuRepository.countByIdIn(menuIds)).willReturn(1L);
+            given(orderTableRepository.findById(order.getOrderTableId()))
+                .willReturn(Optional.of(orderTable));
+            given(orderRepository.save(any(Order.class))).willAnswer(
+                invocation -> {
+                    Order toSave = invocation.getArgument(0);
+                    ReflectionTestUtils.setField(toSave, "id", savedOrderId);
+                    return null;
+                }
+            );
+            given(orderLineItemRepository.saveAll(anyList())).willReturn(anyList());
 
             // when
-            Order result = orderService.create(order);
+            OrderResponse result = orderService.create(orderRequest);
 
             // then
             assertThat(result)
                 .usingRecursiveComparison()
+                .ignoringFields("orderedTime", "orderLineItems")
+                .ignoringFieldsOfTypes(LocalDateTime.class)
                 .isEqualTo(savedOrder);
+            assertThat(result.getOrderLineItems())
+                .usingRecursiveComparison()
+                .isEqualTo(savedOrder.getOrderLineItems().toList());
         }
 
         @DisplayName("Order 생성 실패한다 - orderLineItems 가 비어있는 경우")
@@ -142,11 +171,15 @@ class OrderServiceTest {
         void createFail_whenOrderLineItemDoesNotExist() {
             // given
             order = OrderFactory.copy(order)
-                .orderLineItems(Collections.emptyList())
+                .orderLineItems()
                 .build();
+            orderRequest = OrderFactory.dto(order);
 
-            // when // then
-            assertThatThrownBy(() -> orderService.create(order))
+            // when
+            ThrowingCallable throwingCallable = () -> orderService.create(orderRequest);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -154,10 +187,15 @@ class OrderServiceTest {
         @Test
         void createFail_whenOrderLineItemCountIsNotEqualToMenuCount() {
             // given
-            given(menuDao.countByIdIn(menuIds)).willReturn(0L);
+            given(orderTableRepository.findById(order.getOrderTableId()))
+                .willReturn(Optional.of(orderTable));
+            given(menuRepository.countByIdIn(menuIds)).willReturn(0L);
 
-            // when // then
-            assertThatThrownBy(() -> orderService.create(order))
+            // when
+            ThrowingCallable throwingCallable = () -> orderService.create(orderRequest);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -165,11 +203,13 @@ class OrderServiceTest {
         @Test
         void createFail_whenOrderTableDoesNotExist() {
             // given
-            given(menuDao.countByIdIn(menuIds)).willReturn(1L);
-            given(orderTableDao.findById(order.getOrderTableId())).willReturn(Optional.empty());
+            given(orderTableRepository.findById(order.getOrderTableId())).willReturn(Optional.empty());
 
-            // when // then
-            assertThatThrownBy(() -> orderService.create(order))
+            // when
+            ThrowingCallable throwingCallable = () -> orderService.create(orderRequest);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -180,12 +220,14 @@ class OrderServiceTest {
             orderTable = OrderTableFactory.copy(orderTable)
                 .empty(true)
                 .build();
-            given(menuDao.countByIdIn(menuIds)).willReturn(1L);
-            given(orderTableDao.findById(order.getOrderTableId())).willReturn(
-                Optional.of(orderTable));
+            given(orderTableRepository.findById(order.getOrderTableId()))
+                .willReturn(Optional.of(orderTable));
 
-            // when // then
-            assertThatThrownBy(() -> orderService.create(order))
+            // when
+            ThrowingCallable throwingCallable = () -> orderService.create(orderRequest);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -193,59 +235,52 @@ class OrderServiceTest {
     @Nested
     class ChangeTest {
 
-        Long orderId;
+        private Long orderId;
 
-        List<OrderLineItem> orderLineItems;
+        private Order order;
 
-        Order savedOrder;
-
-        Order order;
+        private OrderRequest orderRequest;
 
         @BeforeEach
         void setUp() {
             orderId = 1L;
 
-            orderLineItems = Collections.singletonList(mock(OrderLineItem.class));
-
-            savedOrder = OrderFactory.builder()
+            order = OrderFactory.builder()
                 .id(orderId)
                 .orderTableId(1L)
-                .orderStatus(OrderStatus.COOKING.name())
+                .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.now())
-                .orderLineItems(orderLineItems)
+                .orderLineItems(OrderLineItemFactory.builder().build())
                 .build();
 
-            order = OrderFactory.copy(savedOrder)
-                .orderStatus(OrderStatus.MEAL.name())
-                .build();
+            orderRequest = OrderFactory.dto(order);
         }
 
         @DisplayName("Order 의 상태를 변경한다")
         @Test
         void changeOrderStatus() {
             // given
-            given(orderDao.findById(orderId)).willReturn(Optional.of(savedOrder));
-            given(orderLineItemDao.findAllByOrderId(orderId)).willReturn(orderLineItems);
+            given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
 
             // when
-            Order result = orderService.changeOrderStatus(orderId, order);
+            OrderResponse result = orderService.changeOrderStatus(orderId, orderRequest);
 
             // then
-            verify(orderDao, times(1)).save(savedOrder);
-            assertThat(result)
-                .usingRecursiveComparison()
-                .ignoringExpectedNullFields()
-                .isEqualTo(order);
+            assertThat(result.getOrderStatus()).isEqualTo(orderRequest.getOrderStatus());
         }
 
         @DisplayName("Order 상태 변경 실패한다 - orderId 에 대한 order 가 존재하지 않는 경우")
         @Test
         void changeOrderStatusFail_whenOrderDoesNotExist() {
             // given
-            given(orderDao.findById(orderId)).willReturn(Optional.empty());
+            given(orderRepository.findById(orderId)).willReturn(Optional.empty());
 
-            // when // then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, order))
+            // when
+            ThrowingCallable throwingCallable =
+                () -> orderService.changeOrderStatus(orderId, orderRequest);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -253,13 +288,17 @@ class OrderServiceTest {
         @Test
         void changeOrderStatusFail_whenOrderIsAlreadyCompleted() {
             // given
-            savedOrder = OrderFactory.copy(savedOrder)
-                .orderStatus(OrderStatus.COMPLETION.name())
+            order = OrderFactory.copy(order)
+                .orderStatus(OrderStatus.COMPLETION)
                 .build();
-            given(orderDao.findById(orderId)).willReturn(Optional.of(savedOrder));
+            given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
 
-            // when // then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, order))
+            // when
+            ThrowingCallable throwingCallable =
+                () -> orderService.changeOrderStatus(orderId, orderRequest);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
     }

@@ -1,21 +1,23 @@
 package kitchenpos.factory;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.dto.TableGroupResponse;
 
 public class TableGroupFactory {
 
     private Long id;
     private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
+    private OrderTables orderTables;
 
     private TableGroupFactory() {
 
     }
 
-    private TableGroupFactory(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+    private TableGroupFactory(Long id, LocalDateTime createdDate, OrderTables orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
@@ -33,6 +35,22 @@ public class TableGroupFactory {
         );
     }
 
+    public static TableGroupFactory copy(TableGroupResponse tableGroupResponse) {
+        return new TableGroupFactory(
+            tableGroupResponse.getId(),
+            tableGroupResponse.getCreatedDate(),
+            OrderTableFactory.copyList(tableGroupResponse.getOrderTables())
+        );
+    }
+
+    public static TableGroupRequest dto(TableGroup tableGroup) {
+        return new TableGroupRequest(
+            tableGroup.getId(),
+            tableGroup.getCreatedDate(),
+            OrderTableFactory.dtoList(tableGroup.getOrderTables())
+        );
+    }
+
     public TableGroupFactory id(Long id) {
         this.id = id;
         return this;
@@ -43,16 +61,12 @@ public class TableGroupFactory {
         return this;
     }
 
-    public TableGroupFactory orderTables(List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+    public TableGroupFactory orderTables(OrderTable... orderTables) {
+        this.orderTables = new OrderTables(orderTables);
         return this;
     }
 
     public TableGroup build() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(id);
-        tableGroup.setCreatedDate(createdDate);
-        tableGroup.setOrderTables(orderTables);
-        return tableGroup;
+        return new TableGroup(id, createdDate, orderTables);
     }
 }

@@ -5,7 +5,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableResponse;
+import kitchenpos.dto.TableGroupResponse;
+import kitchenpos.factory.OrderTableFactory;
+import kitchenpos.factory.TableGroupFactory;
 import kitchenpos.integration.annotation.IntegrationTest;
 import kitchenpos.integration.templates.OrderTableTemplate;
 import kitchenpos.integration.templates.TableGroupTemplate;
@@ -25,36 +30,41 @@ class TableGroupIntegrationTest {
     @Autowired
     OrderTableTemplate orderTableTemplate;
 
-    private OrderTable orderTable;
+    private OrderTable orderTable1;
 
-    private OrderTable secondOrderTable;
+    private OrderTable orderTable2;
+
+    private OrderTableResponse orderTableResponse1;
+
+    private OrderTableResponse orderTableResponse2;
 
     @BeforeEach
     void setUp() {
-        orderTable = orderTableTemplate
+        orderTableResponse1 = orderTableTemplate
             .create(
                 0,
                 true)
             .getBody();
-        secondOrderTable = orderTableTemplate
+        orderTableResponse2 = orderTableTemplate
             .create(
                 0,
                 true)
             .getBody();
+
+        orderTable1 = OrderTableFactory.copy(orderTableResponse1);
+
+        orderTable2 = OrderTableFactory.copy(orderTableResponse2);
     }
 
     @DisplayName("TableGroup 을 생성한다")
     @Test
     void create() {
         // given // when
-        ResponseEntity<TableGroup> tableGroupResponseEntity = tableGroupTemplate
-            .create(
-                orderTable,
-                secondOrderTable
-            );
-        HttpStatus statusCode = tableGroupResponseEntity.getStatusCode();
-        URI location = tableGroupResponseEntity.getHeaders().getLocation();
-        TableGroup body = tableGroupResponseEntity.getBody();
+        ResponseEntity<TableGroupResponse> tableGroupResponse = tableGroupTemplate
+            .create(new OrderTables(orderTable1, orderTable2));
+        HttpStatus statusCode = tableGroupResponse.getStatusCode();
+        URI location = tableGroupResponse.getHeaders().getLocation();
+        TableGroupResponse body = tableGroupResponse.getBody();
 
         // then
         assertThat(statusCode).isEqualTo(HttpStatus.CREATED);
@@ -63,8 +73,8 @@ class TableGroupIntegrationTest {
         assertThat(body.getOrderTables())
             .extracting("id")
             .contains(
-                orderTable.getId(),
-                secondOrderTable.getId()
+                orderTable1.getId(),
+                orderTable2.getId()
             );
         assertThat(location).isEqualTo(URI.create(TABLE_GROUP_URL + "/" + body.getId()));
     }
@@ -73,12 +83,11 @@ class TableGroupIntegrationTest {
     @Test
     void ungroup() {
         // given
-        TableGroup createdTableGroup = tableGroupTemplate
-            .create(
-                orderTable,
-                secondOrderTable)
+        TableGroupResponse tableGroupResponse = tableGroupTemplate
+            .create(new OrderTables(orderTable1, orderTable2))
             .getBody();
-        assertThat(createdTableGroup).isNotNull();
+        assertThat(tableGroupResponse).isNotNull();
+        TableGroup createdTableGroup = TableGroupFactory.copy(tableGroupResponse).build();
 
         // when
         ResponseEntity<Void> responseEntity = tableGroupTemplate

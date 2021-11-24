@@ -2,32 +2,36 @@ package kitchenpos.integration.templates;
 
 import java.math.BigDecimal;
 import kitchenpos.domain.Product;
-import kitchenpos.factory.ProductFactory;
+import kitchenpos.dto.ProductRequest;
+import kitchenpos.dto.ProductResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProductTemplate extends IntegrationTemplate {
+public class ProductTemplate {
 
     public static final String PRODUCT_URL = "/api/products";
 
-    public ResponseEntity<Product> create(String name, BigDecimal price) {
-        Product product = ProductFactory.builder()
-            .name(name)
-            .price(price)
-            .build();
+    private final IntegrationTemplate integrationTemplate;
 
-        return post(
+    public ProductTemplate(IntegrationTemplate integrationTemplate) {
+        this.integrationTemplate = integrationTemplate;
+    }
+
+    public ResponseEntity<Product> create(String name, BigDecimal price) {
+        ProductRequest productRequest = new ProductRequest(null, name, price);
+
+        return integrationTemplate.post(
             PRODUCT_URL,
-            product,
+            productRequest,
             Product.class
         );
     }
 
-    public ResponseEntity<Product[]> list() {
-        return get(
+    public ResponseEntity<ProductResponse[]> list() {
+        return integrationTemplate.get(
             PRODUCT_URL,
-            Product[].class
+            ProductResponse[].class
         );
     }
 }
