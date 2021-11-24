@@ -26,6 +26,7 @@ import kitchenpos.application.dto.request.TableRequestDto;
 import kitchenpos.application.dto.response.MenuGroupResponseDto;
 import kitchenpos.application.dto.response.MenuResponseDto;
 import kitchenpos.application.dto.response.OrdersResponseDto;
+import kitchenpos.application.dto.response.OrdersStatusResponseDto;
 import kitchenpos.application.dto.response.ProductResponseDto;
 import kitchenpos.application.dto.response.TableGroupResponseDto;
 import kitchenpos.application.dto.response.TableResponseDto;
@@ -268,8 +269,10 @@ class TableGroupServiceIntegrationTest extends IntegrationTest {
             null
         );
 
-        ordersService.changeOrderStatus(ordersStatusRequestDto1);
-        ordersService.changeOrderStatus(ordersStatusRequestDto2);
+        OrdersStatusResponseDto ordersStatusResponseDto1 = ordersService
+            .changeOrderStatus(ordersStatusRequestDto1);
+        OrdersStatusResponseDto ordersStatusResponseDto2 = ordersService
+            .changeOrderStatus(ordersStatusRequestDto2);
 
         TableEmptyRequestDto tableEmptyRequestDto1 = new TableEmptyRequestDto(
             tableResponseDto1.getId(),
@@ -284,11 +287,11 @@ class TableGroupServiceIntegrationTest extends IntegrationTest {
         tableService.changeEmpty(tableEmptyRequestDto2);
 
         OrdersStatusRequestDto ordersStatusRequestDto3 = new OrdersStatusRequestDto(
-            ordersResponseDto1.getId(),
+            ordersStatusResponseDto1.getOrderTableId(),
             COOKING.name()
         );
         OrdersStatusRequestDto ordersStatusRequestDto4 = new OrdersStatusRequestDto(
-            ordersResponseDto2.getId(),
+            ordersStatusResponseDto2.getOrderTableId(),
             COOKING.name()
         );
 
@@ -352,8 +355,10 @@ class TableGroupServiceIntegrationTest extends IntegrationTest {
             null
         );
 
-        ordersService.changeOrderStatus(ordersStatusRequestDto1);
-        ordersService.changeOrderStatus(ordersStatusRequestDto2);
+        OrdersStatusResponseDto ordersStatusResponseDto1 = ordersService
+            .changeOrderStatus(ordersStatusRequestDto1);
+        OrdersStatusResponseDto ordersStatusResponseDto2 = ordersService
+            .changeOrderStatus(ordersStatusRequestDto2);
 
         TableEmptyRequestDto tableEmptyRequestDto1 = new TableEmptyRequestDto(
             tableResponseDto1.getId(),
@@ -368,11 +373,11 @@ class TableGroupServiceIntegrationTest extends IntegrationTest {
         tableService.changeEmpty(tableEmptyRequestDto2);
 
         OrdersStatusRequestDto ordersStatusRequestDto3 = new OrdersStatusRequestDto(
-            ordersResponseDto1.getId(),
+            ordersStatusResponseDto1.getOrderTableId(),
             MEAL.name()
         );
         OrdersStatusRequestDto ordersStatusRequestDto4 = new OrdersStatusRequestDto(
-            ordersResponseDto2.getId(),
+            ordersStatusResponseDto2.getOrderTableId(),
             MEAL.name()
         );
 

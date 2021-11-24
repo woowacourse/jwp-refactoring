@@ -14,6 +14,6 @@ public class OrdersDtoAssembler {
     }
 
     public static OrdersStatusResponseDto ordersStatusResponseDto(Orders orders) {
-        return new OrdersStatusResponseDto(orders.getOrderStatus());
+        return new OrdersStatusResponseDto(orders.getOrderTableId(), orders.getOrderStatus());
     }
 }

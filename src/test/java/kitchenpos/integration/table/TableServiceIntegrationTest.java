@@ -23,6 +23,7 @@ import kitchenpos.application.dto.request.TableRequestDto;
 import kitchenpos.application.dto.response.MenuGroupResponseDto;
 import kitchenpos.application.dto.response.MenuResponseDto;
 import kitchenpos.application.dto.response.OrdersResponseDto;
+import kitchenpos.application.dto.response.OrdersStatusResponseDto;
 import kitchenpos.application.dto.response.ProductResponseDto;
 import kitchenpos.application.dto.response.TableEmptyResponseDto;
 import kitchenpos.application.dto.response.TableNumberOfGuestsResponseDto;
@@ -108,10 +109,11 @@ class TableServiceIntegrationTest extends IntegrationTest {
             ordersResponseDto.getId(),
             COMPLETION.name()
         );
-        ordersService.changeOrderStatus(ordersStatusRequestDto);
+        OrdersStatusResponseDto ordersStatusResponseDto = ordersService
+            .changeOrderStatus(ordersStatusRequestDto);
 
         TableEmptyRequestDto requestDto = new TableEmptyRequestDto(
-            tableResponseDto.getId(),
+            ordersStatusResponseDto.getOrderTableId(),
             TRUE
         );
 

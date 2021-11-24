@@ -80,11 +80,8 @@ public class TableGroupService {
         List<OrderTable> orderTables = tableRepository
             .findAllByTableGroupId(requestDto.getId());
 
-        List<Long> orderTableIds = orderTables.stream()
-            .map(OrderTable::getId)
-            .collect(toList());
-        if (ordersRepository.existsByOrderTableIdInAndOrderStatusIn(
-            orderTableIds,
+        if (ordersRepository.existsByOrderTableInAndOrderStatusIn(
+            orderTables,
             Arrays.asList(COOKING.name(), MEAL.name()))) {
             throw new IllegalArgumentException();
         }

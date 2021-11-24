@@ -74,6 +74,10 @@ public class Orders {
         return orderedTime;
     }
 
+    public Long getOrderTableId() {
+        return orderTable.getId();
+    }
+
     public OrderTable getOrderTable() {
         return orderTable;
     }
