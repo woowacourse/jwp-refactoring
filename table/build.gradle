@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+}
+
+group 'camp.nextstep.edu'
+version '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+}
+
+test {
+    useJUnitPlatform()
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+

@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+}
+
+group 'camp.nextstep.edu'
+version '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':menu')
+    implementation project(':menu-group')
+    implementation project(':menu-price')
+    implementation project(':order')
+    implementation project(':product')
+    implementation project(':table')
+    implementation project(':system-common')
+
+    implementation 'org.flywaydb:flyway-core'
+}
+
+test {
+    useJUnitPlatform()
+}

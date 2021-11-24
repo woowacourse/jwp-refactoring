@@ -1,6 +1,6 @@
 ###
-POST {{host}}/api/orders
-Content-Type: application/json
+POST {{host}}/kitchenpos.api/orders
+Content-Type: kitchenpos.menu.application/json
 
 {
   "orderTableId": 1,
@@ -13,19 +13,19 @@ Content-Type: application/json
 }
 
 ###
-GET {{host}}/api/orders
+GET {{host}}/kitchenpos.api/orders
 
 ###
-PUT {{host}}/api/orders/1/order-status
-Content-Type: application/json
+PUT {{host}}/kitchenpos.api/orders/1/order-status
+Content-Type: kitchenpos.menu.application/json
 
 {
   "orderStatus": "MEAL"
 }
 
 ###
-PUT {{host}}/api/orders/1/order-status
-Content-Type: application/json
+PUT {{host}}/kitchenpos.api/orders/1/order-status
+Content-Type: kitchenpos.menu.application/json
 
 {
   "orderStatus": "COMPLETION"
