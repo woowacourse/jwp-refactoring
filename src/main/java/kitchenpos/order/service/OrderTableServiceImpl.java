@@ -1,10 +1,11 @@
-package kitchenpos.ordertable.service;
+package kitchenpos.order.service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.ordertable.service.OrderTableService;
 import kitchenpos.ordertable.service.dto.OrderTableRequest;
 import kitchenpos.ordertable.service.dto.OrderTableResponse;
 import kitchenpos.ordertable.domain.OrderTable;
@@ -14,12 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @Service
-public class TableService {
+public class OrderTableServiceImpl implements OrderTableService {
 
     private final OrderTableRepository orderTableRepository;
     private final OrderRepository orderRepository;
 
-    public TableService(final OrderTableRepository orderTableRepository, final  OrderRepository orderRepository) {
+    public OrderTableServiceImpl(final OrderTableRepository orderTableRepository, final  OrderRepository orderRepository) {
         this.orderTableRepository = orderTableRepository;
         this.orderRepository = orderRepository;
     }

@@ -2,7 +2,7 @@ package kitchenpos.ordertable.ui;
 
 import java.net.URI;
 import java.util.List;
-import kitchenpos.ordertable.service.TableService;
+import kitchenpos.ordertable.service.OrderTableService;
 import kitchenpos.ordertable.service.dto.OrderTableRequest;
 import kitchenpos.ordertable.service.dto.OrderTableResponse;
 import org.springframework.http.ResponseEntity;
@@ -19,15 +19,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TableRestController {
 
-    private final TableService tableService;
+    private final OrderTableService orderTableServiceImpl;
 
-    public TableRestController(final TableService tableService) {
-        this.tableService = tableService;
+    public TableRestController(final OrderTableService orderTableServiceImpl) {
+        this.orderTableServiceImpl = orderTableServiceImpl;
     }
 
     @PostMapping
     public ResponseEntity<OrderTableResponse> create(@RequestBody final OrderTableRequest orderTable) {
-        final OrderTableResponse created = tableService.create(orderTable);
+        final OrderTableResponse created = orderTableServiceImpl.create(orderTable);
         final URI uri = URI.create("/api/tables/" + created.getId());
         return ResponseEntity.created(uri)
             .body(created);
@@ -35,7 +35,7 @@ public class TableRestController {
 
     @GetMapping
     public ResponseEntity<List<OrderTableResponse>> list() {
-        return ResponseEntity.ok(tableService.list());
+        return ResponseEntity.ok(orderTableServiceImpl.list());
     }
 
     @PutMapping("/{orderTableId}/empty")
@@ -43,7 +43,7 @@ public class TableRestController {
         @PathVariable final Long orderTableId,
         @RequestParam final Boolean empty
     ) {
-        return ResponseEntity.ok(tableService.changeEmpty(orderTableId, empty));
+        return ResponseEntity.ok(orderTableServiceImpl.changeEmpty(orderTableId, empty));
     }
 
     @PutMapping("/{orderTableId}/number-of-guests")
@@ -51,6 +51,6 @@ public class TableRestController {
         @PathVariable final Long orderTableId,
         @RequestParam final Integer numberOfGuests
     ) {
-        return ResponseEntity.ok(tableService.changeNumberOfGuests(orderTableId, numberOfGuests));
+        return ResponseEntity.ok(orderTableServiceImpl.changeNumberOfGuests(orderTableId, numberOfGuests));
     }
 }

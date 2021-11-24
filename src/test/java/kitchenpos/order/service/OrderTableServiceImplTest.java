@@ -1,4 +1,4 @@
-package kitchenpos.ordertable.service;
+package kitchenpos.order.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -13,6 +13,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import kitchenpos.fixtures.ServiceTest;
 import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.order.service.OrderTableServiceImpl;
 import kitchenpos.ordertable.service.dto.OrderTableRequest;
 import kitchenpos.ordertable.service.dto.OrderTableResponse;
 import kitchenpos.ordertable.domain.OrderTable;
@@ -25,7 +26,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-public class TableServiceTest extends ServiceTest {
+public class OrderTableServiceImplTest extends ServiceTest {
     @Mock
     private OrderRepository orderRepository;
 
@@ -33,7 +34,7 @@ public class TableServiceTest extends ServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @InjectMocks
-    private TableService tableService;
+    private OrderTableServiceImpl orderTableServiceImpl;
 
     private OrderTable emptyTable;
     private OrderTable nonEmptyTable;
@@ -50,7 +51,7 @@ public class TableServiceTest extends ServiceTest {
     void 주문_테이블을_생성한다() {
         given(orderTableRepository.save(any())).willReturn(emptyTable);
 
-        assertDoesNotThrow(() -> tableService.create(request));
+        assertDoesNotThrow(() -> orderTableServiceImpl.create(request));
         verify(orderTableRepository, times(1)).save(any());
     }
 
@@ -58,7 +59,7 @@ public class TableServiceTest extends ServiceTest {
     void 주문_테이블_리스트를_반환한다() {
         given(orderTableRepository.findAll()).willReturn(TableFixtures.createOrderTables(true));
 
-        List<OrderTableResponse> orderTables = assertDoesNotThrow(() -> tableService.list());
+        List<OrderTableResponse> orderTables = assertDoesNotThrow(() -> orderTableServiceImpl.list());
         assertThat(orderTables).isNotEmpty();
     }
 
@@ -68,7 +69,7 @@ public class TableServiceTest extends ServiceTest {
         given(orderTableRepository.save(any())).willReturn(nonEmptyTable);
         given(orderRepository.findAllByOrderTableId(any())).willReturn(OrderFixtures.createCompletedOrders());
 
-        assertDoesNotThrow(() -> tableService.changeEmpty(emptyTable.getId(), false));
+        assertDoesNotThrow(() -> orderTableServiceImpl.changeEmpty(emptyTable.getId(), false));
         verify(orderTableRepository).save(ArgumentMatchers.refEq(nonEmptyTable, "tableGroup", "orders"));
     }
 
@@ -76,7 +77,7 @@ public class TableServiceTest extends ServiceTest {
     void 상태_변경_시_주문_테이블이_존재하지_않으면_예외를_반환한다() {
         given(orderTableRepository.findById(any())).willReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> tableService.changeEmpty(emptyTable.getId(), false));
+        assertThrows(NoSuchElementException.class, () -> orderTableServiceImpl.changeEmpty(emptyTable.getId(), false));
     }
 
     @Test
@@ -85,7 +86,7 @@ public class TableServiceTest extends ServiceTest {
         given(orderRepository.findAllByOrderTableId(any())).willReturn(OrderFixtures.createMealOrders());
 
         IllegalStateException exception = assertThrows(IllegalStateException.class,
-            () -> tableService.changeEmpty(emptyTable.getId(), false));
+            () -> orderTableServiceImpl.changeEmpty(emptyTable.getId(), false));
         assertThat(exception.getMessage()).isEqualTo("주문 상태가 완료되지 않았습니다.");
     }
 
@@ -95,7 +96,7 @@ public class TableServiceTest extends ServiceTest {
         given(orderTableRepository.findById(any())).willReturn(Optional.of(nonEmptyTable));
         given(orderTableRepository.save(any())).willReturn(crowdTable);
 
-        assertDoesNotThrow(() -> tableService.changeNumberOfGuests(nonEmptyTable.getId(), 3000));
+        assertDoesNotThrow(() -> orderTableServiceImpl.changeNumberOfGuests(nonEmptyTable.getId(), 3000));
     }
 
     @Test
@@ -104,7 +105,7 @@ public class TableServiceTest extends ServiceTest {
 
         assertThrows(
             NoSuchElementException.class,
-            () -> tableService.changeNumberOfGuests(nonEmptyTable.getId(), 3000)
+            () -> orderTableServiceImpl.changeNumberOfGuests(nonEmptyTable.getId(), 3000)
         );
     }
 }
