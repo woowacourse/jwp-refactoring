@@ -1,9 +1,12 @@
 package kitchenpos.ui;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.builder.OrderTableBuilder;
 import kitchenpos.builder.TableGroupBuilder;
+import kitchenpos.ui.dto.ordertable.OrderTableRequest;
+import kitchenpos.ui.dto.ordertable.TableGroupCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,7 +46,7 @@ class TableGroupRestControllerTest extends BaseWebMvcTest {
         tableGroup1 = new TableGroupBuilder()
                 .id(1L)
                 .createdDate(LocalDateTime.now())
-                .orderTables(Arrays.asList(orderTable1, orderTable2))
+                .orderTables(new OrderTables(Arrays.asList(orderTable1, orderTable2)))
                 .build();
 
         orderTable1.grouping(tableGroup1.getId());
@@ -55,18 +58,10 @@ class TableGroupRestControllerTest extends BaseWebMvcTest {
     void create() throws Exception {
 
         // given
-        OrderTable requestOrderTable1 = new OrderTableBuilder()
-                .id(1L)
-                .build();
-        OrderTable requestOrderTable2 = new OrderTableBuilder()
-                .id(2L)
-                .build();
-        TableGroup requestTableGroup = new TableGroupBuilder()
-                .id(null)
-                .createdDate(null)
-                .orderTables(Arrays.asList(requestOrderTable1, requestOrderTable2))
-                .build();
-        String content = parseJson(requestTableGroup);
+        OrderTableRequest requestOrderTable1 = new OrderTableRequest(1L);
+        OrderTableRequest requestOrderTable2 = new OrderTableRequest(2L);
+        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(Arrays.asList(requestOrderTable1, requestOrderTable2));
+        String content = parseJson(tableGroupCreateRequest);
 
         given(tableGroupService.create(any(TableGroup.class)))
                 .willReturn(tableGroup1);

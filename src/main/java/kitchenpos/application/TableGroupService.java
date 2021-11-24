@@ -1,60 +1,44 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.TableGroupValidator;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
-
 @Service
 public class TableGroupService {
-    private final OrderRepository orderRepository;
+    private final TableGroupValidator tableGroupValidator;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(
-            final OrderRepository orderRepository,
+            final TableGroupValidator tableGroupValidator,
             final OrderTableRepository orderTableRepository,
             final TableGroupRepository tableGroupRepository
     ) {
-        this.orderRepository = orderRepository;
+        this.tableGroupValidator = tableGroupValidator;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
     public TableGroup create(final TableGroup tableGroup) {
-        final OrderTables orderTables = new OrderTables(tableGroup.getOrderTables());
-        orderTables.validateGroupingNumbers();
-        final OrderTables savedOrderTables = new OrderTables(orderTableRepository.findAllByIdIn(orderTables.getOrderTableIds()));
-
-        if (orderTables.isDifferentSize(savedOrderTables)) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTables.validateGroupingTables();
+        final OrderTables savedOrderTables = new OrderTables(orderTableRepository.findAllByIdIn(tableGroup.getOrderTables().getOrderTableIds()));
+        tableGroup.grouping(tableGroupValidator, savedOrderTables);
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
         savedOrderTables.groupingTables(savedTableGroup.getId());
-        savedTableGroup.grouping(savedOrderTables.getValues());
 
         return savedTableGroup;
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
-        List<Long> orderTableIds = orderTables.getOrderTableIds();
-
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-        orderTables.ungroupTables();
+        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+                .orElseThrow(IllegalArgumentException::new);
+        tableGroup.unGroup(tableGroupValidator);
+        tableGroupRepository.delete(tableGroup);
     }
 }

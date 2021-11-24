@@ -57,7 +57,7 @@ class TableGroupServiceTest extends BaseServiceTest {
         // then
         assertThat(savedTableGroup.getId()).isNotNull();
         assertThat(savedTableGroup.getCreatedDate()).isNotNull();
-        assertThat(savedTableGroup.getOrderTables())
+        assertThat(savedTableGroup.getOrderTables().getValues())
                 .extracting("id")
                 .contains(savedOrderTable1.getId(), savedOrderTable2.getId());
     }

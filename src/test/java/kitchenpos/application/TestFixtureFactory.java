@@ -108,7 +108,7 @@ public class TestFixtureFactory {
         return new TableGroupBuilder()
                 .id(null)
                 .createdDate(LocalDateTime.now())
-                .orderTables(Arrays.asList(orderTables))
+                .orderTables(new OrderTables(Arrays.asList(orderTables)))
                 .build();
     }
 

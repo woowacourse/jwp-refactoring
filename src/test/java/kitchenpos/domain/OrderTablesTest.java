@@ -135,13 +135,11 @@ class OrderTablesTest {
     @Test
     void groupingTables() {
         // given
-        List<OrderTable> orderTableList = Arrays.asList(
+        OrderTables orderTables = new OrderTables(Arrays.asList(
                 new OrderTable(1L, null, 0, true),
                 new OrderTable(2L, null, 0, true)
-        );
-        OrderTables orderTables = new OrderTables(orderTableList);
-
-        TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now(), orderTableList);
+        ));
+        TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now(), orderTables);
 
         // when
         orderTables.groupingTables(tableGroup.getId());

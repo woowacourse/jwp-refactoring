@@ -2,18 +2,29 @@ package kitchenpos.domain;
 
 import org.springframework.util.CollectionUtils;
 
+import javax.persistence.Embeddable;
+import javax.persistence.OneToMany;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Embeddable
 public class OrderTables {
     private static final int MINIMUM_NUMBER_OF_GROUP_TABLE = 2;
 
-    private final List<OrderTable> values;
+    @OneToMany(mappedBy = "tableGroupId")
+    private List<OrderTable> values;
+
+    public OrderTables() {
+    }
 
     public OrderTables(List<OrderTable> values) {
         this.values = values;
     }
-    
+
+    public boolean isEmpty() {
+        return CollectionUtils.isEmpty(this.values);
+    }
+
     public void validateGroupingNumbers() {
         if (CollectionUtils.isEmpty(values) || isTablesLessThanTwo()) {
             throw new IllegalArgumentException();

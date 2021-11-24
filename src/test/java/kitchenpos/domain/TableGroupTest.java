@@ -19,7 +19,7 @@ class TableGroupTest {
         // given
         Long id = 1L;
         LocalDateTime createdDate = LocalDateTime.now();
-        List<OrderTable> orderTables = new ArrayList<>();
+        OrderTables orderTables = new OrderTables(new ArrayList<>());
 
         // when
         TableGroup tableGroup = new TableGroup(id, createdDate, orderTables);
@@ -37,17 +37,17 @@ class TableGroupTest {
         Long id = 1L;
         LocalDateTime createdDate = LocalDateTime.now();
         TableGroup tableGroup = new TableGroup(id, createdDate, null);
-
-        List<OrderTable> orderTables = Arrays.asList(
+        OrderTables orderTables = new OrderTables(Arrays.asList(
                 new OrderTable(1L, id, 4, false),
                 new OrderTable(2L, id, 4, false)
-        );
+        ));
+        TableGroupValidator tableGroupValidator = new TableGroupValidatorTestImpl();
 
         // when
-        tableGroup.grouping(orderTables);
+        tableGroup.grouping(tableGroupValidator, orderTables);
         int expectedSize = 2;
 
         // then
-        assertThat(tableGroup.getOrderTables()).hasSize(expectedSize);
+        assertThat(tableGroup.getOrderTables().getValues()).hasSize(expectedSize);
     }
 }

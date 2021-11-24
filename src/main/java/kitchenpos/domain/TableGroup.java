@@ -5,25 +5,25 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class TableGroup {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @CreatedDate
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroupId")
-    private List<OrderTable> orderTables;
+    @Embedded
+    private OrderTables orderTables;
 
     public TableGroup() {
     }
 
-    public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+    public TableGroup(Long id, LocalDateTime createdDate, OrderTables orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
@@ -37,12 +37,18 @@ public class TableGroup {
         return createdDate;
     }
 
-    public List<OrderTable> getOrderTables() {
+    public OrderTables getOrderTables() {
         return orderTables;
     }
 
-    public void grouping(final List<OrderTable> orderTables) {
+    public void grouping(TableGroupValidator tableGroupValidator, OrderTables orderTables) {
+        tableGroupValidator.validateGrouping(this);
         this.orderTables = orderTables;
+    }
+
+    public void unGroup(TableGroupValidator tableGroupValidator) {
+        tableGroupValidator.validateUngroup(this);
+        this.orderTables.ungroupTables();
     }
 
     @Override

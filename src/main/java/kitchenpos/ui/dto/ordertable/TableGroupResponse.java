@@ -20,7 +20,7 @@ public class TableGroupResponse {
         return new TableGroupResponse(
                 tableGroup.getId(),
                 tableGroup.getCreatedDate(),
-                OrderTableResponse.toList(tableGroup.getOrderTables())
+                OrderTableResponse.toList(tableGroup.getOrderTables().getValues())
         );
     }
 

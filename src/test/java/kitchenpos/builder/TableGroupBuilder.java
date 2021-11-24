@@ -1,16 +1,15 @@
 package kitchenpos.builder;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class TableGroupBuilder {
 
     private Long id;
     private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
+    private OrderTables orderTables;
 
     public TableGroupBuilder id(Long id) {
         this.id = id;
@@ -22,7 +21,7 @@ public class TableGroupBuilder {
         return this;
     }
 
-    public TableGroupBuilder orderTables(List<OrderTable> orderTables) {
+    public TableGroupBuilder orderTables(OrderTables orderTables) {
         this.orderTables = orderTables;
         return this;
     }
