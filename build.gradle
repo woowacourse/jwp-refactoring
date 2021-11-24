@@ -3,11 +3,16 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
     id 'java'
     id 'java-library'
+    id 'application'
 }
 
 group = 'camp.nextstep.edu'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
+
+application {
+    mainClass = 'kitchenpos.Application'
+}
 
 repositories {
     mavenCentral()
@@ -31,15 +36,7 @@ subprojects {
     }
 
     dependencies {
-        implementation 'org.springframework.boot:spring-boot-starter-actuator'
-        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-        implementation 'org.springframework.boot:spring-boot-starter-web'
-        implementation 'org.springframework.boot:spring-boot-starter-validation'
-        implementation 'org.flywaydb:flyway-core'
-        implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
         implementation 'net.rakugakibox.spring.boot:logback-access-spring-boot-starter:2.7.1'
-        testImplementation 'io.rest-assured:rest-assured:3.3.0'
-        runtimeOnly 'com.h2database:h2'
         testImplementation('org.springframework.boot:spring-boot-starter-test') {
             exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
         }
@@ -61,5 +58,3 @@ project(':api') {
         api project(':common')
     }
 }
-
-
