@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 @Component
 public class MenuRegisteredWithPriceEventHandler {
 
@@ -25,7 +26,6 @@ public class MenuRegisteredWithPriceEventHandler {
 
     @Async
     @EventListener
-    @Transactional
     public void handle(final MenuRegisteredEvent event) {
         validate(event);
     }

@@ -52,7 +52,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final Map<Long, Long> menuIdAndQuantity = orderRequest.toMap();
+        Map<Long, Long> menuIdAndQuantity = orderRequest.toMap();
         List<Menu> menus = menuRepository.findAllById(menuIdAndQuantity.keySet());
         validateMenusSize(orderRequest, menus);
 

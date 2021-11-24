@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 @Component
 public class OrderWithChangedTableEmptyEventHandler {
 
@@ -20,7 +21,6 @@ public class OrderWithChangedTableEmptyEventHandler {
 
     @Async
     @EventListener
-    @Transactional
     public void handle(final OrderTableEmptyChangedEvent event) {
         validate(event);
     }
