@@ -10,6 +10,9 @@ public class MenuResponse {
     private BigDecimal price;
     private List<MenuProductResponse> menuProducts;
 
+    private MenuResponse() {
+    }
+
     public MenuResponse(
         Long id,
         String name,

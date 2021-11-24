@@ -5,6 +5,9 @@ public class MenuProductRequest {
     private Long productId;
     private Long quantity;
 
+    private MenuProductRequest() {
+    }
+
     public MenuProductRequest(Long productId, Long quantity) {
         this.productId = productId;
         this.quantity = quantity;

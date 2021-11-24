@@ -10,6 +10,9 @@ public class MenuResponseDto {
     private BigDecimal price;
     private List<MenuProductResponseDto> menuProducts;
 
+    private MenuResponseDto() {
+    }
+
     public MenuResponseDto(
         Long id,
         String name,

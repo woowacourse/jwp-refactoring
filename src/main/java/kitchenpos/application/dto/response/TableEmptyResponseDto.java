@@ -4,6 +4,9 @@ public class TableEmptyResponseDto {
 
     private Boolean empty;
 
+    private TableEmptyResponseDto() {
+    }
+
     public TableEmptyResponseDto(Boolean empty) {
         this.empty = empty;
     }

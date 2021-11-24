@@ -4,6 +4,9 @@ public class TableResponse {
 
     private Long id;
 
+    private TableResponse() {
+    }
+
     public TableResponse(Long id) {
         this.id = id;
     }

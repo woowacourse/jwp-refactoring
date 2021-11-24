@@ -7,6 +7,9 @@ public class OrdersRequestDto {
     private Long orderTableId;
     private List<OrderLineItemRequestDto> orderLineItems;
 
+    private OrdersRequestDto() {
+    }
+
     public OrdersRequestDto(Long orderTableId, List<OrderLineItemRequestDto> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;

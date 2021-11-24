@@ -4,6 +4,9 @@ public class MenuGroupRequestDto {
 
     private String name;
 
+    private MenuGroupRequestDto() {
+    }
+
     public MenuGroupRequestDto(String name) {
         this.name = name;
     }

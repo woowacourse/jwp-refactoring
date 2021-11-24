@@ -5,6 +5,9 @@ public class TableRequestDto {
     private Long numberOfGuests;
     private Boolean empty;
 
+    private TableRequestDto() {
+    }
+
     public TableRequestDto(Long numberOfGuests, Boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;

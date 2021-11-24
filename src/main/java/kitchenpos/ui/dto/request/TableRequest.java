@@ -5,6 +5,9 @@ public class TableRequest {
     private Long numberOfGuests;
     private Boolean empty;
 
+    private TableRequest() {
+    }
+
     public TableRequest(Long numberOfGuests, Boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;

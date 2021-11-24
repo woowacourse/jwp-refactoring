@@ -5,6 +5,9 @@ public class TableNumberOfGuestsRequestDto {
     private Long orderTableId;
     private Long numberOfGuests;
 
+    private TableNumberOfGuestsRequestDto() {
+    }
+
     public TableNumberOfGuestsRequestDto(Long orderTableId, Long numberOfGuests) {
         this.orderTableId = orderTableId;
         this.numberOfGuests = numberOfGuests;

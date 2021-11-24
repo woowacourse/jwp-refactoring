@@ -4,6 +4,9 @@ public class TableNumberOfGuestsResponseDto {
 
     private Long numberOfGuests;
 
+    private TableNumberOfGuestsResponseDto() {
+    }
+
     public TableNumberOfGuestsResponseDto(Long numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }

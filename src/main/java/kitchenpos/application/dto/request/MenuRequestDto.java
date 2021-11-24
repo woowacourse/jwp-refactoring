@@ -10,6 +10,9 @@ public class MenuRequestDto {
     private Long menuGroupId;
     private List<MenuProductRequestDto> menuProducts;
 
+    private MenuRequestDto() {
+    }
+
     public MenuRequestDto(
         String name,
         BigDecimal price,

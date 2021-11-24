@@ -4,6 +4,9 @@ public class TableEmptyRequest {
 
     private Boolean empty;
 
+    private TableEmptyRequest() {
+    }
+
     public TableEmptyRequest(Boolean empty) {
         this.empty = empty;
     }
