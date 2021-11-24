@@ -24,8 +24,8 @@ Content-Type: application/json
 }
 
 ###
-PUT {{host}}/kitchenpos.api/orders/1/order-status
-Content-Type: kitchenpos.menu.application/json
+PUT {{host}}/api/orders/1/order-status
+Content-Type: application/json
 
 {
   "orderStatus": "COMPLETION"
