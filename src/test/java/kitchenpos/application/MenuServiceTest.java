@@ -47,7 +47,7 @@ class MenuServiceTest extends BaseServiceTest {
 
         menuProduct = TestFixtureFactory.메뉴상품_매핑_생성(savedProduct, 1L);
 
-        menu = TestFixtureFactory.메뉴_후라이드_치킨_한마리(savedMenuGroup, savedProduct, menuProduct);
+        menu = TestFixtureFactory.메뉴_후라이드_치킨_한마리(savedMenuGroup.getId(), menuProduct);
     }
 
     @DisplayName("[메뉴 생성] 메뉴를 정상적으로 생성한다.")
@@ -68,7 +68,7 @@ class MenuServiceTest extends BaseServiceTest {
     void createWithOverPrice() {
         // given
         BigDecimal overPrice = savedProduct.getPrice().add(new BigDecimal(16001));
-        Menu menu = TestFixtureFactory.메뉴_생성("후라이드 한마리", overPrice, savedMenuGroup, menuProduct);
+        Menu menu = TestFixtureFactory.메뉴_생성("후라이드 한마리", overPrice, savedMenuGroup.getId(), menuProduct);
 
         // when then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -82,7 +82,7 @@ class MenuServiceTest extends BaseServiceTest {
         BigDecimal negativePrice = new BigDecimal(-1);
 
         // when then
-        assertThatThrownBy(() -> TestFixtureFactory.메뉴_생성("후라이드 한마리", negativePrice, savedMenuGroup, menuProduct))
+        assertThatThrownBy(() -> TestFixtureFactory.메뉴_생성("후라이드 한마리", negativePrice, savedMenuGroup.getId(), menuProduct))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -94,7 +94,7 @@ class MenuServiceTest extends BaseServiceTest {
                 .id(99999L)
                 .name("존재하지 않는 메뉴그룹")
                 .build();
-        Menu menu = TestFixtureFactory.메뉴_생성("후라이드 한마리", savedProduct.getPrice(), nonExistMenuGroup, menuProduct);
+        Menu menu = TestFixtureFactory.메뉴_생성("후라이드 한마리", savedProduct.getPrice(), nonExistMenuGroup.getId(), menuProduct);
 
         // when then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -106,9 +106,9 @@ class MenuServiceTest extends BaseServiceTest {
     void list() {
         // given
         Menu savedMenu1 = menuService.create(this.menu);
-        Menu menu1 = TestFixtureFactory.메뉴_생성("JMT 후라이드 치킨", new BigDecimal(16000), savedMenuGroup, menuProduct);
+        Menu menu1 = TestFixtureFactory.메뉴_생성("JMT 후라이드 치킨", new BigDecimal(16000), savedMenuGroup.getId(), menuProduct);
         Menu savedMenu2 = menuService.create(menu1);
-        Menu menu2 = TestFixtureFactory.메뉴_생성("통큰 후라이드 치킨", new BigDecimal(8000), savedMenuGroup, menuProduct);
+        Menu menu2 = TestFixtureFactory.메뉴_생성("통큰 후라이드 치킨", new BigDecimal(8000), savedMenuGroup.getId(), menuProduct);
         Menu savedMenu3 = menuService.create(menu2);
 
         int expectedSize = 3;

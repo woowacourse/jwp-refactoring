@@ -48,22 +48,22 @@ public class TestFixtureFactory {
                 .build();
     }
 
-    public static Menu 메뉴_생성(String name, BigDecimal price, MenuGroup menuGroup, MenuProduct... menuProduct) {
+    public static Menu 메뉴_생성(String name, BigDecimal price, Long menuGroupId, MenuProduct... menuProduct) {
         return new MenuBuilder()
                 .id(null)
                 .name(name)
                 .price(price)
-                .menuGroup(menuGroup)
+                .menuGroupId(menuGroupId)
                 .menuProducts(Arrays.asList(menuProduct))
                 .build();
     }
 
-    public static Menu 메뉴_후라이드_치킨_한마리(MenuGroup menuGroup, Product product, MenuProduct... menuProduct) {
+    public static Menu 메뉴_후라이드_치킨_한마리(Long menuGroupId, MenuProduct... menuProduct) {
         return new MenuBuilder()
                 .id(null)
                 .name("후라이드 치킨 한마리")
                 .price(new BigDecimal(16000))
-                .menuGroup(menuGroup)
+                .menuGroupId(menuGroupId)
                 .menuProducts(Arrays.asList(menuProduct))
                 .build();
     }

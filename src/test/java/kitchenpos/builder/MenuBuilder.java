@@ -12,7 +12,7 @@ public class MenuBuilder {
     private Long id;
     private String name;
     private BigDecimal price;
-    private MenuGroup menuGroup;
+    private Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
     public MenuBuilder id(Long id) {
@@ -30,8 +30,8 @@ public class MenuBuilder {
         return this;
     }
 
-    public MenuBuilder menuGroup(MenuGroup menuGroup) {
-        this.menuGroup = menuGroup;
+    public MenuBuilder menuGroupId(Long menuGroupId) {
+        this.menuGroupId = menuGroupId;
         return this;
     }
 
@@ -41,6 +41,6 @@ public class MenuBuilder {
     }
 
     public Menu build() {
-        return new Menu(this.id, this.name, this.price, this.menuGroup, this.menuProducts);
+        return new Menu(this.id, this.name, this.price, this.menuGroupId, this.menuProducts);
     }
 }

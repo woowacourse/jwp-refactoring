@@ -43,7 +43,7 @@ public class MenuRequest {
         return new Menu(
                 this.name,
                 this.price,
-                new MenuGroup(menuGroupId, null),
+                this.menuGroupId,
                 this.menuProducts.stream()
                         .map(MenuProductRequest::toEntity)
                         .collect(Collectors.toList())

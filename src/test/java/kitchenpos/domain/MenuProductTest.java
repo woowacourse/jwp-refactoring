@@ -34,7 +34,7 @@ class MenuProductTest {
     void getMenuId() {
         // given
         Long seq = 1L;
-        Menu menu = new Menu(1L, "바삭치킨 두 마리", new BigDecimal(20000), new MenuGroup(1L, "메인메뉴"), Collections.emptyList());
+        Menu menu = new Menu(1L, "바삭치킨 두 마리", new BigDecimal(20000), 1L, Collections.emptyList());
         Product product = new Product(1L, "바삭치킨", new BigDecimal(16000));
         long quantity = 2;
         MenuProduct menuProduct = new MenuProduct(seq, menu, product, quantity);
@@ -57,7 +57,7 @@ class MenuProductTest {
         long quantity = 2;
         MenuProduct menuProduct = new MenuProduct(seq, menu, product, quantity);
 
-        Menu connectMenu = new Menu(1L, "바삭치킨 두 마리", new BigDecimal(20000), new MenuGroup(1L, "메인메뉴"), Collections.singletonList(menuProduct));
+        Menu connectMenu = new Menu(1L, "바삭치킨 두 마리", new BigDecimal(20000), 1L, Collections.singletonList(menuProduct));
 
         // when
         menuProduct.connectMenu(connectMenu);
@@ -71,7 +71,7 @@ class MenuProductTest {
     void getProductId() {
         // given
         Long seq = 1L;
-        Menu menu = new Menu(1L, "바삭치킨 두 마리", new BigDecimal(20000), new MenuGroup(1L, "메인메뉴"), Collections.emptyList());
+        Menu menu = new Menu(1L, "바삭치킨 두 마리", new BigDecimal(20000), 1L, Collections.emptyList());
         Product product = new Product(1L, "바삭치킨", new BigDecimal(16000));
         long quantity = 2;
         MenuProduct menuProduct = new MenuProduct(seq, menu, product, quantity);

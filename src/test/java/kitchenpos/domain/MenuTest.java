@@ -20,17 +20,17 @@ class MenuTest {
         final Long id = 1L;
         final String name = "바삭치킨 두마리";
         final BigDecimal price = new BigDecimal(24000);
-        final MenuGroup menuGroup = new MenuGroup(1L, "메인메뉴");
+        final Long menuGroupId = 2L;
         final List<MenuProduct> menuProducts = new ArrayList<>();
 
         // when
-        Menu menu = new Menu(id, name, price, menuGroup, menuProducts);
+        Menu menu = new Menu(id, name, price, menuGroupId, menuProducts);
 
         // then
-        assertThat(menu.getId()).isEqualTo(id);
-        assertThat(menu.getName()).isEqualTo(name);
-        assertThat(menu.getPrice()).isEqualTo(price);
-        assertThat(menu.getMenuGroup()).isEqualTo(menuGroup);
+        assertThat(menu.getId()).isEqualTo(1L);
+        assertThat(menu.getName()).isEqualTo("바삭치킨 두마리");
+        assertThat(menu.getPrice()).isEqualTo(new BigDecimal(24000));
+        assertThat(menu.getMenuGroupId()).isEqualTo(2L);
         assertThat(menu.getMenuProducts()).isEmpty();
     }
 
@@ -41,11 +41,11 @@ class MenuTest {
         final Long id = 1L;
         final String name = "바삭치킨 두마리";
         final BigDecimal price = new BigDecimal(-1);
-        final MenuGroup menuGroup = new MenuGroup(1L, "메인메뉴");
+        final Long menuGroupId = 2L;
         final List<MenuProduct> menuProducts = new ArrayList<>();
 
         // when then
-        assertThatThrownBy(() -> new Menu(id, name, price, menuGroup, menuProducts))
+        assertThatThrownBy(() -> new Menu(id, name, price, menuGroupId, menuProducts))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -56,9 +56,9 @@ class MenuTest {
         final Long id = 1L;
         final String name = "바삭치킨 두마리";
         final BigDecimal price = new BigDecimal(24000);
-        final MenuGroup menuGroup = new MenuGroup(1L, "메인메뉴");
+        final Long menuGroupId = 2L;
         final List<MenuProduct> menuProducts = new ArrayList<>();
-        final Menu menu = new Menu(id, name, price, menuGroup, menuProducts);
+        final Menu menu = new Menu(id, name, price, menuGroupId, menuProducts);
 
         final BigDecimal productsTotalPrice1 = new BigDecimal(24000);
         final BigDecimal productsTotalPrice2 = new BigDecimal(23999);
@@ -67,24 +67,5 @@ class MenuTest {
         assertDoesNotThrow(() -> menu.validatePrice(productsTotalPrice1));
         assertThatThrownBy(() -> menu.validatePrice(productsTotalPrice2))
                 .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("Getter: 메뉴 그룹의 id 반환한다.")
-    @Test
-    void getMenuGroupId() {
-        // given
-        final Long id = 1L;
-        final String name = "바삭치킨 두마리";
-        final BigDecimal price = new BigDecimal(24000);
-        final MenuGroup menuGroup = new MenuGroup(1L, "메인메뉴");
-        final List<MenuProduct> menuProducts = new ArrayList<>();
-        final Menu menu = new Menu(id, name, price, menuGroup, menuProducts);
-
-        // when
-        Long expectedMenuGroupId = 1L;
-        Long menuGroupId = menu.getMenuGroupId();
-
-        // then
-        assertThat(menuGroupId).isEqualTo(expectedMenuGroupId);
     }
 }

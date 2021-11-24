@@ -216,7 +216,7 @@ class TableServiceTest extends BaseServiceTest {
         MenuGroup menuGroup = TestFixtureFactory.메뉴그룹_인기_메뉴();
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
         MenuProduct menuProduct = TestFixtureFactory.메뉴상품_매핑_생성(savedProduct, 1L);
-        Menu menu = TestFixtureFactory.메뉴_후라이드_치킨_한마리(savedMenuGroup, savedProduct, menuProduct);
+        Menu menu = TestFixtureFactory.메뉴_후라이드_치킨_한마리(savedMenuGroup.getId(), menuProduct);
         return menuService.create(menu);
     }
 }

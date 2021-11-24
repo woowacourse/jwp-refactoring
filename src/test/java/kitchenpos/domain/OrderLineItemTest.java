@@ -17,7 +17,7 @@ class OrderLineItemTest {
         // given
         final Long seq = 1L;
         final Order order = new Order(2L, null, OrderStatus.COOKING.name(), LocalDateTime.now(), null);
-        final Menu menu = new Menu(3L, "피자", new BigDecimal(18000), new MenuGroup(1L, "피자"), null);
+        final Menu menu = new Menu(3L, "피자", new BigDecimal(18000), 1L, null);
         final long quantity = 4L;
 
         // when

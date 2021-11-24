@@ -31,16 +31,6 @@ class MenuRestControllerTest extends BaseWebMvcTest {
 
     @BeforeEach
     void setUp() {
-        MenuGroup menuGroup1 = new MenuGroupBuilder()
-                .id(1L)
-                .name("메인 메뉴")
-                .build();
-
-        MenuGroup menuGroup2 = new MenuGroupBuilder()
-                .id(2L)
-                .name("사이드 메뉴")
-                .build();
-
         MenuProduct menuProduct1 = new MenuProductBuilder()
                 .seq(1L)
                 .menu(null)
@@ -66,7 +56,7 @@ class MenuRestControllerTest extends BaseWebMvcTest {
                 .id(1L)
                 .name("후라이드 두마리")
                 .price(new BigDecimal(19000))
-                .menuGroup(menuGroup1)
+                .menuGroupId(1L)
                 .menuProducts(Arrays.asList(menuProduct1))
                 .build();
         menuProduct1.connectMenu(menu1);
@@ -75,7 +65,7 @@ class MenuRestControllerTest extends BaseWebMvcTest {
                 .id(2L)
                 .name("후라이드 한마리 + 양념 한마리")
                 .price(new BigDecimal(20000))
-                .menuGroup(menuGroup2)
+                .menuGroupId(2L)
                 .menuProducts(Arrays.asList(menuProduct2, menuProduct3))
                 .build();
         menuProduct2.connectMenu(menu2);
