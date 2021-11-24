@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import kitchenpos.Menu.application.ProductService;
 import kitchenpos.Menu.domain.Product;
-import kitchenpos.annotation.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,8 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-@IntegrationTest
-class ProductServiceTest {
+class ProductServiceTest extends ServiceTest {
 
     @Autowired
     private ProductService productService;
@@ -60,6 +58,6 @@ class ProductServiceTest {
         List<Product> products = productService.list();
 
         //then
-        assertThat(products).hasSize(6);
+        assertThat(products).hasSize(2);
     }
 }
