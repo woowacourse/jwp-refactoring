@@ -35,14 +35,9 @@ public class OrderTable {
         this.tableGroupId = null;
     }
 
-    public void changeEmpty(boolean isEmpty) {
+    public void changeEmpty(TableValidator tableValidator, boolean isEmpty) {
+        tableValidator.validateChangeEmpty(this);
         this.empty = isEmpty;
-    }
-
-    public void validateChangeEmpty() {
-        if (Objects.nonNull(this.tableGroupId)) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
@@ -65,10 +60,12 @@ public class OrderTable {
 
     public void grouping(Long tableGroupId) {
         this.tableGroupId = tableGroupId;
+        this.empty = false;
     }
 
     public void ungroup() {
         this.tableGroupId = null;
+        this.empty = false;
     }
 
     public Long getId() {

@@ -48,34 +48,6 @@ class OrderTableTest {
         assertThat(orderTable.getTableGroupId()).isNull();
     }
 
-    @DisplayName("테이블 활성화 상태 변경 가능 검증: 테이블이 그룹화된 상태가 아니라면 활성화 상태를 변경할 수 있다.")
-    @Test
-    void validateChangeEmpty() {
-        // given
-        final Long id = 1L;
-        final int numberOfGuests = 0;
-        final boolean empty = true;
-        final OrderTable orderTable = new OrderTable(id, null, numberOfGuests, empty);
-
-        // when then
-        assertDoesNotThrow(orderTable::validateChangeEmpty);
-    }
-
-    @DisplayName("테이블 활성화 상태 변경 가능 검증: 테이블이 그룹화된 상태라면 활성화 상태를 변경할 수 없다.")
-    @Test
-    void validateChangeEmptyThrowCase() {
-        // given
-        final Long id = 1L;
-        final Long tableGroupId = 2L;
-        final int numberOfGuests = 0;
-        final boolean empty = true;
-        final OrderTable orderTable = new OrderTable(id, tableGroupId, numberOfGuests, empty);
-
-        // when then
-        assertThatThrownBy(orderTable::validateChangeEmpty)
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("테이블 활성화 상태 변경: 테이블이 그룹화된 상태가 아니라면 활성화 상태를 변경할 수 있다.")
     @Test
     void changeEmpty() {
@@ -84,9 +56,10 @@ class OrderTableTest {
         final int numberOfGuests = 0;
         final boolean empty = true;
         final OrderTable orderTable = new OrderTable(id, null, numberOfGuests, empty);
+        final TableValidator tableValidator = new TableValidatorTestImpl();
 
         // when
-        orderTable.changeEmpty(false);
+        orderTable.changeEmpty(tableValidator, false);
         final boolean expectedEmpty = false;
 
         // then

@@ -49,14 +49,12 @@ public class OrderTables {
     public void groupingTables(Long tableGroupId) {
         for (OrderTable orderTable : this.values) {
             orderTable.grouping(tableGroupId);
-            orderTable.changeEmpty(false);
         }
     }
 
     public void ungroupTables() {
         for (final OrderTable orderTable : values) {
             orderTable.ungroup();
-            orderTable.changeEmpty(false);
         }
     }
 
