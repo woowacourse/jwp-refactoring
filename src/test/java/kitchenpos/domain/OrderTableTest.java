@@ -25,7 +25,7 @@ class OrderTableTest {
 
         // then
         assertThat(orderTable.getId()).isEqualTo(id);
-        assertThat(orderTable.getTableGroup()).isNull();
+        assertThat(orderTable.getTableGroupId()).isNull();
         assertThat(orderTable.getNumberOfGuests()).isEqualTo(numberOfGuests);
         assertThat(orderTable.isEmpty()).isEqualTo(empty);
     }
@@ -35,17 +35,17 @@ class OrderTableTest {
     void initBeforeCreate() {
         // given
         final Long id = 1L;
-        final TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now(), Collections.emptyList());
+        final Long tableGroupId = 2L;
         final int numberOfGuests = 0;
         final boolean empty = true;
-        final OrderTable orderTable = new OrderTable(id, tableGroup, numberOfGuests, empty);
+        final OrderTable orderTable = new OrderTable(id, tableGroupId, numberOfGuests, empty);
 
         // when
         orderTable.initBeforeCreate();
 
         // then
         assertThat(orderTable.getId()).isNull();
-        assertThat(orderTable.getTableGroup()).isNull();
+        assertThat(orderTable.getTableGroupId()).isNull();
     }
 
     @DisplayName("테이블 활성화 상태 변경 가능 검증: 테이블이 그룹화된 상태가 아니라면 활성화 상태를 변경할 수 있다.")
@@ -66,10 +66,10 @@ class OrderTableTest {
     void validateChangeEmptyThrowCase() {
         // given
         final Long id = 1L;
-        final TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now(), Collections.emptyList());
+        final Long tableGroupId = 2L;
         final int numberOfGuests = 0;
         final boolean empty = true;
-        final OrderTable orderTable = new OrderTable(id, tableGroup, numberOfGuests, empty);
+        final OrderTable orderTable = new OrderTable(id, tableGroupId, numberOfGuests, empty);
 
         // when then
         assertThatThrownBy(orderTable::validateChangeEmpty)
@@ -134,12 +134,12 @@ class OrderTableTest {
     void isGrouping() {
         // given
         final Long id = 1L;
-        final TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now(), Collections.emptyList());
+        final Long tableGroupId = 2L;
         final int numberOfGuests = 0;
         final boolean empty = true;
 
         final OrderTable orderTable1 = new OrderTable(id, null, numberOfGuests, empty);
-        final OrderTable orderTable2 = new OrderTable(id, tableGroup, numberOfGuests, empty);
+        final OrderTable orderTable2 = new OrderTable(id, tableGroupId, numberOfGuests, empty);
 
         // when
         boolean result1 = orderTable1.isGrouping();
@@ -156,27 +156,27 @@ class OrderTableTest {
         // given
         final OrderTable orderTable = new OrderTable(1L, null, 0, true);
 
-        final TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now(), Collections.emptyList());
+        final Long tableGroupId = 2L;
 
         // when
-        assertThat(orderTable.getTableGroup()).isNull();
-        orderTable.grouping(tableGroup);
+        assertThat(orderTable.getTableGroupId()).isNull();
+        orderTable.grouping(tableGroupId);
 
         // then
-        assertThat(orderTable.getTableGroup()).isEqualTo(tableGroup);
+        assertThat(orderTable.getTableGroupId()).isEqualTo(2L);
     }
 
     @DisplayName("테이블의 그룹화를 해제한다.")
     @Test
     void ungroup() {
         // given
-        final TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now(), Collections.emptyList());
-        final OrderTable orderTable = new OrderTable(1L, tableGroup, 0, true);
+        final Long tableGroupId = 2L;
+        final OrderTable orderTable = new OrderTable(1L, tableGroupId, 0, true);
 
         // when
         orderTable.ungroup();
 
         // then
-        assertThat(orderTable.getTableGroup()).isNull();
+        assertThat(orderTable.getTableGroupId()).isNull();
     }
 }

@@ -71,16 +71,16 @@ public class TestFixtureFactory {
     public static OrderTable 빈_테이블_생성() {
         return new OrderTableBuilder()
                 .id(null)
-                .tableGroup(null)
+                .tableGroupId(null)
                 .numberOfGuests(0)
                 .empty(true)
                 .build();
     }
 
-    public static OrderTable 테이블_생성(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+    public static OrderTable 테이블_생성(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         return new OrderTableBuilder()
                 .id(id)
-                .tableGroup(tableGroup)
+                .tableGroupId(tableGroupId)
                 .numberOfGuests(numberOfGuests)
                 .empty(empty)
                 .build();
@@ -89,7 +89,7 @@ public class TestFixtureFactory {
     public static OrderTable 테이블_생성(boolean empty) {
         return new OrderTableBuilder()
                 .id(null)
-                .tableGroup(null)
+                .tableGroupId(null)
                 .numberOfGuests(0)
                 .empty(empty)
                 .build();
@@ -98,7 +98,7 @@ public class TestFixtureFactory {
     public static OrderTable 테이블_생성(int numberOfGuests) {
         return new OrderTableBuilder()
                 .id(null)
-                .tableGroup(null)
+                .tableGroupId(null)
                 .numberOfGuests(numberOfGuests)
                 .empty(false)
                 .build();

@@ -39,8 +39,8 @@ class TableGroupTest {
         TableGroup tableGroup = new TableGroup(id, createdDate, null);
 
         List<OrderTable> orderTables = Arrays.asList(
-                new OrderTable(1L, tableGroup, 4, false),
-                new OrderTable(2L, tableGroup, 4, false)
+                new OrderTable(1L, id, 4, false),
+                new OrderTable(2L, id, 4, false)
         );
 
         // when

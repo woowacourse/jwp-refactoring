@@ -27,13 +27,13 @@ class TableRestControllerTest extends BaseWebMvcTest {
     void setUp() {
         orderTable1 = new OrderTableBuilder()
                 .id(1L)
-                .tableGroup(null)
+                .tableGroupId(null)
                 .numberOfGuests(0)
                 .empty(true)
                 .build();
         orderTable2 = new OrderTableBuilder()
                 .id(2L)
-                .tableGroup(null)
+                .tableGroupId(null)
                 .numberOfGuests(0)
                 .empty(true)
                 .build();
@@ -96,7 +96,7 @@ class TableRestControllerTest extends BaseWebMvcTest {
         // given
         OrderTable requestOrderTable = new OrderTableBuilder()
                 .id(null)
-                .tableGroup(null)
+                .tableGroupId(null)
                 .numberOfGuests(0)
                 .empty(false)
                 .build();
@@ -105,7 +105,7 @@ class TableRestControllerTest extends BaseWebMvcTest {
 
         OrderTable orderTable = new OrderTableBuilder()
                 .id(1L)
-                .tableGroup(null)
+                .tableGroupId(null)
                 .numberOfGuests(0)
                 .empty(false)
                 .build();
@@ -129,7 +129,7 @@ class TableRestControllerTest extends BaseWebMvcTest {
         // given
         OrderTable requestOrderTable = new OrderTableBuilder()
                 .id(null)
-                .tableGroup(null)
+                .tableGroupId(null)
                 .numberOfGuests(4)
                 .empty(false)
                 .build();
@@ -138,7 +138,7 @@ class TableRestControllerTest extends BaseWebMvcTest {
 
         OrderTable orderTable = new OrderTableBuilder()
                 .id(1L)
-                .tableGroup(null)
+                .tableGroupId(null)
                 .numberOfGuests(4)
                 .empty(false)
                 .build();

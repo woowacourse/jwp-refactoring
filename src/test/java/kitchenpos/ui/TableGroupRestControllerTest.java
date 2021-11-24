@@ -46,8 +46,8 @@ class TableGroupRestControllerTest extends BaseWebMvcTest {
                 .orderTables(Arrays.asList(orderTable1, orderTable2))
                 .build();
 
-        orderTable1.grouping(tableGroup1);
-        orderTable2.grouping(tableGroup1);
+        orderTable1.grouping(tableGroup1.getId());
+        orderTable2.grouping(tableGroup1.getId());
     }
 
     @DisplayName("POST /api/table-groups -> 테이블들을 그룹화한다.")

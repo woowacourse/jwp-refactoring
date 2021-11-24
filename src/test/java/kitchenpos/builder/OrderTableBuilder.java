@@ -6,7 +6,7 @@ import kitchenpos.domain.TableGroup;
 public class OrderTableBuilder {
 
     private Long id;
-    private TableGroup tableGroup;
+    private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
@@ -15,8 +15,8 @@ public class OrderTableBuilder {
         return this;
     }
 
-    public OrderTableBuilder tableGroup(TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public OrderTableBuilder tableGroupId(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
         return this;
     }
 
@@ -31,6 +31,6 @@ public class OrderTableBuilder {
     }
 
     public OrderTable build() {
-        return new OrderTable(this.id, this.tableGroup, this.numberOfGuests, this.empty);
+        return new OrderTable(this.id, this.tableGroupId, this.numberOfGuests, this.empty);
     }
 }

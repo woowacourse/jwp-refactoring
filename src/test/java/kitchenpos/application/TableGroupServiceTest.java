@@ -92,8 +92,8 @@ class TableGroupServiceTest extends BaseServiceTest {
     void createWithActiveTableOrGroupingTable() {
         // given
         OrderTable orderTable = TestFixtureFactory.테이블_생성(false);
-        OrderTable activedTable = tableService.create(orderTable);
-        TableGroup 활성화_상태인_테이블을_포함한_테이블그룹 = TestFixtureFactory.테이블_그룹_생성(savedOrderTable1, activedTable);
+        OrderTable activeTable = tableService.create(orderTable);
+        TableGroup 활성화_상태인_테이블을_포함한_테이블그룹 = TestFixtureFactory.테이블_그룹_생성(savedOrderTable1, activeTable);
 
         // when then
         assertThatThrownBy(() -> tableGroupService.create(활성화_상태인_테이블을_포함한_테이블그룹));
@@ -130,8 +130,8 @@ class TableGroupServiceTest extends BaseServiceTest {
         // then
         OrderTable findTable1 = orderTableRepository.findById(savedOrderTable1.getId()).get();
         OrderTable findTable2 = orderTableRepository.findById(savedOrderTable2.getId()).get();
-        assertThat(findTable1.getTableGroup()).isNull();
-        assertThat(findTable2.getTableGroup()).isNull();
+        assertThat(findTable1.getTableGroupId()).isNull();
+        assertThat(findTable2.getTableGroupId()).isNull();
     }
 
     @DisplayName("[테이블 그룹화 해제] 테이블 그룹화 해제시 테이블의 주문 상태가 요리중, 식사중 이라면 예외가 발생한다.")
@@ -141,7 +141,7 @@ class TableGroupServiceTest extends BaseServiceTest {
         OrderTable orderTable = 주문한_테이블_생성();
 
         // when then
-        assertThatThrownBy(() -> tableGroupService.ungroup(orderTable.getTableGroup().getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(orderTable.getTableGroupId()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

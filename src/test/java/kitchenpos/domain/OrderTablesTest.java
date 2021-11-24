@@ -43,7 +43,7 @@ class OrderTablesTest {
         OrderTables orderTables2 = new OrderTables(Collections.emptyList());
 
         // when
-        assertDoesNotThrow(() -> orderTables.validateGroupingNumbers());
+        assertDoesNotThrow(orderTables::validateGroupingNumbers);
     }
 
     @DisplayName("그룹화 검증: 테이블 그룹화하려는 테이블 수가 0이거나 2 이하라면 예외가 발생한다.")
@@ -144,15 +144,15 @@ class OrderTablesTest {
         TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now(), orderTableList);
 
         // when
-        orderTables.groupingTables(tableGroup);
+        orderTables.groupingTables(tableGroup.getId());
 
         // then
-        assertThat(orderTables.getValues()).extracting("tableGroup").contains(tableGroup);
+        assertThat(orderTables.getValues()).extracting("tableGroupId").contains(1L);
 
         // when
         orderTables.ungroupTables();
 
         // then
-        assertThat(orderTables.getValues()).extracting("tableGroup").containsNull();
+        assertThat(orderTables.getValues()).extracting("tableGroupId").containsNull();
     }
 }

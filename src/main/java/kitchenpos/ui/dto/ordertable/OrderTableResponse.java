@@ -20,13 +20,9 @@ public class OrderTableResponse {
     }
 
     public static OrderTableResponse of(OrderTable orderTable) {
-        Long tableGroupId = null;
-        if (Objects.nonNull(orderTable.getTableGroup())) {
-            tableGroupId = orderTable.getTableGroup().getId();
-        }
         return new OrderTableResponse(
                 orderTable.getId(),
-                tableGroupId,
+                orderTable.getTableGroupId(),
                 orderTable.getNumberOfGuests(),
                 orderTable.isEmpty()
         );

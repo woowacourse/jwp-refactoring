@@ -40,7 +40,8 @@ public class TableGroupService {
 
         savedOrderTables.validateGroupingTables();
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        savedOrderTables.groupingTables(savedTableGroup);
+        savedOrderTables.groupingTables(savedTableGroup.getId());
+        savedTableGroup.grouping(savedOrderTables.getValues());
 
         return savedTableGroup;
     }

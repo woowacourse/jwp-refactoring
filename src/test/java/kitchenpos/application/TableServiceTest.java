@@ -46,7 +46,7 @@ class TableServiceTest extends BaseServiceTest {
 
         // then
         assertThat(savedOrderTable.getId()).isNotNull();
-        assertThat(savedOrderTable.getTableGroup()).isNull();
+        assertThat(savedOrderTable.getTableGroupId()).isNull();
         assertThat(savedOrderTable.getNumberOfGuests()).isZero();
         assertThat(savedOrderTable.isEmpty()).isTrue();
     }
