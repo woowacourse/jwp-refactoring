@@ -1,52 +1,78 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
+import kitchenpos.exception.menu.MenuPriceOverThanProductsException;
+
+import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "menu")
 public class Menu {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String name;
-    private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+
+    @Embedded
+    private Price price;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "menu_group_id", foreignKey = @ForeignKey(name = "fk_menu_menu_group"))
+    private MenuGroup menuGroup;
+
+    @OneToMany(mappedBy = "menu")
+    private List<MenuProduct> menuProducts = new ArrayList<>();
+
+    protected Menu() {
+    }
+
+    public Menu(String name,
+                Long price,
+                MenuGroup menuGroup,
+                List<MenuProduct> menuProducts) {
+        this.name = name;
+        this.price = Price.from(price);
+        this.menuGroup = menuGroup;
+        this.menuProducts = menuProducts;
+
+        validatePrice(menuProducts);
+
+        for (MenuProduct menuProduct : menuProducts) {
+            if (menuProduct != null) {
+                menuProduct.belongsTo(this);
+            }
+        }
+    }
+
+    private void validatePrice(List<MenuProduct> menuProducts) {
+        long totalPriceOfMenuProducts = menuProducts.stream()
+                .mapToLong(MenuProduct::getTotalPrice)
+                .sum();
+        if (totalPriceOfMenuProducts < price.longValue()) {
+            throw new MenuPriceOverThanProductsException();
+        }
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
+    public Long getPrice() {
+        return price.longValue();
     }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
-    }
-
-    public Long getMenuGroupId() {
-        return menuGroupId;
-    }
-
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
     }
 }
