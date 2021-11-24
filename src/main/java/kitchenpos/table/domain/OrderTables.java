@@ -26,7 +26,9 @@ public class OrderTables {
     }
 
     public void ungroup(TableValidator tableValidator) {
-        orderTables.forEach(table -> table.ungroup(tableValidator));
+        for (OrderTable orderTable : orderTables) {
+            orderTable.ungroup(tableValidator);
+        }
     }
 
     public List<OrderTable> getOrderTables() {
