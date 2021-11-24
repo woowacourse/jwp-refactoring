@@ -1,6 +1,6 @@
 ###
-POST {{host}}/kitchenpos.api/tables
-Content-Type: kitchenpos.menu.application/json
+POST {{host}}/api/tables
+Content-Type: application/json
 
 {
   "numberOfGuests": 0,
@@ -8,35 +8,35 @@ Content-Type: kitchenpos.menu.application/json
 }
 
 ###
-GET {{host}}/kitchenpos.api/tables
+GET {{host}}/api/tables
 
 ###
-PUT {{host}}/kitchenpos.api/tables/1/empty
-Content-Type: kitchenpos.menu.application/json
+PUT {{host}}/api/tables/1/empty
+Content-Type: application/json
 
 {
   "empty": false
 }
 
 ###
-PUT {{host}}/kitchenpos.api/tables/1/number-of-guests
-Content-Type: kitchenpos.menu.application/json
+PUT {{host}}/api/tables/1/number-of-guests
+Content-Type: application/json
 
 {
   "numberOfGuests": 4
 }
 
 ###
-PUT {{host}}/kitchenpos.api/tables/1/empty
-Content-Type: kitchenpos.menu.application/json
+PUT {{host}}/api/tables/1/empty
+Content-Type: application/json
 
 {
   "empty": true
 }
 
 ###
-PUT {{host}}/kitchenpos.api/tables/2/empty
-Content-Type: kitchenpos.menu.application/json
+PUT {{host}}/api/tables/2/empty
+Content-Type: application/json
 
 {
   "empty": true

@@ -1,6 +1,6 @@
 ###
-POST {{host}}/kitchenpos.api/products
-Content-Type: kitchenpos.menu.application/json
+POST {{host}}/api/products
+Content-Type: application/json
 
 {
   "name": "강정치킨",
@@ -8,6 +8,6 @@ Content-Type: kitchenpos.menu.application/json
 }
 
 ###
-GET {{host}}/kitchenpos.api/products
+GET {{host}}/api/products
 
 ###

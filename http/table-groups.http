@@ -1,6 +1,6 @@
 ###
-POST {{host}}/kitchenpos.api/table-groups
-Content-Type: kitchenpos.menu.application/json
+POST {{host}}/api/table-groups
+Content-Type: application/json
 
 {
   "orderTables": [
@@ -14,6 +14,6 @@ Content-Type: kitchenpos.menu.application/json
 }
 
 ###
-DELETE {{host}}/kitchenpos.api/table-groups/1
+DELETE {{host}}/api/table-groups/1
 
 ###
