@@ -1,7 +1,5 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.table.domain.OrderTable;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -13,9 +11,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    private Long orderTableId;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -25,30 +21,23 @@ public class Order {
     protected Order() {
     }
 
-    private Order(OrderTable orderTable) {
-        this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now());
+    private Order(Long orderTableId) {
+        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now());
     }
 
-    private Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
-        validateEmptyOrderTable(orderTable);
+    private Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
 
-    public static Order create(OrderTable orderTable) {
-        return new Order(orderTable);
+    public static Order create(Long orderTableId) {
+        return new Order(orderTableId);
     }
 
-    public static Order create(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
-        return new Order(id, orderTable, orderStatus, orderedTime);
-    }
-
-    private void validateEmptyOrderTable(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException(orderTable.getId() + " 테이블은 비어있어 주문할 수 없습니다.");
-        }
+    public static Order create(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        return new Order(id, orderTableId, orderStatus, orderedTime);
     }
 
     public boolean isCompletion() {
@@ -60,6 +49,9 @@ public class Order {
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
+        if (this.orderStatus.isCompletion()) {
+            throw new IllegalArgumentException("orderId : " + id + "인 완료된 주문은 상태를 변경할 수 없습니다.");
+        }
         this.orderStatus = orderStatus;
     }
 
@@ -67,12 +59,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
-    }
-
     public Long getOrderTableId() {
-        return orderTable.getId();
+        return orderTableId;
     }
 
     public String getOrderStatus() {

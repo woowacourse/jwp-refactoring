@@ -1,16 +1,9 @@
 package kitchenpos.order.application;
 
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderLineItemRepository;
-import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.*;
 import kitchenpos.order.ui.dto.request.OrderChangeStatusRequest;
 import kitchenpos.order.ui.dto.request.OrderCreatedRequest;
 import kitchenpos.order.ui.dto.response.OrderResponse;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,36 +14,35 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class OrderService {
 
-    private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final OrderValidator orderValidator;
 
-    public OrderService(MenuRepository menuRepository, OrderRepository orderRepository, OrderLineItemRepository orderLineItemRepository, OrderTableRepository orderTableRepository) {
-        this.menuRepository = menuRepository;
+    public OrderService(
+            OrderRepository orderRepository,
+            OrderLineItemRepository orderLineItemRepository,
+            OrderValidator orderValidator
+    ) {
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
-    public OrderResponse create(final OrderCreatedRequest orderCreatedRequest) {
-        final OrderTable orderTable = orderTableRepository.findById(orderCreatedRequest.getOrderTableId())
-                .orElseThrow(() -> new IllegalArgumentException(orderCreatedRequest.getOrderTableId() + " 테이블이 존재하지 않습니다."));
+    public OrderResponse create(final OrderCreatedRequest request) {
+        orderValidator.validateTable(request.getOrderTableId());
+        final Order order = Order.create(request.getOrderTableId());
 
-        final Order savedOrder = orderRepository.save(Order.create(orderTable));
-
-        final List<OrderLineItem> orderLineItems = orderCreatedRequest.getOrderLineItemRequests()
+        final List<OrderLineItem> orderLineItems = request.getOrderLineItemRequests()
                 .stream()
                 .map(orderLineItemRequest -> {
-                    final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
-                            .orElseThrow(() -> new IllegalArgumentException("Menu id : " + orderLineItemRequest.getMenuId() + "는 등록되지 않아 주문할 수 없습니다."));
-                    return OrderLineItem.create(savedOrder, menu, orderLineItemRequest.getQuantity());
+                    orderValidator.validateMenu(orderLineItemRequest.getMenuId());
+                    return OrderLineItem.create(order, orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity());
                 })
                 .collect(toList());
 
         List<OrderLineItem> savedOrderLineItems = orderLineItemRepository.saveAll(orderLineItems);
-
+        final Order savedOrder = orderRepository.save(order);
         return OrderResponse.create(savedOrder, savedOrderLineItems);
     }
 
