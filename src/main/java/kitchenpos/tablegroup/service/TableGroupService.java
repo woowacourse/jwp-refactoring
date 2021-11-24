@@ -2,6 +2,7 @@ package kitchenpos.tablegroup.service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.repository.OrderRepository;
@@ -17,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Service
 public class TableGroupService {
+    private static final int MIN_GROUP_SIZE = 2;
+
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
@@ -34,14 +37,23 @@ public class TableGroupService {
     public TableGroupResponse create(final TableGroupRequest request) {
         final List<Long> orderTableIds = request.getOrderTableIds();
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        validateCreation(savedOrderTables, orderTableIds);
 
-        if (request.getOrderTableIds().size() != savedOrderTables.size()) {
-            throw new NoSuchElementException();
-        }
-
-        final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(savedOrderTables));
+        final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup());
+        savedOrderTables.forEach(it -> it.belongsTo(savedTableGroup.getId()));
 
         return TableGroupResponse.of(savedTableGroup);
+        // orderTable 그룹 도메인 이벤트
+    }
+
+    private void validateCreation(List<OrderTable> orderTables, List<Long> requestedIds) {
+        if (requestedIds.size() < MIN_GROUP_SIZE) {
+            throw new IllegalStateException("단체 지정할 테이블들이 부족합니다.");
+        }
+
+        if (requestedIds.size() != orderTables.size()) {
+            throw new NoSuchElementException();
+        }
     }
 
     public void ungroup(final Long tableGroupId) {

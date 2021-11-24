@@ -3,9 +3,7 @@ package kitchenpos.ordertable.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import kitchenpos.fixtures.OrderFixtures;
 import kitchenpos.fixtures.TableFixtures;
-import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 
@@ -15,9 +13,9 @@ class OrderTableTest {
     void 그룹을_지정한다() {
         OrderTable orderTable = TableFixtures.createOrderTable(true);
         TableGroup tableGroup = TableFixtures.createTableGroup();
-        orderTable.belongsTo(tableGroup);
+        orderTable.belongsTo(tableGroup.getId());
 
-        assertThat(orderTable.getTableGroup()).isNotNull();
+        assertThat(orderTable.getTableGroupId()).isNotNull();
     }
 
     @Test
@@ -25,7 +23,7 @@ class OrderTableTest {
         OrderTable notEmptyTable = TableFixtures.createOrderTable(false);
         TableGroup tableGroup = TableFixtures.createTableGroup();
 
-        Exception exception = assertThrows(IllegalStateException.class, () -> notEmptyTable.belongsTo(tableGroup));
+        Exception exception = assertThrows(IllegalStateException.class, () -> notEmptyTable.belongsTo(tableGroup.getId()));
         assertThat(exception.getMessage()).isEqualTo("빈 테이블이 아닙니다.");
     }
 
@@ -34,7 +32,7 @@ class OrderTableTest {
         OrderTable groupedTable = TableFixtures.createGroupedOrderTable(true);
         TableGroup tableGroup = TableFixtures.createTableGroup();
 
-        Exception exception = assertThrows(IllegalStateException.class, () -> groupedTable.belongsTo(tableGroup));
+        Exception exception = assertThrows(IllegalStateException.class, () -> groupedTable.belongsTo(tableGroup.getId()));
         assertThat(exception.getMessage()).isEqualTo("이미 단체 지정된 테이블입니다.");
     }
 
@@ -43,7 +41,7 @@ class OrderTableTest {
         OrderTable groupedTable = TableFixtures.createGroupedOrderTable(true);
         groupedTable.ungroup();
 
-        assertThat(groupedTable.getTableGroup()).isNull();
+        assertThat(groupedTable.getTableGroupId()).isNull();
     }
 
     @Test

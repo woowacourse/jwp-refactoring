@@ -20,11 +20,11 @@ public class TableFixtures {
 
     public static OrderTable createOrderTable(
         Long id,
-        TableGroup tableGroup,
+        Long tableGroupId,
         int numberOfGuests,
         boolean empty
     ) {
-        return new OrderTable(id, tableGroup, numberOfGuests, empty);
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 
     public static OrderTable createOrderTable(boolean empty) {
@@ -32,7 +32,7 @@ public class TableFixtures {
     }
 
     public static OrderTable createGroupedOrderTable(boolean empty) {
-        return createOrderTable(ORDER_TABLE_ID, createTableGroup(), NUMBER_OF_GUESTS, empty);
+        return createOrderTable(ORDER_TABLE_ID, createTableGroup().getId(), NUMBER_OF_GUESTS, empty);
     }
 
     public static OrderTableRequest createOrderTableRequest(OrderTable orderTable) {
@@ -48,29 +48,12 @@ public class TableFixtures {
 
     public static TableGroup createTableGroup(
         Long id,
-        LocalDateTime createdDate,
-        List<OrderTable> orderTables
+        LocalDateTime createdDate
     ) {
-        return new TableGroup(id, createdDate, orderTables);
+        return new TableGroup(id, createdDate);
     }
 
     public static TableGroup createTableGroup() {
-        return createTableGroup(TABLE_GROUP_ID, LocalDateTime.now(), createOrderTables(true));
-    }
-
-    public static TableGroup createTableGroup(List<OrderTable> orderTables) {
-        return createTableGroup(TABLE_GROUP_ID, LocalDateTime.now(), orderTables);
-    }
-
-    public static TableGroupRequest createTableGroupRequest(TableGroup tableGroup) {
-        return new TableGroupRequest(
-            tableGroup.getOrderTables().stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList())
-        );
-    }
-
-    public static TableGroupRequest createTableGroupRequest() {
-        return createTableGroupRequest(createTableGroup());
+        return createTableGroup(TABLE_GROUP_ID, LocalDateTime.now());
     }
 }
