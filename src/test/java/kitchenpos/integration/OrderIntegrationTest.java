@@ -76,7 +76,7 @@ class OrderIntegrationTest {
         Menu changedMenu = menuRepository.findById(originalMenu.getId()).get();
 
         Order currentOrder = orderRepository.findById(order.getId()).get();
-        OrderLineItem orderLineItem = currentOrder.getOrderLineItems().get(0);
+        OrderLineItem orderLineItem = currentOrder.getOrderLineItemLists().get(0);
         Menu orderedMenu = menuRepository.findById(orderLineItem.getMenuId()).get();
 
         // then

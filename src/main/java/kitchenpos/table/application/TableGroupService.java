@@ -31,9 +31,7 @@ public class TableGroupService {
         final TableGroup tableGroup = new TableGroup();
         final List<OrderTable> orderTables = getOrderTables(tableGroup, request);
         tableGroup.addOrderTables(orderTables);
-
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        return TableGroupResponse.from(savedTableGroup);
+        return TableGroupResponse.from(tableGroupRepository.save(tableGroup));
     }
 
     private List<OrderTable> getOrderTables(TableGroup tableGroup, CreateTableGroupRequest request) {

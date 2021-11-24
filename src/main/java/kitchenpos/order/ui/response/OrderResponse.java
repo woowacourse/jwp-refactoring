@@ -30,7 +30,7 @@ public class OrderResponse {
     }
 
     private static List<OrderLineItemResponse> orderLineItemResponse(Order order) {
-        return order.getOrderLineItems().stream()
+        return order.getOrderLineItemLists().stream()
                     .map(OrderLineItemResponse::from)
                     .collect(Collectors.toList());
     }

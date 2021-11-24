@@ -32,8 +32,7 @@ public class OrderService {
     public CreateOrderResponse create(final CreateOrderRequest request) {
         orderValidator.validateTable(request.getOrderTableId());
         final Order order = getOrder(request);
-        final Order savedOrder = orderRepository.save(order);
-        return CreateOrderResponse.from(savedOrder);
+        return CreateOrderResponse.from(orderRepository.save(order));
     }
 
     private Order getOrder(CreateOrderRequest request) {

@@ -31,8 +31,7 @@ public class MenuService {
     public MenuResponse create(final CreateMenuRequest request) {
         menuValidator.validateMenuGroup(request.getMenuGroupId());
         final Menu menu = getMenu(request);
-        final Menu savedMenu = menuRepository.save(menu);
-        return MenuResponse.from(savedMenu);
+        return MenuResponse.from(menuRepository.save(menu));
     }
 
     private Menu getMenu(CreateMenuRequest request) {

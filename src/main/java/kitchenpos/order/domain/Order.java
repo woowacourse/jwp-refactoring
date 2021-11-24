@@ -3,10 +3,7 @@ package kitchenpos.order.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.*;
-
-import org.springframework.util.CollectionUtils;
 
 @Entity
 @Table(name = "orders")
@@ -22,8 +19,8 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
-    private List<OrderLineItem> orderLineItems;
+    @Embedded
+    private OrderLineItems orderLineItems;
 
     public Order() {
     }
@@ -41,14 +38,11 @@ public class Order {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
     public void addOrderLineItem(List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("주문하려면 하나 이상의 메뉴가 필요합니다.");
-        }
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = OrderLineItems.from(orderLineItems);
     }
 
     public boolean isStatus(OrderStatus status) {
@@ -57,7 +51,7 @@ public class Order {
 
     public void changeOrderStatus(String orderStatus) {
         OrderStatus status = OrderStatus.valueOf(orderStatus);
-        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
+        if (OrderStatus.isCompletion(this.orderStatus)) {
             throw new IllegalArgumentException("계산 완료된 주문의 상태는 변경할 수 없습니다.");
         }
         this.orderStatus = status;
@@ -79,7 +73,11 @@ public class Order {
         return orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
+    public OrderLineItems getOrderLineItems() {
         return orderLineItems;
+    }
+
+    public List<OrderLineItem> getOrderLineItemLists() {
+        return orderLineItems.getOrderLineItems();
     }
 }
