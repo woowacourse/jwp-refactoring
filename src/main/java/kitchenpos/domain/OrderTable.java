@@ -1,40 +1,88 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import kitchenpos.exception.CannotChangeOrderTableEmpty;
+import kitchenpos.exception.CannotChangeOrderTableGuest;
+
+@Entity
 public class OrderTable {
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long tableGroupId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
+
     private int numberOfGuests;
+
     private boolean empty;
+
+    public OrderTable() {
+    }
+
+    public OrderTable(int numberOfGuests, boolean empty) {
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
+    public boolean canCreateTableGroup() {
+        return this.isEmpty() && Objects.isNull(tableGroup);
+    }
+
+    public void includeInTableGroup(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+        this.empty = false;
+    }
+
+    public void excludeFromTableGroup() {
+        this.tableGroup = null;
+        this.empty = true;
+    }
+
+    public void changeEmptyStatus(Boolean empty) {
+        if (Objects.nonNull(this.tableGroup)) {
+            throw new CannotChangeOrderTableEmpty();
+        }
+        this.empty = empty;
+    }
+
+    public void changeNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new CannotChangeOrderTableGuest();
+        }
+
+        if (this.empty) {
+            throw new CannotChangeOrderTableGuest();
+        }
+
+        this.numberOfGuests = numberOfGuests;
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
     }
 
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
     public boolean isEmpty() {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
+    public Long getTableGroupId() {
+        if (Objects.isNull(this.tableGroup)) {
+            return null;
+        }
+
+        return this.tableGroup.getId();
     }
 }
