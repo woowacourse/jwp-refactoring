@@ -1,9 +1,6 @@
 package kitchenpos.menu.domain;
 
-import java.math.BigDecimal;
 import javax.persistence.*;
-
-import kitchenpos.product.domain.Product;
 
 @Entity
 public class MenuProduct {
