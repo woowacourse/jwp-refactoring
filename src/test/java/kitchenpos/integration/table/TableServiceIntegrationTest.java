@@ -122,42 +122,6 @@ class TableServiceIntegrationTest extends IntegrationTest {
         assertThat(responseDto.getEmpty()).isTrue();
     }
 
-//    @DisplayName("테이블 상태는 주문 테이블이 존재하면 변경할 수 없다.")
-//    @Test
-//    void changeEmpty_NonExistingOrderTable_Fail() {
-//        // given
-//        MenuResponseDto menuResponseDto = menuService.create(menuRequestDto);
-//
-//        TableRequestDto tableRequestDto = new TableRequestDto(2L, FALSE);
-//        TableResponseDto tableResponseDto = tableService.create(tableRequestDto);
-//
-//        OrderLineItemRequestDto orderLineItemRequestDto = new OrderLineItemRequestDto(
-//            menuResponseDto.getId(),
-//            QUANTITY
-//        );
-//        OrdersRequestDto ordersRequestDto = new OrdersRequestDto(
-//            tableResponseDto.getId(),
-//            Collections.singletonList(orderLineItemRequestDto)
-//        );
-//        OrdersResponseDto ordersResponseDto = ordersService.create(ordersRequestDto);
-//
-//        OrdersStatusRequestDto ordersStatusRequestDto = new OrdersStatusRequestDto(
-//            ordersResponseDto.getId(),
-//            COMPLETION.name()
-//        );
-//        ordersService.changeOrderStatus(ordersStatusRequestDto);
-//
-//        TableEmptyRequestDto requestDto = new TableEmptyRequestDto(
-//            tableResponseDto.getId(),
-//            TRUE
-//        );
-//
-//        // when
-//        // then
-//        assertThatThrownBy(() -> tableService.changeEmpty(requestDto))
-//            .isInstanceOf(IllegalArgumentException.class);
-//    }
-
     @DisplayName("테이블 상태는 주문 상태가 `조리`면 변경할 수 없다.")
     @Test
     void changeEmpty_InvalidCookingOrderStatus_Fail() {
