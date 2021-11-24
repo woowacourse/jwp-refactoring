@@ -18,10 +18,7 @@ class MenuTest {
     void 메뉴를_생성한다() {
         List<MenuProduct> menuProducts = MenuFixtures.createMenuProducts();
         MenuGroup menuGroup = MenuGroupFixtures.createMenuGroup();
-        Price price = menuProducts.stream()
-            .map(menuProduct -> menuProduct.getProduct().getPrice())
-            .reduce(Price::sum)
-            .orElseGet(() -> Price.ZERO);
+        Price price = new Price(new BigDecimal(1000));
 
         Menu menu = new Menu("name", price, menuGroup.getId(), menuProducts);
         assertAll(
@@ -30,18 +27,5 @@ class MenuTest {
             () -> assertThat(menu.getMenuGroupId()).isEqualTo(menuGroup.getId()),
             () -> assertThat(menu.getMenuProducts()).hasSize(menuProducts.size())
         );
-    }
-
-    @Test
-    void 생성_시_가격이_상품들의_가격합보다_크면_예외를_반환한다() {
-        List<MenuProduct> menuProducts = MenuFixtures.createMenuProducts();
-        Price invalidPrice = menuProducts.stream()
-            .map(menuProduct -> menuProduct.getProduct().getPrice())
-            .reduce(Price::sum)
-            .orElseGet(() -> Price.ZERO)
-            .sum(new Price(BigDecimal.ONE));
-
-        assertThrows(IllegalStateException.class,
-            () -> new Menu("name", invalidPrice, MenuGroupFixtures.createMenuGroup().getId(), menuProducts));
     }
 }

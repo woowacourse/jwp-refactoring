@@ -49,7 +49,7 @@ public class MenuFixtures {
             menu.getPrice(),
             menu.getMenuGroupId(),
             menu.getMenuProducts().stream()
-                .map(menuProduct -> new MenuProductRequest(menuProduct.getProduct().getId(), menuProduct.getQuantity()))
+                .map(menuProduct -> new MenuProductRequest(menuProduct.getProductId(), menuProduct.getQuantity()))
                 .collect(Collectors.toList())
         );
     }
@@ -57,14 +57,14 @@ public class MenuFixtures {
     public static MenuProduct createMenuProduct(
         Long id,
         Menu menu,
-        Product product,
+        Long productId,
         long quantity
     ) {
-        return new MenuProduct(id, menu, product, quantity);
+        return new MenuProduct(id, menu, productId, quantity);
     }
 
     public static MenuProduct createMenuProduct() {
-        return createMenuProduct(null, null, ProductFixtures.createProduct(), QUANTITY);
+        return createMenuProduct(null, null, ProductFixtures.createProduct().getId(), QUANTITY);
     }
 
     public static List<MenuProduct> createMenuProducts() {
