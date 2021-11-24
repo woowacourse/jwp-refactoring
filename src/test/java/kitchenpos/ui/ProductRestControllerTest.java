@@ -8,12 +8,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.Constructor;
+import kitchenpos.ObjectMapperForTest;
 import kitchenpos.application.ProductService;
-import kitchenpos.domain.Product;
+import kitchenpos.ui.request.ProductRequest;
+import kitchenpos.ui.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(ProductRestController.class)
-class ProductRestControllerTest extends Constructor {
+class ProductRestControllerTest extends ObjectMapperForTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -36,9 +36,9 @@ class ProductRestControllerTest extends Constructor {
     @Test
     void create() throws Exception {
         //given
-        Product product = productConstructor("후라이드 치킨", 15000);
-        Product expected = productConstructor(1L, "후라이드 치킨", new BigDecimal(15000));
-        given(productService.create(any(Product.class))).willReturn(expected);
+        ProductRequest product = new ProductRequest("후라이드 치킨", 15000L);
+        ProductResponse expected = new ProductResponse(1L, "후라이드 치킨", 15000L);
+        given(productService.create(any(ProductRequest.class))).willReturn(expected);
 
         //when
         ResultActions response = mockMvc.perform(post("/api/products")
@@ -57,10 +57,10 @@ class ProductRestControllerTest extends Constructor {
     @Test
     void readAll() throws Exception {
         //given
-        Product productA = productConstructor(1L, "후라이드 치킨", new BigDecimal(15000));
-        Product productB = productConstructor(2L, "양념 치킨", new BigDecimal(16000));
-        Product productC = productConstructor(3L, "간장 치킨", new BigDecimal(17000));
-        List<Product> expected = Arrays.asList(productA, productB, productC);
+        ProductResponse productA = new ProductResponse(1L, "후라이드 치킨", 15000L);
+        ProductResponse productB = new ProductResponse(2L, "양념 치킨", 16000L);
+        ProductResponse productC = new ProductResponse(3L, "간장 치킨", 17000L);
+        List<ProductResponse> expected = Arrays.asList(productA, productB, productC);
         given(productService.list()).willReturn(expected);
 
         //when

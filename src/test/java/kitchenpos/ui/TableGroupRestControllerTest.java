@@ -12,10 +12,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.Constructor;
+import java.util.stream.Collectors;
+import kitchenpos.ObjectMapperForTest;
 import kitchenpos.application.TableGroupService;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.request.OrderTableRequest;
+import kitchenpos.ui.request.TableGroupRequest;
+import kitchenpos.ui.response.OrderTableResponse;
+import kitchenpos.ui.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(TableGroupRestController.class)
-class TableGroupRestControllerTest extends Constructor {
+class TableGroupRestControllerTest extends ObjectMapperForTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -38,13 +41,16 @@ class TableGroupRestControllerTest extends Constructor {
     @Test
     void create() throws Exception {
         //given
-        OrderTable tableA = orderTableConstructor(1L, null, 4, true);
-        OrderTable tableB = orderTableConstructor(2L, null, 2, true);
-        OrderTable tableC = orderTableConstructor(3L, null, 6, true);
-        List<OrderTable> orderTables = Arrays.asList(tableA, tableB, tableC);
-        TableGroup tableGroup = tableGroupConstructor(orderTables);
-        TableGroup expected = tableGroupConstructor(1L, LocalDateTime.now(), orderTables);
-        given(tableGroupService.create(any(TableGroup.class))).willReturn(expected);
+        OrderTableRequest tableA = new OrderTableRequest(1L);
+        OrderTableRequest tableB = new OrderTableRequest(2L);
+        OrderTableRequest tableC = new OrderTableRequest(3L);
+        List<OrderTableRequest> orderTables = Arrays.asList(tableA, tableB, tableC);
+        TableGroupRequest tableGroup = new TableGroupRequest(orderTables);
+        List<OrderTableResponse> collect = orderTables.stream()
+            .map(value -> new OrderTableResponse(value.getId(), 1L, 4, true))
+            .collect(Collectors.toList());
+        TableGroupResponse expected = new TableGroupResponse(1L, LocalDateTime.now().toString(), collect);
+        given(tableGroupService.create(any(TableGroupRequest.class))).willReturn(expected);
 
         //when
         ResultActions response = mockMvc.perform(post("/api/table-groups")
