@@ -1,17 +1,16 @@
-package kitchenpos.menu.domain;
+package kitchenpos.order.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.order.domain.OrderLineItemQuantity;
 import kitchenpos.order.exception.InvalidOrderLineItemQuantityException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("MenuQuantity 단위 테스트")
-class MenuQuantityTest {
+@DisplayName("OrderLineItemQuantity 단위 테스트")
+class OrderLineItemQuantityTest {
 
-    @DisplayName("MenuQuantity를 생성할 때")
+    @DisplayName("OrderLineItemQuantity를 생성할 때")
     @Nested
     class Create {
 
