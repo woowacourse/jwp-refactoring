@@ -18,11 +18,8 @@ class MenuTest {
     @DisplayName("가격은 0 이상이어야 한다.")
     void validatePriceTest() {
 
-        // given
-        Menu menu = new Menu(1L, "이름", BigDecimal.ZERO, null, new ArrayList<>());
-
         // when
-        ThrowableAssert.ThrowingCallable callable = menu::validatePrice;
+        ThrowableAssert.ThrowingCallable callable = () -> new Menu(1L, "이름", BigDecimal.ZERO, null, new ArrayList<>());
 
         // then
         assertThatCode(callable).doesNotThrowAnyException();
@@ -32,11 +29,8 @@ class MenuTest {
     @DisplayName("가격은 0 이상이어야 한다. 실패")
     void validatePriceFailTest() {
 
-        // given
-        Menu menu = new Menu(1L, "이름", BigDecimal.valueOf(-1), null, new ArrayList<>());
-
         // when
-        ThrowableAssert.ThrowingCallable callable = menu::validatePrice;
+        ThrowableAssert.ThrowingCallable callable = () -> new Menu(1L, "이름", BigDecimal.valueOf(-1), null, new ArrayList<>());
 
         // then
         assertThatIllegalArgumentException().isThrownBy(callable);

@@ -27,7 +27,7 @@ public class OrderLineItemService {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
             final Menu menu = menuService.findById(orderLineItemRequest.getMenuId());
-            orderLineItems.add(new OrderLineItem(null, order, menu, orderLineItemRequest.getQuantity()));
+            orderLineItems.add(new OrderLineItem(null, order, menu.getId(), orderLineItemRequest.getQuantity()));
         }
         return orderLineItemDao.saveAll(orderLineItems);
     }

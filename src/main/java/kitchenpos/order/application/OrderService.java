@@ -1,11 +1,9 @@
 package kitchenpos.order.application;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.order.domain.Order;
@@ -39,9 +37,10 @@ public class OrderService {
     @Transactional
     public Order create(final OrderRequest orderRequest) {
         validateOrderCreation(orderRequest);
-        final OrderTable orderTable = tableService.findById(orderRequest.getOrderTableId());
-        final Order order = orderRequest.toEntity(orderTable);
+        final Order order = orderRequest.toEntity();
+
         final Order savedOrder = orderDao.save(order);
+
         final List<OrderLineItem> orderLineItemList = orderLineItemService.saveAll(savedOrder, orderRequest.getOrderLineItemRequests());
         savedOrder.addOrderLineItems(orderLineItemList);
         return savedOrder;
@@ -55,17 +54,13 @@ public class OrderService {
 
     private void validateOrderLineItemEmpty(OrderRequest orderRequest) {
         final List<OrderLineItemRequest> orderLineItemRequests = orderRequest.getOrderLineItemRequests();
-        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
+        if (orderLineItemRequests.isEmpty()) {
             throw new IllegalArgumentException("주문 항목이 비어있습니다.");
         }
     }
 
     private void validateSavedMenuCount(OrderRequest orderRequest) {
-        final List<Long> menuIds = orderRequest.getOrderLineItemRequests()
-                                               .stream()
-                                               .map(OrderLineItemRequest::getMenuId)
-                                               .collect(Collectors.toList());
-
+        final List<Long> menuIds = orderRequest.getMenuIds();
         if (menuIds.size() != menuService.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("저장되어 있는 메뉴보다 더 많은 메뉴가 입력되었습니다.");
         }

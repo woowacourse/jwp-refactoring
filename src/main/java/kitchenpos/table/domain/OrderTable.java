@@ -16,7 +16,7 @@ public class OrderTable {
     @ManyToOne
     private TableGroup tableGroup;
 
-    @OneToMany(mappedBy = "orderTable")
+    @OneToMany(mappedBy = "orderTableId")
     private List<Order> orders;
 
     private int numberOfGuests;

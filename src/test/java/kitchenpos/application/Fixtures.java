@@ -22,7 +22,7 @@ public class Fixtures {
     }
 
     public static MenuRequest makeMenu() {
-        return new MenuRequest("잠봉", 16000.00, 1L, Collections.singletonList(makeMenuProduct()));
+        return new MenuRequest("잠봉", 16000, 1L, Collections.singletonList(makeMenuProduct()));
     }
 
     public static OrderLineItemRequest makeOrderLineItem() {

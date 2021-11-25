@@ -16,7 +16,7 @@ public class MenuRequest {
 
     public MenuRequest() {}
 
-    public MenuRequest(String name, double price, Long menuGroupId, List<MenuProductRequest> menuProducts) {
+    public MenuRequest(String name, int price, Long menuGroupId, List<MenuProductRequest> menuProducts) {
         this.name = name;
         this.price = BigDecimal.valueOf(price);
         this.menuGroupId = menuGroupId;
@@ -40,7 +40,7 @@ public class MenuRequest {
     }
 
     public Menu toEntity(MenuGroup menuGroup, BigDecimal price) {
-        if (!this.price.equals(price)) {
+        if (this.price.compareTo(price) != 0) {
             throw new IllegalArgumentException("요청 가격과 저장된 가격이 다릅니다.");
         }
         return new Menu(null, name, price, menuGroup, new ArrayList<>());
