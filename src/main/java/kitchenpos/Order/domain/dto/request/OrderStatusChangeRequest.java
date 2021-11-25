@@ -1,6 +1,4 @@
-package kitchenpos.Order.domain.dto.request;
-
-import kitchenpos.Order.domain.Order;
+package kitchenpos.order.domain.dto.request;
 
 public class OrderStatusChangeRequest {
 

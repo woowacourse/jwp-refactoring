@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.Order.domain.Order;
-import kitchenpos.Order.domain.OrderLineItem;
-import kitchenpos.Order.domain.OrderStatus;
-import kitchenpos.OrderTable.application.TableGroupService;
-import kitchenpos.OrderTable.domain.TableGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.application.TableGroupService;
+import kitchenpos.ordertable.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

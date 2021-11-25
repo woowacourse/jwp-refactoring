@@ -1,7 +1,7 @@
-package kitchenpos.Order.domain.dto.request;
+package kitchenpos.order.domain.dto.request;
 
-import kitchenpos.Order.domain.Order;
-import kitchenpos.Order.domain.OrderLineItem;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 
 import java.util.List;
 import java.util.stream.Collectors;

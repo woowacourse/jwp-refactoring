@@ -1,16 +1,15 @@
-package kitchenpos.Menu.application;
+package kitchenpos.menu.application;
 
-import kitchenpos.Menu.domain.Menu;
-import kitchenpos.Menu.domain.MenuProduct;
-import kitchenpos.Menu.domain.Product;
-import kitchenpos.Menu.domain.repository.MenuGroupRepository;
-import kitchenpos.Menu.domain.repository.MenuRepository;
-import kitchenpos.Menu.domain.repository.ProductRepository;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.Product;
+import kitchenpos.menu.domain.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.menu.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 

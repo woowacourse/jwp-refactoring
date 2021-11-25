@@ -1,7 +1,6 @@
-package kitchenpos.Order.domain.dto.response;
+package kitchenpos.order.domain.dto.response;
 
-import kitchenpos.Order.domain.Order;
-import kitchenpos.OrderTable.domain.dto.response.OrderTableResponse;
+import kitchenpos.order.domain.Order;
 
 import java.util.List;
 import java.util.stream.Collectors;

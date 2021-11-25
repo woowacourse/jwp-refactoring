@@ -1,9 +1,9 @@
-package kitchenpos.OrderTable.presentation;
+package kitchenpos.ordertable.presentation;
 
-import kitchenpos.OrderTable.application.TableGroupService;
-import kitchenpos.OrderTable.domain.TableGroup;
-import kitchenpos.OrderTable.domain.dto.request.TableGroupCreateRequest;
-import kitchenpos.OrderTable.domain.dto.response.TableGroupResponse;
+import kitchenpos.ordertable.application.TableGroupService;
+import kitchenpos.ordertable.domain.TableGroup;
+import kitchenpos.ordertable.domain.dto.request.TableGroupCreateRequest;
+import kitchenpos.ordertable.domain.dto.response.TableGroupResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

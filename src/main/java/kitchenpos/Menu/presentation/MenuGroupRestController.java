@@ -1,9 +1,9 @@
-package kitchenpos.Menu.presentation;
+package kitchenpos.menu.presentation;
 
-import kitchenpos.Menu.application.MenuGroupService;
-import kitchenpos.Menu.domain.MenuGroup;
-import kitchenpos.Menu.domain.dto.request.MenuGroupCreateRequest;
-import kitchenpos.Menu.domain.dto.response.MenuGroupResponse;
+import kitchenpos.menu.application.MenuGroupService;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.dto.request.MenuGroupCreateRequest;
+import kitchenpos.menu.domain.dto.response.MenuGroupResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

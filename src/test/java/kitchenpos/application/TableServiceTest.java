@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.Order.domain.OrderStatus;
-import kitchenpos.OrderTable.application.TableGroupService;
-import kitchenpos.OrderTable.domain.OrderTable;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.application.TableGroupService;
+import kitchenpos.ordertable.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

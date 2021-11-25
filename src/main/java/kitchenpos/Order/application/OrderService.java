@@ -1,12 +1,12 @@
-package kitchenpos.Order.application;
+package kitchenpos.order.application;
 
-import kitchenpos.Menu.domain.repository.MenuRepository;
-import kitchenpos.Order.domain.Order;
-import kitchenpos.Order.domain.OrderLineItem;
-import kitchenpos.Order.domain.OrderStatus;
-import kitchenpos.Order.domain.repository.OrderRepository;
-import kitchenpos.OrderTable.domain.OrderTable;
-import kitchenpos.OrderTable.domain.repository.OrderTableRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;

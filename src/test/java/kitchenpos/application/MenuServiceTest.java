@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.Menu.application.MenuService;
-import kitchenpos.Menu.domain.Menu;
-import kitchenpos.Menu.domain.MenuProduct;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

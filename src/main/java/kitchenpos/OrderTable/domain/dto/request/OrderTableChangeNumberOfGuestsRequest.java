@@ -1,6 +1,6 @@
-package kitchenpos.OrderTable.domain.dto.request;
+package kitchenpos.ordertable.domain.dto.request;
 
-import kitchenpos.OrderTable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTable;
 
 public class OrderTableChangeNumberOfGuestsRequest {
 

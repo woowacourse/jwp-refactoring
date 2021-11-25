@@ -1,11 +1,11 @@
-package kitchenpos.OrderTable.presentation;
+package kitchenpos.ordertable.presentation;
 
-import kitchenpos.OrderTable.application.TableService;
-import kitchenpos.OrderTable.domain.OrderTable;
-import kitchenpos.OrderTable.domain.dto.request.OrderTableChangeEmptyRequest;
-import kitchenpos.OrderTable.domain.dto.request.OrderTableChangeNumberOfGuestsRequest;
-import kitchenpos.OrderTable.domain.dto.request.OrderTableCreateRequest;
-import kitchenpos.OrderTable.domain.dto.response.OrderTableResponse;
+import kitchenpos.ordertable.application.TableService;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.ordertable.domain.dto.request.OrderTableChangeNumberOfGuestsRequest;
+import kitchenpos.ordertable.domain.dto.request.OrderTableCreateRequest;
+import kitchenpos.ordertable.domain.dto.response.OrderTableResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
