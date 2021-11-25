@@ -3,8 +3,8 @@ package kitchenpos.tablegroup.ui.response;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.table.ui.response.OrderTableResponse;
+import kitchenpos.tablegroup.domain.TableGroup;
 
 public class TableGroupResponse {
 

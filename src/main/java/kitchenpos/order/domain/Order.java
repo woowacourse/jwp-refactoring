@@ -13,9 +13,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.exception.InvalidOrderException;
 import kitchenpos.order.exception.OrderAlreadyCompletionException;
+import kitchenpos.table.domain.OrderTable;
 
 @Entity(name = "orders")
 public class Order {

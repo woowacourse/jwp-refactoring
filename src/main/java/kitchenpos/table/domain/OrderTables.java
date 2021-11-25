@@ -1,9 +1,9 @@
 package kitchenpos.table.domain;
 
 import java.util.List;
-import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.table.exception.InvalidOrderTablesException;
 import kitchenpos.table.exception.OrderTableNotEmptyException;
+import kitchenpos.tablegroup.domain.TableGroup;
 
 public class OrderTables {
 

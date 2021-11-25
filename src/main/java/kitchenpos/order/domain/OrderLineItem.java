@@ -9,8 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import kitchenpos.order.exception.InvalidOrderLineItemException;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.order.exception.InvalidOrderLineItemException;
 
 @Entity
 public class OrderLineItem {

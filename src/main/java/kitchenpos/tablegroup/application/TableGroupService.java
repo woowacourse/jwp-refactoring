@@ -2,14 +2,14 @@ package kitchenpos.tablegroup.application;
 
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.order.domain.Orders;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTables;
-import kitchenpos.order.domain.Orders;
+import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.exception.OrderTableNotFoundException;
 import kitchenpos.tablegroup.exception.TableGroupNotFoundException;
-import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.tablegroup.repository.TableGroupRepository;
 import kitchenpos.tablegroup.ui.request.TableGroupRequest;
 import kitchenpos.tablegroup.ui.response.TableGroupResponse;

@@ -9,9 +9,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.table.exception.OrderTableEmptyException;
 import kitchenpos.table.exception.OrderTableNotEmptyException;
+import kitchenpos.tablegroup.domain.TableGroup;
 
 @Entity
 public class OrderTable {
