@@ -1,4 +1,4 @@
-package kitchenpos.tablegroup.acceptance;
+package kitchenpos.table.acceptance;
 
 import static java.util.stream.Collectors.toList;
 import static kitchenpos.order.domain.OrderStatus.COOKING;
@@ -27,9 +27,9 @@ import kitchenpos.order.ui.response.OrderResponse;
 import kitchenpos.product.ui.request.ProductRequest;
 import kitchenpos.product.ui.response.ProductResponse;
 import kitchenpos.table.ui.request.OrderTableRequest;
+import kitchenpos.table.ui.request.TableGroupRequest;
 import kitchenpos.table.ui.response.OrderTableResponse;
-import kitchenpos.tablegroup.ui.request.TableGroupRequest;
-import kitchenpos.tablegroup.ui.response.TableGroupResponse;
+import kitchenpos.table.ui.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

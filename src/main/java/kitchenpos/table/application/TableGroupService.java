@@ -1,18 +1,16 @@
-package kitchenpos.tablegroup.application;
+package kitchenpos.table.application;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.order.domain.Orders;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTables;
+import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.repository.OrderTableRepository;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.tablegroup.exception.OrderTableNotFoundException;
-import kitchenpos.tablegroup.exception.TableGroupNotFoundException;
-import kitchenpos.tablegroup.repository.TableGroupRepository;
-import kitchenpos.tablegroup.ui.request.TableGroupRequest;
-import kitchenpos.tablegroup.ui.response.TableGroupResponse;
+import kitchenpos.table.domain.repository.TableGroupRepository;
+import kitchenpos.table.exception.OrderTableNotFoundException;
+import kitchenpos.table.exception.TableGroupNotFoundException;
+import kitchenpos.table.ui.request.TableGroupRequest;
+import kitchenpos.table.ui.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,16 +20,16 @@ public class TableGroupService {
 
     private final TableGroupRepository tableGroupRepository;
     private final OrderTableRepository orderTableRepository;
-    private final OrderRepository orderRepository;
+    private final TableValidator tableValidator;
 
     public TableGroupService(
         TableGroupRepository tableGroupRepository,
         OrderTableRepository orderTableRepository,
-        OrderRepository orderRepository
+        TableValidator tableValidator
     ) {
         this.tableGroupRepository = tableGroupRepository;
         this.orderTableRepository = orderTableRepository;
-        this.orderRepository = orderRepository;
+        this.tableValidator = tableValidator;
     }
 
     @Transactional
@@ -56,14 +54,19 @@ public class TableGroupService {
         return new OrderTables(orderTables);
     }
 
+    private OrderTable findOrderTableById(Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
+            .orElseThrow(() -> new OrderTableNotFoundException(
+                String.format("%s ID에 해당하는 OrderTable이 존재하지 않습니다.", orderTableId)
+            ));
+    }
+
     @Transactional
     public void ungroup(final Long tableGroupId) {
         TableGroup tableGroup = findById(tableGroupId);
 
         for (OrderTable orderTable : orderTableRepository.findAllByTableGroupId(tableGroup.getId())) {
-            Orders orders = new Orders(orderRepository.findAllByOrderTableId(orderTable.getId()));
-            orders.validateCompleted();
-
+            tableValidator.validateOrders(orderTable.getId());
             orderTable.ungroup();
         }
     }
@@ -72,13 +75,6 @@ public class TableGroupService {
         return tableGroupRepository.findById(tableGroupId)
             .orElseThrow(() -> new TableGroupNotFoundException(
                 String.format("%s ID에 해당하는 TableGroup이 존재하지 않습니다.", tableGroupId)
-            ));
-    }
-
-    private OrderTable findOrderTableById(Long orderTableId) {
-        return orderTableRepository.findById(orderTableId)
-            .orElseThrow(() -> new OrderTableNotFoundException(
-                String.format("%s ID에 해당하는 OrderTable이 존재하지 않습니다.", orderTableId)
             ));
     }
 }
