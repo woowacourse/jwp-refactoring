@@ -7,19 +7,19 @@ import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 import kitchenpos.menu.domain.MenuPrice;
 import kitchenpos.menu.domain.MenuQuantity;
-import kitchenpos.product.exception.InvalidPriceException;
+import kitchenpos.product.exception.InvalidProductPriceException;
 
 @Embeddable
-public class Price {
+public class ProductPrice {
 
     @NotNull
     @Column(name = "price")
     private BigDecimal value;
 
-    protected Price() {
+    protected ProductPrice() {
     }
 
-    public Price(BigDecimal value) {
+    public ProductPrice(BigDecimal value) {
         this.value = value;
         validateNull(this.value);
         validateNegative(this.value);
@@ -27,13 +27,13 @@ public class Price {
 
     private void validateNull(BigDecimal value) {
         if (Objects.isNull(value)) {
-            throw new InvalidPriceException("Price는 Null일 수 없습니다.");
+            throw new InvalidProductPriceException("Price는 Null일 수 없습니다.");
         }
     }
 
     private void validateNegative(BigDecimal value) {
         if (value.compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidPriceException(
+            throw new InvalidProductPriceException(
                 String.format("%s 는 0보다 작기 때문에 Price가 될 수 없습니다.", value)
             );
         }
@@ -45,7 +45,7 @@ public class Price {
         return new MenuPrice(result);
     }
 
-    public boolean isBiggerThan(Price price) {
+    public boolean isBiggerThan(ProductPrice price) {
         return value.compareTo(price.value) > 0;
     }
 
@@ -61,7 +61,7 @@ public class Price {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Price price = (Price) o;
+        ProductPrice price = (ProductPrice) o;
         return Objects.equals(value, price.value);
     }
 

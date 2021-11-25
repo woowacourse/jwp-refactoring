@@ -6,8 +6,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import kitchenpos.menu.domain.MenuPrice;
 import kitchenpos.menu.domain.MenuQuantity;
-import kitchenpos.product.exception.InvalidNameException;
-import kitchenpos.product.exception.InvalidPriceException;
+import kitchenpos.product.exception.InvalidProductNameException;
+import kitchenpos.product.exception.InvalidProductPriceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ class ProductTest {
         void nameNullException() {
             // when, then
             assertThatThrownBy(() -> new Product(null, BigDecimal.valueOf(5_000)))
-                .isExactlyInstanceOf(InvalidNameException.class);
+                .isExactlyInstanceOf(InvalidProductNameException.class);
         }
 
         @DisplayName("name이 공백뿐인 경우 예외가 발생한다.")
@@ -34,7 +34,7 @@ class ProductTest {
         void nameBlankException() {
             // when, then
             assertThatThrownBy(() -> new Product(" ", BigDecimal.valueOf(5_000)))
-                .isExactlyInstanceOf(InvalidNameException.class);
+                .isExactlyInstanceOf(InvalidProductNameException.class);
         }
 
         @DisplayName("price가 Null인 경우 예외가 발생한다.")
@@ -42,7 +42,7 @@ class ProductTest {
         void priceNullException() {
             // when, then
             assertThatThrownBy(() -> new Product("치즈버거", null))
-                .isExactlyInstanceOf(InvalidPriceException.class);
+                .isExactlyInstanceOf(InvalidProductPriceException.class);
         }
 
         @DisplayName("price가 음수인 경우 예외가 발생한다.")
@@ -50,7 +50,7 @@ class ProductTest {
         void priceNegativeException() {
             // when, then
             assertThatThrownBy(() -> new Product("치즈버거", BigDecimal.valueOf(-1)))
-                .isExactlyInstanceOf(InvalidPriceException.class);
+                .isExactlyInstanceOf(InvalidProductPriceException.class);
         }
     }
 

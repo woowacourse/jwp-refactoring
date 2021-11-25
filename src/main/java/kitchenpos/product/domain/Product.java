@@ -18,10 +18,10 @@ public class Product {
     private Long id;
 
     @Embedded
-    private Name name;
+    private ProductName name;
 
     @Embedded
-    private Price price;
+    private ProductPrice price;
 
     protected Product() {
     }
@@ -31,10 +31,10 @@ public class Product {
     }
 
     public Product(Long id, String name, BigDecimal price) {
-        this(id, new Name(name), new Price(price));
+        this(id, new ProductName(name), new ProductPrice(price));
     }
 
-    public Product(Long id, Name name, Price price) {
+    public Product(Long id, ProductName name, ProductPrice price) {
         this.id = id;
         this.name = name;
         this.price = price;

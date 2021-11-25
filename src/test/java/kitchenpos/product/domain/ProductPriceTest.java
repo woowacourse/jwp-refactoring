@@ -1,4 +1,4 @@
-package kitchenpos.common;
+package kitchenpos.product.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -11,10 +11,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("Price 단위 테스트")
-class PriceTest {
+@DisplayName("ProductPrice 단위 테스트")
+class ProductPriceTest {
 
-    @DisplayName("Price를 생성할 때")
+    @DisplayName("ProductPrice를 생성할 때")
     @Nested
     class Create {
 

@@ -2,9 +2,9 @@ package kitchenpos.product.exception;
 
 import kitchenpos.common.exception.KitchenposException;
 
-public class InvalidNameException extends KitchenposException {
+public class InvalidProductNameException extends KitchenposException {
 
-    public InvalidNameException(String message) {
+    public InvalidProductNameException(String message) {
         super(message);
     }
 }
