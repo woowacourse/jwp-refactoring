@@ -4,19 +4,19 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
-import kitchenpos.menugroup.exception.InvalidNameException;
+import kitchenpos.menugroup.exception.InvalidMenuGroupNameException;
 
 @Embeddable
-public class Name {
+public class MenuGroupName {
 
     @NotNull
     @Column(name = "name")
     private String value;
 
-    protected Name() {
+    protected MenuGroupName() {
     }
 
-    public Name(String value) {
+    public MenuGroupName(String value) {
         this.value = value;
         validateNull(this.value);
         validateBlank(this.value);
@@ -24,13 +24,13 @@ public class Name {
 
     private void validateNull(String value) {
         if (Objects.isNull(value)) {
-            throw new InvalidNameException("이름은 Null일 수 없습니다.");
+            throw new InvalidMenuGroupNameException("이름은 Null일 수 없습니다.");
         }
     }
 
     private void validateBlank(String value) {
         if (value.replaceAll(" ", "").isEmpty()) {
-            throw new InvalidNameException("이름은 공백으로 이루어질 수 없습니다.");
+            throw new InvalidMenuGroupNameException("이름은 공백으로 이루어질 수 없습니다.");
         }
     }
 
@@ -46,8 +46,8 @@ public class Name {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Name name = (Name) o;
-        return Objects.equals(value, name.value);
+        MenuGroupName menuGroupName = (MenuGroupName) o;
+        return Objects.equals(value, menuGroupName.value);
     }
 
     @Override

@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.menugroup.exception.InvalidNameException;
+import kitchenpos.menugroup.exception.InvalidMenuGroupNameException;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.menugroup.ui.request.MenuGroupRequest;
 import kitchenpos.menugroup.ui.response.MenuGroupResponse;
@@ -52,7 +52,7 @@ class MenuGroupServiceTest {
 
             // when, then
             assertThatThrownBy(() -> menuGroupService.create(request))
-                .isExactlyInstanceOf(InvalidNameException.class);
+                .isExactlyInstanceOf(InvalidMenuGroupNameException.class);
         }
     }
 
