@@ -6,9 +6,9 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.ui.dto.request.menu.MenuProductRequest;
+import kitchenpos.ui.dto.request.menu.MenuRequest;
+import kitchenpos.ui.dto.response.menu.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
@@ -21,18 +21,14 @@ class MenuRestControllerTest extends IntegrationTest {
     @Test
     void create_price_null_exception_thrown() {
         // given
-        Menu menu = new Menu();
-        menu.setPrice(null);
-        menu.setName("kevin");
-        menu.setMenuGroupId(1L);
-        menu.setMenuProducts(Collections.emptyList());
+        MenuRequest request = new MenuRequest("kevin", null, 1L, Collections.emptyList());
 
         // when, then
         webTestClient.post()
             .uri("/api/menus")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(menu)
+            .bodyValue(request)
             .exchange()
             .expectStatus()
             .isBadRequest()
@@ -45,20 +41,15 @@ class MenuRestControllerTest extends IntegrationTest {
     @DisplayName("create 메서드는 Menu 가격이 음수면 예외가 발생한다.")
     @Test
     void create_price_negative_exception_thrown() {
-
         // given
-        Menu menu = new Menu();
-        menu.setPrice(BigDecimal.valueOf(-1));
-        menu.setName("kevin");
-        menu.setMenuGroupId(1L);
-        menu.setMenuProducts(Collections.emptyList());
+        MenuRequest request = new MenuRequest("kevin", BigDecimal.valueOf(-1), 1L, Collections.emptyList());
 
         // when, then
         webTestClient.post()
             .uri("/api/menus")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(menu)
+            .bodyValue(request)
             .exchange()
             .expectStatus()
             .isBadRequest()
@@ -72,18 +63,14 @@ class MenuRestControllerTest extends IntegrationTest {
     @Test
     void create_menu_group_not_found_exception_thrown() {
         // given
-        Menu menu = new Menu();
-        menu.setPrice(BigDecimal.valueOf(100));
-        menu.setName("kevin");
-        menu.setMenuGroupId(4444L);
-        menu.setMenuProducts(Collections.emptyList());
+        MenuRequest request = new MenuRequest("kevin", BigDecimal.valueOf(100), 4444L, Collections.emptyList());
 
         // when, then
         webTestClient.post()
             .uri("/api/menus")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(menu)
+            .bodyValue(request)
             .exchange()
             .expectStatus()
             .isBadRequest()
@@ -97,22 +84,16 @@ class MenuRestControllerTest extends IntegrationTest {
     @Test
     void create_product_of_menu_product_not_found_exception_thrown() {
         // given
-        Menu menu = new Menu();
-        MenuProduct menuProduct1 = new MenuProduct();
-        MenuProduct menuProduct2 = new MenuProduct();
-        menu.setPrice(BigDecimal.valueOf(100));
-        menu.setName("kevin");
-        menu.setMenuGroupId(1L);
-        menu.setMenuProducts(Arrays.asList(menuProduct1, menuProduct2));
-        menuProduct1.setProductId(1L);
-        menuProduct2.setProductId(9999L);
+        List<MenuProductRequest> menuProductRequests =
+            Arrays.asList(new MenuProductRequest(1L, 10L), new MenuProductRequest(9999L, 10L));
+        MenuRequest request = new MenuRequest("kevin", BigDecimal.valueOf(100), 1L, menuProductRequests);
 
         // when, then
         webTestClient.post()
             .uri("/api/menus")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(menu)
+            .bodyValue(request)
             .exchange()
             .expectStatus()
             .isBadRequest()
@@ -126,24 +107,16 @@ class MenuRestControllerTest extends IntegrationTest {
     @Test
     void create_menu_product_sum_gt_menu_price_exception_thrown() {
         // given
-        Menu menu = new Menu();
-        MenuProduct menuProduct1 = new MenuProduct();
-        MenuProduct menuProduct2 = new MenuProduct();
-        menu.setPrice(BigDecimal.valueOf(32001));
-        menu.setName("kevin");
-        menu.setMenuGroupId(1L);
-        menu.setMenuProducts(Arrays.asList(menuProduct1, menuProduct2));
-        menuProduct1.setProductId(1L);
-        menuProduct1.setQuantity(1);
-        menuProduct2.setProductId(2L);
-        menuProduct2.setQuantity(1);
+        List<MenuProductRequest> menuProductRequests =
+            Arrays.asList(new MenuProductRequest(1L, 1L), new MenuProductRequest(2L, 1L));
+        MenuRequest request = new MenuRequest("kevin", BigDecimal.valueOf(32001), 1L, menuProductRequests);
 
         // when, then
         webTestClient.post()
             .uri("/api/menus")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(menu)
+            .bodyValue(request)
             .exchange()
             .expectStatus()
             .isBadRequest()
@@ -157,33 +130,24 @@ class MenuRestControllerTest extends IntegrationTest {
     @Test
     void create_valid_condition_menu_saved() {
         // given
-        Menu menu = new Menu();
-        MenuProduct menuProduct1 = new MenuProduct();
-        MenuProduct menuProduct2 = new MenuProduct();
-        menu.setPrice(BigDecimal.valueOf(32000));
-        menu.setName("kevin");
-        menu.setMenuGroupId(1L);
-        menu.setMenuProducts(Arrays.asList(menuProduct1, menuProduct2));
-        menuProduct1.setProductId(1L);
-        menuProduct1.setQuantity(1);
-        menuProduct2.setProductId(2L);
-        menuProduct2.setQuantity(1);
+        List<MenuProductRequest> menuProductRequests =
+            Arrays.asList(new MenuProductRequest(1L, 1L), new MenuProductRequest(2L, 1L));
+        MenuRequest request = new MenuRequest("kevin", BigDecimal.valueOf(32000), 1L, menuProductRequests);
 
         // when, then
         webTestClient.post()
             .uri("/api/menus")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(menu)
+            .bodyValue(request)
             .exchange()
             .expectStatus()
             .isCreated()
             .expectHeader()
             .valueEquals("location", "/api/menus/7")
-            .expectBody(MenuGroup.class)
-            .value(response -> assertThat(response).usingRecursiveComparison()
-                .ignoringFields("id", "menuProducts")
-                .isEqualTo(menu)
+            .expectBody(MenuResponse.class)
+            .value(response -> assertThat(response).extracting("name", "price")
+                .contains("kevin", BigDecimal.valueOf(32000))
             );
     }
 
@@ -197,7 +161,7 @@ class MenuRestControllerTest extends IntegrationTest {
             .exchange()
             .expectStatus()
             .isOk()
-            .expectBody(new ParameterizedTypeReference<List<Menu>>(){})
+            .expectBody(new ParameterizedTypeReference<List<MenuResponse>>(){})
             .value(response -> assertThat(response).hasSize(6)
                 .extracting("name")
                 .contains("후라이드치킨", "양념치킨", "반반치킨", "통구이", "간장치킨", "순살치킨")

@@ -3,16 +3,21 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import java.util.Optional;
+import kitchenpos.application.dto.request.tablegroup.OrderTableGroupRequestDto;
+import kitchenpos.application.dto.request.tablegroup.TableGroupRequestDto;
+import kitchenpos.application.dto.response.table.TableGroupResponseDto;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -31,35 +36,14 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderTableRepository orderTableRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
-
-    @Mock
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @DisplayName("create 메서드는")
     @Nested
     class Describe_create {
-
-        @DisplayName("TableGroup의 OrderTable 컬렉션 크기가 2 미만이면")
-        @Nested
-        class Context_order_table_size_smaller_than_two {
-
-            @DisplayName("예외가 발생한다.")
-            @Test
-            void it_throws_exception() {
-                // given
-                TableGroup tableGroup = new TableGroup();
-                tableGroup.setOrderTables(Collections.emptyList());
-
-                // when, then
-                assertThatCode(() -> tableGroupService.create(tableGroup))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("TableGroup에 속한 OrderTable은 최소 2개 이상이어야합니다.");
-            }
-        }
 
         @DisplayName("TableGroup의 OrderTable 컬렉션이 DB에 저장되어있지 않았다면")
         @Nested
@@ -69,20 +53,18 @@ class TableGroupServiceTest {
             @Test
             void it_throws_exception() {
                 // given
-                TableGroup tableGroup = new TableGroup();
-                OrderTable orderTable = new OrderTable();
-                OrderTable orderTable2 = new OrderTable();;
-                tableGroup.setOrderTables(Arrays.asList(orderTable, orderTable2));
-                orderTable.setId(1L);
-                orderTable2.setId(2L);
-                given(orderTableDao.findAllByIdIn(any())).willReturn(Collections.emptyList());
+                TableGroupRequestDto tableGroupRequestDto =
+                    new TableGroupRequestDto(Arrays.asList(new OrderTableGroupRequestDto(1L), new OrderTableGroupRequestDto(2L)));
+                given(orderTableRepository.findById(1L))
+                    .willReturn(Optional.of(new OrderTable(10, true)));
+                given(orderTableRepository.findById(2L)).willReturn(Optional.empty());
 
                 // when, then
-                assertThatCode(() -> tableGroupService.create(tableGroup))
+                assertThatCode(() -> tableGroupService.create(tableGroupRequestDto))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("요청한 OrderTable이 저장되어있지 않습니다.");
 
-                verify(orderTableDao, times(1)).findAllByIdIn(any());
+                verify(orderTableRepository, times(2)).findById(anyLong());
             }
         }
 
@@ -94,23 +76,19 @@ class TableGroupServiceTest {
             @Test
             void it_throws_exception() {
                 // given
-                TableGroup tableGroup = new TableGroup();
-                OrderTable orderTable = new OrderTable();
-                OrderTable orderTable2 = new OrderTable();;
-                List<OrderTable> orderTables = Arrays.asList(orderTable, orderTable2);
-                tableGroup.setOrderTables(orderTables);
-                orderTable.setId(1L);
-                orderTable.setEmpty(false);
-                orderTable2.setId(2L);
-                orderTable.setEmpty(true);
-                given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
+                TableGroupRequestDto tableGroupRequestDto =
+                    new TableGroupRequestDto(Arrays.asList(new OrderTableGroupRequestDto(1L), new OrderTableGroupRequestDto(2L)));
+                given(orderTableRepository.findById(1L))
+                    .willReturn(Optional.of(new OrderTable(10, true)));
+                given(orderTableRepository.findById(2L))
+                    .willReturn(Optional.of(new OrderTable(10, false)));
 
                 // when, then
-                assertThatCode(() -> tableGroupService.create(tableGroup))
+                assertThatCode(() -> tableGroupService.create(tableGroupRequestDto))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("OrderTable 일부가 비어있지 않거나 특정 TableGroup에 이미 속해있습니다.");
+                    .hasMessage("OrderTable이 비어있지 않거나 특정 TableGroup에 이미 속해있습니다.");
 
-                verify(orderTableDao, times(1)).findAllByIdIn(any());
+                verify(orderTableRepository, times(2)).findById(anyLong());
             }
         }
 
@@ -122,26 +100,44 @@ class TableGroupServiceTest {
             @Test
             void it_throws_exception() {
                 // given
-                TableGroup tableGroup = new TableGroup();
-                OrderTable orderTable = new OrderTable();
-                OrderTable orderTable2 = new OrderTable();;
-                List<OrderTable> orderTables = Arrays.asList(orderTable, orderTable2);
-                tableGroup.setOrderTables(orderTables);
-                orderTable.setId(1L);
-                orderTable.setEmpty(true);
-                orderTable2.setId(2L);
-                orderTable.setEmpty(true);
-                orderTable2.setTableGroupId(31L);
-                given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
+                TableGroupRequestDto tableGroupRequestDto =
+                    new TableGroupRequestDto(Arrays.asList(new OrderTableGroupRequestDto(1L), new OrderTableGroupRequestDto(2L)));
+                given(orderTableRepository.findById(1L))
+                    .willReturn(Optional.of(new OrderTable(10, true)));
+                given(orderTableRepository.findById(2L))
+                    .willReturn(Optional.of(new OrderTable(new TableGroup(), 10, true)));
 
                 // when, then
-                assertThatCode(() -> tableGroupService.create(tableGroup))
+                assertThatCode(() -> tableGroupService.create(tableGroupRequestDto))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("OrderTable 일부가 비어있지 않거나 특정 TableGroup에 이미 속해있습니다.");
+                    .hasMessage("OrderTable이 비어있지 않거나 특정 TableGroup에 이미 속해있습니다.");
 
-                verify(orderTableDao, times(1)).findAllByIdIn(any());
+                verify(orderTableRepository, times(2)).findById(anyLong());
             }
         }
+
+        @DisplayName("TableGroup의 OrderTable 컬렉션 크기가 2 미만이면")
+        @Nested
+        class Context_order_table_size_smaller_than_two {
+
+            @DisplayName("예외가 발생한다.")
+            @Test
+            void it_throws_exception() {
+                // given
+                TableGroupRequestDto tableGroupRequestDto =
+                    new TableGroupRequestDto(Arrays.asList(new OrderTableGroupRequestDto(1L)));
+                given(orderTableRepository.findById(1L))
+                    .willReturn(Optional.of(new OrderTable(10, true)));
+
+                // when, then
+                assertThatCode(() -> tableGroupService.create(tableGroupRequestDto))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("TableGroup에 속한 OrderTable은 최소 2개 이상이어야합니다.");
+
+                verify(orderTableRepository, times(1)).findById(1L);
+            }
+        }
+
 
         @DisplayName("그 외 정상적인 경우")
         @Nested
@@ -151,29 +147,23 @@ class TableGroupServiceTest {
             @Test
             void it_saves_and_returns_table_group() {
                 // given
-                TableGroup tableGroup = new TableGroup();
-                OrderTable orderTable = new OrderTable();
-                OrderTable orderTable2 = new OrderTable();;
-                List<OrderTable> orderTables = Arrays.asList(orderTable, orderTable2);
-                tableGroup.setId(1L);
-                tableGroup.setOrderTables(orderTables);
-                orderTable.setId(1L);
-                orderTable.setEmpty(true);
-                orderTable2.setId(2L);
-                orderTable2.setEmpty(true);
-                given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
-                given(tableGroupDao.save(tableGroup)).willReturn(tableGroup);
+                TableGroupRequestDto tableGroupRequestDto =
+                    new TableGroupRequestDto(Arrays.asList(new OrderTableGroupRequestDto(1L), new OrderTableGroupRequestDto(2L)));
+                TableGroup tableGroup = new TableGroup(1L, new ArrayList<>());
 
-                // when
-                TableGroup response = tableGroupService.create(tableGroup);
+                given(orderTableRepository.findById(1L))
+                    .willReturn(Optional.of(new OrderTable(10, true)));
+                given(orderTableRepository.findById(2L))
+                    .willReturn(Optional.of(new OrderTable( 10, true)));
+                given(tableGroupRepository.save(any(TableGroup.class))).willReturn(tableGroup);
 
-                // then
-                assertThat(response).usingRecursiveComparison()
-                    .isEqualTo(tableGroup);
+                // when, then
+                TableGroupResponseDto tableGroupResponseDto =
+                    tableGroupService.create(tableGroupRequestDto);
 
-                verify(orderTableDao, times(1)).findAllByIdIn(any());
-                verify(tableGroupDao, times(1)).save(tableGroup);
-                verify(orderTableDao, times(2)).save(any());
+                assertThat(tableGroupResponseDto.getId()).isOne();
+
+                verify(orderTableRepository, times(2)).findById(anyLong());
             }
         }
     }
@@ -190,20 +180,17 @@ class TableGroupServiceTest {
             @Test
             void it_throws_exception() {
                 // given
-                OrderTable orderTable = new OrderTable();
-                OrderTable orderTable2 = new OrderTable();
-                List<OrderTable> orderTables = Arrays.asList(orderTable, orderTable2);
-                given(orderTableDao.findAllByTableGroupId(1L)).willReturn(orderTables);
-                given(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
-                    .willReturn(true);
+                Order order = new Order(new OrderTable(10, false), OrderStatus.COOKING);
+                OrderTable orderTable = new OrderTable(1L, new TableGroup(), 10, false, Arrays.asList(order));
+                TableGroup tableGroup = new TableGroup(1L, Arrays.asList(orderTable));
+                given(tableGroupRepository.findById(1L)).willReturn(Optional.of(tableGroup));
 
                 // when, then
                 assertThatCode(() -> tableGroupService.ungroup(1L))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("TableGroup에 속한 Order 중 일부가 조리중이거나 식사 중입니다.");
+                    .hasMessage("OrderTable에 속한 Order 중 일부가 조리 혹은 식사 중입니다.");
 
-                verify(orderTableDao, times(1)).findAllByTableGroupId(1L);
-                verify(orderDao, times(1)).existsByOrderTableIdInAndOrderStatusIn(any(), any());
+                verify(tableGroupRepository, times(1)).findById(1L);
             }
         }
 
@@ -215,19 +202,15 @@ class TableGroupServiceTest {
             @Test
             void it_throws_exception() {
                 // given
-                OrderTable orderTable = new OrderTable();
-                OrderTable orderTable2 = new OrderTable();
-                List<OrderTable> orderTables = Arrays.asList(orderTable, orderTable2);
-                given(orderTableDao.findAllByTableGroupId(1L)).willReturn(orderTables);
-                given(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
-                    .willReturn(false);
+                Order order = new Order(new OrderTable(10, false), OrderStatus.COMPLETION);
+                OrderTable orderTable = new OrderTable(1L, new TableGroup(), 10, false, Arrays.asList(order));
+                TableGroup tableGroup = new TableGroup(1L, Arrays.asList(orderTable));
+                given(tableGroupRepository.findById(1L)).willReturn(Optional.of(tableGroup));
 
-                // when
+                // when, then
                 tableGroupService.ungroup(1L);
 
-                verify(orderTableDao, times(1)).findAllByTableGroupId(1L);
-                verify(orderDao, times(1)).existsByOrderTableIdInAndOrderStatusIn(any(), any());
-                verify(orderTableDao, times(2)).save(any(OrderTable.class));
+                verify(tableGroupRepository, times(1)).findById(1L);
             }
         }
     }

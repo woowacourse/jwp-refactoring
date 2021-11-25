@@ -4,9 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.ui.dto.request.order.OrderChangeRequest;
+import kitchenpos.ui.dto.request.order.OrderCreateRequest;
+import kitchenpos.ui.dto.request.order.OrderLineItemRequest;
+import kitchenpos.ui.dto.response.order.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
@@ -19,24 +21,21 @@ class OrderRestControllerTest extends IntegrationTest {
     @Test
     void create_order() {
         // given
-        Order requestBody = new Order();
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        requestBody.setOrderTableId(8L);
-        requestBody.setOrderLineItems(Arrays.asList(orderLineItem));
+        List<OrderLineItemRequest> orderLineItemRequests = Arrays.asList(new OrderLineItemRequest(1L, 8L));
+        OrderCreateRequest request = new OrderCreateRequest(8L, orderLineItemRequests);
 
         // when, then
         webTestClient.post()
             .uri("/api/orders")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(requestBody)
+            .bodyValue(request)
             .exchange()
             .expectStatus()
             .isCreated()
             .expectHeader()
             .valueEquals("location", "/api/orders/1")
-            .expectBody(Order.class)
+            .expectBody(OrderResponse.class)
             .value(response ->
                 assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name())
             );
@@ -55,7 +54,7 @@ class OrderRestControllerTest extends IntegrationTest {
             .exchange()
             .expectStatus()
             .isOk()
-            .expectBody(new ParameterizedTypeReference<List<Order>>() {})
+            .expectBody(new ParameterizedTypeReference<List<OrderResponse>>() {})
             .value(response -> assertThat(response).hasSize(1));
     }
 
@@ -64,19 +63,38 @@ class OrderRestControllerTest extends IntegrationTest {
     void changeOrderStatus_success() {
         // given
         create_order();
-        Order requestBody = new Order();
-        requestBody.setOrderStatus(OrderStatus.COMPLETION.name());
+        OrderChangeRequest request = new OrderChangeRequest(OrderStatus.COMPLETION.name());
 
         // when, then
         webTestClient.put()
             .uri("/api/orders/{orderId}/order-status", "1")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(requestBody)
+            .bodyValue(request)
             .exchange()
             .expectStatus()
             .isOk()
-            .expectBody(Order.class)
+            .expectBody(OrderResponse.class)
             .value(response -> assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name()));
+    }
+
+    @DisplayName("changeOrderStatus 메서드는 현재 Order가 COMPLETION이면 상태 변경이 불가능하다.")
+    @Test
+    void changeOrderStatus_failure() {
+        // given
+        changeOrderStatus_success();
+        OrderChangeRequest request = new OrderChangeRequest(OrderStatus.COOKING.name());
+
+        // when, then
+        webTestClient.put()
+            .uri("/api/orders/{orderId}/order-status", "1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .bodyValue(request)
+            .exchange()
+            .expectStatus()
+            .isBadRequest()
+            .expectBody(String.class)
+            .value(response -> assertThat(response).isEqualTo("Order 상태를 변경할 수 없는 상황입니다."));
     }
 }

@@ -3,7 +3,8 @@ package kitchenpos.ui;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.request.menu.MenuGroupRequest;
+import kitchenpos.ui.dto.response.menu.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
@@ -16,24 +17,21 @@ class MenuGroupRestControllerTest extends IntegrationTest {
     @Test
     void create_saves_and_returns_menuGroup_with_url() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("분식류");
-        MenuGroup expected = new MenuGroup();
-        expected.setId(5L);
-        expected.setName("분식류");
+        MenuGroupRequest menuGroupRequest = new MenuGroupRequest("분식류");
+        MenuGroupResponse expected = new MenuGroupResponse(5L, "분식류");
 
         // when, then
         webTestClient.post()
             .uri("/api/menu-groups")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(menuGroup)
+            .bodyValue(menuGroupRequest)
             .exchange()
             .expectStatus()
             .isCreated()
             .expectHeader()
             .valueEquals("location", "/api/menu-groups/5")
-            .expectBody(MenuGroup.class)
+            .expectBody(MenuGroupResponse.class)
             .value(response -> assertThat(response).usingRecursiveComparison()
                 .isEqualTo(expected)
             );
@@ -49,7 +47,8 @@ class MenuGroupRestControllerTest extends IntegrationTest {
             .exchange()
             .expectStatus()
             .isOk()
-            .expectBody(new ParameterizedTypeReference<List<MenuGroup>>(){})
+            .expectBody(new ParameterizedTypeReference<List<MenuGroupResponse>>() {
+            })
             .value(response -> assertThat(response).extracting("name")
                 .contains("두마리메뉴", "한마리메뉴", "순살파닭두마리메뉴", "신메뉴")
                 .hasSize(4)

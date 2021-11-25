@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.request.product.ProductRequest;
+import kitchenpos.ui.dto.response.product.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,16 +20,14 @@ class ProductRestControllerTest extends IntegrationTest {
     @Test
     void create_product_price_null_exception_thrown() {
         // given
-        Product product = new Product();
-        product.setName("순대튀김");
-        product.setPrice(null);
+        ProductRequest request = new ProductRequest("순대튀김", null);
 
         // when, then
         webTestClient.post()
             .uri("/api/products")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(product)
+            .bodyValue(request)
             .exchange()
             .expectStatus()
             .isBadRequest()
@@ -43,16 +41,14 @@ class ProductRestControllerTest extends IntegrationTest {
     @Test
     void create_product_price_negative_exception_thrown() {
         // given
-        Product product = new Product();
-        product.setName("순대튀김");
-        product.setPrice(BigDecimal.valueOf(-1));
+        ProductRequest request = new ProductRequest("순대튀김", BigDecimal.valueOf(-1));
 
         // when, then
         webTestClient.post()
             .uri("/api/products")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(product)
+            .bodyValue(request)
             .exchange()
             .expectStatus()
             .isBadRequest()
@@ -67,26 +63,21 @@ class ProductRestControllerTest extends IntegrationTest {
     @ValueSource(ints = {0, 10})
     void it_saves_and_returns_product_with_url(int price) {
         // given
-        Product product = new Product();
-        product.setName("순대튀김");
-        product.setPrice(BigDecimal.valueOf(price));
-        Product expected = new Product();
-        expected.setId(7L);
-        expected.setName("순대튀김");
-        expected.setPrice(BigDecimal.valueOf(100));
+        ProductRequest request = new ProductRequest("순대튀김", BigDecimal.valueOf(price));
+        ProductResponse expected = new ProductResponse(7L, "순대튀김", BigDecimal.valueOf(price));
 
         // when, then
         webTestClient.post()
             .uri("/api/products")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(product)
+            .bodyValue(request)
             .exchange()
             .expectStatus()
             .isCreated()
             .expectHeader()
             .valueEquals("location", "/api/products/7")
-            .expectBody(MenuGroup.class)
+            .expectBody(ProductResponse.class)
             .value(response -> assertThat(response).usingRecursiveComparison()
                 .isEqualTo(expected)
             );
@@ -102,7 +93,7 @@ class ProductRestControllerTest extends IntegrationTest {
             .exchange()
             .expectStatus()
             .isOk()
-            .expectBody(new ParameterizedTypeReference<List<Product>>() {
+            .expectBody(new ParameterizedTypeReference<List<ProductResponse>>() {
             })
             .value(response -> assertThat(response).extracting("name")
                 .contains("후라이드", "양념치킨", "반반치킨", "통구이", "간장치킨", "순살치킨")

@@ -2,15 +2,18 @@ package kitchenpos.ui;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.ui.dto.request.table.OrderTableEmptyRequest;
+import kitchenpos.ui.dto.request.table.OrderTableGuestRequest;
+import kitchenpos.ui.dto.request.table.OrderTableCreateRequest;
+import kitchenpos.ui.dto.response.table.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,26 +26,26 @@ import org.springframework.http.MediaType;
 class TableRestControllerTest extends IntegrationTest {
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @DisplayName("create 메서드는 OrderTable을 저장 및 반환한다.")
     @Test
     void create_saves_and_returns_order_table() {
         // given
-        OrderTable requestBody = new OrderTable();
+        OrderTableCreateRequest request = new OrderTableCreateRequest(10, true);
 
         // when, then
         webTestClient.post()
             .uri("/api/tables")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(requestBody)
+            .bodyValue(request)
             .exchange()
             .expectStatus()
             .isCreated()
@@ -60,7 +63,7 @@ class TableRestControllerTest extends IntegrationTest {
             .exchange()
             .expectStatus()
             .isOk()
-            .expectBody(new ParameterizedTypeReference<List<OrderTable>>() {})
+            .expectBody(new ParameterizedTypeReference<List<OrderTableResponse>>() {})
             .value(response -> assertThat(response).hasSize(8));
     }
 
@@ -68,15 +71,14 @@ class TableRestControllerTest extends IntegrationTest {
     @Test
     void changeEmpty_order_table_not_found_exception_thrown() {
         // given
-        OrderTable requestBody = new OrderTable();
-        requestBody.setEmpty(true);
+        OrderTableEmptyRequest request = new OrderTableEmptyRequest(true);
 
         // given, when, then
         webTestClient.put()
             .uri("/api/tables/31231/empty")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(requestBody)
+            .bodyValue(request)
             .exchange()
             .expectStatus()
             .isBadRequest()
@@ -90,20 +92,17 @@ class TableRestControllerTest extends IntegrationTest {
     @Test
     void changeEmpty_order_table_has_group_exception_thrown() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setTableGroupId(savedTableGroup.getId());
-        OrderTable requestBody = orderTableDao.save(orderTable);
+        TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup());
+        OrderTable orderTable = new OrderTable(savedTableGroup, 10, false);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+        OrderTableEmptyRequest request = new OrderTableEmptyRequest(true);
 
         // given, when, then
         webTestClient.put()
-            .uri("/api/tables/{id}/empty", requestBody.getId())
+            .uri("/api/tables/{id}/empty", savedOrderTable.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(orderTable)
+            .bodyValue(request)
             .exchange()
             .expectStatus()
             .isBadRequest()
@@ -118,21 +117,18 @@ class TableRestControllerTest extends IntegrationTest {
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void changeEmpty_order_status_cooking_or_meal_exception_thrown(OrderStatus orderStatus) {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        OrderTable requestBody = orderTableDao.save(orderTable);
-        Order order = new Order();
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(orderStatus.name());
-        order.setOrderTableId(requestBody.getId());
-        orderDao.save(order);
+        OrderTable orderTable = new OrderTable(10, false);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+        Order order = new Order(orderTable, orderStatus);
+        orderRepository.save(order);
+        OrderTableEmptyRequest request = new OrderTableEmptyRequest(true);
 
         // when, then
         webTestClient.put()
-            .uri("/api/tables/{id}/empty", requestBody.getId())
+            .uri("/api/tables/{id}/empty", savedOrderTable.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(requestBody)
+            .bodyValue(request)
             .exchange()
             .expectStatus()
             .isBadRequest()
@@ -146,43 +142,37 @@ class TableRestControllerTest extends IntegrationTest {
     @Test
     void changeEmpty_valid_condition_table_status_changed() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        OrderTable requestBody = orderTableDao.save(orderTable);
-        Order order = new Order();
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
-        order.setOrderTableId(requestBody.getId());
-        orderDao.save(order);
+        OrderTable orderTable = new OrderTable(10, false);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+        Order order = new Order(orderTable, OrderStatus.COMPLETION);
+        orderRepository.save(order);
+        OrderTableEmptyRequest request = new OrderTableEmptyRequest(true);
 
         // when, then
         webTestClient.put()
-            .uri("/api/tables/{id}/empty", requestBody.getId())
+            .uri("/api/tables/{id}/empty", savedOrderTable.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(requestBody)
+            .bodyValue(request)
             .exchange()
             .expectStatus()
             .isOk()
-            .expectBody(OrderTable.class)
-            .value(response -> assertThat(response.isEmpty()).isFalse());
+            .expectBody(OrderTableResponse.class)
+            .value(response -> assertThat(response.isEmpty()).isTrue());
     }
 
     @DisplayName("changeNumberOfGuest 메서드는 변경하려는 손님 숫자가 음수면 예외가 발생한다.")
     @Test
     void changeNumberOfGuest_number_of_guests_negative_exception_thrown() {
         // given
-        OrderTable requestBodye = new OrderTable();
-        requestBodye.setNumberOfGuests(-1);
+        OrderTableGuestRequest request = new OrderTableGuestRequest(-1);
 
         // when, then
         webTestClient.put()
-            .uri("/api/tables/1/number-of-guests")
+            .uri("/api/tables/8/number-of-guests")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(requestBodye)
+            .bodyValue(request)
             .exchange()
             .expectStatus()
             .isBadRequest()
@@ -196,15 +186,14 @@ class TableRestControllerTest extends IntegrationTest {
     @Test
     void changeNumberOfGuest_order_table_not_found_exception_thrown() {
         // given
-        OrderTable requestBody = new OrderTable();
-        requestBody.setNumberOfGuests(0);
+        OrderTableGuestRequest request = new OrderTableGuestRequest(1);
 
         // when, then
         webTestClient.put()
             .uri("/api/tables/9999/number-of-guests")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(requestBody)
+            .bodyValue(request)
             .exchange()
             .expectStatus()
             .isBadRequest()
@@ -218,17 +207,14 @@ class TableRestControllerTest extends IntegrationTest {
     @Test
     void changeNumberOfGuest_saved_order_table_is_empty_exception_thrown() {
         // given
-        OrderTable requestBody = new OrderTable();
-        requestBody.setId(1L);
-        requestBody.setEmpty(true);
-        orderTableDao.save(requestBody);
+        OrderTableGuestRequest request = new OrderTableGuestRequest(1);
 
         // when, then
         webTestClient.put()
             .uri("/api/tables/1/number-of-guests")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(requestBody)
+            .bodyValue(request)
             .exchange()
             .expectStatus()
             .isBadRequest()
@@ -242,23 +228,18 @@ class TableRestControllerTest extends IntegrationTest {
     @Test
     void changeNumberOfGuest_valid_condition_number_of_guests_changed() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setEmpty(false);
-        orderTableDao.save(orderTable);
-        OrderTable requestBody = new OrderTable();
-        requestBody.setNumberOfGuests(13);
+        OrderTableGuestRequest request = new OrderTableGuestRequest(13);
 
         // when, then
         webTestClient.put()
-            .uri("/api/tables/1/number-of-guests")
+            .uri("/api/tables/8/number-of-guests")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(requestBody)
+            .bodyValue(request)
             .exchange()
             .expectStatus()
             .isOk()
-            .expectBody(OrderTable.class)
+            .expectBody(OrderTableResponse.class)
             .value(response -> assertThat(response.getNumberOfGuests()).isEqualTo(13));
     }
 }
