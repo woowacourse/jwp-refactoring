@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import kitchenpos.menugroup.exception.InvalidMenuGroupNameException;
-import kitchenpos.menugroup.repository.MenuGroupRepository;
+import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
 import kitchenpos.menugroup.ui.request.MenuGroupRequest;
 import kitchenpos.menugroup.ui.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;

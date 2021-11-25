@@ -5,7 +5,6 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
-import kitchenpos.menu.domain.MenuQuantity;
 import kitchenpos.product.exception.InvalidProductPriceException;
 
 @Embeddable
@@ -36,16 +35,6 @@ public class ProductPrice {
                 String.format("%s 는 0보다 작기 때문에 Price가 될 수 없습니다.", value)
             );
         }
-    }
-
-    public ProductPrice multiplyQuantity(MenuQuantity menuQuantity) {
-        BigDecimal result = value.multiply(menuQuantity.getDecimalValue());
-
-        return new ProductPrice(result);
-    }
-
-    public boolean isBiggerThan(ProductPrice price) {
-        return value.compareTo(price.value) > 0;
     }
 
     public BigDecimal getValue() {
