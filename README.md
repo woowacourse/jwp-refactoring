@@ -181,8 +181,8 @@
   - 중복코드가 잔뜩 발생하더라도, 물리적인 서버 분리도 가능할 정도로 구성해보기
 
 - [x] menu 패키지 리팩토링
-- [ ] menugroup 패키지 리팩토링
+- [x] menugroup 패키지 리팩토링
 - [ ] order 패키지 리팩토링
-- [ ] product 패키지 리팩토링
+- [x] product 패키지 리팩토링
 - [ ] table 패키지 리팩토링
 - [ ] tablegroup 패키지 리팩토링
