@@ -40,12 +40,10 @@ public class Order {
         return new Order(id, orderTableId, orderStatus, orderedTime);
     }
 
-    public boolean isCompletion() {
-        return orderStatus.isCompletion();
-    }
-
-    public boolean isNotCompletion() {
-        return orderStatus.isNotCompletion();
+    public void validateCompletion(){
+        if (this.isCompletion()) {
+            throw new IllegalArgumentException("orderId : " + id + " : 완료된 주문은 상태를 변경할 수 없습니다.");
+        }
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
@@ -53,6 +51,14 @@ public class Order {
             throw new IllegalArgumentException("orderId : " + id + "인 완료된 주문은 상태를 변경할 수 없습니다.");
         }
         this.orderStatus = orderStatus;
+    }
+
+    public boolean isCompletion() {
+        return orderStatus.isCompletion();
+    }
+
+    public boolean isNotCompletion() {
+        return orderStatus.isNotCompletion();
     }
 
     public Long getId() {

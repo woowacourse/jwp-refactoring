@@ -44,9 +44,9 @@ public class OrderTables {
         }
     }
 
-    public void ungroup() {
+    public void ungroup(TableValidator tableValidator) {
         for (final OrderTable orderTable : orderTables) {
-            orderTable.ungroup();
+            orderTable.ungroup(tableValidator);
         }
     }
 

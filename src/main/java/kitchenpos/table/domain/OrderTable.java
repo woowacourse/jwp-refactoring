@@ -58,12 +58,14 @@ public class OrderTable {
         this.tableGroup = tableGroup;
     }
 
-    public void ungroup() {
+    public void ungroup(TableValidator tableValidator) {
+        tableValidator.validateOrder(this);
         tableGroup = null;
         empty = false;
     }
 
-    public void changeEmpty(boolean empty) {
+    public void changeEmpty(boolean empty, TableValidator tableValidator) {
+        tableValidator.validateOrder(this);
         this.empty = empty;
     }
 

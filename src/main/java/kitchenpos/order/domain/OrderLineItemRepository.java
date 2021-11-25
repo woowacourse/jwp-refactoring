@@ -7,4 +7,6 @@ import java.util.List;
 public interface OrderLineItemRepository extends JpaRepository<OrderLineItem, Long> {
 
     List<OrderLineItem> findAllByOrder(Order order);
+
+    List<OrderLineItem> findAllByMenuId(Long menuId);
 }

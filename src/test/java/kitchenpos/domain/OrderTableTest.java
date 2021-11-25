@@ -10,10 +10,15 @@ import java.time.LocalDateTime;
 import kitchenpos.table.domain.NumberOfGuests;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.TableValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class OrderTableTest {
+
+    @Autowired
+    private TableValidator tableValidator;
 
     @Test
     @DisplayName("OrderTable 생성 성공 테스트")
@@ -80,7 +85,7 @@ public class OrderTableTest {
         orderTable.group(tableGroup);
 
         //when
-        orderTable.ungroup();
+        orderTable.ungroup(tableValidator);
 
         //then
         assertNull(orderTable.getTableGroup());

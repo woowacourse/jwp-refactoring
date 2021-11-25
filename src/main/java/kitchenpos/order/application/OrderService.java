@@ -57,10 +57,7 @@ public class OrderService {
     public OrderResponse changeOrderStatus(final Long orderId, final OrderChangeStatusRequest orderChangeStatusRequest) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Id : " + orderId + "인 주문이 존재하지 않습니다."));
-
-        if (savedOrder.isCompletion()) {
-            throw new IllegalArgumentException("orderId : " + orderId + " : 완료된 주문은 상태를 변경할 수 없습니다.");
-        }
+        savedOrder.validateCompletion();
 
         savedOrder.changeOrderStatus(orderChangeStatusRequest.getOrderStatus());
         List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrder(savedOrder);

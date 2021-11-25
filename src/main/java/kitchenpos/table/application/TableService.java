@@ -1,10 +1,10 @@
 package kitchenpos.table.application;
 
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.Orders;
 import kitchenpos.table.domain.NumberOfGuests;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableValidator;
 import kitchenpos.table.ui.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.table.ui.dto.request.OrderTableChangeGuestRequest;
 import kitchenpos.table.ui.dto.request.OrderTableCreateRequest;
@@ -21,15 +21,15 @@ import static java.util.stream.Collectors.toList;
 @Transactional(readOnly = true)
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final TableValidator tableValidator;
 
     public TableService(
-            OrderRepository orderRepository,
-            OrderTableRepository orderTableRepository
+            OrderTableRepository orderTableRepository,
+            TableValidator tableValidator
     ) {
-        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
+        this.tableValidator = tableValidator;
     }
 
     @Transactional
@@ -56,10 +56,7 @@ public class TableService {
             throw new IllegalArgumentException("orderTableId : " + orderTableId + "는 테이블 그룹에 속해 있어 상태 변경이 불가능합니다.");
         }
 
-        final Orders orders = Orders.create(orderRepository.findAllByOrderTable(savedOrderTable));
-        orders.validateCompleted();
-
-        savedOrderTable.changeEmpty(orderTableChangeEmptyRequest.getEmpty());
+        savedOrderTable.changeEmpty(orderTableChangeEmptyRequest.getEmpty(), tableValidator);
 
         return OrderTableResponse.create(savedOrderTable);
     }

@@ -26,7 +26,7 @@ public class NumberOfGuests {
 
     private void validateNegative(int value) {
         if (value < 0) {
-            throw new IllegalArgumentException(("손님은 0명 이상이어야 합니다."));
+            throw new IllegalArgumentException("손님은 0명 이상이어야 합니다.");
         }
     }
 

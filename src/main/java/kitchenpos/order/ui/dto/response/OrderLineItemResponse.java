@@ -1,10 +1,9 @@
 package kitchenpos.order.ui.dto.response;
 
-import kitchenpos.order.domain.OrderLineItem;
+import static java.util.stream.Collectors.toList;
 
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
+import kitchenpos.order.domain.OrderLineItem;
 
 public class OrderLineItemResponse {
 
