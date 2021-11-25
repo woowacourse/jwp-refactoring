@@ -1,10 +1,8 @@
-package kitchenpos.table.domain;
+package kitchenpos.order.domain;
 
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
-
-import kitchenpos.order.domain.Order;
 
 @Entity
 public class OrderTable {
@@ -16,7 +14,7 @@ public class OrderTable {
     @ManyToOne
     private TableGroup tableGroup;
 
-    @OneToMany(mappedBy = "orderTableId")
+    @OneToMany(mappedBy = "orderTable")
     private List<Order> orders;
 
     private int numberOfGuests;
@@ -66,7 +64,7 @@ public class OrderTable {
             throw new IllegalArgumentException("손님의 수는 0 이상이어야 합니다.");
         }
 
-        if (isEmpty()) {
+        if (empty) {
             throw new IllegalArgumentException("빈 테이블은 손님의 수를 변경할 수 없습니다.");
         }
 

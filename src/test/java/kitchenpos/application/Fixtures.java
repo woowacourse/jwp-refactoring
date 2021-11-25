@@ -7,9 +7,9 @@ import kitchenpos.menu.dto.MenuProductRequest;
 import kitchenpos.menu.dto.MenuRequest;
 import kitchenpos.order.dto.OrderLineItemRequest;
 import kitchenpos.order.dto.OrderRequest;
+import kitchenpos.order.dto.OrderTableRequest;
+import kitchenpos.order.dto.TableGroupRequest;
 import kitchenpos.product.dto.ProductRequest;
-import kitchenpos.table.dto.OrderTableRequest;
-import kitchenpos.table.dto.TableGroupRequest;
 
 public class Fixtures {
 

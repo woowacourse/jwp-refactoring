@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
 
 public class OrderRequest {
 
@@ -28,8 +29,8 @@ public class OrderRequest {
         return orderLineItemRequests;
     }
 
-    public Order toEntity() {
-        return new Order(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), new ArrayList<>());
+    public Order toEntity(OrderTable orderTable) {
+        return new Order(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), new ArrayList<>());
     }
 
     public List<Long> getMenuIds() {

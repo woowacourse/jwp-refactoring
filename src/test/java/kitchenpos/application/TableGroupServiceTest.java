@@ -8,11 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.table.application.TableGroupService;
-import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.dto.TableGroupRequest;
-import kitchenpos.table.repository.OrderTableDao;
-import kitchenpos.table.repository.TableGroupDao;
+import kitchenpos.order.application.TableGroupService;
+import kitchenpos.order.domain.TableGroup;
+import kitchenpos.order.dto.TableGroupRequest;
+import kitchenpos.order.repository.OrderTableDao;
+import kitchenpos.order.repository.TableGroupDao;
 import org.assertj.core.api.ThrowableAssert;
 
 import static org.assertj.core.api.Assertions.assertThat;

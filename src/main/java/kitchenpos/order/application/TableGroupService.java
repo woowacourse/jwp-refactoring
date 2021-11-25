@@ -1,4 +1,4 @@
-package kitchenpos.table.application;
+package kitchenpos.order.application;
 
 import java.util.Arrays;
 import java.util.List;
@@ -7,25 +7,24 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
-import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.dto.TableGroupRequest;
-import kitchenpos.table.repository.TableGroupDao;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.TableGroup;
+import kitchenpos.order.dto.TableGroupRequest;
+import kitchenpos.order.repository.OrderDao;
+import kitchenpos.order.repository.TableGroupDao;
 
 @Service
 public class TableGroupService {
     private final TableGroupDao tableGroupDao;
     private final TableService tableService;
-    private final OrderService orderService;
+    private final OrderDao orderDao;
 
-    public TableGroupService(TableGroupDao tableGroupDao, TableService tableService, OrderService orderService) {
+    public TableGroupService(TableGroupDao tableGroupDao, TableService tableService, OrderDao orderDao) {
         this.tableGroupDao = tableGroupDao;
         this.tableService = tableService;
-        this.orderService = orderService;
+        this.orderDao = orderDao;
     }
 
     @Transactional
@@ -46,7 +45,7 @@ public class TableGroupService {
     }
 
     private void validateTableSize(List<Long> orderTableIds, List<OrderTable> savedOrderTables) {
-        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
+        if (orderTableIds.size() < 2) {
             throw new IllegalArgumentException("테이블 비어있거나 2보다 작습니다.");
         }
 
@@ -75,7 +74,7 @@ public class TableGroupService {
                                                     .map(OrderTable::getId)
                                                     .collect(Collectors.toList());
 
-        if (orderService.existsByOrderTableIdInAndOrderStatusIn(
+        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException("식사가 끝나지 않아 해제할 수 없습니다.");
         }

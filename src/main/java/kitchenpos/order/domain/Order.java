@@ -11,7 +11,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long orderTableId;
+    @ManyToOne
+    private OrderTable orderTable;
 
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
@@ -23,9 +24,9 @@ public class Order {
 
     public Order() {}
 
-    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         this.id = id;
-        this.orderTableId = orderTableId;
+        this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
@@ -35,8 +36,8 @@ public class Order {
         return id;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
     public OrderStatus getOrderStatus() {
@@ -65,5 +66,11 @@ public class Order {
 
     public void addOrderLineItems(List<OrderLineItem> orderLineItems) {
         this.orderLineItems.addAll(orderLineItems);
+    }
+
+    public void validate() {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("주문 테이블이 비어있습니다.");
+        }
     }
 }

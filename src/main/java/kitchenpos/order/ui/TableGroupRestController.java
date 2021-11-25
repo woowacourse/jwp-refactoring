@@ -1,13 +1,13 @@
-package kitchenpos.table.ui;
+package kitchenpos.order.ui;
 
 import java.net.URI;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import kitchenpos.table.application.TableGroupService;
-import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.dto.TableGroupRequest;
+import kitchenpos.order.application.TableGroupService;
+import kitchenpos.order.domain.TableGroup;
+import kitchenpos.order.dto.TableGroupRequest;
 
 @RestController
 public class TableGroupRestController {

@@ -1,8 +1,8 @@
-package kitchenpos.table.dto;
+package kitchenpos.order.dto;
 
 import java.util.ArrayList;
 
-import kitchenpos.table.domain.OrderTable;
+import kitchenpos.order.domain.OrderTable;
 
 public class OrderTableRequest {
 
