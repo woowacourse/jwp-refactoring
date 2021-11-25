@@ -6,13 +6,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Arrays;
 import kitchenpos.order.exception.InvalidOrderStatusException;
-import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("Orders 단위 테스트")
 class OrdersTest {
+
+    private static final Long ORDER_TABLE_ID = 1L;
 
     @DisplayName("식사가 완료되지 않은 주문이 있는지 검증할 때")
     @Nested
@@ -22,10 +23,8 @@ class OrdersTest {
         @Test
         void validateCompletionException() {
             // given
-            OrderTable orderTable = new OrderTable(5, true);
-
-            Order order1 = new Order(orderTable);
-            Order order2 = new Order(orderTable);
+            Order order1 = new Order(ORDER_TABLE_ID);
+            Order order2 = new Order(ORDER_TABLE_ID);
             order2.changeStatus(COMPLETION);
 
             Orders orders = new Orders(Arrays.asList(order1, order2));
@@ -39,10 +38,8 @@ class OrdersTest {
         @Test
         void success() {
             // given
-            OrderTable orderTable = new OrderTable(5, true);
-
-            Order order1 = new Order(orderTable);
-            Order order2 = new Order(orderTable);
+            Order order1 = new Order(ORDER_TABLE_ID);
+            Order order2 = new Order(ORDER_TABLE_ID);
             order1.changeStatus(COMPLETION);
             order2.changeStatus(COMPLETION);
 

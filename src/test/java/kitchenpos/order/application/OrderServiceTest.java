@@ -198,7 +198,7 @@ class OrderServiceTest {
             assertThat(response.getId()).isNotNull();
             assertThat(response.getOrderedTime()).isBeforeOrEqualTo(LocalDateTime.now());
             assertThat(response.getOrderStatus()).isEqualTo(COOKING.name());
-            assertThat(response.getOrderTable()).isEqualTo(request.getOrderTable());
+            assertThat(response.getOrderTable()).isEqualTo(request.getOrderTableId());
             assertThat(response.getOrderLineItems()).extracting("seq").isNotEmpty();
         }
     }

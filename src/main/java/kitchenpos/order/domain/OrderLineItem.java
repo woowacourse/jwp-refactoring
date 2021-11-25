@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.exception.InvalidOrderLineItemException;
 
 @Entity
@@ -19,33 +18,32 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
+    @Embedded
+    private OrderLineItemQuantity quantity;
+
     @NotNull
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
 
     @NotNull
-    @ManyToOne
     @JoinColumn(name = "menu_id")
-    private Menu menu;
-
-    @Embedded
-    private OrderLineItemQuantity quantity;
+    private Long menuId;
 
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Order order, Menu menu, Long quantity) {
-        this(null, order, menu, new OrderLineItemQuantity(quantity));
+    public OrderLineItem(Long quantity, Order order, Long menuId) {
+        this(null, new OrderLineItemQuantity(quantity), order, menuId);
     }
 
-    public OrderLineItem(Long seq, Order order, Menu menu, OrderLineItemQuantity quantity) {
+    public OrderLineItem(Long seq, OrderLineItemQuantity quantity, Order order, Long menuId) {
         this.seq = seq;
-        this.order = order;
-        this.menu = menu;
         this.quantity = quantity;
+        this.order = order;
+        this.menuId = menuId;
         validateNull(this.order);
-        validateNull(this.menu);
+        validateNull(this.menuId);
     }
 
     private void validateNull(Object object) {
@@ -58,16 +56,16 @@ public class OrderLineItem {
         return seq;
     }
 
+    public Long getQuantity() {
+        return quantity.getValue();
+    }
+
     public Long getOrderId() {
         return order.getId();
     }
 
     public Long getMenuId() {
-        return menu.getId();
-    }
-
-    public Long getQuantity() {
-        return quantity.getValue();
+        return menuId;
     }
 
     @Override

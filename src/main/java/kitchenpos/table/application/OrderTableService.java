@@ -2,7 +2,7 @@ package kitchenpos.table.application;
 
 import java.util.List;
 import kitchenpos.order.domain.Orders;
-import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.table.domain.NumberOfGuests;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.exception.OrderTableNotFoundException;
@@ -41,7 +41,7 @@ public class OrderTableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableEmptyRequest request) {
         final OrderTable orderTable = findById(orderTableId);
 
-        Orders orders = new Orders(orderRepository.findAllByOrderTable(orderTable));
+        Orders orders = new Orders(orderRepository.findAllByOrderTableId(orderTable.getId()));
         orders.validateCompleted();
         orderTable.changeEmpty(request.isEmpty());
 

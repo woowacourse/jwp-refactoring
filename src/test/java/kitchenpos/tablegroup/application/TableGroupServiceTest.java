@@ -11,8 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.exception.InvalidOrderStatusException;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.exception.InvalidOrderTablesException;
 import kitchenpos.table.exception.OrderTableNotEmptyException;
@@ -139,7 +139,7 @@ class TableGroupServiceTest {
             TableGroupRequest request = TableGroupRequest를_생성한다(orderTable1, orderTable2);
             TableGroupResponse response = tableGroupService.create(request);
 
-            Order order = orderRepository.save(Order를_생성한다(orderTable1, COOKING));
+            Order order = orderRepository.save(Order를_생성한다(orderTable1.getId(), COOKING));
 
             // when, then
             assertThatThrownBy(() -> tableGroupService.ungroup(response.getId()))
@@ -156,7 +156,7 @@ class TableGroupServiceTest {
             TableGroupRequest request = TableGroupRequest를_생성한다(orderTable1, orderTable2);
             TableGroupResponse response = tableGroupService.create(request);
 
-            Order order = orderRepository.save(Order를_생성한다(orderTable1, MEAL));
+            Order order = orderRepository.save(Order를_생성한다(orderTable1.getId(), MEAL));
 
             // when, then
             assertThatThrownBy(() -> tableGroupService.ungroup(response.getId()))
@@ -173,7 +173,7 @@ class TableGroupServiceTest {
             TableGroupRequest request = TableGroupRequest를_생성한다(orderTable1, orderTable2);
             TableGroupResponse response = tableGroupService.create(request);
 
-            Order order = orderRepository.save(Order를_생성한다(orderTable1, COMPLETION));
+            Order order = orderRepository.save(Order를_생성한다(orderTable1.getId(), COMPLETION));
 
             // when
             tableGroupService.ungroup(response.getId());
@@ -211,8 +211,8 @@ class TableGroupServiceTest {
         return orderTable;
     }
 
-    private Order Order를_생성한다(OrderTable orderTable, OrderStatus orderStatus) {
-        Order order = new Order(orderTable);
+    private Order Order를_생성한다(Long orderTableId, OrderStatus orderStatus) {
+        Order order = new Order(orderTableId);
         order.changeStatus(orderStatus);
 
         return order;

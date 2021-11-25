@@ -7,13 +7,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.order.exception.InvalidOrderException;
 import kitchenpos.order.exception.OrderAlreadyCompletionException;
-import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("Order 단위 테스트")
 class OrderTest {
+
+    private static final Long ORDER_TABLE_ID = 1L;
 
     @DisplayName("Order를 생성할 때 OrderTable이 Null이면 예외가 발생한다.")
     @Test
@@ -31,8 +32,7 @@ class OrderTest {
         @Test
         void alreadyCompletionException() {
             // given
-            OrderTable orderTable = new OrderTable(5, true);
-            Order order = new Order(orderTable);
+            Order order = new Order(ORDER_TABLE_ID);
             order.changeStatus(COMPLETION);
 
             // when, then
@@ -44,8 +44,7 @@ class OrderTest {
         @Test
         void success() {
             // given
-            OrderTable orderTable = new OrderTable(5, true);
-            Order order = new Order(orderTable);
+            Order order = new Order(ORDER_TABLE_ID);
             order.changeStatus(MEAL);
 
             // when, then

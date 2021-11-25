@@ -3,7 +3,9 @@ package kitchenpos.order.domain;
 import static kitchenpos.order.domain.OrderStatus.COMPLETION;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -11,11 +13,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import kitchenpos.order.exception.InvalidOrderException;
 import kitchenpos.order.exception.OrderAlreadyCompletionException;
-import kitchenpos.table.domain.OrderTable;
 
 @Entity(name = "orders")
 public class Order {
@@ -24,9 +24,12 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @Embedded
+    private OrderLineItems orderLineItems;
+
+    @NotNull
     @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    private Long orderTableId;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -38,22 +41,26 @@ public class Order {
     protected Order() {
     }
 
-    public Order(OrderTable orderTable) {
-        this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now());
+    public Order(Long orderTableId) {
+        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now());
     }
 
-    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
+    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        validateNull(this.orderTable);
+        validateNull(this.orderTableId);
     }
 
     private void validateNull(Object object) {
         if (Objects.isNull(object)) {
             throw new InvalidOrderException("Order 정보에 null이 포함되었습니다.");
         }
+    }
+
+    public void addOrderLineItems(OrderLineItems orderLineItems) {
+        this.orderLineItems = orderLineItems;
     }
 
     public void changeStatus(OrderStatus orderStatus) {
@@ -77,7 +84,7 @@ public class Order {
     }
 
     public Long getOrderTableId() {
-        return orderTable.getId();
+        return orderTableId;
     }
 
     public String getOrderStatus() {
@@ -86,6 +93,10 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
+    }
+
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems.toList();
     }
 
     @Override
