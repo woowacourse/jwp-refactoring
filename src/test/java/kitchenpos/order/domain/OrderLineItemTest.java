@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.exception.InvalidOrderLineItemException;
-import kitchenpos.order.exception.InvalidQuantityException;
+import kitchenpos.order.exception.InvalidOrderLineItemQuantityException;
 import kitchenpos.menu.domain.Menu;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -54,7 +54,7 @@ class OrderLineItemTest {
 
             // when, then
             assertThatThrownBy(() -> new OrderLineItem(order, menu, null))
-                .isExactlyInstanceOf(InvalidQuantityException.class);
+                .isExactlyInstanceOf(InvalidOrderLineItemQuantityException.class);
         }
 
         @DisplayName("Quantity가 음수면 예외가 발생한다.")
@@ -68,7 +68,7 @@ class OrderLineItemTest {
 
             // when, then
             assertThatThrownBy(() -> new OrderLineItem(order, menu, -1L))
-                .isExactlyInstanceOf(InvalidQuantityException.class);
+                .isExactlyInstanceOf(InvalidOrderLineItemQuantityException.class);
         }
     }
 }

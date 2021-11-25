@@ -37,7 +37,7 @@ class OrderLineItemsTest {
             Order order = new Order(orderTable);
             MenuGroup menuGroup = new MenuGroup("쩌는 그룹");
             Menu menu = new Menu("대박 메뉴", BigDecimal.ONE, menuGroup);
-            Quantity quantity = new Quantity(1L);
+            OrderLineItemQuantity quantity = new OrderLineItemQuantity(1L);
 
             OrderLineItem orderLineItem1 = new OrderLineItem(1L, order, menu, quantity);
             OrderLineItem orderLineItem2 = new OrderLineItem(2L, order, menu, quantity);

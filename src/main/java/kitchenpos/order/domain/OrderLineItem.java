@@ -30,16 +30,16 @@ public class OrderLineItem {
     private Menu menu;
 
     @Embedded
-    private Quantity quantity;
+    private OrderLineItemQuantity quantity;
 
     protected OrderLineItem() {
     }
 
     public OrderLineItem(Order order, Menu menu, Long quantity) {
-        this(null, order, menu, new Quantity(quantity));
+        this(null, order, menu, new OrderLineItemQuantity(quantity));
     }
 
-    public OrderLineItem(Long seq, Order order, Menu menu, Quantity quantity) {
+    public OrderLineItem(Long seq, Order order, Menu menu, OrderLineItemQuantity quantity) {
         this.seq = seq;
         this.order = order;
         this.menu = menu;
