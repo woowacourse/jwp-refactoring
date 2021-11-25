@@ -43,7 +43,6 @@ public class Menu {
     public Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
     }
-
     public Long getId() {
         return id;
     }

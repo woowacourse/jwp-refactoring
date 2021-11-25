@@ -2,7 +2,6 @@ package kitchenpos.menu.domain.dto.request;
 
 import kitchenpos.common.Price;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProduct;
 
 import java.math.BigDecimal;
 import java.util.List;
