@@ -57,6 +57,11 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
+    public void update(MenuName name, MenuPrice price) {
+        this.name = name;
+        this.price = price;
+    }
+
     public Long getId() {
         return id;
     }
