@@ -1,5 +1,7 @@
 package kitchenpos.ordertable.domain;
 
+import kitchenpos.ordertable.application.TableValidator;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -41,6 +43,10 @@ public class OrderTable {
 
     public OrderTable(int numberOfGuests, boolean empty) {
         this(null, null, numberOfGuests, empty);
+    }
+
+    public void validate(TableValidator tableValidator) {
+        tableValidator.validateTableChangeEmpty(this);
     }
 
     public void enrollTableGroupId(Long tableGroupId) {

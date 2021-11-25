@@ -1,25 +1,22 @@
 package kitchenpos.ordertable.application;
 
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 @Transactional
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final TableValidator tableValidator;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository, final TableValidator tableValidator) {
         this.orderTableRepository = orderTableRepository;
+        this.tableValidator = tableValidator;
     }
 
     public OrderTable create(final OrderTable orderTable) {
@@ -34,15 +31,7 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (savedOrderTable.isBelongToTableGroup()) {
-            throw new IllegalArgumentException();
-        }
-
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                savedOrderTable.getId(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
+        savedOrderTable.validate(tableValidator);
         savedOrderTable.changeEmptyStatus(empty);
         return savedOrderTable;
     }
