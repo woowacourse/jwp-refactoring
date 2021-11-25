@@ -15,7 +15,7 @@ public class MenuGroup {
     private Long id;
 
     @Embedded
-    private Name name;
+    private MenuGroupName name;
 
     protected MenuGroup() {
     }
@@ -25,10 +25,10 @@ public class MenuGroup {
     }
 
     public MenuGroup(Long id, String name) {
-        this(id, new Name(name));
+        this(id, new MenuGroupName(name));
     }
 
-    public MenuGroup(Long id, Name name) {
+    public MenuGroup(Long id, MenuGroupName name) {
         this.id = id;
         this.name = name;
     }
