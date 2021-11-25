@@ -148,10 +148,9 @@ class MenuServiceTest {
             assertThat(response.getId()).isNotNull();
             assertThat(response.getName()).isEqualTo(request.getName());
             assertThat(response.getPrice().compareTo(request.getPrice())).isEqualTo(0);
-            assertThat(response.getMenuGroupId()).isEqualTo(request.getMenuGroup());
+            assertThat(response.getMenuGroupId()).isEqualTo(request.getMenuGroupId());
             for (MenuProductResponse menuProductResponse : response.getMenuProducts()) {
                 assertThat(menuProductResponse.getSeq()).isNotNull();
-                assertThat(menuProductResponse.getMenuId()).isEqualTo(response.getId());
             }
         }
     }

@@ -1,19 +1,19 @@
 package kitchenpos.menu.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
 import java.math.BigDecimal;
-import kitchenpos.menu.exception.InvalidMenuProductException;
+import kitchenpos.menu.exception.InvalidMenuException;
 import kitchenpos.menu.exception.InvalidMenuQuantityException;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("MenuProduct 단위 테스트")
 class MenuProductTest {
+
+    private static final Long MENU_GROUP_ID = 1L;
+    private static final Long PRODUCT_ID = 1L;
 
     @DisplayName("MenuProduct가 생성될 때")
     @Nested
@@ -22,36 +22,30 @@ class MenuProductTest {
         @DisplayName("Menu가 null이면 예외가 발생한다.")
         @Test
         void menuNullException() {
-            // given
-            Product product = new Product("스테커2 버거", BigDecimal.valueOf(11_900));
-
             // when, then
-            assertThatCode(() -> new MenuProduct(null, product, 1L))
-                .isExactlyInstanceOf(InvalidMenuProductException.class);
+            assertThatCode(() -> new MenuProduct(null, PRODUCT_ID, 1L))
+                .isExactlyInstanceOf(InvalidMenuException.class);
         }
 
         @DisplayName("Product가 null이면 예외가 발생한다.")
         @Test
         void productNullException() {
             // given
-            MenuGroup menuGroup = new MenuGroup("버거킹 단품 메뉴 그룹");
-            Menu menu = new Menu("스테커2 버거 단품 메뉴", BigDecimal.valueOf(11_900), menuGroup);
+            Menu menu = new Menu("스테커2 버거 단품 메뉴", BigDecimal.valueOf(11_900), MENU_GROUP_ID);
 
             // when, then
             assertThatCode(() -> new MenuProduct(menu, null, 1L))
-                .isExactlyInstanceOf(InvalidMenuProductException.class);
+                .isExactlyInstanceOf(InvalidMenuException.class);
         }
 
         @DisplayName("Quantity가 null이면 예외가 발생한다.")
         @Test
         void quantityNullException() {
             // given
-            MenuGroup menuGroup = new MenuGroup("버거킹 단품 메뉴 그룹");
-            Menu menu = new Menu("스테커2 버거 단품 메뉴", BigDecimal.valueOf(11_900), menuGroup);
-            Product product = new Product("스테커2 버거", BigDecimal.valueOf(11_900));
+            Menu menu = new Menu("스테커2 버거 단품 메뉴", BigDecimal.valueOf(11_900), MENU_GROUP_ID);
 
             // when, then
-            assertThatCode(() -> new MenuProduct(menu, product, null))
+            assertThatCode(() -> new MenuProduct(menu, PRODUCT_ID, null))
                 .isExactlyInstanceOf(InvalidMenuQuantityException.class);
         }
 
@@ -59,29 +53,11 @@ class MenuProductTest {
         @Test
         void quantityNegativeException() {
             // given
-            MenuGroup menuGroup = new MenuGroup("버거킹 단품 메뉴 그룹");
-            Menu menu = new Menu("스테커2 버거 단품 메뉴", BigDecimal.valueOf(11_900), menuGroup);
-            Product product = new Product("스테커2 버거", BigDecimal.valueOf(11_900));
+            Menu menu = new Menu("스테커2 버거 단품 메뉴", BigDecimal.valueOf(11_900), MENU_GROUP_ID);
 
             // when, then
-            assertThatCode(() -> new MenuProduct(menu, product, -1L))
+            assertThatCode(() -> new MenuProduct(menu, PRODUCT_ID, -1L))
                 .isExactlyInstanceOf(InvalidMenuQuantityException.class);
         }
-    }
-
-    @DisplayName("상품의 총 금액은 quantity가 곱해진 값이 반환된다.")
-    @Test
-    void totalPrice() {
-        // given
-        MenuGroup menuGroup = new MenuGroup("버거킹 단품 메뉴 그룹");
-        Menu menu = new Menu("스테커2 버거 단품 메뉴", BigDecimal.valueOf(20_000), menuGroup);
-        Product product = new Product("좋은 상품2", BigDecimal.valueOf(5_000));
-        MenuProduct menuProduct = new MenuProduct(menu, product, 4L);
-
-        // when
-        MenuPrice totalPrice = menuProduct.productTotalPrice();
-
-        // then
-        assertThat(totalPrice.getValue()).isEqualTo(BigDecimal.valueOf(20_000));
     }
 }

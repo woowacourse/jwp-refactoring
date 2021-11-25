@@ -5,17 +5,19 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.table.domain.OrderTable;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.exception.OrderLineItemDuplicateException;
 import kitchenpos.order.exception.OrderLineItemsEmptyException;
-import kitchenpos.menu.domain.Menu;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("OrderLineItems 단위 테스트")
 class OrderLineItemsTest {
+
+    private static final Long MENU_GROUP_ID = 1L;
+    private static final BigDecimal MENU_PRICE = BigDecimal.ZERO;
 
     @DisplayName("OrderLineItems를 생성할 때")
     @Nested
@@ -35,8 +37,7 @@ class OrderLineItemsTest {
             // given
             OrderTable orderTable = new OrderTable(5, true);
             Order order = new Order(orderTable);
-            MenuGroup menuGroup = new MenuGroup("쩌는 그룹");
-            Menu menu = new Menu("대박 메뉴", BigDecimal.ONE, menuGroup);
+            Menu menu = new Menu("대박 메뉴", MENU_PRICE, MENU_GROUP_ID);
             OrderLineItemQuantity quantity = new OrderLineItemQuantity(1L);
 
             OrderLineItem orderLineItem1 = new OrderLineItem(1L, order, menu, quantity);

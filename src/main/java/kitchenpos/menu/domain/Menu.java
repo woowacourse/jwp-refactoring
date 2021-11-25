@@ -1,6 +1,7 @@
 package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -8,9 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.exception.InvalidMenuException;
 
 @Entity
@@ -26,30 +25,36 @@ public class Menu {
     @Embedded
     private MenuPrice price;
 
+    @Embedded
+    private MenuProducts menuProducts;
+
     @NotNull
-    @ManyToOne
     @JoinColumn(name = "menu_group_id")
-    private MenuGroup menuGroup;
+    private Long menuGroupId;
 
     protected Menu() {
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
-        this(null, new MenuName(name), new MenuPrice(price), menuGroup);
+    public Menu(String name, BigDecimal price, Long menuGroupId) {
+        this(null, new MenuName(name), new MenuPrice(price), menuGroupId);
     }
 
-    public Menu(Long id, MenuName name, MenuPrice price, MenuGroup menuGroup) {
+    public Menu(Long id, MenuName name, MenuPrice price, Long menuGroupId) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
-        validateMenuGroupNull(this.menuGroup);
+        this.menuGroupId = menuGroupId;
+        validateNull(this.menuGroupId);
     }
 
-    private void validateMenuGroupNull(MenuGroup menuGroup) {
-        if (Objects.isNull(menuGroup)) {
-            throw new InvalidMenuException("Menu 정보에 null이 포함되었습니다.");
+    private void validateNull(Long menuGroupId) {
+        if (Objects.isNull(menuGroupId)) {
+            throw new InvalidMenuException("Menu의 Group은 Null 일 수 없습니다.");
         }
+    }
+
+    public void addMenuProducts(MenuProducts menuProducts) {
+        this.menuProducts = menuProducts;
     }
 
     public Long getId() {
@@ -65,7 +70,11 @@ public class Menu {
     }
 
     public Long getMenuGroupId() {
-        return menuGroup.getId();
+        return menuGroupId;
+    }
+
+    public List<MenuProduct> getMenuProducts() {
+        return menuProducts.toList();
     }
 
     @Override

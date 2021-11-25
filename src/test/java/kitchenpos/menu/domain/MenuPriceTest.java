@@ -33,7 +33,7 @@ class MenuPriceTest {
         }
     }
 
-    @DisplayName("금액이 더 큰지 비교가 가능하다")
+    @DisplayName("금액이 더 큰지 비교가 가능하다.")
     @Test
     void isBiggerThan() {
         // given
@@ -46,6 +46,20 @@ class MenuPriceTest {
         assertThat(menuPrice.isBiggerThan(smallerMenuPrice)).isTrue();
         assertThat(menuPrice.isBiggerThan(equalMenuPrice)).isFalse();
         assertThat(menuPrice.isBiggerThan(biggerMenuPrice)).isFalse();
+    }
+
+    @DisplayName("금액 덧셈을 진행한다.")
+    @Test
+    void add() {
+        // given
+        MenuPrice menuPrice1 = new MenuPrice(BigDecimal.valueOf(1_000));
+        MenuPrice menuPrice2 = new MenuPrice(BigDecimal.valueOf(2_000));
+
+        // when
+        MenuPrice result = menuPrice1.add(menuPrice2);
+
+        // then
+        assertThat(result).isEqualTo(new MenuPrice(BigDecimal.valueOf(1_000 + 2_000)));
     }
 
     @DisplayName("주어진 수량에 곱해진 가격의 반환한다.")

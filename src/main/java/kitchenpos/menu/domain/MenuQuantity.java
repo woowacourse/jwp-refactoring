@@ -35,6 +35,10 @@ public class MenuQuantity {
         }
     }
 
+    public MenuPrice multiplyPrice(BigDecimal price) {
+        return new MenuPrice(price.multiply(BigDecimal.valueOf(value)));
+    }
+
     public BigDecimal getDecimalValue() {
         return BigDecimal.valueOf(value);
     }

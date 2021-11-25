@@ -3,17 +3,19 @@ package kitchenpos.order.domain;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.table.domain.OrderTable;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.exception.InvalidOrderLineItemException;
 import kitchenpos.order.exception.InvalidOrderLineItemQuantityException;
-import kitchenpos.menu.domain.Menu;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("OrderLineItem 단위 테스트")
 class OrderLineItemTest {
+
+    private static final Long MENU_GROUP_ID = 1L;
+    private static final BigDecimal MENU_PRICE = BigDecimal.ZERO;
 
     @DisplayName("OrderLineItem을 생성할 때")
     @Nested
@@ -23,8 +25,7 @@ class OrderLineItemTest {
         @Test
         void oderNullException() {
             // given
-            MenuGroup menuGroup = new MenuGroup("쩌는 그룹");
-            Menu menu = new Menu("대박 메뉴", BigDecimal.ONE, menuGroup);
+            Menu menu = new Menu("대박 메뉴", MENU_PRICE, MENU_GROUP_ID);
 
             // when, then
             assertThatThrownBy(() -> new OrderLineItem(null, menu, 5L))
@@ -49,8 +50,7 @@ class OrderLineItemTest {
             // given
             OrderTable orderTable = new OrderTable(5, true);
             Order order = new Order(orderTable);
-            MenuGroup menuGroup = new MenuGroup("쩌는 그룹");
-            Menu menu = new Menu("대박 메뉴", BigDecimal.ONE, menuGroup);
+            Menu menu = new Menu("대박 메뉴", MENU_PRICE, MENU_GROUP_ID);
 
             // when, then
             assertThatThrownBy(() -> new OrderLineItem(order, menu, null))
@@ -63,8 +63,7 @@ class OrderLineItemTest {
             // given
             OrderTable orderTable = new OrderTable(5, true);
             Order order = new Order(orderTable);
-            MenuGroup menuGroup = new MenuGroup("쩌는 그룹");
-            Menu menu = new Menu("대박 메뉴", BigDecimal.ONE, menuGroup);
+            Menu menu = new Menu("대박 메뉴", MENU_PRICE, MENU_GROUP_ID);
 
             // when, then
             assertThatThrownBy(() -> new OrderLineItem(order, menu, -1L))
