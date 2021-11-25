@@ -1,9 +1,11 @@
-package kitchenpos.order.domain;
+package kitchenpos.order.application;
 
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuChangedEvent;
 import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItemRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;

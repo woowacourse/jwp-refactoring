@@ -1,8 +1,9 @@
-package kitchenpos.table.domain;
+package kitchenpos.table.application;
 
 import java.util.List;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.table.domain.OrderTable;
 import org.springframework.stereotype.Component;
 
 @Component
