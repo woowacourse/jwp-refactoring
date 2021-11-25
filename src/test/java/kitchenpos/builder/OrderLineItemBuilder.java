@@ -1,7 +1,7 @@
 package kitchenpos.builder;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 
 public class OrderLineItemBuilder {
 

@@ -1,9 +1,9 @@
 package kitchenpos.menu.domain;
 
-import kitchenpos.domain.Products;
-import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.product.domain.Products;
+import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuProductRepository;
-import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.product.domain.repository.ProductRepository;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
