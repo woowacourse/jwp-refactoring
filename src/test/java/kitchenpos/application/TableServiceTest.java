@@ -5,8 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.dto.OrderTableRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

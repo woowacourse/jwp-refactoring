@@ -1,14 +1,13 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.domain.Product;
-import kitchenpos.dto.ProductRequest;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.dto.ProductRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

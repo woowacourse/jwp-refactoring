@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
 import org.assertj.core.api.ThrowableAssert;
 
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;

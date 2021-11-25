@@ -5,8 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.dto.MenuRequest;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.dto.MenuRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
