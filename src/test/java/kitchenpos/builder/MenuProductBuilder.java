@@ -31,6 +31,6 @@ public class MenuProductBuilder {
     }
 
     public MenuProduct build() {
-        return  new MenuProduct(this.seq, this.menu, this.productId, this.quantity);
+        return new MenuProduct(this.seq, this.menu, this.productId, this.quantity);
     }
 }

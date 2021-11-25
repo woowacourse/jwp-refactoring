@@ -1,7 +1,5 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.order.domain.Order;
-
 import javax.persistence.*;
 
 @Entity
@@ -20,7 +18,7 @@ public class OrderLineItem {
     public OrderLineItem() {
     }
 
-    public OrderLineItem(Order order, Long  menuId, long quantity) {
+    public OrderLineItem(Order order, Long menuId, long quantity) {
         this(null, order, menuId, quantity);
     }
 

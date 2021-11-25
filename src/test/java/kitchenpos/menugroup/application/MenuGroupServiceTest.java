@@ -3,7 +3,6 @@ package kitchenpos.menugroup.application;
 import kitchenpos.application.BaseServiceTest;
 import kitchenpos.application.TestFixtureFactory;
 import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menugroup.application.MenuGroupService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

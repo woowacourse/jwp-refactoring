@@ -1,8 +1,5 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderValidator;
-
 public class OrderValidatorTestImpl implements OrderValidator {
 
     @Override

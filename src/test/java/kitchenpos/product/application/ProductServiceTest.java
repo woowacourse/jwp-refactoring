@@ -3,7 +3,6 @@ package kitchenpos.product.application;
 import kitchenpos.application.BaseServiceTest;
 import kitchenpos.application.TestFixtureFactory;
 import kitchenpos.product.domain.Product;
-import kitchenpos.product.application.ProductService;
 import kitchenpos.product.ui.dto.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

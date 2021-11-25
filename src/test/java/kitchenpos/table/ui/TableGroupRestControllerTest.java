@@ -1,10 +1,10 @@
 package kitchenpos.table.ui;
 
+import kitchenpos.builder.OrderTableBuilder;
+import kitchenpos.builder.TableGroupBuilder;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTables;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.builder.OrderTableBuilder;
-import kitchenpos.builder.TableGroupBuilder;
 import kitchenpos.table.ui.dto.OrderTableRequest;
 import kitchenpos.table.ui.dto.TableGroupCreateRequest;
 import kitchenpos.ui.BaseWebMvcTest;

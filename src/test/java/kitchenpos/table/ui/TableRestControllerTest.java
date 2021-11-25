@@ -1,7 +1,7 @@
 package kitchenpos.table.ui;
 
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.builder.OrderTableBuilder;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.ui.dto.OrderTableCreateRequest;
 import kitchenpos.ui.BaseWebMvcTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,11 +11,11 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Arrays;
 
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.mockito.BDDMockito.given;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 

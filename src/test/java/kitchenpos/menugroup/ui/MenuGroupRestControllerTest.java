@@ -1,7 +1,7 @@
 package kitchenpos.menugroup.ui;
 
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.builder.MenuGroupBuilder;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.ui.BaseWebMvcTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
