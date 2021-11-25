@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.menu.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -7,12 +7,11 @@ import static org.assertj.core.api.Assertions.tuple;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.menugroup.exception.InvalidMenuGroupException;
 import kitchenpos.menu.exception.InvalidPriceException;
-import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.ui.dto.request.MenuProductRequestDto;
 import kitchenpos.menu.ui.dto.request.MenuRequestDto;
 import kitchenpos.menu.ui.dto.response.MenuResponseDto;
+import kitchenpos.menugroup.exception.InvalidMenuGroupException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

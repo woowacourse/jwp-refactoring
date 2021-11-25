@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.table.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -10,8 +10,6 @@ import kitchenpos.table.exception.CannotChangeOrderTableEmpty;
 import kitchenpos.table.exception.CannotChangeOrderTableGuest;
 import kitchenpos.table.exception.InvalidTableGroupException;
 import kitchenpos.table.exception.InvalidTableGroupSizeException;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

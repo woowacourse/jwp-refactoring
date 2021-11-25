@@ -22,11 +22,10 @@ public class OrderValidator {
         validateOrderTableNotEmpty(findOrderTableById(order.getOrderTableId()));
     }
 
-    public OrderTable findOrderTableById(Long id) {
+    private OrderTable findOrderTableById(Long id) {
         return orderTableRepository.findById(id)
             .orElseThrow(InvalidOrderTableException::new);
     }
-
 
     private void validateOrderLineItemNotEmpty(List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {

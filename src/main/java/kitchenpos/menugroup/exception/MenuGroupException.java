@@ -1,13 +1,13 @@
-package kitchenpos.exception;
+package kitchenpos.menugroup.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class KitchenposException extends RuntimeException {
+public class MenuGroupException extends RuntimeException {
 
     private final HttpStatus httpStatus;
     private final String message;
 
-    public KitchenposException(HttpStatus httpStatus, String message) {
+    public MenuGroupException(HttpStatus httpStatus, String message) {
         this.httpStatus = httpStatus;
         this.message = message;
     }
@@ -21,3 +21,4 @@ public class KitchenposException extends RuntimeException {
         return message;
     }
 }
+

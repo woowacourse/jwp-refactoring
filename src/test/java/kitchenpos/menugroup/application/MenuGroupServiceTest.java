@@ -1,9 +1,8 @@
-package kitchenpos.application;
+package kitchenpos.menugroup.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.menugroup.application.MenuGroupService;
 import kitchenpos.menugroup.ui.dto.request.MenuGroupRequestDto;
 import kitchenpos.menugroup.ui.dto.response.MenuGroupResponseDto;
 import org.junit.jupiter.api.DisplayName;

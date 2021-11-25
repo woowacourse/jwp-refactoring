@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.menu.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -6,8 +6,8 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.menu.exception.InvalidPriceException;
 import kitchenpos.menu.application.ProductService;
+import kitchenpos.menu.exception.InvalidPriceException;
 import kitchenpos.menu.ui.dto.request.ProductRequestDto;
 import kitchenpos.menu.ui.dto.response.ProductResponseDto;
 import org.junit.jupiter.api.DisplayName;

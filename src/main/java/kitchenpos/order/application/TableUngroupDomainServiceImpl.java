@@ -11,12 +11,12 @@ import kitchenpos.table.exception.InvalidTableGroupException;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TableUnDomainServiceImpl implements TableUngroupDomainService {
+public class TableUngroupDomainServiceImpl implements TableUngroupDomainService {
 
     private final OrderRepository orderRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableUnDomainServiceImpl(
+    public TableUngroupDomainServiceImpl(
         OrderRepository orderRepository,
         TableGroupRepository tableGroupRepository
     ) {

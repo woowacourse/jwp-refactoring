@@ -3,12 +3,12 @@ package kitchenpos.table.application;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
-import kitchenpos.table.exception.InvalidOrderTableException;
-import kitchenpos.table.exception.InvalidTableGroupSizeException;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.table.domain.repository.TableGroupRepository;
+import kitchenpos.table.exception.InvalidOrderTableException;
+import kitchenpos.table.exception.InvalidTableGroupSizeException;
 import kitchenpos.table.ui.dto.request.TableGroupRequestDto;
 import kitchenpos.table.ui.dto.response.OrderTableResponseDto;
 import kitchenpos.table.ui.dto.response.TableGroupResponseDto;
