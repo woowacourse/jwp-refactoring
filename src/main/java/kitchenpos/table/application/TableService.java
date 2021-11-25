@@ -6,11 +6,11 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.order.repository.OrderDao;
-import kitchenpos.table.repository.OrderTableDao;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.repository.OrderDao;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.dto.OrderTableRequest;
+import kitchenpos.table.repository.OrderTableDao;
 
 @Service
 public class TableService {

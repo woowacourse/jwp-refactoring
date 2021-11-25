@@ -7,7 +7,7 @@ import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import org.assertj.core.api.ThrowableAssert;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class OrderTableTest {
 

@@ -9,7 +9,8 @@ import org.junit.jupiter.api.Test;
 import kitchenpos.menu.domain.Menu;
 import org.assertj.core.api.ThrowableAssert;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class MenuTest {
 
@@ -21,7 +22,7 @@ class MenuTest {
         Menu menu = new Menu(1L, "이름", BigDecimal.ZERO, null, new ArrayList<>());
 
         // when
-        ThrowableAssert.ThrowingCallable callable = () -> menu.validatePrice(BigDecimal.ZERO);
+        ThrowableAssert.ThrowingCallable callable = menu::validatePrice;
 
         // then
         assertThatCode(callable).doesNotThrowAnyException();
@@ -35,7 +36,7 @@ class MenuTest {
         Menu menu = new Menu(1L, "이름", BigDecimal.valueOf(-1), null, new ArrayList<>());
 
         // when
-        ThrowableAssert.ThrowingCallable callable = () -> menu.validatePrice(BigDecimal.ZERO);
+        ThrowableAssert.ThrowingCallable callable = menu::validatePrice;
 
         // then
         assertThatIllegalArgumentException().isThrownBy(callable);

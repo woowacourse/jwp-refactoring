@@ -7,15 +7,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import kitchenpos.table.application.TableService;
 import kitchenpos.menu.application.MenuService;
-import kitchenpos.order.repository.OrderDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.dto.OrderLineItemRequest;
 import kitchenpos.order.dto.OrderRequest;
+import kitchenpos.order.repository.OrderDao;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.domain.OrderTable;
 
 @Service
 public class OrderService {

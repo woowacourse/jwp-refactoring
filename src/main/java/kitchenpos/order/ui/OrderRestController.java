@@ -1,15 +1,15 @@
 package kitchenpos.order.ui;
 
-import kitchenpos.order.application.OrderService;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.dto.OrderRequest;
+import java.net.URI;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-import java.util.List;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.dto.OrderRequest;
 
 @RestController
 public class OrderRestController {
@@ -35,7 +35,7 @@ public class OrderRestController {
     public ResponseEntity<Order> changeOrderStatus(
             @PathVariable final Long orderId,
             @RequestBody final OrderStatus orderStatus
-            ) {
+    ) {
         return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderStatus));
     }
 }
