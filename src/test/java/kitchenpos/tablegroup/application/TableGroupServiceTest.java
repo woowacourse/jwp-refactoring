@@ -16,7 +16,7 @@ import kitchenpos.order.exception.InvalidOrderStatusException;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.exception.InvalidOrderTablesException;
 import kitchenpos.table.exception.OrderTableNotEmptyException;
-import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.exception.OrderTableNotFoundException;
 import kitchenpos.tablegroup.repository.TableGroupRepository;
@@ -178,7 +178,7 @@ class TableGroupServiceTest {
             // when
             tableGroupService.ungroup(response.getId());
             TableGroup ungroupedTableGroup = tableGroupService.findById(response.getId());
-            List<OrderTable> ungroupedOrderTables = orderTableRepository.findAllByTableGroup(ungroupedTableGroup);
+            List<OrderTable> ungroupedOrderTables = orderTableRepository.findAllByTableGroupId(ungroupedTableGroup.getId());
 
             // then
             for (OrderTable orderTable : ungroupedOrderTables) {
@@ -206,7 +206,7 @@ class TableGroupServiceTest {
 
     private OrderTable OrderTable을_생성한다(int numberOfGuests, TableGroup tableGroup, boolean isEmpty) {
         OrderTable orderTable = new OrderTable(numberOfGuests, isEmpty);
-        orderTable.groupBy(tableGroup);
+        orderTable.groupBy(tableGroup.getId());
 
         return orderTable;
     }

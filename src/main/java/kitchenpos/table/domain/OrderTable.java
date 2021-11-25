@@ -7,11 +7,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import kitchenpos.table.exception.OrderTableEmptyException;
 import kitchenpos.table.exception.OrderTableNotEmptyException;
-import kitchenpos.tablegroup.domain.TableGroup;
 
 @Entity
 public class OrderTable {
@@ -20,9 +18,8 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
     @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    private Long tableGroupId;
 
     @Embedded
     private NumberOfGuests numberOfGuests;
@@ -37,24 +34,24 @@ public class OrderTable {
         this(null, null, new NumberOfGuests(numberOfGuests), empty);
     }
 
-    public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        this(id, tableGroup, new NumberOfGuests(numberOfGuests), empty);
+    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+        this(id, tableGroupId, new NumberOfGuests(numberOfGuests), empty);
     }
 
-    public OrderTable(Long id, TableGroup tableGroup, NumberOfGuests numberOfGuests, boolean empty) {
+    public OrderTable(Long id, Long tableGroupId, NumberOfGuests numberOfGuests, boolean empty) {
         this.id = id;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public void groupBy(TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public void groupBy(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
         this.empty = false;
     }
 
     public void ungroup() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
         this.empty = true;
     }
 
@@ -67,9 +64,9 @@ public class OrderTable {
     }
 
     public void changeEmpty(boolean empty) {
-        if (Objects.nonNull(tableGroup)) {
+        if (Objects.nonNull(tableGroupId)) {
             throw new OrderTableNotEmptyException(
-                String.format("TableGroup %s을 가지고 있어 상태 변경이 불가능 합니다.", tableGroup.getId())
+                String.format("TableGroup %s을 가지고 있어 상태 변경이 불가능 합니다.", tableGroupId)
             );
         }
 
@@ -81,11 +78,11 @@ public class OrderTable {
     }
 
     public Long getTableGroupId() {
-        if (Objects.isNull(tableGroup)) {
+        if (Objects.isNull(tableGroupId)) {
             return null;
         }
 
-        return tableGroup.getId();
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
@@ -101,7 +98,7 @@ public class OrderTable {
     }
 
     public boolean isGrouped() {
-        return Objects.nonNull(tableGroup);
+        return Objects.nonNull(tableGroupId);
     }
 
     @Override

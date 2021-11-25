@@ -30,7 +30,7 @@ import kitchenpos.order.ui.response.OrderResponse;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.repository.ProductRepository;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.repository.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -81,7 +81,7 @@ class OrderServiceTest {
 
             MenuResponse menuResponse = menuService.create(MenuRequest를_생성한다("엄청난 메뉴", 5_600, menuGroup, menuProducts));
 
-            OrderRequest request = OrderRequest를_생성한다(orderTable, new ArrayList<>());
+            OrderRequest request = OrderRequest를_생성한다(orderTable.getId(), new ArrayList<>());
 
             // when, then
             assertThatThrownBy(() -> orderService.create(request))
@@ -107,7 +107,7 @@ class OrderServiceTest {
             OrderLineItemRequest itemRequest1 = OrderLineItemRequest를_생성한다(menu, 1);
             OrderLineItemRequest itemRequest2 = OrderLineItemRequest를_생성한다(menu, 1);
 
-            OrderRequest request = OrderRequest를_생성한다(orderTable, Arrays.asList(itemRequest1, itemRequest2));
+            OrderRequest request = OrderRequest를_생성한다(orderTable.getId(), Arrays.asList(itemRequest1, itemRequest2));
 
             // when, then
             assertThatThrownBy(() -> orderService.create(request))
@@ -132,8 +132,7 @@ class OrderServiceTest {
             OrderLineItemRequest itemRequest1 = OrderLineItemRequest를_생성한다(menu1, 1);
             OrderLineItemRequest itemRequest2 = OrderLineItemRequest를_생성한다(menu2, 1);
 
-            OrderTable 없는_테이블 = new OrderTable(-1L, TableGroup.create(), 5, true);
-            OrderRequest request = OrderRequest를_생성한다(없는_테이블, Arrays.asList(itemRequest1, itemRequest2));
+            OrderRequest request = OrderRequest를_생성한다(Long.MAX_VALUE, Arrays.asList(itemRequest1, itemRequest2));
 
             // when, then
             assertThatThrownBy(() -> orderService.create(request))
@@ -162,7 +161,7 @@ class OrderServiceTest {
 
             orderTable.ungroup();
             OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-            OrderRequest request = OrderRequest를_생성한다(savedOrderTable, Arrays.asList(itemRequest1, itemRequest2));
+            OrderRequest request = OrderRequest를_생성한다(savedOrderTable.getId(), Arrays.asList(itemRequest1, itemRequest2));
 
             // when, then
             assertThatThrownBy(() -> orderService.create(request))
@@ -189,7 +188,7 @@ class OrderServiceTest {
             OrderLineItemRequest itemRequest1 = OrderLineItemRequest를_생성한다(menu1, 1);
             OrderLineItemRequest itemRequest2 = OrderLineItemRequest를_생성한다(menu2, 1);
 
-            OrderRequest request = OrderRequest를_생성한다(orderTable, Arrays.asList(itemRequest1, itemRequest2));
+            OrderRequest request = OrderRequest를_생성한다(orderTable.getId(), Arrays.asList(itemRequest1, itemRequest2));
 
             // when
             OrderResponse response = orderService.create(request);
@@ -280,11 +279,11 @@ class OrderServiceTest {
         OrderLineItemRequest itemRequest1 = OrderLineItemRequest를_생성한다(menu1, 1);
         OrderLineItemRequest itemRequest2 = OrderLineItemRequest를_생성한다(menu2, 1);
 
-        return orderService.create(OrderRequest를_생성한다(orderTable, Arrays.asList(itemRequest1, itemRequest2)));
+        return orderService.create(OrderRequest를_생성한다(orderTable.getId(), Arrays.asList(itemRequest1, itemRequest2)));
     }
 
-    private OrderRequest OrderRequest를_생성한다(OrderTable orderTable, List<OrderLineItemRequest> orderLineItems) {
-        return new OrderRequest(orderTable.getId(), orderLineItems);
+    private OrderRequest OrderRequest를_생성한다(Long orderTableId, List<OrderLineItemRequest> orderLineItems) {
+        return new OrderRequest(orderTableId, orderLineItems);
     }
 
     private OrderStatusRequest Status_변화용_Request를_생성한다(OrderStatus orderStatus) {
@@ -297,7 +296,7 @@ class OrderServiceTest {
 
     private OrderTable OrderTable을_생성한다(int numberOfGuests, TableGroup tableGroup, boolean isEmpty) {
         OrderTable orderTable = new OrderTable(numberOfGuests, isEmpty);
-        orderTable.groupBy(tableGroup);
+        orderTable.groupBy(tableGroup.getId());
 
         return orderTable;
     }

@@ -16,7 +16,7 @@ import kitchenpos.table.exception.InvalidNumberOfGuestsException;
 import kitchenpos.table.exception.OrderTableEmptyException;
 import kitchenpos.table.exception.OrderTableNotEmptyException;
 import kitchenpos.table.exception.OrderTableNotFoundException;
-import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.table.ui.request.OrderTableEmptyRequest;
 import kitchenpos.table.ui.request.OrderTableGuestsRequest;
 import kitchenpos.table.ui.request.OrderTableRequest;
@@ -104,7 +104,7 @@ class OrderTableServiceTest {
             // given
             TableGroup tableGroup = tableGroupRepository.save(TableGroup을_생성한다());
             OrderTable orderTable = OrderTable을_생성한다(5, false);
-            orderTable.groupBy(tableGroup);
+            orderTable.groupBy(tableGroup.getId());
             orderTableRepository.save(orderTable);
 
             OrderTableEmptyRequest request = new OrderTableEmptyRequest(true);
