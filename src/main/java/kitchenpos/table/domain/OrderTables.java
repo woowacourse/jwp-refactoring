@@ -1,5 +1,6 @@
 package kitchenpos.table.domain;
 
+import kitchenpos.table.application.TableValidator;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;

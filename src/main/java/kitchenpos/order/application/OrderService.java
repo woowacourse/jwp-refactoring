@@ -31,18 +31,17 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderCreatedRequest request) {
         orderValidator.validateTable(request.getOrderTableId());
-        final Order order = Order.create(request.getOrderTableId());
+        final Order savedOrder = orderRepository.save(Order.create(request.getOrderTableId()));
 
         final List<OrderLineItem> orderLineItems = request.getOrderLineItemRequests()
                 .stream()
                 .map(orderLineItemRequest -> {
                     orderValidator.validateMenu(orderLineItemRequest.getMenuId());
-                    return OrderLineItem.create(order, orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity());
+                    return OrderLineItem.create(savedOrder, orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity());
                 })
                 .collect(toList());
 
         List<OrderLineItem> savedOrderLineItems = orderLineItemRepository.saveAll(orderLineItems);
-        final Order savedOrder = orderRepository.save(order);
         return OrderResponse.create(savedOrder, savedOrderLineItems);
     }
 

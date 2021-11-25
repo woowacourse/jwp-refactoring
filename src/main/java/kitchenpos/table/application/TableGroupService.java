@@ -5,7 +5,6 @@ import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.OrderTables;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.TableGroupRepository;
-import kitchenpos.table.domain.TableValidator;
 import kitchenpos.table.ui.dto.request.TableGroupCreateRequest;
 import kitchenpos.table.ui.dto.response.TableGroupResponse;
 import org.springframework.stereotype.Service;

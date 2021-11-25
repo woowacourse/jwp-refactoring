@@ -2,6 +2,7 @@ package kitchenpos.table.domain;
 
 import javax.persistence.*;
 import java.util.Objects;
+import kitchenpos.table.application.TableValidator;
 
 @Entity
 public class OrderTable {

@@ -1,13 +1,13 @@
 package kitchenpos;
 
-import kitchenpos.fixture.MenuFixture;
-import kitchenpos.fixture.MenuGroupFixture;
-import kitchenpos.fixture.MenuProductFixture;
-import kitchenpos.fixture.OrderFixture;
-import kitchenpos.fixture.OrderLineItemFixture;
-import kitchenpos.fixture.OrderTableFixture;
-import kitchenpos.fixture.ProductFixture;
-import kitchenpos.fixture.TableGroupFixture;
+import kitchenpos.menu.fixture.MenuFixture;
+import kitchenpos.menu.fixture.MenuProductFixture;
+import kitchenpos.menugroup.fixture.MenuGroupFixture;
+import kitchenpos.order.fixture.OrderFixture;
+import kitchenpos.order.fixture.OrderLineItemFixture;
+import kitchenpos.product.fixture.ProductFixture;
+import kitchenpos.table.fixture.OrderTableFixture;
+import kitchenpos.table.fixture.TableGroupFixture;
 import kitchenpos.testtool.RequestBuilder;
 import kitchenpos.testtool.request.RequestApi;
 import org.springframework.beans.factory.annotation.Autowired;

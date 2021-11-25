@@ -43,6 +43,12 @@ public class Product {
         this.price = price;
     }
 
+    private void validatePrice(BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("가격이 존재하거나 0보다 커야합니다.");
+        }
+    }
+
     public static Product create(String name, int price) {
         return new Product(name, price);
     }
@@ -53,12 +59,6 @@ public class Product {
 
     public static Product create(Long id, String name, BigDecimal price) {
         return new Product(id, name, price);
-    }
-
-    private void validatePrice(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("가격이 존재하거나 0보다 커야합니다.");
-        }
     }
 
     public BigDecimal calculatePrice(Long quantity) {

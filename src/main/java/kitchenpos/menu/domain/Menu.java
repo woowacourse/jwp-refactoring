@@ -1,5 +1,6 @@
 package kitchenpos.menu.domain;
 
+import kitchenpos.menu.application.MenuValidator;
 import org.springframework.data.domain.AbstractAggregateRoot;
 
 import javax.persistence.*;
