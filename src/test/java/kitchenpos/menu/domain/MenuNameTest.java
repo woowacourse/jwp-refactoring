@@ -2,8 +2,7 @@ package kitchenpos.menu.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.product.domain.Name;
-import kitchenpos.product.exception.InvalidNameException;
+import kitchenpos.menu.exception.InvalidMenuNameException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,16 +18,16 @@ class MenuNameTest {
         @Test
         void nullException() {
             // when, then
-            assertThatThrownBy(() -> new Name(null))
-                .isExactlyInstanceOf(InvalidNameException.class);
+            assertThatThrownBy(() -> new MenuName(null))
+                .isExactlyInstanceOf(InvalidMenuNameException.class);
         }
 
         @DisplayName("값이 공백으로만 이루어진 경우 예외가 발생한다.")
         @Test
         void blankException() {
             // when, then
-            assertThatThrownBy(() -> new Name(" "))
-                .isExactlyInstanceOf(InvalidNameException.class);
+            assertThatThrownBy(() -> new MenuName(" "))
+                .isExactlyInstanceOf(InvalidMenuNameException.class);
         }
     }
 }

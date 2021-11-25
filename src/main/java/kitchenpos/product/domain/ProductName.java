@@ -4,19 +4,19 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
-import kitchenpos.product.exception.InvalidNameException;
+import kitchenpos.product.exception.InvalidProductNameException;
 
 @Embeddable
-public class Name {
+public class ProductName {
 
     @NotNull
     @Column(name = "name")
     private String value;
 
-    protected Name() {
+    protected ProductName() {
     }
 
-    public Name(String value) {
+    public ProductName(String value) {
         this.value = value;
         validateNull(this.value);
         validateBlank(this.value);
@@ -24,13 +24,13 @@ public class Name {
 
     private void validateNull(String value) {
         if (Objects.isNull(value)) {
-            throw new InvalidNameException("이름은 Null일 수 없습니다.");
+            throw new InvalidProductNameException("이름은 Null일 수 없습니다.");
         }
     }
 
     private void validateBlank(String value) {
         if (value.replaceAll(" ", "").isEmpty()) {
-            throw new InvalidNameException("이름은 공백으로 이루어질 수 없습니다.");
+            throw new InvalidProductNameException("이름은 공백으로 이루어질 수 없습니다.");
         }
     }
 
@@ -46,7 +46,7 @@ public class Name {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Name name = (Name) o;
+        ProductName name = (ProductName) o;
         return Objects.equals(value, name.value);
     }
 
