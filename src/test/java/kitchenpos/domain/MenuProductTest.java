@@ -1,16 +1,33 @@
 package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.stream.Stream;
+import kitchenpos.menu.domain.repository.ProductRepository;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProductCalculator;
+import kitchenpos.menu.domain.Product;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @DisplayName("MenuProduct 도메인 테스트")
+@ExtendWith(MockitoExtension.class)
 class MenuProductTest {
+
+    @Mock
+    private ProductRepository productRepository;
+
+    @InjectMocks
+    private MenuProductCalculator menuProductCalculator;
 
     private static Stream<Arguments> providePriceAndQuantityAndTotalPrice() {
         return Stream.of(
@@ -25,10 +42,12 @@ class MenuProductTest {
     @MethodSource({"providePriceAndQuantityAndTotalPrice"})
     void calculatePrice_Success(BigDecimal price, long quantity, BigDecimal expected) {
         // given
-        MenuProduct menuProduct = new MenuProduct(new Product("상품", price), quantity);
+        given(productRepository.findById(1L))
+            .willReturn(Optional.of(new Product("상품", price)));
+        MenuProduct menuProduct = new MenuProduct(1L, quantity);
 
         // when
-        BigDecimal totalPrice = menuProduct.calculatePrice();
+        BigDecimal totalPrice = menuProduct.calculatePrice(menuProductCalculator);
 
         // then
         assertThat(totalPrice).isEqualTo(expected);

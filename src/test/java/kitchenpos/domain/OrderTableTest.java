@@ -6,10 +6,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.exception.CannotChangeOrderTableEmpty;
-import kitchenpos.exception.CannotChangeOrderTableGuest;
-import kitchenpos.exception.InvalidTableGroupException;
-import kitchenpos.exception.InvalidTableGroupSizeException;
+import kitchenpos.table.exception.CannotChangeOrderTableEmpty;
+import kitchenpos.table.exception.CannotChangeOrderTableGuest;
+import kitchenpos.table.exception.InvalidTableGroupException;
+import kitchenpos.table.exception.InvalidTableGroupSizeException;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +49,7 @@ class OrderTableTest {
     void changeEmptyStatus_IncludeInTableGroup_ExceptionThrown() {
         // given
         OrderTable orderTable = new OrderTable(0, true);
-        orderTable.includeInTableGroup(new TableGroup());
+        orderTable.includeInTableGroup(1L);
 
         // when
         // then
@@ -110,7 +112,7 @@ class OrderTableTest {
     void tableGroup_TableGroupNotNull_ExceptionThrown() {
         // given
         OrderTable includeInTableGroup = new OrderTable(0, true);
-        includeInTableGroup.includeInTableGroup(new TableGroup());
+        includeInTableGroup.includeInTableGroup(1L);
         List<OrderTable> orderTables = Arrays.asList(defaultOrderTable(), includeInTableGroup);
 
         // when

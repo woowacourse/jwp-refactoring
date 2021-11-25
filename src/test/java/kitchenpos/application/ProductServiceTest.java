@@ -6,9 +6,10 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.exception.InvalidPriceException;
-import kitchenpos.ui.dto.request.product.ProductRequestDto;
-import kitchenpos.ui.dto.response.product.ProductResponseDto;
+import kitchenpos.menu.exception.InvalidPriceException;
+import kitchenpos.menu.application.ProductService;
+import kitchenpos.menu.ui.dto.request.ProductRequestDto;
+import kitchenpos.menu.ui.dto.response.ProductResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
