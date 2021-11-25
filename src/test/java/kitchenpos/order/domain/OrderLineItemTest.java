@@ -2,11 +2,8 @@ package kitchenpos.order.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.math.BigDecimal;
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.exception.InvalidOrderLineItemException;
 import kitchenpos.order.exception.InvalidOrderLineItemQuantityException;
-import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,8 +11,8 @@ import org.junit.jupiter.api.Test;
 @DisplayName("OrderLineItem 단위 테스트")
 class OrderLineItemTest {
 
-    private static final Long MENU_GROUP_ID = 1L;
-    private static final BigDecimal MENU_PRICE = BigDecimal.ZERO;
+    private static final Long MENU_ID = 1L;
+    private static final Long ORDER_TABLE_ID = 1L;
 
     @DisplayName("OrderLineItem을 생성할 때")
     @Nested
@@ -24,11 +21,8 @@ class OrderLineItemTest {
         @DisplayName("Order가 Null이면 예외가 발생한다.")
         @Test
         void oderNullException() {
-            // given
-            Menu menu = new Menu("대박 메뉴", MENU_PRICE, MENU_GROUP_ID);
-
             // when, then
-            assertThatThrownBy(() -> new OrderLineItem(null, menu, 5L))
+            assertThatThrownBy(() -> new OrderLineItem(5L, null, MENU_ID))
                 .isExactlyInstanceOf(InvalidOrderLineItemException.class);
         }
 
@@ -36,11 +30,10 @@ class OrderLineItemTest {
         @Test
         void menuNullException() {
             // given
-            OrderTable orderTable = new OrderTable(5, true);
-            Order order = new Order(orderTable);
+            Order order = new Order(ORDER_TABLE_ID);
 
             // when, then
-            assertThatThrownBy(() -> new OrderLineItem(order, null, 5L))
+            assertThatThrownBy(() -> new OrderLineItem(5L, order, null))
                 .isExactlyInstanceOf(InvalidOrderLineItemException.class);
         }
 
@@ -48,12 +41,10 @@ class OrderLineItemTest {
         @Test
         void quantityNullException() {
             // given
-            OrderTable orderTable = new OrderTable(5, true);
-            Order order = new Order(orderTable);
-            Menu menu = new Menu("대박 메뉴", MENU_PRICE, MENU_GROUP_ID);
+            Order order = new Order(ORDER_TABLE_ID);
 
             // when, then
-            assertThatThrownBy(() -> new OrderLineItem(order, menu, null))
+            assertThatThrownBy(() -> new OrderLineItem(null, order, MENU_ID))
                 .isExactlyInstanceOf(InvalidOrderLineItemQuantityException.class);
         }
 
@@ -61,12 +52,10 @@ class OrderLineItemTest {
         @Test
         void quantityNegativeException() {
             // given
-            OrderTable orderTable = new OrderTable(5, true);
-            Order order = new Order(orderTable);
-            Menu menu = new Menu("대박 메뉴", MENU_PRICE, MENU_GROUP_ID);
+            Order order = new Order(ORDER_TABLE_ID);
 
             // when, then
-            assertThatThrownBy(() -> new OrderLineItem(order, menu, -1L))
+            assertThatThrownBy(() -> new OrderLineItem(-1L, order, MENU_ID))
                 .isExactlyInstanceOf(InvalidOrderLineItemQuantityException.class);
         }
     }

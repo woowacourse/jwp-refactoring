@@ -1,6 +1,5 @@
 package kitchenpos.order.domain;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -33,10 +32,6 @@ public class OrderLineItemQuantity {
         if (value < 0) {
             throw new InvalidOrderLineItemQuantityException(String.format("음수 %s는 개수가 될 수 없습니다.", value));
         }
-    }
-
-    public BigDecimal getDecimalValue() {
-        return BigDecimal.valueOf(value);
     }
 
     public Long getValue() {

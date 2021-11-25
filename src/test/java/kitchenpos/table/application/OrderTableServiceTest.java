@@ -9,8 +9,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.exception.InvalidOrderStatusException;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.exception.InvalidNumberOfGuestsException;
 import kitchenpos.table.exception.OrderTableEmptyException;
@@ -119,7 +119,7 @@ class OrderTableServiceTest {
         void existOrderTableIdMatchAndCookingStatusOrder() {
             // given
             OrderTable orderTable = orderTableRepository.save(OrderTable을_생성한다());
-            Order order = orderRepository.save(Order를_생성한다(orderTable, COOKING));
+            Order order = orderRepository.save(Order를_생성한다(orderTable.getId(), COOKING));
             OrderTableEmptyRequest request = new OrderTableEmptyRequest(true);
 
             // when, then
@@ -132,7 +132,7 @@ class OrderTableServiceTest {
         void existOrderTableIdMatchAndMealStatusOrder() {
             // given
             OrderTable orderTable = orderTableRepository.save(OrderTable을_생성한다());
-            Order order = orderRepository.save(Order를_생성한다(orderTable, MEAL));
+            Order order = orderRepository.save(Order를_생성한다(orderTable.getId(), MEAL));
             OrderTableEmptyRequest request = new OrderTableEmptyRequest(true);
 
             // when, then
@@ -145,7 +145,7 @@ class OrderTableServiceTest {
         void existOrderTableIdMatchAndCompletionStatusOrder() {
             // given
             OrderTable orderTable = orderTableRepository.save(OrderTable을_생성한다());
-            Order order = orderRepository.save(Order를_생성한다(orderTable, COMPLETION));
+            Order order = orderRepository.save(Order를_생성한다(orderTable.getId(), COMPLETION));
 
             OrderTableEmptyRequest request = new OrderTableEmptyRequest(true);
 
@@ -227,8 +227,8 @@ class OrderTableServiceTest {
         return TableGroup.create();
     }
 
-    private Order Order를_생성한다(OrderTable orderTable, OrderStatus orderStatus) {
-        Order order = new Order(orderTable);
+    private Order Order를_생성한다(Long orderTableId, OrderStatus orderStatus) {
+        Order order = new Order(orderTableId);
         order.changeStatus(orderStatus);
 
         return order;

@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 public class OrderLineItemRequest {
 
     @NotNull(message = "메뉴는 null 일 수 없습니다.")
-    private Long menu;
+    private Long menuId;
 
     @Min(value = 0, message = "최소 개수는 0개 이상입니다.")
     private Long quantity;
@@ -14,13 +14,13 @@ public class OrderLineItemRequest {
     protected OrderLineItemRequest() {
     }
 
-    public OrderLineItemRequest(Long menu, Long quantity) {
-        this.menu = menu;
+    public OrderLineItemRequest(Long menuId, Long quantity) {
+        this.menuId = menuId;
         this.quantity = quantity;
     }
 
-    public Long getMenu() {
-        return menu;
+    public Long getMenuId() {
+        return menuId;
     }
 
     public Long getQuantity() {
