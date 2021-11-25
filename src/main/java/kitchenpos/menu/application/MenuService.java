@@ -6,54 +6,39 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.product.application.ProductService;
-import kitchenpos.menu.repository.MenuDao;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.product.domain.Product;
-import kitchenpos.menu.dto.MenuProductRequest;
 import kitchenpos.menu.dto.MenuRequest;
+import kitchenpos.menu.repository.MenuDao;
 
 @Service
 public class MenuService {
     private final MenuDao menuDao;
     private final MenuGroupService menuGroupService;
     private final MenuProductService menuProductService;
-    private final ProductService productService;
 
     public MenuService(
             final MenuDao menuDao,
             final MenuGroupService menuGroupService,
-            final MenuProductService menuProductService,
-            final ProductService productService
+            final MenuProductService menuProductService
     ) {
         this.menuDao = menuDao;
         this.menuGroupService = menuGroupService;
         this.menuProductService = menuProductService;
-        this.productService = productService;
     }
 
     @Transactional
     public Menu create(final MenuRequest menuRequest) {
         final MenuGroup menuGroup = menuGroupService.findById(menuRequest.getMenuGroupId());
-        final Menu menu = menuRequest.toEntity(menuGroup);
-        menu.validatePrice(calculateSavedPrice(menuRequest));
+        final BigDecimal price = menuProductService.calculateSavedPrice(menuRequest.getMenuProducts());
+        final Menu menu = menuRequest.toEntity(menuGroup, price);
 
         final Menu savedMenu = menuDao.save(menu);
 
         final List<MenuProduct> menuProducts = menuProductService.saveAll(savedMenu, menuRequest.getMenuProducts());
         savedMenu.addMenuProducts(menuProducts);
         return savedMenu;
-    }
-
-    private BigDecimal calculateSavedPrice(final MenuRequest menuRequest) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProductRequest menuProductRequest : menuRequest.getMenuProducts()) {
-            final Product product = productService.findById(menuProductRequest.getProductId());
-            sum = sum.add(product.calculatePrice(menuProductRequest.getQuantity()));
-        }
-        return sum;
     }
 
     public List<Menu> list() {
