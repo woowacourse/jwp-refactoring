@@ -39,7 +39,10 @@ public class MenuRequest {
         return menuProducts;
     }
 
-    public Menu toEntity(MenuGroup menuGroup) {
+    public Menu toEntity(MenuGroup menuGroup, BigDecimal price) {
+        if (!this.price.equals(price)) {
+            throw new IllegalArgumentException("요청 가격과 저장된 가격이 다릅니다.");
+        }
         return new Menu(null, name, price, menuGroup, new ArrayList<>());
     }
 }

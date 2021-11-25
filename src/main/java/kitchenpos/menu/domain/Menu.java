@@ -25,6 +25,7 @@ public class Menu {
     public Menu() {}
 
     public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        validatePrice();
         this.id = id;
         this.name = name;
         this.price = price;
@@ -52,13 +53,9 @@ public class Menu {
         return menuProducts;
     }
 
-    public void validatePrice(BigDecimal sum) {
+    public void validatePrice() {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("가격은 음수가 될 수 없습니다.");
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException("요청 가격과 저장된 가격이 다릅니다.");
         }
     }
 
