@@ -1,1 +1,5 @@
-rootProject.name = 'kitchenpos'
+rootProject.name = 'jwp-refactoring'
+include 'web'
+include 'common'
+include 'api'
+
