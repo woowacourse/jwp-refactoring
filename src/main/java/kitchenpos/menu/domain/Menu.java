@@ -1,22 +1,21 @@
-package kitchenpos.domain;
+package kitchenpos.menu.domain;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Entity
 public class Menu {
-    private static final int COMPARE_RESULT_EQUAL = 0;
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
     private List<MenuProduct> menuProducts;
 
     protected Menu() {
@@ -31,28 +30,11 @@ public class Menu {
     }
 
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        validate(price);
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
-    }
-
-    private void validate(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < COMPARE_RESULT_EQUAL) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    public void validatePrice(BigDecimal productTotalPrice) {
-        if (isPriceLessThan(productTotalPrice)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private boolean isPriceLessThan(BigDecimal productTotalPrice) {
-        return this.price.compareTo(productTotalPrice) > COMPARE_RESULT_EQUAL;
     }
 
     public Long getId() {

@@ -1,12 +1,7 @@
 package kitchenpos.ui.dto.order;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.util.List;
 import java.util.stream.Collectors;
 

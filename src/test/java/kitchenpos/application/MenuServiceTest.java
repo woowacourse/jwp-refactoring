@@ -1,19 +1,21 @@
 package kitchenpos.application;
 
 import kitchenpos.builder.MenuGroupBuilder;
-import kitchenpos.domain.Menu;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.domain.repository.MenuProductRepository;
+import kitchenpos.menu.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.menu.application.MenuService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -32,6 +34,9 @@ class MenuServiceTest extends BaseServiceTest {
     @Autowired
     MenuProductRepository menuProductRepository;
 
+    @Autowired
+    EntityManager entityManager;
+
     Menu menu;
     MenuGroup savedMenuGroup;
     Product savedProduct;
@@ -48,6 +53,8 @@ class MenuServiceTest extends BaseServiceTest {
         menuProduct = TestFixtureFactory.메뉴상품_매핑_생성(savedProduct.getId(), 1L);
 
         menu = TestFixtureFactory.메뉴_후라이드_치킨_한마리(savedMenuGroup.getId(), menuProduct);
+        entityManager.flush();
+        entityManager.clear();
     }
 
     @DisplayName("[메뉴 생성] 메뉴를 정상적으로 생성한다.")
@@ -75,17 +82,6 @@ class MenuServiceTest extends BaseServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("[메뉴 생성] 메뉴의 가격이 음수면 예외가 발생한다.")
-    @Test
-    void createNegativePriceMenu() {
-        // given
-        BigDecimal negativePrice = new BigDecimal(-1);
-
-        // when then
-        assertThatThrownBy(() -> TestFixtureFactory.메뉴_생성("후라이드 한마리", negativePrice, savedMenuGroup.getId(), menuProduct))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("[메뉴 생성] 메뉴가 메뉴 그룹에 속하지 않거나 포함시킬 메뉴 그룹이 존재하지 않으면 예외가 발생한다.")
     @Test
     void createWithoutMenuGroup() {
@@ -106,9 +102,11 @@ class MenuServiceTest extends BaseServiceTest {
     void list() {
         // given
         Menu savedMenu1 = menuService.create(this.menu);
-        Menu menu1 = TestFixtureFactory.메뉴_생성("JMT 후라이드 치킨", new BigDecimal(16000), savedMenuGroup.getId(), menuProduct);
+        MenuProduct menuProduct1 = TestFixtureFactory.메뉴상품_매핑_생성(savedProduct.getId(), 1L);
+        Menu menu1 = TestFixtureFactory.메뉴_생성("JMT 후라이드 치킨", new BigDecimal(16000), savedMenuGroup.getId(), menuProduct1);
         Menu savedMenu2 = menuService.create(menu1);
-        Menu menu2 = TestFixtureFactory.메뉴_생성("통큰 후라이드 치킨", new BigDecimal(8000), savedMenuGroup.getId(), menuProduct);
+        MenuProduct menuProduct2 = TestFixtureFactory.메뉴상품_매핑_생성(savedProduct.getId(), 1L);
+        Menu menu2 = TestFixtureFactory.메뉴_생성("통큰 후라이드 치킨", new BigDecimal(8000), savedMenuGroup.getId(), menuProduct2);
         Menu savedMenu3 = menuService.create(menu2);
 
         int expectedSize = 3;

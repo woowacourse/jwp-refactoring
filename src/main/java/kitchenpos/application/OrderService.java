@@ -24,9 +24,7 @@ public class OrderService {
 
     @Transactional
     public Order create(final Order order) {
-        final OrderLineItems orderLineItems = order.getOrderLineItems();
-        orderLineItems.connectOrder(order);
-
+        order.getOrderLineItems().connectOrder(order);
         order.initId();
         order.startOrder(orderValidator);
         return orderRepository.save(order);

@@ -1,6 +1,6 @@
 package kitchenpos.domain;
 
-import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
