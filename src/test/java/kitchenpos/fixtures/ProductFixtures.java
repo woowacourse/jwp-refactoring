@@ -1,9 +1,11 @@
 package kitchenpos.fixtures;
 
 import java.math.BigDecimal;
-import kitchenpos.application.dto.ProductRequest;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
+import java.util.Arrays;
+import java.util.List;
+import kitchenpos.common.Price;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.service.dto.ProductRequest;
 
 public class ProductFixtures {
 
@@ -21,6 +23,10 @@ public class ProductFixtures {
 
     public static Product createProduct() {
         return createProduct(PRODUCT_ID, PRODUCT_NAME, PRICE);
+    }
+
+    public static List<Product> createProducts() {
+        return Arrays.asList(createProduct(), createProduct(2L, PRODUCT_NAME, PRICE));
     }
 
     public static ProductRequest createProductRequest(long price) {

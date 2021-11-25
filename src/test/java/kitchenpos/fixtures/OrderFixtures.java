@@ -4,13 +4,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.OrderLineItemRequest;
-import kitchenpos.application.dto.OrderRequest;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.service.dto.OrderLineItemRequest;
+import kitchenpos.order.service.dto.OrderRequest;
+import kitchenpos.ordertable.domain.OrderTable;
 
 public class OrderFixtures {
 
@@ -25,14 +25,12 @@ public class OrderFixtures {
         OrderStatus orderStatus,
         List<OrderLineItem> orderLineItems
     ) {
-        return new Order(id, orderTable, orderStatus, LocalDateTime.now(), orderLineItems);
+        return new Order(id, orderTable.getId(), orderStatus, LocalDateTime.now(), orderLineItems);
     }
 
     public static Order createOrder(OrderStatus status) {
-        OrderTable orderTable = new OrderTable(ORDER_TABLE_ID, null, new ArrayList<>(), 10, false);
-        Order order = createOrder(ORDER_ID, orderTable, status, createOrderLineItems());
-        orderTable.addOrder(order);
-        return order;
+        OrderTable orderTable = new OrderTable(ORDER_TABLE_ID, null, 10, false);
+        return createOrder(ORDER_ID, orderTable, status, createOrderLineItems());
     }
 
     public static Order createOrder() {
@@ -55,7 +53,7 @@ public class OrderFixtures {
 
     public static OrderRequest createOrderRequest(Order order) {
         return new OrderRequest(
-            order.getOrderTable().getId(),
+            order.getOrderTableId(),
             order.getOrderStatus(),
             order.getOrderLineItems().stream()
                 .map(item -> new OrderLineItemRequest(item.getMenu().getId(), item.getQuantity()))

@@ -4,13 +4,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.MenuProductRequest;
-import kitchenpos.application.dto.MenuRequest;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
+import kitchenpos.common.Price;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.service.dto.MenuProductRequest;
+import kitchenpos.menu.service.dto.MenuRequest;
+import kitchenpos.menugroup.domain.MenuGroup;
 
 public class MenuFixtures {
 
@@ -28,7 +27,7 @@ public class MenuFixtures {
         MenuGroup menuGroup,
         List<MenuProduct> menuProducts
     ) {
-        return new Menu(id, name, new Price(BigDecimal.valueOf(price)), menuGroup, menuProducts);
+        return new Menu(id, name, new Price(BigDecimal.valueOf(price)), menuGroup.getId(), menuProducts);
     }
 
     public static Menu createMenu() {
@@ -47,9 +46,9 @@ public class MenuFixtures {
         return new MenuRequest(
             menu.getName(),
             menu.getPrice(),
-            menu.getMenuGroup().getId(),
+            menu.getMenuGroupId(),
             menu.getMenuProducts().stream()
-                .map(menuProduct -> new MenuProductRequest(menuProduct.getProduct().getId(), menuProduct.getQuantity()))
+                .map(menuProduct -> new MenuProductRequest(menuProduct.getProductId(), menuProduct.getQuantity()))
                 .collect(Collectors.toList())
         );
     }
@@ -57,14 +56,14 @@ public class MenuFixtures {
     public static MenuProduct createMenuProduct(
         Long id,
         Menu menu,
-        Product product,
+        Long productId,
         long quantity
     ) {
-        return new MenuProduct(id, menu, product, quantity);
+        return new MenuProduct(id, menu, productId, quantity);
     }
 
     public static MenuProduct createMenuProduct() {
-        return createMenuProduct(null, null, ProductFixtures.createProduct(), QUANTITY);
+        return createMenuProduct(null, null, ProductFixtures.createProduct().getId(), QUANTITY);
     }
 
     public static List<MenuProduct> createMenuProducts() {
