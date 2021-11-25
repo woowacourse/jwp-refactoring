@@ -17,7 +17,7 @@ class OrderTableTest {
 
         // given
         TableGroup tableGroup = new TableGroup();
-        OrderTable orderTable = new OrderTable(1L, tableGroup, null, 1, true);
+        OrderTable orderTable = new OrderTable(1L, tableGroup, 1, true);
 
         // when
         ThrowableAssert.ThrowingCallable callable = () -> orderTable.changeEmpty(false);
@@ -31,7 +31,7 @@ class OrderTableTest {
     void changeNumberOfGuestsTest() {
 
         // given
-        OrderTable orderTable = new OrderTable(1L, null, null, 1, false);
+        OrderTable orderTable = new OrderTable(1L, null, 1, false);
 
         // when
         ThrowableAssert.ThrowingCallable callable = () -> orderTable.changeNumberOfGuests(-1);
@@ -45,7 +45,7 @@ class OrderTableTest {
     void changeNumberOfGuestsFailTest() {
 
         // given
-        OrderTable orderTable = new OrderTable(1L, null, null, 1, true);
+        OrderTable orderTable = new OrderTable(1L, null, 1, true);
 
         // when
         ThrowableAssert.ThrowingCallable callable = () -> orderTable.changeNumberOfGuests(-1);

@@ -1,6 +1,5 @@
 package kitchenpos.order.domain;
 
-import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
 
@@ -14,19 +13,15 @@ public class OrderTable {
     @ManyToOne
     private TableGroup tableGroup;
 
-    @OneToMany(mappedBy = "orderTable")
-    private List<Order> orders;
-
     private int numberOfGuests;
 
     private boolean empty;
 
     public OrderTable() {}
 
-    public OrderTable(Long id, TableGroup tableGroup, List<Order> orders, int numberOfGuests, boolean empty) {
+    public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
         this.id = id;
         this.tableGroup = tableGroup;
-        this.orders = orders;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -37,10 +32,6 @@ public class OrderTable {
 
     public TableGroup getTableGroup() {
         return tableGroup;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
     }
 
     public int getNumberOfGuests() {

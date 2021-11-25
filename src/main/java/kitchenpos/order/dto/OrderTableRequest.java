@@ -1,7 +1,5 @@
 package kitchenpos.order.dto;
 
-import java.util.ArrayList;
-
 import kitchenpos.order.domain.OrderTable;
 
 public class OrderTableRequest {
@@ -25,6 +23,6 @@ public class OrderTableRequest {
     }
 
     public OrderTable toEntity() {
-        return new OrderTable(null, null, new ArrayList<>(), numberOfGuests, empty);
+        return new OrderTable(null, null, numberOfGuests, empty);
     }
 }
