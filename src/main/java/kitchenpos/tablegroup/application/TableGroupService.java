@@ -6,7 +6,7 @@ import kitchenpos.order.domain.Orders;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTables;
-import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.exception.OrderTableNotFoundException;
 import kitchenpos.tablegroup.exception.TableGroupNotFoundException;
@@ -40,7 +40,7 @@ public class TableGroupService {
         orderTables.validateEmpty();
 
         TableGroup tableGroup = tableGroupRepository.save(TableGroup.create());
-        orderTables.groupBy(tableGroup);
+        orderTables.groupBy(tableGroup.getId());
 
         return TableGroupResponse.from(tableGroup, orderTables.toList());
     }
@@ -60,7 +60,7 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         TableGroup tableGroup = findById(tableGroupId);
 
-        for (OrderTable orderTable : orderTableRepository.findAllByTableGroup(tableGroup)) {
+        for (OrderTable orderTable : orderTableRepository.findAllByTableGroupId(tableGroup.getId())) {
             Orders orders = new Orders(orderRepository.findAllByOrderTableId(orderTable.getId()));
             orders.validateCompleted();
 

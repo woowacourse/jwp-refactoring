@@ -8,7 +8,7 @@ import kitchenpos.order.exception.OrderTableNotFoundException;
 import kitchenpos.order.ui.request.OrderLineItemRequest;
 import kitchenpos.order.ui.request.OrderRequest;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Component;
 
 @Component

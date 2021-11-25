@@ -184,7 +184,7 @@
 - [x] menugroup 패키지 리팩토링
 - [x] order 패키지 리팩토링
 - [x] product 패키지 리팩토링
-- [ ] table 패키지 리팩토링
+- [x] table 패키지 리팩토링
 - [ ] tablegroup 패키지 리팩토링
 - [ ] 이벤트 리스너 적용해보기
 - [ ] N+1 문제 확인해보기

@@ -6,13 +6,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import kitchenpos.table.exception.InvalidNumberOfGuestsException;
 import kitchenpos.table.exception.OrderTableEmptyException;
 import kitchenpos.table.exception.OrderTableNotEmptyException;
-import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("OrderTable 단위 테스트")
 class OrderTableTest {
+
+    private static final Long TABLE_GROUP_ID = 1L;
 
     @DisplayName("OrderTable을 생성할 때 손님 수가 음수면 예외가 발생한다.")
     @Test
@@ -55,7 +56,7 @@ class OrderTableTest {
     void orderTableMappingTableGroupException() {
         // given
         OrderTable orderTable = new OrderTable(5, false);
-        orderTable.groupBy(TableGroup.create());
+        orderTable.groupBy(TABLE_GROUP_ID);
 
         // when, then
         assertThatThrownBy(() -> orderTable.changeEmpty(true))
@@ -72,7 +73,7 @@ class OrderTableTest {
         assertThat(orderTable.isNotEmpty()).isFalse();
         assertThat(orderTable.isGrouped()).isFalse();
 
-        orderTable.groupBy(TableGroup.create());
+        orderTable.groupBy(TABLE_GROUP_ID);
 
         // then
         assertThat(orderTable.isNotEmpty()).isTrue();
@@ -84,7 +85,7 @@ class OrderTableTest {
     void ungroup() {
         // given
         OrderTable orderTable = new OrderTable(5, true);
-        orderTable.groupBy(TableGroup.create());
+        orderTable.groupBy(TABLE_GROUP_ID);
 
         // when
         assertThat(orderTable.isNotEmpty()).isTrue();

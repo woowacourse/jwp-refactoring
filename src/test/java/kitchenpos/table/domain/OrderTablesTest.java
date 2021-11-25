@@ -7,13 +7,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import kitchenpos.table.exception.InvalidOrderTablesException;
 import kitchenpos.table.exception.OrderTableNotEmptyException;
-import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("OrderTables 단위 테스트")
 class OrderTablesTest {
+
+    private static final Long TABLE_GROUP_ID = 1L;
 
     @DisplayName("OrderTable이 2개 미만일 경우 예외가 발생한다.")
     @Test
@@ -50,7 +51,7 @@ class OrderTablesTest {
             // given
             OrderTable orderTable1 = new OrderTable(5, true);
             OrderTable orderTable2 = new OrderTable(5, true);
-            orderTable2.groupBy(TableGroup.create());
+            orderTable2.groupBy(TABLE_GROUP_ID);
 
             OrderTables orderTables = new OrderTables(Arrays.asList(orderTable1, orderTable2));
 
@@ -74,7 +75,7 @@ class OrderTablesTest {
             assertThat(orderTable.isGrouped()).isFalse();
         }
 
-        orderTables.groupBy(TableGroup.create());
+        orderTables.groupBy(TABLE_GROUP_ID);
 
         // then
         for (OrderTable orderTable : orderTables.toList()) {
