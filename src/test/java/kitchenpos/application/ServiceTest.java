@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.common.Price;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
@@ -59,11 +60,11 @@ public class ServiceTest {
     @BeforeEach
     void setUp() {
         menuGroup = menuGroupRepository.save(new MenuGroup("bepozMenuGroup"));
-        product1 = productRepository.save(new Product("product1", BigDecimal.valueOf(1000)));
-        Product product2 = productRepository.save(new Product("product2", BigDecimal.valueOf(1000)));
+        product1 = productRepository.save(new Product("product1", new Price(1000)));
+        Product product2 = productRepository.save(new Product("product2", new Price(1000)));
         menuProduct1 = new MenuProduct(product1.getId(), 1);
         MenuProduct menuProduct2 = new MenuProduct(product2.getId(), 1);
-        menu = menuRepository.save(new Menu("menu", BigDecimal.valueOf(1000),
+        menu = menuRepository.save(new Menu("menu", new Price(1000),
                 menuGroup.getId(), Arrays.asList(menuProduct1, menuProduct2)));
 
         orderTable1 = orderTableRepository.save(new OrderTable(10, false));

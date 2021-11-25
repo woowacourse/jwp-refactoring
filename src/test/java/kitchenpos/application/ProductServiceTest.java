@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.common.Price;
 import kitchenpos.menu.application.ProductService;
 import kitchenpos.menu.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -22,30 +23,11 @@ class ProductServiceTest extends ServiceTest {
     @Autowired
     private ProductService productService;
 
-    @ParameterizedTest
-    @DisplayName("Product의 가격이 올바르지 않으면 등록할 수 없다.")
-    @MethodSource("minusAndNullPrice")
-    public void priceException(BigDecimal price) {
-        //given & when
-        Product product = new Product("name", price);
-
-        //then
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    private static Stream<Arguments> minusAndNullPrice() {
-        return Stream.of(
-                Arguments.of(BigDecimal.valueOf(-1)),
-                Arguments.of((Object) null)
-        );
-    }
-
     @Test
     @DisplayName("Product를 등록할 수 있다.")
     public void enrollProduct() {
         //given
-        Product product = new Product("name", BigDecimal.valueOf(1000));
+        Product product = new Product("name", new Price(1000));
 
         //when & then
         assertDoesNotThrow(() -> productService.create(product));

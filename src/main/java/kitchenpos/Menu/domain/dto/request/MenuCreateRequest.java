@@ -1,5 +1,6 @@
 package kitchenpos.menu.domain.dto.request;
 
+import kitchenpos.common.Price;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 
@@ -20,7 +21,7 @@ public class MenuCreateRequest {
     public Menu toEntity() {
         return new Menu(
                 name,
-                price,
+                new Price(price),
                 menuGroupId,
                 this.menuProducts.stream()
                         .map(product -> new MenuProduct(
