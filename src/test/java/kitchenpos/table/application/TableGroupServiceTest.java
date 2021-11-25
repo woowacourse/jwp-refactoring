@@ -1,4 +1,4 @@
-package kitchenpos.tablegroup.application;
+package kitchenpos.table.application;
 
 import static java.util.stream.Collectors.toList;
 import static kitchenpos.order.domain.OrderStatus.COMPLETION;
@@ -14,14 +14,14 @@ import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.exception.InvalidOrderStatusException;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.repository.OrderTableRepository;
+import kitchenpos.table.domain.repository.TableGroupRepository;
 import kitchenpos.table.exception.InvalidOrderTablesException;
 import kitchenpos.table.exception.OrderTableNotEmptyException;
-import kitchenpos.table.domain.repository.OrderTableRepository;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.tablegroup.exception.OrderTableNotFoundException;
-import kitchenpos.tablegroup.repository.TableGroupRepository;
-import kitchenpos.tablegroup.ui.request.TableGroupRequest;
-import kitchenpos.tablegroup.ui.response.TableGroupResponse;
+import kitchenpos.table.exception.OrderTableNotFoundException;
+import kitchenpos.table.ui.request.TableGroupRequest;
+import kitchenpos.table.ui.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

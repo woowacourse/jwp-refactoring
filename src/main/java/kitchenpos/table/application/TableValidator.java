@@ -5,11 +5,11 @@ import kitchenpos.order.domain.repository.OrderRepository;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderTableValidator {
+public class TableValidator {
 
     private final OrderRepository orderRepository;
 
-    public OrderTableValidator(OrderRepository orderRepository) {
+    public TableValidator(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 

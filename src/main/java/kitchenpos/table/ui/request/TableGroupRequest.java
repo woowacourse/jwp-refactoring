@@ -1,4 +1,4 @@
-package kitchenpos.tablegroup.ui.request;
+package kitchenpos.table.ui.request;
 
 import java.util.List;
 import javax.validation.constraints.Size;

@@ -1,4 +1,4 @@
-package kitchenpos.tablegroup.exception;
+package kitchenpos.table.exception;
 
 import kitchenpos.common.exception.KitchenposException;
 
