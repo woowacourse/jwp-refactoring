@@ -1,8 +1,11 @@
 package kitchenpos.order.domain;
 
+import kitchenpos.order.application.OrderValidator;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "orders")
@@ -42,6 +45,10 @@ public class Order {
         this(null, null, OrderStatus.valueOf(orderStatus).name(), null, null);
     }
 
+    public void validate(OrderValidator orderValidator) {
+        orderValidator.validate(this);
+    }
+
     public Long getId() {
         return id;
     }
@@ -71,6 +78,9 @@ public class Order {
     }
 
     public void changeStatus(String status) {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), orderStatus)) {
+            throw new IllegalArgumentException("COMPLETION 상태인 Order는 상태를 변경할 수 없습니다.");
+        }
         this.orderStatus = status;
     }
 }
