@@ -20,7 +20,7 @@ public class MenuService {
     }
 
     public Menu create(final Menu menu) {
-        menuValidator.validate(menu);
+        menu.validate(menuValidator);
         return menuRepository.save(menu);
     }
 

@@ -1,6 +1,7 @@
 package kitchenpos.menu.domain;
 
 import kitchenpos.common.Price;
+import kitchenpos.menu.application.MenuValidator;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -43,6 +44,10 @@ public class Menu {
     public Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
     }
+    public void validate(MenuValidator menuValidator) {
+        menuValidator.validate(this);
+    }
+
     public Long getId() {
         return id;
     }
