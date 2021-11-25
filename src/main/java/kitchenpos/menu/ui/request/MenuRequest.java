@@ -17,7 +17,7 @@ public class MenuRequest {
     private BigDecimal price;
 
     @NotNull(message = "메뉴 그룹의 아이디가 null입니다.")
-    private Long menuGroup;
+    private Long menuGroupId;
 
     @NotEmpty(message = "메뉴 상품이 비어있습니다.")
     private List<MenuProductRequest> menuProducts;
@@ -25,10 +25,10 @@ public class MenuRequest {
     protected MenuRequest() {
     }
 
-    public MenuRequest(String name, BigDecimal price, Long menuGroup, List<MenuProductRequest> menuProducts) {
+    public MenuRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProductRequest> menuProducts) {
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
     }
 
@@ -40,8 +40,8 @@ public class MenuRequest {
         return price;
     }
 
-    public Long getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public List<MenuProductRequest> getMenuProducts() {

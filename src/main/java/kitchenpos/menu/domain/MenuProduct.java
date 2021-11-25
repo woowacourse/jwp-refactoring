@@ -9,8 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import kitchenpos.product.domain.Product;
-import kitchenpos.menu.exception.InvalidMenuProductException;
+import kitchenpos.menu.exception.InvalidMenuException;
 
 @Entity
 public class MenuProduct {
@@ -20,14 +19,13 @@ public class MenuProduct {
     private Long seq;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
+    @JoinColumn(name = "product_id")
+    private Long productId;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
 
     @Embedded
     private MenuQuantity quantity;
@@ -35,39 +33,31 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public MenuProduct(Menu menu, Product product, Long quantity) {
-        this(null, menu, product, new MenuQuantity(quantity));
+    public MenuProduct(Menu menu, Long productId, Long quantity) {
+        this(null, menu, productId, new MenuQuantity(quantity));
     }
 
-    public MenuProduct(Long seq, Menu menu, Product product, MenuQuantity quantity) {
+    public MenuProduct(Long seq, Menu menu, Long productId, MenuQuantity quantity) {
         this.seq = seq;
         this.menu = menu;
-        this.product = product;
+        this.productId = productId;
         this.quantity = quantity;
         validateNull(this.menu);
-        validateNull(this.product);
+        validateNull(this.productId);
     }
 
     private void validateNull(Object object) {
         if (Objects.isNull(object)) {
-            throw new InvalidMenuProductException("MenuProduct 정보에 null이 포함되었습니다.");
+            throw new InvalidMenuException("MenuProduct에 Null이 포함되었습니다.");
         }
-    }
-
-    public MenuPrice productTotalPrice() {
-        return product.multiplyPrice(quantity);
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public Long getMenuId() {
-        return menu.getId();
-    }
-
     public Long getProductId() {
-        return product.getId();
+        return productId;
     }
 
     public Long getQuantity() {
