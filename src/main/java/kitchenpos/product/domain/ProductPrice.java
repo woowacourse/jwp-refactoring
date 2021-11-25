@@ -5,7 +5,6 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
-import kitchenpos.menu.domain.MenuPrice;
 import kitchenpos.menu.domain.MenuQuantity;
 import kitchenpos.product.exception.InvalidProductPriceException;
 
@@ -39,10 +38,10 @@ public class ProductPrice {
         }
     }
 
-    public MenuPrice multiplyQuantity(MenuQuantity menuQuantity) {
+    public ProductPrice multiplyQuantity(MenuQuantity menuQuantity) {
         BigDecimal result = value.multiply(menuQuantity.getDecimalValue());
 
-        return new MenuPrice(result);
+        return new ProductPrice(result);
     }
 
     public boolean isBiggerThan(ProductPrice price) {

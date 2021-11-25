@@ -5,9 +5,9 @@ import static kitchenpos.order.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.exception.InvalidOrderException;
 import kitchenpos.order.exception.OrderAlreadyCompletionException;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

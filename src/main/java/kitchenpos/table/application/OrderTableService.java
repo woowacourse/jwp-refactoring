@@ -1,10 +1,10 @@
 package kitchenpos.table.application;
 
 import java.util.List;
-import kitchenpos.table.domain.NumberOfGuests;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.domain.Orders;
 import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.table.domain.NumberOfGuests;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.exception.OrderTableNotFoundException;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.ui.request.OrderTableEmptyRequest;

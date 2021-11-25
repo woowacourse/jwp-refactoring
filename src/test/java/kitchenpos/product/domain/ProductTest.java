@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import kitchenpos.menu.domain.MenuPrice;
 import kitchenpos.menu.domain.MenuQuantity;
 import kitchenpos.product.exception.InvalidProductNameException;
 import kitchenpos.product.exception.InvalidProductPriceException;
@@ -63,9 +62,9 @@ class ProductTest {
 
         // when
         MenuQuantity menuQuantity = new MenuQuantity(value);
-        MenuPrice totalMenuPrice = product.multiplyPrice(menuQuantity);
+        ProductPrice totalPrice = product.multiplyPrice(menuQuantity);
 
         // then
-        assertThat(totalMenuPrice.getValue()).isEqualTo(product.getPrice().multiply(BigDecimal.valueOf(value)));
+        assertThat(totalPrice.getValue()).isEqualTo(product.getPrice().multiply(BigDecimal.valueOf(value)));
     }
 }

@@ -4,9 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import kitchenpos.menu.domain.MenuPrice;
 import kitchenpos.menu.domain.MenuQuantity;
-import kitchenpos.menu.exception.InvalidMenuPriceException;
+import kitchenpos.product.exception.InvalidProductPriceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,16 +21,16 @@ class ProductPriceTest {
         @Test
         void valueNullException() {
             // when, then
-            assertThatThrownBy(() -> new MenuPrice(null))
-                .isExactlyInstanceOf(InvalidMenuPriceException.class);
+            assertThatThrownBy(() -> new ProductPrice(null))
+                .isExactlyInstanceOf(InvalidProductPriceException.class);
         }
 
         @DisplayName("value가 0보다 작을 경우 예외가 발생한다.")
         @Test
         void valueNegativeException() {
             // when, then
-            assertThatThrownBy(() -> new MenuPrice(BigDecimal.valueOf(-1)))
-                .isExactlyInstanceOf(InvalidMenuPriceException.class);
+            assertThatThrownBy(() -> new ProductPrice(BigDecimal.valueOf(-1)))
+                .isExactlyInstanceOf(InvalidProductPriceException.class);
         }
     }
 
@@ -39,15 +38,15 @@ class ProductPriceTest {
     @Test
     void isBiggerThan() {
         // given
-        MenuPrice menuPrice = new MenuPrice(BigDecimal.valueOf(3_000));
-        MenuPrice smallerMenuPrice = new MenuPrice(BigDecimal.valueOf(2_000));
-        MenuPrice equalMenuPrice = new MenuPrice(BigDecimal.valueOf(3_000));
-        MenuPrice biggerMenuPrice = new MenuPrice(BigDecimal.valueOf(5_000));
+        ProductPrice productPrice = new ProductPrice(BigDecimal.valueOf(3_000));
+        ProductPrice smallerProductPrice = new ProductPrice(BigDecimal.valueOf(2_000));
+        ProductPrice equalProductPrice = new ProductPrice(BigDecimal.valueOf(3_000));
+        ProductPrice biggerProductPrice = new ProductPrice(BigDecimal.valueOf(5_000));
 
         // when, then
-        assertThat(menuPrice.isBiggerThan(smallerMenuPrice)).isTrue();
-        assertThat(menuPrice.isBiggerThan(equalMenuPrice)).isFalse();
-        assertThat(menuPrice.isBiggerThan(biggerMenuPrice)).isFalse();
+        assertThat(productPrice.isBiggerThan(smallerProductPrice)).isTrue();
+        assertThat(productPrice.isBiggerThan(equalProductPrice)).isFalse();
+        assertThat(productPrice.isBiggerThan(biggerProductPrice)).isFalse();
     }
 
     @DisplayName("주어진 수량에 곱해진 가격의 반환한다.")
@@ -55,11 +54,11 @@ class ProductPriceTest {
     void multiplyQuantity() {
         // given
         BigDecimal priceValue = BigDecimal.valueOf(3_000);
-        MenuPrice menuPrice = new MenuPrice(priceValue);
+        ProductPrice productPrice = new ProductPrice(priceValue);
 
         // when
         MenuQuantity menuQuantity = new MenuQuantity(4L);
-        MenuPrice result = menuPrice.multiplyQuantity(menuQuantity);
+        ProductPrice result = productPrice.multiplyQuantity(menuQuantity);
 
         // then
         assertThat(result.getValue()).isEqualTo(priceValue.multiply(menuQuantity.getDecimalValue()));
