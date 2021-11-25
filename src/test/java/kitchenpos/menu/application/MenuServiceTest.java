@@ -13,6 +13,8 @@ import kitchenpos.product.domain.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,6 +79,18 @@ class MenuServiceTest extends BaseServiceTest {
         // given
         BigDecimal overPrice = savedProduct.getPrice().add(new BigDecimal(16001));
         Menu menu = TestFixtureFactory.메뉴_생성("후라이드 한마리", overPrice, savedMenuGroup.getId(), menuProduct);
+
+        // when then
+        assertThatThrownBy(() -> menuService.create(menu))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("[메뉴 생성] 메뉴의 가격이 0보다 작으면 예외가 발생한다.")
+    @ParameterizedTest
+    @ValueSource(ints = {-1, -2})
+    void createWithNegativePrice(int price) {
+        // given
+        Menu menu = TestFixtureFactory.메뉴_생성("후라이드 한마리", new BigDecimal(price), savedMenuGroup.getId(), menuProduct);
 
         // when then
         assertThatThrownBy(() -> menuService.create(menu))

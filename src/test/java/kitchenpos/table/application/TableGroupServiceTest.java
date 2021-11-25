@@ -111,7 +111,7 @@ class TableGroupServiceTest extends BaseServiceTest {
         assertThatThrownBy(() -> tableGroupService.create(활성화_상태인_테이블을_포함한_테이블그룹));
     }
 
-    @DisplayName("[테이블 그룹화] 그룹화할 테이블들 중 하나라도 이미 활성화 상태라면 예외가 발생한다.")
+    @DisplayName("[테이블 그룹화] 그룹화할 테이블들 중 하나라도 이미 그룹화된 상태면 예외가 발생한다.")
     @Test
     void createWithAlreadyGroupingTable() {
         // given

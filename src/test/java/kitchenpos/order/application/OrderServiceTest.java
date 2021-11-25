@@ -64,6 +64,18 @@ class OrderServiceTest extends BaseServiceTest {
                 .contains(savedOrder);
     }
 
+    @DisplayName("[주문 생성] 주문항목이 비어있으면 예외가 발생한다.")
+    @Test
+    void createWithEmptyOrderLineItems() {
+        // given
+        OrderTable table = 활성화된_테이블_생성();
+        Order order = TestFixtureFactory.주문_생성(table);
+
+        // when then
+        assertThatThrownBy(() -> orderService.create(order))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
     @DisplayName("[주문 생성] 주문항목에 있는 메뉴가 존재하지 않으면 예외가 발생한다.")
     @Test
     void createWithOrderLineItemInNonExistMenu() {
@@ -168,7 +180,7 @@ class OrderServiceTest extends BaseServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("[주문 상태 변경] 이미 완료된 주문을 상태 변경하면 예외가 발생한다.")
+    @DisplayName("[주문 상태 변경] 이미 완료된 주문 상태를 변경하면 예외가 발생한다.")
     @Test
     void changeOrderStatusWithCompletionOrder() {
         // given
