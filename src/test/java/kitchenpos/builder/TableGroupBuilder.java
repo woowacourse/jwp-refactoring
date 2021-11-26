@@ -28,10 +28,6 @@ public class TableGroupBuilder {
     }
 
     public TableGroup build() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(this.id);
-        tableGroup.setCreatedDate(this.createdDate);
-        tableGroup.setOrderTables(this.orderTables);
-        return tableGroup;
+        return new TableGroup(id, createdDate, orderTables);
     }
 }

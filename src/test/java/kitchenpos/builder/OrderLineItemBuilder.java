@@ -1,12 +1,14 @@
 package kitchenpos.builder;
 
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 
 public class OrderLineItemBuilder {
 
     private Long seq;
-    private Long orderId;
-    private Long menuId;
+    private Order order;
+    private Menu menu;
     private long quantity;
 
     public OrderLineItemBuilder seq(Long seq) {
@@ -14,13 +16,13 @@ public class OrderLineItemBuilder {
         return this;
     }
 
-    public OrderLineItemBuilder orderId(Long orderId) {
-        this.orderId = orderId;
+    public OrderLineItemBuilder order(Order order) {
+        this.order = order;
         return this;
     }
 
-    public OrderLineItemBuilder menuId(Long menuId) {
-        this.menuId = menuId;
+    public OrderLineItemBuilder menu(Menu menu) {
+        this.menu = menu;
         return this;
     }
 
@@ -30,11 +32,11 @@ public class OrderLineItemBuilder {
     }
 
     public OrderLineItem build() {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setSeq(this.seq);
-        orderLineItem.setOrderId(this.orderId);
-        orderLineItem.setMenuId(this.menuId);
-        orderLineItem.setQuantity(this.quantity);
-        return orderLineItem;
+        return new OrderLineItem(
+                this.seq,
+                this.order,
+                this.menu,
+                this.quantity
+        );
     }
 }

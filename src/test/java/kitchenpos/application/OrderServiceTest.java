@@ -3,22 +3,20 @@ package kitchenpos.application;
 import kitchenpos.builder.OrderBuilder;
 import kitchenpos.builder.OrderLineItemBuilder;
 import kitchenpos.domain.*;
+import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@Sql(scripts = "/data-initialization-h2.sql")
-@SpringBootTest
 @Transactional
-class OrderServiceTest {
+class OrderServiceTest extends BaseServiceTest {
 
     @Autowired
     OrderService orderService;
@@ -27,9 +25,11 @@ class OrderServiceTest {
     @Autowired
     MenuGroupService menuGroupService;
     @Autowired
-    ProductService productService;
+    ProductRepository productRepository;
     @Autowired
     TableService tableService;
+    @Autowired
+    EntityManager em;
 
     @DisplayName("[주문 생성] 주문을 정상적으로 생성한다.")
     @Test
@@ -49,8 +49,8 @@ class OrderServiceTest {
         assertThat(savedOrder.getOrderStatus()).isEqualTo("COOKING");
         assertThat(savedOrder.getOrderedTime()).isNotNull();
         assertThat(savedOrder.getOrderLineItems())
-                .extracting("orderId")
-                .contains(savedOrder.getId());
+                .extracting("order")
+                .contains(savedOrder);
     }
 
     @DisplayName("[주문 생성] 주문항목이 없으면 예외가 발생한다.")
@@ -74,8 +74,8 @@ class OrderServiceTest {
         OrderTable table = 활성화된_테이블_생성();
         OrderLineItem orderLineItem = new OrderLineItemBuilder()
                 .seq(null)
-                .menuId(999999L)
-                .orderId(null)
+                .order(null)
+                .menu(new Menu(999999L))
                 .quantity(1L)
                 .build();
         Order order = TestFixtureFactory.주문_생성(table);
@@ -90,7 +90,7 @@ class OrderServiceTest {
     void createWithNonExistTable() {
         // given
         Menu menu = 메뉴_생성();
-        OrderTable table = TestFixtureFactory.테이블_생성(false);
+        OrderTable table = TestFixtureFactory.테이블_생성(1L, null, 0, false);
         OrderLineItem orderLineItem = TestFixtureFactory.주문_항목_생성(menu, 1L);
         Order order = TestFixtureFactory.주문_생성(table, orderLineItem);
 
@@ -141,10 +141,16 @@ class OrderServiceTest {
         Order requestOrderStatusCompletion = new OrderBuilder()
                 .orderStatus("COMPLETION")
                 .build();
+        em.flush();
+        em.clear();
 
         // when
         Order mealOrder = orderService.changeOrderStatus(cookingOrder.getId(), requestOrderStatusMeal);
+        em.flush();
+        em.clear();
         Order completionOrder = orderService.changeOrderStatus(cookingOrder.getId(), requestOrderStatusCompletion);
+        em.flush();
+        em.clear();
 
         // then
         assertThat(cookingOrder.getOrderStatus()).isEqualTo("COOKING");
@@ -186,7 +192,7 @@ class OrderServiceTest {
 
     private Menu 메뉴_생성() {
         Product product = TestFixtureFactory.상품_후라이드_치킨();
-        Product savedProduct = productService.create(product);
+        Product savedProduct = productRepository.save(product);
         MenuGroup menuGroup = TestFixtureFactory.메뉴그룹_인기_메뉴();
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
         MenuProduct menuProduct = TestFixtureFactory.메뉴상품_매핑_생성(savedProduct, 1L);

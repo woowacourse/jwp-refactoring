@@ -1,31 +1,39 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.*;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@Sql(scripts = "/data-initialization-h2.sql")
-@SpringBootTest
 @Transactional
-class TableServiceTest extends TestFixtureFactory {
+class TableServiceTest extends BaseServiceTest {
 
-    @Autowired TableService tableService;
-    @Autowired OrderTableDao orderTableDao;
-    @Autowired TableGroupService tableGroupService;
-    @Autowired OrderService orderService;
-    @Autowired MenuService menuService;
-    @Autowired MenuGroupService menuGroupService;
-    @Autowired ProductService productService;
+    @Autowired
+    TableService tableService;
+    @Autowired
+    OrderTableRepository orderTableRepository;
+    @Autowired
+    TableGroupService tableGroupService;
+    @Autowired
+    OrderService orderService;
+    @Autowired
+    MenuService menuService;
+    @Autowired
+    MenuGroupService menuGroupService;
+    @Autowired
+    ProductRepository productRepository;
+
+    @Autowired
+    EntityManager em;
 
     @DisplayName("[테이블 생성] 테이블을 정상적으로 생성한다.")
     @Test
@@ -38,7 +46,7 @@ class TableServiceTest extends TestFixtureFactory {
 
         // then
         assertThat(savedOrderTable.getId()).isNotNull();
-        assertThat(savedOrderTable.getTableGroupId()).isNull();
+        assertThat(savedOrderTable.getTableGroup()).isNull();
         assertThat(savedOrderTable.getNumberOfGuests()).isZero();
         assertThat(savedOrderTable.isEmpty()).isTrue();
     }
@@ -69,6 +77,8 @@ class TableServiceTest extends TestFixtureFactory {
         // given
         OrderTable orderTable = TestFixtureFactory.빈_테이블_생성();
         OrderTable savedOrderTable = tableService.create(orderTable);
+        em.flush();
+        em.clear();
 
         // when
         OrderTable requestChangeEmptyFalse = TestFixtureFactory.테이블_생성(false);
@@ -86,6 +96,8 @@ class TableServiceTest extends TestFixtureFactory {
         // given
         OrderTable orderTable = TestFixtureFactory.테이블_생성(false);
         OrderTable savedOrderTable = tableService.create(orderTable);
+        em.flush();
+        em.clear();
 
         // when
         OrderTable requestChangeEmptyTrue = TestFixtureFactory.테이블_생성(true);
@@ -107,7 +119,7 @@ class TableServiceTest extends TestFixtureFactory {
         OrderTable savedTable2 = tableService.create(table2);
         TableGroup tableGroup = TestFixtureFactory.테이블_그룹_생성(savedTable1, savedTable2);
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
-        OrderTable orderTable = orderTableDao.findById(savedTable1.getId()).get();
+        OrderTable orderTable = orderTableRepository.findById(savedTable1.getId()).get();
 
         // when then
         OrderTable requestEmptyTrue = TestFixtureFactory.테이블_생성(true);
@@ -133,6 +145,8 @@ class TableServiceTest extends TestFixtureFactory {
         // given
         OrderTable orderTable = 활성화_시킨_테이블();
         int numberOfGuests = 4;
+        em.flush();
+        em.clear();
 
         // when
         OrderTable activeAndFourGuestsTable = tableService.changeNumberOfGuests(orderTable.getId(), TestFixtureFactory.테이블_생성(numberOfGuests));
@@ -198,7 +212,7 @@ class TableServiceTest extends TestFixtureFactory {
 
     private Menu 메뉴_생성() {
         Product product = TestFixtureFactory.상품_후라이드_치킨();
-        Product savedProduct = productService.create(product);
+        Product savedProduct = productRepository.save(product);
         MenuGroup menuGroup = TestFixtureFactory.메뉴그룹_인기_메뉴();
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
         MenuProduct menuProduct = TestFixtureFactory.메뉴상품_매핑_생성(savedProduct, 1L);

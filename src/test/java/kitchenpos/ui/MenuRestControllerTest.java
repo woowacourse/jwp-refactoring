@@ -1,9 +1,14 @@
 package kitchenpos.ui;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.builder.MenuBuilder;
+import kitchenpos.builder.MenuGroupBuilder;
 import kitchenpos.builder.MenuProductBuilder;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.menu.MenuProductRequest;
+import kitchenpos.ui.dto.menu.MenuRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,24 +31,34 @@ class MenuRestControllerTest extends BaseWebMvcTest {
 
     @BeforeEach
     void setUp() {
+        MenuGroup menuGroup1 = new MenuGroupBuilder()
+                .id(1L)
+                .name("메인 메뉴")
+                .build();
+
+        MenuGroup menuGroup2 = new MenuGroupBuilder()
+                .id(2L)
+                .name("사이드 메뉴")
+                .build();
+
         MenuProduct menuProduct1 = new MenuProductBuilder()
                 .seq(1L)
-                .menuId(1L)
-                .productId(1L)
+                .menu(null)
+                .product(new Product(1L))
                 .quantity(2L)
                 .build();
 
         MenuProduct menuProduct2 = new MenuProductBuilder()
                 .seq(2L)
-                .menuId(2L)
-                .productId(1L)
+                .menu(null)
+                .product(new Product(1L))
                 .quantity(1L)
                 .build();
 
         MenuProduct menuProduct3 = new MenuProductBuilder()
                 .seq(3L)
-                .menuId(2L)
-                .productId(2L)
+                .menu(null)
+                .product(new Product(2L))
                 .quantity(1L)
                 .build();
 
@@ -51,17 +66,20 @@ class MenuRestControllerTest extends BaseWebMvcTest {
                 .id(1L)
                 .name("후라이드 두마리")
                 .price(new BigDecimal(19000))
-                .menuGroupId(1L)
+                .menuGroup(menuGroup1)
                 .menuProducts(Arrays.asList(menuProduct1))
                 .build();
+        menuProduct1.connectMenu(menu1);
 
         menu2 = new MenuBuilder()
                 .id(2L)
                 .name("후라이드 한마리 + 양념 한마리")
                 .price(new BigDecimal(20000))
-                .menuGroupId(2L)
+                .menuGroup(menuGroup2)
                 .menuProducts(Arrays.asList(menuProduct2, menuProduct3))
                 .build();
+        menuProduct2.connectMenu(menu2);
+        menuProduct3.connectMenu(menu2);
     }
 
     @DisplayName("POST /api/menus -> 메뉴를 추가한다.")
@@ -70,22 +88,23 @@ class MenuRestControllerTest extends BaseWebMvcTest {
         // given
         given(menuService.create(any(Menu.class)))
                 .willReturn(menu1);
-
-        MenuProduct requestMenuProduct = new MenuProductBuilder()
-                .seq(null)
-                .menuId(null)
-                .productId(1L)
-                .quantity(2L)
+        MenuGroup menuGroup = new MenuGroupBuilder()
+                .id(1L)
+                .name("메인 메뉴")
                 .build();
-        Menu requestMenu = new MenuBuilder()
-                .id(null)
-                .name("후라이드 두마리")
-                .price(new BigDecimal(19000))
-                .menuGroupId(1L)
-                .menuProducts(Arrays.asList(requestMenuProduct))
-                .build();
+        MenuProductRequest menuProductRequest = new MenuProductRequest(
+                null,
+                1L,
+                2L
+        );
+        MenuRequest menuRequest = new MenuRequest(
+                "후라이드 두마리",
+                new BigDecimal(19000),
+                menuGroup.getId(),
+                Arrays.asList(menuProductRequest)
+        );
 
-        String content = parseJson(requestMenu);
+        String content = parseJson(menuRequest);
 
         // when
         ResultActions actions = mvc.perform(super.postRequest("/api/menus", content));

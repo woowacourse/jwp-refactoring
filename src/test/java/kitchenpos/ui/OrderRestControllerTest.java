@@ -1,9 +1,12 @@
 package kitchenpos.ui;
 
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.builder.OrderBuilder;
 import kitchenpos.builder.OrderLineItemBuilder;
+import kitchenpos.ui.dto.order.OrderCreateRequest;
+import kitchenpos.ui.dto.order.OrderLineItemRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,8 +34,8 @@ class OrderRestControllerTest extends BaseWebMvcTest {
     void setUp() {
         orderLineItem1 = new OrderLineItemBuilder()
                 .seq(1L)
-                .orderId(1L)
-                .menuId(1L)
+                .order(null)
+                .menu(new Menu(1L))
                 .quantity(1L)
                 .build();
 
@@ -43,18 +46,19 @@ class OrderRestControllerTest extends BaseWebMvcTest {
                 .orderedTime(LocalDateTime.now())
                 .orderLineItems(Arrays.asList(orderLineItem1))
                 .build();
+        orderLineItem1.connectOrder(order1);
 
         orderLineItem2 = new OrderLineItemBuilder()
                 .seq(2L)
-                .orderId(2L)
-                .menuId(1L)
+                .order(null)
+                .menu(new Menu(1L))
                 .quantity(1L)
                 .build();
 
         orderLineItem3 = new OrderLineItemBuilder()
                 .seq(3L)
-                .orderId(2L)
-                .menuId(2L)
+                .order(null)
+                .menu(new Menu(2L))
                 .quantity(3L)
                 .build();
 
@@ -65,6 +69,8 @@ class OrderRestControllerTest extends BaseWebMvcTest {
                 .orderedTime(LocalDateTime.now())
                 .orderLineItems(Arrays.asList(orderLineItem2, orderLineItem3))
                 .build();
+        orderLineItem2.connectOrder(order2);
+        orderLineItem3.connectOrder(order2);
     }
 
     @DisplayName("POST /api/orders -> 주문을 추가한다.")
@@ -75,19 +81,8 @@ class OrderRestControllerTest extends BaseWebMvcTest {
         given(orderService.create(any(Order.class)))
                 .willReturn(order1);
 
-        OrderLineItem requestOrderLineItem = new OrderLineItemBuilder()
-                .seq(null)
-                .orderId(null)
-                .menuId(1L)
-                .quantity(1L)
-                .build();
-        Order requestOrder = new OrderBuilder()
-                .id(null)
-                .orderTableId(1L)
-                .orderStatus(null)
-                .orderedTime(null)
-                .orderLineItems(Arrays.asList(requestOrderLineItem))
-                .build();
+        OrderLineItemRequest requestOrderLineItem = new OrderLineItemRequest(1L, 1L);
+        OrderCreateRequest requestOrder = new OrderCreateRequest(1L, Arrays.asList(requestOrderLineItem));
         String content = parseJson(requestOrder);
 
         // when

@@ -1,30 +1,38 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.*;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@Sql(scripts = "/data-initialization-h2.sql")
-@SpringBootTest
 @Transactional
-class TableGroupServiceTest {
+class TableGroupServiceTest extends BaseServiceTest {
 
-    @Autowired TableService tableService;
-    @Autowired TableGroupService tableGroupService;
-    @Autowired OrderTableDao orderTableDao;
-    @Autowired OrderService orderService;
-    @Autowired MenuService menuService;
-    @Autowired MenuGroupService menuGroupService;
-    @Autowired ProductService productService;
+    @Autowired
+    TableService tableService;
+    @Autowired
+    TableGroupService tableGroupService;
+    @Autowired
+    OrderTableRepository orderTableRepository;
+    @Autowired
+    OrderService orderService;
+    @Autowired
+    MenuService menuService;
+    @Autowired
+    MenuGroupService menuGroupService;
+    @Autowired
+    ProductRepository productRepository;
+    @Autowired
+    EntityManager em;
 
     OrderTable savedOrderTable1;
     OrderTable savedOrderTable2;
@@ -110,16 +118,20 @@ class TableGroupServiceTest {
     void ungroup() {
         // given
         TableGroup tableGroup = TestFixtureFactory.테이블_그룹_생성(savedOrderTable1, savedOrderTable2);
+        em.flush();
+        em.clear();
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        em.flush();
+        em.clear();
 
         // when
         tableGroupService.ungroup(savedTableGroup.getId());
 
         // then
-        OrderTable findTable1 = orderTableDao.findById(savedOrderTable1.getId()).get();
-        OrderTable findTable2 = orderTableDao.findById(savedOrderTable2.getId()).get();
-        assertThat(findTable1.getTableGroupId()).isNull();
-        assertThat(findTable2.getTableGroupId()).isNull();
+        OrderTable findTable1 = orderTableRepository.findById(savedOrderTable1.getId()).get();
+        OrderTable findTable2 = orderTableRepository.findById(savedOrderTable2.getId()).get();
+        assertThat(findTable1.getTableGroup()).isNull();
+        assertThat(findTable2.getTableGroup()).isNull();
     }
 
     @DisplayName("[테이블 그룹화 해제] 테이블 그룹화 해제시 테이블의 주문 상태가 요리중, 식사중 이라면 예외가 발생한다.")
@@ -129,7 +141,7 @@ class TableGroupServiceTest {
         OrderTable orderTable = 주문한_테이블_생성();
 
         // when then
-        assertThatThrownBy(() -> tableGroupService.ungroup(orderTable.getTableGroupId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(orderTable.getTableGroup().getId()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -156,7 +168,7 @@ class TableGroupServiceTest {
 
     private Menu 메뉴_생성() {
         Product product = TestFixtureFactory.상품_후라이드_치킨();
-        Product savedProduct = productService.create(product);
+        Product savedProduct = productRepository.save(product);
         MenuGroup menuGroup = TestFixtureFactory.메뉴그룹_인기_메뉴();
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
         MenuProduct menuProduct = TestFixtureFactory.메뉴상품_매핑_생성(savedProduct, 1L);

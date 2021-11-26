@@ -42,8 +42,8 @@ public class TestFixtureFactory {
     public static MenuProduct 메뉴상품_매핑_생성(Product product, long quantity) {
         return new MenuProductBuilder()
                 .seq(null)
-                .menuId(null)
-                .productId(product.getId())
+                .menu(null)
+                .product(product)
                 .quantity(quantity)
                 .build();
     }
@@ -53,7 +53,7 @@ public class TestFixtureFactory {
                 .id(null)
                 .name(name)
                 .price(price)
-                .menuGroupId(menuGroup.getId())
+                .menuGroup(menuGroup)
                 .menuProducts(Arrays.asList(menuProduct))
                 .build();
     }
@@ -63,7 +63,7 @@ public class TestFixtureFactory {
                 .id(null)
                 .name("후라이드 치킨 한마리")
                 .price(new BigDecimal(16000))
-                .menuGroupId(menuGroup.getId())
+                .menuGroup(menuGroup)
                 .menuProducts(Arrays.asList(menuProduct))
                 .build();
     }
@@ -71,16 +71,25 @@ public class TestFixtureFactory {
     public static OrderTable 빈_테이블_생성() {
         return new OrderTableBuilder()
                 .id(null)
-                .tableGroupId(null)
+                .tableGroup(null)
                 .numberOfGuests(0)
                 .empty(true)
+                .build();
+    }
+
+    public static OrderTable 테이블_생성(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+        return new OrderTableBuilder()
+                .id(id)
+                .tableGroup(tableGroup)
+                .numberOfGuests(numberOfGuests)
+                .empty(empty)
                 .build();
     }
 
     public static OrderTable 테이블_생성(boolean empty) {
         return new OrderTableBuilder()
                 .id(null)
-                .tableGroupId(null)
+                .tableGroup(null)
                 .numberOfGuests(0)
                 .empty(empty)
                 .build();
@@ -89,7 +98,7 @@ public class TestFixtureFactory {
     public static OrderTable 테이블_생성(int numberOfGuests) {
         return new OrderTableBuilder()
                 .id(null)
-                .tableGroupId(null)
+                .tableGroup(null)
                 .numberOfGuests(numberOfGuests)
                 .empty(false)
                 .build();
@@ -116,8 +125,8 @@ public class TestFixtureFactory {
     public static OrderLineItem 주문_항목_생성(Menu menu, long quantity) {
         return new OrderLineItemBuilder()
                 .seq(null)
-                .menuId(menu.getId())
-                .orderId(null)
+                .menu(menu)
+                .order(null)
                 .quantity(quantity)
                 .build();
     }

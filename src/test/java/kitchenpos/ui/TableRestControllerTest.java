@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import kitchenpos.domain.OrderTable;
 import kitchenpos.builder.OrderTableBuilder;
+import kitchenpos.ui.dto.ordertable.OrderTableCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,13 +27,13 @@ class TableRestControllerTest extends BaseWebMvcTest {
     void setUp() {
         orderTable1 = new OrderTableBuilder()
                 .id(1L)
-                .tableGroupId(null)
+                .tableGroup(null)
                 .numberOfGuests(0)
                 .empty(true)
                 .build();
         orderTable2 = new OrderTableBuilder()
                 .id(2L)
-                .tableGroupId(null)
+                .tableGroup(null)
                 .numberOfGuests(0)
                 .empty(true)
                 .build();
@@ -41,14 +42,8 @@ class TableRestControllerTest extends BaseWebMvcTest {
     @DisplayName("POST /api/tables -> 테이블을 추가한다.")
     @Test
     void create() throws Exception {
-
         // given
-        OrderTable requestOrderTable = new OrderTableBuilder()
-                .id(null)
-                .tableGroupId(null)
-                .numberOfGuests(0)
-                .empty(true)
-                .build();
+        OrderTableCreateRequest requestOrderTable = new OrderTableCreateRequest(0, true);
         String content = parseJson(requestOrderTable);
 
         given(tableService.create(any(OrderTable.class)))
@@ -101,7 +96,7 @@ class TableRestControllerTest extends BaseWebMvcTest {
         // given
         OrderTable requestOrderTable = new OrderTableBuilder()
                 .id(null)
-                .tableGroupId(null)
+                .tableGroup(null)
                 .numberOfGuests(0)
                 .empty(false)
                 .build();
@@ -110,7 +105,7 @@ class TableRestControllerTest extends BaseWebMvcTest {
 
         OrderTable orderTable = new OrderTableBuilder()
                 .id(1L)
-                .tableGroupId(null)
+                .tableGroup(null)
                 .numberOfGuests(0)
                 .empty(false)
                 .build();
@@ -134,7 +129,7 @@ class TableRestControllerTest extends BaseWebMvcTest {
         // given
         OrderTable requestOrderTable = new OrderTableBuilder()
                 .id(null)
-                .tableGroupId(null)
+                .tableGroup(null)
                 .numberOfGuests(4)
                 .empty(false)
                 .build();
@@ -143,7 +138,7 @@ class TableRestControllerTest extends BaseWebMvcTest {
 
         OrderTable orderTable = new OrderTableBuilder()
                 .id(1L)
-                .tableGroupId(null)
+                .tableGroup(null)
                 .numberOfGuests(4)
                 .empty(false)
                 .build();
