@@ -25,7 +25,7 @@ public class Money {
     }
 
     public static <T> Money sum(Collection<T> bags, Function<T, Money> monetary) {
-        return bags.stream().map(bag -> monetary.apply(bag)).reduce(ZERO, Money::plus);
+        return bags.stream().map(monetary).reduce(ZERO, Money::plus);
     }
 
     public Money plus(Money target) {
