@@ -1,6 +1,8 @@
 package kitchenpos.menu.service;
 
+import kitchenpos.generic.Money;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import org.springframework.stereotype.Component;
 
@@ -16,9 +18,14 @@ public class MenuValidator {
         if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
-
-        if (!menu.hasReasonablePrice()) {
+        if (!hasReasonablePrice(menu)) {
             throw new IllegalArgumentException();
         }
+    }
+
+    private boolean hasReasonablePrice(Menu menu) {
+        Money price = menu.getPrice();
+        MenuProducts menuProducts = menu.getMenuProducts();
+        return price.isLessThanOrEqual(menuProducts.calculateTotalPrice());
     }
 }

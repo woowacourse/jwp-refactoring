@@ -59,8 +59,4 @@ public class Menu {
     public void validate(MenuValidator menuValidator) {
         menuValidator.validate(this);
     }
-
-    public boolean hasReasonablePrice() {
-        return price.isLessThanOrEqual(menuProducts.calculateTotalPrice());
-    }
 }
