@@ -4,14 +4,19 @@ import java.util.List;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItems;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OrderValidator {
     private final MenuRepository menuRepository;
+    private final OrderTableRepository orderTableRepository;
 
-    public OrderValidator(MenuRepository menuRepository) {
+    public OrderValidator(MenuRepository menuRepository,
+                          OrderTableRepository orderTableRepository) {
         this.menuRepository = menuRepository;
+        this.orderTableRepository = orderTableRepository;
     }
 
     public void validate(Order order) {
@@ -26,8 +31,15 @@ public class OrderValidator {
             throw new IllegalArgumentException();
         }
 
-        if (!order.getOrderTable().isEmpty()) {
+        OrderTable orderTable = findOrderTableById(order.getOrderTableId());
+        if (!orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
     }
+
+    private OrderTable findOrderTableById(Long tableId) {
+        return orderTableRepository.findById(tableId)
+                .orElseThrow(IllegalArgumentException::new);
+    }
+
 }

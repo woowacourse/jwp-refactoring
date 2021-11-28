@@ -7,30 +7,21 @@ import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.service.OrderRequest.OrderLineItemRequest;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OrderMapper {
-    private final OrderTableRepository orderTableRepository;
     private final MenuRepository menuRepository;
 
-    public OrderMapper(OrderTableRepository orderTableRepository, MenuRepository menuRepository) {
-        this.orderTableRepository = orderTableRepository;
+    public OrderMapper(MenuRepository menuRepository) {
         this.menuRepository = menuRepository;
     }
 
     public Order mapFrom(OrderRequest orderRequest) {
         return new Order(
-                findOrderTableById(orderRequest.getOrderTableId()),
+                orderRequest.getOrderTableId(),
                 orderLineItemList(orderRequest.getOrderLineItems())
         );
-    }
-
-    private OrderTable findOrderTableById(Long tableId) {
-        return orderTableRepository.findById(tableId)
-                .orElseThrow(IllegalArgumentException::new);
     }
 
     private List<OrderLineItem> orderLineItemList(List<OrderLineItemRequest> orderLineItemRequests) {
