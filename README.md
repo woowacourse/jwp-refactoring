@@ -124,3 +124,27 @@
 - `@OneToMany` 단방향의 경우 update쿼리가 추가로 발생하는데, 현재의 schema는 NotNull 옵션이 적용되어있기 때문에, 불가능.
     - 양방향으로 뚫어서 이 부분을 해결. mappedBy를 어디서 하냐도 영향을 주는 듯.
     - 양방향으로 뚫었을 때 (Menu, MenuProduct), 한 쪽에 수정을 배제한다면, 편의 메소드는 의미가 없을까?
+
+- Money를 도입하게 되었을 때, update 구문이 한번 더 나가게 됨.
+```log
+Hibernate: 
+    insert 
+    into
+        product
+        (id, name, price) 
+    values
+        (null, ?, ?)
+2021-11-30 01:43:53.835 TRACE 215952 --- [    Test worker] o.h.type.descriptor.sql.BasicBinder      : binding parameter [1] as [VARCHAR] - [product]
+2021-11-30 01:43:53.836 TRACE 215952 --- [    Test worker] o.h.type.descriptor.sql.BasicBinder      : binding parameter [2] as [NUMERIC] - [1000]
+Hibernate: 
+    update
+        product 
+    set
+        name=?,
+        price=? 
+    where
+        id=?
+2021-11-30 01:43:53.849 TRACE 215952 --- [    Test worker] o.h.type.descriptor.sql.BasicBinder      : binding parameter [1] as [VARCHAR] - [product]
+2021-11-30 01:43:53.849 TRACE 215952 --- [    Test worker] o.h.type.descriptor.sql.BasicBinder      : binding parameter [2] as [NUMERIC] - [1000]
+2021-11-30 01:43:53.850 TRACE 215952 --- [    Test worker] o.h.type.descriptor.sql.BasicBinder      : binding parameter [3] as [BIGINT] - [1]
+```
