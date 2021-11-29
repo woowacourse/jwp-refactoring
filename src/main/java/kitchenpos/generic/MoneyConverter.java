@@ -1,18 +1,17 @@
 package kitchenpos.generic;
 
-import java.math.BigDecimal;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 @Converter(autoApply = true)
-public class MoneyConverter implements AttributeConverter<Money, BigDecimal> {
+public class MoneyConverter implements AttributeConverter<Money, Long> {
     @Override
-    public BigDecimal convertToDatabaseColumn(Money money) {
-        return money.getAmount();
+    public Long convertToDatabaseColumn(Money money) {
+        return money.getAmount().longValue();
     }
 
     @Override
-    public Money convertToEntityAttribute(BigDecimal amount) {
-        return new Money(amount);
+    public Money convertToEntityAttribute(Long amount) {
+        return Money.of(amount);
     }
 }

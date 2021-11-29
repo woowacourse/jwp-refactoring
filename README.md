@@ -125,7 +125,7 @@
     - 양방향으로 뚫어서 이 부분을 해결. mappedBy를 어디서 하냐도 영향을 주는 듯.
     - 양방향으로 뚫었을 때 (Menu, MenuProduct), 한 쪽에 수정을 배제한다면, 편의 메소드는 의미가 없을까?
 
-- Money를 도입하게 되었을 때, update 구문이 한번 더 나가게 됨.
+- Money를 도입하게 되었을 때, update 구문이 한번 더 나가게 됨. -> Money객체가 equals가 선언되어 있지 않아 발생했던 문제.
 ```log
 Hibernate: 
     insert 
