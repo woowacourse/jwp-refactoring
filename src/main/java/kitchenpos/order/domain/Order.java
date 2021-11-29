@@ -22,9 +22,8 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "order_line_item_id")
-    private List<OrderLineItem> orderLineItems;
+    @Embedded
+    private OrderLineItems orderLineItems;
 
     protected Order() {
     }
@@ -34,7 +33,7 @@ public class Order {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
     public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
@@ -62,7 +61,7 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return orderLineItems.getOrderLineItems();
     }
 
     public Long getOrderTableId() {
@@ -74,7 +73,7 @@ public class Order {
     }
 
     public void enrollOrderLineItems(List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
     public void changeStatus(String status) {

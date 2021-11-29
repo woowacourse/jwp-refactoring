@@ -22,9 +22,8 @@ public class Menu {
     @Column(name = "menu_group_id")
     private Long menuGroupId;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "menu_product_id")
-    private List<MenuProduct> menuProducts;
+    @Embedded
+    private MenuProducts menuProducts;
 
     protected Menu() {
     }
@@ -34,7 +33,7 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this.menuProducts = new MenuProducts(menuProducts);
     }
 
     public Menu(Long id) {
@@ -61,7 +60,7 @@ public class Menu {
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+        return menuProducts.getMenuProducts();
     }
 
     public Long getMenuGroupId() {
