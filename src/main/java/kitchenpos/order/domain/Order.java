@@ -64,6 +64,10 @@ public class Order {
         return orderLineItems.getOrderLineItems();
     }
 
+    public List<Long> getMenuIds() {
+        return orderLineItems.getMenuIds();
+    }
+
     public Long getOrderTableId() {
         return orderTableId;
     }

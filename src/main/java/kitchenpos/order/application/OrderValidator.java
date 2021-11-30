@@ -2,14 +2,12 @@ package kitchenpos.order.application;
 
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class OrderValidator {
@@ -23,17 +21,13 @@ public class OrderValidator {
     }
 
     public void validate(Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+        List<Long> menuIds = order.getMenuIds();
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
+        if (CollectionUtils.isEmpty(menuIds)) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
+        if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
 
