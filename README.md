@@ -111,3 +111,40 @@
 - 객체의 생명주기
     - Product
     - Menu, MenuProduct
+
+### Step3
+
+- TableValidator를 interface로 구현하고 이 구현체를 Order부분에 위치 (아래의 의존관계를 풀어주기 위해)
+    - TableValidator -> Order의 의존성이 존재 (Order -> OrderTable -> Order)
+    - TableGroupValidator -> Order의 의존성이 존재 (Order -> OrderTable -> TableGroup -> Order)
+
+### Step4
+
+- `@RequestBody`의 기본 생성자가 없어서, 에러. 다른 부분에서는 왜 정상 동작할까?
+- `@OneToMany` 단방향의 경우 update쿼리가 추가로 발생하는데, 현재의 schema는 NotNull 옵션이 적용되어있기 때문에, 불가능.
+    - 양방향으로 뚫어서 이 부분을 해결. mappedBy를 어디서 하냐도 영향을 주는 듯.
+    - 양방향으로 뚫었을 때 (Menu, MenuProduct), 한 쪽에 수정을 배제한다면, 편의 메소드는 의미가 없을까?
+
+- Money를 도입하게 되었을 때, update 구문이 한번 더 나가게 됨. -> Money객체가 equals가 선언되어 있지 않아 발생했던 문제.
+```log
+Hibernate: 
+    insert 
+    into
+        product
+        (id, name, price) 
+    values
+        (null, ?, ?)
+2021-11-30 01:43:53.835 TRACE 215952 --- [    Test worker] o.h.type.descriptor.sql.BasicBinder      : binding parameter [1] as [VARCHAR] - [product]
+2021-11-30 01:43:53.836 TRACE 215952 --- [    Test worker] o.h.type.descriptor.sql.BasicBinder      : binding parameter [2] as [NUMERIC] - [1000]
+Hibernate: 
+    update
+        product 
+    set
+        name=?,
+        price=? 
+    where
+        id=?
+2021-11-30 01:43:53.849 TRACE 215952 --- [    Test worker] o.h.type.descriptor.sql.BasicBinder      : binding parameter [1] as [VARCHAR] - [product]
+2021-11-30 01:43:53.849 TRACE 215952 --- [    Test worker] o.h.type.descriptor.sql.BasicBinder      : binding parameter [2] as [NUMERIC] - [1000]
+2021-11-30 01:43:53.850 TRACE 215952 --- [    Test worker] o.h.type.descriptor.sql.BasicBinder      : binding parameter [3] as [BIGINT] - [1]
+```

@@ -6,7 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 
-import kitchenpos.domain.validator.TableValidator;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.service.TableValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

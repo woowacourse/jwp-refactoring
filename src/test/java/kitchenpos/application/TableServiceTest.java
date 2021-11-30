@@ -8,14 +8,16 @@ import static org.mockito.Mockito.doThrow;
 
 import java.util.Arrays;
 import kitchenpos.SpringBootTestWithProfiles;
-import kitchenpos.application.dto.request.TableGroupRequest;
-import kitchenpos.application.dto.request.TableGroupRequest.OrderTableId;
-import kitchenpos.application.dto.request.TableRequest;
-import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.repository.TableGroupRepository;
-import kitchenpos.domain.validator.TableValidator;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableGroupRepository;
+import kitchenpos.table.service.TableGroupRequest;
+import kitchenpos.table.service.TableGroupRequest.OrderTableId;
+import kitchenpos.table.service.TableGroupService;
+import kitchenpos.table.service.TableRequest;
+import kitchenpos.table.service.TableResponse;
+import kitchenpos.table.service.TableService;
+import kitchenpos.table.service.TableValidator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,7 +50,7 @@ class TableServiceTest {
     @Test
     @DisplayName("주문 테이블 정상 생성")
     void create() {
-        OrderTableResponse saved = tableService.create(TABLE_REQUEST_FOUR_NOT_EMPTY);
+        TableResponse saved = tableService.create(TABLE_REQUEST_FOUR_NOT_EMPTY);
         assertNotNull(saved.getId());
     }
 
@@ -65,9 +67,9 @@ class TableServiceTest {
     @Test
     @DisplayName("주문 테이블 정상 Empty 상태 수정")
     void changeEmpty() {
-        OrderTableResponse orderTable = tableService.create(TABLE_REQUEST_FOUR_NOT_EMPTY);
+        TableResponse orderTable = tableService.create(TABLE_REQUEST_FOUR_NOT_EMPTY);
 
-        OrderTableResponse changed = tableService.changeEmpty(orderTable.getId(), CHANGE_EMPTY_TRUE);
+        TableResponse changed = tableService.changeEmpty(orderTable.getId(), CHANGE_EMPTY_TRUE);
         assertThat(changed.isEmpty()).isEqualTo(CHANGE_EMPTY_TRUE.getEmpty());
     }
 
@@ -82,8 +84,8 @@ class TableServiceTest {
     @Test
     @DisplayName("주문 테이블 Empty 상태 수정 실패 :: 단체 지정된 테이블")
     void changeEmptyForTableWithTableGroupId() {
-        OrderTableResponse orderTable1 = tableService.create(TABLE_REQUEST_FOUR_EMPTY);
-        OrderTableResponse orderTable2 = tableService.create(TABLE_REQUEST_FOUR_EMPTY);
+        TableResponse orderTable1 = tableService.create(TABLE_REQUEST_FOUR_EMPTY);
+        TableResponse orderTable2 = tableService.create(TABLE_REQUEST_FOUR_EMPTY);
 
         tableGroupService.create(new TableGroupRequest(Arrays.asList(
                 new OrderTableId(orderTable1.getId()),
@@ -96,7 +98,7 @@ class TableServiceTest {
     @Test
     @DisplayName("주문 테이블 Empty 상태 수정 실패 :: validate 실패")
     void changeEmptyForTableWithNotAllowedOrderStatus() {
-        OrderTableResponse orderTable = tableService.create(TABLE_REQUEST_FOUR_NOT_EMPTY);
+        TableResponse orderTable = tableService.create(TABLE_REQUEST_FOUR_NOT_EMPTY);
 
         doThrow(new IllegalArgumentException()).when(tableValidator).validateUpdateEmpty(any());
 
@@ -107,16 +109,16 @@ class TableServiceTest {
     @Test
     @DisplayName("주문 테이블 손님 수 정상 수정")
     void changeNumberOfGuests() {
-        OrderTableResponse orderTable = tableService.create(TABLE_REQUEST_FOUR_NOT_EMPTY);
+        TableResponse orderTable = tableService.create(TABLE_REQUEST_FOUR_NOT_EMPTY);
 
-        OrderTableResponse changed = tableService.changeNumberOfGuests(orderTable.getId(), CHANGE_GUESTS_TO_THREE);
+        TableResponse changed = tableService.changeNumberOfGuests(orderTable.getId(), CHANGE_GUESTS_TO_THREE);
         assertThat(changed.getNumberOfGuests()).isEqualTo(CHANGE_GUESTS_TO_THREE.getNumberOfGuests());
     }
 
     @Test
     @DisplayName("주문 테이블 손님 수 수정 실패 :: 음의 손님 수")
     void changeNumberOfGuestsWithNegativeValue() {
-        OrderTableResponse orderTable = tableService.create(TABLE_REQUEST_FOUR_NOT_EMPTY);
+        TableResponse orderTable = tableService.create(TABLE_REQUEST_FOUR_NOT_EMPTY);
         TableRequest negativeNumberRequest = new TableRequest(-3, null);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), negativeNumberRequest))
@@ -135,7 +137,7 @@ class TableServiceTest {
     @Test
     @DisplayName("주문 테이블 손님 수 수정 실패 :: 빈 테이블 상태")
     void changeNumberOfGuestsWithEmptyTableStatus() {
-        OrderTableResponse orderTable = tableService.create(new TableRequest(3, true));
+        TableResponse orderTable = tableService.create(new TableRequest(3, true));
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), CHANGE_GUESTS_TO_THREE))
                 .isInstanceOf(IllegalArgumentException.class);

@@ -8,17 +8,20 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.SpringBootTestWithProfiles;
-import kitchenpos.application.dto.request.MenuProductRequest;
-import kitchenpos.application.dto.request.MenuRequest;
-import kitchenpos.application.dto.request.ProductRequest;
-import kitchenpos.application.dto.response.MenuGroupResponse;
-import kitchenpos.application.dto.response.MenuResponse;
-import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.domain.repository.MenuProductRepository;
-import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.menu.domain.MenuProductRepository;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.service.MenuProductRequest;
+import kitchenpos.menu.service.MenuRequest;
+import kitchenpos.menu.service.MenuResponse;
+import kitchenpos.menu.service.MenuService;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.menugroup.service.MenuGroupRequest;
+import kitchenpos.menugroup.service.MenuGroupResponse;
+import kitchenpos.menugroup.service.MenuGroupService;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.product.service.ProductRequest;
+import kitchenpos.product.service.ProductResponse;
+import kitchenpos.product.service.ProductService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -53,7 +56,7 @@ class MenuServiceTest {
     @BeforeEach
     void setUp() {
         product = productService.create(new ProductRequest("product", BigDecimal.valueOf(1000)));
-        menuGroup = menuGroupService.create(new MenuGroup("menuGroup"));
+        menuGroup = menuGroupService.create(new MenuGroupRequest("menuGroup"));
         menuProductRequest = new MenuProductRequest(product.getId(), 3L);
     }
 
@@ -69,7 +72,7 @@ class MenuServiceTest {
         MenuResponse saved = menuService.create(input);
 
         assertNotNull(saved.getId());
-        assertThat(saved.getMenuProducts()).hasSize(input.getMenuProductRequests().size());
+        assertThat(saved.getMenuProducts()).hasSize(input.getMenuProducts().size());
         assertThat(saved.getPrice()).isEqualByComparingTo(sumOfMenuProduct);
     }
 

@@ -9,27 +9,32 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.SpringBootTestWithProfiles;
-import kitchenpos.application.dto.request.MenuProductRequest;
-import kitchenpos.application.dto.request.MenuRequest;
-import kitchenpos.application.dto.request.OrderRequest;
-import kitchenpos.application.dto.request.OrderRequest.OrderLineItemRequest;
-import kitchenpos.application.dto.request.OrderStatusRequest;
-import kitchenpos.application.dto.request.ProductRequest;
-import kitchenpos.application.dto.request.TableRequest;
-import kitchenpos.application.dto.response.MenuGroupResponse;
-import kitchenpos.application.dto.response.MenuResponse;
-import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.domain.repository.MenuProductRepository;
-import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.OrderLineItemRepository;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.menu.domain.MenuProductRepository;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.service.MenuProductRequest;
+import kitchenpos.menu.service.MenuRequest;
+import kitchenpos.menu.service.MenuResponse;
+import kitchenpos.menu.service.MenuService;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.menugroup.service.MenuGroupRequest;
+import kitchenpos.menugroup.service.MenuGroupResponse;
+import kitchenpos.menugroup.service.MenuGroupService;
+import kitchenpos.order.domain.Order.OrderStatus;
+import kitchenpos.order.domain.OrderLineItemRepository;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.service.OrderRequest;
+import kitchenpos.order.service.OrderRequest.OrderLineItemRequest;
+import kitchenpos.order.service.OrderResponse;
+import kitchenpos.order.service.OrderService;
+import kitchenpos.order.service.OrderStatusRequest;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.product.service.ProductRequest;
+import kitchenpos.product.service.ProductResponse;
+import kitchenpos.product.service.ProductService;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.service.TableRequest;
+import kitchenpos.table.service.TableResponse;
+import kitchenpos.table.service.TableService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,7 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @SpringBootTestWithProfiles
 class OrderServiceTest {
-    private static final TableRequest TABLE_REQUEST_THREE_NON_EMPTY = new TableRequest(3, false);
+    private static final TableRequest TABLE_REQUEST_THREE_NON_EMPTY = new TableRequest(3, true);
 
     @Autowired
     private OrderService orderService;
@@ -67,7 +72,7 @@ class OrderServiceTest {
     @Autowired
     private MenuRepository menuRepository;
 
-    private OrderTableResponse table;
+    private TableResponse table;
     private ProductResponse chicken;
     private ProductResponse pizza;
     private ProductResponse frenchFry;
@@ -81,7 +86,7 @@ class OrderServiceTest {
     void setUp() {
         table = tableService.create(TABLE_REQUEST_THREE_NON_EMPTY);
 
-        menuGroup = menuGroupService.create(new MenuGroup("menuGroup"));
+        menuGroup = menuGroupService.create(new MenuGroupRequest("menuGroup"));
 
         chicken = productService.create(new ProductRequest("chicken", BigDecimal.valueOf(20000)));
         pizza = productService.create(new ProductRequest("pizza", BigDecimal.valueOf(15000)));
@@ -155,9 +160,9 @@ class OrderServiceTest {
     }
 
     @Test
-    @DisplayName("주문 등록 실패 :: 비어야 하는 주문 테이블로의 주문")
+    @DisplayName("주문 등록 실패 :: 비지 않은 주문 테이블로의 주문")
     void createWithEmptyStateOrderTable() {
-        tableService.changeEmpty(table.getId(), new TableRequest(null, true));
+        tableService.changeEmpty(table.getId(), new TableRequest(null, false));
 
         List<OrderLineItemRequest> orderLineItems = Arrays.asList(
                 new OrderLineItemRequest(chickenSet.getId(), 2L),
@@ -224,7 +229,7 @@ class OrderServiceTest {
         orderTableRepository.deleteAllInBatch();
         menuProductRepository.deleteAllInBatch();
         productRepository.deleteAllInBatch();
-        menuGroupRepository.deleteAllInBatch();
         menuRepository.deleteAllInBatch();
+        menuGroupRepository.deleteAllInBatch();
     }
 }

@@ -4,21 +4,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.SpringBootTestWithProfiles;
-import kitchenpos.application.dto.request.TableGroupRequest;
-import kitchenpos.application.dto.request.TableGroupRequest.OrderTableId;
-import kitchenpos.application.dto.response.TableGroupResponse;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.Order.OrderStatus;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableGroupRepository;
+import kitchenpos.table.service.TableGroupRequest;
+import kitchenpos.table.service.TableGroupRequest.OrderTableId;
+import kitchenpos.table.service.TableGroupResponse;
+import kitchenpos.table.service.TableGroupService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -62,9 +62,6 @@ class TableGroupServiceTest {
 
         assertNotNull(saved.getId());
         assertNotNull(saved.getCreatedDate());
-        assertThat(saved.getOrderTableIds())
-                .hasSize(2)
-                .allMatch(Objects::nonNull);
     }
 
     @Test
@@ -135,8 +132,7 @@ class TableGroupServiceTest {
     void ungroupTableGroupOfTableWithNotAllowedOrderStatus(OrderStatus orderStatus) {
         TableGroupResponse tableGroup = tableGroupService.create(tableGroupRequest);
 
-        orderRepository.save(
-                new Order(table1, orderStatus.name(), LocalDateTime.now(), Collections.emptyList()));
+        orderRepository.save(new Order(table1.getId(), orderStatus, Collections.emptyList()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
