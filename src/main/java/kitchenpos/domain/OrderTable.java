@@ -44,6 +44,14 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
+    public OrderTable changeNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("유효하지 않은 테이블 고객 인원 수 : " + numberOfGuests);
+        }
+
+        return new OrderTable(this.id, this.tableGroupId, numberOfGuests, this.empty);
+    }
+
     public boolean isEmpty() {
         return empty;
     }
