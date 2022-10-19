@@ -79,5 +79,24 @@ class MenuServiceTest {
                 return menuProducts;
             }
         }
+
+        @Nested
+        class 메뉴_가격이_상품가격과_메뉴상품양의_곱보다_큰_경우 {
+
+            private final Menu menu = new Menu("파닭", BigDecimal.valueOf(1000000), 1L, createManuProducts());
+
+            @Test
+            void 예외가_발생한다() {
+                assertThatThrownBy(() -> menuService.create(menu))
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("메뉴의 가격은 상품총합보다 작을 수 없습니다.");
+            }
+
+            private List<MenuProduct> createManuProducts() {
+                final List<MenuProduct> menuProducts = new ArrayList<>();
+                menuProducts.add(new MenuProduct(1L, 1L));
+                return menuProducts;
+            }
+        }
     }
 }
