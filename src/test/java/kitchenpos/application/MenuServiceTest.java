@@ -122,4 +122,19 @@ class MenuServiceTest {
             }
         }
     }
+
+    @Nested
+    class list_메소드는 {
+
+        @Nested
+        class 요청이_들어오는_경우 {
+
+            @Test
+            void 메뉴목록을_반환한다() {
+                List<Menu> actual = menuService.list();
+
+                assertThat(actual).hasSize(6);
+            }
+        }
+    }
 }
