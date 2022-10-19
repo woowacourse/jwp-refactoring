@@ -78,20 +78,8 @@ public class AcceptanceTest {
         return () -> assertThat(response.statusCode()).isEqualTo(httpStatus.value());
     }
 
-    protected Executable 비어있음(final ExtractableResponse<Response> response) {
-        return () -> assertThat(response.as(List.class)).isEmpty();
-    }
-
-    protected Executable 비어있지않음(final ExtractableResponse<Response> response) {
-        return () -> assertThat(response.as(List.class)).isNotEmpty();
-    }
-
     protected <T> Executable 리스트_데이터_검증(final List list, final String fieldName, final T... expected) {
         return () -> assertThat(list).extracting(fieldName).containsExactly(expected);
-    }
-
-    protected <T> Executable 리스트_데이터_검증(final List list, final String fieldName, final List<T> expected) {
-        return () -> assertThat(list).extracting(fieldName).isEqualTo(expected);
     }
 
     protected <T> Executable 단일_데이터_검증(final T actual, final T expected) {
