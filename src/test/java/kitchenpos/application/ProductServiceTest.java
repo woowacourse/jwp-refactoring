@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import java.util.List;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -60,6 +61,21 @@ class ProductServiceTest {
             void 저장된_상품이_반환된다() {
                 Product actual = productService.create(product);
                 assertThat(actual).isNotNull();
+            }
+        }
+    }
+
+    @Nested
+    class list_메소드는 {
+
+        @Nested
+        class 요청이_들어오는_경우 {
+
+            @Test
+            void 상ㅇ품목록을_반환한다() {
+                List<Product> actual = productService.list();
+
+                assertThat(actual).hasSize(6);
             }
         }
     }
