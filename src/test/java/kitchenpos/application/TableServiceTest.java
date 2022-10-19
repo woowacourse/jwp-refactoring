@@ -175,5 +175,18 @@ class TableServiceTest {
                         .hasMessage("손님의 수는 0미만이 될 수 없습니다.");
             }
         }
+
+        @Nested
+        class 존재하지않는_주문테이블을_입력한_경우 {
+
+            private final Long NOT_FOUND_ORDER_TABLE_ID = 0L;
+            private final OrderTable changeOrderTable = new OrderTable(0, true);
+
+            @Test
+            void 예외가_발생한다() {
+                assertThatThrownBy(() -> tableService.changeNumberOfGuests(NOT_FOUND_ORDER_TABLE_ID, changeOrderTable))
+                        .isInstanceOf(IllegalArgumentException.class);
+            }
+        }
     }
 }
