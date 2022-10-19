@@ -46,5 +46,18 @@ class MenuServiceTest {
                         .hasMessage("가격은 양의 정수만 들어올 수 있습니다.");
             }
         }
+
+        @Nested
+        class 없는_메뉴_그룹의_id가_입력될_경우 {
+
+            private final Menu menu = new Menu("파닭", new BigDecimal(10000), -1L, new ArrayList<>());
+
+            @Test
+            void 예외가_발생한다() {
+                assertThatThrownBy(() -> menuService.create(menu))
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("존재하지 않는 메뉴 그룹의 id입니다.");
+            }
+        }
     }
 }

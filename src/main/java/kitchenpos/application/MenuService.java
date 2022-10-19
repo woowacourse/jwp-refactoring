@@ -42,7 +42,7 @@ public class MenuService {
         }
 
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("존재하지 않는 메뉴 그룹의 id입니다.");
         }
 
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
