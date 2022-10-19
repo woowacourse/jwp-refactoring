@@ -21,6 +21,12 @@ class MenuServiceTest {
     @Autowired
     private MenuService menuService;
 
+    private List<MenuProduct> createManuProducts() {
+        final List<MenuProduct> menuProducts = new ArrayList<>();
+        menuProducts.add(new MenuProduct(1L, 1L));
+        return menuProducts;
+    }
+
     @Nested
     class create_메소드는 {
 
@@ -101,12 +107,6 @@ class MenuServiceTest {
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("메뉴의 가격은 상품총합보다 작을 수 없습니다.");
             }
-
-            private List<MenuProduct> createManuProducts() {
-                final List<MenuProduct> menuProducts = new ArrayList<>();
-                menuProducts.add(new MenuProduct(1L, 1L));
-                return menuProducts;
-            }
         }
 
         @Nested
@@ -119,12 +119,6 @@ class MenuServiceTest {
                 Menu actual = menuService.create(menu);
 
                 assertThat(actual).isNotNull();
-            }
-
-            private List<MenuProduct> createManuProducts() {
-                final List<MenuProduct> menuProducts = new ArrayList<>();
-                menuProducts.add(new MenuProduct(1L, 1L));
-                return menuProducts;
             }
         }
     }
