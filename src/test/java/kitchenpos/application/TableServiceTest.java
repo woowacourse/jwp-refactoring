@@ -88,13 +88,11 @@ class TableServiceTest {
         @Nested
         class 단체지정된_주문테이블이_입력된_경우 {
 
-            private Long orderTableId;
+            private final Long orderTableId = 1L;
             private final OrderTable changeOrderTable = new OrderTable(0, false);
 
             @BeforeEach
             void setUp() {
-                orderTableId = orderTableDao.save(new OrderTable(0, true))
-                        .getId();
                 Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
                         .getId();
                 orderTableDao.save(new OrderTable(orderTableId, tableGroupId, 0, true));
@@ -111,13 +109,11 @@ class TableServiceTest {
         @Nested
         class 주문테이블에_조리상태의_주문이_있는_경우 {
 
-            private Long orderTableId;
+            private final Long orderTableId = 1L;
             private final OrderTable changeOrderTable = new OrderTable(0, false);
 
             @BeforeEach
             void setUp() {
-                orderTableId = orderTableDao.save(new OrderTable(0, true))
-                        .getId();
                 orderDao.save(new Order(orderTableId, COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
             }
 
@@ -132,13 +128,11 @@ class TableServiceTest {
         @Nested
         class 주문테이블에_식사상태의_주문이_있는_경우 {
 
-            private Long orderTableId;
+            private final Long orderTableId = 1L;
             private final OrderTable changeOrderTable = new OrderTable(0, false);
 
             @BeforeEach
             void setUp() {
-                orderTableId = orderTableDao.save(new OrderTable(0, true))
-                        .getId();
                 orderDao.save(new Order(orderTableId, MEAL.name(), LocalDateTime.now(), new ArrayList<>()));
             }
 
@@ -153,14 +147,8 @@ class TableServiceTest {
         @Nested
         class 주문테이블_상태를_정상적으로_변환가능한_경우 {
 
-            private Long orderTableId;
+            private final Long orderTableId = 1L;
             private final OrderTable changeOrderTable = new OrderTable(0, false);
-
-            @BeforeEach
-            void setUp() {
-                orderTableId = orderTableDao.save(new OrderTable(0, true))
-                        .getId();
-            }
 
             @Test
             void 변경된_주문테이블이_반환된다() {
