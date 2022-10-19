@@ -158,4 +158,22 @@ class TableServiceTest {
             }
         }
     }
+
+    @Nested
+    class changeNumberOfGuests_메소드는 {
+
+        @Nested
+        class 변경할_손님의_수가_0미만인_경우 {
+
+            private final Long orderTableId = 1L;
+            private final OrderTable changeOrderTable = new OrderTable(-1, true);
+
+            @Test
+            void 예외가_발생한다() {
+                assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, changeOrderTable))
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("손님의 수는 0미만이 될 수 없습니다.");
+            }
+        }
+    }
 }
