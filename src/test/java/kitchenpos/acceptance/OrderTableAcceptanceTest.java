@@ -1,5 +1,8 @@
 package kitchenpos.acceptance;
 
+import static kitchenpos.KitchenPosFixtures.삼인용_테이블;
+import static kitchenpos.KitchenPosFixtures.오인용_테이블;
+import static kitchenpos.KitchenPosFixtures.테이블_URL;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
@@ -10,10 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 public class OrderTableAcceptanceTest extends AcceptanceTest {
-    private final String 테이블_URL = "/api/tables";
-    private final OrderTable 삼인용_테이블 = new OrderTable(null, 3, true);
-    private final OrderTable 오인용_테이블 = new OrderTable(null, 5, true);
-
     @Test
     void 신규_테이블을_생성할_수_있다() {
         // given & when
@@ -22,11 +21,11 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
 
         // then
         assertAll(
-                () -> 응답일치(테이블_생성응답, HttpStatus.CREATED),
-                () -> 단일_데이터_검증(생성된_테이블.getId(), 1L),
-                () -> 단일_데이터_검증(생성된_테이블.getTableGroupId(), null),
-                () -> 단일_데이터_검증(생성된_테이블.getNumberOfGuests(), 삼인용_테이블.getNumberOfGuests()),
-                () -> 단일_데이터_검증(생성된_테이블.isEmpty(), 삼인용_테이블.isEmpty())
+                응답일치(테이블_생성응답, HttpStatus.CREATED),
+                단일_데이터_검증(생성된_테이블.getId(), 1L),
+                단일_데이터_검증(생성된_테이블.getTableGroupId(), null),
+                단일_데이터_검증(생성된_테이블.getNumberOfGuests(), 삼인용_테이블.getNumberOfGuests()),
+                단일_데이터_검증(생성된_테이블.isEmpty(), 삼인용_테이블.isEmpty())
         );
     }
 
@@ -44,12 +43,11 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
 
         // then
         assertAll(
-                () -> 응답일치(테이블_조회응답, HttpStatus.OK),
-                () -> 리스트_데이터_검증(테이블_응답_데이터, "id", 1, 2),
-                () -> 리스트_데이터_검증(테이블_응답_데이터, "groupTableId", null, null),
-                () -> 리스트_데이터_검증(테이블_응답_데이터, "numberOfGuests", 삼인용_테이블.getNumberOfGuests(),
-                        오인용_테이블.getNumberOfGuests()),
-                () -> 단일_데이터_검증(주문_가능_여부, List.of(삼인용_테이블.isEmpty(), 오인용_테이블.isEmpty()))
+                응답일치(테이블_조회응답, HttpStatus.OK),
+                리스트_데이터_검증(테이블_응답_데이터, "id", 1, 2),
+                리스트_데이터_검증(테이블_응답_데이터, "groupTableId", null, null),
+                리스트_데이터_검증(테이블_응답_데이터, "numberOfGuests", 삼인용_테이블.getNumberOfGuests(), 오인용_테이블.getNumberOfGuests()),
+                단일_데이터_검증(주문_가능_여부, List.of(삼인용_테이블.isEmpty(), 오인용_테이블.isEmpty()))
         );
     }
 
@@ -67,11 +65,11 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
 
         // then
         assertAll(
-                () -> 응답일치(수정_응답, HttpStatus.OK),
-                () -> 단일_데이터_검증(수정된_테이블.getId(), 테이블.getId()),
-                () -> 단일_데이터_검증(수정된_테이블.getTableGroupId(), 테이블.getTableGroupId()),
-                () -> 단일_데이터_검증(수정된_테이블.getNumberOfGuests(), 테이블.getNumberOfGuests()),
-                () -> 단일_데이터_검증(수정된_주문가능_여부, !주문가능_여부)
+                응답일치(수정_응답, HttpStatus.OK),
+                단일_데이터_검증(수정된_테이블.getId(), 테이블.getId()),
+                단일_데이터_검증(수정된_테이블.getTableGroupId(), 테이블.getTableGroupId()),
+                단일_데이터_검증(수정된_테이블.getNumberOfGuests(), 테이블.getNumberOfGuests()),
+                단일_데이터_검증(수정된_주문가능_여부, !주문가능_여부)
         );
     }
 
@@ -91,11 +89,11 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
 
         // then
         assertAll(
-                () -> 응답일치(수정_응답, HttpStatus.OK),
-                () -> 단일_데이터_검증(수정된_테이블.getId(), 테이블.getId()),
-                () -> 단일_데이터_검증(수정된_테이블.getTableGroupId(), 테이블.getTableGroupId()),
-                () -> 단일_데이터_검증(수정된_고객_인원수, 기대_인원수),
-                () -> 단일_데이터_검증(수정된_테이블.isEmpty(), 테이블.isEmpty())
+                응답일치(수정_응답, HttpStatus.OK),
+                단일_데이터_검증(수정된_테이블.getId(), 테이블.getId()),
+                단일_데이터_검증(수정된_테이블.getTableGroupId(), 테이블.getTableGroupId()),
+                단일_데이터_검증(수정된_고객_인원수, 기대_인원수),
+                단일_데이터_검증(수정된_테이블.isEmpty(), 테이블.isEmpty())
         );
     }
 }
