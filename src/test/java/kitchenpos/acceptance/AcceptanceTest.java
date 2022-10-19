@@ -7,9 +7,9 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
 import kitchenpos.DatabaseCleaner;
-import org.assertj.core.api.AbstractIterableAssert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -65,9 +65,8 @@ public class AcceptanceTest {
                 .extract();
     }
 
-    protected <T> ExtractableResponse<Response> 삭제요청(final String url, final T body) {
+    protected <T> ExtractableResponse<Response> 삭제요청(final String url) {
         return RestAssured.given().log().all()
-                .body(body)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
                 .delete(url)
@@ -75,31 +74,27 @@ public class AcceptanceTest {
                 .extract();
     }
 
-    protected void 응답일치(final ExtractableResponse<Response> response, final HttpStatus httpStatus) {
-        assertThat(response.statusCode()).isEqualTo(httpStatus.value());
+    protected Executable 응답일치(final ExtractableResponse<Response> response, final HttpStatus httpStatus) {
+        return () -> assertThat(response.statusCode()).isEqualTo(httpStatus.value());
     }
 
-    protected void 비어있음(final ExtractableResponse<Response> response) {
-        assertThat(response.as(List.class)).isEmpty();
+    protected Executable 비어있음(final ExtractableResponse<Response> response) {
+        return () -> assertThat(response.as(List.class)).isEmpty();
     }
 
-    protected void 비어있지않음(final ExtractableResponse<Response> response) {
-        assertThat(response.as(List.class)).isNotEmpty();
+    protected Executable 비어있지않음(final ExtractableResponse<Response> response) {
+        return () -> assertThat(response.as(List.class)).isNotEmpty();
     }
 
-    protected <T> AbstractIterableAssert 리스트_데이터_검증(final List list, final String fieldName, final T... expected) {
-        return assertThat(list)
-                .extracting(fieldName)
-                .containsExactly(expected);
+    protected <T> Executable 리스트_데이터_검증(final List list, final String fieldName, final T... expected) {
+        return () -> assertThat(list).extracting(fieldName).containsExactly(expected);
     }
 
-    protected <T> AbstractIterableAssert 리스트_데이터_검증(final List list, final String fieldName, final List<T> expected) {
-        return assertThat(list)
-                .extracting(fieldName)
-                .isEqualTo(expected);
+    protected <T> Executable 리스트_데이터_검증(final List list, final String fieldName, final List<T> expected) {
+        return () -> assertThat(list).extracting(fieldName).isEqualTo(expected);
     }
 
-    protected <T> void 단일_데이터_검증(final T actual, final T expected) {
-        assertThat(actual).isEqualTo(expected);
+    protected <T> Executable 단일_데이터_검증(final T actual, final T expected) {
+        return () -> assertThat(actual).isEqualTo(expected);
     }
 }
