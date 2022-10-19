@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,21 @@ class MenuGroupServiceTest {
                 MenuGroup actual = menuGroupService.create(menuGroup);
 
                 assertThat(actual.getId()).isNotNull();
+            }
+        }
+    }
+
+    @Nested
+    class list_메소드는 {
+
+        @Nested
+        class 요청이_들어오는_경우 {
+
+            @Test
+            void 메뉴그룹목록을_반환한다() {
+                List<MenuGroup> actual = menuGroupService.list();
+
+                assertThat(actual).hasSize(4);
             }
         }
     }
