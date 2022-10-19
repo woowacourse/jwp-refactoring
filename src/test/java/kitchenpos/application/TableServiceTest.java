@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -118,6 +119,27 @@ class TableServiceTest {
                 orderTableId = orderTableDao.save(new OrderTable(0, true))
                         .getId();
                 orderDao.save(new Order(orderTableId, COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
+            }
+
+            @Test
+            void 예외가_발생한다() {
+                assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, cahngeOrderTable))
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("조리 혹은 식사중인 테이블 상태를 변화할 수 업습니다.");
+            }
+        }
+
+        @Nested
+        class 주문테이블에_식사상태의_주문이_있는_경우 {
+
+            private Long orderTableId;
+            private final OrderTable cahngeOrderTable = new OrderTable(0, false);
+
+            @BeforeEach
+            void setUp() {
+                orderTableId = orderTableDao.save(new OrderTable(0, true))
+                        .getId();
+                orderDao.save(new Order(orderTableId, MEAL.name(), LocalDateTime.now(), new ArrayList<>()));
             }
 
             @Test
