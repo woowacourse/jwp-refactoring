@@ -5,6 +5,7 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 public class MenuGroupService {
@@ -16,8 +17,14 @@ public class MenuGroupService {
 
     @Transactional
     public MenuGroup create(final MenuGroup menuGroup) {
-        //TODO name 필드가 null이 아니고 공백이 아닌 문자가 1개 이상 있어야 할 듯 하다
+        validateName(menuGroup.getName());
         return menuGroupDao.save(menuGroup);
+    }
+
+    private void validateName(final String name) {
+        if (!StringUtils.hasText(name)) {
+            throw new IllegalArgumentException("유효하지 않은 메뉴 그룹명 : " + name);
+        }
     }
 
     public List<MenuGroup> list() {
