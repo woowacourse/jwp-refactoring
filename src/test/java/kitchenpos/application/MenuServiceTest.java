@@ -27,7 +27,9 @@ class MenuServiceTest {
         @Nested
         class 가격이_null이_입력될_경우 {
 
-            private final Menu menu = new Menu("파닭", null, 1L, new ArrayList<>());
+            private final BigDecimal NULL_PRICE = null;
+
+            private final Menu menu = new Menu("파닭", NULL_PRICE, 1L, new ArrayList<>());
 
             @Test
             void 예외가_발생한다() {
@@ -40,7 +42,9 @@ class MenuServiceTest {
         @Nested
         class 가격이_음수가_입력될_경우 {
 
-            private final Menu menu = new Menu("파닭", BigDecimal.valueOf(-1), 1L, new ArrayList<>());
+            private final BigDecimal MINUS_PRICE = BigDecimal.valueOf(-1);
+
+            private final Menu menu = new Menu("파닭", MINUS_PRICE, 1L, new ArrayList<>());
 
             @Test
             void 예외가_발생한다() {
@@ -53,7 +57,10 @@ class MenuServiceTest {
         @Nested
         class 없는_메뉴_그룹의_id가_입력될_경우 {
 
-            private final Menu menu = new Menu("파닭", BigDecimal.valueOf(10000), -1L, new ArrayList<>());
+            private final long NOT_FOUND_MENU_GROUP_ID = -1L;
+
+            private final Menu menu = new Menu("파닭", BigDecimal.valueOf(10000), NOT_FOUND_MENU_GROUP_ID,
+                    new ArrayList<>());
 
             @Test
             void 예외가_발생한다() {
@@ -66,7 +73,7 @@ class MenuServiceTest {
         @Nested
         class 입력된_메뉴상품의_상품id가_존재하지_않는_경우 {
 
-            private final Menu menu = new Menu("파닭", BigDecimal.valueOf(10000), 1L, createErrorMenuProducts());
+            private final Menu menu = new Menu("파닭", BigDecimal.valueOf(16000), 1L, createErrorMenuProducts());
 
             @Test
             void 예외가_발생한다() {
@@ -84,7 +91,9 @@ class MenuServiceTest {
         @Nested
         class 메뉴_가격이_상품가격과_메뉴상품양의_곱보다_큰_경우 {
 
-            private final Menu menu = new Menu("파닭", BigDecimal.valueOf(1000000), 1L, createManuProducts());
+            private final BigDecimal ERROR_MENU_PRICE = BigDecimal.valueOf(1000000);
+
+            private final Menu menu = new Menu("파닭", ERROR_MENU_PRICE, 1L, createManuProducts());
 
             @Test
             void 예외가_발생한다() {
