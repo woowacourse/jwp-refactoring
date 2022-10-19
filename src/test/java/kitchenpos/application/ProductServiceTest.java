@@ -33,5 +33,19 @@ class ProductServiceTest {
                         .isInstanceOf(IllegalArgumentException.class);
             }
         }
+
+        @Nested
+        class 음수인_가격의_상품이_입력된_경우 {
+
+            private final BigDecimal MINUS_PRICE = BigDecimal.valueOf(-1);
+
+            private final Product product = new Product("후라이드", MINUS_PRICE);
+
+            @Test
+            void 예외가_발생한다() {
+                assertThatThrownBy(() -> productService.create(product))
+                        .isInstanceOf(IllegalArgumentException.class);
+            }
+        }
     }
 }
