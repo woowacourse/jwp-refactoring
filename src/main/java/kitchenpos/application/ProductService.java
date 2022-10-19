@@ -7,6 +7,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 public class ProductService {
@@ -18,14 +19,26 @@ public class ProductService {
 
     @Transactional
     public Product create(final Product product) {
-        // TODO 상품 명은 유효한 문자열이 1개 이상 있어야 한다
-        final BigDecimal price = product.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
+        validateName(product.getName());
+        validatePrice(product.getPrice());
 
         return productDao.save(product);
+    }
+
+    private void validateName(final String name) {
+        if (!StringUtils.hasText(name)) {
+            throw new IllegalArgumentException("유효하지 않은 상품명 :" + name);
+        }
+    }
+
+    private void validatePrice(final BigDecimal price) {
+        if (Objects.isNull(price) || isLessThanZero(price)) {
+            throw new IllegalArgumentException("유효하지 않은 가격 : " + price);
+        }
+    }
+
+    private boolean isLessThanZero(final BigDecimal price) {
+        return price.compareTo(BigDecimal.ZERO) < 0;
     }
 
     public List<Product> list() {
