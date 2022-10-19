@@ -30,7 +30,8 @@ class ProductServiceTest {
             @Test
             void 예외가_발생한다() {
                 assertThatThrownBy(() -> productService.create(product))
-                        .isInstanceOf(IllegalArgumentException.class);
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("가격은 양의 정수만 들어올 수 있습니다.");
             }
         }
 
@@ -44,7 +45,8 @@ class ProductServiceTest {
             @Test
             void 예외가_발생한다() {
                 assertThatThrownBy(() -> productService.create(product))
-                        .isInstanceOf(IllegalArgumentException.class);
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("가격은 양의 정수만 들어올 수 있습니다.");
             }
         }
     }
