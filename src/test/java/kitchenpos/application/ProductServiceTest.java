@@ -72,7 +72,7 @@ class ProductServiceTest {
         class 요청이_들어오는_경우 {
 
             @Test
-            void 상ㅇ품목록을_반환한다() {
+            void 상품목록을_반환한다() {
                 List<Product> actual = productService.list();
 
                 assertThat(actual).hasSize(6);
