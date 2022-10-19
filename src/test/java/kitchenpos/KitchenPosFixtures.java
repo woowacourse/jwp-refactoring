@@ -10,6 +10,7 @@ public class KitchenPosFixtures {
     public static final String 테이블_URL = "/api/tables";
     public static final String 테이블그룹_URL = "/api/table-groups";
     public static final String 메뉴그룹_URL = "/api/menu-groups";
+    public static final String 메뉴_URL = "/api/menus";
 
     public static final OrderTable 삼인용_테이블 = new OrderTable(null, 3, true);
     public static final OrderTable 오인용_테이블 = new OrderTable(null, 5, true);
