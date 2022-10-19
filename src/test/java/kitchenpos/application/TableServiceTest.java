@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import kitchenpos.domain.OrderTable;
@@ -45,6 +46,23 @@ class TableServiceTest {
                 List<OrderTable> actual = tableService.list();
 
                 assertThat(actual).hasSize(8);
+            }
+        }
+    }
+
+    @Nested
+    class changeEmpty_메소드는 {
+
+        @Nested
+        class 존재하지않는_주문테이블_id가_입력된_경우 {
+
+            private final long NOT_FOUND_ID = 0L;
+            private final OrderTable orderTable = new OrderTable(0, true);
+
+            @Test
+            void 예외가_발생한다() {
+                assertThatThrownBy(() -> tableService.changeEmpty(NOT_FOUND_ID, orderTable))
+                        .isInstanceOf(IllegalArgumentException.class);
             }
         }
     }
