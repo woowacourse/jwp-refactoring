@@ -35,7 +35,7 @@ class MenuServiceTest {
 
             private final BigDecimal NULL_PRICE = null;
 
-            private final Menu menu = new Menu("파닭", NULL_PRICE, 1L, new ArrayList<>());
+            private final Menu menu = new Menu("후라이드치킨", NULL_PRICE, 1L, new ArrayList<>());
 
             @Test
             void 예외가_발생한다() {
@@ -50,7 +50,7 @@ class MenuServiceTest {
 
             private final BigDecimal MINUS_PRICE = BigDecimal.valueOf(-1);
 
-            private final Menu menu = new Menu("파닭", MINUS_PRICE, 1L, new ArrayList<>());
+            private final Menu menu = new Menu("후라이드치킨", MINUS_PRICE, 1L, new ArrayList<>());
 
             @Test
             void 예외가_발생한다() {
@@ -65,7 +65,7 @@ class MenuServiceTest {
 
             private final long NOT_FOUND_MENU_GROUP_ID = -1L;
 
-            private final Menu menu = new Menu("파닭", BigDecimal.valueOf(10000), NOT_FOUND_MENU_GROUP_ID,
+            private final Menu menu = new Menu("후라이드치킨", BigDecimal.valueOf(10000), NOT_FOUND_MENU_GROUP_ID,
                     new ArrayList<>());
 
             @Test
@@ -79,7 +79,7 @@ class MenuServiceTest {
         @Nested
         class 입력된_메뉴상품의_상품id가_존재하지_않는_경우 {
 
-            private final Menu menu = new Menu("파닭", BigDecimal.valueOf(16000), 1L, createErrorMenuProducts());
+            private final Menu menu = new Menu("후라이드치킨", BigDecimal.valueOf(16000), 1L, createErrorMenuProducts());
 
             @Test
             void 예외가_발생한다() {
@@ -99,7 +99,7 @@ class MenuServiceTest {
 
             private final BigDecimal ERROR_MENU_PRICE = BigDecimal.valueOf(1000000);
 
-            private final Menu menu = new Menu("파닭", ERROR_MENU_PRICE, 1L, createManuProducts());
+            private final Menu menu = new Menu("후라이드치킨", ERROR_MENU_PRICE, 1L, createManuProducts());
 
             @Test
             void 예외가_발생한다() {
@@ -112,7 +112,7 @@ class MenuServiceTest {
         @Nested
         class 메뉴를_정상적으로_생성가능한_경우 {
 
-            private final Menu menu = new Menu("파닭", BigDecimal.valueOf(16000), 1L, createManuProducts());
+            private final Menu menu = new Menu("후라이드치킨", BigDecimal.valueOf(16000), 1L, createManuProducts());
 
             @Test
             void 저장된_메뉴가_반환된다() {
