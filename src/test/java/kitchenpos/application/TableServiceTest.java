@@ -3,8 +3,14 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +23,12 @@ class TableServiceTest {
 
     @Autowired
     private TableService tableService;
+
+    @Autowired
+    private TableGroupDao tableGroupDao;
+
+    @Autowired
+    private OrderTableDao orderTableDao;
 
     @Nested
     class create_메소드는 {
@@ -63,6 +75,29 @@ class TableServiceTest {
             void 예외가_발생한다() {
                 assertThatThrownBy(() -> tableService.changeEmpty(NOT_FOUND_ID, orderTable))
                         .isInstanceOf(IllegalArgumentException.class);
+            }
+        }
+
+        @Nested
+        class 단체지정된_주문테이블이_입력된_경우 {
+
+            private Long orderTableId;
+            private final OrderTable cahngeOrderTable = new OrderTable(0, false);
+
+            @BeforeEach
+            void setUp() {
+                orderTableId = orderTableDao.save(new OrderTable(0, true))
+                        .getId();
+                Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
+                        .getId();
+                orderTableDao.save(new OrderTable(orderTableId, tableGroupId, 0, true));
+            }
+
+            @Test
+            void 예외가_발생한다() {
+                assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, cahngeOrderTable))
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("단체 지정된 테이블 상태를 변화할 수 없습니다.");
             }
         }
     }
