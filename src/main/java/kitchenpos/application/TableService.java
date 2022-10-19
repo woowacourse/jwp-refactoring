@@ -43,7 +43,7 @@ public class TableService {
 
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("조리 혹은 식사중인 테이블 상태를 변화할 수 업습니다.");
         }
 
         savedOrderTable.setEmpty(orderTable.isEmpty());
