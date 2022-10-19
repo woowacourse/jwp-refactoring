@@ -89,7 +89,7 @@ class TableServiceTest {
         class 단체지정된_주문테이블이_입력된_경우 {
 
             private Long orderTableId;
-            private final OrderTable cahngeOrderTable = new OrderTable(0, false);
+            private final OrderTable changeOrderTable = new OrderTable(0, false);
 
             @BeforeEach
             void setUp() {
@@ -102,7 +102,7 @@ class TableServiceTest {
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, cahngeOrderTable))
+                assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, changeOrderTable))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("단체 지정된 테이블 상태를 변화할 수 없습니다.");
             }
@@ -112,7 +112,7 @@ class TableServiceTest {
         class 주문테이블에_조리상태의_주문이_있는_경우 {
 
             private Long orderTableId;
-            private final OrderTable cahngeOrderTable = new OrderTable(0, false);
+            private final OrderTable changeOrderTable = new OrderTable(0, false);
 
             @BeforeEach
             void setUp() {
@@ -123,7 +123,7 @@ class TableServiceTest {
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, cahngeOrderTable))
+                assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, changeOrderTable))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("조리 혹은 식사중인 테이블 상태를 변화할 수 업습니다.");
             }
@@ -133,7 +133,7 @@ class TableServiceTest {
         class 주문테이블에_식사상태의_주문이_있는_경우 {
 
             private Long orderTableId;
-            private final OrderTable cahngeOrderTable = new OrderTable(0, false);
+            private final OrderTable changeOrderTable = new OrderTable(0, false);
 
             @BeforeEach
             void setUp() {
@@ -144,9 +144,29 @@ class TableServiceTest {
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, cahngeOrderTable))
+                assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, changeOrderTable))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("조리 혹은 식사중인 테이블 상태를 변화할 수 업습니다.");
+            }
+        }
+
+        @Nested
+        class 주문테이블_상태를_정상적으로_변환가능한_경우 {
+
+            private Long orderTableId;
+            private final OrderTable changeOrderTable = new OrderTable(0, false);
+
+            @BeforeEach
+            void setUp() {
+                orderTableId = orderTableDao.save(new OrderTable(0, true))
+                        .getId();
+            }
+
+            @Test
+            void 변경된_주문테이블이_반환된다() {
+                OrderTable actual = tableService.changeEmpty(orderTableId, changeOrderTable);
+
+                assertThat(actual.isEmpty()).isFalse();
             }
         }
     }
