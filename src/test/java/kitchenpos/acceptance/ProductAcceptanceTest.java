@@ -29,7 +29,7 @@ public class ProductAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
-    void 전체_프로덕트_조회가_가능하다() {
+    void 전체_프로덕트를_조회할_수_있다() {
         // given
         생성요청(프로덕트_URL, 까르보치킨);
         생성요청(프로덕트_URL, 짜장치킨);
