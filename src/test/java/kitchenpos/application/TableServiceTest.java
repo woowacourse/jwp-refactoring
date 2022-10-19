@@ -180,12 +180,25 @@ class TableServiceTest {
         class 존재하지않는_주문테이블을_입력한_경우 {
 
             private final Long NOT_FOUND_ORDER_TABLE_ID = 0L;
-            private final OrderTable changeOrderTable = new OrderTable(0, true);
+            private final OrderTable changeOrderTable = new OrderTable(2, true);
 
             @Test
             void 예외가_발생한다() {
                 assertThatThrownBy(() -> tableService.changeNumberOfGuests(NOT_FOUND_ORDER_TABLE_ID, changeOrderTable))
                         .isInstanceOf(IllegalArgumentException.class);
+            }
+        }
+
+        @Nested
+        class 주문테이블이_비어있는_경우 {
+
+            private final Long orderTableId = 1L;
+            private final OrderTable changeOrderTable = new OrderTable(2, true);
+            @Test
+            void 예외가_발생한다() {
+                assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, changeOrderTable))
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("빈 테이블은 손님 수를 수정할 수 없습니다.");
             }
         }
     }

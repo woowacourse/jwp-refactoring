@@ -63,7 +63,7 @@ public class TableService {
                 .orElseThrow(IllegalArgumentException::new);
 
         if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("빈 테이블은 손님 수를 수정할 수 없습니다.");
         }
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);
