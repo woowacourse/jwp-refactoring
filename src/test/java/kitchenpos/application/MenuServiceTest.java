@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
@@ -90,6 +91,25 @@ class MenuServiceTest {
                 assertThatThrownBy(() -> menuService.create(menu))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("메뉴의 가격은 상품총합보다 작을 수 없습니다.");
+            }
+
+            private List<MenuProduct> createManuProducts() {
+                final List<MenuProduct> menuProducts = new ArrayList<>();
+                menuProducts.add(new MenuProduct(1L, 1L));
+                return menuProducts;
+            }
+        }
+
+        @Nested
+        class 메뉴를_정상적으로_생성가능한_경우 {
+
+            private final Menu menu = new Menu("파닭", BigDecimal.valueOf(16000), 1L, createManuProducts());
+
+            @Test
+            void 저장된_메뉴가_반환된다() {
+                Menu actual = menuService.create(menu);
+
+                assertThat(actual).isNotNull();
             }
 
             private List<MenuProduct> createManuProducts() {
