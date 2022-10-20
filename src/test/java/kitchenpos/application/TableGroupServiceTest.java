@@ -189,5 +189,28 @@ class TableGroupServiceTest {
                         .hasMessage("조리 혹은 식사중인 테이블이 있어 단체를 해제할 수 없습니다.");
             }
         }
+
+        @Nested
+        class 해제가_정상적으로_가능한_경우 extends SpringServiceTest {
+
+            private Long tableGroupId;
+
+            @BeforeEach
+            void setUp() {
+                tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
+                        .getId();
+                orderTableDao.save(new OrderTable(1L, tableGroupId, 0, false));
+                orderTableDao.save(new OrderTable(2L, tableGroupId, 0, false));
+            }
+
+            @Test
+            void 단체를_해체한다() {
+                tableGroupService.ungroup(tableGroupId);
+                OrderTable actual = orderTableDao.findById(1L)
+                        .get();
+
+                assertThat(actual.getTableGroupId()).isNull();
+            }
+        }
     }
 }
