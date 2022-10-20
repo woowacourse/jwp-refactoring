@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.request.ProductCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -18,9 +19,10 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final Product product) {
-        validateName(product.getName());
-        validatePrice(product.getPrice());
+    public Product create(final ProductCreateRequest request) {
+        validateName(request.getName());
+        validatePrice(request.getPrice());
+        final var product = new Product(request.getName(), request.getPrice());
 
         return productDao.save(product);
     }

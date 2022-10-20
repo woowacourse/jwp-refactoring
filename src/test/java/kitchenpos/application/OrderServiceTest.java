@@ -19,6 +19,7 @@ import kitchenpos.ui.dto.reqeust.MenuProductRequest;
 import kitchenpos.ui.dto.reqeust.OrderChangeStatusRequest;
 import kitchenpos.ui.dto.reqeust.OrderCreateRequest;
 import kitchenpos.ui.dto.reqeust.OrderLineItemRequest;
+import kitchenpos.ui.dto.request.ProductCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -51,8 +52,8 @@ class OrderServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUpOrder() {
-        productA = productService.create(new Product("순살 까르보치킨", new BigDecimal(20000)));
-        productB = productService.create(new Product("순살 짜장치킨", new BigDecimal(18000)));
+        productA = productService.create(new ProductCreateRequest("순살 까르보치킨", new BigDecimal(20000)));
+        productB = productService.create(new ProductCreateRequest("순살 짜장치킨", new BigDecimal(18000)));
 
         menuGroup = menuGroupService.create(new MenuGroupCreateRequest("순살 두 마리"));
 

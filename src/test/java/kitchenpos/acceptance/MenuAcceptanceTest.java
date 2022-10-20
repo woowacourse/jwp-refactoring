@@ -1,10 +1,10 @@
 package kitchenpos.acceptance;
 
-import static kitchenpos.KitchenPosFixtures.까르보치킨;
+import static kitchenpos.KitchenPosFixtures.까르보치킨_생성요청;
 import static kitchenpos.KitchenPosFixtures.두_마리_메뉴_생성요청;
 import static kitchenpos.KitchenPosFixtures.메뉴_URL;
 import static kitchenpos.KitchenPosFixtures.메뉴그룹_URL;
-import static kitchenpos.KitchenPosFixtures.짜장치킨;
+import static kitchenpos.KitchenPosFixtures.짜장치킨_생성요청;
 import static kitchenpos.KitchenPosFixtures.프로덕트_URL;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -26,8 +26,8 @@ public class MenuAcceptanceTest extends AcceptanceTest {
     @BeforeEach
     void setupMenuGroup() {
         두_마리_메뉴 = 생성요청(메뉴그룹_URL, 두_마리_메뉴_생성요청).body().as(MenuGroupResponse.class);
-        생성된_까르보치킨 = 생성요청(프로덕트_URL, 까르보치킨).body().as(Product.class);
-        생성된_짜장치킨 = 생성요청(프로덕트_URL, 짜장치킨).body().as(Product.class);
+        생성된_까르보치킨 = 생성요청(프로덕트_URL, 까르보치킨_생성요청).body().as(Product.class);
+        생성된_짜장치킨 = 생성요청(프로덕트_URL, 짜장치킨_생성요청).body().as(Product.class);
     }
 
     @Test
