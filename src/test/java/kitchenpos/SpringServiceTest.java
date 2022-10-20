@@ -3,6 +3,7 @@ package kitchenpos;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.MenuService;
 import kitchenpos.application.ProductService;
+import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -26,6 +27,9 @@ public class SpringServiceTest {
 
     @Autowired
     protected TableService tableService;
+
+    @Autowired
+    protected TableGroupService tableGroupService;
 
     @Autowired
     protected TableGroupDao tableGroupDao;
