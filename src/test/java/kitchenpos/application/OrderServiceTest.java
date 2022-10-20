@@ -45,6 +45,19 @@ class OrderServiceTest {
             }
         }
 
+        @Nested
+        class 없는_주문테이블을_입력한_경우 extends SpringServiceTest {
+
+            private final Order order = new Order(null, null, LocalDateTime.now(),
+                    createOrderLineItem(new OrderLineItem(1L, 1)));
+
+            @Test
+            void 예외가_발생한다() {
+                assertThatThrownBy(() -> orderService.create(order))
+                        .isInstanceOf(IllegalArgumentException.class);
+            }
+        }
+
         private List<OrderLineItem> createOrderLineItem(final OrderLineItem... orderLineItems) {
             return Arrays.stream(orderLineItems)
                     .collect(Collectors.toList());
