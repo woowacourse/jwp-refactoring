@@ -1,8 +1,9 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.TestFixtureFactory.상품을_생성한다;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -10,8 +11,10 @@ import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
+@Transactional
 class ProductServiceTest {
 
     @Autowired
@@ -43,15 +46,8 @@ class ProductServiceTest {
 
         List<Product> products = productService.list();
 
-        assertThat(products).hasSizeGreaterThanOrEqualTo(1)
+        assertThat(products).hasSize(1)
                 .usingFieldByFieldElementComparator()
-                .contains(savedProduct);
-    }
-
-    private Product 상품을_생성한다(final String name, final BigDecimal price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-        return product;
+                .containsOnly(savedProduct);
     }
 }
