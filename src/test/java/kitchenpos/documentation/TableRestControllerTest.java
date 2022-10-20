@@ -8,7 +8,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.snippet.Attributes.key;
 
 import java.util.List;
 import kitchenpos.domain.OrderTable;
@@ -39,10 +38,8 @@ class TableRestControllerTest extends DocumentationTest {
                 .then().log().all()
                 .apply(document("tables/create",
                         requestFields(
-                                fieldWithPath("numberOfGuests").type(JsonFieldType.NUMBER).description("고객 인원 수")
-                                        .attributes(key("nullable").value(false)),
+                                fieldWithPath("numberOfGuests").type(JsonFieldType.NUMBER).description("고객 인원 수"),
                                 fieldWithPath("empty").type(JsonFieldType.BOOLEAN).description("true:주문불가, false:주문가능")
-                                        .attributes(key("nullable").value(false))
                         ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("테이블 아이디"),

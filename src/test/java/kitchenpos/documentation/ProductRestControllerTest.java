@@ -6,7 +6,6 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.snippet.Attributes.key;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -36,10 +35,8 @@ class ProductRestControllerTest extends DocumentationTest {
                 .then().log().all()
                 .apply(document("products/create",
                         requestFields(
-                                fieldWithPath("name").type(JsonFieldType.STRING).description("생성할 프로덕트 이름")
-                                        .attributes(key("nullable").value(false)),
-                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("생성할 프로덕트 가격")
-                                        .attributes(key("nullable").value(false))
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("프로덕트 이름"),
+                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("프로덕트 가격")
                         ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("프로덕트 아이디"),

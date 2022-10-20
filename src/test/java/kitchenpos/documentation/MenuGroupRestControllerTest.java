@@ -7,7 +7,6 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.snippet.Attributes.key;
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
@@ -34,8 +33,7 @@ class MenuGroupRestControllerTest extends DocumentationTest {
                 .then().log().all()
                 .apply(document("menu-groups/create",
                         requestFields(
-                                fieldWithPath("name").type(JsonFieldType.STRING).description("생성할 메뉴 그룹 이름")
-                                        .attributes(key("nullable").value(false))
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("메뉴 그룹 이름")
                         ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("메뉴 그룹 아이디"),
