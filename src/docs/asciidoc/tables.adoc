@@ -1,0 +1,18 @@
+[[Tables]]
+== 테이블
+
+=== 테이블 생성 요청
+
+operation::tables/create[snippets='request-fields,http-request,response-fields,http-response']
+
+=== 테이블 전체 조회
+
+operation::tables/list[snippets='http-request,response-fields,http-response']
+
+=== 테이블 주문 가능 여부 수정
+
+operation::tables/changeEmpty[snippets='path-parameters,request-fields,http-request,response-fields,http-response']
+
+=== 테이블 고객 인원 수 수정
+
+operation::tables/changeNumberOfGuests[snippets='path-parameters,request-fields,http-request,response-fields,http-response']
