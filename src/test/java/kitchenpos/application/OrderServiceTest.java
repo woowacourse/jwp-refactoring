@@ -10,14 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.reqeust.MenuCreateRequest;
 import kitchenpos.ui.dto.reqeust.MenuGroupCreateRequest;
 import kitchenpos.ui.dto.reqeust.MenuProductRequest;
+import kitchenpos.ui.dto.reqeust.OrderChangeStatusRequest;
+import kitchenpos.ui.dto.reqeust.OrderCreateRequest;
+import kitchenpos.ui.dto.reqeust.OrderLineItemRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -69,11 +70,9 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        final var orderRequest = new Order(
+        final var orderRequest = new OrderCreateRequest(
                 tableA.getId(),
-                null,
-                null,
-                List.of(new OrderLineItem(null, menu.getId(), 1L))
+                List.of(new OrderLineItemRequest(menu.getId(), 1L))
         );
 
         // when
@@ -104,7 +103,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void should_fail_when_orderLineItems_is_null() {
             // given
-            final var orderRequest = new Order(tableA.getId(), null, null, null);
+            final var orderRequest = new OrderCreateRequest(tableA.getId(), null);
 
             // when & then
             assertThrows(
@@ -117,7 +116,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void should_fail_when_orderLineItems_is_empty() {
             // given
-            final var orderRequest = new Order(tableA.getId(), null, null, new ArrayList<>());
+            final var orderRequest = new OrderCreateRequest(tableA.getId(), new ArrayList<>());
 
             // when & then
             assertThrows(
@@ -130,11 +129,9 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void should_fail_when_menuId_is_invalid() {
             // given
-            final var orderRequest = new Order(
+            final var orderRequest = new OrderCreateRequest(
                     tableA.getId(),
-                    null,
-                    null,
-                    List.of(new OrderLineItem(null, -1L, 1L))
+                    List.of(new OrderLineItemRequest(-1L, 1L))
             );
 
             // when & then
@@ -148,11 +145,9 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void should_fail_when_orderTableId_is_null() {
             // given
-            final var orderRequest = new Order(
+            final var orderRequest = new OrderCreateRequest(
                     null,
-                    null,
-                    null,
-                    List.of(new OrderLineItem(null, menu.getId(), 1L))
+                    List.of(new OrderLineItemRequest(menu.getId(), 1L))
             );
 
             // when & then
@@ -166,11 +161,9 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void should_fail_when_orderTableId_is_invalid() {
             // given
-            final var orderRequest = new Order(
+            final var orderRequest = new OrderCreateRequest(
                     -1L,
-                    null,
-                    null,
-                    List.of(new OrderLineItem(null, menu.getId(), 1L))
+                    List.of(new OrderLineItemRequest(menu.getId(), 1L))
             );
 
             // when & then
@@ -185,11 +178,9 @@ class OrderServiceTest extends ServiceTest {
         void should_fail_when_orderTableId_is_empty() {
             // given
             tableService.changeEmpty(tableA.getId(), tableA.changeEmpty(true));
-            final var orderRequest = new Order(
+            final var orderRequest = new OrderCreateRequest(
                     tableA.getId(),
-                    null,
-                    null,
-                    List.of(new OrderLineItem(null, menu.getId(), 1L))
+                    List.of(new OrderLineItemRequest(menu.getId(), 1L))
             );
 
             // when & then
@@ -204,11 +195,9 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void list() {
         // given
-        final var orderRequest = new Order(
+        final var orderRequest = new OrderCreateRequest(
                 tableA.getId(),
-                null,
-                null,
-                List.of(new OrderLineItem(null, menu.getId(), 1L))
+                List.of(new OrderLineItemRequest(menu.getId(), 1L))
         );
 
         // when
@@ -237,11 +226,9 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void changeOrderStatus() {
         // given
-        final var orderRequest = new Order(
+        final var orderRequest = new OrderCreateRequest(
                 tableA.getId(),
-                null,
-                null,
-                List.of(new OrderLineItem(null, menu.getId(), 1L))
+                List.of(new OrderLineItemRequest(menu.getId(), 1L))
         );
         final var order = orderService.create(orderRequest);
 
@@ -249,7 +236,7 @@ class OrderServiceTest extends ServiceTest {
         final var expectedStatus = OrderStatus.COMPLETION.name();
         final var statusChangedOrder = orderService.changeOrderStatus(
                 order.getId(),
-                new Order(null, expectedStatus, null, null)
+                new OrderChangeStatusRequest(expectedStatus)
         );
 
         // then
@@ -267,20 +254,18 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void should_fail_when_orderId_is_null() {
             // given
-            final var orderRequest = new Order(
+            final var orderRequest = new OrderCreateRequest(
                     tableA.getId(),
-                    null,
-                    null,
-                    List.of(new OrderLineItem(null, menu.getId(), 1L))
+                    List.of(new OrderLineItemRequest(menu.getId(), 1L))
             );
-            final var order = orderService.create(orderRequest);
+            orderService.create(orderRequest);
 
             // when & then
             assertThrows(
                     IllegalArgumentException.class,
                     () -> orderService.changeOrderStatus(
                             null,
-                            new Order(null, OrderStatus.COMPLETION.name(), null, null)
+                            new OrderChangeStatusRequest(OrderStatus.COMPLETION.name())
                     )
             );
         }
@@ -296,7 +281,7 @@ class OrderServiceTest extends ServiceTest {
                     IllegalArgumentException.class,
                     () -> orderService.changeOrderStatus(
                             invalidOrderId,
-                            new Order(null, OrderStatus.COMPLETION.name(), null, null)
+                            new OrderChangeStatusRequest(OrderStatus.COMPLETION.name())
                     )
             );
         }
@@ -306,16 +291,14 @@ class OrderServiceTest extends ServiceTest {
         @ParameterizedTest
         void should_fail_when_order_is_complete(final OrderStatus orderStatus) {
             // given
-            final var orderRequest = new Order(
+            final var orderRequest = new OrderCreateRequest(
                     tableA.getId(),
-                    null,
-                    null,
-                    List.of(new OrderLineItem(null, menu.getId(), 1L))
+                    List.of(new OrderLineItemRequest(menu.getId(), 1L))
             );
             final var order = orderService.create(orderRequest);
             orderService.changeOrderStatus(
                     order.getId(),
-                    new Order(null, OrderStatus.COMPLETION.name(), null, null)
+                    new OrderChangeStatusRequest(OrderStatus.COMPLETION.name())
             );
 
             // when & then
@@ -323,7 +306,7 @@ class OrderServiceTest extends ServiceTest {
                     IllegalArgumentException.class,
                     () -> orderService.changeOrderStatus(
                             order.getId(),
-                            new Order(null, orderStatus.name(), null, null)
+                            new OrderChangeStatusRequest(orderStatus.name())
                     )
             );
         }

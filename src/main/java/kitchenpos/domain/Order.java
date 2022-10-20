@@ -27,6 +27,10 @@ public class Order {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
+    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, null, null, orderLineItems);
+    }
+
     public Long getId() {
         return id;
     }
