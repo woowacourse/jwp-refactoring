@@ -8,11 +8,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
 import kitchenpos.ui.dto.request.MenuProductRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,9 +25,9 @@ class MenuServiceTest extends ServiceTest {
     @Autowired
     private MenuService menuService;
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
     private MenuGroup menuGroup;
     private Product productA;
     private Product productB;
@@ -39,9 +39,9 @@ class MenuServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUpForMenu() {
-        menuGroup = menuGroupDao.save(new MenuGroup("순살 두 마리"));
-        productA = productDao.save(new Product("순살 까르보치킨", new BigDecimal(20000)));
-        productB = productDao.save(new Product("순살 짜장치킨", new BigDecimal(19000)));
+        menuGroup = menuGroupRepository.save(new MenuGroup("순살 두 마리"));
+        productA = productRepository.save(new Product("순살 까르보치킨", new BigDecimal(20000)));
+        productB = productRepository.save(new Product("순살 짜장치킨", new BigDecimal(19000)));
         name = "순살 까르보 한 마리 + 순살 짜장 한 마리";
         price = new BigDecimal(35000);
         menuGroupId = menuGroup.getId();

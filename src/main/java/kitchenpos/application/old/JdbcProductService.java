@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.application.ProductService;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.dto.request.ProductCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,10 +14,10 @@ import org.springframework.util.StringUtils;
 @Transactional(readOnly = true)
 @Service
 public class JdbcProductService implements ProductService {
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
-    public JdbcProductService(final ProductDao productDao) {
-        this.productDao = productDao;
+    public JdbcProductService(final ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -27,7 +27,7 @@ public class JdbcProductService implements ProductService {
         validatePrice(request.getPrice());
         final var product = new Product(request.getName(), request.getPrice());
 
-        return productDao.save(product);
+        return productRepository.save(product);
     }
 
     private void validateName(final String name) {
@@ -48,6 +48,6 @@ public class JdbcProductService implements ProductService {
 
     @Override
     public List<Product> list() {
-        return productDao.findAll();
+        return productRepository.findAll();
     }
 }

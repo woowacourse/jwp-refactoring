@@ -8,11 +8,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.OrderRepository;
 import kitchenpos.ui.dto.request.OrderTableCreateRequest;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +31,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Autowired
     private TableService tableService;
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
     private OrderTable tableA;
     private OrderTable tableB;
 
@@ -189,7 +189,7 @@ class TableGroupServiceTest extends ServiceTest {
         void ungroup_should_fail_when_the_group_contains_table_has_order_with_cooking_status() {
             // given
             final TableGroup tableGroup = createTableGroup();
-            orderDao.save(new Order(tableA.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), null));
+            orderRepository.save(new Order(tableA.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), null));
 
             // when & then
             assertThrows(
@@ -203,7 +203,7 @@ class TableGroupServiceTest extends ServiceTest {
         void ungroup_should_fail_when_the_group_contains_table_has_order_with_meal_status() {
             // given
             final TableGroup tableGroup = createTableGroup();
-            orderDao.save(new Order(tableA.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), null));
+            orderRepository.save(new Order(tableA.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), null));
 
             // when & then
             assertThrows(

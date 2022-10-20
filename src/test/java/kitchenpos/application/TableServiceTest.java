@@ -6,9 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.repository.OrderRepository;
 import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.ui.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.request.OrderTableCreateRequest;
@@ -24,7 +24,7 @@ class TableServiceTest extends ServiceTest {
     @Autowired
     private TableGroupService tableGroupService;
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
 
     @DisplayName("테이블을 생성할 수 있다")
@@ -142,7 +142,8 @@ class TableServiceTest extends ServiceTest {
         void should_fail_when_target_table_has_a_cooking_status_order() {
             // given
             final var groupedTable = tableService.create(new OrderTableCreateRequest(0, true));
-            orderDao.save(new Order(groupedTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), null));
+            orderRepository.save(
+                    new Order(groupedTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), null));
 
             // when & then
             assertThrows(
@@ -157,7 +158,7 @@ class TableServiceTest extends ServiceTest {
         void should_fail_when_target_table_has_a_meal_status_order() {
             // given
             final var groupedTable = tableService.create(new OrderTableCreateRequest(0, true));
-            orderDao.save(new Order(groupedTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), null));
+            orderRepository.save(new Order(groupedTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), null));
 
             // when & then
             assertThrows(

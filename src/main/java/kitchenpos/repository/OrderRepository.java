@@ -1,11 +1,10 @@
-package kitchenpos.dao;
-
-import kitchenpos.domain.Order;
+package kitchenpos.repository;
 
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.domain.Order;
 
-public interface OrderDao {
+public interface OrderRepository {
     Order save(Order entity);
 
     Optional<Order> findById(Long id);
