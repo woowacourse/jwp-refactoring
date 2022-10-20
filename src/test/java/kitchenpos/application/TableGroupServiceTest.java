@@ -69,7 +69,7 @@ class TableGroupServiceTest {
             private final TableGroup tableGroup = new TableGroup(LocalDateTime.now(),
                     createOrderTables(
                             new OrderTable(1L, null, 0, true),
-                            new OrderTable(2L, null, 0, false)
+                            new OrderTable(2L, null, 0, true)
                     ));
 
             @BeforeEach
@@ -90,15 +90,15 @@ class TableGroupServiceTest {
 
             private final TableGroup tableGroup = new TableGroup(LocalDateTime.now(),
                     createOrderTables(
-                            new OrderTable(1L, null, 0, false),
-                            new OrderTable(2L, null, 0, false)
+                            new OrderTable(1L, null, 0, true),
+                            new OrderTable(2L, null, 0, true)
                     ));
 
             @BeforeEach
             void setUp() {
                 Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
                         .getId();
-                orderTableDao.save(new OrderTable(2L, tableGroupId, 0, false));
+                orderTableDao.save(new OrderTable(2L, tableGroupId, 0, true));
             }
 
             @Test
