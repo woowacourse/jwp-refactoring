@@ -104,4 +104,19 @@ class OrderServiceTest {
                     .collect(Collectors.toList());
         }
     }
+
+    @Nested
+    class list_메소드는 {
+
+        @Nested
+        class 요청이_들어오는_경우 extends SpringServiceTest {
+
+            @Test
+            void 주문목록을_반환한다() {
+                List<Order> actual = orderService.list();
+
+                assertThat(actual).hasSize(0);
+            }
+        }
+    }
 }
