@@ -1,6 +1,8 @@
 package kitchenpos.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,6 +12,8 @@ import java.util.stream.Collectors;
 import kitchenpos.SpringServiceTest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderTable;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -69,6 +73,29 @@ class OrderServiceTest {
                 assertThatThrownBy(() -> orderService.create(order))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("주문테이블이 비어있습니다.");
+            }
+        }
+
+        @Nested
+        class 정상적으로_주문요청한_경우 extends SpringServiceTest {
+
+            private final Order order = new Order(1L, null, LocalDateTime.now(),
+                    createOrderLineItem(new OrderLineItem(1L, 1)));
+
+            @BeforeEach
+            void setUp() {
+                orderTableDao.save(new OrderTable(1L, null, 1, false));
+            }
+
+            @Test
+            void 주문을_추가하고_반환한다() {
+                Order actual = orderService.create(order);
+                List<OrderLineItem> actualItems = orderLineItemDao.findAllByOrderId(actual.getId());
+
+                assertAll(
+                        () -> assertThat(actual.getId()).isNotNull(),
+                        () -> assertThat(actualItems).hasSize(1)
+                );
             }
         }
 

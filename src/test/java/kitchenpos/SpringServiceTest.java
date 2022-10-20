@@ -7,6 +7,7 @@ import kitchenpos.application.ProductService;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,4 +44,7 @@ public class SpringServiceTest {
 
     @Autowired
     protected OrderDao orderDao;
+
+    @Autowired
+    protected OrderLineItemDao orderLineItemDao;
 }
