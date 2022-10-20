@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -10,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.SpringServiceTest;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
@@ -135,6 +137,33 @@ class TableGroupServiceTest {
         private List<OrderTable> createOrderTables(final OrderTable... requestOrderTables) {
             return Arrays.stream(requestOrderTables)
                     .collect(Collectors.toList());
+        }
+    }
+
+    @Nested
+    class ungroup_메소드는 {
+
+        @Nested
+        class 주문테이블에_조리중인_주문이_있는_경우 extends SpringServiceTest {
+
+            private Long tableGroupId;
+
+            @BeforeEach
+            void setUp() {
+                tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
+                        .getId();
+                orderTableDao.save(new OrderTable(1L, tableGroupId, 0, false));
+                Long orderTableId = orderTableDao.save(new OrderTable(2L, tableGroupId, 0, false))
+                        .getId();
+                orderDao.save(new Order(orderTableId, COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
+            }
+
+            @Test
+            void 예외가_발생한다() {
+                assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("조리 혹은 식사중인 테이블이 있어 단체를 해제할 수 없습니다.");
+            }
         }
     }
 }

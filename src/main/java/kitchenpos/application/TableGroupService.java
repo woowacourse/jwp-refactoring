@@ -76,7 +76,7 @@ public class TableGroupService {
 
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("조리 혹은 식사중인 테이블이 있어 단체를 해제할 수 없습니다.");
         }
 
         for (final OrderTable orderTable : orderTables) {
