@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.request.OrderTableCreateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
@@ -76,8 +77,8 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
     @Test
     void 주문_가능한_테이블의_고객_인원_수를_변경할_수_있다() {
         // given
-        final var 주문가능_테이블 = 삼인용_테이블.changeEmpty(false);
-        final var 테이블 = 생성요청(테이블_URL, 주문가능_테이블).body().as(OrderTable.class);
+        final var 주문가능_테이블_생성요청 = new OrderTableCreateRequest(3, false);
+        final var 테이블 = 생성요청(테이블_URL, 주문가능_테이블_생성요청).body().as(OrderTable.class);
         final var 고객_인원수 = 테이블.getNumberOfGuests();
         final var 고객_인원수_수정_URL = String.format(테이블_URL + "/%d/number-of-guests", 테이블.getId());
         final var 기대_인원수 = 고객_인원수 + 1;

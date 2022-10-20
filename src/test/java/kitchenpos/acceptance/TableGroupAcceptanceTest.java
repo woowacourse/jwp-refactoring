@@ -1,7 +1,5 @@
 package kitchenpos.acceptance;
 
-import static kitchenpos.KitchenPosFixtures.삼인용_테이블;
-import static kitchenpos.KitchenPosFixtures.오인용_테이블;
 import static kitchenpos.KitchenPosFixtures.테이블_URL;
 import static kitchenpos.KitchenPosFixtures.테이블그룹_URL;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -10,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.request.OrderTableCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -20,8 +19,8 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
 
     @BeforeEach
     void setupTables() {
-        테이블A = 생성요청(테이블_URL, 삼인용_테이블.changeEmpty(true)).body().as(OrderTable.class);
-        테이블B = 생성요청(테이블_URL, 오인용_테이블.changeEmpty(true)).body().as(OrderTable.class);
+        테이블A = 생성요청(테이블_URL, new OrderTableCreateRequest(3, true)).body().as(OrderTable.class);
+        테이블B = 생성요청(테이블_URL, new OrderTableCreateRequest(5, true)).body().as(OrderTable.class);
     }
 
     @Test

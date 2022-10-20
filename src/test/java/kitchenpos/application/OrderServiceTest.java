@@ -19,6 +19,8 @@ import kitchenpos.ui.dto.request.MenuProductRequest;
 import kitchenpos.ui.dto.request.OrderChangeStatusRequest;
 import kitchenpos.ui.dto.request.OrderCreateRequest;
 import kitchenpos.ui.dto.request.OrderLineItemRequest;
+import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.ui.dto.request.OrderTableCreateRequest;
 import kitchenpos.ui.dto.request.ProductCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -64,7 +66,7 @@ class OrderServiceTest extends ServiceTest {
         menuProductB = new MenuProductRequest(productB.getId(), 1L);
         menu = menuService.create(new MenuCreateRequest(name, price, menuGroupId, List.of(menuProductA, menuProductB)));
 
-        tableA = tableService.create(new OrderTable(null, 0, false));
+        tableA = tableService.create(new OrderTableCreateRequest(0, false));
     }
 
     @DisplayName("주문을 생성할 수 있다")
@@ -178,7 +180,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void should_fail_when_orderTableId_is_empty() {
             // given
-            tableService.changeEmpty(tableA.getId(), tableA.changeEmpty(true));
+            tableService.changeEmpty(tableA.getId(), new OrderTableChangeEmptyRequest(true));
             final var orderRequest = new OrderCreateRequest(
                     tableA.getId(),
                     List.of(new OrderLineItemRequest(menu.getId(), 1L))

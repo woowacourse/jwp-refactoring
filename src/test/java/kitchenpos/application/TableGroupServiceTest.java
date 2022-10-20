@@ -13,6 +13,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.request.OrderTableCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -142,7 +143,7 @@ class TableGroupServiceTest extends ServiceTest {
 
     private void insertOrderTables(final TableGroup tableGroupRequest) {
         for (OrderTable orderTable : tableGroupRequest.getOrderTables()) {
-            tableService.create(orderTable);
+            tableService.create(new OrderTableCreateRequest(orderTable.getNumberOfGuests(), orderTable.isEmpty()));
         }
     }
 

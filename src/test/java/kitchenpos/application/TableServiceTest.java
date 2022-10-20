@@ -9,8 +9,10 @@ import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.ui.dto.request.OrderTableChangeNumberOfGuestsRequest;
+import kitchenpos.ui.dto.request.OrderTableCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -31,8 +33,7 @@ class TableServiceTest extends ServiceTest {
         // given
         final var expectedNumberOfGuests = 0;
         final var expectedEmpty = true;
-        final Long expectedTableGroupId = null;
-        final var orderTableRequest = new OrderTable(expectedTableGroupId, expectedNumberOfGuests, expectedEmpty);
+        final var orderTableRequest = new OrderTableCreateRequest(expectedNumberOfGuests, expectedEmpty);
 
         // when
         final var actual = tableService.create(orderTableRequest);
@@ -41,8 +42,7 @@ class TableServiceTest extends ServiceTest {
         assertAll(
                 () -> assertThat(actual.getId()).isEqualTo(1L),
                 () -> assertThat(actual.getNumberOfGuests()).isEqualTo(expectedNumberOfGuests),
-                () -> assertThat(actual.isEmpty()).isEqualTo(expectedEmpty),
-                () -> assertThat(actual.getTableGroupId()).isEqualTo(expectedTableGroupId)
+                () -> assertThat(actual.isEmpty()).isEqualTo(expectedEmpty)
         );
     }
 
@@ -50,7 +50,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void create_should_fail_when_numberOfGuest_is_less_than_zero() {
         // given
-        final var orderTableRequest = new OrderTable(null, -1, true);
+        final var orderTableRequest = new OrderTableCreateRequest(-1, true);
 
         // when & then
         assertThrows(
@@ -63,9 +63,9 @@ class TableServiceTest extends ServiceTest {
     @Test
     void list() {
         // given
-        tableService.create(new OrderTable(null, 0, true));
-        tableService.create(new OrderTable(null, 3, false));
-        tableService.create(new OrderTable(null, 5, true));
+        tableService.create(new OrderTableCreateRequest(0, true));
+        tableService.create(new OrderTableCreateRequest(3, false));
+        tableService.create(new OrderTableCreateRequest(5, true));
 
         // when
         final var actual = tableService.list();
@@ -86,20 +86,17 @@ class TableServiceTest extends ServiceTest {
         @Test
         void changes_table_order_availability() {
             // given
-            final var firstTable = tableService.create(new OrderTable(null, 0, true));
-            final var beforeEmpty = firstTable.isEmpty();
+            final var table = tableService.create(new OrderTableCreateRequest(0, true));
 
             // when
-            final var emptyChangeRequest = firstTable.changeEmpty(false);
-            final var emptyChangedTable = tableService.changeEmpty(emptyChangeRequest.getId(), emptyChangeRequest);
-            final var afterEmpty = emptyChangedTable.isEmpty();
+            final var emptyChangeRequest = new OrderTableChangeEmptyRequest(false);
+            final var emptyChangedTable = tableService.changeEmpty(table.getId(), emptyChangeRequest);
 
             // then
             assertAll(
-                    () -> assertThat(beforeEmpty).isTrue(),
-                    () -> assertThat(afterEmpty).isFalse(),
-                    () -> assertThat(emptyChangeRequest.getId()).isEqualTo(firstTable.getId()),
-                    () -> assertThat(emptyChangedTable.getId()).isEqualTo(firstTable.getId())
+                    () -> assertThat(table.isEmpty()).isTrue(),
+                    () -> assertThat(emptyChangedTable.isEmpty()).isFalse(),
+                    () -> assertThat(emptyChangedTable.getId()).isEqualTo(table.getId())
             );
         }
 
@@ -109,7 +106,7 @@ class TableServiceTest extends ServiceTest {
             // when & then
             assertThrows(
                     IllegalArgumentException.class,
-                    () -> tableService.changeEmpty(-1L, new OrderTable(null, 0, true))
+                    () -> tableService.changeEmpty(-1L, new OrderTableChangeEmptyRequest(true))
             );
         }
 
@@ -117,8 +114,8 @@ class TableServiceTest extends ServiceTest {
         @Test
         void should_fail_when_target_table_is_assigned_to_a_tableGroup() {
             // given
-            final var table1 = tableService.create(new OrderTable(null, 0, true));
-            final var table2 = tableService.create(new OrderTable(null, 0, true));
+            final var table1 = tableService.create(new OrderTableCreateRequest(0, true));
+            final var table2 = tableService.create(new OrderTableCreateRequest(0, true));
             final var groupedTables = tableGroupService.create(new TableGroup(null, List.of(table1, table2)))
                     .getOrderTables();
 
@@ -129,11 +126,13 @@ class TableServiceTest extends ServiceTest {
                             .containsExactly(1L, 1L),
                     () -> assertThrows(
                             IllegalArgumentException.class,
-                            () -> tableService.changeEmpty(table1.getId(), table1)
+                            () -> tableService.changeEmpty(table1.getId(),
+                                    new OrderTableChangeEmptyRequest(table1.isEmpty()))
                     ),
                     () -> assertThrows(
                             IllegalArgumentException.class,
-                            () -> tableService.changeEmpty(table2.getId(), table2)
+                            () -> tableService.changeEmpty(table2.getId(),
+                                    new OrderTableChangeEmptyRequest(table2.isEmpty()))
                     )
             );
         }
@@ -142,13 +141,14 @@ class TableServiceTest extends ServiceTest {
         @Test
         void should_fail_when_target_table_has_a_cooking_status_order() {
             // given
-            final var groupedTable = tableService.create(new OrderTable(null, 0, true));
+            final var groupedTable = tableService.create(new OrderTableCreateRequest(0, true));
             orderDao.save(new Order(groupedTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), null));
 
             // when & then
             assertThrows(
                     IllegalArgumentException.class,
-                    () -> tableService.changeEmpty(groupedTable.getId(), groupedTable)
+                    () -> tableService.changeEmpty(groupedTable.getId(),
+                            new OrderTableChangeEmptyRequest(groupedTable.isEmpty()))
             );
         }
 
@@ -156,13 +156,14 @@ class TableServiceTest extends ServiceTest {
         @Test
         void should_fail_when_target_table_has_a_meal_status_order() {
             // given
-            final var groupedTable = tableService.create(new OrderTable(null, 0, true));
+            final var groupedTable = tableService.create(new OrderTableCreateRequest(0, true));
             orderDao.save(new Order(groupedTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), null));
 
             // when & then
             assertThrows(
                     IllegalArgumentException.class,
-                    () -> tableService.changeEmpty(groupedTable.getId(), groupedTable)
+                    () -> tableService.changeEmpty(groupedTable.getId(),
+                            new OrderTableChangeEmptyRequest(groupedTable.isEmpty()))
             );
         }
     }
@@ -174,12 +175,12 @@ class TableServiceTest extends ServiceTest {
         @Test
         void change_number_of_guests() {
             // given
-            final var table = tableService.create(new OrderTable(null, 0, false));
+            final var table = tableService.create(new OrderTableCreateRequest(0, false));
             final var beforeChange = table.getNumberOfGuests();
 
             // when
-            final var changeRequest = table.changeNumberOfGuests(10);
-            final var changed = tableService.changeNumberOfGuests(changeRequest.getId(), changeRequest);
+            final var changeRequest = new OrderTableChangeNumberOfGuestsRequest(10);
+            final var changed = tableService.changeNumberOfGuests(table.getId(), changeRequest);
             final var afterChange = changed.getNumberOfGuests();
 
             // then
@@ -195,12 +196,13 @@ class TableServiceTest extends ServiceTest {
         @Test
         void should_fail_when_request_number_is_less_then_zero() {
             // given
-            final var table = tableService.create(new OrderTable(null, 0, false));
+            final var table = tableService.create(new OrderTableCreateRequest(0, false));
+            final var changeRequest = new OrderTableChangeNumberOfGuestsRequest(-1);
 
             // when & then
             assertThrows(
                     IllegalArgumentException.class,
-                    () -> tableService.changeNumberOfGuests(table.getId(), new OrderTable(null, -1, false))
+                    () -> tableService.changeNumberOfGuests(table.getId(), changeRequest)
             );
         }
 
@@ -208,7 +210,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void should_fail_on_invalid_table_id() {
             // given
-            final var changeRequest = new OrderTable(null, 0, false);
+            final var changeRequest = new OrderTableChangeNumberOfGuestsRequest(0);
 
             // when & then
             assertThrows(
@@ -221,13 +223,13 @@ class TableServiceTest extends ServiceTest {
         @Test
         void should_fail_when_target_table_is_empty() {
             // given
-            final var table = tableService.create(new OrderTable(null, 0, true));
-            final var changeRequest = table.changeNumberOfGuests(10);
+            final var table = tableService.create(new OrderTableCreateRequest(0, true));
+            final var changeRequest = new OrderTableChangeNumberOfGuestsRequest(10);
 
             // when & then
             assertThrows(
                     IllegalArgumentException.class,
-                    () -> tableService.changeNumberOfGuests(changeRequest.getId(), changeRequest)
+                    () -> tableService.changeNumberOfGuests(table.getId(), changeRequest)
             );
         }
     }

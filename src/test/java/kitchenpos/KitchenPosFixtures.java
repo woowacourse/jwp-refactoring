@@ -3,8 +3,8 @@ package kitchenpos;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.math.BigDecimal;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.request.MenuGroupCreateRequest;
+import kitchenpos.ui.dto.request.OrderTableCreateRequest;
 import kitchenpos.ui.dto.request.ProductCreateRequest;
 
 public class KitchenPosFixtures {
@@ -22,8 +22,8 @@ public class KitchenPosFixtures {
     public static final String 메뉴_URL = "/api/menus";
     public static final String 주문_URL = "/api/orders";
 
-    public static final OrderTable 삼인용_테이블 = new OrderTable(null, 3, true);
-    public static final OrderTable 오인용_테이블 = new OrderTable(null, 5, true);
+    public static final OrderTableCreateRequest 삼인용_테이블 = new OrderTableCreateRequest(3, true);
+    public static final OrderTableCreateRequest 오인용_테이블 = new OrderTableCreateRequest(5, true);
     public static final ProductCreateRequest 까르보치킨_생성요청 = new ProductCreateRequest("까르보치킨", new BigDecimal(20000));
     public static final ProductCreateRequest 짜장치킨_생성요청 = new ProductCreateRequest("짜장치킨", new BigDecimal(19000));
     public static final MenuGroupCreateRequest 두_마리_메뉴_생성요청 = new MenuGroupCreateRequest("두 마리 메뉴");
