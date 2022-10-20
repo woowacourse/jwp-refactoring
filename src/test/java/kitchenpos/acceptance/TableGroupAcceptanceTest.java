@@ -5,10 +5,10 @@ import static kitchenpos.KitchenPosFixtures.테이블그룹_URL;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import java.util.Map;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.request.OrderTableCreateRequest;
+import kitchenpos.ui.dto.request.TableGroupCreateRequest;
+import kitchenpos.ui.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -26,15 +26,11 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void 둘_이상의_테이블을_단체로_지정할_수_있다() {
         // given
-        final var 테이블그룹_생성요청 =
-                Map.of("orderTables", List.of(
-                        Map.of("id", 테이블A.getId()),
-                        Map.of("id", 테이블B.getId()))
-                );
+        final var 테이블그룹_생성요청 = new TableGroupCreateRequest(List.of(테이블A.getId(), 테이블B.getId()));
 
         // when
         final var 테이블그룹_생성응답 = 생성요청(테이블그룹_URL, 테이블그룹_생성요청);
-        final var 생성된_테이블그룹 = 테이블그룹_생성응답.body().as(TableGroup.class);
+        final var 생성된_테이블그룹 = 테이블그룹_생성응답.body().as(TableGroupResponse.class);
         final var 그룹소속_테이블들 = 생성된_테이블그룹.getOrderTables();
 
         // then
@@ -51,15 +47,11 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void 단체로_지정된_테이블들을_그룹_해제할_수_있다() {
         // given
-        final var 테이블그룹_생성요청 =
-                Map.of("orderTables", List.of(
-                        Map.of("id", 테이블A.getId()),
-                        Map.of("id", 테이블B.getId()))
-                );
+        final var 테이블그룹_생성요청 = new TableGroupCreateRequest(List.of(테이블A.getId(), 테이블B.getId()));
 
         // when
         final var 테이블그룹_생성응답 = 생성요청(테이블그룹_URL, 테이블그룹_생성요청);
-        final var 테이블그룹_생성_데이터 = 테이블그룹_생성응답.body().as(TableGroup.class);
+        final var 테이블그룹_생성_데이터 = 테이블그룹_생성응답.body().as(TableGroupResponse.class);
         final var 그룹_내_테이블 = 테이블그룹_생성_데이터.getOrderTables();
         final var 그룹아이디 = 테이블그룹_생성_데이터.getId();
 

@@ -14,6 +14,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.request.OrderTableCreateRequest;
+import kitchenpos.ui.dto.request.TableGroupCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -44,11 +45,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        final var orderTables = List.of(
-                new OrderTable(tableA.getId(), null, 0, true),
-                new OrderTable(tableB.getId(), null, 0, true)
-        );
-        final var tableGroupRequest = new TableGroup(null, orderTables);
+        final var tableGroupRequest = new TableGroupCreateRequest(List.of(tableA.getId(), tableB.getId()));
         final var beforeRequest = LocalDateTime.now();
 
         // when
@@ -76,7 +73,7 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void should_fail_when_orderTables_is_null() {
             // given
-            final var tableGroupRequest = new TableGroup(null, null);
+            final var tableGroupRequest = new TableGroupCreateRequest((List<Long>) null);
 
             // when & then
             assertThrows(
@@ -89,8 +86,7 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void should_fail_when_orderTables_size_is_less_then_two() {
             // given
-            final var tableGroupRequest = new TableGroup(null, List.of(table()));
-            insertOrderTables(tableGroupRequest);
+            final var tableGroupRequest = new TableGroupCreateRequest(List.of(tableA.getId()));
 
             // when & then
             assertThrows(
@@ -103,7 +99,7 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void should_fail_when_orderTableId_is_invalid() {
             // given
-            final var tableGroupRequest = new TableGroup(null, List.of(table(), table()));
+            final var tableGroupRequest = new TableGroupCreateRequest(List.of(-1L, -2L));
 
             // when & then
             assertThrows(
@@ -116,13 +112,17 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void should_fail_when_any_grouping_target_table_is_already_assigned_to_another_group() {
             // given
-            final var tableGroupRequest = new TableGroup(null,
-                    List.of(new OrderTable(1L, 0, true), table()));
+            final var tableGroupRequest = new TableGroupCreateRequest(List.of(tableA.getId(), tableB.getId()));
+            tableGroupService.create(tableGroupRequest);
+            final var tableC = tableService.create(new OrderTableCreateRequest(0, true));
 
-            // when & then
+            // when
+            final var request = new TableGroupCreateRequest(List.of(tableA.getId(), tableC.getId()));
+
+            // then
             assertThrows(
                     IllegalArgumentException.class,
-                    () -> tableGroupService.create(tableGroupRequest)
+                    () -> tableGroupService.create(request)
             );
         }
 
@@ -130,8 +130,9 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void should_fail_when_any_grouping_target_table_is_not_empty_status() {
             // given
-            final var tableGroupRequest = new TableGroup(null,
-                    List.of(new OrderTable(null, 0, false), table()));
+            final var emptyTrueTableId = tableService.create(new OrderTableCreateRequest(0, true)).getId();
+            final var emptyFalseTableId = tableService.create(new OrderTableCreateRequest(0, false)).getId();
+            final var tableGroupRequest = new TableGroupCreateRequest(List.of(emptyTrueTableId, emptyFalseTableId));
 
             // when & then
             assertThrows(
@@ -141,21 +142,11 @@ class TableGroupServiceTest extends ServiceTest {
         }
     }
 
-    private void insertOrderTables(final TableGroup tableGroupRequest) {
-        for (OrderTable orderTable : tableGroupRequest.getOrderTables()) {
-            tableService.create(new OrderTableCreateRequest(orderTable.getNumberOfGuests(), orderTable.isEmpty()));
-        }
-    }
-
     @DisplayName("단체로 지정된 테이블들을 그룹 해제할 수 있다")
     @Test
     void ungroup() {
         // given
-        final var orderTables = List.of(
-                new OrderTable(tableA.getId(), null, 0, true),
-                new OrderTable(tableB.getId(), null, 0, true)
-        );
-        final var tableGroupRequest = new TableGroup(null, orderTables);
+        final var tableGroupRequest = new TableGroupCreateRequest(List.of(tableA.getId(), tableB.getId()));
         final var tableGroup = tableGroupService.create(tableGroupRequest);
 
         // when
@@ -222,12 +213,7 @@ class TableGroupServiceTest extends ServiceTest {
         }
 
         private TableGroup createTableGroup() {
-            final var orderTables = List.of(
-                    new OrderTable(tableA.getId(), null, 0, true),
-                    new OrderTable(tableB.getId(), null, 0, true)
-            );
-
-            return tableGroupService.create(new TableGroup(null, orderTables));
+            return tableGroupService.create(new TableGroupCreateRequest(List.of(tableA.getId(), tableB.getId())));
         }
     }
 }

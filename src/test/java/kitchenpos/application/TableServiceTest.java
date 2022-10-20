@@ -9,10 +9,10 @@ import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.ui.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.request.OrderTableCreateRequest;
+import kitchenpos.ui.dto.request.TableGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -116,8 +116,8 @@ class TableServiceTest extends ServiceTest {
             // given
             final var table1 = tableService.create(new OrderTableCreateRequest(0, true));
             final var table2 = tableService.create(new OrderTableCreateRequest(0, true));
-            final var groupedTables = tableGroupService.create(new TableGroup(null, List.of(table1, table2)))
-                    .getOrderTables();
+            final var tableGroupCreateRequest = new TableGroupCreateRequest(List.of(table1.getId(), table2.getId()));
+            final var groupedTables = tableGroupService.create(tableGroupCreateRequest).getOrderTables();
 
             // when & then
             assertAll(
