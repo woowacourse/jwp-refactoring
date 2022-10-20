@@ -5,8 +5,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,13 +35,11 @@ class ProductDaoTest {
     void 상품을_id로_조회할_수_있다() {
         Product product = productDao.save(상품을_생성한다("상품", new BigDecimal(0)));
 
-        Optional<Product> actual = productDao.findById(product.getId());
+        Product actual = productDao.findById(product.getId())
+                .orElseGet(Assertions::fail);
 
-        assertAll(
-                () -> assertThat(actual).isPresent(),
-                () -> assertThat(actual.get()).usingRecursiveComparison()
-                        .isEqualTo(product)
-        );
+        assertThat(actual).usingRecursiveComparison()
+                .isEqualTo(product);
     }
 
     @Test
@@ -47,5 +47,17 @@ class ProductDaoTest {
         Optional<Product> actual = productDao.findById(0L);
 
         assertThat(actual).isEmpty();
+    }
+
+    @Test
+    void 모든_상품을_조회한다() {
+        Product product1 = productDao.save(상품을_생성한다("상품1", new BigDecimal(1_000)));
+        Product product2 = productDao.save(상품을_생성한다("상품2", new BigDecimal(2_000)));
+
+        List<Product> actual = productDao.findAll();
+
+        assertThat(actual).hasSize(2)
+                .extracting("id")
+                .containsExactly(product1.getId(), product2.getId());
     }
 }
