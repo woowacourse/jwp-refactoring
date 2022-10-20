@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.math.BigDecimal;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.ui.dto.reqeust.MenuGroupCreateRequest;
+import kitchenpos.ui.dto.request.MenuGroupCreateRequest;
 import kitchenpos.ui.dto.request.ProductCreateRequest;
 
 public class KitchenPosFixtures {

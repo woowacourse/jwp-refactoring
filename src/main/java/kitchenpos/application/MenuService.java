@@ -12,8 +12,8 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.ui.dto.reqeust.MenuCreateRequest;
-import kitchenpos.ui.dto.reqeust.MenuProductRequest;
+import kitchenpos.ui.dto.request.MenuCreateRequest;
+import kitchenpos.ui.dto.request.MenuProductRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

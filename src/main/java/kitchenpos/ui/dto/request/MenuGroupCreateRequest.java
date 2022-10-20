@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto.reqeust;
+package kitchenpos.ui.dto.request;
 
 public class MenuGroupCreateRequest {
     private String name;
