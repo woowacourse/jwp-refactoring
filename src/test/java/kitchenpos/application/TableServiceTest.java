@@ -102,7 +102,7 @@ class TableServiceTest {
             void 예외가_발생한다() {
                 assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, changeOrderTable))
                         .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("조리 혹은 식사중인 테이블 상태를 변화할 수 업습니다.");
+                        .hasMessage("조리 혹은 식사중인 테이블 상태를 변화할 수 없습니다.");
             }
         }
 
@@ -121,7 +121,7 @@ class TableServiceTest {
             void 예외가_발생한다() {
                 assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, changeOrderTable))
                         .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("조리 혹은 식사중인 테이블 상태를 변화할 수 업습니다.");
+                        .hasMessage("조리 혹은 식사중인 테이블 상태를 변화할 수 없습니다.");
             }
         }
 
