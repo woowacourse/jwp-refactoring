@@ -1,0 +1,10 @@
+[[Products]]
+== 프로덕트
+
+=== 프로덕트 생성 요청
+
+operation::products/create[snippets='request-fields,http-request,response-fields,http-response']
+
+=== 프로덕트 전체 조회
+
+operation::products/list[snippets='http-request,response-fields,http-response']

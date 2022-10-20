@@ -7,3 +7,4 @@
 == Rich Kitchen POS
 
 include::menu-groups.adoc[]
+include::products.adoc[]

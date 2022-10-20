@@ -19,6 +19,8 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 class MenuGroupRestControllerTest extends DocumentationTest {
+    private static final String MENU_GROUPS_API_URL = "/api/menu-groups";
+
     @DisplayName("POST /api/menu-groups")
     @Test
     void create() {
@@ -28,7 +30,7 @@ class MenuGroupRestControllerTest extends DocumentationTest {
         docsGiven
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(new MenuGroupCreateRequest("두 마리 메뉴"))
-                .when().post("/api/menu-groups")
+                .when().post(MENU_GROUPS_API_URL)
                 .then().log().all()
                 .apply(document("menu-groups/create",
                         requestFields(
@@ -54,7 +56,7 @@ class MenuGroupRestControllerTest extends DocumentationTest {
 
         docsGiven
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when().get("/api/menu-groups")
+                .when().get(MENU_GROUPS_API_URL)
                 .then().log().all()
                 .apply(document("menu-groups/list",
                         responseFields(
