@@ -98,11 +98,6 @@ class OrderServiceTest {
                 );
             }
         }
-
-        private List<OrderLineItem> createOrderLineItem(final OrderLineItem... orderLineItems) {
-            return Arrays.stream(orderLineItems)
-                    .collect(Collectors.toList());
-        }
     }
 
     @Nested
@@ -118,5 +113,27 @@ class OrderServiceTest {
                 assertThat(actual).hasSize(0);
             }
         }
+    }
+
+    @Nested
+    class changeOrderStatus_메소드는 {
+
+        @Nested
+        class 존재하지않는_주문_id를_입력받는_경우 extends SpringServiceTest {
+
+            private final Order order = new Order(1L, null, LocalDateTime.now(),
+                    createOrderLineItem(new OrderLineItem(1L, 1)));
+
+            @Test
+            void 예외가_발생한다() {
+                assertThatThrownBy(() -> orderService.changeOrderStatus(0L, order))
+                        .isInstanceOf(IllegalArgumentException.class);
+            }
+        }
+    }
+
+    private List<OrderLineItem> createOrderLineItem(final OrderLineItem... orderLineItems) {
+        return Arrays.stream(orderLineItems)
+                .collect(Collectors.toList());
     }
 }
