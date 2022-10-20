@@ -5,25 +5,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.SpringServiceTest;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
 class ProductServiceTest {
-
-    @Autowired
-    private ProductService productService;
 
     @Nested
     class create_메소드는 {
 
         @Nested
-        class null인_가격의_상품이_입력된_경우 {
+        class null인_가격의_상품이_입력된_경우 extends SpringServiceTest {
 
             private final BigDecimal NULL_PRICE = null;
 
@@ -38,7 +31,7 @@ class ProductServiceTest {
         }
 
         @Nested
-        class 음수인_가격의_상품이_입력된_경우 {
+        class 음수인_가격의_상품이_입력된_경우 extends SpringServiceTest {
 
             private final BigDecimal MINUS_PRICE = BigDecimal.valueOf(-1);
 
@@ -53,7 +46,7 @@ class ProductServiceTest {
         }
 
         @Nested
-        class 상품을_정상적으로_생성가능한_경우 {
+        class 상품을_정상적으로_생성가능한_경우 extends SpringServiceTest {
 
             private final Product product = new Product("후라이드", BigDecimal.valueOf(16000));
 
@@ -69,7 +62,7 @@ class ProductServiceTest {
     class list_메소드는 {
 
         @Nested
-        class 요청이_들어오는_경우 {
+        class 요청이_들어오는_경우 extends SpringServiceTest {
 
             @Test
             void 상품목록을_반환한다() {
