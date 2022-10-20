@@ -12,6 +12,8 @@
 
 > 우아한테크코스 웹 백엔드 4기, 레거시 코드 리팩터링 - Kitchen POS 저장소입니다.
 
+<img src="./docs/analyze.png" width="800" />
+
 <br><br>
 
 ## 요구 사항
