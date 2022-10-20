@@ -10,13 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.reqeust.MenuCreateRequest;
 import kitchenpos.ui.dto.reqeust.MenuGroupCreateRequest;
+import kitchenpos.ui.dto.reqeust.MenuProductRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -42,8 +43,8 @@ class OrderServiceTest extends ServiceTest {
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-    private MenuProduct menuProductA;
-    private MenuProduct menuProductB;
+    private MenuProductRequest menuProductA;
+    private MenuProductRequest menuProductB;
     private Menu menu;
     private OrderTable tableA;
 
@@ -57,13 +58,11 @@ class OrderServiceTest extends ServiceTest {
         name = "순살 까르보 한 마리 + 순살 짜장 한 마리";
         price = new BigDecimal(35000);
         menuGroupId = menuGroup.getId();
-        menuProductA = new MenuProduct(null, productA.getId(), 1L);
-        menuProductB = new MenuProduct(null, productB.getId(), 1L);
-        menu = menuService.create(new Menu(name, price, menuGroupId, List.of(menuProductA, menuProductB)));
+        menuProductA = new MenuProductRequest(productA.getId(), 1L);
+        menuProductB = new MenuProductRequest(productB.getId(), 1L);
+        menu = menuService.create(new MenuCreateRequest(name, price, menuGroupId, List.of(menuProductA, menuProductB)));
 
         tableA = tableService.create(new OrderTable(null, 0, false));
-
-        menu = menuService.create(menu);
     }
 
     @DisplayName("주문을 생성할 수 있다")

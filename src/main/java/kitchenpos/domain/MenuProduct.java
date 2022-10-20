@@ -20,6 +20,10 @@ public class MenuProduct {
         this(null, menuId, productId, quantity);
     }
 
+    public MenuProduct(final Long productId, final long quantity) {
+        this(null, null, productId, quantity);
+    }
+
     public Long getSeq() {
         return seq;
     }

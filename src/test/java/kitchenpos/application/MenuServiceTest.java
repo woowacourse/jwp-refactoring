@@ -12,8 +12,9 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.reqeust.MenuCreateRequest;
+import kitchenpos.ui.dto.reqeust.MenuProductRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -33,8 +34,8 @@ class MenuServiceTest extends ServiceTest {
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-    private MenuProduct menuProductA;
-    private MenuProduct menuProductB;
+    private MenuProductRequest menuProductA;
+    private MenuProductRequest menuProductB;
 
     @BeforeEach
     void setUpForMenu() {
@@ -44,18 +45,19 @@ class MenuServiceTest extends ServiceTest {
         name = "순살 까르보 한 마리 + 순살 짜장 한 마리";
         price = new BigDecimal(35000);
         menuGroupId = menuGroup.getId();
-        menuProductA = new MenuProduct(null, productA.getId(), 1L);
-        menuProductB = new MenuProduct(null, productB.getId(), 1L);
+        menuProductA = new MenuProductRequest(productA.getId(), 1L);
+        menuProductB = new MenuProductRequest(productB.getId(), 1L);
     }
 
     @DisplayName("메뉴를 생성할 수 있다")
     @Test
     void create() {
         // given
-        final var menuRequest = new Menu(name, price, menuGroupId, List.of(menuProductA, menuProductB));
+        final var menuRequest = new MenuCreateRequest(name, price, menuGroupId, List.of(menuProductA, menuProductB));
 
         // when
         final var menu = menuService.create(menuRequest);
+        ;
 
         // then
         assertAll(
@@ -63,8 +65,8 @@ class MenuServiceTest extends ServiceTest {
                 () -> assertThat(menu.getName()).isEqualTo(name),
                 () -> assertThat(menu.getPrice().doubleValue()).isEqualTo(price.doubleValue()),
                 () -> assertThat(menu.getMenuGroupId()).isEqualTo(menuGroupId),
-                () -> assertThat(menuProductA.getMenuId()).isEqualTo(menu.getId()),
-                () -> assertThat(menuProductB.getMenuId()).isEqualTo(menu.getId())
+                () -> assertThat(menu.getMenuProducts()).extracting("menuId")
+                        .containsExactly(menu.getId(), menu.getId())
         );
     }
 
@@ -75,7 +77,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void should_fail_when_price_is_null() {
             // given
-            final var menuRequest = new Menu(name, null, menuGroupId, List.of(menuProductA, menuProductB));
+            final var menuRequest = new MenuCreateRequest(name, null, menuGroupId, List.of(menuProductA, menuProductB));
 
             // when & then
             assertThrows(
@@ -88,7 +90,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void should_fail_when_price_is_less_than_zero() {
             // given
-            final var menuRequest = new Menu(name, new BigDecimal(-30000), menuGroupId,
+            final var menuRequest = new MenuCreateRequest(name, new BigDecimal(-30000), menuGroupId,
                     List.of(menuProductA, menuProductB));
 
             // when & then
@@ -102,7 +104,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void should_fail_when_menuGroupId_is_invalid() {
             // given
-            final var menuRequest = new Menu(name, price, -1L, List.of(menuProductA, menuProductB));
+            final var menuRequest = new MenuCreateRequest(name, price, -1L, List.of(menuProductA, menuProductB));
 
             // when & then
             assertThrows(
@@ -115,7 +117,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void should_fail_when_menuProducts_is_null() {
             // given
-            final var menuRequest = new Menu(name, price, menuGroupId, null);
+            final var menuRequest = new MenuCreateRequest(name, price, menuGroupId, null);
 
             // when & then
             assertThrows(
@@ -128,7 +130,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void should_fail_when_menuProducts_is_empty() {
             // given
-            final var menuRequest = new Menu(name, price, -1L, new ArrayList<>());
+            final var menuRequest = new MenuCreateRequest(name, price, -1L, new ArrayList<>());
 
             // when & then
             assertThrows(
@@ -141,7 +143,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void should_fail_when_price_is_greater_than_sum_of_menuProducts_price() {
             // given
-            final var menuRequest = new Menu(name, new BigDecimal(40000), menuGroupId,
+            final var menuRequest = new MenuCreateRequest(name, new BigDecimal(40000), menuGroupId,
                     List.of(menuProductA, menuProductB));
 
             // when & then
@@ -156,10 +158,11 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void list() {
         // given
-        final var menuRequest = new Menu(name, price, menuGroupId, List.of(menuProductA, menuProductB));
+        final var menuRequest = new MenuCreateRequest(name, price, menuGroupId, List.of(menuProductA, menuProductB));
         final var secondName = name + "2";
         final var secondPrice = new BigDecimal(25000);
-        final var menuRequest2 = new Menu(secondName, secondPrice, menuGroupId, List.of(menuProductA, menuProductB));
+        final var menuRequest2 = new MenuCreateRequest(secondName, secondPrice, menuGroupId,
+                List.of(menuProductA, menuProductB));
         menuService.create(menuRequest);
         menuService.create(menuRequest2);
 
