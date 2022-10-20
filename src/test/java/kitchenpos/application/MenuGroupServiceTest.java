@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.reqeust.MenuGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -21,10 +21,10 @@ class MenuGroupServiceTest extends ServiceTest {
     void create() {
         // given
         final var expectedName = "순살 두 마리 메뉴";
-        final var menuGroupRequest = new MenuGroup(expectedName);
+        final var request = new MenuGroupCreateRequest(expectedName);
 
         // when
-        final var actual = menuGroupService.create(menuGroupRequest);
+        final var actual = menuGroupService.create(request);
 
         // then
         assertAll(
@@ -41,12 +41,12 @@ class MenuGroupServiceTest extends ServiceTest {
         @ParameterizedTest
         void should_fail_on_null_or_empty_string(final String nullOrEmptyString) {
             // given
-            final var menuGroupRequest = new MenuGroup(nullOrEmptyString);
+            final var request = new MenuGroupCreateRequest(nullOrEmptyString);
 
             // when & then
             assertThrows(
                     IllegalArgumentException.class,
-                    () -> menuGroupService.create(menuGroupRequest)
+                    () -> menuGroupService.create(request)
             );
         }
 
@@ -54,12 +54,12 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void should_fail_on_string_with_white_spaces() {
             // given
-            final var menuGroupRequest = new MenuGroup("    ");
+            final var request = new MenuGroupCreateRequest("    ");
 
             // when & then
             assertThrows(
                     IllegalArgumentException.class,
-                    () -> menuGroupService.create(menuGroupRequest)
+                    () -> menuGroupService.create(request)
             );
         }
     }
@@ -70,8 +70,8 @@ class MenuGroupServiceTest extends ServiceTest {
         // given
         final var name1 = "순살 한 마리";
         final var name2 = "뼈 한 마리";
-        menuGroupService.create(new MenuGroup(name1));
-        menuGroupService.create(new MenuGroup(name2));
+        menuGroupService.create(new MenuGroupCreateRequest(name1));
+        menuGroupService.create(new MenuGroupCreateRequest(name2));
 
         // when
         final var actual = menuGroupService.list();

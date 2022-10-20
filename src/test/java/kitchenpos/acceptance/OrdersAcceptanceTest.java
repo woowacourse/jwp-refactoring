@@ -4,7 +4,7 @@ import static kitchenpos.KitchenPosFixtures.objectMapper;
 import static kitchenpos.KitchenPosFixtures.까르보치킨;
 import static kitchenpos.KitchenPosFixtures.메뉴_URL;
 import static kitchenpos.KitchenPosFixtures.메뉴그룹_URL;
-import static kitchenpos.KitchenPosFixtures.세_마리_메뉴;
+import static kitchenpos.KitchenPosFixtures.세_마리_메뉴_생성요청;
 import static kitchenpos.KitchenPosFixtures.오인용_테이블;
 import static kitchenpos.KitchenPosFixtures.주문_URL;
 import static kitchenpos.KitchenPosFixtures.짜장치킨;
@@ -17,11 +17,11 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -30,7 +30,7 @@ public class OrdersAcceptanceTest extends AcceptanceTest {
     private OrderTable 생성된_테이블;
     private Product 생성된_까르보치킨;
     private Product 생성된_짜장치킨;
-    private MenuGroup 생성된_메뉴그룹;
+    private MenuGroupResponse 메뉴그룹_생성응답;
     private Menu 생성된_메뉴;
 
     @BeforeEach
@@ -38,7 +38,7 @@ public class OrdersAcceptanceTest extends AcceptanceTest {
         생성된_테이블 = 생성요청(테이블_URL, 오인용_테이블.changeEmpty(false)).body().as(OrderTable.class);
         생성된_까르보치킨 = 생성요청(프로덕트_URL, 까르보치킨).body().as(Product.class);
         생성된_짜장치킨 = 생성요청(프로덕트_URL, 짜장치킨).body().as(Product.class);
-        생성된_메뉴그룹 = 생성요청(메뉴그룹_URL, 세_마리_메뉴).body().as(MenuGroup.class);
+        메뉴그룹_생성응답 = 생성요청(메뉴그룹_URL, 세_마리_메뉴_생성요청).body().as(MenuGroupResponse.class);
         생성된_메뉴 = 생성요청(메뉴_URL, 메뉴생성요청_데이터()).body().as(Menu.class);
     }
 
@@ -46,7 +46,7 @@ public class OrdersAcceptanceTest extends AcceptanceTest {
         return Map.of(
                 "name", "까르보 두 마리 + 짜장 한 마리",
                 "price", new BigDecimal(40000),
-                "menuGroupId", 생성된_메뉴그룹.getId(),
+                "menuGroupId", 메뉴그룹_생성응답.getId(),
                 "menuProducts", List.of(
                         Map.of("productId", 생성된_까르보치킨.getId(), "quantity", 2),
                         Map.of("productId", 생성된_짜장치킨.getId(), "quantity", 1)

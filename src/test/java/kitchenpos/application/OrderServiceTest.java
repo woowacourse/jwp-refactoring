@@ -16,6 +16,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.reqeust.MenuGroupCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -51,7 +52,7 @@ class OrderServiceTest extends ServiceTest {
         productA = productService.create(new Product("순살 까르보치킨", new BigDecimal(20000)));
         productB = productService.create(new Product("순살 짜장치킨", new BigDecimal(18000)));
 
-        menuGroup = menuGroupService.create(new MenuGroup("순살 두 마리"));
+        menuGroup = menuGroupService.create(new MenuGroupCreateRequest("순살 두 마리"));
 
         name = "순살 까르보 한 마리 + 순살 짜장 한 마리";
         price = new BigDecimal(35000);

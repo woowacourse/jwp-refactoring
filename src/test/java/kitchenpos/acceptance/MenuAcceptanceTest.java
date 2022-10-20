@@ -1,6 +1,7 @@
 package kitchenpos.acceptance;
 
 import static kitchenpos.KitchenPosFixtures.까르보치킨;
+import static kitchenpos.KitchenPosFixtures.두_마리_메뉴_생성요청;
 import static kitchenpos.KitchenPosFixtures.메뉴_URL;
 import static kitchenpos.KitchenPosFixtures.메뉴그룹_URL;
 import static kitchenpos.KitchenPosFixtures.짜장치킨;
@@ -11,20 +12,20 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 public class MenuAcceptanceTest extends AcceptanceTest {
-    private MenuGroup 두_마리_메뉴;
+    private MenuGroupResponse 두_마리_메뉴;
     private Product 생성된_까르보치킨;
     private Product 생성된_짜장치킨;
 
     @BeforeEach
     void setupMenuGroup() {
-        두_마리_메뉴 = 생성요청(메뉴그룹_URL, Map.of("name", "두 마리 메뉴")).body().as(MenuGroup.class);
+        두_마리_메뉴 = 생성요청(메뉴그룹_URL, 두_마리_메뉴_생성요청).body().as(MenuGroupResponse.class);
         생성된_까르보치킨 = 생성요청(프로덕트_URL, 까르보치킨).body().as(Product.class);
         생성된_짜장치킨 = 생성요청(프로덕트_URL, 짜장치킨).body().as(Product.class);
     }

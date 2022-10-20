@@ -3,9 +3,9 @@ package kitchenpos;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.math.BigDecimal;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.reqeust.MenuGroupCreateRequest;
 
 public class KitchenPosFixtures {
     public static final ObjectMapper objectMapper;
@@ -26,6 +26,7 @@ public class KitchenPosFixtures {
     public static final OrderTable 오인용_테이블 = new OrderTable(null, 5, true);
     public static final Product 까르보치킨 = new Product("까르보치킨", new BigDecimal(20000));
     public static final Product 짜장치킨 = new Product("짜장치킨", new BigDecimal(19000));
-    public static final MenuGroup 세_마리_메뉴 = new MenuGroup("세 마리 메뉴");
-    public static final MenuGroup 네_마리_메뉴 = new MenuGroup("네 마리 메뉴");
+    public static final MenuGroupCreateRequest 두_마리_메뉴_생성요청 = new MenuGroupCreateRequest("두 마리 메뉴");
+    public static final MenuGroupCreateRequest 세_마리_메뉴_생성요청 = new MenuGroupCreateRequest("세 마리 메뉴");
+    public static final MenuGroupCreateRequest 네_마리_메뉴_생성요청 = new MenuGroupCreateRequest("네 마리 메뉴");
 }
