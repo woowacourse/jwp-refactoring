@@ -49,7 +49,7 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("실제 메뉴로만 주문이 가능합니다.");
         }
 
         order.setId(null);
