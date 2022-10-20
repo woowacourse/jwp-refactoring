@@ -1,6 +1,8 @@
 package kitchenpos.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -106,6 +108,27 @@ class TableGroupServiceTest {
                 assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("주문 테이블이 비어있지 않거나 이미 단체지정되어있습니다.");
+            }
+        }
+
+        @Nested
+        class 단체지정이_정상적으로_가능한_경우 extends SpringServiceTest {
+
+            private final TableGroup tableGroup = new TableGroup(LocalDateTime.now(),
+                    createOrderTables(
+                            new OrderTable(1L, null, 0, true),
+                            new OrderTable(2L, null, 0, true)
+                    ));
+
+            @Test
+            void 생성_후_단체지정을_반환한다() {
+                TableGroup actual = tableGroupService.create(tableGroup);
+
+                assertAll(
+                        () -> assertThat(actual).isNotNull(),
+                        () -> assertThat(actual.getOrderTables().get(0).getTableGroupId()).isEqualTo(actual.getId()),
+                        () -> assertThat(actual.getOrderTables().get(0).isEmpty()).isFalse()
+                );
             }
         }
 
