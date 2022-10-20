@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import kitchenpos.application.ProductService;
-import kitchenpos.application.request.ProductCreateRequest;
+import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -31,7 +31,7 @@ class ProductRestControllerTest {
 
     @Test
     void create() throws Exception {
-        ProductCreateRequest productCreateRequest = new ProductCreateRequest("name", BigDecimal.valueOf(1000));
+        Product productCreateRequest = Product.of("name", BigDecimal.valueOf(1000));
         String request = objectMapper.writeValueAsString(productCreateRequest);
 
         given(this.productService.create(productCreateRequest))

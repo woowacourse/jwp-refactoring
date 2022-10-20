@@ -1,16 +1,14 @@
 package kitchenpos.ui;
 
+import java.net.URI;
+import java.util.List;
 import kitchenpos.application.ProductService;
-import kitchenpos.application.request.ProductCreateRequest;
 import kitchenpos.domain.Product;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.URI;
-import java.util.List;
 
 @RestController
 public class ProductRestController {
@@ -21,8 +19,8 @@ public class ProductRestController {
     }
 
     @PostMapping("/api/products")
-    public ResponseEntity<Long> create(@RequestBody final ProductCreateRequest request) {
-        Long savedId = productService.create(request);
+    public ResponseEntity<Long> create(@RequestBody final Product product) {
+        Long savedId = productService.create(product);
         URI uri = URI.create("/api/products/" + savedId);
         return ResponseEntity.created(uri)
                 .body(savedId);

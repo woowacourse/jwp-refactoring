@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.application.request.ProductCreateRequest;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
@@ -17,9 +16,9 @@ public class ProductService {
     }
 
 
-    public Long create(final ProductCreateRequest request) {
-        Product product = productDao.save(request.createProduct());
-        return product.getId();
+    public Long create(final Product request) {
+        return productDao.save(request)
+                .getId();
     }
 
     @Transactional(readOnly = true)
