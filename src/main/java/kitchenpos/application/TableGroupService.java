@@ -42,7 +42,7 @@ public class TableGroupService {
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
         if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("실제 주문 테이블 정보와 일치하지 않습니다.");
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
