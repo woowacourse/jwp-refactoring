@@ -1,7 +1,7 @@
 [[MenuGroups]]
 == 메뉴 그룹
 
-=== 메뉴 그룹 생성 요청
+=== 메뉴 그룹 생성
 
 operation::menu-groups/create[snippets='request-fields,http-request,response-fields,http-response']
 

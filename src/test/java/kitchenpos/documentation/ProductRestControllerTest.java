@@ -42,9 +42,9 @@ class ProductRestControllerTest extends DocumentationTest {
                                         .attributes(key("nullable").value(false))
                         ),
                         responseFields(
-                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("생성된 프로덕트 아이디"),
-                                fieldWithPath("name").type(JsonFieldType.STRING).description("생성된 프로덕트 이름"),
-                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("생성된 프로덕트 가격")
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("프로덕트 아이디"),
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("프로덕트 이름"),
+                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("프로덕트 가격")
                         )
                 ))
                 .statusCode(HttpStatus.CREATED.value());

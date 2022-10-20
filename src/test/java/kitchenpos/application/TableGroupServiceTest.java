@@ -69,19 +69,6 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("TableGroupService의 create 메서드는")
     @Nested
     class CreateTableGroup {
-        @DisplayName("orderTables가 null이면 예외가 발생한다")
-        @Test
-        void should_fail_when_orderTables_is_null() {
-            // given
-            final var tableGroupRequest = new TableGroupCreateRequest((List<Long>) null);
-
-            // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> tableGroupService.create(tableGroupRequest)
-            );
-        }
-
         @DisplayName("orderTables의 size가 2보다 작으면 예외가 발생한다")
         @Test
         void should_fail_when_orderTables_size_is_less_then_two() {

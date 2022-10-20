@@ -1,0 +1,10 @@
+[[TableGroups]]
+== 테이블 그룹
+
+=== 테이블 그룹 생성
+
+operation::table-groups/create[snippets='request-fields,http-request,response-fields,http-response']
+
+=== 테이블 그룹 해제
+
+operation::table-groups/upgroup[snippets='path-parameters,http-request,http-response']

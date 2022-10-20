@@ -9,3 +9,4 @@
 include::menu-groups.adoc[]
 include::products.adoc[]
 include::tables.adoc[]
+include::table-groups.adoc[]

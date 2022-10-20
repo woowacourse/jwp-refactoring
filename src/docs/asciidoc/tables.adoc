@@ -1,7 +1,7 @@
 [[Tables]]
 == 테이블
 
-=== 테이블 생성 요청
+=== 테이블 생성
 
 operation::tables/create[snippets='request-fields,http-request,response-fields,http-response']
 

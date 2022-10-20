@@ -34,7 +34,7 @@ public class JdbcTableGroupService implements TableGroupService {
     @Transactional
     @Override
     public TableGroup create(final TableGroupCreateRequest request) {
-        final var orderTableIds = request.getOrderTables();
+        final var orderTableIds = request.ids();
 
         if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
             throw new IllegalArgumentException();

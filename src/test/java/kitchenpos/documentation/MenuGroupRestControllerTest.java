@@ -38,7 +38,7 @@ class MenuGroupRestControllerTest extends DocumentationTest {
                                         .attributes(key("nullable").value(false))
                         ),
                         responseFields(
-                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("생성된 메뉴 그룹 아이디"),
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("메뉴 그룹 아이디"),
                                 fieldWithPath("name").type(JsonFieldType.STRING).description("메뉴 그룹 이름")
                         )
                 ))
