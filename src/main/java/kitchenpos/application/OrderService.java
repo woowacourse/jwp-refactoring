@@ -58,7 +58,7 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문테이블이 비어있습니다.");
         }
 
         order.setOrderTableId(orderTable.getId());

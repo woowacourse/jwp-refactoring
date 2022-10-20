@@ -58,6 +58,20 @@ class OrderServiceTest {
             }
         }
 
+        @Nested
+        class 주문테이블이_비어있는_경우 extends SpringServiceTest {
+
+            private final Order order = new Order(1L, null, LocalDateTime.now(),
+                    createOrderLineItem(new OrderLineItem(1L, 1)));
+
+            @Test
+            void 예외가_발생한다() {
+                assertThatThrownBy(() -> orderService.create(order))
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("주문테이블이 비어있습니다.");
+            }
+        }
+
         private List<OrderLineItem> createOrderLineItem(final OrderLineItem... orderLineItems) {
             return Arrays.stream(orderLineItems)
                     .collect(Collectors.toList());
