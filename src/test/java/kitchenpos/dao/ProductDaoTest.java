@@ -50,14 +50,15 @@ class ProductDaoTest {
     }
 
     @Test
-    void 모든_상품을_조회한다() {
+    void 모든_상품을_조회할_수_있다() {
         Product product1 = productDao.save(상품을_생성한다("상품1", new BigDecimal(1_000)));
         Product product2 = productDao.save(상품을_생성한다("상품2", new BigDecimal(2_000)));
 
         List<Product> actual = productDao.findAll();
 
         assertThat(actual).hasSize(2)
-                .extracting("id")
-                .containsExactly(product1.getId(), product2.getId());
+                .usingFieldByFieldElementComparator()
+                .usingElementComparatorIgnoringFields("price")
+                .containsExactly(product1, product2);
     }
 }

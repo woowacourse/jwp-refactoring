@@ -1,7 +1,10 @@
 package kitchenpos.support;
 
 import java.math.BigDecimal;
+import java.util.List;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 
 public class TestFixtureFactory {
@@ -20,5 +23,15 @@ public class TestFixtureFactory {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(name);
         return menuGroup;
+    }
+
+    public static Menu 메뉴를_생성한다(final String name, final BigDecimal price, final Long menuGroupId,
+                                final List<MenuProduct> menuProducts) {
+        Menu menu = new Menu();
+        menu.setName(name);
+        menu.setPrice(price);
+        menu.setMenuGroupId(menuGroupId);
+        menu.setMenuProducts(menuProducts);
+        return menu;
     }
 }
