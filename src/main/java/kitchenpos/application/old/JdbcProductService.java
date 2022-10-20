@@ -34,6 +34,10 @@ public class JdbcProductService implements ProductService {
         if (!StringUtils.hasText(name)) {
             throw new IllegalArgumentException("유효하지 않은 상품명 :" + name);
         }
+
+        if (productRepository.existsByName(name)) {
+            throw new IllegalArgumentException("이미 존재하는 상품명 : " + name);
+        }
     }
 
     private void validatePrice(final BigDecimal price) {

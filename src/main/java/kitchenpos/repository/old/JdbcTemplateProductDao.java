@@ -53,6 +53,14 @@ public class JdbcTemplateProductDao implements ProductRepository {
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
+    @Override
+    public boolean existsByName(final String name) {
+        final String sql = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END FROM product WHERE name = (:name)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("name", name);
+        return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
+    }
+
     private Product select(final Long id) {
         final String sql = "SELECT id, name, price FROM product WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()

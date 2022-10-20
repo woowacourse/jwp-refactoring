@@ -61,6 +61,20 @@ class ProductServiceTest extends ServiceTest {
         );
     }
 
+    @DisplayName("Product 생성 시, 이미 존재하는 name일 경우 예외가 발생한다")
+    @Test
+    void should_fail_when_name_is_duplicate() {
+        // given
+        final var productRequest = new ProductCreateRequest("까르보치킨", new BigDecimal(20000));
+        productService.create(productRequest);
+
+        // when & then
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> productService.create(productRequest)
+        );
+    }
+
     @DisplayName("전체 프로덕트를 조회할 수 있다")
     @Test
     void list() {
