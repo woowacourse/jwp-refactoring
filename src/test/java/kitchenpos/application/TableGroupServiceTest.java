@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import kitchenpos.SpringServiceTest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -59,6 +60,28 @@ class TableGroupServiceTest {
                 assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("실제 주문 테이블 정보와 일치하지 않습니다.");
+            }
+        }
+
+        @Nested
+        class 주문테이블이_비어있지않는_경우 extends SpringServiceTest {
+
+            private final TableGroup tableGroup = new TableGroup(LocalDateTime.now(),
+                    createOrderTables(
+                            new OrderTable(1L, null, 0, true),
+                            new OrderTable(2L, null, 0, false)
+                    ));
+
+            @BeforeEach
+            void setUp() {
+                orderTableDao.save(new OrderTable(2L, null, 0, false));
+            }
+
+            @Test
+            void 예외가_발생한다() {
+                assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("주문 테이블이 비어있지 않거나 이미 단체지정되어있습니다.");
             }
         }
 
