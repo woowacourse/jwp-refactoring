@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -128,6 +130,26 @@ class OrderServiceTest {
             void 예외가_발생한다() {
                 assertThatThrownBy(() -> orderService.changeOrderStatus(0L, order))
                         .isInstanceOf(IllegalArgumentException.class);
+            }
+        }
+
+        @Nested
+        class 이미_완료상태의_주문을_입력받는_경우 extends SpringServiceTest {
+
+            private Long orderId;
+            private final Order changeOrder = new Order(null, MEAL.name(), LocalDateTime.now(), new ArrayList<>());
+
+            @BeforeEach
+            void setUp() {
+                orderId = orderDao.save(new Order(1L, COMPLETION.name(), LocalDateTime.now(), new ArrayList<>()))
+                        .getId();
+            }
+
+            @Test
+            void 예외가_발생한다() {
+                assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, changeOrder))
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("완료된 주문의 상태는 변경할 수 없습니다.");
             }
         }
     }
