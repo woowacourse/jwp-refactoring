@@ -9,12 +9,8 @@ import java.util.Optional;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.context.annotation.ComponentScan.Filter;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.stereotype.Repository;
 
-@JdbcTest(includeFilters = @Filter(type = FilterType.ANNOTATION, classes = {Repository.class}))
+@DaoTest
 class ProductDaoTest {
 
     @Autowired
