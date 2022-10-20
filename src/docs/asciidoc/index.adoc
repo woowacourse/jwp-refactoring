@@ -1,0 +1,9 @@
+:doctype: book
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+== Rich Kitchen POS
+
+include::menu-groups.adoc[]

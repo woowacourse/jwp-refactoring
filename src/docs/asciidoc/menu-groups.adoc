@@ -1,0 +1,10 @@
+[[MenuGroups]]
+== 메뉴 그룹
+
+=== 메뉴 그룹 생성 요청
+
+operation::menu-groups/create[snippets='request-fields,http-request,response-fields,http-response']
+
+=== 메뉴 그룹 전체 조회
+
+operation::menu-groups/list[snippets='http-request,response-fields,http-response']
