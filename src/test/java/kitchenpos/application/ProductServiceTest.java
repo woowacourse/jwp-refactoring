@@ -20,7 +20,7 @@ class ProductServiceTest {
 
     @Test
     void create() {
-        ProductCreateRequest request = new ProductCreateRequest("name", new BigDecimal(1000));
+        ProductCreateRequest request = new ProductCreateRequest("name", BigDecimal.valueOf(1000));
 
         Long savedId = productService.create(request);
 
@@ -30,7 +30,7 @@ class ProductServiceTest {
     @Test
     @DisplayName("Product 생성 시, 가격이 0원 이하일 때 예외가 발생한다.")
     void createThrowException() {
-        ProductCreateRequest request = new ProductCreateRequest("name", new BigDecimal(-10));
+        ProductCreateRequest request = new ProductCreateRequest("name", BigDecimal.valueOf(-10));
 
         assertThatThrownBy(() -> productService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)

@@ -1,8 +1,8 @@
 package kitchenpos.ui;
 
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,7 +31,7 @@ class ProductRestControllerTest {
 
     @Test
     void create() throws Exception {
-        ProductCreateRequest productCreateRequest = new ProductCreateRequest("name", new BigDecimal(1000));
+        ProductCreateRequest productCreateRequest = new ProductCreateRequest("name", BigDecimal.valueOf(1000));
         String request = objectMapper.writeValueAsString(productCreateRequest);
 
         given(this.productService.create(productCreateRequest))
