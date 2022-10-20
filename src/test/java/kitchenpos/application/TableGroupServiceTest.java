@@ -85,6 +85,30 @@ class TableGroupServiceTest {
             }
         }
 
+        @Nested
+        class 주문테이블이_이미_단체지정이_된_경우 extends SpringServiceTest {
+
+            private final TableGroup tableGroup = new TableGroup(LocalDateTime.now(),
+                    createOrderTables(
+                            new OrderTable(1L, null, 0, false),
+                            new OrderTable(2L, null, 0, false)
+                    ));
+
+            @BeforeEach
+            void setUp() {
+                Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
+                        .getId();
+                orderTableDao.save(new OrderTable(2L, tableGroupId, 0, false));
+            }
+
+            @Test
+            void 예외가_발생한다() {
+                assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("주문 테이블이 비어있지 않거나 이미 단체지정되어있습니다.");
+            }
+        }
+
         private List<OrderTable> createOrderTables(final OrderTable... requestOrderTables) {
             return Arrays.stream(requestOrderTables)
                     .collect(Collectors.toList());
