@@ -12,4 +12,6 @@ public interface MenuGroupRepository {
     List<MenuGroup> findAll();
 
     boolean existsById(Long id);
+
+    boolean existsByName(String name);
 }

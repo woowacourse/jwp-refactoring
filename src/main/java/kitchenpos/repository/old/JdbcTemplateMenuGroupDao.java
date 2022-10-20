@@ -61,6 +61,14 @@ public class JdbcTemplateMenuGroupDao implements MenuGroupRepository {
         return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
     }
 
+    @Override
+    public boolean existsByName(final String name) {
+        final String sql = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END FROM menu_group WHERE name = (:name)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("name", name);
+        return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
+    }
+
     private MenuGroup select(final Long id) {
         final String sql = "SELECT id, name FROM menu_group WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()

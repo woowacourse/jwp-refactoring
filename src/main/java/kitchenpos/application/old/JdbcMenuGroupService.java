@@ -30,6 +30,10 @@ public class JdbcMenuGroupService implements MenuGroupService {
         if (!StringUtils.hasText(name)) {
             throw new IllegalArgumentException("유효하지 않은 메뉴 그룹명 : " + name);
         }
+
+        if (menuGroupRepository.existsByName(name)) {
+            throw new IllegalArgumentException("이미 존재하는 메뉴 그룹명 : " + name);
+        }
     }
 
     @Override

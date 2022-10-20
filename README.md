@@ -7,7 +7,7 @@
 ---
 
 ![Generic badge](https://img.shields.io/badge/Level4-Kitchen_POS-green.svg)
-![Generic badge](https://img.shields.io/badge/test-0_passed-blue.svg)
+![Generic badge](https://img.shields.io/badge/test-86_passed-blue.svg)
 ![Generic badge](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)
 
 > 우아한테크코스 웹 백엔드 4기, 레거시 코드 리팩터링 - Kitchen POS 저장소입니다.
@@ -18,13 +18,42 @@
 
 - [x] kitchenpos 패키지의 코드를 보고 키친포스의 요구 사항을 README.md에 작성한다.
     - 미션을 진행함에 있어 [이 문서](https://dooray.com/htmls/guides/markdown_ko_KR.html)를 적극 활용한다.
-- [ ] 정리한 키친포스의 요구 사항을 토대로 테스트 코드를 작성한다.
-    - [ ] 모든 Business Object에 대한 테스트 코드를 작성한다.
-    - [ ] @SpringBootTest를 이용한 통합 테스트 코드 또는 @ExtendWith(MockitoExtension.class)를 이용한 단위 테스트 코드를 작성한다.
-    - [ ] Controller에 대한 테스트 코드 작성은 권장하지만 필수는 아니다.
+- [x] 정리한 키친포스의 요구 사항을 토대로 테스트 코드를 작성한다.
+    - [x] 모든 Business Object에 대한 테스트 코드를 작성한다.
+    - [x] @SpringBootTest를 이용한 통합 테스트 코드 또는 @ExtendWith(MockitoExtension.class)를 이용한 단위 테스트 코드를 작성한다.
+    - [x] Controller에 대한 테스트 코드 작성은 권장하지만 필수는 아니다.
     - 미션을 진행함에 있어 아래 문서를 적극 활용한다.
         - [Testing in Spring Boot - Baeldung](https://www.baeldung.com/spring-boot-testing)
         - [Exploring the Spring Boot TestRestTemplate](https://www.baeldung.com/spring-boot-testresttemplate)
+
+<br><br>
+
+## 리팩터링 계획
+
+- [x] E2E, 서비스, 컨트롤러 테스트 구현
+- [x] RestDocs, ERD, Postman 문서화
+- [x] Request, Response DTO 도입
+- [x] 서비스 인터페이스 추상화
+- [x] 1단계 테스트를 통한 코드 보호 PR
+- [ ] JdbcTempalte -> JPA 전환
+- [ ] Bean Validation 도입
+- [ ] 일급 컬렉션 도입
+- [ ] 도메인 엔티티 VO 적용
+- [ ] 도메인 엔티티에 유효성 검증 및 비즈니스 로직 내재화
+- [ ] 도메인 엔티티 단위 테스트 구현
+- [ ] 2단계 서비스 리팩터링 PR
+
+<br><br>
+
+## 진행 경과
+
+- 로직 분석 후, E2E -> 서비스 레이어 테스트를 먼저 구현했습니다.
+- RestDocs를 통한 컨트롤러 테스트와 문서화를 진행하던 도중 컨트롤러와 서비스 레이어의 의존을 분리했습니다
+    - 기존에는 컨트롤러에서 RequestBody로 받는 매개변수도 도메인 객체로 받고 있었습니다.
+    - 그로인해 레이어간 결합이 발생했고, 엔드포인트마다 어떤 데이터가 필요하고 사용되는지 파악하기 어려웠습니다.
+    - DTO를 도입하여 서비스 레이어 내에서 도메인 객체로 변환하여 처리하도록 구성하였습니다.
+    - 컨트롤러에서는 RequestDTO를 받도록 구성하여 서비스 레이어와 의존성을 분리했고, 어떤 데이터가 사용되는지 파악하기 쉬워졌습니다.
+    -
 
 <br><br>
 
@@ -99,6 +128,7 @@
 - 메뉴 그룹 생성 시 name을 받는다.
     - 유효성 검사
         - [x] name은 null이 아니어야 하고, 공백이 아닌 문자가 1개 이상 있어야 한다.
+        - [x] 이미 같은 name으로 저장된 메뉴그룹이 있을 경우 예외가 발생한다.
 
 ### Order
 
