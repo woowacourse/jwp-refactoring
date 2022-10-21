@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Menu;
@@ -79,7 +78,7 @@ class MenuDaoTest {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹")).getId();
         Menu menu1 = menuDao.save(메뉴를_생성한다("메뉴1", new BigDecimal(0), menuGroupId, null));
         Menu menu2 = menuDao.save(메뉴를_생성한다("메뉴2", new BigDecimal(0), menuGroupId, null));
-        List<Long> ids = Arrays.asList(menu1.getId(), menu2.getId());
+        List<Long> ids = List.of(menu1.getId(), menu2.getId());
 
         long count = menuDao.countByIdIn(ids);
 

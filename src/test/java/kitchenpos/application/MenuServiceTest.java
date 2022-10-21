@@ -9,7 +9,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
@@ -33,7 +32,7 @@ class MenuServiceTest {
         Long productId = productService.create(상품을_생성한다("상품", new BigDecimal(1_000)))
                 .getId();
         MenuProduct menuProduct = 메뉴_상품을_생성한다(null, productId, 1);
-        Menu menu = 메뉴를_생성한다("메뉴", new BigDecimal(0), menuGroupId, Collections.singletonList(menuProduct));
+        Menu menu = 메뉴를_생성한다("메뉴", new BigDecimal(0), menuGroupId, List.of(menuProduct));
 
         Menu savedMenu = menuService.create(menu);
 
@@ -68,7 +67,7 @@ class MenuServiceTest {
         Long menuGroupId = menuGroupService.create(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
         MenuProduct menuProduct = 메뉴_상품을_생성한다(null, 0L, 1);
-        Menu menu = 메뉴를_생성한다("메뉴", new BigDecimal(2_000), menuGroupId, Collections.singletonList(menuProduct));
+        Menu menu = 메뉴를_생성한다("메뉴", new BigDecimal(2_000), menuGroupId, List.of(menuProduct));
 
         assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -80,7 +79,7 @@ class MenuServiceTest {
         Long productId = productService.create(상품을_생성한다("상품", new BigDecimal(1_000)))
                 .getId();
         MenuProduct menuProduct = 메뉴_상품을_생성한다(null, productId, 1);
-        Menu menu = 메뉴를_생성한다("메뉴", new BigDecimal(2_000), menuGroupId, Collections.singletonList(menuProduct));
+        Menu menu = 메뉴를_생성한다("메뉴", new BigDecimal(2_000), menuGroupId, List.of(menuProduct));
 
         assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -93,9 +92,9 @@ class MenuServiceTest {
                 .getId();
         MenuProduct menuProduct = 메뉴_상품을_생성한다(null, productId, 1);
         Menu menu1 = menuService.create(
-                메뉴를_생성한다("메뉴1", new BigDecimal(0), menuGroupId, Collections.singletonList(menuProduct)));
+                메뉴를_생성한다("메뉴1", new BigDecimal(0), menuGroupId, List.of(menuProduct)));
         Menu menu2 = menuService.create(
-                메뉴를_생성한다("메뉴2", new BigDecimal(0), menuGroupId, Collections.singletonList(menuProduct)));
+                메뉴를_생성한다("메뉴2", new BigDecimal(0), menuGroupId, List.of(menuProduct)));
 
         List<Menu> actual = menuService.list();
 
