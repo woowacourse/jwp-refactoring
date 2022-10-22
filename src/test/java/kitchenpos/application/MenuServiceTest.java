@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.Test;
@@ -19,17 +21,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 class MenuServiceTest {
 
     @Autowired
+    private ProductDao productDao;
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+    @Autowired
     private MenuService menuService;
-    @Autowired
-    private ProductService productService;
-    @Autowired
-    private MenuGroupService menuGroupService;
 
     @Test
     void 메뉴를_생성할_수_있다() {
-        Long menuGroupId = menuGroupService.create(메뉴_그룹을_생성한다("메뉴 그룹"))
+        Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long productId = productService.create(상품을_생성한다("상품", new BigDecimal(1_000)))
+        Long productId = productDao.save(상품을_생성한다("상품", new BigDecimal(1_000)))
                 .getId();
         MenuProduct menuProduct = 메뉴_상품을_생성한다(null, productId, 1);
         Menu menu = 메뉴를_생성한다("메뉴", new BigDecimal(0), menuGroupId, List.of(menuProduct));
@@ -64,7 +66,7 @@ class MenuServiceTest {
 
     @Test
     void 존재하지_않는_상품이_메뉴에_포함되어_있으면_예외를_반환한다() {
-        Long menuGroupId = menuGroupService.create(메뉴_그룹을_생성한다("메뉴 그룹"))
+        Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
         MenuProduct menuProduct = 메뉴_상품을_생성한다(null, 0L, 1);
         Menu menu = 메뉴를_생성한다("메뉴", new BigDecimal(2_000), menuGroupId, List.of(menuProduct));
@@ -74,9 +76,9 @@ class MenuServiceTest {
 
     @Test
     void 메뉴_가격이_메뉴_상품_가격의_합보다_크면_예외를_반환한다() {
-        Long menuGroupId = menuGroupService.create(메뉴_그룹을_생성한다("메뉴 그룹"))
+        Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long productId = productService.create(상품을_생성한다("상품", new BigDecimal(1_000)))
+        Long productId = productDao.save(상품을_생성한다("상품", new BigDecimal(1_000)))
                 .getId();
         MenuProduct menuProduct = 메뉴_상품을_생성한다(null, productId, 1);
         Menu menu = 메뉴를_생성한다("메뉴", new BigDecimal(2_000), menuGroupId, List.of(menuProduct));
@@ -86,9 +88,9 @@ class MenuServiceTest {
 
     @Test
     void 모든_메뉴를_조회할_수_있다() {
-        Long menuGroupId = menuGroupService.create(메뉴_그룹을_생성한다("메뉴 그룹"))
+        Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long productId = productService.create(상품을_생성한다("상품", new BigDecimal(1_000)))
+        Long productId = productDao.save(상품을_생성한다("상품", new BigDecimal(1_000)))
                 .getId();
         MenuProduct menuProduct = 메뉴_상품을_생성한다(null, productId, 1);
         Menu menu1 = menuService.create(

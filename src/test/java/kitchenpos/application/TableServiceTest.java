@@ -24,11 +24,11 @@ class TableServiceTest {
     @Autowired
     private TableGroupDao tableGroupDao;
     @Autowired
-    private TableService tableService;
-    @Autowired
     private OrderTableDao orderTableDao;
     @Autowired
     private OrderDao orderDao;
+    @Autowired
+    private TableService tableService;
 
     @Test
     void 주문_테이블을_생성할_수_있다() {
