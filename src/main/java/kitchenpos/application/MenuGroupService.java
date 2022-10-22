@@ -9,6 +9,7 @@ import java.util.List;
 
 @Service
 public class MenuGroupService {
+
     private final MenuGroupDao menuGroupDao;
 
     public MenuGroupService(final MenuGroupDao menuGroupDao) {
