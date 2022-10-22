@@ -18,6 +18,8 @@ public class Product {
         this(null, name, price);
     }
 
+    private Product() {}
+
     public Long getId() {
         return id;
     }
