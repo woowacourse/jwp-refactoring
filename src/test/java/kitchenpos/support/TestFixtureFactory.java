@@ -6,6 +6,7 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 
@@ -49,5 +50,13 @@ public class TestFixtureFactory {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setCreatedDate(createdDate);
         return tableGroup;
+    }
+
+    public static OrderTable 주문_테이블을_생성한다(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setTableGroupId(tableGroupId);
+        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setEmpty(empty);
+        return orderTable;
     }
 }
