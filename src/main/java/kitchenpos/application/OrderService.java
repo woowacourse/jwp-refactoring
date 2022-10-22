@@ -37,6 +37,7 @@ public class OrderService {
         this.orderTableDao = orderTableDao;
     }
 
+    //TODO: 총체적난국 수습불가
     @Transactional
     public Order create(final Order order) {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();

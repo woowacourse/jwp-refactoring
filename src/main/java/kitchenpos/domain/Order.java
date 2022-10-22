@@ -6,6 +6,7 @@ import java.util.List;
 public class Order {
     private Long id;
     private Long orderTableId;
+    //TODO: Enum으로 변경하기
     private String orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
