@@ -14,47 +14,45 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class MenuGroupServiceTest {
 
-    @Mock
+    @Autowired
     MenuGroupDao menuGroupDao;
 
-    @InjectMocks
+    @Autowired
     MenuGroupService sut;
 
     @Test
     void delegateSaveAndReturnSavedEntity() {
         // given
         MenuGroup expected = new MenuGroup();
-        expected.setId(1L);
         expected.setName("추천메뉴");
-
-        given(menuGroupDao.save(expected)).willReturn(expected);
 
         // when
         MenuGroup actual = sut.create(expected);
 
         // then
-        assertThat(actual).isEqualTo(expected);
-        verify(menuGroupDao, times(1)).save(expected);
+        assertThat(actual).isNotNull();
     }
 
     @Test
     void returnAllSavedEntities() {
         // given
-        ArrayList<MenuGroup> expected = new ArrayList<>();
-        expected.add(new MenuGroup());
-        expected.add(new MenuGroup());
-
-        given(menuGroupDao.findAll()).willReturn(expected);
+        MenuGroup menuGroup1 = new MenuGroup();
+        menuGroup1.setName("추천메뉴");
+        MenuGroup menuGroup2 = new MenuGroup();
+        menuGroup2.setName("치킨");
+        menuGroupDao.save(menuGroup1);
+        menuGroupDao.save(menuGroup2);
 
         // when
         List<MenuGroup> actual = sut.list();
 
         // then
-        assertThat(actual).isEqualTo(expected);
-        verify(menuGroupDao, times(1)).findAll();
+        assertThat(actual).isNotNull();
     }
 }
