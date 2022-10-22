@@ -1,15 +1,13 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.fixtures.ProductFixtures.PRODUCT1_NAME;
-import static kitchenpos.support.fixtures.ProductFixtures.PRODUCT1_PRICE;
+import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT1_NAME;
+import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT1_PRICE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import kitchenpos.support.fixtures.ProductFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

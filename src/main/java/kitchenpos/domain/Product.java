@@ -37,10 +37,9 @@ public class Product {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Product)) {
+        if (!(o instanceof Product product)) {
             return false;
         }
-        Product product = (Product) o;
         return Objects.equals(id, product.id);
     }
 

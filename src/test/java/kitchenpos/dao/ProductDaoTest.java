@@ -1,9 +1,9 @@
 package kitchenpos.dao;
 
-import static kitchenpos.support.fixtures.ProductFixtures.PRODUCT1_NAME;
-import static kitchenpos.support.fixtures.ProductFixtures.PRODUCT1_PRICE;
-import static kitchenpos.support.fixtures.ProductFixtures.PRODUCT2_NAME;
-import static kitchenpos.support.fixtures.ProductFixtures.PRODUCT2_PRICE;
+import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT1_NAME;
+import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT1_PRICE;
+import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT2_NAME;
+import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT2_PRICE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
