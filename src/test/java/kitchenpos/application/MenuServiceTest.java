@@ -14,6 +14,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,6 +38,7 @@ class MenuServiceTest {
     MenuService sut;
 
     @Test
+    @DisplayName("Menu의 가격은 null일 수 없다")
     void throwException_WhenPriceNull() {
         // given
         Menu menu = new Menu();
@@ -50,6 +52,7 @@ class MenuServiceTest {
     }
 
     @Test
+    @DisplayName("Menu의 가격은 음수일 수 없다")
     void throwException_WhenPriceNegative() {
         // given
         Menu menu = new Menu();
@@ -64,11 +67,12 @@ class MenuServiceTest {
     }
 
     @Test
+    @DisplayName("Menu의 MenuGroupId가 존재하지 않으면 Menu를 생성할 수 없다")
     void throwException_WhenGivenNonExistMenuGroupId() {
         // given
         Menu menu = new Menu();
         menu.setName("강정치킨");
-        menu.setMenuGroupId(1L);
+        menu.setMenuGroupId(0L);
         menu.setPrice(BigDecimal.valueOf(1000L));
         menu.setMenuProducts(new ArrayList<>());
 
@@ -78,6 +82,7 @@ class MenuServiceTest {
     }
 
     @Test
+    @DisplayName("Menu에 포함된 Product가 존재하지 않으면 Menu를 생성할 수 없다")
     void throwException_WhenGivenNonExistMenuProductId() {
         // given
         MenuGroup menuGroup = new MenuGroup();
@@ -101,6 +106,7 @@ class MenuServiceTest {
     }
 
     @Test
+    @DisplayName("Menu의 가격과 Menu에 포함된 Product 가격의 합이 달라서는 안된다")
     void throwException_WhenMenuPriceAndSumOfMenuProductPrice_NotMatch() {
         // given
         Product product = new Product();
@@ -124,6 +130,7 @@ class MenuServiceTest {
     }
 
     @Test
+    @DisplayName("메뉴를 생성한다")
     void saveMenu() {
         // given
         Product product = new Product();

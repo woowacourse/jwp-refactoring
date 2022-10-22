@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,6 +28,7 @@ class MenuGroupServiceTest {
     MenuGroupService sut;
 
     @Test
+    @DisplayName("MenuGroup을 생성한다")
     void delegateSaveAndReturnSavedEntity() {
         // given
         MenuGroup expected = new MenuGroup();
@@ -40,6 +42,7 @@ class MenuGroupServiceTest {
     }
 
     @Test
+    @DisplayName("MenuGroup 목록을 조회한다")
     void returnAllSavedEntities() {
         // given
         MenuGroup menuGroup1 = new MenuGroup();
