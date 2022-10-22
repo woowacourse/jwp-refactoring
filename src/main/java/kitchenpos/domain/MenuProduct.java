@@ -1,10 +1,21 @@
 package kitchenpos.domain;
 
 public class MenuProduct {
-    private Long seq;
+    private Long seq; // 주문 순서?
     private Long menuId;
+
     private Long productId;
+
     private long quantity;
+
+    public MenuProduct() {
+    }
+
+    public MenuProduct(Long menuId, Long productId, long quantity) {
+        this.menuId = menuId;
+        this.productId = productId;
+        this.quantity = quantity;
+    }
 
     public Long getSeq() {
         return seq;
