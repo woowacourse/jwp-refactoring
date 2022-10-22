@@ -1,11 +1,13 @@
 package kitchenpos.support;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 
 public class TestFixtureFactory {
 
@@ -41,5 +43,11 @@ public class TestFixtureFactory {
         menuProduct.setProductId(productId);
         menuProduct.setQuantity(quantity);
         return menuProduct;
+    }
+
+    public static TableGroup 단체_지정을_생성한다(final LocalDateTime createdDate) {
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(createdDate);
+        return tableGroup;
     }
 }
