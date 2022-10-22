@@ -19,3 +19,9 @@
 | 단체 지정 | table group | 통합 계산을 위해 개별 주문 테이블을 그룹화하는 기능 |
 | 주문 항목 | order line item | 주문에 속하는 수량이 있는 메뉴 |
 | 매장 식사 | eat in | 포장하지 않고 매장에서 식사하는 것 |
+
+## ERD
+
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/68512686/197355193-94f6a7fb-9e1d-4bff-b2ab-f5a9b735a5fa.png">
+</p>
