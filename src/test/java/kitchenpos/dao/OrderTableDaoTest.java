@@ -4,6 +4,7 @@ import static kitchenpos.support.TestFixtureFactory.단체_지정을_생성한�
 import static kitchenpos.support.TestFixtureFactory.주문_테이블을_생성한다;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,6 +51,13 @@ class OrderTableDaoTest {
 
         assertThat(savedOrderTable).usingRecursiveComparison()
                 .isEqualTo(newOrderTable);
+    }
+
+    @Test
+    void 단체_지정_id는_null일_수_있다() {
+        OrderTable orderTable = 주문_테이블을_생성한다(null, 0, true);
+
+        assertDoesNotThrow(() -> orderTableDao.save(orderTable));
     }
 
     @Test
