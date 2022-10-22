@@ -44,13 +44,13 @@ class OrderTableDaoTest {
                 .getId();
         Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(tableGroupId, 0, true))
                 .getId();
-        OrderTable newOrderTable = 주문_테이블을_생성한다(tableGroupId, 1, false);
-        newOrderTable.setId(orderTableId);
+        OrderTable updateOrderTable = 주문_테이블을_생성한다(tableGroupId, 1, false);
+        updateOrderTable.setId(orderTableId);
 
-        OrderTable savedOrderTable = orderTableDao.save(newOrderTable);
+        OrderTable savedOrderTable = orderTableDao.save(updateOrderTable);
 
         assertThat(savedOrderTable).usingRecursiveComparison()
-                .isEqualTo(newOrderTable);
+                .isEqualTo(updateOrderTable);
     }
 
     @Test

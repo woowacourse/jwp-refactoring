@@ -6,6 +6,8 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -46,11 +48,14 @@ public class TestFixtureFactory {
         return menuProduct;
     }
 
-    public static TableGroup 단체_지정을_생성한다(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(createdDate);
-        tableGroup.setOrderTables(orderTables);
-        return tableGroup;
+    public static Order 주문을_생성한다(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+                                 List<OrderLineItem> orderLineItems) {
+        Order order = new Order();
+        order.setOrderTableId(orderTableId);
+        order.setOrderStatus(orderStatus);
+        order.setOrderedTime(orderedTime);
+        order.setOrderLineItems(orderLineItems);
+        return order;
     }
 
     public static OrderTable 주문_테이블을_생성한다(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
@@ -59,5 +64,12 @@ public class TestFixtureFactory {
         orderTable.setNumberOfGuests(numberOfGuests);
         orderTable.setEmpty(empty);
         return orderTable;
+    }
+
+    public static TableGroup 단체_지정을_생성한다(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(createdDate);
+        tableGroup.setOrderTables(orderTables);
+        return tableGroup;
     }
 }
