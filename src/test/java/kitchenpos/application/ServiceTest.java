@@ -62,6 +62,10 @@ public class ServiceTest {
         return new OrderTable(id, 1L, 1, false);
     }
 
+    protected void 테이블_그룹이_없는_테이블_세팅(Long id) {
+        Mockito.when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(new OrderTable(id, null, 1, false)));
+    }
+
     protected void 존재하는_테이블_세팅() {
         Mockito.when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(테이블_생성(1L)));
     }
@@ -117,8 +121,23 @@ public class ServiceTest {
         Mockito.when(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any())).thenReturn(true);
     }
 
+    protected void 테이블_내_주문_상태를_진행중으로_설정() {
+        Mockito.when(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any())).thenReturn(true);
+    }
+
+
     protected void 그룹_id로_조회시_두개_반환하도록_세팅() {
         Mockito.when(orderTableDao.findAllByTableGroupId(any()))
                 .thenReturn(Arrays.asList(테이블_생성(1L), 테이블_생성(2L)));
+    }
+
+    /**
+     * table  test fixture
+     */
+
+    protected OrderTable 게스트_숫자_음수인_테이블_생성() {
+        final OrderTable 테이블 = 테이블_생성(1L);
+        테이블.setNumberOfGuests(-1);
+        return 테이블;
     }
 }
