@@ -6,7 +6,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -23,7 +22,6 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import org.mockito.Mockito;
-import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
@@ -46,7 +44,7 @@ public class ServiceTest {
     protected OrderTableDao orderTableDao;
 
     /**
-     * menu test fixture
+     * order test fixture
      */
     protected void 완료된_주문_조회() {
         Mockito.when(orderDao.findById(anyLong())).thenReturn(Optional.of(주문_생성(OrderStatus.COMPLETION)));
@@ -78,7 +76,7 @@ public class ServiceTest {
     }
 
     /**
-     * order test fixture
+     * menu test fixture
      */
 
     protected void 메뉴그룹에서_없는_메뉴로_세팅한다() {
@@ -111,10 +109,13 @@ public class ServiceTest {
         return 세트A;
     }
 
-    protected void 그룹_내_주문_상태를_진행중으로_설정() {
-        Mockito.when(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(),any())).thenReturn(true);
-    }
+    /**
+     * table Group test fixture
+     */
 
+    protected void 그룹_내_주문_상태를_진행중으로_설정() {
+        Mockito.when(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any())).thenReturn(true);
+    }
 
     protected void 그룹_id로_조회시_두개_반환하도록_세팅() {
         Mockito.when(orderTableDao.findAllByTableGroupId(any()))

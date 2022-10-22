@@ -43,6 +43,4 @@ class ProductServiceTest extends ServiceTest {
         Assertions.assertThatThrownBy(() -> productService.create(짜장면))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-
-
 }
