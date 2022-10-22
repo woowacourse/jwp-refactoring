@@ -46,9 +46,10 @@ public class TestFixtureFactory {
         return menuProduct;
     }
 
-    public static TableGroup 단체_지정을_생성한다(final LocalDateTime createdDate) {
+    public static TableGroup 단체_지정을_생성한다(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setCreatedDate(createdDate);
+        tableGroup.setOrderTables(orderTables);
         return tableGroup;
     }
 

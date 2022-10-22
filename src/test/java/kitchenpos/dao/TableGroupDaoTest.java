@@ -20,7 +20,7 @@ class TableGroupDaoTest {
 
     @Test
     void 단체_지정을_저장_하면_id가_채워진다() {
-        TableGroup tableGroup = 단체_지정을_생성한다(LocalDateTime.now());
+        TableGroup tableGroup = 단체_지정을_생성한다(LocalDateTime.now(), null);
 
         TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
@@ -34,7 +34,7 @@ class TableGroupDaoTest {
 
     @Test
     void id로_단체_지정을_조회할_수_있다() {
-        TableGroup tableGroup = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now()));
+        TableGroup tableGroup = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now(), null));
 
         TableGroup actual = tableGroupDao.findById(tableGroup.getId())
                 .orElseGet(Assertions::fail);
@@ -52,8 +52,8 @@ class TableGroupDaoTest {
 
     @Test
     void 모든_단체_지정을_조회할_수_있다() {
-        TableGroup tableGroup1 = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now()));
-        TableGroup tableGroup2 = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now()));
+        TableGroup tableGroup1 = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now(), null));
+        TableGroup tableGroup2 = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now(), null));
 
         List<TableGroup> actual = tableGroupDao.findAll();
 

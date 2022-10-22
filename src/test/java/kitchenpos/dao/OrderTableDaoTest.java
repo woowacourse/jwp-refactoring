@@ -23,7 +23,7 @@ class OrderTableDaoTest {
 
     @Test
     void 주문_테이블을_저장하면_id가_채워진다() {
-        Long tableGroupId = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now()))
+        Long tableGroupId = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now(), null))
                 .getId();
         OrderTable orderTable = 주문_테이블을_생성한다(tableGroupId, 0, true);
 
@@ -39,7 +39,7 @@ class OrderTableDaoTest {
 
     @Test
     void 저장하는_주문_테이블의_id가_null이_아니면_업데이트한다() {
-        Long tableGroupId = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now()))
+        Long tableGroupId = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now(), null))
                 .getId();
         Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(tableGroupId, 0, true))
                 .getId();
@@ -54,7 +54,7 @@ class OrderTableDaoTest {
 
     @Test
     void id로_주문_테이블을_조회할_수_있다() {
-        Long tableGroupId = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now()))
+        Long tableGroupId = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now(), null))
                 .getId();
         OrderTable orderTable = orderTableDao.save(주문_테이블을_생성한다(tableGroupId, 0, true));
 
@@ -74,7 +74,7 @@ class OrderTableDaoTest {
 
     @Test
     void 모든_주문_테이블을_조회할_수_있다() {
-        Long tableGroupId = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now()))
+        Long tableGroupId = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now(), null))
                 .getId();
         OrderTable orderTable1 = orderTableDao.save(주문_테이블을_생성한다(tableGroupId, 0, true));
         OrderTable orderTable2 = orderTableDao.save(주문_테이블을_생성한다(tableGroupId, 1, false));
@@ -88,7 +88,7 @@ class OrderTableDaoTest {
 
     @Test
     void id_목록에_있는_주문_테이블을_조회할_수_있다() {
-        Long tableGroupId = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now()))
+        Long tableGroupId = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now(), null))
                 .getId();
         OrderTable orderTable1 = orderTableDao.save(주문_테이블을_생성한다(tableGroupId, 0, true));
         orderTableDao.save(주문_테이블을_생성한다(tableGroupId, 1, false));
@@ -103,9 +103,9 @@ class OrderTableDaoTest {
 
     @Test
     void 단체_지정_id로_주문_테이블을_조회할_수_있다() {
-        Long tableGroupId1 = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now()))
+        Long tableGroupId1 = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now(), null))
                 .getId();
-        Long tableGroupId2 = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now()))
+        Long tableGroupId2 = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now(), null))
                 .getId();
         OrderTable orderTable1 = orderTableDao.save(주문_테이블을_생성한다(tableGroupId1, 0, true));
         orderTableDao.save(주문_테이블을_생성한다(tableGroupId2, 0, true));
