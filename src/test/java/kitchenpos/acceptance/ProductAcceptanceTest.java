@@ -20,9 +20,9 @@ public class ProductAcceptanceTest extends AcceptanceTest {
     @DisplayName("상품을 추가해야 한다.")
     @Test
     void createProduct() {
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("name", "productName");
-        requestBody.put("price", 1000);
+        Map<String, Object> requestBody = Map.of(
+                "name", "productName",
+                "price", 1000);
         ExtractableResponse<Response> response = Request.create("/api/products", requestBody);
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
@@ -32,10 +32,15 @@ public class ProductAcceptanceTest extends AcceptanceTest {
     @DisplayName("상품 목록을 가져와야 한다.")
     @Test
     void getProducts() {
+        Map<String, Object> requestBody = Map.of(
+                "name", "productName",
+                "price", 1000);
+        Request.create("/api/products", requestBody);
+
         ResponseBodyExtractionOptions body = Request.get("/api/products")
                 .body();
         java.util.List<Product> list = body.jsonPath().getList(".", Product.class);
 
-        assertThat(list.size()).isEqualTo(6);
+        assertThat(list.size()).isEqualTo(1);
     }
 }
