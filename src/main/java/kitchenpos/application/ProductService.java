@@ -22,7 +22,7 @@ public class ProductService {
         final BigDecimal price = product.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("상품의 가격은 null 이거나 0원 미만일 수 없습니다.");
         }
 
         return productDao.save(product);
