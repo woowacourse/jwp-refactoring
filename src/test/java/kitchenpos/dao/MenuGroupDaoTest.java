@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import javax.sql.DataSource;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.support.fixtures.DomainFixtures;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
