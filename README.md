@@ -2,6 +2,41 @@
 
 ## 요구 사항
 
+### MenuGroup
+
+- [x] MenuGroup을 생성할 수 있다.
+- [x] MenuGroup 목록을 조회할 수 있다.
+
+### Menu
+
+- [x] Menu를 등록할 수 있다.
+- [x] Menu 목록을 조회할 수 있다.
+
+### Product
+
+- [x] Product를 등록할 수 있다.
+- [x] Product 목록을 조회할 수 있다.
+
+### Order
+
+- [x] Order를 등록할 수 있다.
+- [x] Order 목록을 조회할 수 있다.
+- [x] Order의 상태를 변경할 수 있다.
+
+### Table
+
+- [x] Table을 등록할 수 있다.
+- [x] Table 목록을 조회할 수 있다.
+- [x] Table의 방문한 손님 수를 변경할 수 있다.
+- [x] Table의 손님 유무 상태 값을 변경할 수 있다.
+
+### Table Group
+
+- [x] TableGroup을 등록할 수 있다.
+- [x] TableGroup을 삭제할 수 있다.
+
+---
+
 ## 용어 사전
 
 | 한글명 | 영문명 | 설명 |
