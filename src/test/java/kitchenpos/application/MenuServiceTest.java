@@ -17,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
  * 전체를 조회합니다.)
  */
 
-@SpringBootTest
 class MenuServiceTest extends ServiceTest {
 
     @Autowired

@@ -22,8 +22,10 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+@SpringBootTest
 public class ServiceTest {
 
     @MockBean
@@ -40,7 +42,6 @@ public class ServiceTest {
     protected OrderLineItemDao orderLineItemDao;
     @MockBean
     protected OrderTableDao orderTableDao;
-
 
     /**
      * menu test fixture

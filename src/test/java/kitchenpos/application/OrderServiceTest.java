@@ -25,7 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * <p>
  * `Completion 상태의 주문`인데, 변경을 시도할 경우 예외를 반환합니다.
  */
-@SpringBootTest
+
 class OrderServiceTest extends ServiceTest {
 
     @Autowired
