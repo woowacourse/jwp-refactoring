@@ -31,10 +31,10 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 @SpringBootTest
 class OrderServiceTest {
 
-    @MockBean
+    @MockBean(name = "menuDao")
     private MenuDao menuDao;
 
-    @MockBean
+    @MockBean(name = "orderTableDao")
     private OrderTableDao orderTableDao;
 
     @SpyBean
