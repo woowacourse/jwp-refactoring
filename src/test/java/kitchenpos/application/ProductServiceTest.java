@@ -34,7 +34,7 @@ class ProductServiceTest {
     void 상품_가격이_0원_미만이면_예외를_반환한다() {
         Product product = 상품을_생성한다("상품", new BigDecimal(-1));
 
-        assertThatThrownBy(() -> productService.create(product)).isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
