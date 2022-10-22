@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -11,6 +12,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -24,6 +26,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 
 @SpringBootTest
 class OrderServiceTest {
@@ -33,6 +36,9 @@ class OrderServiceTest {
 
     @MockBean
     private OrderTableDao orderTableDao;
+
+    @SpyBean
+    private OrderDao orderDao;
 
     @Autowired
     private OrderService orderService;
@@ -81,7 +87,7 @@ class OrderServiceTest {
         assertThat(savedOrder.getOrderedTime()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{1} 예외가 발생한다.")
+    @ParameterizedTest(name = "{1} 주문을 생성하면 예외가 발생한다.")
     @MethodSource("invalidParams")
     void createWithInvalidOrder(final Order order, final String testName) {
         assertThatThrownBy(() -> orderService.create(order))
@@ -95,5 +101,35 @@ class OrderServiceTest {
                 Arguments.of(new Order(1L, Arrays.asList(new OrderLineItem(), new OrderLineItem())),
                         "주문 상품 목록에 등록되지 않은 메뉴가 존재할 경우")
         );
+    }
+
+    @Test
+    @DisplayName("주문 상태를 변경할 수 있다.")
+    void changeOrderStatus() {
+        // given
+        final Order savedOrder = orderService.create(order);
+        final Order newStatusOrder = new Order();
+        newStatusOrder.setOrderStatus(COMPLETION.name());
+
+        // when
+        final Order updateOrder = orderService.changeOrderStatus(savedOrder.getId(), newStatusOrder);
+
+        // then
+        assertThat(updateOrder.getOrderStatus()).isEqualTo(COMPLETION.name());
+    }
+
+    @Test
+    @DisplayName("COMPLETION 상태에서는 주문 상태를 변경할 수 없다.")
+    void changeInvalidOrderStatus() {
+        // given
+        final Order savedOrder = new Order();
+        savedOrder.setOrderStatus(COMPLETION.name());
+        final Order newStatusOrder = new Order();
+        newStatusOrder.setOrderStatus(COOKING.name());
+        given(orderDao.findById(1L)).willReturn(Optional.of(savedOrder));
+
+        // then
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), newStatusOrder))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
