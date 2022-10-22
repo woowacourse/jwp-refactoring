@@ -16,4 +16,7 @@ public class ServiceTest {
 
     @Autowired
     protected MenuGroupService menuGroupService;
+
+    @Autowired
+    protected MenuService menuService;
 }
