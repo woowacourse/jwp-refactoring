@@ -18,8 +18,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
+@Transactional
 class MenuServiceTest {
 
     @Autowired
@@ -154,9 +156,27 @@ class MenuServiceTest {
         menu.setMenuProducts(menuProducts);
 
         // when
-        Menu actual = sut.create(menu);
+        Menu savedMenu = sut.create(menu);
 
         // then
-        assertThat(actual).isNotNull();
+        assertThat(savedMenu).isNotNull();
+        assertThatMenuIdIsSet(savedMenu.getMenuProducts(), savedMenu.getId());
+    }
+
+    @Test
+    @DisplayName("Menu 목록을 조회한다")
+    void listMenus() {
+        List<Menu> menus = sut.list();
+
+        assertThat(menus).hasSize(6);
+        for (Menu menu : menus) {
+            assertThatMenuIdIsSet(menu.getMenuProducts(), menu.getId());
+        }
+    }
+
+    private void assertThatMenuIdIsSet(List<MenuProduct> menuProducts, Long menuId) {
+        for (MenuProduct menuProduct : menuProducts) {
+            assertThat(menuProduct.getMenuId()).isEqualTo(menuId);
+        }
     }
 }

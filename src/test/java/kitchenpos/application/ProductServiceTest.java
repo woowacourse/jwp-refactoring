@@ -2,31 +2,29 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@Transactional
 class ProductServiceTest {
 
-    @Mock
+    @Autowired
     ProductDao productDao;
 
-    @InjectMocks
+    @Autowired
     ProductService sut;
 
     @Test
+    @DisplayName("가격은 null일 수 없다")
     void throwException_WhenPriceNull() {
         // given
         Product product = new Product();
@@ -38,6 +36,7 @@ class ProductServiceTest {
     }
 
     @Test
+    @DisplayName("가격은 음수일 수 없다")
     void throwException_WhenPriceNegative() {
         // given
         Product product = new Product();
@@ -50,40 +49,25 @@ class ProductServiceTest {
     }
 
     @Test
+    @DisplayName("Product를 생성한다")
     void delegateSaveAndReturnSavedEntity() {
         // given
-        Product expected = new Product();
-        expected.setId(1L);
-        expected.setName("강정치킨");
-        expected.setPrice(BigDecimal.valueOf(1000L));
-
-        given(productDao.save(expected)).willReturn(expected);
+        Product product = new Product();
+        product.setName("강정치킨");
+        product.setPrice(BigDecimal.valueOf(1000L));
 
         // when
-        Product actual = sut.create(expected);
+        Product savedProduct = sut.create(product);
 
         // then
-        assertThat(actual).isEqualTo(expected);
-        verify(productDao, times(1)).save(expected);
+        assertThat(savedProduct).isNotNull();
     }
 
     @Test
+    @DisplayName("Product 목록을 조회한다")
     void returnAllSavedEntities() {
-        // given
-        ArrayList<Product> expected = new ArrayList<>();
-        Product product = new Product();
-        product.setId(1L);
-        product.setName("강정치킨");
-        product.setPrice(BigDecimal.valueOf(1000L));
-        expected.add(product);
-
-        given(productDao.findAll()).willReturn(expected);
-
-        // when
         List<Product> actual = sut.list();
 
-        // then
-        assertThat(actual).isEqualTo(expected);
-        verify(productDao, times(1)).findAll();
+        assertThat(actual).hasSize(6);
     }
 }
