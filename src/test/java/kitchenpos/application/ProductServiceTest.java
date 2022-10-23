@@ -80,8 +80,7 @@ class ProductServiceTest {
         // then
         assertAll(
                 () -> assertThat(products).hasSizeGreaterThanOrEqualTo(1),
-                () -> assertThat(products).usingRecursiveFieldByFieldElementComparator()
-                        .extracting("id")
+                () -> assertThat(products).extracting("id")
                         .contains(saved.getId())
         );
     }

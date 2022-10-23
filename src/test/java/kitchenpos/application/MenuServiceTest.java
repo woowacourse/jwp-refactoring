@@ -148,8 +148,7 @@ class MenuServiceTest {
                 () -> assertThat(menus).hasSizeGreaterThanOrEqualTo(1),
                 () -> assertThat(menus).extracting("id")
                         .contains(saved.getId()),
-                () -> assertThat(menus).usingRecursiveFieldByFieldElementComparator()
-                        .extracting("menuProducts")
+                () -> assertThat(menus).extracting("menuProducts")
                         .isNotEmpty()
         );
     }
