@@ -2,12 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -29,42 +24,40 @@ class ProductServiceTest {
         this.productDao = productDao;
     }
 
-    @Nested
-    @TestInstance(Lifecycle.PER_CLASS)
-    class CreateTest {
+    @Test
+    void createWithPositivePrice() {
+        final var positivePrice = 1;
 
-        @ParameterizedTest
-        @ValueSource(ints = {1, 2})
-        void createWithPositivePrice(final int price) {
-            Product expected = new Product("탕수육", price);
-            Product actual = productDao.save(expected);
+        Product expected = new Product("탕수육", positivePrice);
+        Product actual = productDao.save(expected);
 
-            assertThat(actual.getId()).isPositive();
-            assertProductEqualsWithoutId(actual, expected);
-        }
+        assertThat(actual.getId()).isPositive();
+        assertProductEqualsWithoutId(actual, expected);
+    }
 
-        @Test
-        void createWithZeroPrice() {
-            Product expected = new Product("탕수육", 0);
-            Product actual = productDao.save(expected);
+    @Test
+    void createWithZeroPrice() {
+        final var zeroPrice = 0;
 
-            assertThat(actual.getId()).isPositive();
-            assertProductEqualsWithoutId(actual, expected);
-        }
+        Product expected = new Product("탕수육", zeroPrice);
+        Product actual = productDao.save(expected);
 
-        @ParameterizedTest
-        @ValueSource(ints = {-1, -2})
-        void createWithNegativePrice(final int price) {
-            Product product = new Product("탕수육", price);
+        assertThat(actual.getId()).isPositive();
+        assertProductEqualsWithoutId(actual, expected);
+    }
 
-            assertThatThrownBy(() -> productService.create(product))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
+    @Test
+    void createWithNegativePrice() {
+        final var negativePrice = -1;
 
-        private void assertProductEqualsWithoutId(final Product actual, final Product expected) {
-            assertThat(actual.getName()).isEqualTo(expected.getName());
-            assertThat(actual.getPrice()).isEqualByComparingTo(expected.getPrice());
-        }
+        Product product = new Product("탕수육", negativePrice);
+        assertThatThrownBy(() -> productService.create(product))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private void assertProductEqualsWithoutId(final Product actual, final Product expected) {
+        assertThat(actual.getName()).isEqualTo(expected.getName());
+        assertThat(actual.getPrice()).isEqualByComparingTo(expected.getPrice());
     }
 
     @Test
