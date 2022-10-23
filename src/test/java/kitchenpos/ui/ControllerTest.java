@@ -11,12 +11,14 @@ import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.MenuService;
 import kitchenpos.application.OrderService;
 import kitchenpos.application.ProductService;
+import kitchenpos.application.TableService;
 
 @WebMvcTest({
     MenuGroupRestController.class,
     MenuRestController.class,
     OrderRestController.class,
-    ProductRestController.class
+    ProductRestController.class,
+    TableRestController.class
 })
 public class ControllerTest {
 
@@ -37,4 +39,7 @@ public class ControllerTest {
 
     @MockBean
     protected ProductService productService;
+
+    @MockBean
+    protected TableService tableService;
 }
