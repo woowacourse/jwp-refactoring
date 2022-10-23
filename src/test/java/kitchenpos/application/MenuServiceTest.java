@@ -1,19 +1,21 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuTestFixture.떡볶이;
+import static kitchenpos.fixture.ProductFixture.불맛_떡볶이;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.fixture.MenuGroupFixture;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -36,7 +38,11 @@ class MenuServiceTest {
     @Test
     void 메뉴_정상_생성() {
         // given
-        Menu menu = 새_메뉴();
+        MenuGroup menuGroup = menuGroupDao.save(MenuGroupFixture.분식.toEntity());
+        Product product = productDao.save(불맛_떡볶이.toEntity());
+        List<MenuProduct> menuProducts = 메뉴_상품_목록_생성(product);
+
+        Menu menu = 떡볶이.toEntity(menuGroup.getId(), menuProducts);
 
         // when
         Menu savedMenu = menuService.create(menu);
@@ -46,36 +52,17 @@ class MenuServiceTest {
         assertThat(actual).isNotEmpty();
     }
 
-    private Menu 새_메뉴(){
-        Menu menu = new Menu();
-        menu.setName("떡볶이");
-        menu.setPrice(BigDecimal.valueOf(10000));
-        menu.setMenuGroupId(메뉴_그룹_생성().getId());
-        menu.setMenuProducts(메뉴_상품_목록_생성());
-        return menu;
+    private List<MenuProduct> 메뉴_상품_목록_생성(final Product... products) {
+        return Arrays.stream(products)
+                .map(this::메뉴_상품_생성)
+                .collect(Collectors.toList());
     }
 
-    private MenuGroup 메뉴_그룹_생성() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("분식");
-        return menuGroupDao.save(menuGroup);
-    }
-
-    private List<MenuProduct> 메뉴_상품_목록_생성() {
+    private MenuProduct 메뉴_상품_생성(final Product product) {
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setMenuId(null);
-        menuProduct.setProductId(새_상품().getId());
+        menuProduct.setProductId(product.getId());
         menuProduct.setQuantity(3);
-
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(menuProduct);
-        return menuProducts;
-    }
-
-    private Product 새_상품() {
-        Product product = new Product();
-        product.setName("떡볶이");
-        product.setPrice(BigDecimal.valueOf(8000));
-        return productDao.save(product);
+        return menuProduct;
     }
 }
