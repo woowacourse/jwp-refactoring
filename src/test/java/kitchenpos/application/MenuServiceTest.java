@@ -21,7 +21,7 @@ class MenuServiceTest extends ServiceTest {
     void create() {
         // given
         MenuGroup menuGroup = menuGroupService.create(saveMenuGroup("반마리치킨"));
-        Product product = productService.create(createProduct("크림치킨", BigDecimal.valueOf(10000.00)));
+        Product product = productService.create(saveProduct("크림치킨", BigDecimal.valueOf(10000.00)));
         MenuProduct menuProduct = createMenuProduct(product.getId(), 1);
         Menu menu = createMenu("크림치킨", BigDecimal.valueOf(10000.00), menuGroup.getId(),
                 Collections.singletonList(menuProduct));
@@ -39,7 +39,7 @@ class MenuServiceTest extends ServiceTest {
     void list() {
         // given
         MenuGroup menuGroup = menuGroupService.create(saveMenuGroup("반마리치킨"));
-        Product product = productService.create(createProduct("크림치킨", BigDecimal.valueOf(15000.00)));
+        Product product = productService.create(saveProduct("크림치킨", BigDecimal.valueOf(15000.00)));
         saveMenu("크림치킨", menuGroup, product);
         saveMenu("크림어니언치킨", menuGroup, product);
         saveMenu("크림치즈치킨", menuGroup, product);

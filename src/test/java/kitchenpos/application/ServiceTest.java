@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixture.MenuFixture.createMenuGroup;
+import static kitchenpos.fixture.ProductFixture.createProduct;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -64,11 +65,8 @@ abstract class ServiceTest {
         return menuGroupService.create(createMenuGroup(name));
     }
 
-    protected Product createProduct(String name, BigDecimal price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-        return product;
+    protected Product saveProduct(String name, BigDecimal price) {
+        return productService.create(createProduct(name, price));
     }
 
     protected Menu createMenu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
