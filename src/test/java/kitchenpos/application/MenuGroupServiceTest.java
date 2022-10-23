@@ -33,13 +33,13 @@ class MenuGroupServiceTest {
 
     @Test
     @DisplayName("리스트 형태로 조회한다.")
-    void findAsList(){
+    void findAsList() {
         //when
         List<MenuGroup> result = menuGroupService.list();
 
         //then
         assertAll(
-            ()-> assertThat(result).hasSize(5)
+            () -> assertThat(result).hasSize(5)
         );
     }
 }

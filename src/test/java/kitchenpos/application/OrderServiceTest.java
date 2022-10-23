@@ -20,7 +20,7 @@ import kitchenpos.domain.OrderTable;
 class OrderServiceTest {
 
     @Autowired
-    OrderService orderService;
+    private OrderService orderService;
 
     @Autowired
     private TableService tableService;

@@ -21,6 +21,8 @@ import kitchenpos.domain.TableGroup;
 @SpringBootTest
 class TableServiceTest {
 
+    private final OrderTable orderTable = new OrderTable();
+
     @Autowired
     private TableService tableService;
 
@@ -32,8 +34,6 @@ class TableServiceTest {
 
     @Autowired
     private OrderTableDao orderTableDao;
-
-    private final OrderTable orderTable = new OrderTable();
 
     @Test
     @DisplayName("존재하지 않는 테이블을 빈 테이블로 수정하려고 하면 예외를 발생시킨다.")
