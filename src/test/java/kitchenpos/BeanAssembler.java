@@ -2,8 +2,10 @@ package kitchenpos;
 
 import javax.sql.DataSource;
 import kitchenpos.application.ProductService;
+import kitchenpos.dao.JdbcTemplateMenuDao;
 import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.dao.JdbcTemplateProductDao;
+import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 
@@ -19,5 +21,9 @@ public class BeanAssembler {
 
     public static MenuGroupDao createMenuGroupDao(DataSource dataSource) {
         return new JdbcTemplateMenuGroupDao(dataSource);
+    }
+
+    public static MenuDao createMenuDao(DataSource dataSource) {
+        return new JdbcTemplateMenuDao(dataSource);
     }
 }
