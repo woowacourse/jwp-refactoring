@@ -46,8 +46,11 @@ class MenuServiceTest extends ServiceTest {
 
         // when
         List<Menu> menus = menuService.list();
+        for (Menu menu : menus) {
+            System.out.println("menu.getName() = " + menu.getName());
+        }
 
         // then
-        assertThat(menus).hasSize(9);
+        assertThat(menus).hasSize(3);
     }
 }

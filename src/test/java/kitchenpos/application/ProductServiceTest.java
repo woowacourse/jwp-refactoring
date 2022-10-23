@@ -33,6 +33,6 @@ class ProductServiceTest extends ServiceTest {
         List<Product> products = productService.list();
 
         // then
-        assertThat(products).hasSize(6);
+        assertThat(products).hasSize(0);
     }
 }

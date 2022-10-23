@@ -35,7 +35,7 @@ class TableServiceTest extends ServiceTest {
         List<OrderTable> orderTables = tableService.list();
 
         // then
-        assertThat(orderTables).hasSize(8);
+        assertThat(orderTables).hasSize(0);
     }
 
     @Nested
