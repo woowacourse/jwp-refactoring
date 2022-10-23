@@ -6,7 +6,6 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -37,9 +36,9 @@ class ApplicationTest {
     @Autowired
     protected TableGroupDao tableGroupDao;
 
-    @SpyBean
+    @Autowired
     protected MenuDao menuDao;
 
-    @SpyBean
+    @Autowired
     protected OrderDao orderDao;
 }

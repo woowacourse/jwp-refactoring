@@ -2,11 +2,11 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -93,9 +93,6 @@ class TableGroupServiceTest extends ApplicationTest {
     @Test
     void canNotUngroupWhenCookOrMeal() {
         // given
-        when(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
-                .thenReturn(true);
-
         final OrderTable orderTable = new OrderTable(0, true);
         final OrderTable anotherOrderTable = new OrderTable(0, true);
 
@@ -105,8 +102,16 @@ class TableGroupServiceTest extends ApplicationTest {
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(createdOrderTable, createdAnotherOrderTable));
         final TableGroup createdTableGroup = tableGroupService.create(tableGroup);
 
+        saveCookingOrder(createdOrderTable);
+
         // when & then
         assertThatThrownBy(() -> tableGroupService.ungroup(createdTableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private void saveCookingOrder(final OrderTable createdOrderTable) {
+        final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
+        final Order order = new Order(createdOrderTable.getId(), "COOKING", LocalDateTime.now(), List.of(orderLineItem));
+        orderDao.save(order);
     }
 }

@@ -5,8 +5,6 @@ import static kitchenpos.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,14 +53,12 @@ class OrderServiceTest extends ApplicationTest {
     @Test
     void orderLineItemSizeEqualToMenuSize() {
         // given
-        final long invalidMenuSize = 100L;
-        when(menuDao.countByIdIn(any())).thenReturn(invalidMenuSize);
-
         final OrderTable orderTable = new OrderTable(1, false);
         final OrderTable createdOrderTable = tableService.create(orderTable);
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
+        final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1L, 1L, 1L);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 1L, 1L, 1L);
 
-        final Order order = new Order(createdOrderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
+        final Order order = new Order(createdOrderTable.getId(), LocalDateTime.now(), List.of(orderLineItem1, orderLineItem2));
 
         // when & then
         assertThatThrownBy(() -> orderService.create(order))
