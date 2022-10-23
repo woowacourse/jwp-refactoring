@@ -18,7 +18,7 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
     @DisplayName("메뉴 그룹을 생성한다.")
     @Test
     void createMenuGroup() {
-        ExtractableResponse<Response> response = MenuGroupHttpCommunication.create(RequestBody.MENU_GROUP)
+        final ExtractableResponse<Response> response = MenuGroupHttpCommunication.create(RequestBody.MENU_GROUP)
                 .getResponse();
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
@@ -30,7 +30,7 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
     void getMenuGroups() {
         MenuGroupHttpCommunication.create(RequestBody.MENU_GROUP);
 
-        List<MenuGroup> menuGroups = MenuGroupHttpCommunication.getMenuGroups()
+        final List<MenuGroup> menuGroups = MenuGroupHttpCommunication.getMenuGroups()
                 .getResponseBodyAsList(MenuGroup.class);
 
         assertThat(menuGroups.size()).isEqualTo(1);

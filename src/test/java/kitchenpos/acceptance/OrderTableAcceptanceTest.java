@@ -41,10 +41,10 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
     @DisplayName("OrderTable 에 게스트 존재여부를 변경한다.")
     @Test
     void changeEmpty() {
-        OrderTable orderTable = OrderTableHttpCommunication.create(RequestBody.ORDER_TABLE_1)
+        final OrderTable orderTable = OrderTableHttpCommunication.create(RequestBody.ORDER_TABLE_1)
                 .getResponseBodyAsObject(OrderTable.class);
 
-        OrderTable result = OrderTableHttpCommunication.changeEmpty(orderTable.getId(),
+        final OrderTable result = OrderTableHttpCommunication.changeEmpty(orderTable.getId(),
                         RequestBody.NON_EMPTY_TABLE)
                 .getResponseBodyAsObject(OrderTable.class);
 
@@ -54,15 +54,15 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
     @DisplayName("OrderTable 에 있는 게스트 명수를 변경한다.")
     @Test
     void changeNumberOfGuests() {
-        OrderTable orderTable = OrderTableHttpCommunication.create(RequestBody.ORDER_TABLE_1)
+        final OrderTable orderTable = OrderTableHttpCommunication.create(RequestBody.ORDER_TABLE_1)
                 .getResponseBodyAsObject(OrderTable.class);
-        OrderTable nonEmptyOrderTable = OrderTableHttpCommunication.changeEmpty(orderTable.getId(),
+        final OrderTable nonEmptyOrderTable = OrderTableHttpCommunication.changeEmpty(orderTable.getId(),
                         RequestBody.NON_EMPTY_TABLE)
                 .getResponseBodyAsObject(OrderTable.class);
-        Map<String, Object> requestBody = Map.of(
+        final Map<String, Object> requestBody = Map.of(
                 "numberOfGuests", 3,
                 "empty", nonEmptyOrderTable.isEmpty());
-        OrderTable result = OrderTableHttpCommunication.changeNumberOfGuests(orderTable.getId(), requestBody)
+        final OrderTable result = OrderTableHttpCommunication.changeNumberOfGuests(orderTable.getId(), requestBody)
                 .getResponseBodyAsObject(OrderTable.class);
 
         assertThat(result.getNumberOfGuests()).isEqualTo(3);

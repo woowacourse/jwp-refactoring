@@ -28,7 +28,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         final MenuGroup menuGroup = MenuGroupHttpCommunication.create(RequestBody.MENU_GROUP)
                 .getResponseBodyAsObject(MenuGroup.class);
 
-        ExtractableResponse<Response> response = MenuHttpCommunication.create(
+        final ExtractableResponse<Response> response = MenuHttpCommunication.create(
                         RequestBody.getMenuProductFixture(product.getId(), menuGroup.getId()))
                 .getResponse();
 
@@ -47,7 +47,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
 
         MenuHttpCommunication.create(RequestBody.getMenuProductFixture(product.getId(), menuGroup.getId()));
 
-        List<Menu> menus = MenuHttpCommunication.getMenus()
+        final List<Menu> menus = MenuHttpCommunication.getMenus()
                 .getResponseBodyAsList(Menu.class);
 
         assertThat(menus.size()).isEqualTo(1);
