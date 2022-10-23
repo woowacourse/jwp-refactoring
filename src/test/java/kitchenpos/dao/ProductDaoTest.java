@@ -7,19 +7,12 @@ import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT2_PRICE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import javax.sql.DataSource;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 
-@DataJdbcTest
-class ProductDaoTest {
-
-    @Autowired
-    private DataSource dataSource;
+class ProductDaoTest extends DaoTest {
 
     private ProductDao productDao;
 

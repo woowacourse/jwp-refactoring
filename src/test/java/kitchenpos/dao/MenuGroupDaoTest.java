@@ -3,19 +3,12 @@ package kitchenpos.dao;
 import static kitchenpos.support.fixtures.DomainFixtures.MENU_GROUP_NAME1;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import javax.sql.DataSource;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 
-@DataJdbcTest
-class MenuGroupDaoTest {
-
-    @Autowired
-    private DataSource dataSource;
+class MenuGroupDaoTest extends DaoTest {
 
     private MenuGroupDao menuGroupDao;
 

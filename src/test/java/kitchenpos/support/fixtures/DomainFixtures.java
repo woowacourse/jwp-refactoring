@@ -12,6 +12,11 @@ public class DomainFixtures {
     public static final String MENU_GROUP_NAME1 = "한 마리 메뉴";
     public static final String MENU_GROUP_NAME2 = "두 마리 메뉴";
 
+    public static final String MENU1_NAME = "맛난 후라이드 치킨";
+    public static final BigDecimal MENU1_PRICE = BigDecimal.valueOf(18000);
+    public static final String MENU2_NAME = "맛난 양념 치킨";
+    public static final BigDecimal MENU2_PRICE = BigDecimal.valueOf(19000);
+
     private DomainFixtures() {
     }
 }
