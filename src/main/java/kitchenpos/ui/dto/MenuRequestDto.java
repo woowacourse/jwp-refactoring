@@ -6,8 +6,10 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.CreateMenuDto;
 import kitchenpos.application.dto.CreateMenuProductDto;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
+@Setter
 public class MenuRequestDto {
 
     private String name;
@@ -23,6 +25,7 @@ public class MenuRequestDto {
     }
 
     @NoArgsConstructor
+    @Setter
     static class MenuProductRequestDto {
 
         private Long productId;
