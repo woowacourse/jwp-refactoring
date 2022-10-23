@@ -7,15 +7,15 @@ public enum MenuFixture {
 
     MENU_1("메뉴1", 10000);
 
-    private String name;
-    private int price;
+    private final String name;
+    private final int price;
 
-    MenuFixture(String name, int price) {
+    MenuFixture(final String name, final int price) {
         this.name = name;
         this.price = price;
     }
 
-    public Menu 생성(long menuGroupId) {
+    public Menu 생성(final long menuGroupId) {
         return new Menu(this.name, new BigDecimal(this.price), menuGroupId);
     }
 }

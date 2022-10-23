@@ -10,7 +10,7 @@ public enum ProductFixture {
     private final String name;
     private final int price;
 
-    ProductFixture(String name, int price) {
+    ProductFixture(final String name, final int price) {
         this.name = name;
         this.price = price;
     }

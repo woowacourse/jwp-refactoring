@@ -14,8 +14,7 @@ class MenuDaoTest extends JdbcDaoTest {
     @Test
     void 메뉴를_저장할_수_있다() {
         // given
-        final long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성())
-                .getId();
+        final long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
         final Menu menu = MENU_1.생성(menuGroupId);
 
         // when
@@ -28,8 +27,7 @@ class MenuDaoTest extends JdbcDaoTest {
     @Test
     void 메뉴를_아이디로_조회할_수_있다() {
         // given
-        final long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성())
-                .getId();
+        final long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
         final Menu savedMenu = 메뉴를_저장한다(MENU_1.생성(menuGroupId));
 
         // when
@@ -49,8 +47,7 @@ class MenuDaoTest extends JdbcDaoTest {
         // given
         final int alreadyExistCount = menuDao.findAll()
                 .size();
-        final long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성())
-                .getId();
+        final long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
         final Menu savedMenu = 메뉴를_저장한다(MENU_1.생성(menuGroupId));
 
         // when
@@ -65,8 +62,7 @@ class MenuDaoTest extends JdbcDaoTest {
     @Test
     void 아이디_목록으로_존재하는_메뉴의_개수를_반환한다() {
         // given
-        final long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성())
-                .getId();
+        final long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
         final Menu savedMenu = 메뉴를_저장한다(MENU_1.생성(menuGroupId));
         final long notExistId = Long.MAX_VALUE;
 

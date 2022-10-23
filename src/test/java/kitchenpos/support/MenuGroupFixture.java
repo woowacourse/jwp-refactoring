@@ -6,7 +6,7 @@ public enum MenuGroupFixture {
 
     MENU_GROUP_1("메뉴그룹1");
 
-    private String name;
+    private final String name;
 
     MenuGroupFixture(final String name) {
         this.name = name;
