@@ -60,6 +60,17 @@ public class HttpCommunication {
             return this;
         }
 
+        public RequestBuilder update(final String url, final Map<String, Object> body) {
+            response = RestAssured
+                    .given().log().all()
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .body(body)
+                    .when().put(url)
+                    .then().log().all()
+                    .extract();
+            return this;
+        }
+
         public HttpCommunication build() {
             return new HttpCommunication(response);
         }

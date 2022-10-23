@@ -25,4 +25,19 @@ public class RequestBody {
                 entry("menuProducts", List.of(menuProduct))
         );
     }
+
+    public static final Map<String, Object> ORDER_TABLE_1 = Map.of(
+            "numberOfGuests", 0,
+            "empty", true
+    );
+
+    public static final Map<String, Object> NON_EMPTY_TABLE = Map.of(
+            "numberOfGuests", 1,
+            "empty", false
+    );
+
+    public static final Map<String, Object> ORDER_TABLE_2 = Map.of(
+            "numberOfGuests", 0,
+            "empty", true
+    );
 }
