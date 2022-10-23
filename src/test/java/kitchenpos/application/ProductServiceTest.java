@@ -66,8 +66,10 @@ class ProductServiceTest {
     @Test
     @DisplayName("Product 목록을 조회한다")
     void returnAllSavedEntities() {
+        List<Product> expected = productDao.findAll();
+
         List<Product> actual = sut.list();
 
-        assertThat(actual).hasSize(6);
+        assertThat(actual).isEqualTo(expected);
     }
 }

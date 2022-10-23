@@ -166,9 +166,11 @@ class MenuServiceTest {
     @Test
     @DisplayName("Menu 목록을 조회한다")
     void listMenus() {
+        List<Menu> expected = menuDao.findAll();
+
         List<Menu> menus = sut.list();
 
-        assertThat(menus).hasSize(6);
+        assertThat(menus).isEqualTo(expected);
         for (Menu menu : menus) {
             assertThatMenuIdIsSet(menu.getMenuProducts(), menu.getId());
         }

@@ -38,8 +38,10 @@ class MenuGroupServiceTest {
     @Test
     @DisplayName("MenuGroup 목록을 조회한다")
     void returnAllSavedEntities() {
+        List<MenuGroup> expected = menuGroupDao.findAll();
+
         List<MenuGroup> actual = sut.list();
 
-        assertThat(actual).hasSize(4);
+        assertThat(actual).isEqualTo(expected);
     }
 }
