@@ -17,6 +17,7 @@ import java.util.Optional;
 
 @Repository
 public class JdbcTemplateMenuDao implements MenuDao {
+
     private static final String TABLE_NAME = "menu";
     private static final String KEY_COLUMN_NAME = "id";
 
@@ -26,8 +27,8 @@ public class JdbcTemplateMenuDao implements MenuDao {
     public JdbcTemplateMenuDao(final DataSource dataSource) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
-                .withTableName(TABLE_NAME)
-                .usingGeneratedKeyColumns(KEY_COLUMN_NAME)
+            .withTableName(TABLE_NAME)
+            .usingGeneratedKeyColumns(KEY_COLUMN_NAME)
         ;
     }
 
@@ -57,23 +58,22 @@ public class JdbcTemplateMenuDao implements MenuDao {
     public long countByIdIn(final List<Long> ids) {
         final String sql = "SELECT COUNT(*) FROM menu WHERE id IN (:ids)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("ids", ids);
+            .addValue("ids", ids);
         return jdbcTemplate.queryForObject(sql, parameters, Long.class);
     }
 
     private Menu select(final Long id) {
         final String sql = "SELECT id, name, price, menu_group_id FROM menu WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("id", id);
+            .addValue("id", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     private Menu toEntity(final ResultSet resultSet) throws SQLException {
-        final Menu entity = new Menu();
-        entity.setId(resultSet.getLong("id"));
-        entity.setName(resultSet.getString("name"));
-        entity.setPrice(resultSet.getBigDecimal("price"));
-        entity.setMenuGroupId(resultSet.getLong("menu_group_id"));
-        return entity;
+        return new Menu(
+            resultSet.getLong(KEY_COLUMN_NAME),
+            resultSet.getString("name"),
+            resultSet.getBigDecimal("price"),
+            resultSet.getLong("menu_group_id"));
     }
 }

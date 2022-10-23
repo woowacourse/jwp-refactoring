@@ -1,40 +1,23 @@
 package kitchenpos.domain;
 
+import lombok.Getter;
+
+@Getter
 public class MenuProduct {
-    private Long seq;
-    private Long menuId;
-    private Long productId;
-    private long quantity;
 
-    public Long getSeq() {
-        return seq;
-    }
+    private final Long seq;
+    private final Long menuId;
+    private final Long productId;
+    private final long quantity;
 
-    public void setSeq(final Long seq) {
+    public MenuProduct(Long seq, Long menuId, Long productId, long quantity) {
         this.seq = seq;
-    }
-
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
         this.menuId = menuId;
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(final Long productId) {
         this.productId = productId;
-    }
-
-    public long getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
         this.quantity = quantity;
+    }
+
+    public MenuProduct(Long menuId, Long productId, long quantity) {
+        this(null, menuId, productId, quantity);
     }
 }
