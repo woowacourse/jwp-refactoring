@@ -1,9 +1,11 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.ProductFixture.PRODUCT_NAME;
+import static kitchenpos.application.ProductFixture.PRODUCT_PRICE;
+import static kitchenpos.application.ProductFixture.UNSAVED_PRODUCT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Stream;
 import kitchenpos.domain.Product;
@@ -24,13 +26,7 @@ class ProductServiceTest {
     @DisplayName("상품을 만든다.")
     @Test
     void create() {
-        Product product = new Product();
-        BigDecimal price = BigDecimal.valueOf(3000);
-        String name = "맘모스빵";
-        product.setPrice(price);
-        product.setName(name);
-
-        Product savedProduct = productService.create(product);
+        Product savedProduct = productService.create(UNSAVED_PRODUCT);
         List<Product> products = productService.list();
 
         assertThat(products).contains(savedProduct);
@@ -45,17 +41,9 @@ class ProductServiceTest {
     }
 
     static Stream<Arguments> argsOfCreateException() {
-        BigDecimal price = BigDecimal.valueOf(3000);
-        String name = "맘모스빵";
-
-        Product noNameProduct = new Product();
-        noNameProduct.setPrice(price);
-        Product noPriceProduct = new Product();
-        noPriceProduct.setName(name);
-
         return Stream.of(
-                Arguments.of(noNameProduct),
-                Arguments.of(noPriceProduct)
+                Arguments.of(new Product(null, PRODUCT_PRICE)),
+                Arguments.of(new Product(PRODUCT_NAME, null))
         );
     }
 }

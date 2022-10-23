@@ -8,10 +8,20 @@ public class Product {
     private String name;
     private BigDecimal price;
 
+    @Deprecated
+    public Product() {
+    }
+
+    public Product(String name, BigDecimal price) {
+        this.name = name;
+        this.price = price;
+    }
+
     public Long getId() {
         return id;
     }
 
+    @Deprecated
     public void setId(final Long id) {
         this.id = id;
     }
@@ -20,6 +30,7 @@ public class Product {
         return name;
     }
 
+    @Deprecated
     public void setName(final String name) {
         this.name = name;
     }
@@ -28,6 +39,7 @@ public class Product {
         return price;
     }
 
+    @Deprecated
     public void setPrice(final BigDecimal price) {
         this.price = price;
     }
