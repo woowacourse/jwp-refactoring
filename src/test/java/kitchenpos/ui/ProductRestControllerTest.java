@@ -36,7 +36,7 @@ class ProductRestControllerTest {
         given(this.productService.create(product))
                 .willReturn(1L);
 
-        this.mvc.perform(post("/api/products/")
+        this.mvc.perform(post("/api/products")
                         .content(request)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isCreated());

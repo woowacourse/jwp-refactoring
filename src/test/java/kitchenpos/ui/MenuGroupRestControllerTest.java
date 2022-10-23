@@ -32,7 +32,7 @@ class MenuGroupRestControllerTest {
         MenuGroup menuGroup = MenuGroup.of(1L, "name");
         String request = objectMapper.writeValueAsString(menuGroup);
 
-        given(menuGroupService.create(menuGroup)).willReturn(menuGroup);
+        given(this.menuGroupService.create(menuGroup)).willReturn(1L);
 
         this.mvc.perform(post("/api/menu-groups")
                         .content(request)
