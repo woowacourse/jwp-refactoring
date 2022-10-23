@@ -1,12 +1,15 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuGroupFixture.분식;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.fixture.MenuGroupFixture;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,8 +26,7 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴_그룹_정상_생성() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("양식");
+        MenuGroup menuGroup = 분식.toEntity();
 
         // when
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
@@ -48,25 +50,20 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴_그룹_목록_조회() {
         // given
-        int count = 3;
-        List<MenuGroup> menuGroups = saveMenuGroups(count);
+        List<MenuGroup> menuGroups = 메뉴_그룹_목록_생성();
 
         // when
         List<MenuGroup> actual = menuGroupService.list();
 
         // then
-        assertThat(actual.size()).isEqualTo(count);
+        assertThat(actual.size()).isEqualTo(menuGroups.size());
         assertThat(actual).usingRecursiveComparison()
                 .isEqualTo(menuGroups);
     }
 
-    private List<MenuGroup> saveMenuGroups(final int count) {
-        List<MenuGroup> menuGroups = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            MenuGroup menuGroup = new MenuGroup();
-            menuGroup.setName("메뉴 그룹명 " + i);
-            menuGroups.add(menuGroupDao.save(menuGroup));
-        }
-        return menuGroups;
+    private List<MenuGroup> 메뉴_그룹_목록_생성() {
+        return Arrays.stream(MenuGroupFixture.values())
+                .map(it -> menuGroupDao.save(it.toEntity()))
+                .collect(Collectors.toList());
     }
 }
