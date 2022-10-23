@@ -26,12 +26,12 @@
 
 ## 요구 사항
 
-- [ ] kitchenpos 패키지의 코드를 보고 요구 사항을 README.md에 작성
+- [x] kitchenpos 패키지의 코드를 보고 요구 사항을 README.md에 작성
     - [마크다운(Markdown) - Dooray!](https://dooray.com/htmls/guides/markdown_ko_KR.html)
-- [ ] 요구 사항을 토대로 모든 Business Object에 대한 테스트 코드 작성
+- [x] 요구 사항을 토대로 모든 Business Object에 대한 테스트 코드 작성
     - [Testing in Spring Boot - Baeldung](https://www.baeldung.com/spring-boot-testing)
     - [Exploring the Spring Boot TestRestTemplate](https://www.baeldung.com/spring-boot-testresttemplate)
-- [ ] Lombok 사용하지 않기
+- [x] Lombok 사용하지 않기
     - [Lombok 사용상 주의점(Pitfall)](https://kwonnam.pe.kr/wiki/java/lombok/pitfall)
 
 ---
@@ -99,6 +99,7 @@
 - 테스트
   - [ ] nested 어노테이션 사용해보기
   - [ ] 자주 사용되는 도메인을 픽스쳐로 분리하기
+  - [ ] controller 테스트도 추가해보기
 - 도메인
   - [ ] 불필요한 setter 없애기
   - [ ] 도메인에서 처리 가능한 비지니스 로직을 서비스로부터 책임 분리
