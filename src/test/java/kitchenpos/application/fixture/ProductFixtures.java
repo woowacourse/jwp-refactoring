@@ -13,7 +13,7 @@ public class ProductFixtures {
     }
 
     public static final Product 후라이드() {
-        return generateProduct("후라이드", BigDecimal.valueOf(15000));
+        return generateProduct("후라이드", BigDecimal.valueOf(16000));
     }
 
     public static final Product 양념치킨() {
