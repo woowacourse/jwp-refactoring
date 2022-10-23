@@ -7,31 +7,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.tools.javac.util.List;
 
-import kitchenpos.application.MenuGroupService;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuGroupResponse;
 
-@WebMvcTest(MenuGroupRestController.class)
-class MenuGroupRestControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
-    private MenuGroupService menuGroupService;
+class MenuGroupRestControllerTest extends ControllerTest {
 
     @DisplayName("메뉴 그룹을 등록한다.")
     @Test
@@ -39,8 +23,9 @@ class MenuGroupRestControllerTest {
         // given
         MenuGroupRequest menuGroupRequest = new MenuGroupRequest("신메뉴");
 
+        MenuGroupResponse menuGroupResponse = new MenuGroupResponse(1L, "신메뉴");
         given(menuGroupService.create(any(MenuGroupRequest.class)))
-            .willReturn(new MenuGroupResponse(1L, "신메뉴"));
+            .willReturn(menuGroupResponse);
 
         // when
         ResultActions result = mockMvc.perform(post("/api/menu-groups")
@@ -49,7 +34,8 @@ class MenuGroupRestControllerTest {
 
         // then
         result.andExpect(status().isCreated())
-            .andExpect(header().string("location", "/api/menu-groups/1"));
+            .andExpect(header().string("location", "/api/menu-groups/1"))
+            .andExpect(content().json(objectMapper.writeValueAsString(menuGroupResponse)));
     }
 
     @DisplayName("메뉴 그룹 목록을 조회한다.")
