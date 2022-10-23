@@ -1,5 +1,10 @@
 package kitchenpos.application;
 
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.CreateTableDto;
+import kitchenpos.application.dto.EmptyTableDto;
+import kitchenpos.application.dto.TableDto;
+import kitchenpos.application.dto.UpdateGuestNumberDto;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
@@ -20,19 +25,21 @@ public class TableService {
     private final OrderTableDao orderTableDao;
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-
-        return orderTableDao.save(orderTable);
+    public TableDto create(final CreateTableDto createTableDto) {
+        OrderTable orderTable = new OrderTable(createTableDto.getNumberOfGuests(), createTableDto.getEmpty());
+        return TableDto.of(orderTableDao.save(orderTable));
     }
 
-    public List<OrderTable> list() {
-        return orderTableDao.findAll();
+    public List<TableDto> list() {
+        return orderTableDao.findAll()
+                .stream()
+                .map(TableDto::of)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public TableDto changeEmpty(EmptyTableDto emptyTableDto) {
+        Long orderTableId = emptyTableDto.getOrderTableId();
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -45,14 +52,15 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+        savedOrderTable.setEmpty(emptyTableDto.getEmpty());
 
-        return orderTableDao.save(savedOrderTable);
+        return TableDto.of(orderTableDao.save(savedOrderTable));
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+    public TableDto changeNumberOfGuests(UpdateGuestNumberDto updateGuestNumberDto) {
+        final Long orderTableId = updateGuestNumberDto.getOrderTableId();
+        final int numberOfGuests = updateGuestNumberDto.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
@@ -67,6 +75,6 @@ public class TableService {
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);
 
-        return orderTableDao.save(savedOrderTable);
+        return TableDto.of(orderTableDao.save(savedOrderTable));
     }
 }
