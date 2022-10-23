@@ -7,13 +7,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestConstructor;
-import org.springframework.test.context.TestConstructor.AutowireMode;
 
 @SuppressWarnings("NonAsciiCharacters")
-@TestConstructor(autowireMode = AutowireMode.ALL)
-@SpringBootTest
+@ApplicationTest
 class ProductServiceTest {
 
     private final ProductService productService;
