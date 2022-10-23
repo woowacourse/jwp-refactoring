@@ -21,9 +21,6 @@ public class ProductService {
     public Product create(final Product product) {
         final BigDecimal price = product.getPrice();
 
-        /**
-         * 상품의 가격은 0보다 크거나 같아야한다.
-         */
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
