@@ -1,3 +1,12 @@
+drop table if exists orders;
+drop table if exists order_line_item;
+drop table if exists menu;
+drop table if exists menu_group;
+drop table if exists menu_product;
+drop table if exists order_table;
+drop table if exists table_group;
+drop table if exists product;
+
 CREATE TABLE orders (
     id BIGINT(20) NOT NULL AUTO_INCREMENT,
     order_table_id BIGINT(20) NOT NULL,
