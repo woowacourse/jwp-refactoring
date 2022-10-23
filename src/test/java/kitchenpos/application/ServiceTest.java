@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.fixture.OrderFixture.forUpdateStatus;
+
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -10,7 +12,11 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,5 +77,21 @@ public abstract class ServiceTest {
 
     protected Menu 메뉴등록(final Menu menu) {
         return menuService.create(menu);
+    }
+
+    protected OrderTable 테이블등록(final OrderTable orderTable) {
+        return orderTableDao.save(orderTable);
+    }
+
+    protected TableGroup 단체지정(final TableGroup tableGroup) {
+        return tableGroupService.create(tableGroup);
+    }
+
+    protected Order 주문등록(final Order order) {
+        return orderService.create(order);
+    }
+
+    protected void 주문상태변경(final Order order, final OrderStatus orderStatus) {
+        orderService.changeOrderStatus(order.getId(), forUpdateStatus(orderStatus));
     }
 }
