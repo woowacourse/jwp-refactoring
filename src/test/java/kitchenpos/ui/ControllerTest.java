@@ -1,25 +1,30 @@
 package kitchenpos.ui;
 
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.ResponseEntity;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kitchenpos.application.MenuGroupService;
+import kitchenpos.application.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.web.servlet.MockMvc;
 
-@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
+@WebMvcTest({
+        ProductRestController.class,
+        MenuGroupRestController.class
+})
+@Import(MockMvcConfig.class)
 public abstract class ControllerTest {
 
-    private static final String ORIGIN = "http://localhost:8080";
-    private static final TestRestTemplate restTemplate = new TestRestTemplate();
+    @Autowired
+    protected MockMvc mockMvc;
 
-    protected <T> ResponseEntity<T> get(final String url, final Class<T> clazz) {
-        return restTemplate.getForEntity(url, clazz);
-    }
+    @Autowired
+    protected ObjectMapper objectMapper;
 
-    protected <T> ResponseEntity<T> post(final String url, final Object request, final Class<T> clazz) {
-        return restTemplate.postForEntity(url, request, clazz);
-    }
+    @MockBean
+    protected MenuGroupService menuGroupService;
 
-    protected String url(final String url) {
-        return ORIGIN + url;
-    }
+    @MockBean
+    protected ProductService productService;
 }
