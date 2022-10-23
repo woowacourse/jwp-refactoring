@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.DomainFixture.getEmptyTable;
+import static kitchenpos.application.DomainFixture.getNotEmptyTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -43,8 +45,8 @@ class TableGroupServiceTest {
 
     @BeforeEach
     void setUp() {
-        table1 = orderTableDao.save(new OrderTable(null, null, 0, true));
-        table2 = orderTableDao.save(new OrderTable(null, null, 0, true));
+        table1 = orderTableDao.save(getEmptyTable());
+        table2 = orderTableDao.save(getEmptyTable());
     }
 
     @DisplayName("단체 지정을 등록한다.")
@@ -89,7 +91,7 @@ class TableGroupServiceTest {
     @Test
     void create_exception_containsNotEmptyTable() {
         final TableGroup tableGroup = new TableGroup();
-        final OrderTable table3 = orderTableDao.save(new OrderTable(null, null, 0, false));
+        final OrderTable table3 = orderTableDao.save(getNotEmptyTable(0));
         tableGroup.setOrderTables(List.of(table1, table2, table3));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -103,7 +105,7 @@ class TableGroupServiceTest {
         tableGroup.setOrderTables(List.of(table1, table2));
         tableGroupService.create(tableGroup);
 
-        final OrderTable table3 = orderTableDao.save(new OrderTable(null, null, 0, false));
+        final OrderTable table3 = orderTableDao.save(getNotEmptyTable(0));
         final TableGroup newTableGroup = new TableGroup();
         newTableGroup.setOrderTables(List.of(table1, table3));
 

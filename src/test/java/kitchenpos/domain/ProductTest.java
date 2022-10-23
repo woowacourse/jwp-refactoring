@@ -11,14 +11,14 @@ class ProductTest {
     @DisplayName("가격이 null이면 예외를 반환한다.")
     @Test
     void create_exception_priceIsNull() {
-        assertThatThrownBy(() -> new Product(null, "마이쮸", null))
+        assertThatThrownBy(() -> new Product("마이쮸", null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("가격이 0보다 작으면 예외를 반환한다.")
     @Test
     void create_exception_priceIsLessThanZero() {
-        assertThatThrownBy(() -> new Product(null, "마이쮸", BigDecimal.valueOf(-1)))
+        assertThatThrownBy(() -> new Product("마이쮸", BigDecimal.valueOf(-1)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

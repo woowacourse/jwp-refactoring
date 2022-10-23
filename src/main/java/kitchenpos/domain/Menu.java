@@ -12,6 +12,10 @@ public class Menu {
     private final Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
+    public Menu(String name, BigDecimal price, Long menuGroupId) {
+        this(null, name, price, menuGroupId);
+    }
+
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
         validatePrice(price);
         this.id = id;

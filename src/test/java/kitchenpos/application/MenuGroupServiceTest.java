@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.DomainFixture.getMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -21,14 +22,13 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 등록한다.")
     @Test
     void create() {
-        final String name = "마이쮸 2종 세트";
-        final MenuGroup menuGroup = new MenuGroup(null, name);
+        final MenuGroup menuGroup = getMenuGroup();
 
         final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
         assertAll(
                 () -> assertThat(savedMenuGroup.getId()).isNotNull(),
-                () -> assertThat(savedMenuGroup.getName()).isEqualTo(name)
+                () -> assertThat(savedMenuGroup.getName()).isEqualTo(menuGroup.getName())
         );
     }
 

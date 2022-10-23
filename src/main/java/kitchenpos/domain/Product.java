@@ -9,6 +9,10 @@ public class Product {
     private final String name;
     private final BigDecimal price;
 
+    public Product(String name, BigDecimal price) {
+        this(null, name, price);
+    }
+
     public Product(Long id, String name, BigDecimal price) {
         validatePrice(price);
         this.id = id;

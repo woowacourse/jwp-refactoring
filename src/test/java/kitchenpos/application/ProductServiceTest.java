@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.DomainFixture.getProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -22,17 +22,14 @@ class ProductServiceTest {
     @DisplayName("상품을 등록한다.")
     @Test
     void create() {
-        final String name = "마이쮸";
-        final BigDecimal price = BigDecimal.valueOf(800);
-
-        final Product product = new Product(null, name, price);
+        final Product product = getProduct();
 
         final Product savedProduct = productService.create(product);
 
         assertAll(
                 () -> assertThat(savedProduct.getId()).isNotNull(),
-                () -> assertThat(savedProduct.getName()).isEqualTo(name),
-                () -> assertThat(savedProduct.getPrice()).isEqualByComparingTo(price)
+                () -> assertThat(savedProduct.getName()).isEqualTo(product.getName()),
+                () -> assertThat(savedProduct.getPrice()).isEqualByComparingTo(product.getPrice())
         );
     }
 

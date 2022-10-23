@@ -1,10 +1,13 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.DomainFixture.getEmptyTable;
+import static kitchenpos.application.DomainFixture.getMenu;
+import static kitchenpos.application.DomainFixture.getMenuGroup;
+import static kitchenpos.application.DomainFixture.getNotEmptyTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -43,9 +46,9 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(null, "마이쮸 1종 세트"));
-        menu = menuDao.save(new Menu(null, "마이쮸", BigDecimal.valueOf(800), menuGroup.getId()));
-        orderTable = orderTableDao.save(new OrderTable(null, null, 5, false));
+        final MenuGroup menuGroup = menuGroupDao.save(getMenuGroup());
+        menu = menuDao.save(getMenu(menuGroup.getId()));
+        orderTable = orderTableDao.save(getNotEmptyTable(5));
     }
 
     @DisplayName("주문을 등록한다.")
@@ -101,7 +104,7 @@ class OrderServiceTest {
     void create_exception_tableIsEmpty() {
         final Order order = new Order();
         order.setOrderLineItems(List.of(new OrderLineItem(null, null, menu.getId(), 1)));
-        final OrderTable orderTable = orderTableDao.save(new OrderTable(null, null, 5, true));
+        final OrderTable orderTable = orderTableDao.save(getEmptyTable());
         order.setOrderTableId(orderTable.getId());
 
         assertThatThrownBy(() -> orderService.create(order))
