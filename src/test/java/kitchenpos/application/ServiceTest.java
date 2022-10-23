@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuFixture.createMenu;
 import static kitchenpos.fixture.MenuFixture.createMenuGroup;
+import static kitchenpos.fixture.MenuFixture.createMenuProduct;
 import static kitchenpos.fixture.ProductFixture.createProduct;
 
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
@@ -69,20 +69,11 @@ abstract class ServiceTest {
         return productService.create(createProduct(name, price));
     }
 
-    protected Menu createMenu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-        return menu;
-    }
-
-    protected MenuProduct createMenuProduct(Long productId, long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+    protected Menu saveMenu(String menuName, MenuGroup menuGroup, Product product) {
+        MenuProduct menuProduct = createMenuProduct(product.getId(), 1);
+        return menuService.create(
+                createMenu(menuName, product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())),
+                        menuGroup.getId(), menuProduct));
     }
 
     protected OrderTable createOrderTable(int numberOfGuests, boolean empty) {
@@ -90,12 +81,5 @@ abstract class ServiceTest {
         orderTable.setNumberOfGuests(numberOfGuests);
         orderTable.setEmpty(empty);
         return orderTable;
-    }
-
-    protected Menu saveMenu(String menuName, MenuGroup menuGroup, Product product) {
-        MenuProduct menuProduct = createMenuProduct(product.getId(), 1);
-        return menuService.create(
-                createMenu(menuName, product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())),
-                        menuGroup.getId(), Collections.singletonList(menuProduct)));
     }
 }
