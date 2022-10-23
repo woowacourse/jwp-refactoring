@@ -11,7 +11,7 @@ public class BeanAssembler {
         return new ProductService(createProductDao(dataSource));
     }
 
-    private static ProductDao createProductDao(DataSource dataSource) {
+    public static ProductDao createProductDao(DataSource dataSource) {
         return new JdbcTemplateProductDao(dataSource);
     }
 }
