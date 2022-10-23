@@ -1,5 +1,9 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.exception.ExceptionType.INVALID_TABLE_GROUP_EXCEPTION;
+import static kitchenpos.application.exception.ExceptionType.INVALID_TABLE_UNGROUP_EXCEPTION;
+import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +39,7 @@ class TableGroupServiceTest extends ServiceTest {
 
         Assertions.assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("그룹 구성은 두개 이상의 테이블 부터 가능합니다.");
+                .hasMessage(INVALID_TABLE_GROUP_EXCEPTION.getMessage());
     }
 
     @Test
@@ -44,7 +48,7 @@ class TableGroupServiceTest extends ServiceTest {
 
         Assertions.assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("그룹 구성은 두개 이상의 테이블 부터 가능합니다.");
+                .hasMessage(INVALID_TABLE_GROUP_EXCEPTION.getMessage());
     }
 
     @Test
@@ -53,7 +57,7 @@ class TableGroupServiceTest extends ServiceTest {
 
         Assertions.assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("존재하지 않는 테이블이 포함되어 있습니다.");
+                .hasMessage(NOT_FOUND_TABLE_EXCEPTION.getMessage());
     }
 
     @Test
@@ -63,6 +67,6 @@ class TableGroupServiceTest extends ServiceTest {
 
         Assertions.assertThatThrownBy(() -> tableGroupService.ungroup(1L))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("아직 그룹을 해지할 수 없습니다.");
+                .hasMessage(INVALID_TABLE_UNGROUP_EXCEPTION.getMessage());
     }
 }

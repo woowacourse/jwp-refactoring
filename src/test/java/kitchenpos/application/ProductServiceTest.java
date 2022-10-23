@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.exception.ExceptionType.INVALID_PRODUCT_PRICE_EXCEPTION;
+
 import java.math.BigDecimal;
 import kitchenpos.domain.Product;
 import org.assertj.core.api.Assertions;
@@ -7,15 +9,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * ### Product 상품은 `이름`과 `가격`을 가지고 있습니다.
+ * ### Product &#xC0C1;&#xD488;&#xC740; `&#xC774;&#xB984;`&#xACFC; `&#xAC00;&#xACA9;`&#xC744; &#xAC00;&#xC9C0;&#xACE0;
+ * &#xC788;&#xC2B5;&#xB2C8;&#xB2E4;.
  * <br>
- * - create (상품을 생성할 수 있습니다)
+ * - create (&#xC0C1;&#xD488;&#xC744; &#xC0DD;&#xC131;&#xD560; &#xC218; &#xC788;&#xC2B5;&#xB2C8;&#xB2E4;)
  * <br>
- * - price 가 필수값입니다.
+ * - price &#xAC00; &#xD544;&#xC218;&#xAC12;&#xC785;&#xB2C8;&#xB2E4;.
  * <br>
- * - price > 0 조건을 만족해야합니다.
+ * - price > 0 &#xC870;&#xAC74;&#xC744; &#xB9CC;&#xC871;&#xD574;&#xC57C;&#xD569;&#xB2C8;&#xB2E4;.
  * <br>
- * - findAll (상품 전체를 조회합니다.)
+ * - findAll (&#xC0C1;&#xD488; &#xC804;&#xCCB4;&#xB97C; &#xC870;&#xD68C;&#xD569;&#xB2C8;&#xB2E4;.)
  */
 class ProductServiceTest extends ServiceTest {
 
@@ -24,23 +27,19 @@ class ProductServiceTest extends ServiceTest {
 
     @Test
     void 상품의_가격이_없을시_예외를_반환한다() {
-        // given
         final Product 짜장면 = new Product(1L, "짜장면", BigDecimal.valueOf(-1));
-        // when
 
-        // then
         Assertions.assertThatThrownBy(() -> productService.create(짜장면))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(INVALID_PRODUCT_PRICE_EXCEPTION.getMessage());
     }
 
     @Test
     void 상품의_가격이_null_일때_예외를_반환한다() {
-        // given
         final Product 짜장면 = new Product(1L, "짜장면", null);
-        // when
 
-        // then
         Assertions.assertThatThrownBy(() -> productService.create(짜장면))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(INVALID_PRODUCT_PRICE_EXCEPTION.getMessage());
     }
 }

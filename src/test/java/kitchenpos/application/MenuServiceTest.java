@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import kitchenpos.domain.Menu;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  * Menu 메뉴는 이름, 가격, 메뉴 그룹, 메뉴 상품 리스트를 가지고 있습니다.

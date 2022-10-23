@@ -25,6 +25,10 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+/***
+ * 테스트 내에 사용하는 Mock 객체들을 관리하는 객체입니다.
+ * Application Context 재사용을 위해서 상속 구조를 가지고 있습니다.
+ */
 @SpringBootTest
 public class ServiceTest {
 

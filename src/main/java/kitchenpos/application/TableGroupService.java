@@ -1,10 +1,15 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.exception.ExceptionType.INVALID_TABLE_GROUP_EXCEPTION;
+import static kitchenpos.application.exception.ExceptionType.INVALID_TABLE_UNGROUP_EXCEPTION;
+import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
+
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import kitchenpos.application.exception.CustomIllegalArgumentException;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -33,7 +38,7 @@ public class TableGroupService {
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException("그룹 구성은 두개 이상의 테이블 부터 가능합니다.");
+            throw new CustomIllegalArgumentException(INVALID_TABLE_GROUP_EXCEPTION);
         }
 
         final List<Long> orderTableIds = orderTables.stream()
@@ -43,12 +48,12 @@ public class TableGroupService {
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
         if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException("존재하지 않는 테이블이 포함되어 있습니다.");
+            throw new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION);
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
+                throw new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION);
             }
         }
 
@@ -77,7 +82,7 @@ public class TableGroupService {
 
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("아직 그룹을 해지할 수 없습니다.");
+            throw new CustomIllegalArgumentException(INVALID_TABLE_UNGROUP_EXCEPTION);
         }
 
         for (final OrderTable orderTable : orderTables) {

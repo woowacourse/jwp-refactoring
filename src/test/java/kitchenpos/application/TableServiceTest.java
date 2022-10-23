@@ -1,5 +1,10 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.exception.ExceptionType.INVALID_CHANGE_NUMBER_OF_GUEST;
+import static kitchenpos.application.exception.ExceptionType.INVALID_PROCEEDING_TABLE_GROUP_EXCEPTION;
+import static kitchenpos.application.exception.ExceptionType.INVALID_TABLE_UNGROUP_EXCEPTION;
+import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
+
 import kitchenpos.domain.OrderTable;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -39,15 +44,16 @@ class TableServiceTest extends ServiceTest {
     void 테이블_초기화_시도시_존재하지않는_테이블이면_예외를_반환한다() {
         Assertions.assertThatThrownBy(() -> tableService.changeEmpty(1L, 테이블_생성(1L)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("테이블을 찾을 수 없습니다.");
+                .hasMessage(NOT_FOUND_TABLE_EXCEPTION.getMessage());
     }
 
     @Test
     void 테이블_초기화_시도시_테이블_그룹이_null_이_아니면_예외를_반환한다() {
         존재하는_테이블_세팅();
+
         Assertions.assertThatThrownBy(() -> tableService.changeEmpty(1L, 테이블_생성(1L)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("진행중인 테이블 그룹이 존재합니다.");
+                .hasMessage(INVALID_PROCEEDING_TABLE_GROUP_EXCEPTION.getMessage());
     }
 
     @Test
@@ -57,7 +63,7 @@ class TableServiceTest extends ServiceTest {
 
         Assertions.assertThatThrownBy(() -> tableService.changeEmpty(1L, 테이블_생성(1L)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("아직 그룹을 해지할 수 없습니다.");
+                .hasMessage(INVALID_TABLE_UNGROUP_EXCEPTION.getMessage());
     }
 
     @Test
@@ -66,7 +72,7 @@ class TableServiceTest extends ServiceTest {
 
         Assertions.assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, 음수_테이블))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("게스트 숫자는 음수일 수 없습니다.");
+                .hasMessage(INVALID_CHANGE_NUMBER_OF_GUEST.getMessage());
     }
 
     @Test
@@ -75,6 +81,6 @@ class TableServiceTest extends ServiceTest {
 
         Assertions.assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, 테이블_생성(1L)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("테이블이 존재하지 않습니다.");
+                .hasMessage(NOT_FOUND_TABLE_EXCEPTION.getMessage());
     }
 }

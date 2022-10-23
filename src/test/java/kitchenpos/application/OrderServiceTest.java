@@ -1,12 +1,15 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.exception.ExceptionType.INVALID_CHANGE_ORDER_STATUS_EXCEPTION;
+import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_MENU_EXCEPTION;
+import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
+
 import java.time.LocalDateTime;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  * Order 매장에서 발생하는 주문입니다.  `테이블 번호`, `주문 상태`, `주문 시간`, 주문에 속하는 수량이 있는 `메뉴`를 가지고 있습니다.
@@ -47,7 +50,7 @@ class OrderServiceTest extends ServiceTest {
 
         Assertions.assertThatThrownBy(() -> orderService.create(주문))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("없는 메뉴가 포함된 주문입니다.");
+                .hasMessage(NOT_FOUND_MENU_EXCEPTION.getMessage());
     }
 
     @Test
@@ -59,7 +62,7 @@ class OrderServiceTest extends ServiceTest {
 
         Assertions.assertThatThrownBy(() -> orderService.create(주문))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("없는 테이블에 대한 주문입니다.");
+                .hasMessage(NOT_FOUND_TABLE_EXCEPTION.getMessage());
     }
 
     @Test
@@ -73,6 +76,6 @@ class OrderServiceTest extends ServiceTest {
 
         Assertions.assertThatThrownBy(() -> orderService.changeOrderStatus(1L, 주문))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("이미 완료된 주문입니다.");
+                .hasMessage(INVALID_CHANGE_ORDER_STATUS_EXCEPTION.getMessage());
     }
 }
