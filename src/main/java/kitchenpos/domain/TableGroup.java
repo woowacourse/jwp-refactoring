@@ -14,7 +14,7 @@ public class TableGroup {
     public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
+        this.orderTables.addAll(orderTables);
     }
 
     public TableGroup(final Long id, final LocalDateTime createdDate) {
@@ -48,8 +48,8 @@ public class TableGroup {
         return orderTables;
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+    public void addOrderTables(final List<OrderTable> orderTables) {
+        this.orderTables.addAll(orderTables);
     }
 
     @Override

@@ -19,6 +19,10 @@ public class OrderTable {
         this(null, tableGroupId, numberOfGuests, empty);
     }
 
+    public OrderTable(final int numberOfGuests, final boolean empty) {
+        this(null, numberOfGuests, empty);
+    }
+
     public Long getId() {
         return id;
     }
