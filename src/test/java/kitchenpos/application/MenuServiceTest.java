@@ -121,6 +121,28 @@ class MenuServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @Test
+    void 메뉴_목록_조회() {
+        // given
+        MenuGroup menuGroup = menuGroupDao.save(MenuGroupFixture.분식.toEntity());
+        Product product = productDao.save(불맛_떡볶이.toEntity());
+        List<MenuProduct> menuProducts = 메뉴_상품_목록_생성(product);
+
+        Menu menu = 떡볶이.toEntity(menuGroup.getId(), menuProducts);
+        menuService.create(menu);
+
+        // when
+        List<Menu> menus = menuService.list();
+
+        // then
+        Menu actual = menus.get(0);
+        assertThat(actual.getId()).isNotNull();
+        assertThat(actual.getMenuProducts())
+                .usingRecursiveComparison()
+                .ignoringFields("seq")
+                .isEqualTo(menuProducts);
+    }
+
     private List<MenuProduct> 메뉴_상품_목록_생성(final Product... products) {
         return Arrays.stream(products)
                 .map(it -> 메뉴_상품_생성(it, 3))
