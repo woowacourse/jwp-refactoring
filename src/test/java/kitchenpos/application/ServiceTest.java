@@ -6,9 +6,11 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +33,9 @@ abstract class ServiceTest {
     protected TableService tableService;
 
     @Autowired
+    protected TableGroupService tableGroupService;
+
+    @Autowired
     protected MenuGroupDao menuGroupDao;
 
     @Autowired
@@ -41,6 +46,9 @@ abstract class ServiceTest {
 
     @Autowired
     protected OrderTableDao orderTableDao;
+
+    @Autowired
+    protected TableGroupDao tableGroupDao;
 
     protected MenuGroup createMenuGroup(String name) {
         MenuGroup menuGroup = new MenuGroup();
@@ -69,5 +77,12 @@ abstract class ServiceTest {
         menuProduct.setProductId(productId);
         menuProduct.setQuantity(quantity);
         return menuProduct;
+    }
+
+    protected OrderTable createOrderTable(int numberOfGuests, boolean empty) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setEmpty(empty);
+        return orderTable;
     }
 }

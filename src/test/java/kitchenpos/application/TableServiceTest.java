@@ -38,13 +38,6 @@ class TableServiceTest extends ServiceTest {
         assertThat(orderTables).hasSize(8);
     }
 
-    private OrderTable createOrderTable(int numberOfGuests, boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
-    }
-
     @Nested
     @DisplayName("changeEmpty 메서드는")
     class ChangeEmpty {
