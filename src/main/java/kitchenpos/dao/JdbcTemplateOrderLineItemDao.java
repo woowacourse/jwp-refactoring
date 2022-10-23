@@ -73,6 +73,6 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
                 resultSet.getLong(KEY_COLUMN_NAME),
                 resultSet.getLong("order_id"),
                 resultSet.getLong("menu_id"),
-                resultSet.getLong("quantity"));
+                resultSet.getInt("quantity"));
     }
 }
