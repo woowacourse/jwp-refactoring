@@ -40,7 +40,7 @@ public class MenuServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("메뉴의 가격이 0원 미만이면 예외가 발생한다.")
+    @DisplayName("create : 메뉴의 가격이 0원 미만이면 예외가 발생한다.")
     void create_invalidPrice_throwException() {
         // given
         final MenuGroup menuGroup = 메뉴그룹등록(메뉴그룹A);
@@ -54,7 +54,7 @@ public class MenuServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("메뉴 그룹이 존재하지 않으면 예외가 발생한다.")
+    @DisplayName("create : 메뉴 그룹이 존재하지 않으면 예외가 발생한다.")
     void create_noGroup_throwException() {
         // given
         final MenuGroup notRegisteredMenuGroup = 메뉴그룹A;
@@ -67,7 +67,7 @@ public class MenuServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("메뉴의 가격이 메뉴 상품들 가격의 합보다 클 경우 예외가 발생한다.")
+    @DisplayName("create : 메뉴의 가격이 메뉴 상품들 가격의 합보다 클 경우 예외가 발생한다.")
     void create_overProductsPrice_throwException() {
         // given
         final MenuGroup menuGroup = 메뉴그룹등록(메뉴그룹A);

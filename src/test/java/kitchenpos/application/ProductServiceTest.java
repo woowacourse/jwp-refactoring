@@ -33,7 +33,7 @@ public class ProductServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("상품의 가격이 0원 미만이면 예외가 발생한다.")
+    @DisplayName("create : 상품의 가격이 0원 미만이면 예외가 발생한다.")
     void create_invalidPrice_throwException() {
         // given
         final Product product = createProduct("짜장면", -1);
