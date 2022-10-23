@@ -4,7 +4,10 @@ import java.util.Arrays;
 
 public enum BadRequestCode {
 
-    NOT_FOUND_ERROR_CODE(0000, "해당 에러 코드를 찾을 수 없습니다.", NotFoundErrorCodeException.class);
+    NOT_FOUND_ERROR_CODE(0000, "해당 에러 코드를 찾을 수 없습니다.", NotFoundErrorCodeException.class),
+
+    NOT_FOUND_PRODUCT_ERROR_CODE(1000, "해당 상품을 찾을 수 없습니다.", NotFoundProductException.class),
+    INVALID_PRODUCT_PRICE_ERROR_CODE(1001, "상품의 가격 정보 오류입니다.", InvalidProductPriceException.class);
 
     private int code;
     private String message;
