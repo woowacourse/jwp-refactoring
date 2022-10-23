@@ -4,36 +4,57 @@
 
 ### MenuGroup
 
-- [x] MenuGroup을 생성할 수 있다.
-- [x] MenuGroup 목록을 조회할 수 있다.
+- MenuGroup을 생성할 수 있다.
+- MenuGroup 목록을 조회할 수 있다.
 
 ### Menu
 
-- [x] Menu를 등록할 수 있다.
-- [x] Menu 목록을 조회할 수 있다.
+- Menu를 등록할 수 있다.
+    - 가격이 null이거나 0 미만이면 예외가 발생한다.
+    - 존재하지 않는 MenuGroup이면 예외가 발생한다.
+    - 존재하지 않는 Product이면 예외가 발생한다.
+    - 가격이 일치하지 않으면 예외가 발생한다.
+- Menu 목록을 조회할 수 있다.
 
 ### Product
 
-- [x] Product를 등록할 수 있다.
-- [x] Product 목록을 조회할 수 있다.
+- Product를 등록할 수 있다.
+    - 가격이 null이거나 0 미만이면 예외가 발생한다.
+- Product 목록을 조회할 수 있다.
 
 ### Order
 
-- [x] Order를 등록할 수 있다.
-- [x] Order 목록을 조회할 수 있다.
-- [x] Order의 상태를 변경할 수 있다.
+- Order를 등록할 수 있다.
+    - OrderLineItem이 존재하지 않으면 예외가 발생한다.
+    - OrderLineItem 중 DB에 더 이상 존재하지 않는 것이 있다면 예외가 발생한다.
+    - 존재하지 않는 OrderTable이면 예외가 발생한다.
+    - OrderStatus를 COOKING, OrderedTime을 현재 시간으로 설정한다.
+- Order 목록을 조회할 수 있다.
+- Order의 상태를 변경할 수 있다.
+    - 존재하지 않는 Order이면 예외가 발생한다.
+    - 현재 OrderStatus가 COMPLETION이면 예외가 발생한다.
 
 ### Table
 
-- [x] Table을 등록할 수 있다.
-- [x] Table 목록을 조회할 수 있다.
-- [x] Table의 방문한 손님 수를 변경할 수 있다.
-- [x] Table의 손님 유무 상태 값을 변경할 수 있다.
+- Table을 등록할 수 있다.
+- Table 목록을 조회할 수 있다.
+- Table의 방문한 손님 수를 변경할 수 있다.
+    - Guest 수가 0 미만이면 예외가 발생한다.
+    - 존재하지 않는 OrderTable이면 예외가 발생한다.
+    - 해당 OrderTable이 손님이 없는 상태이면 예외가 발생한다.
+- Table의 손님 유무 상태 값을 변경할 수 있다.
+    - 존재하지 않는 OrderTable이면 예외가 발생한다.
+    - 해당 OrderTable의 TableGroup이 존재하지 않으면 예외가 발생한다.
+    - 해당 OrderTable에 해당하는 Order가 없거나, 있어도 OrderStatus가 COOKING 또는 MEAL이 아니라면 예외가 발생한다.
 
 ### Table Group
 
-- [x] TableGroup을 등록할 수 있다.
-- [x] TableGroup을 삭제할 수 있다.
+- TableGroup을 등록할 수 있다.
+    - OrderTable의 크기가 2 미만이면 예외가 발생한다.
+    - OrderTable 중 DB에 더 이상 존재하지 않는 것이 있다면 예외가 발생한다.
+    - OrderTable 중 해당 Table이 empty 상태가 아니거나 TableGroup이 null이면 예외가 발생한다.
+    - createdDate를 현재 시간으로 설정한다.
+- TableGroup을 삭제할 수 있다.
 
 ---
 
