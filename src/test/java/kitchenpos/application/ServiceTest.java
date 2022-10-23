@@ -44,6 +44,9 @@ abstract class ServiceTest {
     protected TableService tableService;
 
     @Autowired
+    protected TableGroupService tableGroupService;
+
+    @Autowired
     private ProductDao productDao;
 
     @Autowired
