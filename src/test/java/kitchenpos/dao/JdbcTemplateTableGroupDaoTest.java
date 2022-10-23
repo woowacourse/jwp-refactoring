@@ -87,6 +87,6 @@ class JdbcTemplateTableGroupDaoTest {
         List<TableGroup> tableGroups = tableGroupDao.findAll();
 
         // then
-        assertThat(tableGroups).hasSize(2);
+        assertThat(tableGroups).hasSize(3);
     }
 }
