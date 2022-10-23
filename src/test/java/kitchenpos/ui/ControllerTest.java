@@ -5,6 +5,7 @@ import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.MenuService;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.TableGroupService;
+import kitchenpos.application.TableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -15,7 +16,8 @@ import org.springframework.test.web.servlet.MockMvc;
         ProductRestController.class,
         MenuGroupRestController.class,
         MenuRestController.class,
-        TableGroupRestController.class
+        TableGroupRestController.class,
+        TableRestController.class
 })
 @Import(MockMvcConfig.class)
 public abstract class ControllerTest {
@@ -37,4 +39,7 @@ public abstract class ControllerTest {
 
     @MockBean
     protected TableGroupService tableGroupService;
+
+    @MockBean
+    protected TableService tableService;
 }
