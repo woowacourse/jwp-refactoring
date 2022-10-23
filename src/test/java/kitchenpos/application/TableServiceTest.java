@@ -100,7 +100,7 @@ class TableServiceTest extends ServiceTest {
         }
 
         @ParameterizedTest(name = "주문 상태: {0}")
-        @DisplayName("주문 상태가 계산 완료가 아니라면 주문 등록 가능 여부를 변경할 수 없다.")
+        @DisplayName("주문 테이블에 주문이 있다면 주문 상태는 계산 완료인 경우에만 주문 등록 가능 여부를 변경할 수 없다.")
         @ValueSource(strings = {"COOKING", "MEAL"})
         void changeEmpty_orderStatusIsCompletion_exception(final String orderStatus) {
             // given
