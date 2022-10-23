@@ -55,7 +55,8 @@ OrderLineItem은 orderId, menuId, quantity를 가지고 있다.
 
 ### MenuGroupService
 
- * [ ] menuGroup을 생성한다.
+ * [x] menuGroup을 생성한다.
+ * [x] menuGroup list를 조회한다.
 
 ### MenuService
 
