@@ -6,33 +6,14 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
-class TableServiceTest {
-
-    @Autowired
-    private TableService tableService;
-
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private OrderTableDao orderTableDao;
-
-    @Autowired
-    private TableGroupDao tableGroupDao;
+class TableServiceTest extends ApplicationTest {
 
     @DisplayName("새로운 주문 테이블을 생성할 수 있다.")
     @Test

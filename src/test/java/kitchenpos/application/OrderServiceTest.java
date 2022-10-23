@@ -10,29 +10,13 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
-class OrderServiceTest {
-
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private TableService tableService;
-
-    @SpyBean
-    private MenuDao menuDao;
+class OrderServiceTest extends ApplicationTest {
 
     @DisplayName("주문을 등록할 수 있다. (주문을 하면 조리 상태가 된다.)")
     @Test

@@ -7,28 +7,12 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
-class TableGroupServiceTest {
-
-    @Autowired
-    private TableGroupService tableGroupService;
-
-    @Autowired
-    private TableService tableService;
-
-    @SpyBean
-    private OrderDao orderDao;
+class TableGroupServiceTest extends ApplicationTest {
 
     @DisplayName("새로운 단체 지정(table group)을 생성할 수 있다.")
     @Test

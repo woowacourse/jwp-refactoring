@@ -10,16 +10,8 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
-class MenuServiceTest {
-
-    @Autowired
-    private MenuService menuService;
+class MenuServiceTest extends ApplicationTest {
 
     @DisplayName("새로운 메뉴를 등록할 수 있다.")
     @Test
