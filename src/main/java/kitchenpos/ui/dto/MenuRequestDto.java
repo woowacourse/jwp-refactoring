@@ -17,8 +17,8 @@ public class MenuRequestDto {
 
     public CreateMenuDto toCreateMenuDto() {
         List<CreateMenuProductDto> menuProductsDto = menuProducts.stream()
-            .map(MenuProductRequestDto::toCreateMenuProductDto)
-            .collect(Collectors.toList());
+                .map(MenuProductRequestDto::toCreateMenuProductDto)
+                .collect(Collectors.toList());
         return new CreateMenuDto(name, price, menuGroupId, menuProductsDto);
     }
 

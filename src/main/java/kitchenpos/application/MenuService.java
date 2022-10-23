@@ -37,15 +37,15 @@ public class MenuService {
         final Price menuPrice = Price.ofMenu(createMenuDto.getPrice(), menuProductQuantities);
         final Menu menu = menuDao.save(new Menu(createMenuDto.getName(), menuPrice, createMenuDto.getMenuGroupId()));
         return MenuDto.of(menu, menuProductQuantities.stream()
-            .map(it -> new MenuProduct(menu.getId(), it.getProductId(), it.getQuantity()))
-            .map(menuProductDao::save)
-            .collect(Collectors.toList()));
+                .map(it -> new MenuProduct(menu.getId(), it.getProductId(), it.getQuantity()))
+                .map(menuProductDao::save)
+                .collect(Collectors.toList()));
     }
 
     private List<ProductQuantity> getMenuProductQuantities(List<CreateMenuProductDto> menuProductDtos) {
         return menuProductDtos.stream()
-            .map(it -> new ProductQuantity(getProductById(it.getProductId()), it.getQuantity()))
-            .collect(Collectors.toList());
+                .map(it -> new ProductQuantity(getProductById(it.getProductId()), it.getQuantity()))
+                .collect(Collectors.toList());
     }
 
     private Product getProductById(Long productId) {
@@ -55,7 +55,7 @@ public class MenuService {
     public List<MenuDto> list() {
         final List<Menu> menus = menuDao.findAll();
         return menus.stream()
-            .map(menu -> MenuDto.of(menu, menuProductDao.findAllByMenuId(menu.getId())))
-            .collect(Collectors.toList());
+                .map(menu -> MenuDto.of(menu, menuProductDao.findAllByMenuId(menu.getId())))
+                .collect(Collectors.toList());
     }
 }

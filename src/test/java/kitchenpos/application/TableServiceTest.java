@@ -46,10 +46,10 @@ class TableServiceTest {
 
             OrderTable actual = tableService.create(newOrderTable);
             assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getNumberOfGuests()).isEqualTo(1),
-                () -> assertThat(actual.getTableGroupId()).isNull(),
-                () -> assertThat(actual.isEmpty()).isFalse()
+                    () -> assertThat(actual.getId()).isNotNull(),
+                    () -> assertThat(actual.getNumberOfGuests()).isEqualTo(1),
+                    () -> assertThat(actual.getTableGroupId()).isNull(),
+                    () -> assertThat(actual.isEmpty()).isFalse()
             );
         }
 
@@ -60,9 +60,9 @@ class TableServiceTest {
 
             OrderTable actual = tableService.create(newOrderTable);
             assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getNumberOfGuests()).isEqualTo(1),
-                () -> assertThat(actual.isEmpty()).isFalse()
+                    () -> assertThat(actual.getId()).isNotNull(),
+                    () -> assertThat(actual.getNumberOfGuests()).isEqualTo(1),
+                    () -> assertThat(actual.isEmpty()).isFalse()
             );
         }
 
@@ -73,9 +73,9 @@ class TableServiceTest {
 
             OrderTable actual = tableService.create(newOrderTable);
             assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getNumberOfGuests()).isZero(),
-                () -> assertThat(actual.isEmpty()).isTrue()
+                    () -> assertThat(actual.getId()).isNotNull(),
+                    () -> assertThat(actual.getNumberOfGuests()).isZero(),
+                    () -> assertThat(actual.isEmpty()).isTrue()
             );
         }
     }
@@ -97,7 +97,7 @@ class TableServiceTest {
             orderTable.setEmpty(false);
 
             assertThatThrownBy(() -> tableService.changeEmpty(999999L, orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -115,7 +115,7 @@ class TableServiceTest {
             tableGroupService.create(tableGroup);
 
             assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableId, orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -135,7 +135,7 @@ class TableServiceTest {
             orderService.create(order);
 
             assertThatThrownBy(() -> tableService.changeEmpty(notEmptyOrderTableId, orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -155,8 +155,8 @@ class TableServiceTest {
 
             OrderTable actual = tableService.changeNumberOfGuests(savedOrderTableId, orderTable);
             assertAll(
-                () -> assertThat(actual.getId()).isEqualTo(savedOrderTableId),
-                () -> assertThat(actual.getNumberOfGuests()).isEqualTo(5)
+                    () -> assertThat(actual.getId()).isEqualTo(savedOrderTableId),
+                    () -> assertThat(actual.getNumberOfGuests()).isEqualTo(5)
             );
         }
 
@@ -166,7 +166,7 @@ class TableServiceTest {
             orderTable.setNumberOfGuests(-1);
 
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -175,7 +175,7 @@ class TableServiceTest {
             orderTable.setNumberOfGuests(10);
 
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(999999L, orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -187,7 +187,7 @@ class TableServiceTest {
             savedOrderTable.setEmpty(true);
 
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 }

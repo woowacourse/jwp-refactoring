@@ -48,12 +48,12 @@ class TableGroupServiceTest {
 
             TableGroup actual = tableGroupService.create(tableGroup);
             assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getCreatedDate()).isNotNull(),
-                () -> assertThat(actual.getOrderTables().get(0).getTableGroupId()).isEqualTo(actual.getId()),
-                () -> assertThat(actual.getOrderTables().get(0).isEmpty()).isFalse(),
-                () -> assertThat(actual.getOrderTables().get(1).getTableGroupId()).isEqualTo(actual.getId()),
-                () -> assertThat(actual.getOrderTables().get(1).isEmpty()).isFalse()
+                    () -> assertThat(actual.getId()).isNotNull(),
+                    () -> assertThat(actual.getCreatedDate()).isNotNull(),
+                    () -> assertThat(actual.getOrderTables().get(0).getTableGroupId()).isEqualTo(actual.getId()),
+                    () -> assertThat(actual.getOrderTables().get(0).isEmpty()).isFalse(),
+                    () -> assertThat(actual.getOrderTables().get(1).getTableGroupId()).isEqualTo(actual.getId()),
+                    () -> assertThat(actual.getOrderTables().get(1).isEmpty()).isFalse()
             );
         }
 
@@ -64,7 +64,7 @@ class TableGroupServiceTest {
             tableGroup.setOrderTables(List.of(orderTable));
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -76,7 +76,7 @@ class TableGroupServiceTest {
             tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -90,7 +90,7 @@ class TableGroupServiceTest {
             tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -118,12 +118,13 @@ class TableGroupServiceTest {
             TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
             tableGroupService.ungroup(savedTableGroup.getId());
-            List<OrderTable> orderTables = orderTableDao.findAllByIdIn(List.of(orderTable1.getId(), orderTable2.getId()));
+            List<OrderTable> orderTables = orderTableDao.findAllByIdIn(
+                    List.of(orderTable1.getId(), orderTable2.getId()));
             assertAll(
-                () -> assertThat(orderTables.get(0).getTableGroupId()).isNull(),
-                () -> assertThat(orderTables.get(0).isEmpty()).isFalse(),
-                () -> assertThat(orderTables.get(1).getTableGroupId()).isNull(),
-                () -> assertThat(orderTables.get(1).isEmpty()).isFalse()
+                    () -> assertThat(orderTables.get(0).getTableGroupId()).isNull(),
+                    () -> assertThat(orderTables.get(0).isEmpty()).isFalse(),
+                    () -> assertThat(orderTables.get(1).getTableGroupId()).isNull(),
+                    () -> assertThat(orderTables.get(1).isEmpty()).isFalse()
             );
         }
 
@@ -142,7 +143,7 @@ class TableGroupServiceTest {
             orderService.create(order);
 
             assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroupId))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 

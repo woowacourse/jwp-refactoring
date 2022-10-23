@@ -27,9 +27,8 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
     public JdbcTemplateMenuProductDao(final DataSource dataSource) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
-            .withTableName(TABLE_NAME)
-            .usingGeneratedKeyColumns(KEY_COLUMN_NAME)
-        ;
+                .withTableName(TABLE_NAME)
+                .usingGeneratedKeyColumns(KEY_COLUMN_NAME);
     }
 
     @Override
@@ -58,22 +57,22 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
     public List<MenuProduct> findAllByMenuId(final Long menuId) {
         final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product WHERE menu_id = (:menuId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
-            .addValue("menuId", menuId);
+                .addValue("menuId", menuId);
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     private MenuProduct select(final Long id) {
         final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product WHERE seq = (:seq)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
-            .addValue("seq", id);
+                .addValue("seq", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     private MenuProduct toEntity(final ResultSet resultSet) throws SQLException {
         return new MenuProduct(
-            resultSet.getLong(KEY_COLUMN_NAME),
-            resultSet.getLong("menu_id"),
-            resultSet.getLong("product_id"),
-            resultSet.getInt("quantity"));
+                resultSet.getLong(KEY_COLUMN_NAME),
+                resultSet.getLong("menu_id"),
+                resultSet.getLong("product_id"),
+                resultSet.getInt("quantity"));
     }
 }

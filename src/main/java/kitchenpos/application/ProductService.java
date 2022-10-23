@@ -28,8 +28,8 @@ public class ProductService {
 
     public List<ProductDto> list() {
         return productDao.findAll()
-            .stream()
-            .map(ProductDto::of)
-            .collect(Collectors.toList());
+                .stream()
+                .map(ProductDto::of)
+                .collect(Collectors.toList());
     }
 }

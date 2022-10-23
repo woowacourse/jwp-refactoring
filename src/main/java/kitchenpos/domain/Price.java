@@ -26,8 +26,8 @@ public class Price {
 
     private static BigDecimal calculateIndividualPriceSum(List<ProductQuantity> menuProductQuantities) {
         return menuProductQuantities.stream()
-            .map(ProductQuantity::calculateTotalPrice)
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .map(ProductQuantity::calculateTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public Price multiply(int operand) {

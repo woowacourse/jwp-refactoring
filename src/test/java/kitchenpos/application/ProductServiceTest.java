@@ -34,9 +34,9 @@ class ProductServiceTest {
 
             Product actual = productService.create(product);
             assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getName()).isEqualTo("강정치킨"),
-                () -> assertThat(actual.getPrice()).isNotNull()
+                    () -> assertThat(actual.getId()).isNotNull(),
+                    () -> assertThat(actual.getName()).isEqualTo("강정치킨"),
+                    () -> assertThat(actual.getPrice()).isNotNull()
             );
         }
 
@@ -45,7 +45,7 @@ class ProductServiceTest {
             CreateProductDto product = new CreateProductDto("강정치킨", null);
 
             assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -53,7 +53,7 @@ class ProductServiceTest {
             CreateProductDto product = new CreateProductDto("강정치킨", BigDecimal.valueOf(-1));
 
             assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -61,7 +61,7 @@ class ProductServiceTest {
             CreateProductDto product = new CreateProductDto("", BigDecimal.valueOf(1000));
 
             assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 

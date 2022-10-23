@@ -40,11 +40,11 @@ class OrderServiceTest {
 
             Order actual = orderService.create(order);
             assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getOrderTableId()).isEqualTo(orderTableId),
-                () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
-                () -> assertThat(actual.getOrderedTime()).isNotNull(),
-                () -> assertThat(actual.getOrderLineItems()).hasSize(1)
+                    () -> assertThat(actual.getId()).isNotNull(),
+                    () -> assertThat(actual.getOrderTableId()).isEqualTo(orderTableId),
+                    () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+                    () -> assertThat(actual.getOrderedTime()).isNotNull(),
+                    () -> assertThat(actual.getOrderLineItems()).hasSize(1)
             );
         }
 
@@ -56,7 +56,7 @@ class OrderServiceTest {
             order.setOrderLineItems(List.of());
 
             assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -67,7 +67,7 @@ class OrderServiceTest {
             order.setOrderLineItems(List.of(generateOrderLineItem(9999999L, 1)));
 
             assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -77,7 +77,7 @@ class OrderServiceTest {
             order.setOrderLineItems(List.of(generateOrderLineItem(1L, 1)));
 
             assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -90,7 +90,7 @@ class OrderServiceTest {
             order.setOrderLineItems(List.of(generateOrderLineItem(1L, 1)));
 
             assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -123,18 +123,18 @@ class OrderServiceTest {
             orderDto.setOrderStatus(OrderStatus.MEAL.name());
             Order actual = orderService.changeOrderStatus(orderId, orderDto);
             assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getOrderTableId()).isEqualTo(orderTableId),
-                () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name()),
-                () -> assertThat(actual.getOrderedTime()).isNotNull(),
-                () -> assertThat(actual.getOrderLineItems()).hasSize(1)
+                    () -> assertThat(actual.getId()).isNotNull(),
+                    () -> assertThat(actual.getOrderTableId()).isEqualTo(orderTableId),
+                    () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name()),
+                    () -> assertThat(actual.getOrderedTime()).isNotNull(),
+                    () -> assertThat(actual.getOrderLineItems()).hasSize(1)
             );
         }
 
         @Test
         void 존재하지_않는_주문인_경우_예외를_발생시킨다() {
             assertThatThrownBy(() -> orderService.changeOrderStatus(99999L, new Order()))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -149,7 +149,7 @@ class OrderServiceTest {
             orderService.changeOrderStatus(orderId, orderDto);
 
             assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, orderDto))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 

@@ -28,8 +28,7 @@ public class JdbcTemplateMenuGroupDao implements MenuGroupDao {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
-                .usingGeneratedKeyColumns(KEY_COLUMN_NAME)
-        ;
+                .usingGeneratedKeyColumns(KEY_COLUMN_NAME);
     }
 
     @Override
@@ -71,7 +70,7 @@ public class JdbcTemplateMenuGroupDao implements MenuGroupDao {
 
     private MenuGroup toEntity(final ResultSet resultSet) throws SQLException {
         return new MenuGroup(
-            resultSet.getLong(KEY_COLUMN_NAME),
-            resultSet.getString("name"));
+                resultSet.getLong(KEY_COLUMN_NAME),
+                resultSet.getString("name"));
     }
 }
