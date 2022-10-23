@@ -1,6 +1,6 @@
-> 레거시 리팩터링 미션 요구사항은 [이 문서](./docs/mission_requirements.md)에서 볼 수 있습니다.
-
 # 키친포스
+
+> 레거시 리팩터링 미션 요구사항은 [이 문서](./docs/mission_requirements.md)에서 볼 수 있습니다.
 
 ## 요구 사항
 
@@ -89,3 +89,7 @@
 | 단체 지정 | table group | 통합 계산을 위해 개별 주문 테이블을 그룹화하는 기능 |
 | 주문 항목 | order line item | 주문에 속하는 수량이 있는 메뉴 |
 | 매장 식사 | eat in | 포장하지 않고 매장에서 식사하는 것 |
+
+## DB 구조
+
+![DB 구조](./docs/DB구조.png)
