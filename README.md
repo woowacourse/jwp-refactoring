@@ -1,8 +1,7 @@
 # 키친포스
 
-## 요구 사항
-
-## 용어 사전
+<details>
+<summary>용어 사전</summary>
 
 | 한글명 | 영문명 | 설명 |
 | --- | --- | --- |
@@ -19,3 +18,24 @@
 | 단체 지정 | table group | 통합 계산을 위해 개별 주문 테이블을 그룹화하는 기능 |
 | 주문 항목 | order line item | 주문에 속하는 수량이 있는 메뉴 |
 | 매장 식사 | eat in | 포장하지 않고 매장에서 식사하는 것 |
+
+</details>
+
+<details>
+<summary>1단계 - 테스트를 통한 코드 보호</summary>
+
+요구 사항
+
+- [ ] kitchenpos 패키지의 코드를 보고 요구 사항을 README.md에 작성
+    - [마크다운(Markdown) - Dooray!](https://dooray.com/htmls/guides/markdown_ko_KR.html)
+- [ ] 요구 사항을 토대로 모든 Business Object에 대한 테스트 코드 작성
+    - [Testing in Spring Boot - Baeldung](https://www.baeldung.com/spring-boot-testing)
+    - [Exploring the Spring Boot TestRestTemplate](https://www.baeldung.com/spring-boot-testresttemplate)
+- [ ] Lombok 사용하지 않기
+    - [Lombok 사용상 주의점(Pitfall)](https://kwonnam.pe.kr/wiki/java/lombok/pitfall)
+
+---
+
+구현 기능 목록
+
+</details>
