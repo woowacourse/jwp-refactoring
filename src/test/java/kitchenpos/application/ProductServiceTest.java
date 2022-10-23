@@ -1,12 +1,7 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -14,14 +9,15 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-@Transactional
-@SpringBootTest
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+@ServiceTest
 class ProductServiceTest {
 
     private final ProductService productService;

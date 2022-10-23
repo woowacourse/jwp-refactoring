@@ -1,21 +1,17 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.domain.MenuGroup;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
-
-@Transactional
-@SpringBootTest
+@ServiceTest
 class MenuGroupServiceTest {
 
     private final MenuGroupService menuGroupService;
