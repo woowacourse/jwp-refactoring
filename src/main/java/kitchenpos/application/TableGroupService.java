@@ -12,7 +12,6 @@ import kitchenpos.domain.TableGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,35 +31,39 @@ public class TableGroupService {
     @Transactional
     public TableGroupDto create(CreateTableGroupDto createTableGroupDto) {
         List<Long> tableIds = createTableGroupDto.getOrderTableIds();
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(tableIds);
-        if (tableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-        OrderTables orderTables = OrderTables.ofNotGroupedOrderTables(savedOrderTables);
-
-        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup());
-        orderTables.group(savedTableGroup.getId());
+        OrderTables orderTables = findValidOrderTables(tableIds);
+        final TableGroup tableGroup = tableGroupDao.save(new TableGroup());
+        orderTables.group(tableGroup.getId());
         for (final OrderTable savedOrderTable : orderTables.getValue()) {
             orderTableDao.save(savedOrderTable);
         }
-        return TableGroupDto.of(savedTableGroup, orderTables.getValue());
+        return TableGroupDto.of(tableGroup, orderTables.getValue());
+    }
+
+    private OrderTables findValidOrderTables(List<Long> tableIds) {
+        final List<OrderTable> orderTables = orderTableDao.findAllByIdIn(tableIds);
+        if (tableIds.size() != orderTables.size()) {
+            throw new IllegalArgumentException();
+        }
+        return OrderTables.ofNotGroupedOrderTables(orderTables);
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
-
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, OrderStatus.getOngoingStatuses())) {
-            throw new IllegalArgumentException();
-        }
-
+        validateNoOngoingOrder(orderTables);
         for (final OrderTable orderTable : orderTables) {
             orderTable.removeTableGroupId();
             orderTableDao.save(orderTable);
+        }
+    }
+
+    private void validateNoOngoingOrder(List<OrderTable> orderTables) {
+        final List<Long> orderTableIds = orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, OrderStatus.getOngoingStatuses())) {
+            throw new IllegalArgumentException();
         }
     }
 }
