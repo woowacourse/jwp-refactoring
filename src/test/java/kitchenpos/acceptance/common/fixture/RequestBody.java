@@ -5,6 +5,7 @@ import static java.util.Map.entry;
 import java.util.List;
 import java.util.Map;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
 
 public class RequestBody {
 
@@ -40,4 +41,13 @@ public class RequestBody {
             "numberOfGuests", 0,
             "empty", true
     );
+
+    public static Map<String, Object> getOrder(final Long menuId, final Long orderTableId) {
+        return Map.of(
+                "orderTableId", orderTableId,
+                "orderLineItems", List.of(Map.of(
+                    "menuId", menuId,
+                    "quantity", 1
+                )));
+    }
 }
