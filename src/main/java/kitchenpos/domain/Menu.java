@@ -30,6 +30,9 @@ public class Menu {
         this(null, name, price, menuGroupId, Collections.emptyList());
     }
 
+    private Menu() {
+    }
+
     public Long getId() {
         return id;
     }
