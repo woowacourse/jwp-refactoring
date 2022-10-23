@@ -8,28 +8,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(ProductRestController.class)
-class ProductRestControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+class ProductRestControllerTest extends ControllerTest {
 
     @MockBean
     private ProductService productService;
@@ -37,8 +28,9 @@ class ProductRestControllerTest {
     @Test
     void createProduct() throws Exception {
         // given
+        long id = 1L;
         Product product = new Product();
-        product.setId(1L);
+        product.setId(id);
         product.setName("치킨");
         product.setPrice(BigDecimal.valueOf(10000));
 
@@ -52,7 +44,7 @@ class ProductRestControllerTest {
 
         // then
         actions.andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/api/products/1"));
+                .andExpect(header().string("Location", "/api/products/" + id));
     }
 
     @Test
