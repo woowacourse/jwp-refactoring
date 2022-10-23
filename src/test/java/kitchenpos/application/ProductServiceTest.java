@@ -42,13 +42,8 @@ class ProductServiceTest {
 
     @Test
     void 모든_상품을_조회한다() {
-        Product macdonald = new Product("맥도날드 페페로니 피자 버거", new BigDecimal(7_300));
-        Product burgerking = new Product("버거킹 주니어 와퍼", new BigDecimal(7_300));
-        productService.create(macdonald);
-        productService.create(burgerking);
-
         List<Product> products = productService.list();
 
-        assertThat(products).hasSize(8);
+        assertThat(products).hasSize(6);
     }
 }

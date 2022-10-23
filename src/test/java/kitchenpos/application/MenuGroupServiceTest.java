@@ -25,11 +25,8 @@ class MenuGroupServiceTest {
 
     @Test
     void 메뉴그룹을_모두_조회한다() {
-        MenuGroup menuGroup = new MenuGroup("햄버거");
-        menuGroupService.create(menuGroup);
-
         List<MenuGroup> menuGroups = menuGroupService.list();
 
-        assertThat(menuGroups).hasSize(5);
+        assertThat(menuGroups).hasSize(4);
     }
 }
