@@ -63,6 +63,18 @@ class JdbcTemplateMenuDaoTest {
     }
 
     @Test
+    void 일치하는_ID가_없는_경우_empty를_반환한다() {
+        // given
+        Long notExistId = -1L;
+
+        // when
+        Optional<Menu> foundMenu = menuDao.findById(notExistId);
+
+        // then
+        assertThat(foundMenu).isEmpty();
+    }
+
+    @Test
     void 메뉴_목록을_조회한다() {
         // given
         List<Menu> menus = menuDao.findAll();

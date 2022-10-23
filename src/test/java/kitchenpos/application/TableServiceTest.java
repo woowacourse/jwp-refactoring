@@ -116,7 +116,7 @@ class TableServiceTest {
     void 손님의_수를_변경할_시_손님의_수가_0보다_작으면_예외를_반환한다() {
         // given
         OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(0);
+        orderTable.setNumberOfGuests(-1);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))

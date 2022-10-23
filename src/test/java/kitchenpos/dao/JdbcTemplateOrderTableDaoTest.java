@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import javax.sql.DataSource;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -63,6 +64,42 @@ class JdbcTemplateOrderTableDaoTest {
                 () -> assertThat(updatedOrderTable.getNumberOfGuests()).isEqualTo(5),
                 () -> assertThat(updatedOrderTable.isEmpty()).isEqualTo(false)
         );
+    }
+
+    @Test
+    void ID로_조회한다() {
+        // given
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(3);
+        orderTable.setEmpty(true);
+        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+
+        // when
+        Optional<OrderTable> foundOrderTable = orderTableDao.findById(savedOrderTable.getId());
+
+        // then
+        Assertions.assertAll(
+                () -> assertThat(foundOrderTable).isPresent(),
+                () -> assertThat(foundOrderTable.get())
+                        .extracting("numberOfGuests", "empty")
+                        .contains(3, true)
+        );
+    }
+
+    @Test
+    void 일치하는_ID가_없는_경우_empty를_반환한다() {
+        // given
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(3);
+        orderTable.setEmpty(true);
+        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        Long notExistId = -1L;
+
+        // when
+        Optional<OrderTable> foundOrderTable = orderTableDao.findById(notExistId);
+
+        // then
+        assertThat(foundOrderTable).isEmpty();
     }
 
     @Test

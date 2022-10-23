@@ -73,4 +73,16 @@ class JdbcTemplateProductDaoTest {
                 () -> assertThat(product.get().getName()).isEqualTo("후라이드")
         );
     }
+
+    @Test
+    void 일치하는_ID가_없는_경우_empty를_반환한다() {
+        // given
+        Long notExistId = -1L;
+
+        // when
+        Optional<Product> foundProduct = productDao.findById(notExistId);
+
+        // then
+        assertThat(foundProduct).isEmpty();
+    }
 }

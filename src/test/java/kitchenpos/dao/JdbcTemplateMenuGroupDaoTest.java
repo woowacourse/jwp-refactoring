@@ -56,6 +56,18 @@ class JdbcTemplateMenuGroupDaoTest {
     }
 
     @Test
+    void 일치하는_ID가_없는_경우_empty를_반환한다() {
+        // given
+        Long notExistId = -1L;
+
+        // when
+        Optional<MenuGroup> foundMenuGroup = menuGroupDao.findById(notExistId);
+
+        // then
+        assertThat(foundMenuGroup).isEmpty();
+    }
+
+    @Test
     void 목록을_조회한다() {
         // given & when
         List<MenuGroup> menuGroups = menuGroupDao.findAll();
