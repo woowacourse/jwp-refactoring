@@ -60,12 +60,12 @@ OrderLineItem은 orderId, menuId, quantity를 가지고 있다.
 
 ### MenuService
 
- * [ ] menu를 생성한다.
-   * [ ] price가 null인 경우 예외를 던진다.
-   * [ ] price가 0보다 작은 경우 예외를 던진다.
-   * [ ] 존재하지 않는 menuGroupId인 경우 예외를 던진다.
-   * [ ] price가 menu에 속한 product의 총 price보다 큰 경우 예외를 던진다.
- * [ ] menu list를 조회한다.
+ * [x] menu를 생성한다.
+   * [x] price가 null인 경우 예외를 던진다.
+   * [x] price가 0미만인 경우 예외를 던진다.
+   * [x] 존재하지 않는 menuGroupId인 경우 예외를 던진다.
+   * [x] price가 menu에 속한 product의 총 price보다 큰 경우 예외를 던진다.
+ * [x] menu list를 조회한다.
 
 ### OrderService
 
