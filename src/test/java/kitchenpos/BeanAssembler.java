@@ -7,13 +7,17 @@ import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.dao.JdbcTemplateMenuProductDao;
 import kitchenpos.dao.JdbcTemplateOrderDao;
 import kitchenpos.dao.JdbcTemplateOrderLineItemDao;
+import kitchenpos.dao.JdbcTemplateOrderTableDao;
 import kitchenpos.dao.JdbcTemplateProductDao;
+import kitchenpos.dao.JdbcTemplateTableGroupDao;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.TableGroupDao;
 
 public class BeanAssembler {
 
@@ -43,5 +47,13 @@ public class BeanAssembler {
 
     public static OrderLineItemDao createOrderLineItemDao(DataSource dataSource) {
         return new JdbcTemplateOrderLineItemDao(dataSource);
+    }
+
+    public static OrderTableDao createOrderTableDao(DataSource dataSource) {
+        return new JdbcTemplateOrderTableDao(dataSource);
+    }
+
+    public static TableGroupDao createTableGroupDao(DataSource dataSource) {
+        return new JdbcTemplateTableGroupDao(dataSource);
     }
 }
