@@ -30,6 +30,9 @@ public class Order {
         this(null, orderTableId, orderStatus, orderedTime, Collections.emptyList());
     }
 
+    private Order() {
+    }
+
     public Long getId() {
         return id;
     }

@@ -19,6 +19,9 @@ public class OrderLineItem {
         this(null, orderId, menuId, quantity);
     }
 
+    private OrderLineItem() {
+    }
+
     public Long getSeq() {
         return seq;
     }
