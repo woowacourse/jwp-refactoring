@@ -4,9 +4,18 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class TableGroup {
+
     private Long id;
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
+
+    public TableGroup() {
+        this(null);
+    }
+
+    public TableGroup(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
 
     public Long getId() {
         return id;
