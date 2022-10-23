@@ -2,19 +2,18 @@ package kitchenpos.ui;
 
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 public class TableRestController {
-    private final TableService tableService;
 
-    public TableRestController(final TableService tableService) {
-        this.tableService = tableService;
-    }
+    private final TableService tableService;
 
     @PostMapping("/api/tables")
     public ResponseEntity<OrderTable> create(@RequestBody final OrderTable orderTable) {

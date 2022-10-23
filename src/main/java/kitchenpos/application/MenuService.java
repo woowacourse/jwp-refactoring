@@ -13,11 +13,13 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductQuantity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class MenuService {
 
@@ -25,18 +27,6 @@ public class MenuService {
     private final MenuGroupDao menuGroupDao;
     private final MenuProductDao menuProductDao;
     private final ProductDao productDao;
-
-    public MenuService(
-        final MenuDao menuDao,
-        final MenuGroupDao menuGroupDao,
-        final MenuProductDao menuProductDao,
-        final ProductDao productDao
-    ) {
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
-        this.productDao = productDao;
-    }
 
     @Transactional
     public MenuDto create(final CreateMenuDto createMenuDto) {

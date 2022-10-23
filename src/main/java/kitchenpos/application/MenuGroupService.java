@@ -5,19 +5,17 @@ import kitchenpos.application.dto.CreateMenuGroupDto;
 import kitchenpos.application.dto.MenuGroupDto;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class MenuGroupService {
 
     private final MenuGroupDao menuGroupDao;
-
-    public MenuGroupService(final MenuGroupDao menuGroupDao) {
-        this.menuGroupDao = menuGroupDao;
-    }
 
     @Transactional
     public MenuGroup create(final CreateMenuGroupDto menuGroupDto) {

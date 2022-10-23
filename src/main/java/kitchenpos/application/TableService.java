@@ -4,6 +4,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,15 +12,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+@RequiredArgsConstructor
 @Service
 public class TableService {
+
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
-
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
-    }
 
     @Transactional
     public OrderTable create(final OrderTable orderTable) {

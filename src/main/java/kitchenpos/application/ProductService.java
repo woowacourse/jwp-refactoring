@@ -6,19 +6,17 @@ import kitchenpos.application.dto.CreateProductDto;
 import kitchenpos.application.dto.ProductDto;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class ProductService {
 
     private final ProductDao productDao;
-
-    public ProductService(final ProductDao productDao) {
-        this.productDao = productDao;
-    }
 
     @Transactional
     public Product create(final CreateProductDto createProductDto) {

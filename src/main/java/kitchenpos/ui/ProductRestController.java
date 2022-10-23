@@ -4,6 +4,7 @@ import kitchenpos.application.ProductService;
 import kitchenpos.application.dto.ProductDto;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.ProductRequestDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,14 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 public class ProductRestController {
 
     private final ProductService productService;
-
-    public ProductRestController(final ProductService productService) {
-        this.productService = productService;
-    }
 
     @PostMapping("/api/products")
     public ResponseEntity<Product> create(@RequestBody final ProductRequestDto requestBody) {
