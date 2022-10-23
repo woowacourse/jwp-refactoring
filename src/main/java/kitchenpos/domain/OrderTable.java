@@ -22,15 +22,11 @@ public class OrderTable {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Long getTableGroupId() {
         return tableGroupId;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
+    public void updateTableGroupId(final Long tableGroupId) {
         this.tableGroupId = tableGroupId;
     }
 

@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -11,6 +12,7 @@ import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.MenuService;
 import kitchenpos.application.OrderService;
 import kitchenpos.application.ProductService;
+import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
 
 @WebMvcTest({
@@ -18,7 +20,8 @@ import kitchenpos.application.TableService;
     MenuRestController.class,
     OrderRestController.class,
     ProductRestController.class,
-    TableRestController.class
+    TableRestController.class,
+    TableGroupRestController.class
 })
 public class ControllerTest {
 
@@ -42,4 +45,7 @@ public class ControllerTest {
 
     @MockBean
     protected TableService tableService;
+
+    @MockBean
+    protected TableGroupService tableGroupService;
 }
