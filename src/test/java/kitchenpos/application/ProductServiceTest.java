@@ -9,16 +9,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * ### Product &#xC0C1;&#xD488;&#xC740; `&#xC774;&#xB984;`&#xACFC; `&#xAC00;&#xACA9;`&#xC744; &#xAC00;&#xC9C0;&#xACE0;
- * &#xC788;&#xC2B5;&#xB2C8;&#xB2E4;.
+ * ### Product 상품은 `이름`과 `가격`을 가지고 있습니다.
  * <br>
- * - create (&#xC0C1;&#xD488;&#xC744; &#xC0DD;&#xC131;&#xD560; &#xC218; &#xC788;&#xC2B5;&#xB2C8;&#xB2E4;)
+ * - create (상품을 생성할 수 있습니다)
  * <br>
- * - price &#xAC00; &#xD544;&#xC218;&#xAC12;&#xC785;&#xB2C8;&#xB2E4;.
+ * - price 가 필수값입니다.
  * <br>
- * - price > 0 &#xC870;&#xAC74;&#xC744; &#xB9CC;&#xC871;&#xD574;&#xC57C;&#xD569;&#xB2C8;&#xB2E4;.
+ * - price > 0 조건을 만족해야합니다.
  * <br>
- * - findAll (&#xC0C1;&#xD488; &#xC804;&#xCCB4;&#xB97C; &#xC870;&#xD68C;&#xD569;&#xB2C8;&#xB2E4;.)
+ * - findAll (상품 전체를 조회합니다.)
  */
 class ProductServiceTest extends ServiceTest {
 
