@@ -66,7 +66,7 @@ class MenuDaoTest {
                 BigDecimal.valueOf(1000),
                 1L,
                 List.of(new MenuProduct(1L, 1L, 3), new MenuProduct(1L, 2L, 2)));
-        Menu savedMenu = menuDao.save(menu);
+        menuDao.save(menu);
         // when
         List<Menu> menus = menuDao.findAll();
 
