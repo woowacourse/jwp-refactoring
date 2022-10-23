@@ -3,14 +3,13 @@ package kitchenpos.ui.dto;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.CreateTableGroupDto;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@NoArgsConstructor
-@Setter
 public class TableGroupsRequestDto {
 
     private List<OrderTableIdRequestDto> orderTables;
+
+    public TableGroupsRequestDto() {
+    }
 
     public CreateTableGroupDto toCreateTableGroupDto() {
         return new CreateTableGroupDto(orderTables.stream()
@@ -18,10 +17,19 @@ public class TableGroupsRequestDto {
                 .collect(Collectors.toList()));
     }
 
-    @NoArgsConstructor
-    @Setter
+    public void setOrderTables(List<OrderTableIdRequestDto> orderTables) {
+        this.orderTables = orderTables;
+    }
+
     static class OrderTableIdRequestDto {
 
-        Long id;
+        private Long id;
+
+        public OrderTableIdRequestDto() {
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
     }
 }

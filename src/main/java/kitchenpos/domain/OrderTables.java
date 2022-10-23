@@ -2,9 +2,7 @@ package kitchenpos.domain;
 
 import java.util.List;
 import java.util.Objects;
-import lombok.Getter;
 
-@Getter
 public class OrderTables {
 
     private final List<OrderTable> orderTables;

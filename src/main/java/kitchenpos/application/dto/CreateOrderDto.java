@@ -1,9 +1,7 @@
 package kitchenpos.application.dto;
 
 import java.util.List;
-import lombok.Getter;
 
-@Getter
 public class CreateOrderDto {
 
     private final Long orderTableId;
@@ -13,5 +11,13 @@ public class CreateOrderDto {
                           List<CreateOrderLineItemDto> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
+    }
+
+    public Long getOrderTableId() {
+        return orderTableId;
+    }
+
+    public List<CreateOrderLineItemDto> getOrderLineItems() {
+        return orderLineItems;
     }
 }

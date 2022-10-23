@@ -1,9 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.Objects;
-import lombok.Getter;
 
-@Getter
 public class OrderTable {
 
     private final Long id;
@@ -24,6 +22,18 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getTableGroupId() {
+        return tableGroupId;
+    }
+
+    public Integer getNumberOfGuests() {
+        return numberOfGuests;
     }
 
     public void setTableGroupId(Long tableGroupId) {

@@ -2,9 +2,7 @@ package kitchenpos.application.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
-import lombok.Getter;
 
-@Getter
 public class CreateMenuDto {
 
     private final String name;
@@ -20,5 +18,21 @@ public class CreateMenuDto {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public Long getMenuGroupId() {
+        return menuGroupId;
+    }
+
+    public List<CreateMenuProductDto> getMenuProducts() {
+        return menuProducts;
     }
 }

@@ -1,8 +1,5 @@
 package kitchenpos.application.dto;
 
-import lombok.Getter;
-
-@Getter
 public class CreateMenuProductDto {
 
     private final Long productId;
@@ -11,5 +8,13 @@ public class CreateMenuProductDto {
     public CreateMenuProductDto(Long productId, Integer quantity) {
         this.productId = productId;
         this.quantity = quantity;
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
     }
 }

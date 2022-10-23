@@ -1,9 +1,7 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import lombok.Getter;
 
-@Getter
 public class Product {
 
     private final Long id;
@@ -21,6 +19,14 @@ public class Product {
 
     public Product(String name, BigDecimal price) {
         this(null, name, price);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public BigDecimal getPrice() {

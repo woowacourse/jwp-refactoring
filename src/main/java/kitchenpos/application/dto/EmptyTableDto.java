@@ -1,8 +1,5 @@
 package kitchenpos.application.dto;
 
-import lombok.Getter;
-
-@Getter
 public class EmptyTableDto {
 
     private final Long orderTableId;
@@ -11,5 +8,13 @@ public class EmptyTableDto {
     public EmptyTableDto(Long orderTableId, Boolean empty) {
         this.orderTableId = orderTableId;
         this.empty = empty;
+    }
+
+    public Long getOrderTableId() {
+        return orderTableId;
+    }
+
+    public Boolean getEmpty() {
+        return empty;
     }
 }

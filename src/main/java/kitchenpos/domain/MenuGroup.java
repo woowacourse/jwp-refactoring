@@ -1,8 +1,5 @@
 package kitchenpos.domain;
 
-import lombok.Getter;
-
-@Getter
 public class MenuGroup {
 
     private Long id;
@@ -20,11 +17,11 @@ public class MenuGroup {
         this(null, name);
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
-    public void setName(final String name) {
-        this.name = name;
+    public String getName() {
+        return name;
     }
 }

@@ -2,9 +2,7 @@ package kitchenpos.application.dto;
 
 import java.math.BigDecimal;
 import kitchenpos.domain.Product;
-import lombok.Getter;
 
-@Getter
 public class ProductDto {
 
     private final Long id;
@@ -19,5 +17,17 @@ public class ProductDto {
 
     public static ProductDto of(Product product) {
         return new ProductDto(product.getId(), product.getName(), product.getPrice());
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
     }
 }

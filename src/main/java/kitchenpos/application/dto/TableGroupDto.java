@@ -5,9 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import lombok.Getter;
 
-@Getter
 public class TableGroupDto {
 
     private final Long id;
@@ -26,5 +24,17 @@ public class TableGroupDto {
                 .map(TableDto::of)
                 .collect(Collectors.toList());
         return new TableGroupDto(tableGroup.getId(), tableGroup.getCreatedDate(), orderTables);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public List<TableDto> getOrderTables() {
+        return orderTables;
     }
 }

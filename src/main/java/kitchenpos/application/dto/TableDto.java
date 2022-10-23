@@ -1,9 +1,7 @@
 package kitchenpos.application.dto;
 
 import kitchenpos.domain.OrderTable;
-import lombok.Getter;
 
-@Getter
 public class TableDto {
 
     private final Long id;
@@ -19,6 +17,22 @@ public class TableDto {
     }
 
     public static TableDto of(OrderTable orderTable) {
-        return new TableDto(orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(), orderTable.getEmpty());
+        return new TableDto(orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(), orderTable.isEmpty());
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getTableGroupId() {
+        return tableGroupId;
+    }
+
+    public Integer getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public Boolean getEmpty() {
+        return empty;
     }
 }

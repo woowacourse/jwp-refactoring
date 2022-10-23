@@ -1,8 +1,5 @@
 package kitchenpos.domain;
 
-import lombok.Getter;
-
-@Getter
 public class OrderLineItem {
 
     private final Long seq;
@@ -19,5 +16,21 @@ public class OrderLineItem {
 
     public OrderLineItem(Long orderId, Long menuId, long quantity) {
         this(null, orderId, menuId, quantity);
+    }
+
+    public Long getSeq() {
+        return seq;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public Long getMenuId() {
+        return menuId;
+    }
+
+    public long getQuantity() {
+        return quantity;
     }
 }

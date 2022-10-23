@@ -4,18 +4,20 @@ import kitchenpos.application.OrderService;
 import kitchenpos.application.dto.OrderDto;
 import kitchenpos.ui.dto.OrderRequestDto;
 import kitchenpos.ui.dto.OrderStatusRequestDto;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
 
-@RequiredArgsConstructor
 @RestController
 public class OrderRestController {
 
     private final OrderService orderService;
+
+    public OrderRestController(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @PostMapping("/api/orders")
     public ResponseEntity<OrderDto> create(@RequestBody final OrderRequestDto requestBody) {

@@ -1,8 +1,5 @@
 package kitchenpos.application.dto;
 
-import lombok.Getter;
-
-@Getter
 public class CreateTableDto {
 
     private final Integer numberOfGuests;
@@ -11,5 +8,13 @@ public class CreateTableDto {
     public CreateTableDto(Integer numberOfGuests, Boolean empty) {
         this.empty = empty;
         this.numberOfGuests = numberOfGuests;
+    }
+
+    public Integer getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public Boolean getEmpty() {
+        return empty;
     }
 }

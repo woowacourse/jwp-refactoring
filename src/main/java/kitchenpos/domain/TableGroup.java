@@ -1,9 +1,7 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import lombok.Getter;
 
-@Getter
 public class TableGroup {
 
     private final Long id;
@@ -16,5 +14,13 @@ public class TableGroup {
 
     public TableGroup() {
         this(null, LocalDateTime.now());
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
     }
 }

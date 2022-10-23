@@ -4,9 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import lombok.Getter;
 
-@Getter
 public class OrderDto {
 
     private final Long id;
@@ -33,5 +31,25 @@ public class OrderDto {
         String orderStatus = order.getOrderStatus();
         LocalDateTime orderedTime = order.getOrderedTime();
         return new OrderDto(id, orderTableId, orderStatus, orderedTime, orderLineItems);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getOrderTableId() {
+        return orderTableId;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
+    }
+
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems;
     }
 }

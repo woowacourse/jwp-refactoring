@@ -4,9 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import lombok.Getter;
 
-@Getter
 public class MenuDto {
 
     private final Long id;
@@ -29,5 +27,25 @@ public class MenuDto {
 
     public static MenuDto of(Menu menu, List<MenuProduct> menuProducts) {
         return new MenuDto(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProducts);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public Long getMenuGroupId() {
+        return menuGroupId;
+    }
+
+    public List<MenuProduct> getMenuProducts() {
+        return menuProducts;
     }
 }

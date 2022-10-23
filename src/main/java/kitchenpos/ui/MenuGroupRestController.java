@@ -4,7 +4,6 @@ import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.dto.MenuGroupDto;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.ui.dto.MenuGroupRequestDto;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,11 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 import java.util.List;
 
-@RequiredArgsConstructor
 @RestController
 public class MenuGroupRestController {
 
     private final MenuGroupService menuGroupService;
+
+    public MenuGroupRestController(MenuGroupService menuGroupService) {
+        this.menuGroupService = menuGroupService;
+    }
 
     @PostMapping("/api/menu-groups")
     public ResponseEntity<MenuGroup> create(@RequestBody final MenuGroupRequestDto requestBody) {

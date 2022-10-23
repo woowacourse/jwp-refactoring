@@ -1,8 +1,5 @@
 package kitchenpos.application.dto;
 
-import lombok.Getter;
-
-@Getter
 public class UpdateGuestNumberDto {
 
     private final Long orderTableId;
@@ -11,5 +8,13 @@ public class UpdateGuestNumberDto {
     public UpdateGuestNumberDto(Long orderTableId, Integer numberOfGuests) {
         this.orderTableId = orderTableId;
         this.numberOfGuests = numberOfGuests;
+    }
+
+    public Long getOrderTableId() {
+        return orderTableId;
+    }
+
+    public Integer getNumberOfGuests() {
+        return numberOfGuests;
     }
 }

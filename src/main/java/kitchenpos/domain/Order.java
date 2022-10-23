@@ -1,9 +1,7 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import lombok.Getter;
 
-@Getter
 public class Order {
 
     private final Long id;
@@ -28,14 +26,26 @@ public class Order {
         return new Order(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
     }
 
-    public String getOrderStatus() {
-        return orderStatus.name();
-    }
-
     public void changeOrderStatus(OrderStatus orderStatus) {
         if (OrderStatus.COMPLETION.equals(this.orderStatus)) {
             throw new IllegalArgumentException();
         }
         this.orderStatus = orderStatus;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getOrderTableId() {
+        return orderTableId;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus.name();
+    }
+
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
     }
 }

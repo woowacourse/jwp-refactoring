@@ -2,9 +2,7 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
-import lombok.Getter;
 
-@Getter
 public class Price {
 
     private final BigDecimal value;
@@ -32,5 +30,9 @@ public class Price {
 
     public Price multiply(int operand) {
         return new Price(value.multiply(BigDecimal.valueOf(operand)));
+    }
+
+    public BigDecimal getValue() {
+        return value;
     }
 }

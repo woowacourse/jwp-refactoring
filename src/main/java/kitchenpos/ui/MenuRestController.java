@@ -2,9 +2,7 @@ package kitchenpos.ui;
 
 import kitchenpos.application.MenuService;
 import kitchenpos.application.dto.MenuDto;
-import kitchenpos.domain.Menu;
 import kitchenpos.ui.dto.MenuRequestDto;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,11 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 import java.util.List;
 
-@RequiredArgsConstructor
 @RestController
 public class MenuRestController {
 
     private final MenuService menuService;
+
+    public MenuRestController(MenuService menuService) {
+        this.menuService = menuService;
+    }
 
     @PostMapping("/api/menus")
     public ResponseEntity<MenuDto> create(@RequestBody final MenuRequestDto requestBody) {

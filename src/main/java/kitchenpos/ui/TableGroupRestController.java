@@ -3,17 +3,19 @@ package kitchenpos.ui;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.dto.TableGroupDto;
 import kitchenpos.ui.dto.TableGroupsRequestDto;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
-@RequiredArgsConstructor
 @RestController
 public class TableGroupRestController {
 
     private final TableGroupService tableGroupService;
+
+    public TableGroupRestController(TableGroupService tableGroupService) {
+        this.tableGroupService = tableGroupService;
+    }
 
     @PostMapping("/api/table-groups")
     public ResponseEntity<TableGroupDto> create(@RequestBody final TableGroupsRequestDto requestBody) {

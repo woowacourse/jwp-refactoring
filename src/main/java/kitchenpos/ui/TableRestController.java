@@ -6,18 +6,20 @@ import kitchenpos.application.dto.UpdateGuestNumberDto;
 import kitchenpos.ui.dto.EmptyTableRequestDto;
 import kitchenpos.ui.dto.TableGuestNumberRequestDto;
 import kitchenpos.ui.dto.TableRequestDto;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
 
-@RequiredArgsConstructor
 @RestController
 public class TableRestController {
 
     private final TableService tableService;
+
+    public TableRestController(TableService tableService) {
+        this.tableService = tableService;
+    }
 
     @PostMapping("/api/tables")
     public ResponseEntity<TableDto> create(@RequestBody final TableRequestDto requestBody) {

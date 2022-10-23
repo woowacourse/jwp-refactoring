@@ -2,9 +2,7 @@ package kitchenpos.application.dto;
 
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
-import lombok.Getter;
 
-@Getter
 public class MenuGroupDto {
 
     private final Long id;
@@ -17,5 +15,13 @@ public class MenuGroupDto {
 
     public static MenuGroupDto of(MenuGroup menuGroup) {
         return new MenuGroupDto(menuGroup.getId(), menuGroup.getName());
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
     }
 }
