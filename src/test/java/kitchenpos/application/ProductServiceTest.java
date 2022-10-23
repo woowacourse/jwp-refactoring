@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.ProductFixture.상품을_등록한다;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
@@ -59,11 +60,9 @@ class ProductServiceTest {
         @DisplayName("상품 가격이 0원보다 적은 경우 등록할 수 없다.")
         @Test
         void createWithPriceLessThanZero() {
-            final Product product = new Product();
-            product.setName("짱구");
-            product.setPrice(BigDecimal.valueOf(-1));
+            final Product 짱구 = 상품을_등록한다("짱구", -1);
 
-            assertThatThrownBy(() -> sut.create(product))
+            assertThatThrownBy(() -> sut.create(짱구))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -71,23 +70,18 @@ class ProductServiceTest {
     @DisplayName("상품 목록을 조회할 수 있다.")
     @Test
     void getProducts() {
-        final Product product = new Product();
-        product.setName("짱구");
-        product.setPrice(BigDecimal.TEN);
+        final Product 짱구 = 상품을_등록한다("짱구", 100);
+        final Product 짱아 = 상품을_등록한다("짱아", 100);
 
-        final Product product1 = new Product();
-        product1.setName("짱아");
-        product1.setPrice(BigDecimal.TEN);
-
-        sut.create(product);
-        sut.create(product1);
+        sut.create(짱구);
+        sut.create(짱아);
 
         assertThat(sut.list())
                 .hasSize(2)
                 .extracting("name", "price")
                 .containsExactly(
-                        tuple(product.getName(), product.getPrice()),
-                        tuple(product1.getName(), product1.getPrice())
+                        tuple(짱구.getName(), 짱구.getPrice()),
+                        tuple(짱아.getName(), 짱아.getPrice())
                 );
     }
 }
