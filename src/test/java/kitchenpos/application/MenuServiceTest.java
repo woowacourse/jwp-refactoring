@@ -80,5 +80,4 @@ class MenuServiceTest extends ServiceTest {
             assertThat(menuService.list()).hasSize(6);
         }
     }
-
 }

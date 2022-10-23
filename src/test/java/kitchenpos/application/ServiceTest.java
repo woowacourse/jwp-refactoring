@@ -21,4 +21,7 @@ public class ServiceTest {
     @Autowired
     OrderTableDao orderTableDao;
 
+    @Autowired
+    ProductService productService;
+
 }
