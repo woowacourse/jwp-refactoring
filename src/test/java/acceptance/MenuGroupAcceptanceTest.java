@@ -17,13 +17,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest(
         webEnvironment = WebEnvironment.RANDOM_PORT,
         classes = Application.class
 )
-@Sql("classpath:/db/migration/V1__Initialize_project_tables.sql")
 public class MenuGroupAcceptanceTest {
 
     @LocalServerPort
