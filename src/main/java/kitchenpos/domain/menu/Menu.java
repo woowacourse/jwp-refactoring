@@ -1,6 +1,7 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
+import kitchenpos.domain.Price;
 
 public class Menu {
 

@@ -11,7 +11,7 @@ import kitchenpos.application.dto.request.CreateTableDto;
 import kitchenpos.application.dto.request.CreateTableGroupDto;
 import kitchenpos.application.dto.response.TableGroupDto;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

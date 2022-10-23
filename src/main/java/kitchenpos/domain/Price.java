@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.domain.menu.ProductQuantity;
 
 public class Price {
 

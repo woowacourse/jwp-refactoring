@@ -1,6 +1,7 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import java.time.LocalDateTime;
+import kitchenpos.domain.table.OrderTable;
 
 public class Order {
 
