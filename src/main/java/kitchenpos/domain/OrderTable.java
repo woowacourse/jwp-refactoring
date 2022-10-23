@@ -36,8 +36,14 @@ public class OrderTable {
         return numberOfGuests;
     }
 
-    public void setTableGroupId(Long tableGroupId) {
+    public void addTableGroupId(Long tableGroupId) {
         this.tableGroupId = tableGroupId;
+        this.empty = false;
+    }
+
+    public void removeTableGroupId() {
+        this.tableGroupId = null;
+        this.empty = false;
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
@@ -47,7 +53,10 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void changeEmpty(final boolean empty) {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
         this.empty = empty;
     }
 }

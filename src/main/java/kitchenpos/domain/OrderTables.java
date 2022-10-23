@@ -12,18 +12,17 @@ public class OrderTables {
     }
 
     public static OrderTables ofNotGroupedOrderTables(List<OrderTable> orderTables) {
-        for (final OrderTable orderTable : orderTables) {
-            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
-            }
+        boolean isOrderTableOrGrouped = orderTables.stream()
+                .anyMatch(it -> !it.isEmpty() || Objects.nonNull(it.getTableGroupId()));
+        if (isOrderTableOrGrouped) {
+            throw new IllegalArgumentException();
         }
         return new OrderTables(orderTables);
     }
 
     public void group(Long tableGroupId) {
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(tableGroupId);
-            orderTable.setEmpty(false);
+            orderTable.addTableGroupId(tableGroupId);
         }
     }
 

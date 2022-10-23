@@ -54,14 +54,13 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        List<String> orderStatuses = Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name());
+        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatuses)) {
             throw new IllegalArgumentException();
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
+            orderTable.removeTableGroupId();
             orderTableDao.save(orderTable);
         }
     }

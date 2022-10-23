@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TableService {
@@ -44,18 +43,11 @@ public class TableService {
     public TableDto changeEmpty(EmptyTableDto emptyTableDto) {
         Long orderTableId = emptyTableDto.getOrderTableId();
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
-
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
+        List<String> orderStatuses = Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name());
+        if (orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatuses)) {
             throw new IllegalArgumentException();
         }
-
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setEmpty(emptyTableDto.getEmpty());
-
+        savedOrderTable.changeEmpty(emptyTableDto.getEmpty());
         return TableDto.of(orderTableDao.save(savedOrderTable));
     }
 
