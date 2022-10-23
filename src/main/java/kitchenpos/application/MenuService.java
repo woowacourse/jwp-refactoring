@@ -10,11 +10,12 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductQuantity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -42,22 +43,23 @@ public class MenuService {
         if (!menuGroupDao.existsById(createMenuDto.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
-
-        final List<CreateMenuProductDto> menuProducts = createMenuDto.getMenuProducts();
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final CreateMenuProductDto menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
-                .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.calculateTotalPriceFromQuantity(menuProduct.getQuantity()));
-        }
-        if (createMenuDto.getPrice().compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
-        final Menu menu = menuDao.save(new Menu(createMenuDto.getName(), createMenuDto.getPrice(), createMenuDto.getMenuGroupId()));
-        return MenuDto.of(menu, menuProducts.stream()
+        final List<ProductQuantity> menuProductQuantities = getMenuProductQuantities(createMenuDto.getMenuProducts());
+        final Price menuPrice = Price.ofMenu(createMenuDto.getPrice(), menuProductQuantities);
+        final Menu menu = menuDao.save(new Menu(createMenuDto.getName(), menuPrice, createMenuDto.getMenuGroupId()));
+        return MenuDto.of(menu, menuProductQuantities.stream()
             .map(it -> new MenuProduct(menu.getId(), it.getProductId(), it.getQuantity()))
             .map(menuProductDao::save)
             .collect(Collectors.toList()));
+    }
+
+    private List<ProductQuantity> getMenuProductQuantities(List<CreateMenuProductDto> menuProductDtos) {
+        return menuProductDtos.stream()
+            .map(it -> new ProductQuantity(getProductById(it.getProductId()), it.getQuantity()))
+            .collect(Collectors.toList());
+    }
+
+    private Product getProductById(Long productId) {
+        return productDao.findById(productId).orElseThrow(IllegalArgumentException::new);
     }
 
     public List<MenuDto> list() {
