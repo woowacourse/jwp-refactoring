@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.CreateTableDto;
-import kitchenpos.application.dto.EmptyTableDto;
-import kitchenpos.application.dto.TableDto;
-import kitchenpos.application.dto.UpdateGuestNumberDto;
+import kitchenpos.application.dto.request.CreateTableDto;
+import kitchenpos.application.dto.request.EmptyTableDto;
+import kitchenpos.application.dto.response.TableDto;
+import kitchenpos.application.dto.request.UpdateGuestNumberDto;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
@@ -12,7 +12,6 @@ import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service

@@ -1,8 +1,8 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.TableService;
-import kitchenpos.application.dto.TableDto;
-import kitchenpos.application.dto.UpdateGuestNumberDto;
+import kitchenpos.application.dto.response.TableDto;
+import kitchenpos.application.dto.request.UpdateGuestNumberDto;
 import kitchenpos.ui.dto.EmptyTableRequestDto;
 import kitchenpos.ui.dto.TableGuestNumberRequestDto;
 import kitchenpos.ui.dto.TableRequestDto;

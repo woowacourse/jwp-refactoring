@@ -1,6 +1,6 @@
 package kitchenpos.ui.dto;
 
-import kitchenpos.application.dto.UpdateGuestNumberDto;
+import kitchenpos.application.dto.request.UpdateGuestNumberDto;
 
 public class TableGuestNumberRequestDto {
 

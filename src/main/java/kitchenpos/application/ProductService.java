@@ -2,8 +2,8 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.CreateProductDto;
-import kitchenpos.application.dto.ProductDto;
+import kitchenpos.application.dto.request.CreateProductDto;
+import kitchenpos.application.dto.response.ProductDto;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;

@@ -3,8 +3,8 @@ package kitchenpos.ui.dto;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.CreateMenuDto;
-import kitchenpos.application.dto.CreateMenuProductDto;
+import kitchenpos.application.dto.request.CreateMenuDto;
+import kitchenpos.application.dto.request.CreateMenuProductDto;
 
 public class MenuRequestDto {
 

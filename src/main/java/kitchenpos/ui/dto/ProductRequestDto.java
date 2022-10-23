@@ -1,7 +1,7 @@
 package kitchenpos.ui.dto;
 
 import java.math.BigDecimal;
-import kitchenpos.application.dto.CreateProductDto;
+import kitchenpos.application.dto.request.CreateProductDto;
 
 public class ProductRequestDto {
 

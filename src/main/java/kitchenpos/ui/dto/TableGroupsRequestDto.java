@@ -2,7 +2,7 @@ package kitchenpos.ui.dto;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.CreateTableGroupDto;
+import kitchenpos.application.dto.request.CreateTableGroupDto;
 
 public class TableGroupsRequestDto {
 

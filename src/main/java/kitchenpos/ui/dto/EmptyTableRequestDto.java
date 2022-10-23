@@ -1,6 +1,6 @@
 package kitchenpos.ui.dto;
 
-import kitchenpos.application.dto.EmptyTableDto;
+import kitchenpos.application.dto.request.EmptyTableDto;
 
 public class EmptyTableRequestDto {
 

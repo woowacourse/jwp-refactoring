@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.CreateMenuDto;
-import kitchenpos.application.dto.CreateMenuProductDto;
-import kitchenpos.application.dto.MenuDto;
+import kitchenpos.application.dto.request.CreateMenuDto;
+import kitchenpos.application.dto.request.CreateMenuProductDto;
+import kitchenpos.application.dto.response.MenuDto;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;

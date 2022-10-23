@@ -5,11 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.application.dto.CreateOrderDto;
-import kitchenpos.application.dto.CreateOrderLineItemDto;
-import kitchenpos.application.dto.CreateTableDto;
-import kitchenpos.application.dto.OrderDto;
-import kitchenpos.application.dto.UpdateOrderStatusDto;
+import kitchenpos.application.dto.request.CreateOrderDto;
+import kitchenpos.application.dto.request.CreateOrderLineItemDto;
+import kitchenpos.application.dto.request.CreateTableDto;
+import kitchenpos.application.dto.response.OrderDto;
+import kitchenpos.application.dto.request.UpdateOrderStatusDto;
 import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.CreateTableGroupDto;
-import kitchenpos.application.dto.TableGroupDto;
+import kitchenpos.application.dto.request.CreateTableGroupDto;
+import kitchenpos.application.dto.response.TableGroupDto;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;

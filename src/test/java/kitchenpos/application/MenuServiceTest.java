@@ -6,10 +6,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.CreateMenuDto;
-import kitchenpos.application.dto.CreateMenuProductDto;
-import kitchenpos.application.dto.MenuDto;
-import kitchenpos.domain.Menu;
+import kitchenpos.application.dto.request.CreateMenuDto;
+import kitchenpos.application.dto.request.CreateMenuProductDto;
+import kitchenpos.application.dto.response.MenuDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

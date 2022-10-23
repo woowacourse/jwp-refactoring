@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.CreateOrderDto;
-import kitchenpos.application.dto.CreateOrderLineItemDto;
-import kitchenpos.application.dto.OrderDto;
-import kitchenpos.application.dto.UpdateOrderStatusDto;
+import kitchenpos.application.dto.request.CreateOrderDto;
+import kitchenpos.application.dto.request.CreateOrderLineItemDto;
+import kitchenpos.application.dto.response.OrderDto;
+import kitchenpos.application.dto.request.UpdateOrderStatusDto;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;

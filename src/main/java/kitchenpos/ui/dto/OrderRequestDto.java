@@ -2,8 +2,8 @@ package kitchenpos.ui.dto;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.CreateOrderDto;
-import kitchenpos.application.dto.CreateOrderLineItemDto;
+import kitchenpos.application.dto.request.CreateOrderDto;
+import kitchenpos.application.dto.request.CreateOrderLineItemDto;
 
 public class OrderRequestDto {
 
