@@ -39,9 +39,8 @@ class MenuServiceTest {
         menuProducts.add(new MenuProduct(null, product.getId(), 1));
 
         MenuGroup menuGroup = menuGroupService.create(new MenuGroup("면"));
-        Menu ramen = new Menu("라면", new BigDecimal(1200), menuGroup.getId(), menuProducts);
+        Menu ramen = menuService.create(new Menu("라면", new BigDecimal(1200), menuGroup.getId(), menuProducts));
         menuProducts.get(0).setMenuId(ramen.getId());
-        menuService.create(ramen);
 
         assertThat(ramen.getName()).isEqualTo("라면");
     }
@@ -54,7 +53,6 @@ class MenuServiceTest {
 
         MenuGroup menuGroup = menuGroupService.create(new MenuGroup("면"));
         Menu ramen = new Menu("라면", new BigDecimal(-1), menuGroup.getId(), menuProducts);
-        menuProducts.get(0).setMenuId(ramen.getId());
 
         assertThatThrownBy(
                 () -> menuService.create(ramen)
@@ -81,7 +79,6 @@ class MenuServiceTest {
 
         MenuGroup menuGroup = menuGroupService.create(new MenuGroup("면"));
         Menu ramen = new Menu("라면", new BigDecimal(-1), menuGroup.getId(), menuProducts);
-        menuProducts.get(0).setMenuId(ramen.getId());
 
         assertThatThrownBy(
                 () -> menuService.create(ramen)
@@ -96,7 +93,6 @@ class MenuServiceTest {
 
         MenuGroup menuGroup = menuGroupService.create(new MenuGroup("면"));
         Menu ramen = new Menu("라면", new BigDecimal(1500), menuGroup.getId(), menuProducts);
-        menuProducts.get(0).setMenuId(ramen.getId());
 
         assertThatThrownBy(
                 () -> menuService.create(ramen)
@@ -112,12 +108,10 @@ class MenuServiceTest {
         menuProducts.add(new MenuProduct(null, product.getId(), 1));
 
         MenuGroup menuGroup = menuGroupService.create(new MenuGroup("면"));
-        Menu ramen = new Menu("라면", new BigDecimal(1200), menuGroup.getId(), menuProducts);
+        Menu ramen = menuService.create(new Menu("라면", new BigDecimal(1200), menuGroup.getId(), menuProducts));
         menuProducts.get(0).setMenuId(ramen.getId());
-        menuService.create(ramen);
-        Menu friedRice = new Menu("짜파게티", new BigDecimal(1300), menuGroup.getId(), menuProducts);
+        Menu friedRice = menuService.create(new Menu("짜파게티", new BigDecimal(1300), menuGroup.getId(), menuProducts));
         menuProducts.get(1).setMenuId(friedRice.getId());
-        menuService.create(friedRice);
 
         List<Menu> menus = menuService.list();
 
