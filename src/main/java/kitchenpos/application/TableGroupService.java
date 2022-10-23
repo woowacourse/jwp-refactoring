@@ -32,6 +32,9 @@ public class TableGroupService {
     public TableGroup create(final TableGroup tableGroup) {
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
+        /**
+         * 주문 테이블의 개수가 2개 미만이면 안된다.
+         */
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
         }
@@ -42,10 +45,16 @@ public class TableGroupService {
 
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
+        /**
+         * 등록되지 않은 주문 테이블이 있으면 안된다.
+         */
         if (orderTables.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 
+        /**
+         * 주문 테이블이 빈 상태이거나 이미 다른 테이블 그룹에 등록되어있지 않아야한다.
+         */
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
                 throw new IllegalArgumentException();
@@ -56,6 +65,7 @@ public class TableGroupService {
 
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
+        // 각각의 주문 테이블에 테이블 그룹과 빈 상태가 아님을 등록
         final Long tableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.setTableGroupId(tableGroupId);
@@ -75,6 +85,9 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
+        /**
+         * 테이블 그룹에 속한 테이블 중 조리 또는 식사중인 상태의 테이블이 존재하면 안된다.
+         */
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();

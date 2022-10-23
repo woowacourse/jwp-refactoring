@@ -1,5 +1,8 @@
 package kitchenpos.domain;
 
+/**
+ * 매장에서 주문이 발생하는 영역
+ */
 public class OrderTable {
     private Long id;
     private Long tableGroupId;

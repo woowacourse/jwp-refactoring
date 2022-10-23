@@ -2,6 +2,9 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 
+/**
+ * 메뉴를 관리하는 기준이 되는 데이터
+ */
 public class Product {
     private Long id;
     private String name;

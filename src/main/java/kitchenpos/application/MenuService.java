@@ -38,14 +38,21 @@ public class MenuService {
     public Menu create(final Menu menu) {
         final BigDecimal price = menu.getPrice();
 
+        /**
+         * 메뉴 가격은 0보다 커야함
+         */
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
 
+        /**
+         * 메뉴그룹이 존재해야함
+         */
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
 
+        // 메뉴 상품의 개별 가격을 모두 합치기
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
 
         BigDecimal sum = BigDecimal.ZERO;
@@ -55,12 +62,16 @@ public class MenuService {
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
+        /**
+         * 메뉴 전체 가격은 메뉴 상품의 개별 가격을 모두 합친 것보다 작아야함
+         */
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
 
         final Menu savedMenu = menuDao.save(menu);
 
+        // 메뉴 상품들에 방금 저장한 menu의 id 넣고 저장
         final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {

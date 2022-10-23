@@ -41,23 +41,37 @@ public class OrderService {
     public Order create(final Order order) {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
+        /**
+         * 주문 항목들이 존재해야한다.
+         */
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
         }
 
+        // 주문 항목들에 등록된 메뉴를 가져온다.
         final List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
 
+        /**
+         * 주문항목들의 수와 주문 항목들에 등록된 메뉴의 수가 다르면 안된다.
+         * (같은 메뉴라면 같은 주문 항목에 들어가야한다.)
+         */
         if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
 
         order.setId(null);
 
+        /**
+         * 주문에 등록된 주문 테이블이 존재해야한다.
+         */
         final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
+        /**
+         * 주문 테이블이 빈 상태이면 안된다.
+         */
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -91,9 +105,15 @@ public class OrderService {
 
     @Transactional
     public Order changeOrderStatus(final Long orderId, final Order order) {
+        /**
+         * 등록된 주문이어야한다.
+         */
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
+        /**
+         * 주문이 계산 완료된 상태이면 안된다.
+         */
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException();
         }

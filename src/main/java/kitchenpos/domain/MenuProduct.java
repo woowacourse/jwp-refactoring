@@ -1,5 +1,8 @@
 package kitchenpos.domain;
 
+/**
+ * 메뉴에 속하는 수량이 있는 상품
+ */
 public class MenuProduct {
     private Long seq;
     private Long menuId;
