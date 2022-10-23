@@ -27,17 +27,6 @@ class MenuDaoTest {
         menuDao = BeanAssembler.createMenuDao(dataSource);
     }
 
-    /*
-        Menu save(Menu entity);
-
-    Optional<Menu> findById(Long id);
-
-    List<Menu> findAll();
-
-    long countByIdIn(List<Long> ids);
-
-     */
-
     @Test
     void save() {
         // given
@@ -45,7 +34,7 @@ class MenuDaoTest {
                 "메뉴",
                 BigDecimal.valueOf(1000),
                 1L,
-                List.of(new MenuProduct(1L, 1L, 1L, 3), new MenuProduct(2L, 1L, 2L, 2)));
+                List.of(new MenuProduct(1L, 1L, 3), new MenuProduct(1L, 2L, 2)));
         // when
         Menu savedMenu = menuDao.save(menu);
 
@@ -60,7 +49,7 @@ class MenuDaoTest {
                 "메뉴",
                 BigDecimal.valueOf(1000),
                 1L,
-                List.of(new MenuProduct(1L, 1L, 1L, 3), new MenuProduct(2L, 1L, 2L, 2)));
+                List.of(new MenuProduct(1L, 1L, 3), new MenuProduct(1L, 2L, 2)));
         Menu savedMenu = menuDao.save(menu);
         // when
         Optional<Menu> foundMenu = menuDao.findById(savedMenu.getId());
@@ -76,7 +65,7 @@ class MenuDaoTest {
                 "메뉴",
                 BigDecimal.valueOf(1000),
                 1L,
-                List.of(new MenuProduct(1L, 1L, 1L, 3), new MenuProduct(2L, 1L, 2L, 2)));
+                List.of(new MenuProduct(1L, 1L, 3), new MenuProduct(1L, 2L, 2)));
         Menu savedMenu = menuDao.save(menu);
         // when
         List<Menu> menus = menuDao.findAll();
@@ -92,7 +81,7 @@ class MenuDaoTest {
                 "메뉴",
                 BigDecimal.valueOf(1000),
                 1L,
-                List.of(new MenuProduct(1L, 1L, 1L, 3), new MenuProduct(2L, 1L, 2L, 2)));
+                List.of(new MenuProduct(1L, 1L, 3), new MenuProduct(1L, 2L, 2)));
         Menu savedMenu = menuDao.save(menu);
 
         // when
