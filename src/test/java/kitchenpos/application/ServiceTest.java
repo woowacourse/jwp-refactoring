@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -27,6 +28,9 @@ abstract class ServiceTest {
     protected MenuService menuService;
 
     @Autowired
+    protected TableService tableService;
+
+    @Autowired
     protected MenuGroupDao menuGroupDao;
 
     @Autowired
@@ -34,6 +38,9 @@ abstract class ServiceTest {
 
     @Autowired
     protected MenuDao menuDao;
+
+    @Autowired
+    protected OrderTableDao orderTableDao;
 
     protected MenuGroup createMenuGroup(String name) {
         MenuGroup menuGroup = new MenuGroup();
