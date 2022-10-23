@@ -46,10 +46,7 @@ class MenuServiceTest {
         final String name = "마이쮸 포도맛";
         final BigDecimal price = BigDecimal.valueOf(800);
 
-        final Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroup.getId());
+        final Menu menu = new Menu(null, name, price, menuGroup.getId());
         menu.setMenuProducts(menuProducts);
 
         final Menu savedMenu = menuService.create(menu);
@@ -62,37 +59,10 @@ class MenuServiceTest {
         );
     }
 
-    @DisplayName("메뉴를 등록한다. - 가격이 null이면 예외를 반환한다.")
-    @Test
-    void create_exception_priceIsNull() {
-        final Menu menu = new Menu();
-        menu.setName("마이쮸 포도맛");
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setMenuProducts(menuProducts);
-
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("메뉴를 등록한다. - 가격이 0보다 작으면 예외를 반환한다.")
-    @Test
-    void create_exception_priceIsLessThanZero() {
-        final Menu menu = new Menu();
-        menu.setName("마이쮸 포도맛");
-        menu.setPrice(BigDecimal.valueOf(-1));
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setMenuProducts(menuProducts);
-
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("메뉴를 등록한다. - 메뉴 그룹이 존재하지 않으면 예외를 반환한다.")
     @Test
     void create_exception_noSuchMenuGroup() {
-        final Menu menu = new Menu();
-        menu.setName("마이쮸 포도맛");
-        menu.setPrice(BigDecimal.valueOf(800));
+        final Menu menu = new Menu(null, "마이쮸 포도맛", BigDecimal.valueOf(800), null);
         menu.setMenuProducts(menuProducts);
 
         assertThatThrownBy(() -> menuService.create(menu))
@@ -102,10 +72,7 @@ class MenuServiceTest {
     @DisplayName("메뉴를 등록한다. - 존재하지 않는 상품이 포함되어 있으면 예외를 반환한다.")
     @Test
     void create_exception_noSuchProduct() {
-        final Menu menu = new Menu();
-        menu.setName("마이쮸 포도맛");
-        menu.setPrice(BigDecimal.valueOf(800));
-        menu.setMenuGroupId(menuGroup.getId());
+        final Menu menu = new Menu(null, "마이쮸 포도맛", BigDecimal.valueOf(800), menuGroup.getId());
         menu.setMenuProducts(List.of(new MenuProduct(null, null, null, 1)));
 
         assertThatThrownBy(() -> menuService.create(menu))
@@ -115,10 +82,7 @@ class MenuServiceTest {
     @DisplayName("메뉴를 등록한다. - 메뉴 금액이 각 상품 금액의 합보다 크면 예외를 반환한다.")
     @Test
     void create_exception_wrongTotalPrice() {
-        final Menu menu = new Menu();
-        menu.setName("마이쮸 포도맛");
-        menu.setPrice(BigDecimal.valueOf(900));
-        menu.setMenuGroupId(menuGroup.getId());
+        final Menu menu = new Menu(null, "마이쮸 포도맛", BigDecimal.valueOf(900), menuGroup.getId());
         menu.setMenuProducts(menuProducts);
 
         assertThatThrownBy(() -> menuService.create(menu))
