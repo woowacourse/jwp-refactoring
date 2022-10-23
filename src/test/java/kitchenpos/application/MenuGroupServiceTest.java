@@ -56,11 +56,5 @@ class MenuGroupServiceTest extends ServiceTest {
             assertThat(actual).extracting(MenuGroup::getName)
                     .contains(name1, name2, name3);
         }
-
-        private void saveMenuGroup(final String name) {
-            final MenuGroup menuGroup = new MenuGroup();
-            menuGroup.setName(name);
-            menuGroupDao.save(menuGroup);
-        }
     }
 }

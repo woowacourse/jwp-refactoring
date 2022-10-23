@@ -88,12 +88,5 @@ class ProductServiceTest extends ServiceTest {
             assertThat(actual).extracting(Product::getName)
                     .contains(name1, name2, name3, name4);
         }
-
-        private void saveProduct(final String name) {
-            final Product product = new Product();
-            product.setName(name);
-            product.setPrice(BigDecimal.ONE);
-            productDao.save(product);
-        }
     }
 }
