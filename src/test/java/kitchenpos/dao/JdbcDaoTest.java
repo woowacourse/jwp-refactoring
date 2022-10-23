@@ -4,6 +4,7 @@ import javax.sql.DataSource;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +22,7 @@ public class JdbcDaoTest {
     protected MenuProductDao menuProductDao;
     protected ProductDao productDao;
     protected TableGroupDao tableGroupDao;
+    protected OrderTableDao orderTableDao;
 
     @BeforeEach
     void setUp() {
@@ -29,6 +31,7 @@ public class JdbcDaoTest {
         this.menuProductDao = new JdbcTemplateMenuProductDao(dataSource);
         this.productDao = new JdbcTemplateProductDao(dataSource);
         this.tableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
+        this.orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
     }
 
     protected Product 상품을_저장한다(final Product product) {
@@ -49,5 +52,9 @@ public class JdbcDaoTest {
 
     protected TableGroup 테이블그룹을_저장한다(final TableGroup tableGroup) {
         return tableGroupDao.save(tableGroup);
+    }
+
+    protected OrderTable 주문테이블을_저장한다(final OrderTable orderTable) {
+        return orderTableDao.save(orderTable);
     }
 }
