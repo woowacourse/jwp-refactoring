@@ -17,13 +17,13 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 @JdbcTest
 class OrderLineItemDaoTest {
 
-    @Autowired
     private DataSource dataSource;
 
     private OrderLineItemDao orderLineItemDao;
 
     @Autowired
     public OrderLineItemDaoTest(DataSource dataSource) {
+        this.dataSource = dataSource;
         orderLineItemDao = BeanAssembler.createOrderLineItemDao(dataSource);
     }
 
