@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
+
     private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
@@ -42,7 +43,7 @@ public class OrderService {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("한 가지 이상의 주문 항목을 포함해야합니다.");
         }
 
         final List<Long> menuIds = orderLineItems.stream()
@@ -50,7 +51,7 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문한 메뉴 항목 개수와 실제 메뉴의 수가 일치하지 않습니다.");
         }
 
         order.setId(null);
@@ -95,7 +96,7 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
 
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("이미 계산 완료 상태이므로 주문 상태 변경이 불가합니다.");
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
