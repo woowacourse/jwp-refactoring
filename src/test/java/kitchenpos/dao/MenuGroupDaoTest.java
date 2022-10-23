@@ -1,35 +1,20 @@
 package kitchenpos.dao;
 
+import static kitchenpos.support.MenuGroupFixture.MENU_GROUP_1;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import javax.sql.DataSource;
 import kitchenpos.domain.MenuGroup;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
 @JdbcTest
-class MenuGroupDaoTest {
-
-    @Autowired
-    private DataSource dataSource;
-
-    private MenuGroupDao menuGroupDao;
-
-    @BeforeEach
-    void setUp() {
-        this.menuGroupDao = new JdbcTemplateMenuGroupDao(dataSource);
-    }
+class MenuGroupDaoTest extends JdbcDaoTest {
 
     @Test
     void 메뉴그룹을_저장할_수_있다() {
-        // given
-        final MenuGroup menuGroup = new MenuGroup("메뉴그룹");
-
-        // when
-        final MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        // given, when
+        final MenuGroup savedMenuGroup = menuGroupDao.save(MENU_GROUP_1.생성());
 
         // then
         assertThat(savedMenuGroup.getId()).isNotNull();
@@ -38,15 +23,14 @@ class MenuGroupDaoTest {
     @Test
     void 메뉴그룹을_아이디로_조회할_수_있다() {
         // given
-        final MenuGroup menuGroup = new MenuGroup("메뉴그룹");
-        final MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        final MenuGroup savedMenuGroup = 메뉴그룹을_저장한다(MENU_GROUP_1.생성());
 
         // when
         final MenuGroup foundMenuGroup = menuGroupDao.findById(savedMenuGroup.getId())
                 .orElseThrow(IllegalArgumentException::new);
 
         // then
-        assertThat(foundMenuGroup.getName()).isEqualTo("메뉴그룹");
+        assertThat(foundMenuGroup.getName()).isEqualTo("메뉴그룹1");
     }
 
     @Test
@@ -54,8 +38,7 @@ class MenuGroupDaoTest {
         // given
         final int alreadyExistCount = menuGroupDao.findAll()
                 .size();
-        final MenuGroup menuGroup = new MenuGroup("메뉴그룹");
-        final MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        final MenuGroup savedMenuGroup = 메뉴그룹을_저장한다(MENU_GROUP_1.생성());
 
         // when
         final List<MenuGroup> menuGroups = menuGroupDao.findAll();
@@ -69,8 +52,7 @@ class MenuGroupDaoTest {
     @Test
     void 메뉴그룹이_존재하는지_확인한다() {
         // given
-        final MenuGroup menuGroup = new MenuGroup("메뉴그룹");
-        final MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        final MenuGroup savedMenuGroup = 메뉴그룹을_저장한다(MENU_GROUP_1.생성());
 
         // when
         final boolean exist = menuGroupDao.existsById(savedMenuGroup.getId());
