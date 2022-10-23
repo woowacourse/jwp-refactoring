@@ -2,10 +2,12 @@ package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import javax.sql.DataSource;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +17,12 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 class JdbcTemplateOrderTableDaoTest {
 
     private final OrderTableDao orderTableDao;
+    private final TableGroupDao tableGroupDao;
 
     @Autowired
     JdbcTemplateOrderTableDaoTest(final DataSource dataSource) {
         this.orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
+        this.tableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
     }
 
     @Test
@@ -106,20 +110,25 @@ class JdbcTemplateOrderTableDaoTest {
 
     @Test
     void table_group_id로_조회할_수_있다() {
+        // before
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now());
+        Long tableGroupId = tableGroupDao.save(tableGroup).getId();
+
         // given
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(3);
         orderTable.setEmpty(true);
-        orderTable.setTableGroupId(1L);
+        orderTable.setTableGroupId(tableGroupId);
         orderTableDao.save(orderTable);
 
         // when
-        List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(1L);
+        List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
 
         // then
         assertThat(orderTables).hasSize(1)
                 .usingRecursiveComparison()
                 .ignoringFields("id")
-                .isEqualTo(Arrays.asList(new OrderTable(null, 1L, 3, true)));
+                .isEqualTo(Arrays.asList(new OrderTable(null, tableGroupId, 3, true)));
     }
 }
