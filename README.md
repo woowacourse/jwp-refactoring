@@ -1,6 +1,140 @@
 # 키친포스
 
-## 요구 사항
+## 미션 요구 사항
+1. `kitchenpos` 패키지의 코드를 보고 키친포스의 요구사항을 `README.md`에 작성.
+2. 모든 Business Object에 대한 테스트 코드 작성.
+
+## 키친포스 요구 사항
+#### 메뉴
+- [ ] 메뉴를 등록할 수 있다.
+  - [ ] 메뉴의 가격이 null이거나 0일 수 없다.
+  - [ ] 메뉴의 메뉴 그룹이 등록되어 있어야 한다.
+  - [ ] 메뉴의 메뉴 상품들의 상품이 등록되어 있어야 한다.
+  - [ ] 메뉴의 가격이 0보다 커야 한다.
+- [ ] 등록된 메뉴를 조회할 수 있다.
+#### 메뉴 그룹
+- [ ] 메뉴 그룹을 등록할 수 있다.
+- [ ] 등록된 메뉴 그룹을 조회할 수 있다.
+#### 상품
+- [ ] 상품을 등록할 수 있다.
+  - [ ] 상품의 가격이 null이거나 0일 수 없다.
+- [ ] 등록된 상품을 조회할 수 있다.
+#### 테이블
+- [ ] 주문 테이블을 추가할 수 있다.
+- [ ] 등록된 테이블을 조회할 수 있다.
+- [ ] 특정 주문 테이블을 빈 테이블로 수정할 수 있다.
+- [ ] 특정 주문 테이블의 방문한 손님 수를 수정할 수 있다.
+#### 테이블 그룹
+- [ ] 테이블 그룹을 등록할 수 있다.
+  - [ ] 그룹화하려는 주문 테이블이 2개 이하일 수 없다.
+  - [ ] 그룹화하려는 주문 테이블이 모두 등록되어 있어야 한다.
+  - [ ] 그룹화하려는 주문 테이블이 비어있거나 이미 테이블 그룹에 속해있으면 안된다.
+- [ ] 테이블 그룹을 해제할 수 있다.
+  - [ ] 해제하려는 그룹에 속한 주문 테이블이 조리나 식사 상태일 수 없다. 
+#### 주문
+- [ ] 주문을 등록할 수 있다.
+  - [ ] 주문항목이 0개이면 안된다.
+  - [ ] 주문 항목에 해당하는 메뉴들이 모두 등록되어 있어야 한다.
+  - [ ] 등록하려는 주문의 주문 테이블이 존재해야 한다.
+- [ ] 등록된 주문을 조회할 수 있다.
+- [ ] 특정 주문의 상태를 변경할 수 있다.
+  - [ ] 특정 주문이 등록되어 있어야 한다.
+  - [ ] 특정 주문의 상태가 계산 완료면 안된다.
+
+## 클래스 다이어그램
+
+```mermaid
+classDiagram
+direction BT
+class Menu {
+  + setId(Long) void
+  + setMenuProducts(List~MenuProduct~) void
+  + getName() String
+  + setMenuGroupId(Long) void
+  + getId() Long
+  + getPrice() BigDecimal
+  + setPrice(BigDecimal) void
+  + getMenuProducts() List~MenuProduct~
+  + getMenuGroupId() Long
+  + setName(String) void
+}
+class MenuGroup {
+  + setId(Long) void
+  + setName(String) void
+  + getId() Long
+  + getName() String
+}
+class MenuProduct {
+  + setProductId(Long) void
+  + setMenuId(Long) void
+  + getProductId() Long
+  + getSeq() Long
+  + getQuantity() long
+  + setQuantity(long) void
+  + getMenuId() Long
+  + setSeq(Long) void
+}
+class Order {
+  + setOrderTableId(Long) void
+  + getOrderStatus() String
+  + setOrderStatus(String) void
+  + getOrderTableId() Long
+  + getOrderLineItems() List~OrderLineItem~
+  + setId(Long) void
+  + setOrderLineItems(List~OrderLineItem~) void
+  + setOrderedTime(LocalDateTime) void
+  + getId() Long
+  + getOrderedTime() LocalDateTime
+}
+class OrderLineItem {
+  + getSeq() Long
+  + setSeq(Long) void
+  + getOrderId() Long
+  + setMenuId(Long) void
+  + getQuantity() long
+  + setQuantity(long) void
+  + setOrderId(Long) void
+  + getMenuId() Long
+}
+class OrderStatus {
+<<enumeration>>
+  +  MEAL
+  +  COOKING
+  +  COMPLETION
+  + values() OrderStatus[]
+  + valueOf(String) OrderStatus
+}
+class OrderTable {
+  + setId(Long) void
+  + setEmpty(boolean) void
+  + getNumberOfGuests() int
+  + setNumberOfGuests(int) void
+  + isEmpty() boolean
+  + getId() Long
+  + getTableGroupId() Long
+  + setTableGroupId(Long) void
+}
+class Product {
+  + getId() Long
+  + getPrice() BigDecimal
+  + getName() String
+  + setPrice(BigDecimal) void
+  + setId(Long) void
+  + setName(String) void
+}
+class TableGroup {
+  + getId() Long
+  + getCreatedDate() LocalDateTime
+  + getOrderTables() List~OrderTable~
+  + setCreatedDate(LocalDateTime) void
+  + setOrderTables(List~OrderTable~) void
+  + setId(Long) void
+}
+
+Menu "1" *--> "menuProducts *" MenuProduct 
+Order "1" *--> "orderLineItems *" OrderLineItem 
+TableGroup "1" *--> "orderTables *" OrderTable 
+```
 
 ## 용어 사전
 
