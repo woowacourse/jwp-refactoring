@@ -43,8 +43,7 @@ public class TableService {
     public TableDto changeEmpty(EmptyTableDto emptyTableDto) {
         Long orderTableId = emptyTableDto.getOrderTableId();
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
-        List<String> orderStatuses = Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name());
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatuses)) {
+        if (orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, OrderStatus.getOngoingStatuses())) {
             throw new IllegalArgumentException();
         }
         savedOrderTable.changeEmpty(emptyTableDto.getEmpty());

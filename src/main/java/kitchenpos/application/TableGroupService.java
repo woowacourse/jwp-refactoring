@@ -54,8 +54,7 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        List<String> orderStatuses = Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name());
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatuses)) {
+        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, OrderStatus.getOngoingStatuses())) {
             throw new IllegalArgumentException();
         }
 
