@@ -10,11 +10,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.MenuService;
 import kitchenpos.application.OrderService;
+import kitchenpos.application.ProductService;
 
 @WebMvcTest({
     MenuGroupRestController.class,
     MenuRestController.class,
-    OrderRestController.class
+    OrderRestController.class,
+    ProductRestController.class
 })
 public class ControllerTest {
 
@@ -32,4 +34,7 @@ public class ControllerTest {
 
     @MockBean
     protected OrderService orderService;
+
+    @MockBean
+    protected ProductService productService;
 }
