@@ -40,7 +40,10 @@ public class OrderTable {
         this.tableGroupId = tableGroupId;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0 || isEmpty()) {
+            throw new IllegalArgumentException();
+        }
         this.numberOfGuests = numberOfGuests;
     }
 

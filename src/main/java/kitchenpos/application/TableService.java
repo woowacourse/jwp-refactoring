@@ -43,8 +43,7 @@ public class TableService {
     @Transactional
     public TableDto changeEmpty(EmptyTableDto emptyTableDto) {
         Long orderTableId = emptyTableDto.getOrderTableId();
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        final OrderTable savedOrderTable = getOrderTable(orderTableId);
 
         if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
             throw new IllegalArgumentException();
@@ -64,20 +63,13 @@ public class TableService {
     public TableDto changeNumberOfGuests(UpdateGuestNumberDto updateGuestNumberDto) {
         final Long orderTableId = updateGuestNumberDto.getOrderTableId();
         final int numberOfGuests = updateGuestNumberDto.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
+        final OrderTable savedOrderTable = getOrderTable(orderTableId);
+        savedOrderTable.changeNumberOfGuests(numberOfGuests);
         return TableDto.of(orderTableDao.save(savedOrderTable));
+    }
+
+    private OrderTable getOrderTable(Long orderTableId) {
+        return orderTableDao.findById(orderTableId)
+                .orElseThrow(IllegalArgumentException::new);
     }
 }
