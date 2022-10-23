@@ -13,6 +13,9 @@ import kitchenpos.domain.MenuProduct;
 
 public class MenuFixture {
 
+    public static final Long MENU_FIRST_ID = 1L;
+    public static final Long MENU_SECOND_ID = 2L;
+    public static final Long MENU_THIRD_ID = 3L;
     public static final BigDecimal MENU_PRICE = BigDecimal.valueOf(9900);
     public static final BigDecimal MENU_INVALID_PRICE = BigDecimal.valueOf(-10);
     public static final BigDecimal MENU_EXPENSIVE_PRICE = BigDecimal.valueOf(11001);
