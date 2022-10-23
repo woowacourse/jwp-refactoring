@@ -32,7 +32,7 @@ public class ProductServiceTest {
 
     @DisplayName("상품의 가격은")
     @Nested
-    class Price {
+    class PriceIs {
 
         @Test
         @DisplayName("값이 존재하지 않는다면 예외가 발생한다.")
