@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -30,7 +29,6 @@ class ProductServiceTest extends ServiceTest {
             final Product actual = productService.create(expected);
 
             // then
-            final SoftAssertions softly = new SoftAssertions();
             softly.assertThat(actual.getName()).isEqualTo(expected.getName());
             softly.assertThat(actual.getPrice()).isEqualByComparingTo(expected.getPrice());
             softly.assertThat(actual.getId()).isNotNull()
