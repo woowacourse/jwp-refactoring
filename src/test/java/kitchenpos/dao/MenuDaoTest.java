@@ -9,7 +9,6 @@ import javax.sql.DataSource;
 import kitchenpos.BeanAssembler;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
@@ -17,14 +16,11 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 @JdbcTest
 class MenuDaoTest {
 
-    @Autowired
-    private DataSource dataSource;
-
     private MenuDao menuDao;
 
-    @BeforeEach
-    void setUp() {
-        menuDao = BeanAssembler.createMenuDao(dataSource);
+    @Autowired
+    public MenuDaoTest(DataSource dataSource) {
+        this.menuDao = BeanAssembler.createMenuDao(dataSource);
     }
 
     @Test

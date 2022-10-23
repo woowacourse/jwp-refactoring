@@ -9,7 +9,6 @@ import javax.sql.DataSource;
 import kitchenpos.BeanAssembler;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
@@ -17,14 +16,11 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 @JdbcTest
 class OrderDaoTest {
 
-    @Autowired
-    private DataSource dataSource;
-
     private OrderDao orderDao;
 
-    @BeforeEach
-    void setUp() {
-        orderDao = BeanAssembler.createOrderDao(dataSource);
+    @Autowired
+    public OrderDaoTest(DataSource dataSource) {
+        this.orderDao = BeanAssembler.createOrderDao(dataSource);
     }
 
     @Test

@@ -22,13 +22,16 @@ class OrderLineItemDaoTest {
 
     private OrderLineItemDao orderLineItemDao;
 
+    @Autowired
+    public OrderLineItemDaoTest(DataSource dataSource) {
+        orderLineItemDao = BeanAssembler.createOrderLineItemDao(dataSource);
+    }
+
     private Long orderIdA;
     private Long orderIdB;
 
     @BeforeEach
     void setUp() {
-        orderLineItemDao = BeanAssembler.createOrderLineItemDao(dataSource);
-
         OrderDao orderDao = BeanAssembler.createOrderDao(dataSource);
         orderIdA = orderDao.save(new Order(1L, "COOKING", LocalDateTime.now(), null)).getId();
         orderIdB = orderDao.save(new Order(2L, "COOKING", LocalDateTime.now(), null)).getId();
