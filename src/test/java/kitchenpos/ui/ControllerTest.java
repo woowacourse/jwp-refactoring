@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.MenuService;
 import kitchenpos.application.ProductService;
+import kitchenpos.application.TableGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -13,7 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest({
         ProductRestController.class,
         MenuGroupRestController.class,
-        MenuRestController.class
+        MenuRestController.class,
+        TableGroupRestController.class
 })
 @Import(MockMvcConfig.class)
 public abstract class ControllerTest {
@@ -32,4 +34,7 @@ public abstract class ControllerTest {
 
     @MockBean
     protected MenuService menuService;
+
+    @MockBean
+    protected TableGroupService tableGroupService;
 }
