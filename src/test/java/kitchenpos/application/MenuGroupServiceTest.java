@@ -11,7 +11,7 @@ class MenuGroupServiceTest extends IntegrationTest {
     @Test
     void 메뉴_그룹을_생성할_수_있다() {
         // given
-        MenuGroup menuGroup = new MenuGroup(1L, "두마리메뉴");
+        MenuGroup menuGroup = new MenuGroup("두마리메뉴");
 
         // when
         MenuGroup extract = menuGroupService.create(menuGroup);
@@ -23,7 +23,7 @@ class MenuGroupServiceTest extends IntegrationTest {
     @Test
     void 메뉴_그룹들을_조회할_수_있다() {
         // given
-        MenuGroup menuGroup = new MenuGroup(1L, "두마리메뉴");
+        MenuGroup menuGroup = new MenuGroup("두마리메뉴");
         menuGroupService.create(menuGroup);
 
         // when

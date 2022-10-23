@@ -14,7 +14,7 @@ class ProductServiceTest extends IntegrationTest {
     @Test
     void 상품을_생성할_수_있다() {
         // given
-        Product product = new Product(1L, "치킨", BigDecimal.valueOf(1000));
+        Product product = new Product("치킨", BigDecimal.valueOf(1000));
 
         // when
         Product extract = productService.create(product);
@@ -26,7 +26,7 @@ class ProductServiceTest extends IntegrationTest {
     @Test
     void 상품의_가격이_없을_경우_예외가_발생한다() {
         // given
-        Product product = new Product(1L, "짜장면", BigDecimal.valueOf(-1));
+        Product product = new Product("짜장면", BigDecimal.valueOf(-1));
 
         // when & then
         assertThatThrownBy(() -> productService.create(product))
@@ -36,7 +36,7 @@ class ProductServiceTest extends IntegrationTest {
     @Test
     void 상품의_가격이_NULL일_경우_예외가_발생한다() {
         // given
-        Product product = new Product(1L, "짜장면", null);
+        Product product = new Product("짜장면", null);
 
         // when & then
         assertThatThrownBy(() -> productService.create(product))
@@ -46,7 +46,7 @@ class ProductServiceTest extends IntegrationTest {
     @Test
     void 상품의_리스트들을_반환할_수_있다() {
         // given
-        Product product = new Product(1L, "짜장면", BigDecimal.valueOf(1000));
+        Product product = new Product("짜장면", BigDecimal.valueOf(1000));
         productService.create(product);
 
         // when
