@@ -29,7 +29,7 @@ class MenuServiceTest {
     }
 
     @Test
-    void throwExceptionWhenPriceIsNegative() {
+    void createThrowExceptionWhenPriceIsNegative() {
         Menu menu = Menu.of("name", BigDecimal.valueOf(-100), 1L, new ArrayList<>());
 
         assertThatThrownBy(() -> menuService.create(menu))
@@ -38,7 +38,7 @@ class MenuServiceTest {
     }
 
     @Test
-    void throwExceptionWhenNotExistProduct() {
+    void createThrowExceptionWhenNotExistProduct() {
         MenuProduct menuProduct = MenuProduct.of( 0L, 0L, 10);
         Menu menu = Menu.of("name", BigDecimal.valueOf(100), 1L, List.of(menuProduct));
 
@@ -48,7 +48,7 @@ class MenuServiceTest {
     }
 
     @Test
-    void throwExceptionWhenNotExistMenuId() {
+    void createThrowExceptionWhenNotExistMenuId() {
         MenuProduct menuProduct = MenuProduct.of(1L, 1L, 10);
         Menu menu = Menu.of("name", BigDecimal.valueOf(100), 0L, List.of(menuProduct));
 
