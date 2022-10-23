@@ -3,7 +3,11 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * 통합 계산을 위해 개별 OrderTable 을 그룹화하는 객체
+ */
 public class TableGroup {
+
     private Long id;
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;

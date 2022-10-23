@@ -1,6 +1,10 @@
 package kitchenpos.domain;
 
+/**
+ * Order 에 속하는 수량이 있는 Menu
+ */
 public class OrderLineItem {
+
     private Long seq;
     private Long orderId;
     private Long menuId;

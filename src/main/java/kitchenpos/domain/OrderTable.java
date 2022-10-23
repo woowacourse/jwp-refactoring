@@ -1,6 +1,12 @@
 package kitchenpos.domain;
 
+/**
+ * 매장에서 주문이 발생하는 영역
+ * emptyTable: 주문을 등록할 수 없는 OrderTable
+ * numberOfGuests: 방문한 손님 수. 필수는 아니며 Order 는 0명으로 등록할 수 있다.
+ */
 public class OrderTable {
+
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;

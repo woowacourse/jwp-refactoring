@@ -3,7 +3,11 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * MenuGroup에 속하는 실제 주문 가능 단위
+ */
 public class Menu {
+
     private Long id;
     private String name;
     private BigDecimal price;
