@@ -8,6 +8,7 @@ import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,5 +67,9 @@ public abstract class ServiceTest {
 
     protected MenuGroup 메뉴그룹등록(final MenuGroup menuGroup) {
         return menuGroupDao.save(menuGroup);
+    }
+
+    protected Menu 메뉴등록(final Menu menu) {
+        return menuService.create(menu);
     }
 }
