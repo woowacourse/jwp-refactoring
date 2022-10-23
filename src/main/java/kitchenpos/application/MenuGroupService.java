@@ -13,14 +13,15 @@ import java.util.stream.Collectors;
 
 @Service
 public class MenuGroupService {
+
     private final MenuGroupDao menuGroupDao;
 
-    public MenuGroupService(final MenuGroupDao menuGroupDao) {
+    public MenuGroupService(MenuGroupDao menuGroupDao) {
         this.menuGroupDao = menuGroupDao;
     }
 
     @Transactional
-    public MenuGroupResponse create(final MenuGroupRequest menuGroupRequest) {
+    public MenuGroupResponse create(MenuGroupRequest menuGroupRequest) {
         MenuGroup menuGroup = menuGroupDao.save(menuGroupRequest.toEntity());
         return MenuGroupResponse.from(menuGroup);
     }
