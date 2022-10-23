@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 public class OrderTable {
     private Long id;
     private Long tableGroupId;
@@ -49,5 +51,23 @@ public class OrderTable {
     @Deprecated
     public void setEmpty(final boolean empty) {
         this.empty = empty;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        OrderTable that = (OrderTable) o;
+        return numberOfGuests == that.numberOfGuests && empty == that.empty && Objects.equals(tableGroupId,
+                that.tableGroupId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tableGroupId, numberOfGuests, empty);
     }
 }
