@@ -4,6 +4,7 @@ import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderTable;
 
 public class ServiceTestFixture {
     public static final MenuGroup MENU_GROUP1 =  new MenuGroup(1L,  "한마리메뉴");
@@ -19,4 +20,12 @@ public class ServiceTestFixture {
 
     public static final List<OrderLineItem> ORDER_LINE_ITEMS = List.of(ORDER_LINE_ITEM1, ORDER_LINE_ITEM2);
 
+    public static final OrderTable ORDER_TABLE1 = new OrderTable(1L,   0, true);
+    public static final OrderTable ORDER_TABLE2 = new OrderTable(2L,   0, true);
+    public static final OrderTable ORDER_TABLE3 = new OrderTable(3L,  0, true);
+    public static final OrderTable INVALID_ORDER_TABLE = new OrderTable(100L, 1L, 0, true);
+    public static final OrderTable NOT_EMPTY_ORDER_TABLE = new OrderTable(100L, 1L, 0, false);
+    public static final OrderTable INVALID_GROUPID_ORDER_TABLE = new OrderTable(100L, 100L, 0, false);
+
+    public static final List<OrderTable> ORDER_TABLES = List.of(ORDER_TABLE1, ORDER_TABLE2, ORDER_TABLE3);
 }

@@ -35,4 +35,7 @@ public class ServiceTest {
     @Autowired
     protected OrderTableDao orderTableDao;
 
+    @Autowired
+    protected TableGroupService tableGroupService;
+
 }
