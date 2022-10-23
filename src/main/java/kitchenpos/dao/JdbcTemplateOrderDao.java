@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 @Repository
 public class JdbcTemplateOrderDao implements OrderDao {
+
     private static final String TABLE_NAME = "orders";
     private static final String KEY_COLUMN_NAME = "id";
 
@@ -95,11 +97,10 @@ public class JdbcTemplateOrderDao implements OrderDao {
     }
 
     private Order toEntity(final ResultSet resultSet) throws SQLException {
-        final Order entity = new Order();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setOrderTableId(resultSet.getLong("order_table_id"));
-        entity.setOrderStatus(resultSet.getString("order_status"));
-        entity.setOrderedTime(resultSet.getObject("ordered_time", LocalDateTime.class));
-        return entity;
+        return new Order(
+                resultSet.getLong(KEY_COLUMN_NAME),
+                resultSet.getLong("order_table_id"),
+                OrderStatus.valueOf(resultSet.getString("order_status")),
+                resultSet.getObject("ordered_time", LocalDateTime.class));
     }
 }

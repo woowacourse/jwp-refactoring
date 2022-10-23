@@ -5,12 +5,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.application.dto.CreateOrderDto;
+import kitchenpos.application.dto.CreateOrderLineItemDto;
 import kitchenpos.application.dto.CreateTableDto;
 import kitchenpos.application.dto.CreateTableGroupDto;
 import kitchenpos.application.dto.TableGroupDto;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -119,14 +119,8 @@ class TableGroupServiceTest {
         void 주문이_들어간_테이블이_포함된_경우_예외를_발생시킨다() {
             CreateTableGroupDto createTableGroupDto = new CreateTableGroupDto(List.of(orderTableId1, orderTableId2));
             Long savedTableGroupId = tableGroupService.create(createTableGroupDto).getId();
-
-            Order order = new Order();
-            order.setOrderTableId(orderTableId1);
-            OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(1L);
-            orderLineItem.setQuantity(1);
-            order.setOrderLineItems(List.of(orderLineItem));
-            orderService.create(order);
+            List<CreateOrderLineItemDto> orderLineItems = List.of(new CreateOrderLineItemDto(1L, 1));
+            orderService.create(new CreateOrderDto(orderTableId1, orderLineItems));
 
             assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroupId))
                     .isInstanceOf(IllegalArgumentException.class);

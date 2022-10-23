@@ -5,11 +5,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.application.dto.CreateOrderDto;
+import kitchenpos.application.dto.CreateOrderLineItemDto;
 import kitchenpos.application.dto.CreateTableDto;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.application.dto.OrderDto;
+import kitchenpos.application.dto.UpdateOrderStatusDto;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -35,11 +36,8 @@ class OrderServiceTest {
         @Test
         void 주문을_생성하고_반환한다() {
             Long orderTableId = saveOrderTable();
-            Order order = new Order();
-            order.setOrderTableId(orderTableId);
-            order.setOrderLineItems(List.of(generateOrderLineItem(1L, 1)));
-
-            Order actual = orderService.create(order);
+            List<CreateOrderLineItemDto> orderLineItems = List.of(new CreateOrderLineItemDto(1L, 1));
+            OrderDto actual = orderService.create(new CreateOrderDto(orderTableId, orderLineItems));
             assertAll(
                     () -> assertThat(actual.getId()).isNotNull(),
                     () -> assertThat(actual.getOrderTableId()).isEqualTo(orderTableId),
@@ -52,57 +50,41 @@ class OrderServiceTest {
         @Test
         void 주문하는_메뉴_정보가_없는_경우_예외가_발생한다() {
             Long orderTableId = saveOrderTable();
-            Order order = new Order();
-            order.setOrderTableId(orderTableId);
-            order.setOrderLineItems(List.of());
-
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(new CreateOrderDto(orderTableId, List.of())))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 존재하지_않는_메뉴가_포함된_경우_예외가_발생한다() {
             Long orderTableId = saveOrderTable();
-            Order order = new Order();
-            order.setOrderTableId(orderTableId);
-            order.setOrderLineItems(List.of(generateOrderLineItem(9999999L, 1)));
-
-            assertThatThrownBy(() -> orderService.create(order))
+            List<CreateOrderLineItemDto> orderLineItems = List.of(new CreateOrderLineItemDto(9999999L, 1));
+            assertThatThrownBy(() -> orderService.create(new CreateOrderDto(orderTableId, orderLineItems)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 존재하지_않는_테이블에서_주문한_경우_예외가_발생한다() {
-            Order order = new Order();
-            order.setOrderTableId(99999999L);
-            order.setOrderLineItems(List.of(generateOrderLineItem(1L, 1)));
-
-            assertThatThrownBy(() -> orderService.create(order))
+            List<CreateOrderLineItemDto> orderLineItems = List.of(new CreateOrderLineItemDto(1L, 1));
+            assertThatThrownBy(() -> orderService.create(new CreateOrderDto(99999999L, orderLineItems)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 빈_테이블에서_주문한_경우_예외가_발생한다() {
             Long orderTableId = tableService.create(new CreateTableDto(0, true)).getId();
-            Order order = new Order();
-            order.setOrderTableId(orderTableId);
-            order.setOrderLineItems(List.of(generateOrderLineItem(1L, 1)));
-
-            assertThatThrownBy(() -> orderService.create(order))
+            List<CreateOrderLineItemDto> orderLineItems = List.of(new CreateOrderLineItemDto(1L, 1));
+            assertThatThrownBy(() -> orderService.create(new CreateOrderDto(orderTableId, orderLineItems)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
     @Test
     void list_메서드는_주문_목록을_조회한다() {
-        Order order = new Order();
-        order.setOrderTableId(saveOrderTable());
-        order.setOrderLineItems(List.of(generateOrderLineItem(1L, 1)));
-        orderService.create(order);
-        orderService.create(order);
+        List<CreateOrderLineItemDto> orderLineItems = List.of(new CreateOrderLineItemDto(1L, 1));
+        orderService.create(new CreateOrderDto(saveOrderTable(), orderLineItems));
+        orderService.create(new CreateOrderDto(saveOrderTable(), orderLineItems));
 
-        List<Order> orders = orderService.list();
-
+        List<OrderDto> orders = orderService.list();
         assertThat(orders).hasSizeGreaterThan(1);
     }
 
@@ -113,14 +95,11 @@ class OrderServiceTest {
         @Test
         void 주문의_상태를_수정하고_반환한다() {
             Long orderTableId = saveOrderTable();
-            Order order = new Order();
-            order.setOrderTableId(orderTableId);
-            order.setOrderLineItems(List.of(generateOrderLineItem(1L, 1)));
-            Long orderId = orderService.create(order).getId();
+            List<CreateOrderLineItemDto> orderLineItems = List.of(new CreateOrderLineItemDto(1L, 1));
+            Long orderId = orderService.create(new CreateOrderDto(orderTableId, orderLineItems)).getId();
 
-            Order orderDto = new Order();
-            orderDto.setOrderStatus(OrderStatus.MEAL.name());
-            Order actual = orderService.changeOrderStatus(orderId, orderDto);
+            UpdateOrderStatusDto updateOrderStatusDto = new UpdateOrderStatusDto(orderId, OrderStatus.MEAL);
+            OrderDto actual = orderService.changeOrderStatus(updateOrderStatusDto);
             assertAll(
                     () -> assertThat(actual.getId()).isNotNull(),
                     () -> assertThat(actual.getOrderTableId()).isEqualTo(orderTableId),
@@ -132,31 +111,22 @@ class OrderServiceTest {
 
         @Test
         void 존재하지_않는_주문인_경우_예외를_발생시킨다() {
-            assertThatThrownBy(() -> orderService.changeOrderStatus(99999L, new Order()))
+            UpdateOrderStatusDto updateOrderStatusDto = new UpdateOrderStatusDto(99999L, OrderStatus.MEAL);
+            assertThatThrownBy(() -> orderService.changeOrderStatus(updateOrderStatusDto))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void COMPLETION_상태인_주문의_상태롤_변경하려는_경우_예외를_발생시킨다() {
-            Order order = new Order();
-            order.setOrderTableId(saveOrderTable());
-            order.setOrderLineItems(List.of(generateOrderLineItem(1L, 1)));
-            Long orderId = orderService.create(order).getId();
+            Long orderTableId = saveOrderTable();
+            List<CreateOrderLineItemDto> orderLineItems = List.of(new CreateOrderLineItemDto(1L, 1));
+            Long orderId = orderService.create(new CreateOrderDto(orderTableId, orderLineItems)).getId();
 
-            Order orderDto = new Order();
-            orderDto.setOrderStatus(OrderStatus.COMPLETION.name());
-            orderService.changeOrderStatus(orderId, orderDto);
-
-            assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, orderDto))
+            UpdateOrderStatusDto updateOrderStatusDto = new UpdateOrderStatusDto(orderId, OrderStatus.COMPLETION);
+            orderService.changeOrderStatus(updateOrderStatusDto);
+            assertThatThrownBy(() -> orderService.changeOrderStatus(updateOrderStatusDto))
                     .isInstanceOf(IllegalArgumentException.class);
         }
-    }
-
-    private OrderLineItem generateOrderLineItem(Long menuId, int quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-        return orderLineItem;
     }
 
     private Long saveOrderTable() {

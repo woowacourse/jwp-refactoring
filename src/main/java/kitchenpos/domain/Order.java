@@ -1,52 +1,41 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import lombok.Getter;
 
+@Getter
 public class Order {
-    private Long id;
-    private Long orderTableId;
-    private String orderStatus;
-    private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
 
-    public Long getId() {
-        return id;
-    }
+    private final Long id;
+    private final Long orderTableId;
+    private OrderStatus orderStatus;
+    private final LocalDateTime orderedTime;
 
-    public void setId(final Long id) {
+    public Order(Long id,
+                 Long orderTableId,
+                 OrderStatus orderStatus,
+                 LocalDateTime orderedTime) {
         this.id = id;
-    }
-
-    public Long getOrderTableId() {
-        return orderTableId;
-    }
-
-    public void setOrderTableId(final Long orderTableId) {
         this.orderTableId = orderTableId;
-    }
-
-    public String getOrderStatus() {
-        return orderStatus;
-    }
-
-    public void setOrderStatus(final String orderStatus) {
         this.orderStatus = orderStatus;
-    }
-
-    public LocalDateTime getOrderedTime() {
-        return orderedTime;
-    }
-
-    public void setOrderedTime(final LocalDateTime orderedTime) {
         this.orderedTime = orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+    public static Order of(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        return new Order(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
     }
 
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+    public String getOrderStatus() {
+        return orderStatus.name();
+    }
+
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        if (OrderStatus.COMPLETION.equals(this.orderStatus)) {
+            throw new IllegalArgumentException();
+        }
+        this.orderStatus = orderStatus;
     }
 }

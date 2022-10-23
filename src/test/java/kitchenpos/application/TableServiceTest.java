@@ -5,13 +5,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.application.dto.CreateOrderDto;
+import kitchenpos.application.dto.CreateOrderLineItemDto;
 import kitchenpos.application.dto.CreateTableDto;
 import kitchenpos.application.dto.CreateTableGroupDto;
 import kitchenpos.application.dto.EmptyTableDto;
 import kitchenpos.application.dto.TableDto;
 import kitchenpos.application.dto.UpdateGuestNumberDto;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -104,14 +104,8 @@ class TableServiceTest {
         @Test
         void 주문이_들어간_테이블의_빈_테이블_여부를_수정하려는_경우_예외를_발생시킨다() {
             Long orderTableId = saveOrderTable();
-
-            Order order = new Order();
-            order.setOrderTableId(orderTableId);
-            OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(1L);
-            orderLineItem.setQuantity(1);
-            order.setOrderLineItems(List.of(orderLineItem));
-            orderService.create(order);
+            List<CreateOrderLineItemDto> orderLineItems = List.of(new CreateOrderLineItemDto(1L, 1));
+            orderService.create(new CreateOrderDto(orderTableId, orderLineItems));
 
             assertThatThrownBy(() -> tableService.changeEmpty(new EmptyTableDto(orderTableId, true)))
                     .isInstanceOf(IllegalArgumentException.class);
