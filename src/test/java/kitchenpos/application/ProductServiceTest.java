@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.Fixture.상품_강정치킨;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -20,9 +21,7 @@ class ProductServiceTest {
     @Test
     void 상품을_등록할_수_있다() {
         // given
-        Product product = new Product();
-        product.setName("강정치킨");
-        product.setPrice(BigDecimal.valueOf(17000));
+        Product product = 상품_강정치킨();
 
         // when
         Product actual = productService.create(product);
@@ -33,9 +32,7 @@ class ProductServiceTest {
 
     @Test
     void 상품_목록들을_조회한다() {
-        Product product = new Product();
-        product.setName("강정치킨");
-        product.setPrice(BigDecimal.valueOf(17000));
+        Product product = 상품_강정치킨();
 
         // when
         productService.create(product);

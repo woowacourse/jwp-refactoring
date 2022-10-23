@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.Fixture.메뉴_그룹_추천상품;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
@@ -17,8 +18,7 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴_그룹을_생성할_수_있다() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("추천 메뉴");
+        MenuGroup menuGroup = 메뉴_그룹_추천상품();
 
         // when
         MenuGroup actual = menuGroupService.create(menuGroup);
@@ -32,8 +32,8 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴_그룹_목록을_조회한다() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("추천 메뉴");
+        MenuGroup menuGroup = 메뉴_그룹_추천상품();
+
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
         // when
