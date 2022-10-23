@@ -18,7 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -31,15 +31,13 @@ class OrderServiceTest {
     @Autowired
     private TableService tableService;
 
-    @MockBean
+    @SpyBean
     private MenuDao menuDao;
 
     @DisplayName("주문을 등록할 수 있다. (주문을 하면 조리 상태가 된다.)")
     @Test
     void create() {
         // given
-        when(menuDao.countByIdIn(any())).thenReturn(1L);
-
         final OrderTable orderTable = new OrderTable(1, false);
         final OrderTable createdOrderTable = tableService.create(orderTable);
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
@@ -59,8 +57,6 @@ class OrderServiceTest {
     @Test
     void createOrderWithOneMenu() {
         // given
-        when(menuDao.countByIdIn(any())).thenReturn(1L);
-
         final OrderTable orderTable = new OrderTable(1, false);
         final OrderTable createdOrderTable = tableService.create(orderTable);
 
@@ -93,8 +89,6 @@ class OrderServiceTest {
     @Test
     void createWithNonEmptyOrderTable() {
         // given
-        when(menuDao.countByIdIn(any())).thenReturn(1L);
-
         final OrderTable orderTable = new OrderTable(1, true);
         final OrderTable createdOrderTable = tableService.create(orderTable);
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
@@ -110,8 +104,6 @@ class OrderServiceTest {
     @Test
     void canChangeOrderStatus() {
         // given
-        when(menuDao.countByIdIn(any())).thenReturn(1L);
-
         final OrderTable orderTable = new OrderTable(1, false);
         final OrderTable createdOrderTable = tableService.create(orderTable);
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
@@ -132,8 +124,6 @@ class OrderServiceTest {
     @Test
     void canNotChangeOrderStatusWhenAlreadyCompletion() {
         // given
-        when(menuDao.countByIdIn(any())).thenReturn(1L);
-
         final OrderTable orderTable = new OrderTable(1, false);
         final OrderTable createdOrderTable = tableService.create(orderTable);
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
@@ -151,8 +141,6 @@ class OrderServiceTest {
     @Test
     void list() {
         // given
-        when(menuDao.countByIdIn(any())).thenReturn(1L);
-
         final OrderTable orderTable = new OrderTable(1, false);
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
 

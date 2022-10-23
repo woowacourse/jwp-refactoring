@@ -14,7 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -27,7 +27,7 @@ class TableGroupServiceTest {
     @Autowired
     private TableService tableService;
 
-    @MockBean
+    @SpyBean
     private OrderDao orderDao;
 
     @DisplayName("새로운 단체 지정(table group)을 생성할 수 있다.")
