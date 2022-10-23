@@ -15,7 +15,8 @@ class MenuGroupServiceTest extends ServiceTest {
     @DisplayName("create 메서드는 메뉴 분류를 생성한다.")
     void create() {
         // given
-        MenuGroup menuGroup = createMenuGroup("반마리치킨");
+        MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setName("반마리치킨");
 
         // when
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
@@ -28,13 +29,14 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     @DisplayName("list 메서드는 모든 메뉴 분류를 조회한다.")
     void list() {
+        // given
+        saveMenuGroup("반마리치킨");
+        saveMenuGroup("세마리치킨");
+
         // when
-        List<MenuGroup> list = menuGroupService.list();
-        for (MenuGroup menuGroup : list) {
-            System.out.println("menuGroup.getName() = " + menuGroup.getName());
-        }
+        List<MenuGroup> menuGroups = menuGroupService.list();
 
         // then
-        assertThat(list).hasSize(0);
+        assertThat(menuGroups).hasSize(2);
     }
 }

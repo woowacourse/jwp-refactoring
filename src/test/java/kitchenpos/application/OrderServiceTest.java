@@ -25,7 +25,7 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("list 메서드는 모든 order를 조회한다.")
     void list() {
         // given
-        MenuGroup menuGroup = menuGroupService.create(createMenuGroup("반마리치킨"));
+        MenuGroup menuGroup = menuGroupService.create(saveMenuGroup("반마리치킨"));
         Product product = productService.create(createProduct("크림치킨", BigDecimal.valueOf(15000.00)));
         Menu menu1 = saveMenu("크림치킨", menuGroup, product);
         Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
@@ -67,7 +67,7 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("order 상태를 업데이트한다.")
         void success() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(createMenuGroup("반마리치킨"));
+            MenuGroup menuGroup = menuGroupService.create(saveMenuGroup("반마리치킨"));
             Product product = productService.create(createProduct("크림치킨", BigDecimal.valueOf(15000.00)));
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
@@ -88,7 +88,7 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("orderId에 해당하는 order가 존재하지 않는 경우 예외를 던진다.")
         void orderId_NotExist_ExceptionThrown() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(createMenuGroup("반마리치킨"));
+            MenuGroup menuGroup = menuGroupService.create(saveMenuGroup("반마리치킨"));
             Product product = productService.create(createProduct("크림치킨", BigDecimal.valueOf(15000.00)));
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
@@ -104,7 +104,7 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("order의 상태가 COMPLETION인 경우 예외를 던진다.")
         void orderStatus_IsCompleted_ExceptionThrown() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(createMenuGroup("반마리치킨"));
+            MenuGroup menuGroup = menuGroupService.create(saveMenuGroup("반마리치킨"));
             Product product = productService.create(createProduct("크림치킨", BigDecimal.valueOf(15000.00)));
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
@@ -128,7 +128,7 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("order를 생성한다.")
         void success() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(createMenuGroup("반마리치킨"));
+            MenuGroup menuGroup = menuGroupService.create(saveMenuGroup("반마리치킨"));
             Product product = productService.create(createProduct("크림치킨", BigDecimal.valueOf(15000.00)));
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
@@ -168,7 +168,7 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("OrderLineItem의 개수와 OrderLineItem에 해당하는 메뉴의 개수가 다른 경우 예외를 던진다.")
         void orderLineItem_MenuNotExist_ExceptionThrown() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(createMenuGroup("반마리치킨"));
+            MenuGroup menuGroup = menuGroupService.create(saveMenuGroup("반마리치킨"));
             Product product = productService.create(createProduct("크림치킨", BigDecimal.valueOf(15000.00)));
             Menu menu = saveMenu("크림치킨", menuGroup, product);
             OrderLineItem orderLineItem1 = new OrderLineItem();
@@ -190,7 +190,7 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("orderTable이 존재하지 않는 경우 예외를 던진다.")
         void orderTable_NotExist_ExceptionThrown() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(createMenuGroup("반마리치킨"));
+            MenuGroup menuGroup = menuGroupService.create(saveMenuGroup("반마리치킨"));
             Product product = productService.create(createProduct("크림치킨", BigDecimal.valueOf(15000.00)));
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
@@ -214,7 +214,7 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("orderTable이 empty인 경우 예외를 던진다.")
         void orderTable_IsEmpty_ExceptionThrown() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(createMenuGroup("반마리치킨"));
+            MenuGroup menuGroup = menuGroupService.create(saveMenuGroup("반마리치킨"));
             Product product = productService.create(createProduct("크림치킨", BigDecimal.valueOf(15000.00)));
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);

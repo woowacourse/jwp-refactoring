@@ -20,7 +20,7 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("create 메서드는 메뉴를 생성한다.")
     void create() {
         // given
-        MenuGroup menuGroup = menuGroupService.create(createMenuGroup("반마리치킨"));
+        MenuGroup menuGroup = menuGroupService.create(saveMenuGroup("반마리치킨"));
         Product product = productService.create(createProduct("크림치킨", BigDecimal.valueOf(10000.00)));
         MenuProduct menuProduct = createMenuProduct(product.getId(), 1);
         Menu menu = createMenu("크림치킨", BigDecimal.valueOf(10000.00), menuGroup.getId(),
@@ -38,7 +38,7 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("list 메서드는 모든 메뉴를 조회한다.")
     void list() {
         // given
-        MenuGroup menuGroup = menuGroupService.create(createMenuGroup("반마리치킨"));
+        MenuGroup menuGroup = menuGroupService.create(saveMenuGroup("반마리치킨"));
         Product product = productService.create(createProduct("크림치킨", BigDecimal.valueOf(15000.00)));
         saveMenu("크림치킨", menuGroup, product);
         saveMenu("크림어니언치킨", menuGroup, product);
