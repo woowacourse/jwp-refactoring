@@ -55,10 +55,9 @@ class OrderServiceTest extends ApplicationTest {
         // given
         final OrderTable orderTable = new OrderTable(1, false);
         final OrderTable createdOrderTable = tableService.create(orderTable);
-        final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1L, 1L, 1L);
-        final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 1L, 1L, 1L);
 
-        final Order order = new Order(createdOrderTable.getId(), LocalDateTime.now(), List.of(orderLineItem1, orderLineItem2));
+        final Order order = new Order(createdOrderTable.getId(), LocalDateTime.now(),
+                invalidQuantityOrderLineItem());
 
         // when & then
         assertThatThrownBy(() -> orderService.create(order))
@@ -150,5 +149,11 @@ class OrderServiceTest extends ApplicationTest {
         final OrderTable createdOrderTable = tableService.create(orderTable);
 
         return new Order(createdOrderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
+    }
+
+    private static List<OrderLineItem> invalidQuantityOrderLineItem() {
+        final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1L, 1L, 1L);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 1L, 1L, 1L);
+        return List.of(orderLineItem1, orderLineItem2);
     }
 }
