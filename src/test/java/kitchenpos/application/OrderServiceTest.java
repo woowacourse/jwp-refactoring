@@ -141,7 +141,7 @@ class OrderServiceTest {
                         .extracting("id")
                         .contains(saved.getId()),
                 () -> assertThat(orders).usingRecursiveFieldByFieldElementComparator()
-                        .usingElementComparatorOnFields("orderLineItems")
+                        .extracting("orderLineItems")
                         .isNotEmpty()
         );
     }

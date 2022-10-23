@@ -47,8 +47,8 @@ class MenuServiceTest {
                 () -> assertThat(saved.getName()).isEqualTo("두마리 치킨 콤보"),
                 () -> assertThat(saved.getPrice()).isEqualByComparingTo(new BigDecimal("30000")),
                 () -> assertThat(saved.getMenuGroupId()).isEqualTo(1L),
-                () -> assertThat(saved.getMenuProducts()).usingElementComparatorOnFields("menuId", "productId",
-                                "quantity")
+                () -> assertThat(saved.getMenuProducts()).usingElementComparatorOnFields(
+                                "menuId", "productId", "quantity")
                         .hasSize(1)
                         .containsExactly(menuProduct)
         );
@@ -149,7 +149,7 @@ class MenuServiceTest {
                 () -> assertThat(menus).extracting("id")
                         .contains(saved.getId()),
                 () -> assertThat(menus).usingRecursiveFieldByFieldElementComparator()
-                        .usingElementComparatorOnFields("menuProducts")
+                        .extracting("menuProducts")
                         .isNotEmpty()
         );
     }
