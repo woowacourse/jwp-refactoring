@@ -28,8 +28,8 @@ class ProductServiceTest {
     void createWithPositivePrice() {
         final var positivePrice = 1;
 
-        Product expected = new Product("탕수육", positivePrice);
-        Product actual = productDao.save(expected);
+        final var expected = new Product("탕수육", positivePrice);
+        final var actual = productDao.save(expected);
 
         assertThat(actual.getId()).isPositive();
         assertProductEqualsWithoutId(actual, expected);
@@ -39,8 +39,8 @@ class ProductServiceTest {
     void createWithZeroPrice() {
         final var zeroPrice = 0;
 
-        Product expected = new Product("탕수육", zeroPrice);
-        Product actual = productDao.save(expected);
+        final var expected = new Product("탕수육", zeroPrice);
+        final var actual = productDao.save(expected);
 
         assertThat(actual.getId()).isPositive();
         assertProductEqualsWithoutId(actual, expected);
@@ -50,7 +50,8 @@ class ProductServiceTest {
     void createWithNegativePrice() {
         final var negativePrice = -1;
 
-        Product product = new Product("탕수육", negativePrice);
+        final var product = new Product("탕수육", negativePrice);
+
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -74,7 +75,7 @@ class ProductServiceTest {
     }
 
     private void assertAllMatches(final List<Product> actualList, final List<Product> expectedList) {
-        final int expectedSize = actualList.size();
+        final var expectedSize = actualList.size();
         assertThat(expectedList).hasSize(expectedSize);
 
         for (int i = 0; i < expectedSize; i++) {

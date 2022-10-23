@@ -43,8 +43,8 @@ class MenuServiceTest {
         final var product = productDao.save(new Product("자장면", 5000));
         final var menuProduct = menuProductDao.save(new MenuProduct(1L, product.getId(), 1));
 
-        final var expected = new Menu("자장면", product.getPrice(), menuGroup.getId(), menuProduct);
-        final var actual = menuDao.save(expected);
+        final Menu expected = new Menu("자장면", product.getPrice(), menuGroup.getId(), menuProduct);
+        final Menu actual = menuDao.save(expected);
         actual.setMenuProducts(menuProductDao.findAllByMenuId(actual.getId()));
 
         assertThat(actual.getId()).isPositive();
@@ -124,7 +124,7 @@ class MenuServiceTest {
     }
 
     private void assertAllMatches(final List<Menu> actualList, final List<Menu> expectedList) {
-        final int expectedSize = actualList.size();
+        final var expectedSize = actualList.size();
         assertThat(expectedList).hasSize(expectedSize);
 
         for (int i = 0; i < expectedSize; i++) {
@@ -139,7 +139,7 @@ class MenuServiceTest {
     }
 
     private void assertMenuProductsEquals(final List<MenuProduct> actualList, final List<MenuProduct> expectedList) {
-        final int expectedSize = actualList.size();
+        final var expectedSize = actualList.size();
         assertThat(expectedList).hasSize(expectedSize);
 
         for (int i = 0; i < expectedSize; i++) {

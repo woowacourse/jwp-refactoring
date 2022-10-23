@@ -25,8 +25,8 @@ class MenuGroupServiceTest {
 
     @Test
     void create() {
-        final MenuGroup expected = new MenuGroup("양식");
-        final MenuGroup actual = menuGroupService.create(expected);
+        final var expected = new MenuGroup("양식");
+        final var actual = menuGroupService.create(expected);
 
         assertThat(actual.getId()).isPositive();
         assertThat(actual.getName()).isEqualTo(expected.getName());
@@ -44,7 +44,7 @@ class MenuGroupServiceTest {
     }
 
     private void assertAllMatches(final List<MenuGroup> actualList, final List<MenuGroup> expectedList) {
-        final int expectedSize = actualList.size();
+        final var expectedSize = actualList.size();
         assertThat(expectedList).hasSize(expectedSize);
 
         for (int i = 0; i < expectedSize; i++) {
