@@ -1,8 +1,10 @@
 package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
+import java.util.List;
 import javax.sql.DataSource;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +19,7 @@ class ProductDaoTest {
     private DataSource dataSource;
 
     private ProductDao productDao;
+
 
     @BeforeEach
     void setup() {
@@ -33,5 +36,38 @@ class ProductDaoTest {
 
         // then
         assertThat(savedProduct.getId()).isNotNull();
+    }
+
+    @Test
+    void 제품을_아이디로_조회할_수_있다() {
+        // given
+        final Product product = new Product("제품1", new BigDecimal(10000));
+        final Product savedProduct = productDao.save(product);
+
+        // when
+        final Product foundProduct = productDao.findById(savedProduct.getId())
+                .orElseThrow(IllegalArgumentException::new);
+
+        // then
+        assertAll(
+                () -> assertThat(foundProduct.getName()).isEqualTo("제품1"),
+                () -> assertThat(foundProduct.getPrice().intValue()).isEqualTo(10000)
+        );
+    }
+
+    @Test
+    void 제품을_모두_조회할_수_있다() {
+        // given
+        final int alreadyExistCount = productDao.findAll().size();
+        final Product product = new Product("제품1", new BigDecimal(10000));
+        final Product savedProduct = productDao.save(product);
+
+        // when
+        final List<Product> products = productDao.findAll();
+
+        // then
+        assertThat(products).usingFieldByFieldElementComparator()
+                .hasSize(alreadyExistCount + 1)
+                .contains(savedProduct);
     }
 }

@@ -9,6 +9,7 @@ public class Product {
     private BigDecimal price;
 
     public Product() {
+        this(null, null);
     }
 
     public Product(final String name, final BigDecimal price) {
