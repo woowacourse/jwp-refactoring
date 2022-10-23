@@ -1,7 +1,8 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.fixture.MenuGroupFixture.MENUGROUP_세트메뉴A;
-import static kitchenpos.application.fixture.MenuGroupFixture.MENUGROUP_세트메뉴B;
+import static kitchenpos.application.fixture.MenuGroupFixture.createMenuGroup;
+import static kitchenpos.application.fixture.MenuGroupFixture.메뉴그룹A;
+import static kitchenpos.application.fixture.MenuGroupFixture.메뉴그룹B;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -16,7 +17,7 @@ public class MenuGroupServiceTest extends ServiceTest {
     @DisplayName("메뉴 그룹을 생성한다.")
     void create() {
         // given
-        final MenuGroup menuGroup = MENUGROUP_세트메뉴A.create();
+        final MenuGroup menuGroup = createMenuGroup("메뉴그룹");
 
         // when
         final MenuGroup createdMenuGroup = menuGroupService.create(menuGroup);
@@ -33,8 +34,8 @@ public class MenuGroupServiceTest extends ServiceTest {
     @DisplayName("메뉴그룹 목록을 조회한다.")
     void list() {
         // given
-        menuGroupDao.save(MENUGROUP_세트메뉴A.create());
-        menuGroupDao.save(MENUGROUP_세트메뉴B.create());
+        메뉴그룹등록(메뉴그룹A);
+        메뉴그룹등록(메뉴그룹B);
 
         // when
         final List<MenuGroup> actual = menuGroupService.list();

@@ -3,21 +3,11 @@ package kitchenpos.application.fixture;
 import java.math.BigDecimal;
 import kitchenpos.domain.Product;
 
-public enum ProductFixture {
+public class ProductFixture {
 
-    PRODUCT_짜장면(createProduct("짜장면", 8_000)),
-    PRODUCT_짬뽕(createProduct("짬뽕", 8_000)),
-    PRODUCT_탕수육(createProduct("탕수육", 10_000));
-
-    private final Product value;
-
-    ProductFixture(final Product value) {
-        this.value = value;
-    }
-
-    public Product create() {
-        return value;
-    }
+    public static Product 짜장면 = createProduct("짜장면", 8_000);
+    public static Product 짬뽕 = createProduct("짬뽕", 8_000);
+    public static Product 탕수육 = createProduct("탕수육", 10_000);
 
     public static Product createProduct(final String name, final int price) {
         final Product product = new Product();

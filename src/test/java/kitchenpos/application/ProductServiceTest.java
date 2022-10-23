@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.fixture.ProductFixture.PRODUCT_짜장면;
-import static kitchenpos.application.fixture.ProductFixture.PRODUCT_짬뽕;
-import static kitchenpos.application.fixture.ProductFixture.PRODUCT_탕수육;
 import static kitchenpos.application.fixture.ProductFixture.createProduct;
+import static kitchenpos.application.fixture.ProductFixture.짜장면;
+import static kitchenpos.application.fixture.ProductFixture.짬뽕;
+import static kitchenpos.application.fixture.ProductFixture.탕수육;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -19,7 +19,7 @@ public class ProductServiceTest extends ServiceTest {
     @DisplayName("상품을 등록한다.")
     void create() {
         // given
-        final Product product = PRODUCT_짜장면.create();
+        final Product product = createProduct("짜장면", 10_000);
 
         // when
         final Product actual = productService.create(product);
@@ -47,9 +47,9 @@ public class ProductServiceTest extends ServiceTest {
     @DisplayName("상품을 조회한다.")
     void list() {
         // given
-        productDao.save(PRODUCT_짜장면.create());
-        productDao.save(PRODUCT_짬뽕.create());
-        productDao.save(PRODUCT_탕수육.create());
+        상품등록(짜장면);
+        상품등록(짬뽕);
+        상품등록(탕수육);
 
         // when
         final List<Product> list = productService.list();

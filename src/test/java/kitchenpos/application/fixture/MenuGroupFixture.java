@@ -2,21 +2,11 @@ package kitchenpos.application.fixture;
 
 import kitchenpos.domain.MenuGroup;
 
-public enum MenuGroupFixture {
+public class MenuGroupFixture {
 
-    MENUGROUP_세트메뉴A(createMenuGroup("세트메뉴A")),
-    MENUGROUP_세트메뉴B(createMenuGroup("세트메뉴B")),
-    MENUGROUP_세트메뉴C(createMenuGroup("세트메뉴C"));
-
-    private final MenuGroup value;
-
-    MenuGroupFixture(final MenuGroup value) {
-        this.value = value;
-    }
-
-    public MenuGroup create() {
-        return value;
-    }
+    public static MenuGroup 메뉴그룹A = createMenuGroup("메뉴그룹A");
+    public static MenuGroup 메뉴그룹B = createMenuGroup("메뉴그룹B");
+    public static MenuGroup 메뉴그룹C = createMenuGroup("메뉴그룹C");
 
     public static MenuGroup createMenuGroup(final String name) {
         final MenuGroup menuGroup = new MenuGroup();

@@ -8,6 +8,8 @@ import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,4 +59,12 @@ public abstract class ServiceTest {
 
     @Autowired
     protected TableGroupDao tableGroupDao;
+
+    protected Product 상품등록(final Product product) {
+        return productDao.save(product);
+    }
+
+    protected MenuGroup 메뉴그룹등록(final MenuGroup menuGroup) {
+        return menuGroupDao.save(menuGroup);
+    }
 }
