@@ -1,9 +1,11 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
@@ -36,6 +38,9 @@ abstract class ServiceTest {
     protected TableGroupService tableGroupService;
 
     @Autowired
+    protected OrderService orderService;
+
+    @Autowired
     protected MenuGroupDao menuGroupDao;
 
     @Autowired
@@ -49,6 +54,9 @@ abstract class ServiceTest {
 
     @Autowired
     protected TableGroupDao tableGroupDao;
+
+    @Autowired
+    protected OrderDao orderDao;
 
     protected MenuGroup createMenuGroup(String name) {
         MenuGroup menuGroup = new MenuGroup();
@@ -84,5 +92,12 @@ abstract class ServiceTest {
         orderTable.setNumberOfGuests(numberOfGuests);
         orderTable.setEmpty(empty);
         return orderTable;
+    }
+
+    protected Menu saveMenu(String menuName, MenuGroup menuGroup, Product product) {
+        MenuProduct menuProduct = createMenuProduct(product.getId(), 1);
+        return menuService.create(
+                createMenu(menuName, product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())),
+                        menuGroup.getId(), Collections.singletonList(menuProduct)));
     }
 }

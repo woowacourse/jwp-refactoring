@@ -50,11 +50,4 @@ class MenuServiceTest extends ServiceTest {
         // then
         assertThat(menus).hasSize(9);
     }
-
-    private Menu saveMenu(String menuName, MenuGroup menuGroup, Product product) {
-        MenuProduct menuProduct = createMenuProduct(product.getId(), 1);
-        return menuService.create(
-                createMenu(menuName, product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())),
-                        menuGroup.getId(), Collections.singletonList(menuProduct)));
-    }
 }
