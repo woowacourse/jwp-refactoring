@@ -38,8 +38,6 @@ class MenuGroupServiceTest {
         List<MenuGroup> result = menuGroupService.list();
 
         //then
-        assertAll(
-            () -> assertThat(result).hasSize(5)
-        );
+        assertThat(result).hasSize(5);
     }
 }
