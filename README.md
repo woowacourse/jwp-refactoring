@@ -48,10 +48,10 @@ OrderLineItem은 orderId, menuId, quantity를 가지고 있다.
 
 ### ProductService
 
- * [ ] product를 생성한다.
-   * [ ] price가 null인 경우 예외를 던진다.
-   * [ ] price가 0보다 작은 경우 예외를 던진다.
- * [ ] product list를 조회한다.
+ * [x] product를 생성한다.
+   * [x] price가 null인 경우 예외를 던진다.
+   * [x] price가 0미만인 경우 예외를 던진다.
+ * [x] product list를 조회한다.
 
 ### MenuGroupService
 
