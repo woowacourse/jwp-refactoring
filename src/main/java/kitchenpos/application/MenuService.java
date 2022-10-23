@@ -72,7 +72,7 @@ public class MenuService {
         return savedMenu;
     }
 
-    public List<Menu> list() {
+    public List<Menu> findAll() {
         final List<Menu> menus = menuDao.findAll();
 
         for (final Menu menu : menus) {
