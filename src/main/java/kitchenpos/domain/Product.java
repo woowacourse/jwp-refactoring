@@ -8,18 +8,26 @@ public class Product {
 
     private final Long id;
     private final String name;
-    private final BigDecimal price;
+    private final Price price;
 
     public Product(Long id, String name, BigDecimal price) {
-        if (name == null || name.isBlank() || price == null || price.doubleValue() < 0) {
+        if (name == null || name.isBlank()) {
             throw new IllegalArgumentException();
         }
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
     }
 
     public Product(String name, BigDecimal price) {
         this(null, name, price);
+    }
+
+    public BigDecimal getPrice() {
+        return price.getValue();
+    }
+
+    public BigDecimal calculateTotalPriceFromQuantity(int quantity) {
+        return price.multiply(quantity).getValue();
     }
 }
