@@ -49,3 +49,15 @@
 | 주문 항목 | order line item | 주문에 속하는 수량이 있는 메뉴 |
 | 매장 식사 | eat in | 포장하지 않고 매장에서 식사하는 것 |
 
+## 클래스 다이어그램
+
+```uml
+MenuGroup "1" -- "*" Menu
+Menu "1" -- "*" MenuProduct
+MenuProduct "*" -- "1" Product
+
+TableGroup "1" -- "*" OrderTable
+OrderTable "1" -- "*" Order
+Order "1" -- "*" OrderLineItem
+OrderLineTiem "*" -- "1" Menu
+```
