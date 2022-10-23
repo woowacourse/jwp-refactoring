@@ -1,0 +1,51 @@
+package kitchenpos.service;
+
+import static org.assertj.core.api.Assertions.*;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import kitchenpos.application.MenuService;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
+
+@SpringBootTest
+public class MenuServiceTest {
+
+    @Autowired
+    private MenuService menuService;
+
+    @Test
+    @DisplayName("메뉴를 등록한다.")
+    void create() {
+        // given
+        Menu menu = new Menu("후라이드+후라이드", new BigDecimal(32000), 1L, List.of(new MenuProduct(1L, 2)));
+
+        // when
+        Menu savedMenu = menuService.create(menu);
+
+        // then
+        assertThat(savedMenu).usingRecursiveComparison()
+            .ignoringFields("id", "menuProducts", "price")
+            .isEqualTo(menu);
+    }
+
+    @Test
+    @DisplayName("전체 메뉴를 조회한다.")
+    void list() {
+        // given
+        Menu menu = new Menu("후라이드+후라이드", new BigDecimal(32000), 1L, List.of(new MenuProduct(1L, 2)));
+        Menu savedMenu = menuService.create(menu);
+
+        // when
+        List<Menu> result = menuService.list();
+
+        // then
+        assertThat(result).contains(savedMenu);
+    }
+}
