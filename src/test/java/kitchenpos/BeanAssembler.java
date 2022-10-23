@@ -2,6 +2,7 @@ package kitchenpos;
 
 import javax.sql.DataSource;
 import kitchenpos.application.MenuGroupService;
+import kitchenpos.application.MenuService;
 import kitchenpos.application.OrderService;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.TableGroupService;
@@ -51,6 +52,15 @@ public class BeanAssembler {
                 createOrderDao(dataSource),
                 createOrderLineItemDao(dataSource),
                 createOrderTableDao(dataSource)
+        );
+    }
+
+    public static MenuService createMenuService(DataSource dataSource) {
+        return new MenuService(
+                createMenuDao(dataSource),
+                createMenuGroupDao(dataSource),
+                createMenuProductDao(dataSource),
+                createProductDao(dataSource)
         );
     }
 
