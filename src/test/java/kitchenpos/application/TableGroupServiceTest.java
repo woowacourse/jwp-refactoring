@@ -54,8 +54,8 @@ class TableGroupServiceTest {
         tableGroup.setOrderTables(List.of(table1, table2));
         final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
-        OrderTable table1 = orderTableDao.findById(this.table1.getId()).get();
-        OrderTable table2 = orderTableDao.findById(this.table2.getId()).get();
+        final OrderTable table1 = orderTableDao.findById(this.table1.getId()).get();
+        final OrderTable table2 = orderTableDao.findById(this.table2.getId()).get();
 
         assertAll(
                 () -> assertThat(savedTableGroup.getId()).isNotNull(),
@@ -120,8 +120,8 @@ class TableGroupServiceTest {
 
         tableGroupService.ungroup(savedTableGroup.getId());
 
-        OrderTable table1 = orderTableDao.findById(this.table1.getId()).get();
-        OrderTable table2 = orderTableDao.findById(this.table2.getId()).get();
+        final OrderTable table1 = orderTableDao.findById(this.table1.getId()).get();
+        final OrderTable table2 = orderTableDao.findById(this.table2.getId()).get();
 
         assertAll(
                 () -> assertThat(table1.getTableGroupId()).isNull(),

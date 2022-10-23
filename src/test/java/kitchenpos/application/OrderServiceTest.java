@@ -43,7 +43,7 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(null, "마이쮸 1종 세트"));
+        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(null, "마이쮸 1종 세트"));
         menu = menuDao.save(new Menu(null, "마이쮸", BigDecimal.valueOf(800), menuGroup.getId()));
         orderTable = orderTableDao.save(new OrderTable(null, null, 5, false));
     }

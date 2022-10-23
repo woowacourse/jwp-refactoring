@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 public class MenuProduct {
+
     private final Long seq;
     private Long menuId;
     private final Long productId;

@@ -38,7 +38,7 @@ class MenuServiceTest {
     @BeforeEach
     void setUp() {
         menuGroup = menuGroupDao.save(new MenuGroup(null, "마이쮸 1종 세트"));
-        Product product = productDao.save(new Product(null, "마이쮸", BigDecimal.valueOf(800)));
+        final Product product = productDao.save(new Product(null, "마이쮸", BigDecimal.valueOf(800)));
         menuProducts = List.of(new MenuProduct(null, null, product.getId(), 1));
     }
 
