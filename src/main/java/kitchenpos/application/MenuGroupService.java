@@ -17,10 +17,13 @@ public class MenuGroupService {
 
     @Transactional
     public MenuGroup create(final MenuGroup menuGroup) {
+        if (menuGroup.getName() == null) {
+            throw new IllegalArgumentException("이름은 null일 수 없습니다.");
+        }
         return menuGroupDao.save(menuGroup);
     }
 
-    public List<MenuGroup> list() {
+    public List<MenuGroup> findAll() {
         return menuGroupDao.findAll();
     }
 }
