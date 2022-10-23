@@ -17,6 +17,7 @@ import java.util.Optional;
 
 @Repository
 public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
+
     private static final String TABLE_NAME = "order_line_item";
     private static final String KEY_COLUMN_NAME = "seq";
 
@@ -69,11 +70,11 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
     }
 
     private OrderLineItem toEntity(final ResultSet resultSet) throws SQLException {
-        final OrderLineItem entity = new OrderLineItem();
-        entity.setSeq(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setOrderId(resultSet.getLong("order_id"));
-        entity.setMenuId(resultSet.getLong("menu_id"));
-        entity.setQuantity(resultSet.getLong("quantity"));
-        return entity;
+        return new OrderLineItem(
+                resultSet.getLong(KEY_COLUMN_NAME),
+                resultSet.getLong("order_id"),
+                resultSet.getLong("menu_id"),
+                resultSet.getLong("quantity")
+        );
     }
 }

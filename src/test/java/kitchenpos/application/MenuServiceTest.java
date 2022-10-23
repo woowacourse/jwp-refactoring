@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -25,18 +27,18 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private MenuGroupService menuGroupService;
+    private MenuGroupDao menuGroupDao;
 
     @Autowired
-    private ProductService productService;
+    private ProductDao productDao;
 
     private MenuGroup menuGroup;
     private List<MenuProduct> menuProducts;
 
     @BeforeEach
     void setUp() {
-        menuGroup = menuGroupService.create(new MenuGroup(null, "마이쮸 1종 세트"));
-        Product product = productService.create(new Product(null, "마이쮸", BigDecimal.valueOf(800)));
+        menuGroup = menuGroupDao.save(new MenuGroup(null, "마이쮸 1종 세트"));
+        Product product = productDao.save(new Product(null, "마이쮸", BigDecimal.valueOf(800)));
         menuProducts = List.of(new MenuProduct(null, null, product.getId(), 1));
     }
 
