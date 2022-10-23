@@ -24,8 +24,7 @@ class MenuGroupDaoTest {
     @Test
     void save() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("메뉴그룹");
+        MenuGroup menuGroup = new MenuGroup("메뉴그룹");
 
         // when
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
@@ -37,9 +36,7 @@ class MenuGroupDaoTest {
     @Test
     void findById() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("메뉴그룹");
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹"));
 
         // when
         Optional<MenuGroup> foundMenuGroup = menuGroupDao.findById(savedMenuGroup.getId());
@@ -51,13 +48,8 @@ class MenuGroupDaoTest {
     @Test
     void findAll() {
         // given
-        MenuGroup menuGroupA = new MenuGroup();
-        menuGroupA.setName("메뉴그룹A");
-        menuGroupDao.save(menuGroupA);
-
-        MenuGroup menuGroupB = new MenuGroup();
-        menuGroupB.setName("메뉴그룹B");
-        menuGroupDao.save(menuGroupB);
+        menuGroupDao.save(new MenuGroup("메뉴그룹A"));
+        menuGroupDao.save(new MenuGroup("메뉴그룹B"));
 
         // when
         List<MenuGroup> menuGroups = menuGroupDao.findAll();
@@ -69,9 +61,7 @@ class MenuGroupDaoTest {
     @Test
     void existsById() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("메뉴그룹");
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹"));
 
         // when
         boolean exists = menuGroupDao.existsById(savedMenuGroup.getId());

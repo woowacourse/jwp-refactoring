@@ -25,9 +25,7 @@ class ProductDaoTest {
     @Test
     void save() {
         // given
-        Product product = new Product();
-        product.setName("상품");
-        product.setPrice(BigDecimal.valueOf(1000));
+        Product product = new Product("상품", BigDecimal.valueOf(1000));
 
         // when
         Product savedProduct = productDao.save(product);
@@ -39,10 +37,7 @@ class ProductDaoTest {
     @Test
     void findById() {
         // given
-        Product product = new Product();
-        product.setName("상품");
-        product.setPrice(BigDecimal.valueOf(1000));
-        Product savedProduct = productDao.save(product);
+        Product savedProduct = productDao.save(new Product("상품", BigDecimal.valueOf(1000)));
 
         // when
         Optional<Product> foundProduct = productDao.findById(savedProduct.getId());
@@ -54,15 +49,8 @@ class ProductDaoTest {
     @Test
     void findAll() {
         // given
-        Product productA = new Product();
-        productA.setName("상품A");
-        productA.setPrice(BigDecimal.valueOf(1000));
-        productDao.save(productA);
-
-        Product productB = new Product();
-        productB.setName("상품B");
-        productB.setPrice(BigDecimal.valueOf(2000));
-        productDao.save(productB);
+        productDao.save(new Product("상품A", BigDecimal.valueOf(1000)));
+        productDao.save(new Product("상품B", BigDecimal.valueOf(2000)));
 
         // when
         List<Product> products = productDao.findAll();

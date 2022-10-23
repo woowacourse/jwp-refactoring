@@ -29,10 +29,8 @@ class ProductRestControllerTest extends ControllerTest {
     void createProduct() throws Exception {
         // given
         long id = 1L;
-        Product product = new Product();
+        Product product = new Product("치킨", BigDecimal.valueOf(10000));
         product.setId(id);
-        product.setName("치킨");
-        product.setPrice(BigDecimal.valueOf(10000));
 
         given(productService.create(any())).willReturn(product);
 
@@ -50,13 +48,8 @@ class ProductRestControllerTest extends ControllerTest {
     @Test
     void findProducts() throws Exception {
         // given
-        Product productA = new Product();
-        productA.setName("치킨");
-        productA.setPrice(BigDecimal.valueOf(10000));
-
-        Product productB = new Product();
-        productB.setName("피자");
-        productB.setPrice(BigDecimal.valueOf(8000));
+        Product productA = new Product("치킨", BigDecimal.valueOf(10000));
+        Product productB = new Product("피자", BigDecimal.valueOf(8000));
 
         given(productService.list()).willReturn(List.of(productA, productB));
 
