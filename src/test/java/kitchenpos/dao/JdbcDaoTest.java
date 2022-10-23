@@ -3,6 +3,7 @@ package kitchenpos.dao;
 import javax.sql.DataSource;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,5 +38,9 @@ public class JdbcDaoTest {
 
     protected Menu 메뉴를_저장한다(final Menu menu) {
         return menuDao.save(menu);
+    }
+
+    protected MenuProduct 메뉴상품을_저장한다(final MenuProduct menuProduct) {
+        return menuProductDao.save(menuProduct);
     }
 }
