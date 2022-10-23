@@ -9,8 +9,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.MenuService;
+import kitchenpos.application.OrderService;
 
-@WebMvcTest({MenuGroupRestController.class, MenuRestController.class})
+@WebMvcTest({
+    MenuGroupRestController.class,
+    MenuRestController.class,
+    OrderRestController.class
+})
 public class ControllerTest {
 
     @Autowired
@@ -24,4 +29,7 @@ public class ControllerTest {
 
     @MockBean
     protected MenuService menuService;
+
+    @MockBean
+    protected OrderService orderService;
 }
