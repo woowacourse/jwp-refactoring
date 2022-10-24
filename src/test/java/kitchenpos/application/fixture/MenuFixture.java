@@ -6,15 +6,6 @@ import kitchenpos.domain.MenuGroup;
 
 public class MenuFixture {
 
-    public static Menu 메뉴_등록(final String name, final BigDecimal price, final Long menuGroupId) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-
-        return menu;
-    }
-
     public static Menu 후라이드_치킨(final MenuGroup menuGroup) {
         Menu menu = new Menu();
         menu.setName("후라이드치킨");

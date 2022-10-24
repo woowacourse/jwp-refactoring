@@ -5,14 +5,6 @@ import kitchenpos.domain.Product;
 
 public class ProductFixture {
 
-    public static Product 상품_등록(String name, int price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
-
-        return product;
-    }
-
     public static Product 후라이드_치킨() {
         Product chicken = new Product();
         chicken.setName("후라이드치킨");

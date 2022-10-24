@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import static kitchenpos.application.fixture.MenuGroupFixture.치킨;
 import static kitchenpos.application.fixture.MenuGroupFixture.피자;
-import static kitchenpos.application.fixture.MenuProductFixture.메뉴_상품_생성;
 import static kitchenpos.application.fixture.ProductFixture.양념_치킨;
 import static kitchenpos.application.fixture.ProductFixture.포테이토_피자;
 import static kitchenpos.application.fixture.ProductFixture.후라이드_치킨;
@@ -246,22 +245,6 @@ class TableServiceTest extends ServiceTestBase {
         OrderTable newOrderTable = new OrderTable();
         newOrderTable.setEmpty(false);
         return newOrderTable;
-    }
-
-    private OrderTable 빈_주문_테이블_생성() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        orderTable.setNumberOfGuests(0);
-
-        return orderTable;
-    }
-
-    private OrderTable 주문_테이블_생성() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(2);
-
-        return orderTable;
     }
 
 

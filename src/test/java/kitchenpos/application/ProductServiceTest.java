@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.fixture.ProductFixture.상품_등록;
 import static kitchenpos.application.fixture.ProductFixture.양념_치킨;
 import static kitchenpos.application.fixture.ProductFixture.후라이드_치킨;
 import static org.assertj.core.api.Assertions.assertThat;

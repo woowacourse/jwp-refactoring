@@ -2,9 +2,6 @@ package kitchenpos.application;
 
 import static kitchenpos.application.fixture.MenuGroupFixture.치킨;
 import static kitchenpos.application.fixture.MenuGroupFixture.피자;
-import static kitchenpos.application.fixture.MenuProductFixture.메뉴_상품_생성;
-import static kitchenpos.application.fixture.OrderTableFixture.빈_주문_테이블_생성;
-import static kitchenpos.application.fixture.OrderTableFixture.주문_테이블_생성;
 import static kitchenpos.application.fixture.ProductFixture.양념_치킨;
 import static kitchenpos.application.fixture.ProductFixture.포테이토_피자;
 import static kitchenpos.application.fixture.ProductFixture.후라이드_치킨;
@@ -38,7 +35,7 @@ class TableGroupServiceTest extends ServiceTestBase {
 
     @Autowired
     private TableGroupService tableGroupService;
-    
+
 
     private Menu friedChicken;
     private Menu seasonedChicken;
