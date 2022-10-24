@@ -109,4 +109,15 @@ class TableServiceTest extends ServiceTestBase {
         assertThat(actual).isNotEmpty();
         assertThat(actual.get().getNumberOfGuests()).isEqualTo(changedNumberOfGuests);
     }
+
+    @Test
+    void 방문한_손님_수_0_미만으로_변경_불가능() {
+        // given
+        OrderTable orderTable = 주문_테이블_생성();
+        orderTable.setNumberOfGuests(-1);
+
+        // when & then
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTable))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }
