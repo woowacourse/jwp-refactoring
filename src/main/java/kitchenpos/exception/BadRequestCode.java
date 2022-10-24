@@ -16,8 +16,13 @@ public enum BadRequestCode {
 
     INVALID_ORDER_STATUS_ERROR_CODE(4001, "주문의 상태가 잘못되었습니다.", InvalidOrderStatusException.class),
 
+    NOT_FOUND_ORDER_TABLE_EXCEPTION(5000, "주문 테이블을 찾을 수 없습니다", NotFoundOrderTableException.class),
     INVALID_ORDER_TABLE_NUMBER_OF_GUESTS_ERROR_CODE(5001, "주문 테이블의 손님 숫자는 0 미만일 수 없습니다.", InvalidOrderTableNumberOfGuestsException.class),
-    INVALID_ORDER_TABLE_IS_EMPTY_OF_NUMBER_OF_GUESTS_ERROR_CODE(5002, "주문 테이블이 비어있을 때, 손님의 숫자를 변경할 수 없습니다.", InvalidOrderTableIsEmptyOfNumberOfGuestsException.class);
+    INVALID_ORDER_TABLE_IS_EMPTY_ERROR_CODE(5002, "주문 테이블이 비어있는 경우, 주문을 할 수 없습니다.", InvalidOrderTableIsEmptyException.class),
+    INVALID_ORDER_TABLE_IS_EMPTY_OF_NUMBER_OF_GUESTS_ERROR_CODE(5003, "주문 테이블이 비어있을 때, 손님의 숫자를 변경할 수 없습니다.", InvalidOrderTableIsEmptyOfNumberOfGuestsException.class),
+
+
+    INVALID_ORDER_LINE_ITEM_NON_REGISTERED_EXCEPTION(6001, "주문한 메뉴 목록 중, 등록되지 않는 메뉴가 있습니다.", InvalidOrderLineItemNonRegisteredException.class)
     ;
 
     private int code;

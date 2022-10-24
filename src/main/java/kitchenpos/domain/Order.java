@@ -16,6 +16,10 @@ public class Order {
         this(null, orderTableId, orderStatus, null, new ArrayList<>());
     }
 
+    public Order(final Long orderTableId, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, null, orderedTime, orderLineItems);
+    }
+
     public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
