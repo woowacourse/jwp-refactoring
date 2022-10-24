@@ -18,7 +18,8 @@ public class Fixture {
     }
 
     public static class OrderTable {
-        public static final Long 첫번째 = 1L;
-        public static final Long 두번째 = 2L;
+        public static final Long 첫번째_테이블 = 1L;
+        public static final Long 두번째_테이블 = 2L;
+        public static final Long 세번째_테이블 = 3L;
     }
 }

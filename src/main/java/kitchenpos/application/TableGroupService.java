@@ -20,12 +20,14 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class TableGroupService {
+
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao, final TableGroupDao tableGroupDao) {
+    public TableGroupService(OrderDao orderDao, OrderTableDao orderTableDao, TableGroupDao tableGroupDao) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
@@ -36,18 +38,18 @@ public class TableGroupService {
         List<Long> orderTableIds = tableGroupRequest.getOrderTableIds();
 
         if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블 그룹은 2개 이상부터 지정할 수 있습니다.");
         }
 
         List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
         if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("존재하지 않는 테이블로 지정할 수 업습니다.");
         }
 
         for (OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("비어 있는 테이블로만 단체를 지정할 수 있습니다.");
             }
         }
 
@@ -66,7 +68,7 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<kitchenpos.domain.OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
+        final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
 
         final List<Long> orderTableIds = orderTables.stream()
                 .map(kitchenpos.domain.OrderTable::getId)
@@ -74,10 +76,10 @@ public class TableGroupService {
 
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("완료되지 않은 주문이 있어서 해제할 수 없습니다.");
         }
 
-        for (final kitchenpos.domain.OrderTable orderTable : orderTables) {
+        for (OrderTable orderTable : orderTables) {
             orderTable.updateTableGroupId(null);
             orderTable.changeEmpty(false);
             orderTableDao.save(orderTable);
