@@ -70,7 +70,7 @@ class MenuServiceTest {
 
     private List<MenuProduct> createMenuProducts() {
         List<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(new MenuProduct(1L, 1L, 1L));
+        menuProducts.add(new MenuProduct(1L, 1L));
         return menuProducts;
     }
 }
