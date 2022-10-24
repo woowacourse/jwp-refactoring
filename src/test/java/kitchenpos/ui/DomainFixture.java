@@ -1,10 +1,14 @@
 package kitchenpos.ui;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 
@@ -47,5 +51,20 @@ public class DomainFixture {
         orderTable.setNumberOfGuests(0);
         orderTable.setEmpty(isEmpty);
         return orderTable;
+    }
+
+    public static Order getOrder() {
+        final Order order = new Order();
+        order.setId(1L);
+        order.setOrderTableId(1L);
+        order.setOrderStatus(OrderStatus.COOKING.name());
+        order.setOrderedTime(LocalDateTime.now());
+        final OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setOrderId(1L);
+        orderLineItem.setId(1L);
+        orderLineItem.setQuantity(1);
+        orderLineItem.setMenuId(1L);
+        order.setOrderLineItems(List.of(orderLineItem));
+        return order;
     }
 }
