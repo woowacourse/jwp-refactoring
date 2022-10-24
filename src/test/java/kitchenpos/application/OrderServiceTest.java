@@ -143,10 +143,10 @@ class OrderServiceTest {
 
         final Order order = new Order(createdOrderTable.getId(), "COMPLETION", LocalDateTime.now(),
                 List.of(orderLineItem));
-        final Order createdOrder = sut.create(order);
+        final Order savedOrder = orderDao.save(order);
 
         // when & then
-        assertThatThrownBy(() -> sut.changeOrderStatus(createdOrder.getOrderTableId(), createdOrder))
+        assertThatThrownBy(() -> sut.changeOrderStatus(savedOrder.getId(), order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
