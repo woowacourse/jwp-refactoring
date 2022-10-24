@@ -22,6 +22,7 @@ class ProductServiceTest {
     @Autowired
     private ProductService productService;
 
+    @DisplayName("상품을 생성한다")
     @Nested
     class CreateTest {
 
@@ -55,15 +56,11 @@ class ProductServiceTest {
         }
     }
 
-    @Nested
-    class ListTest {
+    @DisplayName("존재하는 모든 상품 목록을 조회한다")
+    @Test
+    void list() {
+        List<Product> products = productService.list();
 
-        @DisplayName("존재하는 모든 상품 목록을 조회한다")
-        @Test
-        void list() {
-            List<Product> products = productService.list();
-
-            assertThat(products).hasSize(6);
-        }
+        assertThat(products).hasSize(6);
     }
 }

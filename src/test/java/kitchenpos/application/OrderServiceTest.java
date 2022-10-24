@@ -29,6 +29,7 @@ class OrderServiceTest {
     @Autowired
     private OrderTableDao orderTableDao;
 
+    @DisplayName("주문을 생성한다")
     @Nested
     class CreateTest {
 
@@ -92,6 +93,15 @@ class OrderServiceTest {
         }
     }
 
+    @DisplayName("주문 목록을 조회한다")
+    @Test
+    void list() {
+        List<Order> actual = orderService.list();
+
+        assertThat(actual).hasSize(0);
+    }
+
+    @DisplayName("주문 상태를 변경한다")
     @Nested
     class ChangeOrderStatusTest {
 

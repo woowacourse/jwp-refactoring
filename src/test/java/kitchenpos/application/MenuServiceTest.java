@@ -23,6 +23,7 @@ class MenuServiceTest {
     @Autowired
     private MenuService menuService;
 
+    @DisplayName("메뉴를 생성한다")
     @Nested
     class CreateTest {
 
@@ -96,15 +97,11 @@ class MenuServiceTest {
         }
     }
 
-    @Nested
-    class ListTest {
+    @DisplayName("존재하는 모든 메뉴 목록을 조회한다")
+    @Test
+    void list() {
+        List<Menu> list = menuService.list();
 
-        @DisplayName("존재하는 모든 메뉴 목록을 조회한다")
-        @Test
-        void list() {
-            List<Menu> list = menuService.list();
-
-            assertThat(list).hasSize(6);
-        }
+        assertThat(list).hasSize(6);
     }
 }
