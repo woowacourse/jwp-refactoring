@@ -42,13 +42,14 @@ class TableGroupServiceTest {
         TableGroup createdTableGroup = tableGroupService.create(tableGroup);
 
         // then
-        List<Long> expectedTableGroupIds = List.of(createdTableGroup.getId(), createdTableGroup.getId());
-        List<Boolean> expectedEmpties = List.of(false, false);
+        List<OrderTable> createdOrderTables = createdTableGroup.getOrderTables();
+        Long[] expectedTableGroupIds = {createdTableGroup.getId(), createdTableGroup.getId()};
+        Boolean[] expectedEmpties = {false, false};
 
         Assertions.assertAll(
                 () -> assertThat(createdTableGroup.getId()).isNotNull(),
-                () -> assertThat(orderTables).extracting("tableGroupId").containsAll(expectedTableGroupIds),
-                () -> assertThat(orderTables).extracting("empty").containsAll(expectedEmpties)
+                () -> assertThat(createdOrderTables).extracting("tableGroupId").contains(expectedTableGroupIds),
+                () -> assertThat(createdOrderTables).extracting("empty").contains(expectedEmpties)
         );
     }
 
