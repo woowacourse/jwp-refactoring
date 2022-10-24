@@ -19,11 +19,11 @@ class MenuDaoTest {
     @Autowired
     DataSource dataSource;
 
-    MenuDao menuDao;
+    MenuDao sut;
 
     @BeforeEach
     void setUp() {
-        menuDao = new JdbcTemplateMenuDao(dataSource);
+        sut = new JdbcTemplateMenuDao(dataSource);
     }
 
     @Test
@@ -36,17 +36,17 @@ class MenuDaoTest {
         menu.setMenuGroupId(1L);
 
         // when
-        Menu savedMenu = menuDao.save(menu);
+        Menu savedMenu = sut.save(menu);
 
         // then
-        Menu findMenu = menuDao.findById(savedMenu.getId()).get();
+        Menu findMenu = sut.findById(savedMenu.getId()).get();
         assertThat(savedMenu).isEqualTo(findMenu);
     }
 
     @Test
     @DisplayName("입력받은 id에 해당하는 Menu가 없으면 빈 객체를 반환한다")
     void returnOptionalEmpty_WhenFindByNonExistId() {
-        Optional<Menu> findMenu = menuDao.findById(0L);
+        Optional<Menu> findMenu = sut.findById(0L);
         assertThat(findMenu).isEmpty();
     }
 
@@ -54,15 +54,15 @@ class MenuDaoTest {
     @DisplayName("저장된 모든 Menu를 조회한다")
     void findAll() {
         // given
-        List<Menu> previousSaved = menuDao.findAll();
+        List<Menu> previousSaved = sut.findAll();
         Menu menu = new Menu();
         menu.setName("강정치킨");
         menu.setPrice(BigDecimal.valueOf(1000L));
         menu.setMenuGroupId(1L);
-        menuDao.save(menu);
+        sut.save(menu);
 
         // when
-        List<Menu> actual = menuDao.findAll();
+        List<Menu> actual = sut.findAll();
 
         // then
         assertThat(actual.size()).isEqualTo(previousSaved.size() + 1);
@@ -76,16 +76,16 @@ class MenuDaoTest {
         menu1.setName("강정치킨");
         menu1.setPrice(BigDecimal.valueOf(1000L));
         menu1.setMenuGroupId(1L);
-        Long menuId1 = menuDao.save(menu1).getId();
+        Long menuId1 = sut.save(menu1).getId();
 
         Menu menu2 = new Menu();
         menu2.setName("순살치킨");
         menu2.setPrice(BigDecimal.valueOf(1000L));
         menu2.setMenuGroupId(1L);
-        Long menuId2 = menuDao.save(menu2).getId();
+        Long menuId2 = sut.save(menu2).getId();
 
         // when
-        long count = menuDao.countByIdIn(List.of(menuId1, menuId2));
+        long count = sut.countByIdIn(List.of(menuId1, menuId2));
 
         // then
         assertThat(count).isEqualTo(2);
