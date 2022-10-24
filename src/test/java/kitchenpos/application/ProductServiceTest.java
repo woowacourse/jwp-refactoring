@@ -2,7 +2,11 @@ package kitchenpos.application;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -24,28 +28,18 @@ class ProductServiceTest {
         this.productDao = productDao;
     }
 
-    @Test
-    void createWithPositivePrice() {
-        final var positivePrice = 1;
-
-        final var expected = new Product("탕수육", positivePrice);
-        final var actual = productDao.save(expected);
-
-        assertThat(actual.getId()).isPositive();
-        assertProductEqualsWithoutId(actual, expected);
-    }
-
-    @Test
-    void createWithZeroPrice() {
-        final var zeroPrice = 0;
-
-        final var expected = new Product("탕수육", zeroPrice);
-        final var actual = productDao.save(expected);
+    @DisplayName("상품을 추가한다")
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1})
+    void create(final int price) {
+        final var expected = new Product("탕수육", price);
+        final var actual = productService.create(expected);
 
         assertThat(actual.getId()).isPositive();
         assertProductEqualsWithoutId(actual, expected);
     }
 
+    @DisplayName("가격이 음수가 아니어야 상품을 추가할 수 있다")
     @Test
     void createWithNegativePrice() {
         final var negativePrice = -1;
@@ -61,6 +55,7 @@ class ProductServiceTest {
         assertThat(actual.getPrice()).isEqualByComparingTo(expected.getPrice());
     }
 
+    @DisplayName("상품을 전체 조회한다")
     @Test
     void list() {
         final List<Product> expected = Map.of("자장면", 4500, "짬뽕", 5000, "탕수육", 10000)

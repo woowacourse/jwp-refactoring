@@ -7,6 +7,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -43,6 +45,7 @@ class TableGroupServiceTest {
         this.tableGroupDao = tableGroupDao;
     }
 
+    @DisplayName("단체 지정을 한다")
     @Test
     void create() {
         final var expected = new TableGroup(LocalDateTime.now(), saveOrderTableAsTimes(ORDER_TABLE_COUNT_LIMIT));
@@ -79,6 +82,7 @@ class TableGroupServiceTest {
                 .collect(Collectors.toUnmodifiableList());
     }
 
+    @DisplayName("2개 이상의 주문 테이블을 지정해야만 단체 지정을 할 수 있다")
     @ParameterizedTest
     @ValueSource(ints = {0, 1})
     void createWithEmptyOrSingleOrderTable(final int orderTableCount) {
@@ -96,6 +100,7 @@ class TableGroupServiceTest {
                 .collect(Collectors.toUnmodifiableList());
     }
 
+    @DisplayName("존재하는 주문 테이블이어야만 단체 지정을 할 수 있다")
     @Test
     void createWithUnsavedOrderTables() {
         final var tableGroup = new TableGroup(LocalDateTime.now(), List.of(
@@ -107,6 +112,7 @@ class TableGroupServiceTest {
                 .hasMessage("존재하지 않는 주문 테이블이 있습니다.");
     }
 
+    @DisplayName("비어있는 주문 테이블이어야만 단체 지정을 할 수 있다")
     @Test
     void createWithNonEmptyOrderTable() {
         final var tableGroup = new TableGroup(LocalDateTime.now(), saveOrderTables(
@@ -118,6 +124,7 @@ class TableGroupServiceTest {
                 .hasMessage("비어있지 않은 주문 테이블이 존재합니다.");
     }
 
+    @DisplayName("단체 지정되지 않은 주문 테이블이어야만 단체 지정을 할 수 있다")
     @Test
     void createWithAlreadyGroupAssignedOrderTable() {
         final var tableGroup = new TableGroup(LocalDateTime.now(), saveOrderTables(
@@ -129,6 +136,7 @@ class TableGroupServiceTest {
                 .hasMessage("비어있지 않은 주문 테이블이 존재합니다.");
     }
 
+    @DisplayName("단체 지정을 해제한다")
     @Test
     void ungroup() {
         final var expected = saveOrderTableAsTimes(ORDER_TABLE_COUNT_LIMIT);
@@ -163,6 +171,7 @@ class TableGroupServiceTest {
         }
     }
 
+    @DisplayName("지정된 주문 테이블의 모든 계산이 완료되어야만 단체 지정을 해제할 수 있다")
     @ParameterizedTest
     @ValueSource(strings = {"COOKING", "MEAL"})
     void ungroupWithUnreadyOrderTable(final String orderStatus) {

@@ -2,6 +2,8 @@ package kitchenpos.application;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,6 +25,7 @@ class MenuGroupServiceTest {
         this.menuGroupDao = menuGroupDao;
     }
 
+    @DisplayName("메뉴 그룹을 추가한다")
     @Test
     void create() {
         final var expected = new MenuGroup("양식");
@@ -32,6 +35,7 @@ class MenuGroupServiceTest {
         assertThat(actual.getName()).isEqualTo(expected.getName());
     }
 
+    @DisplayName("메뉴 그룹을 전체 조회한다")
     @Test
     void list() {
         final List<MenuGroup> expected = Stream.of("한식", "양식", "중식", "일식")

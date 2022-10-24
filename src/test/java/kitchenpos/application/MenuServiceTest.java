@@ -8,6 +8,8 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,6 +39,7 @@ class MenuServiceTest {
         this.productDao = productDao;
     }
 
+    @DisplayName("메뉴를 추가한다")
     @Test
     void create() {
         final var menuGroup = menuGroupDao.save(new MenuGroup("중식"));
@@ -58,6 +61,7 @@ class MenuServiceTest {
         assertMenuProductsEquals(actual.getMenuProducts(), expected.getMenuProducts());
     }
 
+    @DisplayName("메뉴 가격이 양수여야 메뉴를 추가할 수 있다")
     @Test
     void createWithNegativePrice() {
         final var negativePrice = -1;
@@ -69,6 +73,7 @@ class MenuServiceTest {
                 .hasMessage("메뉴 가격은 양수여야 합니다.");
     }
 
+    @DisplayName("존재하는 메뉴 그룹이어야 메뉴를 추가할 수 있다")
     @Test
     void createWithNonExistMenuGroup() {
         final var nonExistMenuGroupId = 0L;
@@ -81,6 +86,7 @@ class MenuServiceTest {
                 .hasMessage("메뉴 그룹을 찾을 수 없습니다.");
     }
 
+    @DisplayName("존재하는 상품이어야 메뉴를 추가할 수 있다")
     @Test
     void createWithNonExistProduct() {
         final var nonExistProductId = 0L;
@@ -94,6 +100,7 @@ class MenuServiceTest {
                 .hasMessage("상품을 찾을 수 없습니다.");
     }
 
+    @DisplayName("메뉴 가격이 상품 전체 금액보다 작거나 같아야 메뉴를 추가할 수 있다")
     @Test
     void createWithBiggerPriceThenSum() {
         final var menuPrice = 11;
@@ -109,6 +116,7 @@ class MenuServiceTest {
                 .hasMessage("메뉴 가격은 상품 금액 합산보다 클 수 없습니다.");
     }
 
+    @DisplayName("메뉴를 전체 조회한다")
     @Test
     void list() {
         final List<Menu> expected = List.of(

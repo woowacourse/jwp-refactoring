@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -39,6 +40,7 @@ class OrderServiceTest {
         this.orderTableDao = orderTableDao;
     }
 
+    @DisplayName("주문을 한다")
     @Test
     void create() {
         final var menu = menuDao.save(new Menu("자장면", 5000, 1));
@@ -60,6 +62,7 @@ class OrderServiceTest {
         assertOrderLineItemsEquals(actual.getOrderLineItems(), expected.getOrderLineItems());
     }
 
+    @DisplayName("하나 이상의 주문 항목을 포함해야 주문을 할 수 있다")
     @Test
     void createWithEmptyOrderLineItems() {
         final var order = new Order(1L, null, LocalDateTime.now(), Collections.emptyList());
@@ -69,6 +72,7 @@ class OrderServiceTest {
                 .hasMessage("주문 항목이 비어 있습니다.");
     }
 
+    @DisplayName("주문 항목의 메뉴가 서로 달라야 주문을 할 수 있다")
     @Test
     void createWithDuplicatedMenu() {
         final var menu = menuDao.save(new Menu("자장면", 5000, 1));
@@ -82,6 +86,7 @@ class OrderServiceTest {
                 .hasMessage("중복된 메뉴의 주문 항목이 존재합니다.");
     }
 
+    @DisplayName("존재하는 주문 테이블이어야 주문을 할 수 있다")
     @Test
     void createWithNonExistOrderTable() {
         final var nonExistOrderTableId = 0L;
@@ -95,6 +100,7 @@ class OrderServiceTest {
                 .hasMessage("주문 테이블을 찾을 수 없습니다.");
     }
 
+    @DisplayName("주문 테이블이 비어 있어야 주문을 할 수 있다")
     @Test
     void createWithEmptyOrderTable() {
         final var emptyOrderTable = orderTableDao.save(new OrderTable(1L, 1, true));
@@ -108,6 +114,7 @@ class OrderServiceTest {
                 .hasMessage("주문 테이블이 비어 있습니다.");
     }
 
+    @DisplayName("주문 테이블을 전체 조회한다")
     @Test
     void list() {
         final List<Order> expected = List.of(
@@ -175,6 +182,7 @@ class OrderServiceTest {
         return orderLineItemDao.save(new OrderLineItem(orderId, menuId, quantity));
     }
 
+    @DisplayName("주문 상태를 변경한다")
     @Test
     void changeOrderStatus() {
         final var expected = saveOrder(1L, OrderStatus.MEAL, LocalDateTime.now(),
@@ -186,6 +194,7 @@ class OrderServiceTest {
         assertOrderEquals(actual, expected);
     }
 
+    @DisplayName("존재하는 주문이어야 주문 상태를 변경할 수 있다")
     @Test
     void changeOrderStatusWithNonExistOrder() {
         final var nonExistOrderId = 0L;
@@ -198,6 +207,7 @@ class OrderServiceTest {
                 .hasMessage("주문이 존재하지 않습니다.");
     }
 
+    @DisplayName("이미 결제 완료된 주문은 더이상 주문 상태를 변경할 수 없다")
     @Test
     void changeOrderStatusWithCompletedOrder() {
         final var completedOrderStatus = OrderStatus.COMPLETION;
