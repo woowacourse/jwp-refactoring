@@ -32,7 +32,7 @@ class ProductServiceTest {
     @DisplayName("상품의 가격이 null이면 예외가 발생한다.")
     @Test
     void createWithNullPrice() {
-        assertThatThrownBy(()->productService.create(new Product("치킨", null)))
+        assertThatThrownBy(() -> productService.create(new Product("치킨", null)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -40,7 +40,7 @@ class ProductServiceTest {
     @ParameterizedTest
     @ValueSource(ints = {-1, -5})
     void createWithInvalidPrice(int price) {
-        assertThatThrownBy(()->productService.create(new Product("치킨", BigDecimal.valueOf(price))))
+        assertThatThrownBy(() -> productService.create(new Product("치킨", BigDecimal.valueOf(price))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

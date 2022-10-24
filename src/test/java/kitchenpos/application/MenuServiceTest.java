@@ -42,14 +42,16 @@ class MenuServiceTest {
     @ParameterizedTest
     @ValueSource(ints = {-1, -5})
     void createWithInvalidPrice(int price) {
-        assertThatThrownBy(() -> menuService.create(new Menu("치킨", BigDecimal.valueOf(price), 1L, createMenuProducts())))
+        assertThatThrownBy(
+                () -> menuService.create(new Menu("치킨", BigDecimal.valueOf(price), 1L, createMenuProducts())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴 그룹이 존재하지 않으면 예외가 발생한다.")
     @Test
     void createWithNoMenuGroup() {
-        assertThatThrownBy(() -> menuService.create(new Menu("치킨", BigDecimal.valueOf(10000), 99999L, createMenuProducts())))
+        assertThatThrownBy(
+                () -> menuService.create(new Menu("치킨", BigDecimal.valueOf(10000), 99999L, createMenuProducts())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

@@ -91,14 +91,14 @@ class TableServiceTest {
     @DisplayName("손님 수가 0보다 작으면 예외가 발생한다.")
     @Test
     void changeNumberWithInvalidNumberOfGuests() {
-        assertThatThrownBy(()->tableService.changeNumberOfGuests(1L, new OrderTable(-1, true)))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, new OrderTable(-1, true)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블이 존재하지 않으면 예외가 발생한다.")
     @Test
     void changeNumberWithNotExistOrderTable() {
-        assertThatThrownBy(()->tableService.changeNumberOfGuests(9999L, new OrderTable(4, true)))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(9999L, new OrderTable(4, true)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
