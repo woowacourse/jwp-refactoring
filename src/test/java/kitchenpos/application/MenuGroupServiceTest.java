@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.fixture.MenuGroupFixture.두마리_메뉴_그룹;
-import static kitchenpos.application.fixture.MenuGroupFixture.한마리_메뉴_그룹;
+import static kitchenpos.application.fixture.MenuGroupFixture.치킨;
+import static kitchenpos.application.fixture.MenuGroupFixture.피자;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -28,8 +28,8 @@ class MenuGroupServiceTest {
     @Test
     void findAll() {
         // given
-        menuGroupDao.save(한마리_메뉴_그룹());
-        menuGroupDao.save(두마리_메뉴_그룹());
+        menuGroupDao.save(치킨());
+        menuGroupDao.save(피자());
 
         // when
         List<MenuGroup> menuGroups = menuGroupService.list();
@@ -42,7 +42,7 @@ class MenuGroupServiceTest {
     @Test
     void createMenuGroup() {
         // given
-        MenuGroup menuGroup = 한마리_메뉴_그룹();
+        MenuGroup menuGroup = 치킨();
 
         // when
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);

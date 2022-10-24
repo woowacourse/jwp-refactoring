@@ -28,4 +28,12 @@ public class ProductFixture {
 
         return pizza;
     }
+
+    public static Product 포테이토_피자() {
+        Product pizza = new Product();
+        pizza.setName("포테이토피자");
+        pizza.setPrice(BigDecimal.valueOf(15000));
+
+        return pizza;
+    }
 }
