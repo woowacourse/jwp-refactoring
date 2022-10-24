@@ -1,4 +1,4 @@
-package kitchenpos.controller;
+package kitchenpos.ui;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -13,7 +13,6 @@ import java.util.List;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.ui.OrderRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -22,7 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(OrderRestController.class)
-public class OrderControllerTest extends ControllerTest {
+public class OrderRestControllerTest extends ControllerTest {
 
     @MockBean
     private OrderService orderService;

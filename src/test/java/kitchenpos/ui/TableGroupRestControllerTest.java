@@ -1,4 +1,4 @@
-package kitchenpos.controller;
+package kitchenpos.ui;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -12,7 +12,6 @@ import java.util.List;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.ui.TableGroupRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -21,7 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(TableGroupRestController.class)
-public class TableGroupControllerTest extends ControllerTest {
+public class TableGroupRestControllerTest extends ControllerTest {
 
     @MockBean
     private TableGroupService tableGroupService;

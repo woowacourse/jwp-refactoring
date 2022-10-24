@@ -1,4 +1,4 @@
-package kitchenpos.controller;
+package kitchenpos.ui;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 

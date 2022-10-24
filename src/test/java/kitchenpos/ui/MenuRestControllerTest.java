@@ -1,4 +1,4 @@
-package kitchenpos.controller;
+package kitchenpos.ui;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -8,9 +8,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
-import kitchenpos.application.ProductService;
-import kitchenpos.domain.Product;
-import kitchenpos.ui.ProductRestController;
+import java.util.List;
+import kitchenpos.application.MenuService;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -18,36 +19,43 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
-@WebMvcTest(ProductRestController.class)
-public class ProductControllerTest extends ControllerTest {
+@WebMvcTest(MenuRestController.class)
+public class MenuRestControllerTest extends ControllerTest {
 
     @MockBean
-    private ProductService productService;
+    private MenuService menuService;
 
-    @DisplayName("상품을 생성한다.")
+    @DisplayName("메뉴를 생성한다.")
     @Test
     public void create() throws Exception {
         // given
-        Product product = new Product("강정치킨", new BigDecimal(17000));
-        given(productService.create(any()))
-                .willReturn(new Product(1L, "강정치킨", new BigDecimal(17000)));
+        Menu menu = new Menu("후라이드+후라이드",
+                new BigDecimal("19000"),
+                1L,
+                List.of(new MenuProduct(1L, 2)));
+        given(menuService.create(any()))
+                .willReturn(new Menu(1L,
+                        "후라이드+후라이드",
+                        new BigDecimal(19000),
+                        1L,
+                        List.of(new MenuProduct(1L, 2))));
 
         // when
-        ResultActions perform = mockMvc.perform(post("/api/products")
+        ResultActions perform = mockMvc.perform(post("/api/menus")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
-                        .content(objectMapper.writeValueAsString(product)))
+                        .content(objectMapper.writeValueAsString(menu)))
                 .andDo(print());
 
         // then
         perform.andExpect(status().isCreated());
     }
 
-    @DisplayName("상품을 조회한다.")
+    @DisplayName("메뉴를 조회한다.")
     @Test
     public void list() throws Exception {
         // when
-        ResultActions perform = mockMvc.perform(get("/api/products")
+        ResultActions perform = mockMvc.perform(get("/api/menus")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8"))
                 .andDo(print());
