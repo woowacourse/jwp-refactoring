@@ -4,6 +4,7 @@ import static kitchenpos.fixture.MenuFixture.createMenu;
 import static kitchenpos.fixture.MenuFixture.createMenuGroup;
 import static kitchenpos.fixture.MenuFixture.createMenuProduct;
 import static kitchenpos.fixture.ProductFixture.createProduct;
+import static kitchenpos.fixture.TableFixture.createOrder;
 import static kitchenpos.fixture.TableFixture.createOrderTable;
 import static kitchenpos.fixture.TableFixture.createTableGroup;
 
@@ -17,6 +18,7 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -85,5 +87,9 @@ abstract class ServiceTest {
 
     protected TableGroup saveTableGroup(OrderTable... orderTables) {
         return tableGroupService.create(createTableGroup(orderTables));
+    }
+
+    protected Order saveOrder(OrderTable orderTable, Menu... menus) {
+        return orderService.create(createOrder(orderTable, menus));
     }
 }

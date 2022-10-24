@@ -25,13 +25,13 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("list 메서드는 모든 order를 조회한다.")
     void list() {
         // given
-        MenuGroup menuGroup = menuGroupService.create(saveMenuGroup("반마리치킨"));
-        Product product = productService.create(saveProduct("크림치킨", BigDecimal.valueOf(15000.00)));
+        MenuGroup menuGroup = saveMenuGroup("반마리치킨");
+        Product product = saveProduct("크림치킨", BigDecimal.valueOf(15000.00));
         Menu menu1 = saveMenu("크림치킨", menuGroup, product);
         Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
-        OrderTable orderTable1 = tableService.create(saveOrderTable(2, false));
-        OrderTable orderTable2 = tableService.create(saveOrderTable(4, false));
-        OrderTable orderTable3 = tableService.create(saveOrderTable(1, false));
+        OrderTable orderTable1 = saveOrderTable(2, false);
+        OrderTable orderTable2 = saveOrderTable(4, false);
+        OrderTable orderTable3 = saveOrderTable(1, false);
 
         saveOrder(orderTable1, menu1, menu2);
         saveOrder(orderTable2, menu1, menu2);
@@ -44,21 +44,6 @@ class OrderServiceTest extends ServiceTest {
         assertThat(orders).hasSize(3);
     }
 
-    private Order saveOrder(OrderTable orderTable, Menu menu1, Menu menu2) {
-        OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setMenuId(menu1.getId());
-        orderLineItem1.setQuantity(1);
-        OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setMenuId(menu2.getId());
-        orderLineItem2.setQuantity(2);
-
-        Order order = new Order();
-        order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
-        order.setOrderTableId(orderTable.getId());
-
-        return orderService.create(order);
-    }
-
     @Nested
     @DisplayName("changeOrderStatus 메서드는")
     class ChangeOrderStatus {
@@ -67,14 +52,15 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("order 상태를 업데이트한다.")
         void success() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(saveMenuGroup("반마리치킨"));
-            Product product = productService.create(saveProduct("크림치킨", BigDecimal.valueOf(15000.00)));
+            MenuGroup menuGroup = saveMenuGroup("반마리치킨");
+            Product product = saveProduct("크림치킨", BigDecimal.valueOf(15000.00));
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
-            OrderTable orderTable = tableService.create(saveOrderTable(2, false));
+            OrderTable orderTable = saveOrderTable(2, false);
             Order savedOrder = saveOrder(orderTable, menu1, menu2);
             Order updateOrder = new Order();
             updateOrder.setOrderStatus("MEAL");
+
             orderService.changeOrderStatus(savedOrder.getId(), updateOrder);
 
             // when
@@ -88,11 +74,11 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("orderId에 해당하는 order가 존재하지 않는 경우 예외를 던진다.")
         void orderId_NotExist_ExceptionThrown() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(saveMenuGroup("반마리치킨"));
-            Product product = productService.create(saveProduct("크림치킨", BigDecimal.valueOf(15000.00)));
+            MenuGroup menuGroup = saveMenuGroup("반마리치킨");
+            Product product = saveProduct("크림치킨", BigDecimal.valueOf(15000.00));
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
-            OrderTable orderTable = tableService.create(saveOrderTable(2, false));
+            OrderTable orderTable = saveOrderTable(2, false);
             Order order = saveOrder(orderTable, menu1, menu2);
 
             // when & then
@@ -104,11 +90,11 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("order의 상태가 COMPLETION인 경우 예외를 던진다.")
         void orderStatus_IsCompleted_ExceptionThrown() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(saveMenuGroup("반마리치킨"));
-            Product product = productService.create(saveProduct("크림치킨", BigDecimal.valueOf(15000.00)));
+            MenuGroup menuGroup = saveMenuGroup("반마리치킨");
+            Product product = saveProduct("크림치킨", BigDecimal.valueOf(15000.00));
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
-            OrderTable orderTable = tableService.create(saveOrderTable(2, false));
+            OrderTable orderTable = saveOrderTable(2, false);
             Order savedOrder = saveOrder(orderTable, menu1, menu2);
             Order updateOrder = new Order();
             updateOrder.setOrderStatus("COMPLETION");
@@ -128,20 +114,20 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("order를 생성한다.")
         void success() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(saveMenuGroup("반마리치킨"));
-            Product product = productService.create(saveProduct("크림치킨", BigDecimal.valueOf(15000.00)));
+            MenuGroup menuGroup = saveMenuGroup("반마리치킨");
+            Product product = saveProduct("크림치킨", BigDecimal.valueOf(15000.00));
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
+            OrderTable orderTable = saveOrderTable(2, false);
             OrderLineItem orderLineItem1 = new OrderLineItem();
+
             orderLineItem1.setMenuId(menu1.getId());
             orderLineItem1.setQuantity(1);
             OrderLineItem orderLineItem2 = new OrderLineItem();
             orderLineItem2.setMenuId(menu2.getId());
             orderLineItem2.setQuantity(2);
-            OrderTable orderTable = tableService.create(saveOrderTable(2, false));
-
             Order order = new Order();
-            order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
+            order.setOrderLineItems(List.of(orderLineItem1, orderLineItem2));
             order.setOrderTableId(orderTable.getId());
 
             // when
