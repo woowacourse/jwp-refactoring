@@ -12,22 +12,18 @@ import kitchenpos.application.request.MenuProductRequest;
 import kitchenpos.domain.Menu;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
 public class MenuServiceTest {
-
-    @Autowired
-    private MenuService menuService;
-
+    
     @Nested
     class create_메서드는 {
 
         @Nested
-        class 가격이_null인_경우 {
+        class 가격이_null인_경우 extends ServiceTest {
 
             private final MenuCreateRequest request = new MenuCreateRequest("메뉴", null, 1L, null);
 
@@ -40,7 +36,7 @@ public class MenuServiceTest {
         }
 
         @Nested
-        class 가격이_0_미만일_경우 {
+        class 가격이_0_미만일_경우 extends ServiceTest {
 
             private static final int INVALID_PRICE = -1000;
 
@@ -56,7 +52,7 @@ public class MenuServiceTest {
         }
 
         @Nested
-        class 입력받은_MenuGroup이_존재하지_않는_경우 {
+        class 입력받은_MenuGroup이_존재하지_않는_경우 extends ServiceTest {
 
             private static final long NOT_EXIST_MENUGROUP_ID = -1L;
 
@@ -72,7 +68,7 @@ public class MenuServiceTest {
         }
 
         @Nested
-        class 입력받은_Product가_존재하지_않는_경우 {
+        class 입력받은_Product가_존재하지_않는_경우 extends ServiceTest {
 
             private static final long NOT_EXIST_PRODUCT_ID = -1L;
 
@@ -88,7 +84,7 @@ public class MenuServiceTest {
         }
 
         @Nested
-        class 입력받은_가격이_총_금액보다_큰_경우 {
+        class 입력받은_가격이_총_금액보다_큰_경우 extends ServiceTest {
 
             private final MenuCreateRequest request = new MenuCreateRequest("메뉴", new BigDecimal(40000), 1L,
                     List.of(new MenuProductRequest(1L, 1L), new MenuProductRequest(2L, 1L)));
@@ -102,7 +98,7 @@ public class MenuServiceTest {
         }
 
         @Nested
-        class 정상적인_입력을_받을_경우 {
+        class 정상적인_입력을_받을_경우 extends ServiceTest {
 
             private final MenuCreateRequest request = new MenuCreateRequest("메뉴", new BigDecimal(32000), 1L,
                     List.of(new MenuProductRequest(1L, 1L), new MenuProductRequest(2L, 1L)));
@@ -127,7 +123,7 @@ public class MenuServiceTest {
     class list_메서드는 {
 
         @Nested
-        class 호출하는_경우 {
+        class 호출하는_경우 extends ServiceTest {
 
             private static final int EXPECT_SIZE = 6;
 

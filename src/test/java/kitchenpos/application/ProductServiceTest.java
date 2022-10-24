@@ -10,22 +10,18 @@ import kitchenpos.application.request.ProductCreateRequest;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
 class ProductServiceTest {
-
-    @Autowired
-    private ProductService productService;
-
+    
     @Nested
     class create_메서드는 {
 
         @Nested
-        class 가격이_null인_경우 {
+        class 가격이_null인_경우 extends ServiceTest {
             private final ProductCreateRequest request = new ProductCreateRequest("상품", null);
 
             @Test
@@ -37,7 +33,7 @@ class ProductServiceTest {
         }
 
         @Nested
-        class 가격이_0_미만일_경우 {
+        class 가격이_0_미만일_경우 extends ServiceTest {
 
             private static final int INVALID_PRICE = -1000;
 
@@ -52,7 +48,7 @@ class ProductServiceTest {
         }
 
         @Nested
-        class 정상적인_입력을_받을_경우 {
+        class 정상적인_입력을_받을_경우 extends ServiceTest {
 
             private final ProductCreateRequest request = new ProductCreateRequest("상품", new BigDecimal(10000));
 
@@ -73,7 +69,7 @@ class ProductServiceTest {
     class list_메서드는 {
 
         @Nested
-        class 호출하는_경우 {
+        class 호출하는_경우 extends ServiceTest {
 
             private static final int EXPECT_SIZE = 6;
 
