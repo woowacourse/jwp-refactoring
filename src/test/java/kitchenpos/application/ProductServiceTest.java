@@ -34,7 +34,7 @@ class ProductServiceTest {
 
     @BeforeEach
     void setUp() {
-        product = new Product("강정치킨", new BigDecimal(17000));
+        product = new Product("강정치킨", BigDecimal.valueOf(17000));
         product.setId(1L);
     }
 
@@ -42,7 +42,7 @@ class ProductServiceTest {
     @DisplayName("상품을 생성한다.")
     void create() {
         // given
-        final Product requestProduct = new Product("강정치킨", new BigDecimal(17000));
+        final Product requestProduct = new Product("강정치킨", BigDecimal.valueOf(17000));
         when(productDao.save(any())).thenReturn(product);
 
         // when
@@ -52,7 +52,7 @@ class ProductServiceTest {
         assertAll(
                 () -> assertThat(savedProduct.getId()).isNotNull(),
                 () -> assertThat(savedProduct.getName()).isEqualTo("강정치킨"),
-                () -> assertThat(savedProduct.getPrice()).isEqualTo(new BigDecimal(17000))
+                () -> assertThat(savedProduct.getPrice()).isEqualTo(BigDecimal.valueOf(17000))
         );
     }
 
@@ -60,8 +60,8 @@ class ProductServiceTest {
     @DisplayName("싱품의 가격이 0일 경우 상품이 생성되어야 한다.")
     void createWithValidPrice() {
         // given
-        final Product requestProduct = new Product("강정치킨", new BigDecimal(0));
-        product.setPrice(new BigDecimal(0));
+        final Product requestProduct = new Product("강정치킨", BigDecimal.valueOf(0));
+        product.setPrice(BigDecimal.valueOf(0));
         when(productDao.save(any())).thenReturn(product);
 
         // when
@@ -70,7 +70,7 @@ class ProductServiceTest {
         // then
         assertAll(
                 () -> assertThat(savedProduct.getId()).isNotNull(),
-                () -> assertThat(savedProduct.getPrice()).isEqualTo(new BigDecimal(0))
+                () -> assertThat(savedProduct.getPrice()).isEqualTo(BigDecimal.valueOf(0))
         );
     }
 
@@ -83,8 +83,8 @@ class ProductServiceTest {
 
     private static Stream<Arguments> invalidParams() {
         return Stream.of(
-                Arguments.of(new Product("강정치킨", new BigDecimal(-100)), "-100"),
-                Arguments.of(new Product("강정치킨", new BigDecimal(-1)), "-1"),
+                Arguments.of(new Product("강정치킨", BigDecimal.valueOf(-100)), "-100"),
+                Arguments.of(new Product("강정치킨", BigDecimal.valueOf(-1)), "-1"),
                 Arguments.of(new Product("강정치킨", null), "null")
         );
     }

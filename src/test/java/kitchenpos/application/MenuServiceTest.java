@@ -39,7 +39,7 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        final Product product = new Product("후라이드", new BigDecimal(10000));
+        final Product product = new Product("후라이드", BigDecimal.valueOf(10000));
         product.setId(1L);
         final MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(1L);
@@ -47,7 +47,7 @@ class MenuServiceTest {
 
         menu = new Menu();
         menu.setName("후라이드+후라이드");
-        menu.setPrice(new BigDecimal(19000));
+        menu.setPrice(BigDecimal.valueOf(19000));
         menu.setMenuGroupId(1L);
         menu.setMenuProducts(Arrays.asList(menuProduct));
 
@@ -72,11 +72,11 @@ class MenuServiceTest {
 
     private static Stream<Arguments> invalidParams() {
         return Stream.of(
-                Arguments.of(new Menu("후라이드+후라이드", new BigDecimal(-1000), 1L, Arrays.asList()),
+                Arguments.of(new Menu("후라이드+후라이드", BigDecimal.valueOf(-1000), 1L, Arrays.asList()),
                         "가격이 음수일 경우"),
-                Arguments.of(new Menu("후라이드+후라이드", new BigDecimal(1000), 2L, Arrays.asList()),
+                Arguments.of(new Menu("후라이드+후라이드", BigDecimal.valueOf(1000), 2L, Arrays.asList()),
                         "존재하지 않는 메뉴그룹일 경우"),
-                Arguments.of(new Menu("후라이드+후라이드", new BigDecimal(21000), 1L,
+                Arguments.of(new Menu("후라이드+후라이드", BigDecimal.valueOf(21000), 1L,
                                 Arrays.asList(new MenuProduct(1L, 2))),
                         "메뉴안의 상품들의 가격의 합이 메뉴의 가격을 넘을 경우")
         );
