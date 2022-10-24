@@ -4,6 +4,7 @@ import static kitchenpos.common.fixtures.MenuGroupFixtures.루나치킨_이름;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
 import kitchenpos.common.builder.MenuGroupBuilder;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,5 +39,19 @@ class MenuGroupServiceTest {
                 () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertThat(actual.getName()).isEqualTo(루나치킨_이름)
         );
+    }
+
+    @DisplayName("메뉴 그룹을 조회한다.")
+    @Test
+    void 메뉴_그룹을_조회한다() {
+        // given
+        MenuGroup actual = menuGroupService.create(루나치킨);
+
+        // when
+        List<MenuGroup> 메뉴그룹들 = menuGroupService.list();
+
+        // then
+        assertThat(메뉴그룹들).extracting(MenuGroup::getName)
+                .contains(루나치킨_이름);
     }
 }
