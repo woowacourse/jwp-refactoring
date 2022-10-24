@@ -5,6 +5,7 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +23,9 @@ public abstract class ServiceTest {
 
     @Autowired
     MenuService menuService;
+
+    @Autowired
+    TableService tableService;
 
     protected Product 상품을_저장한다(String name, int price) {
         Product product = new Product();
@@ -60,5 +64,21 @@ public abstract class ServiceTest {
         menu.setMenuProducts(List.of(menuProduct1, menuProduct2));
 
         return menuService.create(menu);
+    }
+
+    protected OrderTable 테이블을_저장한다(int numberOfGuests) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setEmpty(false);
+
+        return tableService.create(orderTable);
+    }
+
+    protected OrderTable 빈_테이블을_저장한다() {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(0);
+        orderTable.setEmpty(true);
+
+        return tableService.create(orderTable);
     }
 }
