@@ -6,6 +6,7 @@ import kitchenpos.domain.Menu;
 public enum MenuFixture {
 
     CHICKEN_1000("치킨", new BigDecimal(1000)),
+    PIZZA_2000("피자", new BigDecimal(2000)),
     ;
 
     private final String name;

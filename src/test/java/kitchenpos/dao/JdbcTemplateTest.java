@@ -13,10 +13,12 @@ public class JdbcTemplateTest {
 
     protected JdbcTemplateProductDao jdbcTemplateProductDao;
     protected JdbcTemplateMenuGroupDao jdbcTemplateMenuGroupDao;
+    protected JdbcTemplateMenuDao jdbcTemplateMenuDao;
 
     @BeforeEach
     void setUp() {
         jdbcTemplateProductDao = new JdbcTemplateProductDao(dataSource);
         jdbcTemplateMenuGroupDao = new JdbcTemplateMenuGroupDao(dataSource);
+        jdbcTemplateMenuDao = new JdbcTemplateMenuDao(dataSource);
     }
 }
