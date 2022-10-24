@@ -5,19 +5,19 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.support.IntegrationServiceTest;
 import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.annotation.Rollback;
 
-@Rollback
 class OrderServiceTest extends IntegrationServiceTest {
 
     private static final OrderLineItem ORDER_LINE_ITEM = new OrderLineItem(1L, 1L);
@@ -57,7 +57,7 @@ class OrderServiceTest extends IntegrationServiceTest {
         }
 
         @Nested
-        class 없는_주문테이블을_입력한_경우 {
+        class 존재하지_않는_주문테이블을_입력한_경우 {
 
             private final long 존재하지_않는_주문테이블_ID = -1L;
             private final Order order =
@@ -74,12 +74,38 @@ class OrderServiceTest extends IntegrationServiceTest {
         @Nested
         class 주문테이블이_비어있는_경우 {
 
+            private final Order order = new Order(1L, null, now(), ORDER_LINE_ITEMS);
+
+            @Test
+            void 예외가_발생한다() {
+                assertThatThrownBy(() -> orderService.create(order))
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("주문테이블이 비어있습니다.");
+            }
         }
 
         @Nested
-        class 정상적으로_주문요청한_경우 {
+        class 정상적으로_주문요청한_경우 extends IntegrationServiceTest {
 
+            private final Order order = new Order(1L, null, now(), ORDER_LINE_ITEMS);
+            private Long savedOrderTableId;
 
+            @BeforeEach
+            void setUp() {
+                final OrderTable savedOrderTable = orderTableDao.save(new OrderTable(1L, null, 1, false));
+                this.savedOrderTableId = savedOrderTable.getId();
+            }
+
+            @Test
+            void 주문을_추가하고_반환한다() {
+                Order actual = orderService.create(order);
+                List<OrderLineItem> actualItems = orderLineItemDao.findAllByOrderId(actual.getId());
+
+                assertAll(
+                        () -> assertThat(actual.getId()).isNotNull(),
+                        () -> assertThat(actualItems).hasSize(1)
+                );
+            }
         }
     }
 
@@ -114,22 +140,19 @@ class OrderServiceTest extends IntegrationServiceTest {
 
 
         @Nested
-        class 이미_계산완료된_주문의_상태를_변경하려는_경우 {
+        class 이미_계산완료된_주문의_상태를_변경하려는_경우 extends IntegrationServiceTest {
 
             private final Order orderToChange = new Order(null, OrderStatus.MEAL.name(), now(), ORDER_LINE_ITEMS);
             private Long savedOrderId;
 
-            @AfterEach
-            void tearDown() {
-                dbTableCleaner.removeRecordByPk("ORDERS", savedOrderId);
+            @BeforeEach
+            void setUp() {
+                this.savedOrderId = orderDao.save(new Order(1L, OrderStatus.COMPLETION.name(), now(), ORDER_LINE_ITEMS))
+                        .getId();
             }
 
             @Test
-            @Rollback
             void 예외를_발생한다() {
-                this.savedOrderId =
-                        orderDao.save(new Order(1L, OrderStatus.COMPLETION.name(), now(), ORDER_LINE_ITEMS))
-                        .getId();
 
                 assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrderId, orderToChange))
                         .isInstanceOf(IllegalArgumentException.class)
