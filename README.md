@@ -21,8 +21,8 @@
 | 매장 식사 | eat in | 포장하지 않고 매장에서 식사하는 것 |
 
 ## 1단계 요구 사항 
-- [ ] 키친포스 요구 사항 README.md에 작성하기 
-- [ ] 키친포스 요구 사항을 토대로 테스트 코드 작성하기 
-  - [ ] 모든 Business Object에 대한 테스트 코드 작성 
-  - [ ] @SpringBootTest를 이용한 통합 테스트 코드 또는 @ExtendWith(MockitoExtension.class)를 이용한 단위 테스트 코드를 작성
-- [ ] lombok 사용하지 않고 미션 진행하기 
+- [x] 키친포스 요구 사항 README.md에 작성하기 
+- [x] 키친포스 요구 사항을 토대로 테스트 코드 작성하기 
+  - [x] 모든 Business Object에 대한 테스트 코드 작성 
+  - [x] @SpringBootTest를 이용한 통합 테스트 코드 또는 @ExtendWith(MockitoExtension.class)를 이용한 단위 테스트 코드를 작성
+- [x] lombok 사용하지 않고 미션 진행하기 
