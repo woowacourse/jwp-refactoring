@@ -13,8 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@ServiceTest
-class ProductServiceTest {
+class ProductServiceTest extends ServiceTest {
 
     private static final String PRODUCE_NAME = "빅맥";
     private static final BigDecimal PRICE = new BigDecimal(5000);
