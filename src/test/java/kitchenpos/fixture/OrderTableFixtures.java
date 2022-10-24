@@ -17,4 +17,8 @@ public class OrderTableFixtures {
     public static OrderTable 테이블_2번() {
         return createOrderTable(0, true);
     }
+
+    public static OrderTable 테이블_3번() {
+        return createOrderTable(0, true);
+    }
 }
