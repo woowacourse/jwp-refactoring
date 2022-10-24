@@ -12,7 +12,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
     @DisplayName("테이블을 생성한다.")
     void create() {
         // given
-        OrderTable orderTable = new OrderTable(1L, 1, false);
+        OrderTable orderTable = new OrderTable(1L, 1, true);
 
         // when, then
         _테이블생성검증(orderTable);
@@ -22,8 +22,8 @@ public class TableAcceptanceTest extends AcceptanceTest {
     @DisplayName("전체 테이블을 조회한다.")
     void list() {
         // given
-        OrderTable orderTable1 = new OrderTable(1L, 1, false);
-        OrderTable orderTable2 = new OrderTable(1L, 1, false);
+        OrderTable orderTable1 = new OrderTable(1L, 1, true);
+        OrderTable orderTable2 = new OrderTable(1L, 1, true);
 
         _테이블생성검증(orderTable1);
         _테이블생성검증(orderTable2);
@@ -52,7 +52,8 @@ public class TableAcceptanceTest extends AcceptanceTest {
         long tableId = _테이블생성_Id반환(orderTable);
 
         // when, then
-        put("/api/tables/" + tableId + "/number-of-guests", orderTable).assertThat()
+        OrderTable orderTableToChange = new OrderTable(1L, 2, false);
+        put("/api/tables/" + tableId + "/number-of-guests", orderTableToChange).assertThat()
             .statusCode(HttpStatus.OK.value());
     }
 

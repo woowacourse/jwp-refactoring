@@ -1,13 +1,17 @@
 package kitchenpos.acceptance;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class AcceptanceTest {
+
+    @Value("${server.port}")
+    int port;
 
     public ValidatableResponse post(String url, Object request) {
         return RestAssured.given().log().all()

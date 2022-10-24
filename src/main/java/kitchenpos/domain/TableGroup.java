@@ -12,6 +12,13 @@ public class TableGroup {
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
 
+    public TableGroup() {
+    }
+
+    public TableGroup(final List<OrderTable> orderTables) {
+        this.orderTables = List.copyOf(orderTables);
+    }
+
     public Long getId() {
         return id;
     }
