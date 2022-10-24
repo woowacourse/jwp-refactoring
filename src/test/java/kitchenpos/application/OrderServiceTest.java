@@ -53,9 +53,10 @@ class OrderServiceTest {
         order.setOrderTableId(orderTable.getId());
         order.setOrderStatus(OrderStatus.COOKING.name());
         order.setOrderedTime(LocalDateTime.now());
+
         given(menuDao.countByIdIn(anyList())).willReturn(1L);
         given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
-        given(orderDao.save(order)).willReturn(order);
+        given(orderDao.save(order)).willReturn(ORDER);
         given(orderLineItemDao.save(orderLineItem)).willReturn(orderLineItem);
 
         //when

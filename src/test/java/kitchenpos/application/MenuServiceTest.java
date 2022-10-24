@@ -56,12 +56,13 @@ class MenuServiceTest {
                 .willReturn(MENU_PRODUCT);
 
         //when
-        Menu menu = menuService.create(MENU);
+        Menu menu = new Menu("후라이드", BigDecimal.valueOf(19000), 1L, List.of(MENU_PRODUCT));
+        Menu savedMenu = menuService.create(menu);
 
         //then
-        assertThat(menu.getName()).isEqualTo("후라이드+후라이드");
-        assertThat(menu.getPrice()).isEqualTo( BigDecimal.valueOf(19000));
-        assertThat(menu.getMenuGroupId()).isNotNull();
+        assertThat(savedMenu.getName()).isEqualTo(MENU.getName());
+        assertThat(savedMenu.getPrice()).isEqualTo(MENU.getPrice());
+        assertThat(savedMenu.getMenuGroupId()).isNotNull();
     }
 
     @DisplayName("메뉴를 조회한다.")
@@ -71,9 +72,9 @@ class MenuServiceTest {
         given(menuDao.findAll()).willReturn(List.of(MENU));
 
         //when
-        List<Menu> menues = menuService.list();
+        List<Menu> menus = menuService.list();
 
         //then
-        assertThat(menues).hasSize(1);
+        assertThat(menus).hasSize(1);
     }
 }

@@ -13,7 +13,7 @@ import kitchenpos.domain.Product;
 
 public class Fixture {
 
-    private static final OrderLineItem ORDER_LINE_ITEM = new OrderLineItem(1L, 1L);
+    public static final OrderLineItem ORDER_LINE_ITEM = new OrderLineItem(1L, 1L);
     public static final Order ORDER =  new Order(1L, OrderStatus.COOKING.name(),
             LocalDateTime.now(), List.of(ORDER_LINE_ITEM));
 
