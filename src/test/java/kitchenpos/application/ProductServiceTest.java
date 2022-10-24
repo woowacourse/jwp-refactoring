@@ -48,8 +48,8 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void 상품_목록_조회_메소드는_모든_상품의_id_이름_가격을_조회한다() {
         // given
-        Product product1 = 상품을_등록한다("상품1", 10000);
-        Product product2 = 상품을_등록한다("상품2", 20000);
+        Product product1 = 상품을_저장한다("상품1", 10000);
+        Product product2 = 상품을_저장한다("상품2", 20000);
 
         // when
         final List<Product> products = productService.list();

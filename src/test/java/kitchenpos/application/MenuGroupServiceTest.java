@@ -27,8 +27,8 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void 메뉴_그룹_목록_조회_메소드는_모든_메뉴_그룹의_id_이름을_조회한다() {
         // given
-        MenuGroup menuGroup1 = 메뉴_그룹을_생성한다("추천 메뉴 1");
-        MenuGroup menuGroup2 = 메뉴_그룹을_생성한다("추천 메뉴 2");
+        MenuGroup menuGroup1 = 메뉴_그룹을_저장한다("추천 메뉴 1");
+        MenuGroup menuGroup2 = 메뉴_그룹을_저장한다("추천 메뉴 2");
 
         // when
         final List<MenuGroup> menuGroups = menuGroupService.list();
