@@ -3,31 +3,22 @@ package kitchenpos.dao;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
+import java.util.Optional;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import javax.sql.DataSource;
-import java.util.List;
-import java.util.Optional;
 
 @DisplayName("MenuGroup 테스트")
 @SuppressWarnings("NonAsciiCharacters")
-@JdbcTest
+@DaoTest
 class MenuGroupDaoTest {
 
     @Autowired
-    private DataSource dataSource;
-
     private MenuGroupDao menuGroupDao;
-
-    @BeforeEach
-    void setUp() {
-        this.menuGroupDao = new JdbcTemplateMenuGroupDao(dataSource);
-    }
 
     @Nested
     class save_메서드는 {
