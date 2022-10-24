@@ -29,9 +29,9 @@ class OrderServiceTest extends ServiceTest {
         Product product = productService.create(saveProduct("크림치킨", BigDecimal.valueOf(15000.00)));
         Menu menu1 = saveMenu("크림치킨", menuGroup, product);
         Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
-        OrderTable orderTable1 = tableService.create(createOrderTable(2, false));
-        OrderTable orderTable2 = tableService.create(createOrderTable(4, false));
-        OrderTable orderTable3 = tableService.create(createOrderTable(1, false));
+        OrderTable orderTable1 = tableService.create(saveOrderTable(2, false));
+        OrderTable orderTable2 = tableService.create(saveOrderTable(4, false));
+        OrderTable orderTable3 = tableService.create(saveOrderTable(1, false));
 
         saveOrder(orderTable1, menu1, menu2);
         saveOrder(orderTable2, menu1, menu2);
@@ -71,7 +71,7 @@ class OrderServiceTest extends ServiceTest {
             Product product = productService.create(saveProduct("크림치킨", BigDecimal.valueOf(15000.00)));
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
-            OrderTable orderTable = tableService.create(createOrderTable(2, false));
+            OrderTable orderTable = tableService.create(saveOrderTable(2, false));
             Order savedOrder = saveOrder(orderTable, menu1, menu2);
             Order updateOrder = new Order();
             updateOrder.setOrderStatus("MEAL");
@@ -92,7 +92,7 @@ class OrderServiceTest extends ServiceTest {
             Product product = productService.create(saveProduct("크림치킨", BigDecimal.valueOf(15000.00)));
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
-            OrderTable orderTable = tableService.create(createOrderTable(2, false));
+            OrderTable orderTable = tableService.create(saveOrderTable(2, false));
             Order order = saveOrder(orderTable, menu1, menu2);
 
             // when & then
@@ -108,7 +108,7 @@ class OrderServiceTest extends ServiceTest {
             Product product = productService.create(saveProduct("크림치킨", BigDecimal.valueOf(15000.00)));
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
-            OrderTable orderTable = tableService.create(createOrderTable(2, false));
+            OrderTable orderTable = tableService.create(saveOrderTable(2, false));
             Order savedOrder = saveOrder(orderTable, menu1, menu2);
             Order updateOrder = new Order();
             updateOrder.setOrderStatus("COMPLETION");
@@ -138,7 +138,7 @@ class OrderServiceTest extends ServiceTest {
             OrderLineItem orderLineItem2 = new OrderLineItem();
             orderLineItem2.setMenuId(menu2.getId());
             orderLineItem2.setQuantity(2);
-            OrderTable orderTable = tableService.create(createOrderTable(2, false));
+            OrderTable orderTable = tableService.create(saveOrderTable(2, false));
 
             Order order = new Order();
             order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
@@ -224,7 +224,7 @@ class OrderServiceTest extends ServiceTest {
             OrderLineItem orderLineItem2 = new OrderLineItem();
             orderLineItem2.setMenuId(menu2.getId());
             orderLineItem2.setQuantity(2);
-            OrderTable orderTable = tableService.create(createOrderTable(2, true));
+            OrderTable orderTable = tableService.create(saveOrderTable(2, true));
 
             Order order = new Order();
             order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));

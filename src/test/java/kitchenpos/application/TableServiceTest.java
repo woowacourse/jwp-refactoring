@@ -18,7 +18,9 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("create 메서드는 OrderTable을 생성한다.")
     void create() {
         // given
-        OrderTable orderTable = createOrderTable(0, true);
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(0);
+        orderTable.setEmpty(true);
 
         // when
         OrderTable savedOrderTable = tableService.create(orderTable);
@@ -32,10 +34,13 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("list 메서드는 모든 OrderTable을 조회한다.")
     void list() {
         // when
+        saveOrderTable(0, true);
+        saveOrderTable(0, true);
+        saveOrderTable(0, true);
         List<OrderTable> orderTables = tableService.list();
 
         // then
-        assertThat(orderTables).hasSize(0);
+        assertThat(orderTables).hasSize(3);
     }
 
     @Nested
@@ -46,12 +51,12 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("OrderTable의 empty 여부를 업데이트한다.")
         void success() {
             // given
-            OrderTable orderTable = createOrderTable(0, true);
+            OrderTable orderTable = saveOrderTable(0, true);
             OrderTable savedOrderTable = tableService.create(orderTable);
 
             // when
             OrderTable updatedOrderTable = tableService.changeEmpty(savedOrderTable.getId(),
-                    createOrderTable(0, false));
+                    saveOrderTable(0, false));
 
             // then
             assertThat(updatedOrderTable.isEmpty()).isFalse();
@@ -61,7 +66,7 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("orderTable이 존재하지 않는 경우 예외를 던진다.")
         void orderTableId_NotExist_ExceptionThrown() {
             // given
-            OrderTable orderTable = createOrderTable(0, true);
+            OrderTable orderTable = saveOrderTable(0, true);
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(9L, orderTable))
@@ -88,7 +93,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void success() {
             // given
-            OrderTable orderTable = createOrderTable(2, true);
+            OrderTable orderTable = saveOrderTable(2, true);
 
             // when
             OrderTable savedOrderTable = tableService.create(orderTable);
@@ -103,18 +108,18 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("테이블 인원 수가 0 미만인 경우 예외를 던진다.")
         void numberOfGuest_IsNegative_ExceptionThrown() {
             // given
-            OrderTable savedOrderTable = tableService.create(createOrderTable(0, true));
+            OrderTable savedOrderTable = tableService.create(saveOrderTable(0, true));
 
             // when & then
             assertThatThrownBy(
-                    () -> tableService.changeNumberOfGuests(savedOrderTable.getId(), createOrderTable(-1, true)))
+                    () -> tableService.changeNumberOfGuests(savedOrderTable.getId(), saveOrderTable(-1, true)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         @DisplayName("orderTable이 존재하지 않는 경우 예외를 던진다.")
         void orderTableId_NotExist_ExceptionThrown() {
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(9L, createOrderTable(0, false)))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(9L, saveOrderTable(0, false)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -122,11 +127,11 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("orderTable이 빈 테이블인 경우 예외를 던진다.")
         void emptyTable_ExceptionThrown() {
             // given
-            OrderTable savedOrderTable = tableService.create(createOrderTable(0, true));
+            OrderTable savedOrderTable = tableService.create(saveOrderTable(0, true));
 
             // when & then
             assertThatThrownBy(
-                    () -> tableService.changeNumberOfGuests(savedOrderTable.getId(), createOrderTable(2, false)))
+                    () -> tableService.changeNumberOfGuests(savedOrderTable.getId(), saveOrderTable(2, false)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

@@ -4,6 +4,7 @@ import static kitchenpos.fixture.MenuFixture.createMenu;
 import static kitchenpos.fixture.MenuFixture.createMenuGroup;
 import static kitchenpos.fixture.MenuFixture.createMenuProduct;
 import static kitchenpos.fixture.ProductFixture.createProduct;
+import static kitchenpos.fixture.TableFixture.createOrderTable;
 
 import java.math.BigDecimal;
 import kitchenpos.dao.MenuDao;
@@ -76,10 +77,7 @@ abstract class ServiceTest {
                         menuGroup.getId(), menuProduct));
     }
 
-    protected OrderTable createOrderTable(int numberOfGuests, boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+    protected OrderTable saveOrderTable(int numberOfGuests, boolean empty) {
+        return tableService.create(createOrderTable(numberOfGuests, empty));
     }
 }

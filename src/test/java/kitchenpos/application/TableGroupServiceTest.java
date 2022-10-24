@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.TableFixture.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -25,8 +26,8 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("orderTable 목록을 그룹화한다.")
         void success() {
             // given
-            OrderTable orderTable1 = tableService.create(createOrderTable(2, true));
-            OrderTable orderTable2 = tableService.create(createOrderTable(4, true));
+            OrderTable orderTable1 = tableService.create(saveOrderTable(2, true));
+            OrderTable orderTable2 = tableService.create(saveOrderTable(4, true));
             TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2));
 
@@ -42,7 +43,7 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("그룹화할 orderTable이 2개 미만인 경우 예외를 던진다.")
         void orderTableSize_SmallerThanTwo_ExceptionThrown() {
             // given
-            OrderTable orderTable1 = tableService.create(createOrderTable(2, true));
+            OrderTable orderTable1 = tableService.create(saveOrderTable(2, true));
             TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(Collections.singletonList(orderTable1));
 
@@ -55,7 +56,7 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("그룹화할 orderTable이 존재하지 않는 경우 예외를 던진다.")
         void orderTable_NotExist_ExceptionThrown() {
             // given
-            OrderTable orderTable1 = tableService.create(createOrderTable(2, true));
+            OrderTable orderTable1 = tableService.create(saveOrderTable(2, true));
             OrderTable orderTable2 = createOrderTable(4, true);
             TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2));
@@ -69,8 +70,8 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("그룹화할 orderTable이 빈 테이블이 아닌 경우 예외를 던진다.")
         void orderTable_NotEmpty_ExceptionThrown() {
             // given
-            OrderTable orderTable1 = tableService.create(createOrderTable(2, true));
-            OrderTable orderTable2 = tableService.create(createOrderTable(4, false));
+            OrderTable orderTable1 = tableService.create(saveOrderTable(2, true));
+            OrderTable orderTable2 = tableService.create(saveOrderTable(4, false));
             TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2));
 
@@ -83,10 +84,10 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("그룹화할 orderTable이 이미 그룹에 속한 경우 예외를 던진다.")
         void orderTable_alreadyGrouped_ExceptionThrown() {
             // given
-            OrderTable orderTable1 = tableService.create(createOrderTable(2, true));
-            OrderTable orderTable2 = tableService.create(createOrderTable(4, true));
-            OrderTable orderTable3 = tableService.create(createOrderTable(4, true));
-            OrderTable orderTable4 = tableService.create(createOrderTable(4, true));
+            OrderTable orderTable1 = tableService.create(saveOrderTable(2, true));
+            OrderTable orderTable2 = tableService.create(saveOrderTable(4, true));
+            OrderTable orderTable3 = tableService.create(saveOrderTable(4, true));
+            OrderTable orderTable4 = tableService.create(saveOrderTable(4, true));
             TableGroup tableGroup1 = new TableGroup();
             tableGroup1.setOrderTables(Arrays.asList(orderTable1, orderTable2));
             tableGroupService.create(tableGroup1);
@@ -107,8 +108,8 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("그룹을 해제한다.")
         void success() {
             // given
-            OrderTable orderTable1 = tableService.create(createOrderTable(2, true));
-            OrderTable orderTable2 = tableService.create(createOrderTable(4, true));
+            OrderTable orderTable1 = tableService.create(saveOrderTable(2, true));
+            OrderTable orderTable2 = tableService.create(saveOrderTable(4, true));
             TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2));
             TableGroup savedTableGroup = tableGroupService.create(tableGroup);
