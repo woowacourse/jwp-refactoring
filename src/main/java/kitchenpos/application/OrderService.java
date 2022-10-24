@@ -49,7 +49,8 @@ public class OrderService {
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+        long countByIdIn = menuDao.countByIdIn(menuIds);
+        if (orderLineItems.size() != countByIdIn) {
             throw new IllegalArgumentException();
         }
 
