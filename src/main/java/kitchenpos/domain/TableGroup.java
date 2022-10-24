@@ -8,6 +8,9 @@ public class TableGroup {
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
 
+    public TableGroup() {
+    }
+
     public Long getId() {
         return id;
     }
