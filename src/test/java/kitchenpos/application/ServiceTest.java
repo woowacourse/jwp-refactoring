@@ -5,6 +5,7 @@ import static kitchenpos.fixture.MenuFixture.createMenuGroup;
 import static kitchenpos.fixture.MenuFixture.createMenuProduct;
 import static kitchenpos.fixture.ProductFixture.createProduct;
 import static kitchenpos.fixture.TableFixture.createOrderTable;
+import static kitchenpos.fixture.TableFixture.createTableGroup;
 
 import java.math.BigDecimal;
 import kitchenpos.dao.MenuDao;
@@ -18,6 +19,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,5 +81,9 @@ abstract class ServiceTest {
 
     protected OrderTable saveOrderTable(int numberOfGuests, boolean empty) {
         return tableService.create(createOrderTable(numberOfGuests, empty));
+    }
+
+    protected TableGroup saveTableGroup(OrderTable... orderTables) {
+        return tableGroupService.create(createTableGroup(orderTables));
     }
 }
