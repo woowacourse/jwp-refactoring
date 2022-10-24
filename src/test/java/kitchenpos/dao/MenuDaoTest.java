@@ -9,6 +9,7 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("NonAsciiCharacters")
 class MenuDaoTest extends JdbcDaoTest {
 
     @Test

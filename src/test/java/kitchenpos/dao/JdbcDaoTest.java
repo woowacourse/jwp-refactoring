@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
 @JdbcTest
+@SuppressWarnings("NonAsciiCharacters")
 public class JdbcDaoTest {
 
     @Autowired

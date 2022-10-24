@@ -8,6 +8,7 @@ import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
+@SuppressWarnings("NonAsciiCharacters")
 @JdbcTest
 class MenuGroupDaoTest extends JdbcDaoTest {
 

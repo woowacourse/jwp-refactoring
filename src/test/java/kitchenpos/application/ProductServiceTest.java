@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("NonAsciiCharacters")
 class ProductServiceTest extends ServiceTest {
 
     @Test

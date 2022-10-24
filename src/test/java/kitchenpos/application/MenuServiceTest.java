@@ -15,6 +15,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("NonAsciiCharacters")
 class MenuServiceTest extends ServiceTest {
 
     @Test

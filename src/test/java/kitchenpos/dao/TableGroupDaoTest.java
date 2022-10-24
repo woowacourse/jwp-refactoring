@@ -8,6 +8,7 @@ import java.util.List;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("NonAsciiCharacters")
 class TableGroupDaoTest extends JdbcDaoTest {
 
     @Test

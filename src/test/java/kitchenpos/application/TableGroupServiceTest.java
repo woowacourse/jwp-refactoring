@@ -21,6 +21,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("NonAsciiCharacters")
 class TableGroupServiceTest extends ServiceTest {
 
     @Test

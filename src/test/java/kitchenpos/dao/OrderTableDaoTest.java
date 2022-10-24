@@ -9,6 +9,7 @@ import java.util.List;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("NonAsciiCharacters")
 class OrderTableDaoTest extends JdbcDaoTest {
 
     @Test
