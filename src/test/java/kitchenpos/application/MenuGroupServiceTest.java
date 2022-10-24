@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@DisplayName("MenuGroupService 테스트")
 class MenuGroupServiceTest extends ServiceTest {
 
     @Autowired
