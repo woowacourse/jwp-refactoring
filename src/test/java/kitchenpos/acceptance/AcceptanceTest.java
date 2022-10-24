@@ -38,4 +38,19 @@ public class AcceptanceTest {
                 .when().get(uri)
                 .then().log().all();
     }
+
+    protected ValidatableResponse put(final String uri, final Object body) {
+        return RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(body)
+                .when().put(uri)
+                .then().log().all();
+    }
+
+    protected ValidatableResponse delete(final String uri) {
+        return RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().delete(uri)
+                .then().log().all();
+    }
 }
