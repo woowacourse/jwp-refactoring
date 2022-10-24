@@ -72,7 +72,7 @@ class MenuServiceTest {
     void 생성할때_상품의_가격의_합과_메뉴의_가격이_다를_경우_예외를_발생시킨다() {
         MenuProduct 후라이드 = new MenuProduct(1L, 7L, 1L, 1);
         MenuProduct 양념 = new MenuProduct(2L, 7L, 2L, 1);
-        Menu menu = new Menu("반반치킨", new BigDecimal(32_001), -1L, List.of(후라이드, 양념));
+        Menu menu = new Menu("반반치킨", new BigDecimal(32_001), 1L, List.of(후라이드, 양념));
 
         assertThatThrownBy(() -> menuService.create(menu))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
