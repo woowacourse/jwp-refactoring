@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static kitchenpos.common.fixtures.MenuGroupFixtures.루나세트_이름;
 import static kitchenpos.common.fixtures.ProductFixtures.야채곱창_가격;
 import static kitchenpos.common.fixtures.ProductFixtures.야채곱창_이름;
+import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -211,5 +212,62 @@ class OrderServiceTest {
         // then
         assertThat(주문들).extracting(Order::getOrderTableId)
                 .contains(야채곱창_주문_테이블.getId());
+    }
+
+    @DisplayName("주문의 주문 상태를 변경한다.")
+    @Test
+    void 주문의_주문_상태를_변경한다() {
+        // given
+        OrderLineItem 야채곱창_주문항목 = new OrderLineItemBuilder()
+                .menuId(야채곱창_메뉴.getId())
+                .quantity(1)
+                .build();
+
+        Order 야채곱창_주문 = new OrderBuilder()
+                .orderTableId(야채곱창_주문_테이블.getId())
+                .orderLineItems(List.of(야채곱창_주문항목))
+                .build();
+
+        야채곱창_주문 = orderService.create(야채곱창_주문);
+
+        // when
+        Order 변경된_야채곱창_주문 = orderService.changeOrderStatus(야채곱창_주문.getId(), new Order(COOKING.name()));
+
+        // then
+        assertThat(변경된_야채곱창_주문.getOrderStatus()).isEqualTo(COOKING.name());
+    }
+
+    @DisplayName("주문의 주문 상태를 변경할 때 주문이 존재하지 않으면 예외가 발생한다.")
+    @Test
+    void 주문의_주문_상태를_변경할_때_주문이_존재하지_않으면_예외가_발생한다() {
+        // given
+        Long 잘못된_주문_아이디 = -1L;
+
+        // when & then
+        assertThatThrownBy(() -> orderService.changeOrderStatus(잘못된_주문_아이디, new Order(COOKING.name())))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문의 주문 상태를 변경할 때 주문 상태가 계산이면 예외가 발생한다.")
+    @Test
+    void 주문의_주문_상태를_변경할_때_주문_상태가_계산이면_예외가_발생한다() {
+        // given
+        OrderLineItem 야채곱창_주문항목 = new OrderLineItemBuilder()
+                .menuId(야채곱창_메뉴.getId())
+                .quantity(1)
+                .build();
+
+        Order 야채곱창_주문 = new OrderBuilder()
+                .orderTableId(야채곱창_주문_테이블.getId())
+                .orderLineItems(List.of(야채곱창_주문항목))
+                .build();
+
+        야채곱창_주문 = orderService.create(야채곱창_주문);
+        Long 야채곱창_주문_아이디 = 야채곱창_주문.getId();
+
+        orderService.changeOrderStatus(야채곱창_주문_아이디, new Order(COMPLETION.name()));
+
+        // when & then
+        assertThatThrownBy(() -> orderService.changeOrderStatus(야채곱창_주문_아이디, new Order(COOKING.name())));
     }
 }
