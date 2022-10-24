@@ -71,6 +71,17 @@ public class HttpCommunication {
             return this;
         }
 
+        public RequestBuilder delete(final String url) {
+            response = RestAssured
+                    .given().log().all()
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .when().delete(url)
+                    .then().log().all()
+                    .extract();
+            return this;
+        }
+
+
         public HttpCommunication build() {
             return new HttpCommunication(response);
         }
