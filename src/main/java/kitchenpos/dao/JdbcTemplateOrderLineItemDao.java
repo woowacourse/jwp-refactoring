@@ -38,6 +38,7 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
         return select(key.longValue());
     }
 
+    @Deprecated
     @Override
     public Optional<OrderLineItem> findById(final Long id) {
         try {
@@ -47,6 +48,7 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
         }
     }
 
+    @Deprecated
     @Override
     public List<OrderLineItem> findAll() {
         final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item";

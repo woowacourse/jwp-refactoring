@@ -38,6 +38,7 @@ public class JdbcTemplateMenuDao implements MenuDao {
         return select(key.longValue());
     }
 
+    @Deprecated
     @Override
     public Optional<Menu> findById(final Long id) {
         try {
