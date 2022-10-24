@@ -30,4 +30,8 @@ public enum ProductFixtures {
     public int 가격() {
         return price;
     }
+
+    public static long 존재하지_않는_상품_ID() {
+        return -1L;
+    }
 }

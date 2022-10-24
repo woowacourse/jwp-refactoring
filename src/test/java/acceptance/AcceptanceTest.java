@@ -28,10 +28,14 @@ public abstract class AcceptanceTest {
     }
 
     @AfterEach
-    void tearDow() {
+    void tearDown() {
         jdbcTemplate.update("SET REFERENTIAL_INTEGRITY FALSE");
         jdbcTemplate.execute("TRUNCATE TABLE order_table");
         jdbcTemplate.execute("TRUNCATE TABLE orders");
+        jdbcTemplate.execute("DELETE FROM product WHERE id > 6");
+        jdbcTemplate.execute("DELETE FROM menu_group WHERE id > 4");
+        jdbcTemplate.execute("DELETE FROM menu WHERE id > 6");
+        jdbcTemplate.execute("DELETE FROM menu_product WHERE seq > 6");
         jdbcTemplate.update("SET REFERENTIAL_INTEGRITY TRUE");
 
         jdbcTemplate.execute("ALTER TABLE order_table ALTER COLUMN id RESTART WITH 1");

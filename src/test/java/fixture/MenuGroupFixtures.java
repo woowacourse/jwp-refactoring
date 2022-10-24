@@ -22,4 +22,8 @@ public enum MenuGroupFixtures {
     public String 이름() {
         return name;
     }
+
+    public static long 존재하지않는_그룹_ID() {
+        return -1L;
+    }
 }
