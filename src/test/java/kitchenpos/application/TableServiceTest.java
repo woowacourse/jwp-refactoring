@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -40,11 +41,18 @@ class TableServiceTest {
     @DisplayName("테이블의 전체 목록을 조회할 수 있다.")
     @Test
     void list() {
-        // given, when
+        // given
+        final OrderTable savedTable1 = dataSupport.saveOrderTable(0, true);
+        final OrderTable savedTable2 = dataSupport.saveOrderTable(2, false);
+
+        // when
         final List<OrderTable> orderTables = tableService.list();
 
         // then
-        assertThat(orderTables).hasSize(8);
+        assertThat(orderTables)
+                .usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(Arrays.asList(savedTable1, savedTable2));
     }
 
     @DisplayName("테이블이 비었는지 상태를 변경할 수 있다.")

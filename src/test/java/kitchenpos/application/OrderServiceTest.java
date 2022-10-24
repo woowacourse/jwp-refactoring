@@ -31,7 +31,7 @@ class OrderServiceTest {
     @Autowired
     private DataSupport dataSupport;
     private OrderTable savedUnEmptyTable;
-    private Menu savedMenu;
+    private List<OrderLineItem> orderLineItems;
 
     @BeforeEach
     void saveData() {
@@ -42,20 +42,22 @@ class OrderServiceTest {
         final MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(savedProduct.getId());
         menuProduct.setQuantity(1);
-        savedMenu = dataSupport.saveMenu("치킨마요", new BigDecimal(3500), savedMenuGroup.getId(), menuProduct);
+        final Menu savedMenu = dataSupport.saveMenu("치킨마요", new BigDecimal(3500), savedMenuGroup.getId(), menuProduct);
+
+        final OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(savedMenu.getId());
+        orderLineItem.setQuantity(1);
+        orderLineItems = Arrays.asList(orderLineItem);
+
     }
 
     @DisplayName("테이블에 대해 메뉴를 주문하고 주문 상태를 조리로 변경한다.")
     @Test
     void create() {
         // given
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
-        orderLineItem.setQuantity(1);
-
         final Order order = new Order();
         order.setOrderTableId(savedUnEmptyTable.getId());
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
+        order.setOrderLineItems(orderLineItems);
 
         // when
         final Order savedOrder = orderService.create(order);
@@ -80,13 +82,13 @@ class OrderServiceTest {
     @Test
     void create_throwsException_ifMenuNotFound() {
         // given
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(100L);
-        orderLineItem.setQuantity(1);
+        final OrderLineItem fakeOrderLineItem = new OrderLineItem();
+        fakeOrderLineItem.setMenuId(100L);
+        fakeOrderLineItem.setQuantity(1);
 
         final Order order = new Order();
         order.setOrderTableId(savedUnEmptyTable.getId());
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
+        order.setOrderLineItems(Arrays.asList(fakeOrderLineItem));
 
         // when, then
         assertThatExceptionOfType(IllegalArgumentException.class)
@@ -97,13 +99,9 @@ class OrderServiceTest {
     @Test
     void create_throwsException_ifTableNotFound() {
         // given
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
-        orderLineItem.setQuantity(1);
-
         final Order order = new Order();
         order.setOrderTableId(100L);
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
+        order.setOrderLineItems(orderLineItems);
 
         // when, then
         assertThatExceptionOfType(IllegalArgumentException.class)
@@ -116,13 +114,9 @@ class OrderServiceTest {
         // given
         final OrderTable emptyTable = dataSupport.saveOrderTable(0, true);
 
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
-        orderLineItem.setQuantity(1);
-
         final Order order = new Order();
         order.setOrderTableId(emptyTable.getId());
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
+        order.setOrderLineItems(orderLineItems);
 
         // when, then
         assertThatExceptionOfType(IllegalArgumentException.class)
@@ -132,11 +126,21 @@ class OrderServiceTest {
     @DisplayName("주문의 전체 목록을 조회할 수 있다.")
     @Test
     void list() {
-        // given, when
+        // given
+        final OrderLineItem orderLineItem = orderLineItems.get(0);
+        final Order savedOrder1 =
+                dataSupport.saveOrder(savedUnEmptyTable.getId(), OrderStatus.COOKING.name(), orderLineItem);
+        final Order savedOrder2 =
+                dataSupport.saveOrder(savedUnEmptyTable.getId(), OrderStatus.COOKING.name(), orderLineItem);
+
+        // when
         final List<Order> orders = orderService.list();
 
         // then
-        assertThat(orders).hasSize(0);
+        assertThat(orders)
+                .usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(Arrays.asList(savedOrder1, savedOrder2));
     }
 
     @DisplayName("주문 상태를 변경할 수 있다.")

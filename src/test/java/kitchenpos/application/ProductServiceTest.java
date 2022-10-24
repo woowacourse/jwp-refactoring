@@ -5,8 +5,10 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Product;
+import kitchenpos.support.DataSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,8 @@ class ProductServiceTest {
 
     @Autowired
     private ProductService productService;
+    @Autowired
+    private DataSupport dataSupport;
 
     @DisplayName("새로운 상품을 등록할 수 있다.")
     @Test
@@ -61,10 +65,17 @@ class ProductServiceTest {
     @DisplayName("상품의 전체 목록을 조회할 수 있다.")
     @Test
     void list() {
-        // given, when
+        // given
+        final Product savedProduct1 = dataSupport.saveProduct("치킨마요", new BigDecimal(3500));
+        final Product savedProduct2 = dataSupport.saveProduct("참치마요", new BigDecimal(4000));
+
+        // when
         final List<Product> products = productService.list();
 
         // then
-        assertThat(products).hasSize(6);
+        assertThat(products)
+                .usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(Arrays.asList(savedProduct1, savedProduct2));
     }
 }

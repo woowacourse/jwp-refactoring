@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -29,24 +29,23 @@ class MenuServiceTest {
     private DataSupport dataSupport;
 
     private MenuGroup savedMenuGroup;
-    private Product savedProduct;
+    private List<MenuProduct> menuProducts;
 
     @BeforeEach
     void saveData() {
         savedMenuGroup = dataSupport.saveMenuGroup("추천 메뉴");
-        savedProduct = dataSupport.saveProduct("치킨마요", new BigDecimal(3500));
+
+        final Product savedProduct = dataSupport.saveProduct("치킨마요", new BigDecimal(3500));
+        final MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setProductId(savedProduct.getId());
+        menuProduct.setQuantity(1);
+        menuProducts = Arrays.asList(menuProduct);
     }
 
     @DisplayName("새로운 메뉴를 등록할 수 있다.")
     @Test
     void create() {
         // given
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(1);
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(menuProduct);
-
         final Menu menu = new Menu();
         menu.setName("치킨마요");
         menu.setPrice(new BigDecimal(3500));
@@ -62,17 +61,15 @@ class MenuServiceTest {
     @Test
     void create_throwsException_ifProductNotFound() {
         // given
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(100L);
-        menuProduct.setQuantity(1);
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(menuProduct);
+        final MenuProduct fakeMenuProduct = new MenuProduct();
+        fakeMenuProduct.setProductId(100L);
+        fakeMenuProduct.setQuantity(1);
 
         final Menu menu = new Menu();
         menu.setName("치킨마요");
         menu.setPrice(new BigDecimal(3500));
         menu.setMenuGroupId(savedMenuGroup.getId());
-        menu.setMenuProducts(menuProducts);
+        menu.setMenuProducts(Arrays.asList(fakeMenuProduct));
 
         // when, then
         assertThatExceptionOfType(IllegalArgumentException.class)
@@ -83,12 +80,6 @@ class MenuServiceTest {
     @Test
     void create_throwsException_ifNoPrice() {
         // given
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(1);
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(menuProduct);
-
         final Menu menu = new Menu();
         menu.setName("치킨마요");
         menu.setMenuGroupId(savedMenuGroup.getId());
@@ -103,12 +94,6 @@ class MenuServiceTest {
     @Test
     void create_throwsException_ifPriceUnder0() {
         // given
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(1);
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(menuProduct);
-
         final Menu menu = new Menu();
         menu.setName("치킨마요");
         menu.setPrice(new BigDecimal(-1));
@@ -124,12 +109,6 @@ class MenuServiceTest {
     @Test
     void create_throwsException_ifPriceOverProduct() {
         // given
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(1);
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(menuProduct);
-
         final Menu menu = new Menu();
         menu.setName("치킨마요");
         menu.setPrice(new BigDecimal(3600));
@@ -144,10 +123,20 @@ class MenuServiceTest {
     @DisplayName("메뉴의 전체 목록을 조회할 수 있다.")
     @Test
     void list() {
-        // given, when
+        // given
+        final MenuProduct menuProduct = menuProducts.get(0);
+        final Menu savedMenu1 = dataSupport.saveMenu(
+                "치킨마요", new BigDecimal(3500), savedMenuGroup.getId(), menuProduct);
+        final Menu savedMenu2 = dataSupport.saveMenu(
+                "더 비싼 치킨마요", new BigDecimal(4000), savedMenuGroup.getId(), menuProduct);
+
+        // when
         final List<Menu> menus = menuService.list();
 
         // then
-        assertThat(menus).hasSize(6);
+        assertThat(menus)
+                .usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(Arrays.asList(savedMenu1, savedMenu2));
     }
 }
