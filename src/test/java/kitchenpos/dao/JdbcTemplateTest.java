@@ -12,9 +12,11 @@ public class JdbcTemplateTest {
     private DataSource dataSource;
 
     protected JdbcTemplateProductDao jdbcTemplateProductDao;
+    protected JdbcTemplateMenuGroupDao jdbcTemplateMenuGroupDao;
 
     @BeforeEach
     void setUp() {
         jdbcTemplateProductDao = new JdbcTemplateProductDao(dataSource);
+        jdbcTemplateMenuGroupDao = new JdbcTemplateMenuGroupDao(dataSource);
     }
 }
