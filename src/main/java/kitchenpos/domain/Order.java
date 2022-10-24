@@ -13,6 +13,15 @@ public class Order {
     public Order() {
     }
 
+    public Order(final String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        this.orderTableId = orderTableId;
+        this.orderLineItems = orderLineItems;
+    }
+
     public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         this.orderTableId = orderTableId;

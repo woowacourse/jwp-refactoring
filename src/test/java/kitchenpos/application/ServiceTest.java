@@ -34,4 +34,7 @@ public class ServiceTest {
 
     @Autowired
     protected OrderDao orderDao;
+
+    @Autowired
+    protected OrderService orderService;
 }
