@@ -8,6 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.Collections;
 import java.util.List;
 import kitchenpos.common.builder.MenuBuilder;
 import kitchenpos.common.builder.MenuGroupBuilder;
@@ -110,18 +111,33 @@ class OrderServiceTest {
         );
     }
 
-    @DisplayName("주문을 등록할 때, 주문 항목이 올바르지 않으면 예외가 발생한다")
+    @DisplayName("주문을 등록할 때, 주문 항목이 메뉴에 없으면 예외가 발생한다")
     @Test
-    void 주문을_등록할_때_주문_항목이_올바르지_않으면_예외가_발생한다() {
+    void 주문을_등록할_때_주문_항목이_메뉴에_없으면_예외가_발생한다() {
         // given
+        Long 잘못된_메뉴_아이디 = -1L;
         OrderLineItem 야채곱창_주문항목 = new OrderLineItemBuilder()
-                .menuId(야채곱창_메뉴.getId())
+                .menuId(잘못된_메뉴_아이디)
                 .quantity(1)
                 .build();
 
         Order 야채곱창_주문 = new OrderBuilder()
                 .orderTableId(야채곱창_주문_테이블.getId())
                 .orderLineItems(List.of(야채곱창_주문항목))
+                .build();
+
+        // when & then
+        assertThatThrownBy(() -> orderService.create(야채곱창_주문))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문을 등록할 때, 주문 항목이 없으면 예외가 발생한다")
+    @Test
+    void 주문을_등록할_때_주문_항목이_없으면_예외가_발생한다() {
+        // given
+        Order 야채곱창_주문 = new OrderBuilder()
+                .orderTableId(야채곱창_주문_테이블.getId())
+                .orderLineItems(Collections.emptyList())
                 .build();
 
         // when & then
