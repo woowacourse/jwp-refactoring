@@ -147,6 +147,7 @@ class MenuServiceTest extends ServiceTest {
     }
 
     @Test
+    @DisplayName("전체 메뉴를 조회한다.")
     void list() {
         List<Menu> menus = menuService.list();
         assertThat(menus).isNotNull();

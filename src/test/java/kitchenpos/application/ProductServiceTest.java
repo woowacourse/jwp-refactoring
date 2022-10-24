@@ -63,7 +63,7 @@ class ProductServiceTest extends ServiceTest {
     class list {
 
         @Test
-        @DisplayName("전체 상품 목록을 반환한다.")
+        @DisplayName("전체 상품을 조회한다.")
         void list() {
             List<Product> products = productService.list();
             assertThat(products).isNotNull();
