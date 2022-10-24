@@ -157,7 +157,7 @@ class TableServiceTest {
             final OrderTable newOrderTable = new OrderTable(null, 0, true);
             final Long orderTableId = tableService.create(newOrderTable).getId();
 
-            final OrderTable orderTable = new OrderTable(null, -3, false);
+            final OrderTable orderTable = new OrderTable(null, 2, false);
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, orderTable))
                             .isInstanceOf(IllegalArgumentException.class);
         }

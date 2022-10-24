@@ -53,7 +53,9 @@ class OrderServiceTest {
         @Test
         @DisplayName("orderLineItems가 비어있는데 주문을 생성하려는 경우 예외를 발생시킨다.")
         void create_emptyOrderLineItems() {
-            final Long tableId = tableService.create(new OrderTable()).getId();
+            final OrderTable orderTable = new OrderTable();
+            orderTable.setEmpty(false);
+            final Long tableId = tableService.create(orderTable).getId();
             final Order order = new Order();
             order.setOrderTableId(tableId);
             order.setOrderLineItems(List.of());
@@ -66,7 +68,9 @@ class OrderServiceTest {
         @Test
         @DisplayName("존재하지 않는 메뉴로 주문을 생성하려는 경우 예외를 발생시킨다.")
         void create_notExistMenuId() {
-            final Long tableId = tableService.create(new OrderTable()).getId();
+            final OrderTable orderTable = new OrderTable();
+            orderTable.setEmpty(false);
+            final Long tableId = tableService.create(orderTable).getId();
             final Order order = new Order();
             order.setOrderTableId(tableId);
             final Long notExistMenuId = 999999L;
@@ -92,9 +96,9 @@ class OrderServiceTest {
         @Test
         @DisplayName("테이블이 비어있는데 주문을 생성하려는 경우 예외를 발생시킨다.")
         void create_emptyTable() {
-            final OrderTable orderTable = tableService.create(new OrderTable());
-            final Long tableId = orderTable.getId();
+            final OrderTable orderTable = new OrderTable();
             orderTable.setEmpty(true);
+            final Long tableId = tableService.create(orderTable).getId();
             final Order order = new Order();
             order.setOrderTableId(tableId);
             order.setOrderLineItems(List.of());

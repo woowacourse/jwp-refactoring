@@ -106,6 +106,23 @@ class TableGroupServiceTest {
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                             .isInstanceOf(IllegalArgumentException.class);
         }
+
+        @Test
+        @DisplayName("그룹핑할 테이블중 이미 다른 테이블 그룹애 포함된 테이블을 포함하면 예외를 발생시킨다.")
+        void create_containAlreadyGroupTable(){
+            final OrderTable orderTable1 = new OrderTable(null, 2, true);
+            final TableGroup tableGroup1 = new TableGroup();
+            tableService.create(orderTable1);
+            tableGroup1.setOrderTables(List.of(orderTable1));
+
+            final OrderTable orderTable2 = new OrderTable(null, 2, true);
+             tableService.create(orderTable2);
+            final TableGroup tableGroup2 = new TableGroup();
+            tableGroup2.setOrderTables(List.of(orderTable1, orderTable2));
+
+            assertThatThrownBy(() -> tableGroupService.create(tableGroup2))
+                            .isInstanceOf(IllegalArgumentException.class);
+        }
     }
 
     @Nested
