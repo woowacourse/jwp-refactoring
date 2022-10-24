@@ -19,7 +19,7 @@ class ProductDaoTest {
     private final ProductDao productDao;
 
     @Autowired
-    public ProductDaoTest(final DataSource dataSource) {
+    private ProductDaoTest(final DataSource dataSource) {
         this.productDao = new JdbcTemplateProductDao(dataSource);
     }
 

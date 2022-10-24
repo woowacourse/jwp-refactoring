@@ -18,7 +18,7 @@ class MenuGroupDaoTest {
     private final MenuGroupDao menuGroupDao;
 
     @Autowired
-    public MenuGroupDaoTest(final DataSource dataSource) {
+    private MenuGroupDaoTest(final DataSource dataSource) {
         this.menuGroupDao = new JdbcTemplateMenuGroupDao(dataSource);
     }
 

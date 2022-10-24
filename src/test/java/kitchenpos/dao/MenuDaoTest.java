@@ -20,7 +20,7 @@ class MenuDaoTest {
     private final MenuDao menuDao;
 
     @Autowired
-    public MenuDaoTest(final DataSource dataSource) {
+    private MenuDaoTest(final DataSource dataSource) {
         this.menuDao = new JdbcTemplateMenuDao(dataSource);
     }
 
