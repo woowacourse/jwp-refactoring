@@ -9,25 +9,32 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.application.MenuService;
 import kitchenpos.application.ProductService;
+import kitchenpos.application.TableGroupService;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.Product;
 
 @Component
 @Transactional
 public class TestFixture {
 
-    private ProductService productService;
-    private MenuGroupDao menuGroupDao;
-    private MenuService menuService;
+    private final ProductService productService;
+    private final MenuGroupDao menuGroupDao;
+    private final MenuService menuService;
+    private final TableGroupService tableGroupService;
+    private final OrderLineItemDao orderLineItemDao;
 
-    public TestFixture(ProductService productService, MenuGroupDao menuGroupDao, MenuService menuService) {
+    public TestFixture(ProductService productService, MenuGroupDao menuGroupDao, MenuService menuService,
+                       TableGroupService tableGroupService, OrderLineItemDao orderLineItemDao) {
         this.productService = productService;
         this.menuGroupDao = menuGroupDao;
         this.menuService = menuService;
+        this.tableGroupService = tableGroupService;
+        this.orderLineItemDao = orderLineItemDao;
     }
 
     public Product 삼겹살() {
