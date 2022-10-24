@@ -12,6 +12,10 @@ public enum MenuProductFixture {
         this.quantity = quantity;
     }
 
+    public MenuProduct 생성(final long productId) {
+        return new MenuProduct(null, productId, this.quantity);
+    }
+
     public MenuProduct 생성(final long menuId, final long productId) {
         return new MenuProduct(menuId, productId, this.quantity);
     }

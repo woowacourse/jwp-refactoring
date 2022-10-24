@@ -2,9 +2,9 @@ package kitchenpos.dao;
 
 import static kitchenpos.support.MenuFixture.MENU_PRICE_10000;
 import static kitchenpos.support.MenuGroupFixture.MENU_GROUP_1;
-import static kitchenpos.support.OrderFixture.ORDER_1;
+import static kitchenpos.support.OrderFixture.ORDER_COOKING_1;
 import static kitchenpos.support.OrderLineItemFixture.ORDER_LINE_ITEM_1;
-import static kitchenpos.support.OrderTableFixture.ORDER_TABLE_1;
+import static kitchenpos.support.OrderTableFixture.ORDER_TABLE_NOT_EMPTY_1;
 import static kitchenpos.support.TableGroupFixture.TABLE_GROUP_NOW;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -85,7 +85,7 @@ class OrderLineItemDaoTest extends JdbcDaoTest {
 
     private Long 주문_저장() {
         final Long tableGroupId = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성()).getId();
-        final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_1.생성(tableGroupId)).getId();
-        return 주문을_저장한다(ORDER_1.생성(orderTableId)).getId();
+        final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성(tableGroupId)).getId();
+        return 주문을_저장한다(ORDER_COOKING_1.생성(orderTableId)).getId();
     }
 }
