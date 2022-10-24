@@ -32,7 +32,7 @@ public class Product {
 
     private void validatePrice(BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("상품의 가격은 음수일 수 없습니다. : " + price);
         }
     }
 
