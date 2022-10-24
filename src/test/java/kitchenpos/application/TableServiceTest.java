@@ -19,18 +19,15 @@ class TableServiceTest {
     private OrderTableDao orderTableDao;
 
     @Test
-    void create() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(1L);
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+    void 주문테이블을_저장한다() {
+        OrderTable orderTable = createOrderTable(2, false);
         OrderTable savedOrderTable = tableService.create(orderTable);
 
         assertThat(orderTableDao.findById(savedOrderTable.getId())).isPresent();
     }
 
     @Test
-    void list() {
+    void 주문테이블_목록을_불러온다() {
         OrderTable orderTable = new OrderTable();
 
         int beforeSize = tableService.list().size();
@@ -40,7 +37,7 @@ class TableServiceTest {
     }
 
     @Test
-    void changeEmpty_orderTableIdException() {
+    void 주문테이블을_비울때_아이디가_잘못되면_예외를_반환한다() {
         OrderTable orderTable = new OrderTable();
 
         assertThatThrownBy(() -> tableService.changeEmpty(0L, orderTable))
@@ -48,20 +45,8 @@ class TableServiceTest {
     }
 
     @Test
-    void changeEmpty_notNullTableGroupIdException() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(1L);
-
-        assertThatThrownBy(() -> tableService.changeEmpty(0L, orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void changeNumberOfGuests() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(1L);
-        orderTable.setNumberOfGuests(10);
-        orderTable.setEmpty(false);
+    void 손님_수를_변경한다() {
+        OrderTable orderTable = createOrderTable(10, false);
         OrderTable savedOrderTable = tableService.create(orderTable);
 
         tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable);
@@ -70,18 +55,16 @@ class TableServiceTest {
     }
 
     @Test
-    void changeNumberOfGuests_guestCountException() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(1L);
-        orderTable.setNumberOfGuests(-1);
-        OrderTable savedOrderTable = tableService.create(orderTable);
+    void 손님_수를_변경할때_잘못된_수는_예외를_반환한다() {
+        OrderTable orderTable = createOrderTable(-1, false);
+        OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void changeNumberOfGuests_notFoundOrderTableIdException() {
+    void 손님_수를_변경할때_orderTableId를_찾을수없으면_예외를_반환한다() {
         OrderTable orderTable = new OrderTable();
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, orderTable))
@@ -89,13 +72,17 @@ class TableServiceTest {
     }
 
     @Test
-    void changeNumberOfGuests_emptyException() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(1L);
-        orderTable.setNumberOfGuests(1);
-        orderTable.setEmpty(true);
+    void 손님_수를_변경할때_비어있으면_예외를_반환한다() {
+        OrderTable orderTable = createOrderTable(1, true);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private OrderTable createOrderTable(int numberOfGuests, boolean isEmpty) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setEmpty(isEmpty);
+        return orderTable;
     }
 }

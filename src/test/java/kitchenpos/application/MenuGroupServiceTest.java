@@ -27,14 +27,14 @@ class MenuGroupServiceTest {
     }
 
     @Test
-    void create() {
+    void 메뉴그룹을_생성한다() {
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
         assertThat(menuGroupDao.existsById(savedMenuGroup.getId())).isTrue();
     }
 
     @Test
-    void list() {
+    void 메뉴그룹_리스트를_반환한다() {
         int beforeSize = menuGroupService.list().size();
         menuGroupService.create(menuGroup);
 

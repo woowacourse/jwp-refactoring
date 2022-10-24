@@ -27,14 +27,10 @@ class OrderServiceTest {
     private OrderTableDao orderTableDao;
 
     @Test
-    void create() {
+    void 주문을_생성한다() {
         Order order = new Order();
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        order.setOrderLineItems(Collections.singletonList(createOrderLineItem(1L)));
+        OrderTable savedOrderTable = orderTableDao.save(createOrderTable(false));
         order.setOrderTableId(savedOrderTable.getId());
 
         Order savedOrder = orderService.create(order);
@@ -43,11 +39,9 @@ class OrderServiceTest {
     }
 
     @Test
-    void create_orderLineItemsEmptyException() {
+    void 주문을_생성할때_orderLineItems가_비었으면_예외를_발생한다() {
         Order order = new Order();
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableDao.save(createOrderTable(false));
         order.setOrderTableId(savedOrderTable.getId());
 
         assertThatThrownBy(() -> orderService.create(order))
@@ -55,13 +49,10 @@ class OrderServiceTest {
     }
 
     @Test
-    void create_orderLineItemsSizeException() {
+    void 주문을_생성할때_메뉴의수가_다르면_예외를_발생한다() {
         Order order = new Order();
-        OrderLineItem orderLineItem = new OrderLineItem();
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        order.setOrderLineItems(Collections.singletonList(createOrderLineItem(1L)));
+        OrderTable savedOrderTable = orderTableDao.save(createOrderTable(false));
         order.setOrderTableId(savedOrderTable.getId());
 
         assertThatThrownBy(() -> orderService.create(order))
@@ -69,14 +60,10 @@ class OrderServiceTest {
     }
 
     @Test
-    void create_orderTableException() {
+    void 주문을_생성할때_orderTableId가_존재하지않으면_예외를_발생한다() {
         Order order = new Order();
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTableDao.save(orderTable);
+        order.setOrderLineItems(Collections.singletonList(createOrderLineItem(1L)));
+        orderTableDao.save(createOrderTable(false));
         order.setOrderTableId(0L);
 
         assertThatThrownBy(() -> orderService.create(order))
@@ -86,12 +73,8 @@ class OrderServiceTest {
     @Test
     void list() {
         Order order = new Order();
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        order.setOrderLineItems(Collections.singletonList(createOrderLineItem(1L)));
+        OrderTable savedOrderTable = orderTableDao.save(createOrderTable(false));
         order.setOrderTableId(savedOrderTable.getId());
 
         int beforeSize = orderService.list().size();
@@ -101,15 +84,11 @@ class OrderServiceTest {
     }
 
     @Test
-    void changeOrderStatus() {
+    void 주문_상태를_변경한다() {
         Order order = new Order();
         order.setOrderStatus(OrderStatus.COOKING.name());
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        order.setOrderLineItems(Collections.singletonList(createOrderLineItem(1L)));
+        OrderTable savedOrderTable = orderTableDao.save(createOrderTable(false));
         order.setOrderTableId(savedOrderTable.getId());
 
         Order savedOrder = orderService.create(order);
@@ -119,7 +98,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void changeOrderStatus_noSuchOrderException() {
+    void 주문_상태를_변경할때_유효하지않은_아이디면_예외를_반환한다() {
         Order order = new Order();
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(0L, order))
@@ -127,20 +106,28 @@ class OrderServiceTest {
     }
 
     @Test
-    void changeOrderStatus_orderStatusException() {
+    void 주문_상태를_변경할때_완료상태면_예외를_반환한다() {
         Order order = new Order();
         order.setOrderStatus(OrderStatus.COMPLETION.name());
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        order.setOrderLineItems(Collections.singletonList(createOrderLineItem(1L)));
+        OrderTable savedOrderTable = orderTableDao.save(createOrderTable(false));
         order.setOrderTableId(savedOrderTable.getId());
 
         Order savedOrder = orderService.create(order);
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), order))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private OrderLineItem createOrderLineItem(Long menuId) {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(menuId);
+        return orderLineItem;
+    }
+
+    private OrderTable createOrderTable(boolean isEmpty) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(isEmpty);
+        return orderTable;
     }
 }

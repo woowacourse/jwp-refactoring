@@ -26,14 +26,10 @@ class TableGroupServiceTest {
     private TableGroupDao tableGroupDao;
 
     @Test
-    void create() {
+    void 테이블그룹을_생성한다() {
         TableGroup tableGroup = new TableGroup();
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
-        OrderTable saved = orderTableDao.save(orderTable);
-        OrderTable saved1 = orderTableDao.save(orderTable1);
+        OrderTable saved = orderTableDao.save(createOrderTable(true));
+        OrderTable saved1 = orderTableDao.save(createOrderTable(true));
         tableGroup.setOrderTables(Arrays.asList(saved, saved1));
 
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
@@ -42,11 +38,9 @@ class TableGroupServiceTest {
     }
 
     @Test
-    void create_tableGroupCountException() {
+    void 테이블그룹을_생성할때_주문테이블_수가_2개미만이면_예외를_발생한다() {
         TableGroup tableGroup = new TableGroup();
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        OrderTable saved = orderTableDao.save(orderTable);
+        OrderTable saved = orderTableDao.save(createOrderTable(true));
         tableGroup.setOrderTables(Collections.singletonList(saved));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -54,32 +48,34 @@ class TableGroupServiceTest {
     }
 
     @Test
-    void create_orderTableSettingException() {
+    void 테이블그룹을_생성할때_저장된_orderTables와_일치하지않으면_예외를_발생한다() {
         TableGroup tableGroup = new TableGroup();
-        OrderTable orderTable = new OrderTable();
-        OrderTable orderTable1 = new OrderTable();
-        OrderTable saved = orderTableDao.save(orderTable);
-        OrderTable saved1 = orderTableDao.save(orderTable1);
-        tableGroup.setOrderTables(Arrays.asList(saved, saved1));
+
+        tableGroup.setOrderTables(Arrays.asList(
+                createOrderTable(true),
+                createOrderTable(true)
+        ));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void ungroup() {
+    void 그룹을_해제한다() {
         TableGroup tableGroup = new TableGroup();
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
-        OrderTable saved = orderTableDao.save(orderTable);
-        OrderTable saved1 = orderTableDao.save(orderTable1);
+        OrderTable saved = orderTableDao.save(createOrderTable(true));
+        OrderTable saved1 = orderTableDao.save(createOrderTable(true));
         tableGroup.setOrderTables(Arrays.asList(saved, saved1));
 
         tableGroupService.create(tableGroup);
         tableGroupService.ungroup(tableGroup.getId());
 
         assertThat(orderTableDao.findById(saved.getId()).get().isEmpty()).isFalse();
+    }
+
+    private OrderTable createOrderTable(boolean isEmpty) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(isEmpty);
+        return orderTable;
     }
 }

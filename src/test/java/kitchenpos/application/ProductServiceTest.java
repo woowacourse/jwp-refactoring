@@ -29,14 +29,14 @@ class ProductServiceTest {
     }
 
     @Test
-    void create() {
+    void 상품을_생성한다() {
         Product savedProduct = productService.create(product);
 
         assertThat(productDao.findById(savedProduct.getId())).isPresent();
     }
 
     @Test
-    void list() {
+    void 상품목록을_불러온다() {
         int beforeSize = productService.list().size();
         productService.create(product);
 
