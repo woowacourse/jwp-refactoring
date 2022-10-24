@@ -10,13 +10,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.assertj.core.data.TemporalUnitWithinOffset;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.jdbc.Sql;
 
 @ServiceTest
 class TableGroupServiceTest {
@@ -26,6 +29,9 @@ class TableGroupServiceTest {
 
     @Autowired
     private OrderTableDao orderTableDao;
+
+    @Autowired
+    private OrderDao orderDao;
 
     @Test
     void 테이블_그룹을_생성한다() {
@@ -39,19 +45,16 @@ class TableGroupServiceTest {
 
         // then
         OrderTable expectedOrderTable1 = new OrderTable();
-        expectedOrderTable1.setEmpty(false);
-        expectedOrderTable1.setId(1L);
-        expectedOrderTable1.setTableGroupId(1L);
+        expectedOrderTable1.setTableGroupId(actual.getId());
         OrderTable expectedOrderTable2 = new OrderTable();
-        expectedOrderTable2.setEmpty(false);
-        expectedOrderTable2.setId(2L);
-        expectedOrderTable2.setTableGroupId(1L);
+        expectedOrderTable2.setTableGroupId(actual.getId());
 
         assertAll(
-                () -> assertThat(actual.getId()).isEqualTo(1L),
+                () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertThat(actual.getCreatedDate()).isCloseTo(LocalDateTime.now(),
                         new TemporalUnitWithinOffset(1, ChronoUnit.SECONDS)),
                 () -> assertThat(actual.getOrderTables()).usingRecursiveComparison()
+                        .ignoringFields("id")
                         .isEqualTo(Arrays.asList(expectedOrderTable1, expectedOrderTable2))
         );
     }
@@ -88,7 +91,6 @@ class TableGroupServiceTest {
         // given
         List<OrderTable> invalidOrderTables = 저장된_기본_주문_테이블들();
         OrderTable invalidOrderTable = new OrderTable();
-        invalidOrderTable.setEmpty(false);
         invalidOrderTables.add(orderTableDao.save(invalidOrderTable));
 
         TableGroup tableGroup = new TableGroup();
@@ -119,48 +121,65 @@ class TableGroupServiceTest {
     @Test
     void 테이블_그룹을_삭제한다() {
         // given
-        List<OrderTable> orderTables = 저장된_기본_주문_테이블들();
-        TableGroup tableGroup1 = new TableGroup();
-        tableGroup1.setOrderTables(orderTables);
-        TableGroup tableGroup = tableGroupService.create(tableGroup1);
+        List<OrderTable> orderTables = Arrays.asList(
+                getOrderedOrderTable(OrderStatus.COMPLETION.name()),
+                getOrderedOrderTable(OrderStatus.COMPLETION.name())
+        );
+
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(orderTables);
+        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         // when
-        tableGroupService.ungroup(tableGroup.getId());
+        tableGroupService.ungroup(savedTableGroup.getId());
 
         // then
         orderTables.forEach(orderTable -> {
             orderTable.setTableGroupId(null);
             orderTable.setEmpty(false);
         });
-        assertThat(orderTableDao.findAll()).usingRecursiveComparison()
-                .isEqualTo(orderTables);
+
+        assertAll(
+                () -> assertThat(orderTableDao.findAllByTableGroupId(savedTableGroup.getId())).isEmpty(),
+                () -> assertThat(orderTableDao.findAllByIdIn(
+                        orderTables.stream()
+                                .map(OrderTable::getId)
+                                .collect(Collectors.toList()))
+                ).usingRecursiveComparison().isEqualTo(orderTables)
+        );
     }
 
     @Test
-    @Sql(scripts = {"/test_schema.sql", "/orderTable.sql"})
     void 테이블_그룹에_속한_테이블이_조리중인_상태라면_삭제할_수_없다() {
         // given
-        List<OrderTable> orderTables = orderTableDao.findAllByIdIn(Arrays.asList(2L, 4L));
-        TableGroup tableGroup1 = new TableGroup();
-        tableGroup1.setOrderTables(orderTables);
-        TableGroup tableGroup = tableGroupService.create(tableGroup1);
+        List<OrderTable> orderTables = Arrays.asList(
+                getOrderedOrderTable(OrderStatus.COOKING.name()),
+                getOrderedOrderTable(OrderStatus.COMPLETION.name())
+        );
+
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(orderTables);
+        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    @Sql(scripts = {"/test_schema.sql", "/orderTable.sql"})
     void 테이블_그룹에_속한_테이블이_식사중인_상태라면_삭제할_수_없다() {
         // given
-        List<OrderTable> orderTables = orderTableDao.findAllByIdIn(Arrays.asList(3L, 4L));
-        TableGroup tableGroup1 = new TableGroup();
-        tableGroup1.setOrderTables(orderTables);
-        TableGroup tableGroup = tableGroupService.create(tableGroup1);
+        List<OrderTable> orderTables = Arrays.asList(
+                getOrderedOrderTable(OrderStatus.MEAL.name()),
+                getOrderedOrderTable(OrderStatus.COMPLETION.name())
+        );
+
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(orderTables);
+        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -171,5 +190,18 @@ class TableGroupServiceTest {
         OrderTable orderTable2 = orderTableDao.save(orderTable);
 
         return new ArrayList<>(Arrays.asList(orderTable1, orderTable2));
+    }
+
+    private OrderTable getOrderedOrderTable(String orderStatus) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(true);
+        OrderTable emptyOrderTable = orderTableDao.save(orderTable);
+
+        Order order = new Order();
+        order.setOrderTableId(emptyOrderTable.getId());
+        order.setOrderStatus(orderStatus);
+        order.setOrderedTime(LocalDateTime.now());
+        orderDao.save(order);
+        return emptyOrderTable;
     }
 }
