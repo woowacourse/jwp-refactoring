@@ -10,6 +10,16 @@ public class Order {
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
+    public Order() {
+    }
+
+    public Order(final Long orderTableId, final String orderStatus, final List<OrderLineItem> orderLineItems) {
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = LocalDateTime.now();
+        this.orderLineItems = orderLineItems;
+    }
+
     public Long getId() {
         return id;
     }
