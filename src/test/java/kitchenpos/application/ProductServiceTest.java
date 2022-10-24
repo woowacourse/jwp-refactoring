@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -28,10 +27,7 @@ class ProductServiceTest extends ServiceTest {
             Product savedProduct = productService.create(product);
 
             // then
-            assertAll(
-                () -> assertThat(savedProduct).isNotNull(),
-                () -> assertThat(savedProduct.getId()).isNotNull()
-            );
+            assertThat(savedProduct.getId()).isNotNull();
         }
 
         @Test
@@ -69,6 +65,14 @@ class ProductServiceTest extends ServiceTest {
             assertThat(products).isNotNull();
         }
 
+    }
+
+    private Product createProduct(String name, BigDecimal price) {
+        Product product = new Product();
+        product.setName(name);
+        product.setPrice(price);
+
+        return product;
     }
 
 }
