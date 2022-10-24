@@ -9,6 +9,10 @@ public class OrderTable {
     public OrderTable() {
     }
 
+    public OrderTable(Long id) {
+        this.id = id;
+    }
+
     public OrderTable(boolean empty) {
         this(0, empty);
     }
