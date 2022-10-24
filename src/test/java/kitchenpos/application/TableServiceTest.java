@@ -13,15 +13,15 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.support.cleaner.ApplicationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@ApplicationTest
 class TableServiceTest {
 
     @Autowired
@@ -51,13 +51,11 @@ class TableServiceTest {
     @Test
     @DisplayName("모든 OrderTable을 조회한다.")
     void list() {
-        OrderTable orderTable = tableService.create(new OrderTable(10, true));
+        OrderTable orderTable1 = tableService.create(new OrderTable(10, true));
+        OrderTable orderTable2 = tableService.create(new OrderTable(5, true));
 
         List<OrderTable> orderTables = tableService.list();
-        assertAll(
-                () -> assertThat(orderTables).isNotEmpty(),
-                () -> assertThat(orderTables).contains(orderTable)
-        );
+        assertThat(orderTables).containsExactly(orderTable1, orderTable2);
     }
 
     @Nested

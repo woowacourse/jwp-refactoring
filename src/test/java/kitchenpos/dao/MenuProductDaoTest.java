@@ -8,7 +8,6 @@ import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT1_PRICE;
 import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT2_NAME;
 import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT2_PRICE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.domain.Menu;
@@ -53,14 +52,11 @@ class MenuProductDaoTest extends DaoTest {
         Menu menu = menuDao.save(new Menu(MENU1_NAME, MENU1_PRICE, menuGroup.getId()));
         Product product = productDao.save(new Product(PRODUCT1_NAME, PRODUCT1_PRICE));
 
-        MenuProduct menuProduct = menuProductDao.save(new MenuProduct(menu.getId(), product.getId(), 1));
+        MenuProduct menuProduct1 = menuProductDao.save(new MenuProduct(menu.getId(), product.getId(), 1));
+        MenuProduct menuProduct2 = menuProductDao.save(new MenuProduct(menu.getId(), product.getId(), 2));
 
         List<MenuProduct> menuProducts = menuProductDao.findAll();
-
-        assertAll(
-                () -> assertThat(menuProducts).isNotEmpty(),
-                () -> assertThat(menuProducts).contains(menuProduct)
-        );
+        assertThat(menuProducts).contains(menuProduct1, menuProduct2);
     }
 
     @Test

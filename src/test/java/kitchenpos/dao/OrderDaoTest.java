@@ -1,7 +1,6 @@
 package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,10 +45,7 @@ class OrderDaoTest extends DaoTest {
         Order order2 = orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
 
         List<Order> orders = orderDao.findAll();
-        assertAll(
-                () -> assertThat(orders).isNotEmpty(),
-                () -> assertThat(orders).contains(order1, order2)
-        );
+        assertThat(orders).containsExactly(order1, order2);
     }
 
     @Test

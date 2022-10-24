@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
 import static kitchenpos.support.fixtures.DomainFixtures.MENU_GROUP_NAME1;
+import static kitchenpos.support.fixtures.DomainFixtures.MENU_GROUP_NAME2;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import kitchenpos.domain.MenuGroup;
@@ -28,9 +29,10 @@ class MenuGroupDaoTest extends DaoTest {
     @Test
     @DisplayName("MenuGroup을 모두 조회한다.")
     void findAll() {
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(MENU_GROUP_NAME1));
+        MenuGroup menuGroup1 = menuGroupDao.save(new MenuGroup(MENU_GROUP_NAME1));
+        MenuGroup menuGroup2 = menuGroupDao.save(new MenuGroup(MENU_GROUP_NAME2));
 
-        assertThat(menuGroupDao.findAll()).contains(menuGroup);
+        assertThat(menuGroupDao.findAll()).containsExactly(menuGroup1, menuGroup2);
     }
 
     @Test

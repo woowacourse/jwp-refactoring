@@ -1,7 +1,6 @@
 package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,12 +36,9 @@ class OrderTableDaoTest extends DaoTest {
         TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
         OrderTable orderTable1 = orderTableDao.save(new OrderTable(tableGroup.getId(), 10, false));
         OrderTable orderTable2 = orderTableDao.save(new OrderTable(tableGroup.getId(), 5, false));
-        List<OrderTable> orderTables = orderTableDao.findAll();
 
-        assertAll(
-                () -> assertThat(orderTables).isNotEmpty(),
-                () -> assertThat(orderTables).contains(orderTable1, orderTable2)
-        );
+        List<OrderTable> orderTables = orderTableDao.findAll();
+        assertThat(orderTables).containsExactly(orderTable1, orderTable2);
     }
 
     @Test

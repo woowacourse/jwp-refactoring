@@ -4,7 +4,6 @@ import static kitchenpos.support.fixtures.DomainFixtures.MENU1_NAME;
 import static kitchenpos.support.fixtures.DomainFixtures.MENU1_PRICE;
 import static kitchenpos.support.fixtures.DomainFixtures.MENU_GROUP_NAME1;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -58,10 +57,7 @@ class OrderLineItemDaoTest extends DaoTest {
         OrderLineItem orderLineItem2 = orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 2));
 
         List<OrderLineItem> orderLineItems = orderLineItemDao.findAll();
-        assertAll(
-                () -> assertThat(orderLineItems).isNotEmpty(),
-                () -> assertThat(orderLineItems).contains(orderLineItem1, orderLineItem2)
-        );
+        assertThat(orderLineItems).contains(orderLineItem1, orderLineItem2);
     }
 
     @Test
@@ -74,10 +70,7 @@ class OrderLineItemDaoTest extends DaoTest {
         OrderLineItem orderLineItem2 = orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 2));
 
         List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(order.getId());
-        assertAll(
-                () -> assertThat(orderLineItems).isNotEmpty(),
-                () -> assertThat(orderLineItems).containsExactly(orderLineItem1, orderLineItem2)
-        );
+        assertThat(orderLineItems).containsExactly(orderLineItem1, orderLineItem2);
     }
 
     private Menu createMenu() {

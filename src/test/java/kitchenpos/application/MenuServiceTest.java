@@ -9,31 +9,26 @@ import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT1_NAME;
 import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT1_PRICE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.support.cleaner.ApplicationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@ApplicationTest
 class MenuServiceTest {
 
     @Autowired
     private MenuService menuService;
-
-    @Autowired
-    private MenuDao menuDao;
 
     @Autowired
     private MenuGroupDao menuGroupDao;
@@ -115,9 +110,6 @@ class MenuServiceTest {
         Menu savedMenu = menuService.create(menu);
         List<Menu> menus = menuService.list();
 
-        assertAll(
-                () -> assertThat(menus).isNotEmpty(),
-                () -> assertThat(menus).contains(savedMenu)
-        );
+        assertThat(menus).containsExactly(savedMenu);
     }
 }

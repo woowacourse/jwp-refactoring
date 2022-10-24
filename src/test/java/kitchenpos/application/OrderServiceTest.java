@@ -25,13 +25,13 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.support.cleaner.ApplicationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@ApplicationTest
 class OrderServiceTest {
 
     @Autowired
@@ -155,10 +155,7 @@ class OrderServiceTest {
         Order savedOrder = orderService.create(order);
         List<Order> orders = orderService.list();
 
-        assertAll(
-                () -> assertThat(orders).isNotEmpty(),
-                () -> assertThat(orders).contains(savedOrder)
-        );
+        assertThat(orders).containsExactly(savedOrder);
     }
 
     @Nested

@@ -37,6 +37,6 @@ class ProductDaoTest extends DaoTest {
         Product product2 = productDao.save(new Product(PRODUCT2_NAME, PRODUCT2_PRICE));
 
         List<Product> products = productDao.findAll();
-        assertThat(products).contains(product1, product2);
+        assertThat(products).containsExactly(product1, product2);
     }
 }
