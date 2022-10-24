@@ -47,7 +47,7 @@ class MenuServiceTest extends ServiceTest {
                 new Product("짜장면", new BigDecimal(30_000))
         );
 
-        this.menuProduct = new MenuProduct(1L, product.getId(), 10L);
+        this.menuProduct = new MenuProduct(product.getId(), 10L);
     }
 
     @DisplayName("create 메소드는 ")
@@ -96,7 +96,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_ProductDoesNotExistInMenuProductList() {
             // given
-            MenuProduct menuProduct = new MenuProduct(1L, product.getId() + 1, 1L);
+            MenuProduct menuProduct = new MenuProduct(product.getId() + 1, 1L);
             Menu menu = new Menu("세트1", new BigDecimal(10000), menuGroup.getId(), List.of(menuProduct));
 
             // when
