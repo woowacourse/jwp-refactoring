@@ -14,10 +14,18 @@ public enum OrderTableFixture {
         this.numberOfGuests = numberOfGuests;
     }
 
+    public OrderTable getOrderTable() {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setEmpty(true);
+        return orderTable;
+    }
+
     public OrderTable getOrderTable(Long tableGroupId) {
         OrderTable orderTable = new OrderTable();
         orderTable.setTableGroupId(tableGroupId);
         orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setEmpty(true);
         return orderTable;
     }
 
@@ -26,6 +34,7 @@ public enum OrderTableFixture {
         orderTable.setId(id);
         orderTable.setTableGroupId(tableGroupId);
         orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setEmpty(true);
         return orderTable;
     }
 }
