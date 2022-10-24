@@ -39,6 +39,11 @@ class ProductServiceTest {
         // then
         assertThat(createdProduct).isNotNull();
         assertThat(createdProduct.getId()).isNotNull();
+        final Product foundProduct = productDao.findById(createdProduct.getId()).get();
+        assertThat(foundProduct)
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(createdProduct);
     }
 
     @DisplayName("상품의 가격이 0보다 작으면 상품을 등록할 수 없다.")

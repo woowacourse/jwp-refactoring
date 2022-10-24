@@ -52,6 +52,11 @@ class TableGroupServiceTest {
         // then
         assertThat(createdTableGroup).isNotNull();
         assertThat(createdTableGroup.getId()).isNotNull();
+        final TableGroup foundTableGroup = tableGroupDao.findById(createdTableGroup.getId()).get();
+        assertThat(foundTableGroup)
+                .usingRecursiveComparison()
+                .ignoringFields("id", "orderTables")
+                .isEqualTo(createdTableGroup);
     }
 
     @DisplayName("새로운 테이블 그룹의 주문 테이블이 비어있거나 그룹화하려는 주문 테이블이 2개 보다 작을 수는 없다.")

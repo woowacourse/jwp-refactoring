@@ -60,6 +60,11 @@ class TableServiceTest {
         // then
         assertThat(createdOrderTable).isNotNull();
         assertThat(createdOrderTable.getId()).isNotNull();
+        final OrderTable foundOrderTable = orderTableDao.findById(createdOrderTable.getId()).get();
+        assertThat(foundOrderTable)
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(createdOrderTable);
     }
 
     @DisplayName("전체 주문 테이블 목록을 조회할 수 있다.")

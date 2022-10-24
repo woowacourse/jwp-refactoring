@@ -53,6 +53,11 @@ class MenuServiceTest {
         // then
         assertThat(createdMenu).isNotNull();
         assertThat(createdMenu.getId()).isNotNull();
+        final Menu foundMenu = menuDao.findById(createdMenu.getId()).get();
+        assertThat(foundMenu)
+                .usingRecursiveComparison()
+                .ignoringFields("id", "menuProducts")
+                .isEqualTo(createdMenu);
     }
 
     @DisplayName("메뉴의 가격은 음수일 수 없다.")

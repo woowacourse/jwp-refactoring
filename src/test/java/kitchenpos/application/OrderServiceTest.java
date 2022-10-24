@@ -62,6 +62,11 @@ class OrderServiceTest {
         assertThat(createdOrder).isNotNull();
         assertThat(createdOrder.getId()).isNotNull();
         assertThat(createdOrder.getOrderStatus()).isEqualTo(COOKING.name());
+        final Order foundOrder = orderDao.findById(createdOrder.getId()).get();
+        assertThat(foundOrder)
+                .usingRecursiveComparison()
+                .ignoringFields("id", "orderLineItems")
+                .isEqualTo(createdOrder);
     }
 
     @DisplayName("주문을 할 때 하나 이상의 메뉴를 주문해야한다.")

@@ -36,6 +36,11 @@ class MenuGroupServiceTest {
         // then
         assertThat(createdMenuGroup).isNotNull();
         assertThat(createdMenuGroup.getId()).isNotNull();
+        final MenuGroup foundMenuGroup = menuGroupDao.findById(createdMenuGroup.getId()).get();
+        assertThat(foundMenuGroup)
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(menuGroup);
     }
 
     @DisplayName("메뉴 그룹 전체 목록을 조회할 수 있다.")
