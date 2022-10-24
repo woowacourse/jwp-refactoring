@@ -37,12 +37,12 @@ public class TableService {
                 .orElseThrow(IllegalArgumentException::new);
 
         if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블은 단체지정이 없어야 한다.");
         }
 
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블의 주문이 있다면 COMPLETION 상태여야 한다.");
         }
 
         savedOrderTable.updateEmpty(orderTable.isEmpty());
@@ -55,14 +55,14 @@ public class TableService {
         final int numberOfGuests = orderTable.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블 고객 수는 0 이상이어야 한다.");
         }
 
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블은 차있어야 한다.");
         }
 
         savedOrderTable.updateNumberOfGuests(numberOfGuests);

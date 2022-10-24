@@ -48,6 +48,7 @@ public class Fixtures {
     public static TableGroup 테이블그룹(List<OrderTable> tables) {
         return new TableGroup(1L, LocalDateTime.now(), tables);
     }
+
     public static TableGroup 테이블그룹2(List<OrderTable> tables) {
         return new TableGroup(2L, LocalDateTime.now(), tables);
     }
@@ -56,10 +57,17 @@ public class Fixtures {
         return new OrderLineItem(1L, 1L, 상품_후라이드().getId(), 1L);
     }
 
-    public static Order 주문_후라이드() {
+    public static Order 주문_테이블1_후라이드() {
         return new Order(1L, 테이블_1().getId(),
                 OrderStatus.COOKING.name(),
                 LocalDateTime.now(),
                 List.of(주문아이템_후라이드()));
+    }
+
+    public static Order 주문_테이블1_후라이드(List<OrderLineItem> items) {
+        return new Order(1L, 테이블_1().getId(),
+                OrderStatus.COOKING.name(),
+                LocalDateTime.now(),
+                items);
     }
 }

@@ -102,7 +102,7 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable 테이블_1 = Fixtures.테이블_1();
         테이블_1.updateTableGroupId(saved.getId());
         orderTableDao.save(테이블_1);
-        orderService.create(Fixtures.주문_후라이드());
+        orderService.create(Fixtures.주문_테이블1_후라이드());
 
         assertThatThrownBy(() -> tableGroupService.ungroup(saved.getId()))
                 .isInstanceOf(IllegalArgumentException.class)

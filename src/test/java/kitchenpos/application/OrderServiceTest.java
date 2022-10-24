@@ -44,10 +44,10 @@ class OrderServiceTest extends ServiceTest {
         orderTableDao.save(Fixtures.테이블_1());
     }
 
-    @DisplayName("주문을 추가하면 주문_후라이드 목록에 추가된다.")
+    @DisplayName("주문을 추가하면 주문 목록에 추가된다.")
     @Test
     void create() {
-        Order 주문 = Fixtures.주문_후라이드();
+        Order 주문 = Fixtures.주문_테이블1_후라이드();
 
         Order saved = orderService.create(주문);
 
@@ -108,7 +108,7 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 상태를 변경하면 변경된 주문 상태가 반영된다.")
     @Test
     void changeOrderStatus() {
-        Order saved = orderService.create(Fixtures.주문_후라이드());
+        Order saved = orderService.create(Fixtures.주문_테이블1_후라이드());
         String 주문상태 = OrderStatus.MEAL.name();
         saved.updateOrderStatus(주문상태);
         assertThat(saved.getOrderStatus()).isEqualTo(주문상태);
@@ -123,7 +123,7 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 상태가 COMPLETION일 시 주문 상태를 변경할 수 없다.")
     @Test
     void changeOrderStatus_noComplete() {
-        Order 주문_후라이드 = orderService.create(Fixtures.주문_후라이드());
+        Order 주문_후라이드 = orderService.create(Fixtures.주문_테이블1_후라이드());
 
         주문_후라이드.updateOrderStatus(OrderStatus.COMPLETION.name());
         Order saved = orderService.changeOrderStatus(주문_후라이드.getId(), 주문_후라이드);

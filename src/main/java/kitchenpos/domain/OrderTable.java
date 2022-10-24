@@ -7,10 +7,17 @@ public class OrderTable {
     private boolean empty;
 
     public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+        validateNumberOfGuests(numberOfGuests);
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    private void validateNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("테이블 고객 수는 0 이상이어야 한다.");
+        }
     }
 
     public void updateTableGroupId(final Long tableGroupId) {
