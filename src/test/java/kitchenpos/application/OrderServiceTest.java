@@ -17,11 +17,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
 public class OrderServiceTest {
 
     @Nested

@@ -8,13 +8,9 @@ import kitchenpos.application.request.MenuGroupCreateRequest;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
 class MenuGroupServiceTest {
-    
+
     @Nested
     class create_메서드는 {
 

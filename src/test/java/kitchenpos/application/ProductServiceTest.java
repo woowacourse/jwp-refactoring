@@ -10,13 +10,9 @@ import kitchenpos.application.request.ProductCreateRequest;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
 class ProductServiceTest {
-    
+
     @Nested
     class create_메서드는 {
 

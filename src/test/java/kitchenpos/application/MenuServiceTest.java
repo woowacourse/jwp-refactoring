@@ -12,13 +12,9 @@ import kitchenpos.application.request.MenuProductRequest;
 import kitchenpos.domain.Menu;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
 public class MenuServiceTest {
-    
+
     @Nested
     class create_메서드는 {
 
