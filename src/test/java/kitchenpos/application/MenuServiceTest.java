@@ -50,7 +50,7 @@ class MenuServiceTest {
 
         // then
         assertAll(
-                () -> assertThat(actual.getMenuProducts()).usingFieldByFieldElementComparator()
+                () -> assertThat(actual.getMenuProducts())
                         .usingElementComparatorIgnoringFields("seq")
                         .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                         .containsExactlyElementsOf(menu.getMenuProducts()),
@@ -153,7 +153,7 @@ class MenuServiceTest {
         final List<Menu> actual = menuService.list();
 
         // then
-        assertThat(actual).usingRecursiveFieldByFieldElementComparator()
+        assertThat(actual)
                 .usingElementComparatorIgnoringFields("id", "menuProducts")
                 .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                 .contains(savedMenu);
