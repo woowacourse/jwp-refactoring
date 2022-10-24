@@ -1,8 +1,10 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -25,5 +27,17 @@ class TableGroupServiceTest extends ServiceTestBase {
         // then
         Optional<TableGroup> actual = tableGroupDao.findById(savedTableGroup.getId());
         assertThat(actual).isNotEmpty();
+    }
+
+    @Test
+    void 주문_테이블_1개로_테이블_그룹_생성_시_실패() {
+        // given
+        TableGroup tableGroup = new TableGroup();
+        OrderTable orderTable = 빈_주문_테이블_생성();
+        tableGroup.setOrderTables(Collections.singletonList(orderTable));
+
+        // when & then
+        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
