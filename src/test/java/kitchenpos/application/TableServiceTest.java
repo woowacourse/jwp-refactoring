@@ -163,7 +163,7 @@ class TableServiceTest {
         assertThatThrownBy(
                 () -> tableService.changeEmpty(savedTable.getId(), newOrderTable)
         ).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("TableGroupId가 없습니다.");
+                .hasMessageContaining("TableGroupId가 있습니다.");
     }
 
     @DisplayName("Empty값 업데이트 시 ordertable의 order의 status가 completion이 아니면 예외 발생")
@@ -194,6 +194,7 @@ class TableServiceTest {
         OrderTable savedTable = orderTableDao.save(orderTable1);
 
         Order order1 = 주문_생성(savedTable);
+        order1.setOrderedTime(LocalDateTime.now());
         order1.setOrderStatus(OrderStatus.COMPLETION.name());
         Order savedOrder = orderDao.save(order1);
         OrderLineItem orderLineItem1 = 주문_항목_생성(savedOrder, friedChicken, 1);
@@ -206,6 +207,70 @@ class TableServiceTest {
 
         //then
         assertThat(orderTable.isEmpty()).isFalse();
+    }
+
+    @DisplayName("받은 손님의 수가 0보다 작으면 예외를 발생한다.")
+    @Test
+    void changeMinusGuest() {
+        // given
+        OrderTable orderTable1 = 빈_주문_테이블_생성();
+        OrderTable savedTable = orderTableDao.save(orderTable1);
+
+        OrderTable newOrderTable = new OrderTable();
+        newOrderTable.setNumberOfGuests(-1);
+
+        // when & then
+        assertThatThrownBy(
+                () -> tableService.changeNumberOfGuests(savedTable.getId(), newOrderTable)
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("손님의 수는 0 이상이어야합니다.");
+    }
+
+    @DisplayName("ordertable이 존재하지 않으면 예외를 발생한다.")
+    @Test
+    void changeNotExistedOrderTable() {
+        // given
+        OrderTable newOrderTable = new OrderTable();
+        newOrderTable.setNumberOfGuests(2);
+
+        // when & then
+        assertThatThrownBy(
+                () -> tableService.changeNumberOfGuests(0L, newOrderTable)
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("존재하지 않는 order table 입니다.");
+    }
+
+    @DisplayName("빈 주문 테이블의 손님의 수를 update 할 시에 예외를 발생한다.")
+    @Test
+    void changeEmptyOrderTable() {
+        // given
+        OrderTable orderTable1 = 빈_주문_테이블_생성();
+        OrderTable savedTable = orderTableDao.save(orderTable1);
+
+        OrderTable newOrderTable = new OrderTable();
+        newOrderTable.setNumberOfGuests(2);
+
+        // when & then
+        assertThatThrownBy(
+                () -> tableService.changeNumberOfGuests(savedTable.getId(), newOrderTable)
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("빈 주문 테이블의 손님의 수를 업데이트 할 수 없습니다.");
+    }
+
+    @DisplayName("손님의 수를 정상적으로 업데이트한다.")
+    @Test
+    void changeNumberOfGuests() {
+        // given
+        OrderTable orderTable = orderTableDao.save(주문_테이블_생성());
+
+        OrderTable newOrderTable = new OrderTable();
+        newOrderTable.setNumberOfGuests(4);
+
+        // when
+        OrderTable savedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable);
+
+        //then
+        assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(4);
     }
 
     private OrderTable 주문_테이블_상태를_EMPTY_FALSE로() {
@@ -221,6 +286,15 @@ class TableServiceTest {
 
         return orderTable;
     }
+
+    private OrderTable 주문_테이블_생성() {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(false);
+        orderTable.setNumberOfGuests(2);
+
+        return orderTable;
+    }
+
 
     private TableGroup 단체_지정_생성(final OrderTable... orderTables) {
         List<OrderTable> orderTableList = Arrays.stream(orderTables)

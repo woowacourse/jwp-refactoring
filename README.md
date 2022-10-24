@@ -55,11 +55,11 @@
     - [x] DB 조회 시 찾은 ordertable에 tableGroupID가 있으면 예외를 발생한다.
     - [x] 찾은 ordertable의 주문 상태가 COMPLETION이 아니면 예외를 발생한다.
     - [x] ordertable의 isEmpty 상태를 변경한다.
-- [ ] table의 손님 수를 등록한다.
-    - [ ] 받은 손님의 수가 0보다 작으면 예외를 발생한다.
-    - [ ] order table id 로 조회했을 때 order table이 없으면 예외가 발생한다.
-    - [ ] 찾은 order table 이 empty이면 예외를 발생한다.
-    - [ ] ordertable에 손님의 수를 등록하고 저장한다.
+- [x] table의 손님 수를 등록한다.
+    - [x] 받은 손님의 수가 0보다 작으면 예외를 발생한다.
+    - [x] order table id 로 조회했을 때 order table이 없으면 예외가 발생한다.
+    - [x] 찾은 order table 이 empty이면 예외를 발생한다.
+    - [x] ordertable에 손님의 수를 등록하고 저장한다.
 
 ### TableGroup
 
