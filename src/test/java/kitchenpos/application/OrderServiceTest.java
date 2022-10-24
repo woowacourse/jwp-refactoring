@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.support.MenuFixture.MENU_PRICE_10000;
 import static kitchenpos.support.MenuGroupFixture.MENU_GROUP_1;
 import static kitchenpos.support.MenuProductFixture.MENU_PRODUCT_1;
@@ -12,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import java.util.Optional;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import org.junit.jupiter.api.Test;
@@ -94,6 +97,72 @@ class OrderServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> orderService.create(order))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 모든_주문을_조회할_때_주문한_메뉴도_함께_조회한다() {
+        // given
+        final Long productId = 제품을_저장한다(PRODUCT_PRICE_10000.생성()).getId();
+        final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
+        final Long menuId = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId, List.of(MENU_PRODUCT_1.생성(productId))))
+                .getId();
+        final OrderLineItem orderLineItem = ORDER_LINE_ITEM_1.생성(menuId);
+
+        final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성()).getId();
+        final Order savedOrder = 주문을_저장한다(ORDER_COOKING_1.생성(orderTableId, List.of(orderLineItem)));
+
+        // when
+        final List<Order> orders = orderService.list();
+
+        // then
+        final Optional<Order> foundOrder = orders.stream()
+                .filter(order -> order.getId().equals(savedOrder.getId()))
+                .findFirst();
+
+        assertThat(foundOrder).isPresent();
+        assertThat(foundOrder.get().getOrderLineItems()).usingElementComparatorIgnoringFields("seq")
+                .containsOnly(orderLineItem);
+    }
+
+    @Test
+    void 주문의_상태를_변경할_수_있다() {
+        // given
+        final Long productId = 제품을_저장한다(PRODUCT_PRICE_10000.생성()).getId();
+        final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
+        final Long menuId = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId, List.of(MENU_PRODUCT_1.생성(productId))))
+                .getId();
+        final OrderLineItem orderLineItem = ORDER_LINE_ITEM_1.생성(menuId);
+
+        final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성()).getId();
+        final Order savedOrder = 주문을_저장한다(ORDER_COOKING_1.생성(orderTableId, List.of(orderLineItem)));
+
+        final Order updateFor = new Order(savedOrder.getOrderTableId(), COMPLETION.name(), savedOrder.getOrderedTime());
+
+        // when
+        final Order changedOrderStatus = orderService.changeOrderStatus(savedOrder.getId(), updateFor);
+
+        // then
+        assertThat(changedOrderStatus.getOrderStatus()).isEqualTo(COMPLETION.name());
+    }
+
+    @Test
+    void 주문의_상태를_변경할_때_이미_완료된_주문이면_예외를_반환한다() {
+        // given
+        final Long productId = 제품을_저장한다(PRODUCT_PRICE_10000.생성()).getId();
+        final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
+        final Long menuId = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId, List.of(MENU_PRODUCT_1.생성(productId))))
+                .getId();
+        final OrderLineItem orderLineItem = ORDER_LINE_ITEM_1.생성(menuId);
+
+        final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성()).getId();
+        final Order savedOrder = 주문을_저장한다(ORDER_COOKING_1.생성(orderTableId, List.of(orderLineItem)));
+        주문_상태를_변경한다(savedOrder.getId(), COMPLETION);
+
+        final Order updateFor = new Order(savedOrder.getOrderTableId(), MEAL.name(), savedOrder.getOrderedTime());
+
+        // when, then
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), updateFor))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
