@@ -14,6 +14,13 @@ public enum MenuProductFixture {
         this.quantity = quantity;
     }
 
+    public MenuProduct getMenuProduct(Long productId) {
+        MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setProductId(productId);
+        menuProduct.setQuantity(quantity);
+        return menuProduct;
+    }
+
     public MenuProduct getMenuProduct(Long menuId, Long productId) {
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setMenuId(menuId);
