@@ -27,9 +27,9 @@ public class ProductRestControllerTest extends ControllerTest {
     @Test
     public void create() throws Exception {
         // given
-        Product product = new Product("강정치킨", new BigDecimal(17000));
+        Product product = new Product("강정치킨", new BigDecimal("17000"));
         given(productService.create(any()))
-                .willReturn(new Product(1L, "강정치킨", new BigDecimal(17000)));
+                .willReturn(new Product(1L, "강정치킨", new BigDecimal("17000")));
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/products")
