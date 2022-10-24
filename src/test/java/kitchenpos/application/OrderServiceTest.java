@@ -2,17 +2,14 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +26,19 @@ class OrderServiceTest {
     @Autowired
     private OrderService orderService;
 
+    private OrderTable orderTable;
+    private Order order;
+
+    @BeforeEach
+    void setUp() {
+        orderTable = tableService.create(new OrderTable());
+        order = new Order();
+        order.setOrderTableId(orderTable.getId());
+    }
+
     @Test
     @DisplayName("주문을 생성한다")
     void create() {
-        final OrderTable orderTable = tableService.create(new OrderTable());
-        final Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         final OrderLineItem orderLineItem = generateOrderLineItem(1L, 1);
         orderLineItems.add(orderLineItem);
@@ -49,9 +53,6 @@ class OrderServiceTest {
     @Test
     @DisplayName("메뉴가 없는 주문을 생성하면 예외를 반환한다")
     void create_notHaveMenuException() {
-        final OrderTable orderTable = tableService.create(new OrderTable());
-        final Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         order.setOrderLineItems(orderLineItems);
 
@@ -62,9 +63,6 @@ class OrderServiceTest {
     @Test
     @DisplayName("존재하지 않는 메뉴로 주문을 생성하면 예외를 반환한다")
     void create_notExistMenuException() {
-        final OrderTable orderTable = tableService.create(new OrderTable());
-        final Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         final OrderLineItem orderLineItem = generateOrderLineItem(999999999L, 1);
         orderLineItems.add(orderLineItem);
@@ -77,9 +75,6 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문 전체를 조회한다")
     void list() {
-        final OrderTable orderTable = tableService.create(new OrderTable());
-        final Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         final OrderLineItem orderLineItem = generateOrderLineItem(1L, 1);
         orderLineItems.add(orderLineItem);
@@ -94,10 +89,6 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문 상태를 변경한다")
     void changeOrderStatus() {
-        final OrderTable orderTable = tableService.create(new OrderTable());
-
-        final Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         final OrderLineItem orderLineItem = generateOrderLineItem(1L, 1);
         orderLineItems.add(orderLineItem);
@@ -116,10 +107,6 @@ class OrderServiceTest {
     @Test
     @DisplayName("`계산 완료`인 주문 상태를 변경하면 예외를 반환한다")
     void changeOrderStatus_completionException() {
-        final OrderTable orderTable = tableService.create(new OrderTable());
-
-        final Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         final OrderLineItem orderLineItem = generateOrderLineItem(1L, 2);
         orderLineItems.add(orderLineItem);
