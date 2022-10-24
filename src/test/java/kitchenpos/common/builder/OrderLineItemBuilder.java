@@ -1,6 +1,5 @@
 package kitchenpos.common.builder;
 
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 
 public class OrderLineItemBuilder {
@@ -25,6 +24,6 @@ public class OrderLineItemBuilder {
     }
 
     public OrderLineItem build() {
-        return new OrderLineItem(orderId, menuId, quantity);
+        return new OrderLineItem(menuId, quantity);
     }
 }
