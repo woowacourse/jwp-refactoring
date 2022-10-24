@@ -3,6 +3,7 @@ package acceptance;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import kitchenpos.common.DataClearExtension;
 import io.restassured.RestAssured;
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,6 +19,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -25,8 +27,9 @@ import org.springframework.http.HttpStatus;
 
 @SpringBootTest(
         webEnvironment = WebEnvironment.RANDOM_PORT,
-        classes = Application.class
+        classes = {Application.class, DataClearExtension.class}
 )
+@ExtendWith(DataClearExtension.class)
 public class AcceptanceTest {
 
     @LocalServerPort
