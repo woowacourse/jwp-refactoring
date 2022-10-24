@@ -45,4 +45,6 @@ public class MenuProduct {
     public void setQuantity(final long quantity) {
         this.quantity = quantity;
     }
+
+
 }

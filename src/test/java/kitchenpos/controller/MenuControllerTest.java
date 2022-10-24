@@ -31,7 +31,7 @@ public class MenuControllerTest extends ControllerTest {
     public void create() throws Exception {
         // given
         Menu menu = new Menu("후라이드+후라이드",
-                new BigDecimal(19000),
+                new BigDecimal("19000"),
                 1L,
                 List.of(new MenuProduct(1L, 2)));
         given(menuService.create(any()))
