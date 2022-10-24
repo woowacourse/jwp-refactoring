@@ -12,6 +12,8 @@ import kitchenpos.Application;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
@@ -141,5 +143,28 @@ public class AcceptanceTest {
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
                 .extract().jsonPath().getList(".", OrderTable.class);
+    }
+
+    protected long 주문_생성(long table,List<OrderLineItem> orderLineItems) {
+        Order order = new Order();
+        order.setOrderTableId(table);
+        order.setOrderLineItems(orderLineItems);
+
+        return RestAssured.given().log().all()
+                .header(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .body(order)
+                .when().log().all()
+                .post("/api/orders")
+                .then().log().all()
+                .statusCode(HttpStatus.CREATED.value())
+                .extract().jsonPath().getLong("id");
+    }
+
+    protected List<Order> 주문_목목조회() {
+        return RestAssured.given().log().all()
+                .when().log().all()
+                .get("/api/orders")
+                .then().log().all()
+                .extract().jsonPath().getList(".", Order.class);
     }
 }
