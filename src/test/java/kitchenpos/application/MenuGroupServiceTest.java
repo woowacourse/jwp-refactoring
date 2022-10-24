@@ -4,24 +4,12 @@ import static kitchenpos.fixture.MenuGroupFixture.분식;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.fixture.MenuGroupFixture;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
-@ServiceTest
-class MenuGroupServiceTest {
-
-    @Autowired
-    private MenuGroupService menuGroupService;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
+class MenuGroupServiceTest extends ServiceTestBase {
 
     @Test
     void 메뉴_그룹_정상_생성() {
@@ -59,11 +47,5 @@ class MenuGroupServiceTest {
         assertThat(actual.size()).isEqualTo(menuGroups.size());
         assertThat(actual).usingRecursiveComparison()
                 .isEqualTo(menuGroups);
-    }
-
-    private List<MenuGroup> 메뉴_그룹_목록_생성() {
-        return Arrays.stream(MenuGroupFixture.values())
-                .map(it -> menuGroupDao.save(it.toEntity()))
-                .collect(Collectors.toList());
     }
 }

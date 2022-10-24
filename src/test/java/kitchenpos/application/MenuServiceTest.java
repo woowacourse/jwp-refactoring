@@ -7,40 +7,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.MenuGroupFixture;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
-@ServiceTest
-class MenuServiceTest {
-
-    @Autowired
-    private MenuService menuService;
-
-    @Autowired
-    private MenuDao menuDao;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    private MenuProductDao menuProductDao;
+class MenuServiceTest extends ServiceTestBase {
 
     @Test
     void 메뉴_정상_생성() {
@@ -141,25 +118,5 @@ class MenuServiceTest {
                 .usingRecursiveComparison()
                 .ignoringFields("seq")
                 .isEqualTo(menuProducts);
-    }
-
-    private List<MenuProduct> 메뉴_상품_목록_생성(final Product... products) {
-        return Arrays.stream(products)
-                .map(it -> 메뉴_상품_생성(it, 3))
-                .collect(Collectors.toList());
-    }
-
-    private List<MenuProduct> 메뉴_상품_목록_생성(final long quantity, final Product... products) {
-        return Arrays.stream(products)
-                .map(it -> 메뉴_상품_생성(it, quantity))
-                .collect(Collectors.toList());
-    }
-
-    private MenuProduct 메뉴_상품_생성(final Product product, final long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(null);
-        menuProduct.setProductId(product.getId());
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
     }
 }

@@ -7,54 +7,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.fixture.MenuGroupFixture;
-import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
-@ServiceTest
-class OrderServiceTest {
-
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private OrderDao orderDao;
-
-    @Autowired
-    private MenuDao menuDao;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    private MenuProductDao menuProductDao;
-
-    @Autowired
-    private OrderTableDao orderTableDao;
+class OrderServiceTest extends ServiceTestBase {
 
     private Long menuId;
     private Long orderTableId;
@@ -204,37 +170,5 @@ class OrderServiceTest {
 
     private OrderLineItem 주문_항목() {
         return 주문_항목(menuId);
-    }
-
-    private OrderLineItem 주문_항목(final Long menuId) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(1);
-        return orderLineItem;
-    }
-
-    private Product 상품_생성(final ProductFixture productFixture) {
-        return productDao.save(productFixture.toEntity());
-    }
-
-    private List<MenuProduct> 메뉴_상품_목록(final Product... products) {
-        return Arrays.stream(products)
-                .map(this::메뉴_상품)
-                .collect(Collectors.toList());
-    }
-
-    private MenuProduct 메뉴_상품(final Product product) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(null);
-        menuProduct.setProductId(product.getId());
-        menuProduct.setQuantity(3);
-        return menuProduct;
-    }
-
-    private OrderTable 주문_테이블_생성() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(3);
-        return orderTableDao.save(orderTable);
     }
 }

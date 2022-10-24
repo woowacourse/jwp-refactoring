@@ -9,20 +9,11 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
-@ServiceTest
-class ProductServiceTest {
-
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private ProductDao productDao;
+class ProductServiceTest extends ServiceTestBase {
 
     @Test
     void 상품_생성() {

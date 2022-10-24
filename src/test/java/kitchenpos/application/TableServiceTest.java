@@ -5,20 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
-@ServiceTest
-class TableServiceTest {
-
-    @Autowired
-    private TableService tableService;
-
-    @Autowired
-    private OrderTableDao orderTableDao;
+class TableServiceTest extends ServiceTestBase {
 
     @Test
     void 주문_테이블_생성_성공() {
@@ -66,12 +57,5 @@ class TableServiceTest {
         Optional<OrderTable> actual = orderTableDao.findById(orderTableId);
         assertThat(actual).isNotEmpty();
         assertThat(actual.get().isEmpty()).isEqualTo(changedEmpty);
-    }
-
-    private OrderTable 주문_테이블_생성() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(3);
-        return orderTableDao.save(orderTable);
     }
 }
