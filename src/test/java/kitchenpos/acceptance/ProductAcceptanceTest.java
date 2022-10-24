@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
-import kitchenpos.ProductFixture;
+import kitchenpos.fixture.ProductFixture;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

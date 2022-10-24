@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kitchenpos.ProductFixture;
+import kitchenpos.fixture.ProductFixture;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.ProductRestController;

@@ -6,19 +6,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
-import kitchenpos.ProductFixture;
 import kitchenpos.domain.Product;
+import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
-@SpringBootTest
-@Sql("classpath:truncate.sql")
+@ServiceTest
 class ProductServiceTest {
 
     @Autowired
@@ -39,7 +36,6 @@ class ProductServiceTest {
                 .withComparatorForFields((Comparator<BigDecimal>) BigDecimal::compareTo, "price")
                 .isEqualTo(product);
     }
-
 
     @ParameterizedTest
     @NullSource
