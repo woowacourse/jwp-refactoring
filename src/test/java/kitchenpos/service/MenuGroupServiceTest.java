@@ -37,6 +37,6 @@ public class MenuGroupServiceTest {
     public void listMenuGroup() {
         menuGroupService.create(new MenuGroup("밥류"));
         menuGroupService.create(new MenuGroup("햄류"));
-        assertThat(menuGroupService.list()).hasSize(2);
+        assertThat(menuGroupService.list()).hasSize(2+4);
     }
 }
