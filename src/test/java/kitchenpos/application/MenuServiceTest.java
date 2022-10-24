@@ -91,6 +91,7 @@ class MenuServiceTest {
         // given & when
         List<Menu> menus = menuService.list();
         // then
-        assertThat(menus).hasSize(6);
+        int defaultSize = 6;
+        assertThat(menus).hasSize(defaultSize);
     }
 }

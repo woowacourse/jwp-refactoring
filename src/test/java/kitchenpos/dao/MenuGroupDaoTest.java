@@ -55,7 +55,8 @@ class MenuGroupDaoTest {
         List<MenuGroup> menuGroups = menuGroupDao.findAll();
 
         // then
-        assertThat(menuGroups).hasSize(4 + 2);
+        int defaultSize = 4;
+        assertThat(menuGroups).hasSize(defaultSize + 2);
     }
 
     @Test

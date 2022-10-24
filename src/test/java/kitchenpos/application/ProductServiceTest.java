@@ -75,6 +75,7 @@ class ProductServiceTest {
         List<Product> products = productService.list();
 
         // then
-        assertThat(products).hasSize(6);
+        int defaultSize = 6;
+        assertThat(products).hasSize(defaultSize);
     }
 }

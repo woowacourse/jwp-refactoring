@@ -35,6 +35,7 @@ class MenuGroupServiceTest {
         // given & when
         List<MenuGroup> menuGroups = menuGroupService.list();
         // then
-        assertThat(menuGroups).hasSize(4);
+        int defaultSize = 4;
+        assertThat(menuGroups).hasSize(defaultSize);
     }
 }

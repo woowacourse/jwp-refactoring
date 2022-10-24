@@ -49,7 +49,8 @@ class TableServiceTest {
         // given & when
         List<OrderTable> orderTables = tableService.list();
         // then
-        assertThat(orderTables).hasSize(8);
+        int defaultSize = 8;
+        assertThat(orderTables).hasSize(defaultSize);
     }
 
     @Test

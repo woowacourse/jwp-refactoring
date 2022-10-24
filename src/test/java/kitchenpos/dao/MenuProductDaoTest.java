@@ -54,7 +54,8 @@ class MenuProductDaoTest {
         List<MenuProduct> menuProducts = menuProductDao.findAll();
 
         // then
-        assertThat(menuProducts).hasSize(1 + 6);
+        int defaultSize = 6;
+        assertThat(menuProducts).hasSize(1 + defaultSize);
     }
 
     @Test
@@ -68,6 +69,7 @@ class MenuProductDaoTest {
         List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(menuId);
 
         // then
-        assertThat(menuProducts).hasSize(1 + 1);
+        int defaultSize = 1;
+        assertThat(menuProducts).hasSize(1 + defaultSize);
     }
 }

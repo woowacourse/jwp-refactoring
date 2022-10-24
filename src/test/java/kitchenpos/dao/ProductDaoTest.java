@@ -56,6 +56,7 @@ class ProductDaoTest {
         List<Product> products = productDao.findAll();
 
         // then
-        assertThat(products).hasSize(6 + 2);
+        int defaultSize = 6;
+        assertThat(products).hasSize(defaultSize + 2);
     }
 }

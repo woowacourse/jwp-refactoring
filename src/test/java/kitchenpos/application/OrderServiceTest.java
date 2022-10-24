@@ -104,7 +104,7 @@ class OrderServiceTest {
         // given & when
         List<Order> orders = orderService.list();
         // then
-        assertThat(orders).hasSize(0);
+        assertThat(orders).isEmpty();
     }
 
     @Test

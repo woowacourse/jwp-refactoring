@@ -67,7 +67,8 @@ class OrderTableDaoTest {
         List<OrderTable> orderTables = orderTableDao.findAll();
 
         // then
-        assertThat(orderTables).hasSize(2 + 8);
+        int defaultSize = 8;
+        assertThat(orderTables).hasSize(2 + defaultSize);
     }
 
     @Test
