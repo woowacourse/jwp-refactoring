@@ -4,21 +4,35 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.Arrays;
+import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.jdbc.Sql;
 
 @ServiceTest
 class TableServiceTest {
 
     @Autowired
     private TableService tableService;
+
+    @Autowired
+    private OrderTableDao orderTableDao;
+
+    @Autowired
+    private TableGroupDao tableGroupDao;
+
+    @Autowired
+    private OrderDao orderDao;
 
     @Test
     void 주문_테이블을_생성한다() {
@@ -30,13 +44,13 @@ class TableServiceTest {
 
         // then
         OrderTable expected = new OrderTable();
-        expected.setId(1L);
         expected.setTableGroupId(null);
         expected.setNumberOfGuests(0);
         expected.setEmpty(false);
 
         assertThat(actual).usingRecursiveComparison()
-                 .isEqualTo(expected);
+                .ignoringFields("id")
+                .isEqualTo(expected);
     }
 
     @Test
@@ -51,16 +65,13 @@ class TableServiceTest {
 
         // when
         List<OrderTable> actual = tableService.list();
-        orderTable1.setId(1L);
-        orderTable2.setId(2L);
 
         // then
-        assertThat(actual).usingRecursiveComparison()
-                .isEqualTo(Arrays.asList(orderTable1, orderTable2));
+        assertThat(actual).hasSizeGreaterThanOrEqualTo(2);
     }
 
     @ParameterizedTest
-    @CsvSource(value = {"false", "false"})
+    @CsvSource(value = {"true", "false"})
     void 주문_테이블을_빈_상태로_변경한다(boolean status) {
         // given
         OrderTable savedOrderTable = tableService.create(new OrderTable());
@@ -85,35 +96,41 @@ class TableServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    //
     @Test
-    @Sql(scripts = {"/test_schema.sql", "/orderTable.sql"})
     void 이미_테이블_그룹에_속한_주문_테이블의_상태를_변경할_수_없다() {
+        // given
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now());
+        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+
+        OrderTable orderTable = new OrderTable();
+        orderTable.setTableGroupId(savedTableGroup.getId());
+        OrderTable invalidOrderTable = orderTableDao.save(orderTable);
+
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(2L, new OrderTable()))
+        assertThatThrownBy(() -> tableService.changeEmpty(invalidOrderTable.getId(), new OrderTable()))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"COOKING","MEAL"})
+    void 테이블이_주문목록에_존재하고_상태가_조리중이거나_식사중이면_테이블의_상태를_변경할_수_없다(String orderStatus) {
+        //given
+        OrderTable invalidOrderTable = getOrderedOrderTable(orderStatus);
+
+        // when & then
+        assertThatThrownBy(() -> tableService.changeEmpty(invalidOrderTable.getId(), new OrderTable()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    @Sql(scripts = {"/test_schema.sql", "/orderTable.sql"})
-    void 테이블이_주문목록에_존재하고_상태가_조리중이면_테이블의_상태를_변경할_수_없다() {
-        // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(2L, new OrderTable()))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @Sql(scripts = {"/test_schema.sql", "/orderTable.sql"})
-    void 테이블이_주문목록에_존재하고_식사중이면_테이블의_상태를_변경할_수_없다() {
-        // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(3L, new OrderTable()))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @Sql(scripts = {"/test_schema.sql", "/orderTable.sql"})
     void 테이블이_주문목록에_존재하고_이미_계산이_완료되었으면_테이블의_상태를_변경할_수_있다() {
+        //given
+        OrderTable invalidOrderTable = getOrderedOrderTable(OrderStatus.COMPLETION.name());
+
         // when & then
-        assertThatCode(() -> tableService.changeEmpty(4L, new OrderTable()))
+        assertThatCode(() -> tableService.changeEmpty(invalidOrderTable.getId(), new OrderTable()))
                 .doesNotThrowAnyException();
     }
 
@@ -168,5 +185,16 @@ class TableServiceTest {
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), new OrderTable()))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private OrderTable getOrderedOrderTable(String orderStatus) {
+        OrderTable invalidOrderTable = orderTableDao.save(new OrderTable());
+
+        Order order = new Order();
+        order.setOrderTableId(invalidOrderTable.getId());
+        order.setOrderStatus(orderStatus);
+        order.setOrderedTime(LocalDateTime.now());
+        orderDao.save(order);
+        return invalidOrderTable;
     }
 }
