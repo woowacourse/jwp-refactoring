@@ -108,6 +108,22 @@ class OrderServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @Test
+    void menu_id가_null인_주문_항목을_주문하는_경우_실패() {
+        // given
+        Order order = new Order();
+        List<OrderLineItem> orderLineItems = Collections.singletonList(menuId가_null인_주문_항목());
+        order.setOrderLineItems(orderLineItems);
+        order.setOrderTableId(orderTableId);
+
+        // when & then
+        assertThatThrownBy(() -> orderService.create(order))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private OrderLineItem menuId가_null인_주문_항목() {
+        return 주문_항목(null);
+    }
 
     private OrderLineItem 주문_항목() {
         return 주문_항목(menuId);
