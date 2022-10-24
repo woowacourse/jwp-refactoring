@@ -9,16 +9,8 @@ import java.util.List;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
-@SpringBootTest
-@Sql("/init_schema.sql")
-class ProductServiceTest {
-
-    @Autowired
-    private ProductService productService;
+class ProductServiceTest extends ServiceTest {
 
     @Nested
     class 상품_등록_메소드는 {
@@ -35,7 +27,8 @@ class ProductServiceTest {
 
             // then
             List<Product> products = productService.list();
-            assertThat(products).extracting(Product::getId, Product::getName, (product) -> product.getPrice().intValue())
+            assertThat(products).extracting(Product::getId, Product::getName,
+                            (product) -> product.getPrice().intValue())
                     .contains(tuple(savedProduct.getId(), "상품1", 10000));
         }
 
@@ -65,13 +58,5 @@ class ProductServiceTest {
         assertThat(products).extracting(Product::getId, Product::getName, (product) -> product.getPrice().intValue())
                 .hasSize(2)
                 .contains(tuple(product1.getId(), "상품1", 10000), tuple(product2.getId(), "상품2", 20000));
-    }
-
-    private Product 상품을_등록한다(final String name, final int price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
-
-        return productService.create(product);
     }
 }
