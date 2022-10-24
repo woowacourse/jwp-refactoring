@@ -1,0 +1,7 @@
+[[Product]]
+
+=== 상품 생성하기
+operation::products/create[snippets='http-request,http-response']
+
+=== 상품 목록 가져오기
+operation::products/get-products[snippets='http-request,http-response']

@@ -11,7 +11,7 @@ import java.util.Objects;
 
 @Service
 public class ProductService {
-    private final ProductDao productDao;
+    private ProductDao productDao;
 
     public ProductService(final ProductDao productDao) {
         this.productDao = productDao;
