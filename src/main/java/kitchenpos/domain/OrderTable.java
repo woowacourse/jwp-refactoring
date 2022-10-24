@@ -9,6 +9,14 @@ public class OrderTable {
     public OrderTable() {
     }
 
+    public OrderTable(final boolean empty) {
+        this.empty = empty;
+    }
+
+    public OrderTable(final int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
+    }
+
     public OrderTable(final int numberOfGuests, final boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
