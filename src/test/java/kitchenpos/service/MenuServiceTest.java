@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
 
+import kitchenpos.TestFixture;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.MenuService;
 import kitchenpos.application.ProductService;
@@ -32,11 +33,14 @@ public class MenuServiceTest {
     private final MenuService menuService;
     private final MenuGroupService menuGroupService;
     private final ProductService productService;
+    private final TestFixture testFixture;
 
-    public MenuServiceTest(MenuService menuService, MenuGroupService menuGroupService, ProductService productService) {
+    public MenuServiceTest(MenuService menuService, MenuGroupService menuGroupService, ProductService productService,
+                           TestFixture testFixture) {
         this.menuService = menuService;
         this.menuGroupService = menuGroupService;
         this.productService = productService;
+        this.testFixture = testFixture;
     }
 
     @Nested
@@ -47,19 +51,13 @@ public class MenuServiceTest {
 
         @BeforeEach
         void setUp() {
-            Product product = new Product();
-            product.setName("삼겹살");
-            product.setPrice(BigDecimal.valueOf(1000L));
-            Product savedProduct = productService.create(product);
-
-            MenuGroup menuGroup = new MenuGroup();
-            menuGroup.setName("삼겹살 종류");
-            MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
-
+            Product savedProduct = productService.create(testFixture.삼겹살());
+            MenuGroup savedMenuGroup = menuGroupService.create(testFixture.삼겹살_종류());
             MenuProduct menuProduct = new MenuProduct();
             menuProduct.setProductId(savedProduct.getId());
             menuProduct.setQuantity(1L);
-            this.menuGroup = menuGroupService.create(menuGroup);
+
+            this.menuGroup = savedMenuGroup;
             this.menuProducts = new ArrayList<>();
             this.menuProducts.add(menuProduct);
         }
