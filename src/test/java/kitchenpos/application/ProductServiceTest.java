@@ -10,8 +10,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
+@Transactional
 class ProductServiceTest {
 
     @Autowired
@@ -20,7 +22,7 @@ class ProductServiceTest {
     @DisplayName("상품 저장")
     @Test
     void create() {
-        final var product = new Product(null, "콜라", new BigDecimal(1000));
+        final var product = new Product("콜라", new BigDecimal(1000));
         final var result = productService.create(product);
 
         assertThat(product).isEqualTo(result);
@@ -29,7 +31,7 @@ class ProductServiceTest {
     @DisplayName("상품 저장 시 가격이 null이라면 예외 발생")
     @Test
     void create_priceIsNull_throwsException() {
-        final var invalidProduct = new Product(null, "사이다", null);
+        final var invalidProduct = new Product("사이다", null);
 
         assertThatThrownBy(
                 () -> productService.create(invalidProduct)
@@ -39,7 +41,7 @@ class ProductServiceTest {
     @DisplayName("상품 저장 시 가격이 0 미만이라면 예외 발생")
     @Test
     void create_priceIsUnderZero_throwsException() {
-        final var invalidProduct = new Product(null, "환타", new BigDecimal(-1));
+        final var invalidProduct = new Product("환타", new BigDecimal(-1));
 
         assertThatThrownBy(
                 () -> productService.create(invalidProduct)
@@ -51,8 +53,8 @@ class ProductServiceTest {
     void list() {
         final var existingProducts = productService.list();
 
-        final var coke = new Product(null, "콜라", new BigDecimal(1000));
-        final var rice = new Product(null, "공기밥", new BigDecimal(1500));
+        final var coke = new Product("콜라", new BigDecimal(1000));
+        final var rice = new Product("공기밥", new BigDecimal(1500));
 
         productService.create(coke);
         productService.create(rice);
