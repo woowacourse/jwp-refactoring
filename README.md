@@ -31,20 +31,20 @@
 
 ### Order
 
-- [ ] 주문을 등록할 수 있다.
-    - [ ] 주문에 속하는 수량이 있는 메뉴(OrderLineItem)이 비어있으면 예외를 발생한다.
-    - [ ] 주문에 속하는 수량이 있는 메뉴에서 menu의 id들을 추출하여 등록되어잇는 메뉴의 수와 다르면 예외를 발생한다.
-    - [ ] order table id로 ordertable을 찾아서 없으면 예외를 발생한다.
-    - [ ] order table 내부의 empty 값이 true이면 예외를 발생한다.
-    - [ ] order의 상태를 업데이트 한 후 저장한다.
-    - [ ] orderLineItem에 대해서 orderId값을 set하고 저장한다.
-- [ ] 주문의 목록을 조회할 수 있다.
-    - [ ] `ORDER` 테이블과 `ORDER_LINE_ITEM` 테이블을 조합하여 결과를 가져온다.
-- [ ] 한 개의 주문에 대하여 주문의 상태를 변경할 수 있다.
-    - [ ] 입력받은 order id에 대해서 ORDER 가 존재하지 않으면 예외를 발생한다.
-    - [ ] 입력받은 order id에 해당하는 주문의 상태가 이미 'COMPLETION' 이면 예외를 발생한다.
-    - [ ] orderstatus를 새로 저장한다.
-    - [ ] order를 새로 저장한다.
+- [x] 주문을 등록할 수 있다.
+    - [x] 주문에 속하는 수량이 있는 메뉴(OrderLineItem)이 비어있으면 예외를 발생한다.
+    - [x] 주문에 속하는 수량이 있는 메뉴에서 menu의 id들을 추출하여 등록되어잇는 메뉴의 수와 다르면 예외를 발생한다.
+    - [x] order table id로 ordertable을 찾아서 없으면 예외를 발생한다.
+    - [x] order table 내부의 empty 값이 true이면 예외를 발생한다.
+    - [x] order의 상태를 업데이트 한 후 저장한다.
+    - [x] orderLineItem에 대해서 orderId값을 set하고 저장한다.
+- [x] 주문의 목록을 조회할 수 있다.
+    - [x] `ORDER` 테이블과 `ORDER_LINE_ITEM` 테이블을 조합하여 결과를 가져온다.
+- [x] 한 개의 주문에 대하여 주문의 상태를 변경할 수 있다.
+    - [x] 입력받은 order id에 대해서 ORDER 가 존재하지 않으면 예외를 발생한다.
+    - [x] 입력받은 order id에 해당하는 주문의 상태가 이미 'COMPLETION' 이면 예외를 발생한다.
+    - [x] orderstatus를 새로 저장한다.
+    - [x] order를 새로 저장한다.
 
 ### Table
 
