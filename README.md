@@ -7,7 +7,11 @@
   - menu가 속한 menu Group이 존재하지 않으면 menu를 생성할 수 없다.
   - menu에 속한 menuProduct가 하나라도 존재하지 않으면 menu를 생성할 수 없다.
   - menu의 가격이 menu의 product들의 합보다 비싼 경우 예외가 발생한다.
-- menu들은 조회할 수 있다.
+- menu들을 조회할 수 있다.
+
+### MenuGroup
+- menuGroup을 생성할 수 있다.
+- menuGroup들을 조회할 수 있다.
 
 ## 용어 사전
 
