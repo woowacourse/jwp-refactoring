@@ -4,10 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-import kitchenpos.acceptance.common.OrderTableHttpCommunication;
+import kitchenpos.acceptance.common.httpcommunication.OrderTableHttpCommunication;
 import kitchenpos.acceptance.common.fixture.RequestBody;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;

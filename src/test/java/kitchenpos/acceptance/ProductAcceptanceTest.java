@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
-import kitchenpos.acceptance.common.ProductHttpCommunication;
+import kitchenpos.acceptance.common.httpcommunication.ProductHttpCommunication;
 import kitchenpos.acceptance.common.fixture.RequestBody;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;

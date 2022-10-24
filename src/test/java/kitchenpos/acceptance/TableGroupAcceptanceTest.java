@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.acceptance.common.OrderTableHttpCommunication;
-import kitchenpos.acceptance.common.TableGroupHttpCommunication;
+import kitchenpos.acceptance.common.httpcommunication.OrderTableHttpCommunication;
+import kitchenpos.acceptance.common.httpcommunication.TableGroupHttpCommunication;
 import kitchenpos.acceptance.common.fixture.RequestBody;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;

@@ -1,4 +1,4 @@
-package kitchenpos.acceptance.common;
+package kitchenpos.acceptance.common.httpcommunication;
 
 import java.util.Map;
 

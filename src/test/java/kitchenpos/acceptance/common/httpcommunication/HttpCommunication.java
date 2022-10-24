@@ -1,4 +1,4 @@
-package kitchenpos.acceptance.common;
+package kitchenpos.acceptance.common.httpcommunication;
 
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;

@@ -1,18 +1,18 @@
-package kitchenpos.acceptance.common;
+package kitchenpos.acceptance.common.httpcommunication;
 
 import java.util.Map;
 
-public class MenuGroupHttpCommunication {
+public class ProductHttpCommunication {
 
     public static HttpCommunication create(final Map<String, Object> requestBody) {
         return HttpCommunication.request()
-                .create("/api/menu-groups", requestBody)
+                .create("/api/products", requestBody)
                 .build();
     }
 
-    public static HttpCommunication getMenuGroups() {
+    public static HttpCommunication getProducts() {
         return HttpCommunication.request()
-                .get("/api/menu-groups")
+                .get("/api/products")
                 .build();
     }
 }
