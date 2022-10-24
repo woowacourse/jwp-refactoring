@@ -5,6 +5,8 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -31,6 +33,27 @@ public abstract class ServiceTest {
     @Autowired
     TableGroupService tableGroupService;
 
+    @Autowired
+    OrderService orderService;
+
+    protected OrderTable 테이블을_생성한다(int numberOfGuests, boolean empty) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setEmpty(empty);
+
+        return orderTable;
+    }
+
+    protected MenuProduct 메뉴_상품을_생성한다(String productName, int productPrice, Long quantity) {
+        Product product = 상품을_저장한다(productName, productPrice);
+
+        MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setProductId(product.getId());
+        menuProduct.setQuantity(quantity);
+
+        return menuProduct;
+    }
+
     protected Product 상품을_저장한다(String name, int price) {
         Product product = new Product();
         product.setName(name);
@@ -44,16 +67,6 @@ public abstract class ServiceTest {
         menuGroup1.setName(name);
 
         return menuGroupService.create(menuGroup1);
-    }
-
-    protected MenuProduct 메뉴_상품을_생성한다(String productName, int productPrice, Long quantity) {
-        Product product = 상품을_저장한다(productName, productPrice);
-
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(product.getId());
-        menuProduct.setQuantity(quantity);
-
-        return menuProduct;
     }
 
     protected Menu 메뉴를_저장한다(String menuName) {
@@ -71,17 +84,13 @@ public abstract class ServiceTest {
     }
 
     protected OrderTable 테이블을_저장한다(int numberOfGuests) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(false);
+        OrderTable orderTable = 테이블을_생성한다(numberOfGuests, false);
 
         return tableService.create(orderTable);
     }
 
     protected OrderTable 빈_테이블을_저장한다() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
+        OrderTable orderTable = 테이블을_생성한다(0, true);
 
         return tableService.create(orderTable);
     }
@@ -94,5 +103,19 @@ public abstract class ServiceTest {
         tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
 
         return tableGroupService.create(tableGroup);
+    }
+
+    protected Order 주문을_저장한다() {
+        OrderTable orderTable = 테이블을_저장한다(4);
+        Menu menu = 메뉴를_저장한다("메뉴");
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(menu.getId());
+        orderLineItem.setQuantity(3L);
+
+        Order order = new Order();
+        order.setOrderTableId(orderTable.getId());
+        order.setOrderLineItems(List.of(orderLineItem));
+
+        return orderService.create(order);
     }
 }
