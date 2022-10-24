@@ -50,7 +50,7 @@
 
 - [x] table 을 등록할 수 있다.
 - [x] table 전체 목록을 조회한다.
-- [ ] table의 empty 상태를 바꾼다.
+- [x] table의 empty 상태를 바꾼다.
     - [x] orderTableId로 DB를 조회했을 때 없으면 예외를 발생한다.
     - [x] DB 조회 시 찾은 ordertable에 tableGroupID가 있으면 예외를 발생한다.
     - [x] 찾은 ordertable의 주문 상태가 COMPLETION이 아니면 예외를 발생한다.
@@ -63,17 +63,17 @@
 
 ### TableGroup
 
-- [ ] table group을 등록할 수 있다.
-    - [ ] 내부의 order table의 사이즈가 1보다 작거나 같으면 예외를 발생한다.
-    - [ ] order table id로 저장된 table을 찾아서 둘의 사이즈가 다르면 예외를 발생한다.
-    - [ ] 찾은 ordertables를 순회하면 각 ordertable이 empty거나 ordertable의 tablegroupid가 비어잇으면 에외를 발생한다.
-    - [ ] 테이블 그룹의 생성날짜를 저장한다.
-    - [ ] 테이블 그룹을 저장하고 order table을 set 한다.
-- [ ] table group을 삭제할 수 있다.
-    - [ ] table group id로 ordertable을 찾는다.
-    - [ ] 찾은 order table에 대해 id를 추출하고,
-    - [ ] 찾은 Id에 해당하는 주문들이 COMPLETION 상태가 아니라면 예외를 발생한다.
-    - [ ] order table을 null, false 로 초기화한다.
+- [x] table group을 등록할 수 있다.
+    - [x] 내부의 order table의 사이즈가 1보다 작거나 같으면 예외를 발생한다.
+    - [x] order table id로 저장된 table을 찾아서 둘의 사이즈가 다르면 예외를 발생한다.
+    - [x] 찾은 ordertables를 순회하면 각 ordertable이 empty거나 ordertable의 tablegroupid가 비어잇으면 에외를 발생한다.
+    - [x] 테이블 그룹의 생성날짜를 저장한다.
+    - [x] 테이블 그룹을 저장하고 order table을 set 한다.
+- [x] table group을 삭제할 수 있다.
+    - [x] table group id로 ordertable을 찾는다.
+    - [x] 찾은 order table에 대해 id를 추출하고,
+    - [x] 찾은 Id에 해당하는 주문들이 COMPLETION 상태가 아니라면 예외를 발생한다.
+    - [x] order table을 null, false 로 초기화한다.
 
 ## 용어 사전
 
