@@ -32,6 +32,17 @@ public class MenuGroupAcceptanceTest {
         RestAssured.port = port;
     }
 
+    public static long createMenuGroup(String name) {
+        return RestAssured.given().log().all()
+                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .body(Map.of("name", name))
+                .when().log().all()
+                .post("/api/menu-groups")
+                .then().log().all()
+                .statusCode(HttpStatus.CREATED.value())
+                .extract().body().jsonPath().getLong("id");
+    }
+
     @Test
     @DisplayName("메뉴 그룹 목록을 조회한다.")
     void getMenuGroups() {
@@ -54,16 +65,5 @@ public class MenuGroupAcceptanceTest {
                         tuple(menuGroupId3, "베루스 메뉴"),
                         tuple(menuGroupId4, "라라 메뉴")
                 );
-    }
-
-    public static long createMenuGroup(String name) {
-        return RestAssured.given().log().all()
-                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(Map.of("name", name))
-                .when().log().all()
-                .post("/api/menu-groups")
-                .then().log().all()
-                .statusCode(HttpStatus.CREATED.value())
-                .extract().body().jsonPath().getLong("id");
     }
 }

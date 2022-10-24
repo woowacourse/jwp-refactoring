@@ -85,7 +85,7 @@ public class MenuAcceptanceTest {
                 .extract().jsonPath().getLong("id");
     }
 
-    private Menu givenMenu(String name, int price, long menuGroupId, final List<MenuProduct> menuProducts) {
+    private Menu givenMenu(String name, int price, long menuGroupId, List<MenuProduct> menuProducts) {
         Menu menu = new Menu();
         menu.setName(name);
         menu.setPrice(BigDecimal.valueOf(price));

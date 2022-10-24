@@ -52,7 +52,7 @@ public class TableGroupAcceptanceTest {
                 .extract().jsonPath().getLong("id");
     }
 
-    private TableGroup givenTableGroup(final List<Long> tableIds) {
+    private TableGroup givenTableGroup(List<Long> tableIds) {
         List<OrderTable> orderTables = tableIds.stream()
                 .map(id -> {
                     OrderTable orderTable = new OrderTable();
@@ -63,14 +63,5 @@ public class TableGroupAcceptanceTest {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(orderTables);
         return tableGroup;
-    }
-
-    private List<OrderTable> getTableGroups() {
-        return RestAssured.given().log().all()
-                .when().log().all()
-                .get("/api/table-groups")
-                .then().log().all()
-                .statusCode(HttpStatus.OK.value())
-                .extract().body().jsonPath().getList(".", OrderTable.class);
     }
 }
