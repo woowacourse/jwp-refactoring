@@ -42,7 +42,7 @@ public class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        orderTable = orderTableDao.save(new OrderTable(null, 100, false));
+        orderTable = orderTableDao.save(new OrderTable(100, false));
         menu = testFixture.삼겹살_메뉴();
     }
 

@@ -9,8 +9,7 @@ public class OrderTable {
 
     public OrderTable() {}
 
-    public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
-        this.tableGroupId = tableGroupId;
+    public OrderTable(int numberOfGuests, boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
