@@ -42,6 +42,11 @@
 
 
 # 서비스 요구사항
+### ProductService
+- [x] Product를 생성한다.
+  - [x] price가 null이거나 0인 경우 예외를 던진다.
+- [x] Product를 전체 조회한다.
+
 ### MenuService
 - [ ] menu를 생성한다.
   - [ ] price가 null이거나 0인 경우 예외를 던진다.
@@ -52,11 +57,6 @@
 ### MenuGroupService
 - [ ] menuGroup을 생성한다.
 - [ ] menuGroup을 전체 조회한다.
-
-### ProductService
-- [ ] Product를 생성한다.
-  - [ ] price가 null이거나 0인 경우 예외를 던진다.
-- [ ] Product를 전체 조회한다.
 
 ### OrderService
 - [ ] Order를 생성한다.
