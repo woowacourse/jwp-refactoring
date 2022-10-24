@@ -45,7 +45,6 @@ public abstract class ServiceTestBase {
     @Autowired
     protected TableGroupDao tableGroupDao;
 
-
     protected Product 상품_등록(String name, int price) {
         Product product = new Product();
         product.setName(name);

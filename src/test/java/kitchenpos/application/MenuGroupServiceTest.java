@@ -42,11 +42,7 @@ class MenuGroupServiceTest extends ServiceTestBase {
 
         //then
         List<MenuGroup> savedMenuGroups = menuGroupDao.findAll();
-        assertAll(
-                () -> assertThat(savedMenuGroups).hasSize(1),
-                () -> assertThat(savedMenuGroup).extracting("name")
-                        .isEqualTo(menuGroup.getName())
-        );
+        assertAll(() -> assertThat(savedMenuGroups).hasSize(1),
+                () -> assertThat(savedMenuGroup).extracting("name").isEqualTo(menuGroup.getName()));
     }
-
 }
