@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -119,7 +120,7 @@ class TableGroupServiceTest extends ServiceTest {
     void ungroup_Exception_NotCompleteOrderTableStatus(String orderStatus) {
         OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, 5, true));
         TableGroup tableGroup = tableGroupService.create(new TableGroup(List.of(orderTable1, orderTable2)));
-        orderDao.save(new Order(orderTable2.getId(), orderStatus));
+        orderDao.save(new Order(orderTable2.getId(), orderStatus, Collections.emptyList()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class)

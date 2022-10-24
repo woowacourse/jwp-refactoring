@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.Collections;
 import java.util.Optional;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -70,7 +71,7 @@ class TableServiceTest extends ServiceTest {
     @ValueSource(strings = {"COOKING", "MEAL"})
     void changeEmpty_Exception_NotCompleteOrderStatus(String orderStatus) {
         OrderTable orderTable = orderTableDao.save(new OrderTable(null, 3, false));
-        orderDao.save(new Order(orderTable.getId(), orderStatus));
+        orderDao.save(new Order(orderTable.getId(), orderStatus, Collections.emptyList()));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTable(null, 3, true)))
                 .isInstanceOf(IllegalArgumentException.class)
