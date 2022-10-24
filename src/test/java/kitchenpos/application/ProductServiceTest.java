@@ -86,7 +86,7 @@ class ProductServiceTest extends ServiceTest {
 
             // then
             assertThat(actual).extracting(Product::getName)
-                    .contains(name1, name2, name3, name4);
+                    .containsExactly(name1, name2, name3, name4);
         }
     }
 }

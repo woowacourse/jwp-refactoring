@@ -61,7 +61,7 @@ class TableServiceTest extends ServiceTest {
 
             // then
             assertThat(actual).extracting(OrderTable::getNumberOfGuests, OrderTable::isEmpty)
-                    .contains(
+                    .containsExactly(
                             tuple(orderTable1.getNumberOfGuests(), orderTable1.isEmpty()),
                             tuple(orderTable2.getNumberOfGuests(), orderTable2.isEmpty())
                     );

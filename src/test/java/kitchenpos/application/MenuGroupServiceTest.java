@@ -54,7 +54,7 @@ class MenuGroupServiceTest extends ServiceTest {
 
             // then
             assertThat(actual).extracting(MenuGroup::getName)
-                    .contains(name1, name2, name3);
+                    .containsExactly(name1, name2, name3);
         }
     }
 }

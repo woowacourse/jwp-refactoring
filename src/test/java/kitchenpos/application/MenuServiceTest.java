@@ -164,7 +164,7 @@ class MenuServiceTest extends ServiceTest {
 
             // then
             assertThat(actual).extracting("name", "price", "menuGroupId")
-                    .contains(
+                    .containsExactly(
                             tuple(chickenMenu.getName(), chickenMenu.getPrice(), chickenMenuGroup.getId()),
                             tuple(sushiMenu.getName(), sushiMenu.getPrice(), sushiMenuGroup.getId())
                     );
