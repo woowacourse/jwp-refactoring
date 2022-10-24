@@ -3,9 +3,11 @@
 ## 주요 요구 사항 🚀
 
 - [x] kitchenpos 패키지의 코드를 보고 키친포스의 요구 사항을 README.md에 작성한다.
-- [ ] 정리한 키친포스의 요구 사항을 토대로 테스트 코드를 작성한다. 모든 Business Object에 대한 테스트 코드를 작성한다. @SpringBootTest를 이용한 통합 테스트 코드 또는
-  @ExtendWith(MockitoExtension.class)를 이용한 단위 테스트 코드를 작성한다.
-- [ ] 이번 과정에서는 Lombok 없이 미션을 진행해 본다.
+- [x] 정리한 키친포스의 요구 사항을 토대로 테스트 코드를 작성한다. 
+- [ ] 정리한 키친포스의 요구 사항을 토대로 예외사항에 대한 테스트 코드를 작성한다. 
+- [ ] 모든 Business Object에 대한 테스트 코드를 작성한다. 
+- [x] @SpringBootTest를 이용한 통합 테스트 코드 또는 @ExtendWith(MockitoExtension.class)를 이용한 단위 테스트 코드를 작성한다.
+- [x] 이번 과정에서는 Lombok 없이 미션을 진행해 본다.
 
 ---
 
