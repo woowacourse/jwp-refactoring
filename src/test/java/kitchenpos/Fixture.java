@@ -22,8 +22,8 @@ public class Fixture {
     public static final Menu MENU =  new Menu(1L, "후라이드+후라이드",
             BigDecimal.valueOf(19000), 1L, List.of(MENU_PRODUCT));
 
-    public static final Product PRODUCT = new Product("후라이드 치킨",
-            BigDecimal.valueOf(10000));
+    public static final Product PRODUCT = new Product(1L, "강정치킨",
+            BigDecimal.valueOf(17000));
 
     public static final MenuGroup MENU_GROUP = new MenuGroup(1L, "추천메뉴");
 }
