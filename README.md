@@ -59,29 +59,29 @@
 - [x] menu를 전체 조회한다.
 
 ### OrderService
-- [ ] Order를 생성한다.
-  - [ ] orderLineItems가 비어있는 경우 예외를 던진다.
-  - [ ] orderLineItems의 개수와 menu에 포함된 개수가 일치하지 않으면 예외를 던진다.
-  - [ ] orderTable이 없는 경우 예외를 던진다.
-- [ ] order를 전체 조회한다.
-- [ ] order의 status를 변경한다.
-  - [ ] order의 상태가 `COMPLETION`인 경우 예외를 던진다.
+- [x] Order를 생성한다.
+  - [x] orderLineItems가 비어있는 경우 예외를 던진다.
+  - [x] orderLineItems의 개수와 menu에 포함된 개수가 일치하지 않으면 예외를 던진다.
+  - [x] orderTable이 없는 경우 예외를 던진다.
+- [x] order를 전체 조회한다.
+- [x] order의 status를 변경한다.
+  - [x] order의 상태가 `COMPLETION`인 경우 예외를 던진다.
 
 ### TableGroupService
-* [ ] TableGroup을 생성한다.
-  * [ ] orderTables가 비어있거나 사이즈가 2보다 작은 경우 예외를 던진다.
-  * [ ] orderGroup이 가진 orderTables의 사이즈와 저장된 orderTables의 사이즈가 다른 경우 예외를 던진다.
-  * [ ] 저장된 orderTables 중 비어있지 않은 경우 예외를 던진다.
-  * [ ] 저장된 orderTables 중 tableGroupId가 null이 아닌 경우 예외를 던진다.
-* [ ] tableGroup을 해제한다.
-  * [ ] orderTables의 orderStatus가 `COOKING`, `MEAL`인 경우 예외를 던진다.
+* [x] TableGroup을 생성한다.
+  * [x] orderTables가 비어있거나 사이즈가 2보다 작은 경우 예외를 던진다.
+  * [x] orderGroup이 가진 orderTables의 사이즈와 저장된 orderTables의 사이즈가 다른 경우 예외를 던진다.
+  * [x] 저장된 orderTables 중 비어있지 않은 경우 예외를 던진다.
+  * [x] 저장된 orderTables 중 tableGroupId가 null이 아닌 경우 예외를 던진다.
+* [x] tableGroup을 해제한다.
+  * [x] orderTables의 orderStatus가 `COOKING`, `MEAL`인 경우 예외를 던진다.
 
 ### TableService
-- [ ] orderTable을 생성한다.
-- [ ] orderTable을 전체 조회한다.
-- [ ] orderTable의 empty를 변경한다.
-  - [ ] tableGroupId가 null이 아닌 경우 예외를 던진다.
-  - [ ] orderTable에 속한 order 중 `COOKING`, `MEAL`이 존재하는 경우 예외를 던진다.
-- [ ] orderTable의 `changeNumberOfGuests`를 변경한다.
-  - [ ] numberOfGuests가 0 미만인 경우 예외를 던진다.
-  - [ ] 저장된 orderTable이 비어있는 경우 예외를 던진다.
+- [x] orderTable을 생성한다.
+- [x] orderTable을 전체 조회한다.
+- [x] orderTable의 empty를 변경한다.
+  - [x] tableGroupId가 null이 아닌 경우 예외를 던진다.
+  - [x] orderTable에 속한 order 중 `COOKING`, `MEAL`이 존재하는 경우 예외를 던진다.
+- [x] orderTable의 `changeNumberOfGuests`를 변경한다.
+  - [x] numberOfGuests가 0 미만인 경우 예외를 던진다.
+  - [x] 저장된 orderTable이 비어있는 경우 예외를 던진다.
