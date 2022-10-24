@@ -17,6 +17,11 @@ public class Order {
         this(null, orderTableId, orderStatus, orderedTime, Collections.emptyList());
     }
 
+    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime,
+                 List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
+    }
+
     public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
         this.id = id;
