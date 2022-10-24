@@ -48,6 +48,10 @@ public class Fixtures {
     public static TableGroup 테이블그룹(List<OrderTable> tables) {
         return new TableGroup(1L, LocalDateTime.now(), tables);
     }
+    public static TableGroup 테이블그룹2(List<OrderTable> tables) {
+        return new TableGroup(2L, LocalDateTime.now(), tables);
+    }
+
     public static OrderLineItem 주문아이템_후라이드() {
         return new OrderLineItem(1L, 1L, 상품_후라이드().getId(), 1L);
     }
