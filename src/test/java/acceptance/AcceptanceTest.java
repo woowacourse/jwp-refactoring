@@ -1,6 +1,6 @@
 package acceptance;
 
-import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import io.restassured.RestAssured;
@@ -40,7 +40,7 @@ public class AcceptanceTest {
     protected long 상품_생성(final String name, final int price) {
         Product product = givenProduct(name, price);
         return RestAssured.given().log().all()
-                .header(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .body(product)
                 .when().log().all()
                 .post("/api/products")
@@ -103,7 +103,7 @@ public class AcceptanceTest {
         menu.setMenuProducts(menuProducts);
 
         return RestAssured.given().log().all()
-                .header(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .body(menu)
                 .when().log().all()
                 .post("/api/menus")
@@ -126,7 +126,7 @@ public class AcceptanceTest {
         orderTable.setEmpty(empty);
 
         return RestAssured.given().log().all()
-                .header(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .body(orderTable)
                 .when().log().all()
                 .post("/api/tables")
@@ -137,7 +137,7 @@ public class AcceptanceTest {
 
     protected List<OrderTable> 테이블_목록_조회() {
         return RestAssured.given().log().all()
-                .header(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .when().log().all()
                 .get("/api/tables")
                 .then().log().all()
@@ -151,7 +151,7 @@ public class AcceptanceTest {
         order.setOrderLineItems(orderLineItems);
 
         return RestAssured.given().log().all()
-                .header(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .body(order)
                 .when().log().all()
                 .post("/api/orders")
