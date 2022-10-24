@@ -5,6 +5,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -25,6 +26,8 @@ public class ServiceTest {
     protected TableService tableService;
     @Autowired
     protected TableGroupService tableGroupService;
+    @Autowired
+    protected OrderService orderService;
 
     @Autowired
     protected MenuGroupDao menuGroupDao;
@@ -36,5 +39,7 @@ public class ServiceTest {
     protected OrderTableDao orderTableDao;
     @Autowired
     protected TableGroupDao tableGroupDao;
+    @Autowired
+    protected MenuDao menuDao;
 
 }
