@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.domain.Product;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ class ProductServiceTest {
     @Test
     void createProduct() {
         // given
-        Product product = new Product("상품", BigDecimal.valueOf(1000));
+        ProductRequest product = new ProductRequest("상품", BigDecimal.valueOf(1000));
 
         // when
         Product savedProduct = productService.create(product);
@@ -35,7 +36,7 @@ class ProductServiceTest {
     @Test
     void createProductWithNullPrice() {
         // given
-        Product product = new Product("상품", null);
+        ProductRequest product = new ProductRequest("상품", null);
 
         // when & then
         assertThatThrownBy(() -> productService.create(product))
@@ -45,7 +46,7 @@ class ProductServiceTest {
     @Test
     void createProductWithZeroPrice() {
         // given
-        Product product = new Product("상품", BigDecimal.valueOf(0));
+        ProductRequest product = new ProductRequest("상품", BigDecimal.valueOf(0));
 
         // when
         Product savedProduct = productService.create(product);
@@ -57,7 +58,7 @@ class ProductServiceTest {
     @Test
     void createProductWithNegativePrice() {
         // given
-        Product product = new Product("상품", BigDecimal.valueOf(-1));
+        ProductRequest product = new ProductRequest("상품", BigDecimal.valueOf(-1));
 
         // when & then
         assertThatThrownBy(() -> productService.create(product))

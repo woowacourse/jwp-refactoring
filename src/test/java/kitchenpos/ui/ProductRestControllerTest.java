@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.ProductService;
+import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,15 +32,14 @@ class ProductRestControllerTest extends ControllerTest {
     void createProduct() throws Exception {
         // given
         long id = 1L;
-        Product product = new Product("치킨", BigDecimal.valueOf(10000));
-        product.setId(id);
-
-        given(productService.create(any())).willReturn(product);
+        String name = "치킨";
+        BigDecimal price = BigDecimal.valueOf(10000);
+        given(productService.create(any())).willReturn(new Product(id, name, price));
 
         // when
         ResultActions actions = mockMvc.perform(post("/api/products")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(product))
+                .content(objectMapper.writeValueAsString(new ProductRequest(name, price)))
         );
 
         // then
