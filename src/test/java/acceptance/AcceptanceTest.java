@@ -31,6 +31,7 @@ public abstract class AcceptanceTest {
     void tearDow() {
         jdbcTemplate.update("SET REFERENTIAL_INTEGRITY FALSE");
         jdbcTemplate.execute("TRUNCATE TABLE order_table");
+        jdbcTemplate.execute("TRUNCATE TABLE orders");
         jdbcTemplate.update("SET REFERENTIAL_INTEGRITY TRUE");
 
         jdbcTemplate.execute("ALTER TABLE order_table ALTER COLUMN id RESTART WITH 1");
