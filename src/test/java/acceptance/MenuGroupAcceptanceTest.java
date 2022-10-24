@@ -59,7 +59,7 @@ public class MenuGroupAcceptanceTest {
                 );
     }
 
-    private long createMenuGroup(String name) {
+    public static long createMenuGroup(String name) {
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .body(Map.of("name", name))

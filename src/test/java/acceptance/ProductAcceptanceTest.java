@@ -32,9 +32,9 @@ public class ProductAcceptanceTest {
         RestAssured.port = port;
     }
 
-    @DisplayName("메뉴 목록을 조회한다.")
+    @DisplayName("상품 목록을 조회한다.")
     @Test
-    void findMenuList() {
+    void findProducts() {
         // given
         long productId1 = createProduct("후라이드", 19000);
         long productId2 = createProduct("돼지국밥", 9000);
@@ -54,7 +54,7 @@ public class ProductAcceptanceTest {
                 );
     }
 
-    private long createProduct(final String name, final int price) {
+    public static long createProduct(String name, int price) {
         Product product = givenProduct(name, price);
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -66,7 +66,7 @@ public class ProductAcceptanceTest {
                 .extract().jsonPath().getLong("id");
     }
 
-    private Product givenProduct(String name, int price) {
+    public static Product givenProduct(String name, int price) {
         Product product = new Product();
         product.setName(name);
         product.setPrice(BigDecimal.valueOf(price));
