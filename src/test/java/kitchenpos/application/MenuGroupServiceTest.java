@@ -1,9 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.Fixture.메뉴_그룹_추천상품;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
@@ -24,9 +22,7 @@ class MenuGroupServiceTest {
         MenuGroup actual = menuGroupService.create(menuGroup);
 
         // then
-        menuGroup.setId(1L);
-        assertThat(actual).usingRecursiveComparison()
-                .isEqualTo(menuGroup);
+        assertThat(actual.getName()).isEqualTo(menuGroup.getName());
     }
 
     @Test
@@ -34,13 +30,18 @@ class MenuGroupServiceTest {
         // given
         MenuGroup menuGroup = 메뉴_그룹_추천상품();
 
-        MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        menuGroupService.create(menuGroup);
 
         // when
         List<MenuGroup> actual = menuGroupService.list();
 
         // then
-        assertThat(actual).usingRecursiveComparison()
-                .isEqualTo(Collections.singletonList(savedMenuGroup));
+        assertThat(actual).hasSizeGreaterThanOrEqualTo(1);
+    }
+
+    public MenuGroup 메뉴_그룹_추천상품() {
+        MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setName("추천상품");
+        return menuGroup;
     }
 }

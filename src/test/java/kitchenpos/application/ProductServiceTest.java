@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.Fixture.상품_강정치킨;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -23,7 +22,7 @@ class ProductServiceTest {
     @Test
     void 상품을_등록할_수_있다() {
         // given
-        Product product = 상품_강정치킨();
+        Product product = 강정치킨();
 
         // when
         Product actual = productService.create(product);
@@ -38,7 +37,7 @@ class ProductServiceTest {
 
     @Test
     void 상품_목록들을_조회한다() {
-        Product product = 상품_강정치킨();
+        Product product = 강정치킨();
 
         // when
         productService.create(product);
@@ -72,5 +71,13 @@ class ProductServiceTest {
         // when & then
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    public Product 강정치킨() {
+        Product product = new Product();
+        product.setName("강정치킨");
+        product.setPrice(BigDecimal.valueOf(17000));
+
+        return product;
     }
 }
