@@ -30,9 +30,9 @@ class OrderServiceTest {
     @Test
     void create() {
         // given
-        orderTableDao.save(new OrderTable(1L, 1,false));
+        final OrderTable savedOrderTable = orderTableDao.save(new OrderTable(1, false));
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 2);
-        final Order order = new Order(1L, List.of(orderLineItem));
+        final Order order = new Order(savedOrderTable.getId(), List.of(orderLineItem));
 
         // when
         final Order savedOrder = orderService.create(order);
@@ -48,7 +48,7 @@ class OrderServiceTest {
     @Test
     void create_throwException_ifOrderLineItemsEmpty() {
         // given
-        orderTableDao.save(new OrderTable(1L, 1, false));
+        orderTableDao.save(new OrderTable(1, false));
         final Order order = new Order(1L, List.of());
 
         // when, then
@@ -62,7 +62,7 @@ class OrderServiceTest {
     void create_throwException_ifMenuNotExist() {
         // given
         final Long noExistMenuId = 999L;
-        orderTableDao.save(new OrderTable(1L, 1, false));
+        orderTableDao.save(new OrderTable(1, false));
         final OrderLineItem orderLineItem = new OrderLineItem(noExistMenuId, 2);
         final Order order = new Order(1L, List.of(orderLineItem));
 
@@ -90,22 +90,23 @@ class OrderServiceTest {
     @Test
     void create_throwException_ifTableNotEmpty() {
         // given
+        final OrderTable savedOrderTable = orderTableDao.save(new OrderTable(1, true));
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 2);
-        final Order order = new Order(1L, List.of(orderLineItem));
+        final Order order = new Order(savedOrderTable.getId(), List.of(orderLineItem));
 
         // when, then
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("이미 사용 중인 테이블입니다.");
+                .hasMessage("사용 중이지 않은 테이블입니다.");
     }
 
     @DisplayName("전체 주문을 조회한다.")
     @Test
     void findAll() {
         // given
-        orderTableDao.save(new OrderTable(1L, 1,false));
+        final OrderTable savedOrderTable = orderTableDao.save(new OrderTable(1, false));
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 2);
-        final Order order = new Order(1L, List.of(orderLineItem));
+        final Order order = new Order(savedOrderTable.getId(), List.of(orderLineItem));
         orderService.create(order);
 
         // when, then

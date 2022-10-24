@@ -9,16 +9,21 @@ public class OrderTable {
     public OrderTable() {
     }
 
-    public OrderTable(Long id, int numberOfGuests, boolean empty) {
-        this.id = id;
+    public OrderTable(boolean empty) {
+        this(0, empty);
+    }
+
+    public OrderTable(int numberOfGuests, boolean empty) {
+        this(null, numberOfGuests, empty);
+    }
+
+    public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public OrderTable(int numberOfGuests, boolean empty) {
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
-    }
+
 
     public Long getId() {
         return id;

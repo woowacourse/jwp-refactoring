@@ -59,7 +59,7 @@ public class OrderService {
                 .orElseThrow(()-> new IllegalArgumentException("없는 테이블에서는 주문할 수 없습니다."));
 
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("이미 사용 중인 테이블입니다.");
+            throw new IllegalArgumentException("사용 중이지 않은 테이블입니다.");
         }
 
         order.setOrderTableId(orderTable.getId());
