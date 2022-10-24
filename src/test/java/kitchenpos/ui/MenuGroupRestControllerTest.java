@@ -1,12 +1,16 @@
 package kitchenpos.ui;
 
+import static kitchenpos.support.MenuGroupFixtures.MENU_GROUP1;
+import static kitchenpos.support.MenuGroupFixtures.createAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +38,7 @@ public class MenuGroupRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final MenuGroup menuGroup = new MenuGroup(1L, "두마리메뉴");
+        final MenuGroup menuGroup = MENU_GROUP1.create();
 
         given(menuGroupService.create(any(MenuGroup.class))).willReturn(menuGroup);
 
@@ -46,5 +50,22 @@ public class MenuGroupRestControllerTest {
 
         // then
         resultActions.andExpect(status().isCreated());
+    }
+
+    @DisplayName("menu group들을 조회한다.")
+    @Test
+    void list() throws Exception {
+        // given
+        final List<MenuGroup> menuGroups = createAll();
+
+        given(menuGroupService.list()).willReturn(menuGroups);
+
+        // when
+        final ResultActions resultActions = mockMvc.perform(get("/api/menu-groups")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print());
+
+        // then
+        resultActions.andExpect(status().isOk());
     }
 }
