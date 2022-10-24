@@ -1,10 +1,23 @@
 package kitchenpos.domain;
 
 public class OrderLineItem {
+
     private Long id;
     private Long orderId;
     private Long menuId;
     private long quantity;
+
+    public OrderLineItem(final Long menuId, final long quantity) {
+        this.menuId = menuId;
+        this.quantity = quantity;
+    }
+
+    public OrderLineItem(final Long id, final Long orderId, final Long menuId, final long quantity) {
+        this.id = id;
+        this.orderId = orderId;
+        this.menuId = menuId;
+        this.quantity = quantity;
+    }
 
     public Long getId() {
         return id;

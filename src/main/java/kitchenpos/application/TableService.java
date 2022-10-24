@@ -4,6 +4,9 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.exception.InvalidOrderStatusException;
+import kitchenpos.exception.InvalidOrderTableIsEmptyOfNumberOfGuestsException;
+import kitchenpos.exception.InvalidOrderTableNumberOfGuestsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +47,7 @@ public class TableService {
 
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new InvalidOrderStatusException();
         }
 
         savedOrderTable.setEmpty(orderTable.isEmpty());
@@ -57,14 +60,14 @@ public class TableService {
         final int numberOfGuests = orderTable.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new InvalidOrderTableNumberOfGuestsException();
         }
 
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new InvalidOrderTableIsEmptyOfNumberOfGuestsException();
         }
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);
