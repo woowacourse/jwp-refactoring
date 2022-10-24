@@ -2,14 +2,23 @@ plugins {
     id 'org.springframework.boot' version '2.3.3.RELEASE'
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
     id 'java'
+    id 'jacoco'
 }
 
 group = 'camp.nextstep.edu'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
+jacoco {
+    toolVersion = '0.8.7'
+}
+
 repositories {
     mavenCentral()
+}
+
+ext {
+    set('testCoverageDir', file("src/main/resources/testCoverage"))
 }
 
 dependencies {
@@ -23,6 +32,68 @@ dependencies {
     }
 }
 
-test {
-    useJUnitPlatform()
+task testCoverage(type: Test) {
+    group 'verification'
+    description 'Runs the unit tests with coverage'
+
+    dependsOn(':test',
+            ':jacocoTestReport',
+            ':jacocoTestCoverageVerification')
+
+    tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
+    tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
+}
+
+tasks.named('jacocoTestReport') {
+    reports {
+        html.enabled true
+        xml.enabled true
+        csv.enabled false
+        html.destination file("$testCoverageDir")
+    }
+}
+
+tasks.named('jacocoTestCoverageVerification') {
+    violationRules {
+        rule {
+            element = 'CLASS'
+
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.70
+            }
+
+            limit {
+                counter = 'METHOD'
+                value = 'COVEREDRATIO'
+                minimum = 0.60
+            }
+
+            excludes = [
+                    '**.*Application*',
+            ]
+        }
+
+        rule {
+            element = 'METHOD'
+
+            limit {
+                counter = 'LINE'
+                value = 'TOTALCOUNT'
+                maximum = 200
+            }
+        }
+    }
+
+
+    test {
+        useJUnitPlatform()
+    }
 }
