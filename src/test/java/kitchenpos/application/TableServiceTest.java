@@ -58,7 +58,7 @@ class TableServiceTest extends ServiceTest {
             tableService.changeEmpty(savedOrderTable.getId(), emptyOrderTable);
 
             // then
-            final OrderTable findTable = tableService.list()
+            OrderTable findTable = tableService.list()
                     .stream()
                     .filter(table -> table.getId().equals(savedOrderTable.getId()))
                     .findFirst()
@@ -81,7 +81,7 @@ class TableServiceTest extends ServiceTest {
             tableService.changeEmpty(savedOrderTable.getId(), emptyOrderTable);
 
             // then
-            final OrderTable findTable = tableService.list()
+            OrderTable findTable = tableService.list()
                     .stream()
                     .filter(table -> table.getId().equals(savedOrderTable.getId()))
                     .findFirst()
@@ -133,7 +133,7 @@ class TableServiceTest extends ServiceTest {
             tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable);
 
             // then
-            final OrderTable findTable = tableService.list()
+            OrderTable findTable = tableService.list()
                     .stream()
                     .filter(table -> table.getId().equals(savedOrderTable.getId()))
                     .findFirst()

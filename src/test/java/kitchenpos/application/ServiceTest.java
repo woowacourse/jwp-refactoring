@@ -7,6 +7,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -26,6 +27,9 @@ public abstract class ServiceTest {
 
     @Autowired
     TableService tableService;
+
+    @Autowired
+    TableGroupService tableGroupService;
 
     protected Product 상품을_저장한다(String name, int price) {
         Product product = new Product();
@@ -80,5 +84,15 @@ public abstract class ServiceTest {
         orderTable.setEmpty(true);
 
         return tableService.create(orderTable);
+    }
+
+    protected TableGroup 테이블_그룹을_저장한다() {
+        OrderTable orderTable1 = 빈_테이블을_저장한다();
+        OrderTable orderTable2 = 빈_테이블을_저장한다();
+
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+
+        return tableGroupService.create(tableGroup);
     }
 }
