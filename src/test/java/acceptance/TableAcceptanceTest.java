@@ -30,4 +30,30 @@ public class TableAcceptanceTest extends AcceptanceTest {
                         tuple(테이블3, 2, true)
                 );
     }
+
+    @Test
+    @DisplayName("빈 테이블로 변경한다.")
+    void changeEmpty() {
+        // given
+        long 테이블 = 테이블_생성(0, false);
+
+        // when
+        OrderTable table = 테이블_상태_변경(테이블, true);
+
+        // then
+        assertThat(table.isEmpty()).isTrue();
+    }
+
+    @Test
+    @DisplayName("테이블 방문자 수를 변경한다.")
+    void changeNumberOfGuest() {
+        // given
+        long 테이블 = 테이블_생성(0, false);
+
+        // when
+        OrderTable table = 테이블_방문자_수_변경(테이블, 2);
+
+        // then
+        assertThat(table.getNumberOfGuests()).isEqualTo(2);
+    }
 }

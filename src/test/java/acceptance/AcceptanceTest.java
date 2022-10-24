@@ -20,7 +20,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 @SpringBootTest(
@@ -145,7 +144,33 @@ public class AcceptanceTest {
                 .extract().jsonPath().getList(".", OrderTable.class);
     }
 
-    protected long 주문_생성(long table,List<OrderLineItem> orderLineItems) {
+    protected OrderTable 테이블_상태_변경(long orderTableId, boolean empty) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(empty);
+
+        return RestAssured.given().log().all()
+                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .body(orderTable)
+                .when().log().all()
+                .put("/api/tables/{order_table_id}/empty", orderTableId)
+                .then().log().all()
+                .extract().as(OrderTable.class);
+    }
+
+    protected OrderTable 테이블_방문자_수_변경(long orderTableId, int numberOfGuests) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(numberOfGuests);
+
+        return RestAssured.given().log().all()
+                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .body(orderTable)
+                .when().log().all()
+                .put("/api/tables/{order_table_id}/number-of-guests", orderTableId)
+                .then().log().all()
+                .extract().as(OrderTable.class);
+    }
+
+    protected long 주문_생성(long table, List<OrderLineItem> orderLineItems) {
         Order order = new Order();
         order.setOrderTableId(table);
         order.setOrderLineItems(orderLineItems);
