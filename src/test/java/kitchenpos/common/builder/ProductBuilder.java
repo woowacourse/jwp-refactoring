@@ -5,7 +5,6 @@ import kitchenpos.domain.Product;
 
 public class ProductBuilder {
 
-    private Long id;
     private String name;
     private BigDecimal price;
 
