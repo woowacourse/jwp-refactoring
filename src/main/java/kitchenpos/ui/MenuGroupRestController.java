@@ -19,11 +19,11 @@ public class MenuGroupRestController {
     }
 
     @PostMapping("/api/menu-groups")
-    public ResponseEntity<Long> create(@RequestBody final MenuGroup menuGroup) {
-        final Long savedId = menuGroupService.create(menuGroup);
-        final URI uri = URI.create("/api/menu-groups/" + savedId);
+    public ResponseEntity<MenuGroup> create(@RequestBody final MenuGroup menuGroup) {
+        final MenuGroup created = menuGroupService.create(menuGroup);
+        final URI uri = URI.create("/api/menu-groups/" + created.getId());
         return ResponseEntity.created(uri)
-                .body(savedId)
+                .body(created)
                 ;
     }
 

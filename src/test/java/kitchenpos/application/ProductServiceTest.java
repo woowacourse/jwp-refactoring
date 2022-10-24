@@ -21,9 +21,9 @@ class ProductServiceTest {
     void create() {
         Product request = Product.of("name", BigDecimal.valueOf(1000));
 
-        Long savedId = productService.create(request);
+        Product savedProduct = productService.create(request);
 
-        assertThat(savedId).isNotNull();
+        assertThat(savedProduct.getId()).isNotNull();
     }
 
     @Test

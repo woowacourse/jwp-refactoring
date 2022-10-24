@@ -34,7 +34,7 @@ public class MenuService {
     }
 
     @Transactional
-    public Long create(final Menu menu) {
+    public Menu create(final Menu menu) {
         final BigDecimal price = menu.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
@@ -68,7 +68,7 @@ public class MenuService {
         }
         savedMenu.setMenuProducts(savedMenuProducts);
 
-        return savedMenu.getId();
+        return savedMenu;
     }
 
     public List<Menu> list() {

@@ -23,9 +23,9 @@ class MenuServiceTest {
         MenuProduct menuProduct = MenuProduct.of(1L, 1L, 10);
         Menu menu = Menu.of("name", BigDecimal.valueOf(1000), 1L, List.of(menuProduct));
 
-        Long savedId = menuService.create(menu);
+        Menu savedMenu = menuService.create(menu);
 
-        assertThat(savedId).isNotNull();
+        assertThat(savedMenu.getId()).isNotNull();
     }
 
     @Test

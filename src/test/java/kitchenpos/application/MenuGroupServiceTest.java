@@ -18,9 +18,9 @@ class MenuGroupServiceTest {
     void create() {
         MenuGroup request = MenuGroup.from("name");
 
-        Long savedId = menuGroupService.create(request);
+        MenuGroup savedMenuGroup = menuGroupService.create(request);
 
-        assertThat(savedId).isNotNull();
+        assertThat(savedMenuGroup.getId()).isNotNull();
     }
 
     @Test

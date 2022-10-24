@@ -15,9 +15,8 @@ public class MenuGroupService {
     }
 
     @Transactional
-    public Long create(final MenuGroup menuGroup) {
-        return menuGroupDao.save(menuGroup)
-                .getId();
+    public MenuGroup create(final MenuGroup menuGroup) {
+        return menuGroupDao.save(menuGroup);
     }
 
     public List<MenuGroup> list() {

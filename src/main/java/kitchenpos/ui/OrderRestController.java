@@ -21,11 +21,11 @@ public class OrderRestController {
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<Long> create(@RequestBody final Order order) {
-        final Long savedId = orderService.create(order);
-        final URI uri = URI.create("/api/orders/" + savedId);
+    public ResponseEntity<Order> create(@RequestBody final Order order) {
+        final Order created = orderService.create(order);
+        final URI uri = URI.create("/api/orders/" + created.getId());
         return ResponseEntity.created(uri)
-                .body(savedId)
+                .body(created)
                 ;
     }
 

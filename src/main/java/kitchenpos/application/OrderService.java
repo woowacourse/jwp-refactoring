@@ -37,7 +37,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Long create(final Order order) {
+    public Order create(final Order order) {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
@@ -75,7 +75,7 @@ public class OrderService {
         }
         savedOrder.setOrderLineItems(savedOrderLineItems);
 
-        return savedOrder.getId();
+        return savedOrder;
     }
 
     public List<Order> list() {

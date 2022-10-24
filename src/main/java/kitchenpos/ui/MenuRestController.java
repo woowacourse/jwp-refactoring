@@ -19,11 +19,12 @@ public class MenuRestController {
     }
 
     @PostMapping("/api/menus")
-    public ResponseEntity<Long> create(@RequestBody final Menu menu) {
-        final Long savedId = menuService.create(menu);
-        final URI uri = URI.create("/api/menus/" + savedId);
+    public ResponseEntity<Menu> create(@RequestBody final Menu menu) {
+        final Menu created = menuService.create(menu);
+        final URI uri = URI.create("/api/menus/" + created.getId());
         return ResponseEntity.created(uri)
-                .body(savedId);
+                .body(created)
+                ;
     }
 
     @GetMapping("/api/menus")

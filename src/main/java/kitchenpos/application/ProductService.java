@@ -16,9 +16,8 @@ public class ProductService {
     }
 
 
-    public Long create(final Product request) {
-        return productDao.save(request)
-                .getId();
+    public Product create(final Product request) {
+        return productDao.save(request);
     }
 
     @Transactional(readOnly = true)

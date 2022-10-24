@@ -35,9 +35,9 @@ class OrderServiceTest {
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         Order order = Order.of(savedOrderTable.getId(), "", LocalDateTime.now(), List.of(orderLineItem));
-        Long savedId = orderService.create(order);
+        Order savedOrder = orderService.create(order);
 
-        assertThat(savedId).isNotNull();
+        assertThat(savedOrder.getId()).isNotNull();
     }
 
     @Test
