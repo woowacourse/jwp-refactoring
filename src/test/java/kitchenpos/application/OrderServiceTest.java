@@ -73,7 +73,7 @@ class OrderServiceTest {
     private Menu seasonedChicken;
     private Menu potatoPizza;
 
-    @DisplayName("메뉴 및 메뉴 그룹 및 주문 테이블 생성")
+    @DisplayName("메뉴 및 메뉴 그룹 생성")
     @BeforeEach
     void setUp() {
         Product productChicken1 = productDao.save(후라이드_치킨());
@@ -306,21 +306,6 @@ class OrderServiceTest {
         return order;
     }
 
-    private Order 주문_생성_및_저장(final OrderTable orderTable) {
-        Order order = 주문_생성(orderTable);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-
-        return orderDao.save(order);
-    }
-
-    private Order 주문_생성(final Long orderTableId) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-
-        return order;
-    }
-
     private TableGroup 단체_지정_생성(final OrderTable... orderTables) {
         List<OrderTable> orderTableList = Arrays.stream(orderTables)
                 .collect(Collectors.toList());
@@ -347,5 +332,20 @@ class OrderServiceTest {
         orderTable.setNumberOfGuests(0);
 
         return orderTable;
+    }
+
+    private Order 주문_생성_및_저장(final OrderTable orderTable) {
+        Order order = 주문_생성(orderTable);
+        order.setOrderedTime(LocalDateTime.now());
+        order.setOrderStatus(OrderStatus.COOKING.name());
+
+        return orderDao.save(order);
+    }
+
+    private Order 주문_생성(final Long orderTableId) {
+        Order order = new Order();
+        order.setOrderTableId(orderTableId);
+
+        return order;
     }
 }
