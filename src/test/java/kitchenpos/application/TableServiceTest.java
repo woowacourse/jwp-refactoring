@@ -34,7 +34,7 @@ class TableServiceTest extends ServiceTest {
         orderTable.setEmpty(false);
         orderTable.setNumberOfGuests(5);
 
-        assertThat(tableService.list()).hasSize(8);
+        assertThat(tableService.list()).hasSize(15);
     }
 
     @Nested
