@@ -4,16 +4,12 @@ import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -24,53 +20,27 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 
-@SpringBootTest
-class OrderServiceTest {
-
-    @MockBean(name = "menuDao")
-    private MenuDao menuDao;
-
-    @MockBean(name = "orderTableDao")
-    private OrderTableDao orderTableDao;
-
-    @SpyBean
-    private OrderDao orderDao;
+class OrderServiceTest extends ServiceTest{
 
     @Autowired
     private OrderService orderService;
-
     private Order order;
 
     @BeforeEach
     void setUp() {
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1L);
-
-        order = new Order();
-        order.setOrderTableId(1L);
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
-
-        final OrderTable orderTable = new OrderTable();
+        final OrderTable orderTable = getOrderTable(1L);
         orderTable.setId(1L);
+        order = getOrder();
+        order.setOrderLineItems(Arrays.asList(getOrderLineItem(order.getId())));
+        final OrderLineItem orderLineItem = getOrderLineItem(order.getId());
+        orderLineItem.setSeq(1L);
 
         given(orderTableDao.findById(any())).willReturn(Optional.of(orderTable));
+        given(orderLineItemDao.save(any())).willReturn(orderLineItem);
         given(menuDao.countByIdIn(any())).willReturn(1L);
-    }
-
-    @Test
-    @DisplayName("주문을 생성한다.")
-    void create() {
-        final Order savedOrder = orderService.create(order);
-        assertAll(
-                () -> assertThat(savedOrder.getId()).isNotNull(),
-                () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(COOKING.name()),
-                () -> assertThat(savedOrder.getOrderedTime()).isNotNull()
-        );
+        given(orderDao.findById(any())).willReturn(Optional.ofNullable(order));
+        given(orderDao.save(any())).willReturn(order);
     }
 
     @Test
@@ -123,6 +93,7 @@ class OrderServiceTest {
     void changeInvalidOrderStatus() {
         // given
         final Order savedOrder = new Order();
+        savedOrder.setId(1L);
         savedOrder.setOrderStatus(COMPLETION.name());
         final Order newStatusOrder = new Order();
         newStatusOrder.setOrderStatus(COOKING.name());
