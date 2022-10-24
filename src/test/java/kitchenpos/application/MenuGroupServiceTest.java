@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹을_등록한다;
+import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -37,9 +37,9 @@ public class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 목록을 조회할 수 있다.")
     @Test
     void getMenuGroups() {
-        final MenuGroup 떡잎_유치원 = 메뉴_그룹을_등록한다("떡잎 유치원");
-        final MenuGroup 꽃잎_유치원 = 메뉴_그룹을_등록한다("꽃잎 유치원");
-        final MenuGroup 솔잎_유치원 = 메뉴_그룹을_등록한다("솔잎 유치원");
+        final MenuGroup 떡잎_유치원 = 메뉴_그룹_생성("떡잎 유치원");
+        final MenuGroup 꽃잎_유치원 = 메뉴_그룹_생성("꽃잎 유치원");
+        final MenuGroup 솔잎_유치원 = 메뉴_그룹_생성("솔잎 유치원");
 
         sut.create(떡잎_유치원);
         sut.create(꽃잎_유치원);

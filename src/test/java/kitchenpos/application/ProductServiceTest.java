@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.ProductFixture.상품을_등록한다;
+import static kitchenpos.fixture.ProductFixture.상품_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
@@ -50,8 +50,7 @@ class ProductServiceTest {
         @DisplayName("상품 가격이 없는 경우 등록할 수 없다.")
         @Test
         void createWithNullPrice() {
-            final Product product = new Product();
-            product.setName("짱구");
+            final Product product = 상품_생성("짱구", null);
 
             assertThatThrownBy(() -> sut.create(product))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -60,7 +59,7 @@ class ProductServiceTest {
         @DisplayName("상품 가격이 0원보다 적은 경우 등록할 수 없다.")
         @Test
         void createWithPriceLessThanZero() {
-            final Product 짱구 = 상품을_등록한다("짱구", -1);
+            final Product 짱구 = 상품_생성("짱구", -1);
 
             assertThatThrownBy(() -> sut.create(짱구))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -70,8 +69,8 @@ class ProductServiceTest {
     @DisplayName("상품 목록을 조회할 수 있다.")
     @Test
     void getProducts() {
-        final Product 짱구 = 상품을_등록한다("짱구", 100);
-        final Product 짱아 = 상품을_등록한다("짱아", 100);
+        final Product 짱구 = 상품_생성("짱구", 100);
+        final Product 짱아 = 상품_생성("짱아", 100);
 
         sut.create(짱구);
         sut.create(짱아);
