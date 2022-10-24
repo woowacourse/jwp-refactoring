@@ -6,22 +6,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.math.BigDecimal;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import kitchenpos.domain.Product;
 
-@SpringBootTest
-@Transactional
-class ProductServiceTest {
-
-    @Autowired
-    private ProductService productService;
+class ProductServiceTest extends ServiceTest {
 
     @Nested
     @DisplayName("create()")
@@ -63,14 +54,6 @@ class ProductServiceTest {
             // when, then
             assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        Product createProduct(String name, BigDecimal price) {
-            Product product = new Product();
-            product.setName(name);
-            product.setPrice(price);
-
-            return product;
         }
 
     }
