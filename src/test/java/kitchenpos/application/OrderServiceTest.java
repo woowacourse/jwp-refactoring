@@ -55,7 +55,7 @@ class OrderServiceTest extends ServiceTest {
     void changeOrderStatus() {
         Order saved = orderService.create(Fixtures.주문_후라이드());
         String 주문상태 = OrderStatus.MEAL.name();
-        saved.setOrderStatus(주문상태);
+        saved.updateOrderStatus(주문상태);
         assertThat(saved.getOrderStatus()).isEqualTo(주문상태);
 
         orderService.changeOrderStatus(saved.getId(), saved);

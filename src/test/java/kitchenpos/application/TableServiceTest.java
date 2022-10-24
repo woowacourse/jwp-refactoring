@@ -34,7 +34,7 @@ class TableServiceTest extends ServiceTest {
     void changeEmpty() {
         OrderTable 테이블_1 = tableService.create(Fixtures.테이블_1());
 
-        테이블_1.setEmpty(false);
+        테이블_1.updateEmpty(false);
         tableService.changeEmpty(테이블_1.getId(), 테이블_1);
 
         assertThat(orderTableDao.findById(테이블_1.getId()).orElseThrow().isEmpty())
@@ -45,7 +45,7 @@ class TableServiceTest extends ServiceTest {
     void changeNumberOfGuests() {
         OrderTable 테이블_1 = tableService.create(Fixtures.테이블_1());
 
-        테이블_1.setNumberOfGuests(100);
+        테이블_1.updateNumberOfGuests(100);
         tableService.changeNumberOfGuests(테이블_1.getId(), 테이블_1);
 
         assertThat(orderTableDao.findById(테이블_1.getId()).orElseThrow().getNumberOfGuests())

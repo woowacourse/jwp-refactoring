@@ -64,10 +64,10 @@ public class MenuService {
         final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
+            menuProduct.updateMenuId(menuId);
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
-        savedMenu.setMenuProducts(savedMenuProducts);
+        savedMenu.updateMenuProducts(savedMenuProducts);
 
         return savedMenu;
     }
@@ -76,7 +76,7 @@ public class MenuService {
         final List<Menu> menus = menuDao.findAll();
 
         for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+            menu.updateMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
         }
 
         return menus;
