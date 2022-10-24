@@ -37,4 +37,7 @@ public class ServiceTest {
 
     @Autowired
     protected OrderService orderService;
+
+    @Autowired
+    protected TableGroupService tableGroupService;
 }
