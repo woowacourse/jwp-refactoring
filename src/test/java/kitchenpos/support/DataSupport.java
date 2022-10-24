@@ -122,4 +122,9 @@ public class DataSupport {
         return orderTableDao.findById(id)
                 .get();
     }
+
+    public Order findOrder(final Long id) {
+        return orderDao.findById(id)
+                .get();
+    }
 }
