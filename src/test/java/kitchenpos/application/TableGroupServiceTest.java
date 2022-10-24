@@ -10,9 +10,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import kitchenpos.application.fixture.MenuFixture;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -192,23 +190,5 @@ class TableGroupServiceTest extends ServiceTestBase {
                 () -> assertThat(tableGroupDao.findById(savedTableGroup.getId())).isPresent(),
                 () -> assertThat(orderTableDao.findAllByTableGroupId(savedTableGroup.getId())).hasSize(2)
         );
-
-    }
-
-    private TableGroup 단체_지정_생성(final OrderTable... orderTables) {
-        List<OrderTable> orderTableList = Arrays.asList(orderTables);
-
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        tableGroup.setOrderTables(orderTableList);
-
-        return tableGroup;
-    }
-
-    private Order 주문_생성(final OrderTable orderTable) {
-        Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
-
-        return order;
     }
 }

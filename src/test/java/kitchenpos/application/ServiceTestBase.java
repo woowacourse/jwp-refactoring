@@ -1,6 +1,10 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -11,8 +15,11 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -94,5 +101,47 @@ public abstract class ServiceTestBase {
         orderTable.setNumberOfGuests(0);
 
         return orderTable;
+    }
+
+    protected Order 주문_생성(final Long orderTableId) {
+        Order order = new Order();
+        order.setOrderTableId(orderTableId);
+
+        return order;
+    }
+
+    protected Order 주문_생성(final OrderTable orderTable) {
+        Order order = new Order();
+        order.setOrderTableId(orderTable.getId());
+
+        return order;
+    }
+
+    protected TableGroup 단체_지정_생성(final OrderTable... orderTables) {
+        List<OrderTable> orderTableList = Arrays.stream(orderTables)
+                .collect(Collectors.toList());
+
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now());
+        tableGroup.setOrderTables(orderTableList);
+
+        return tableGroup;
+    }
+
+    protected OrderLineItem 주문_항목_생성(final Order order, final Menu menu, final long quantity) {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(menu.getId());
+        orderLineItem.setQuantity(quantity);
+        orderLineItem.setOrderId(order.getId());
+
+        return orderLineItem;
+    }
+
+    protected OrderLineItem 주문_항목_생성(final Menu menu, final long quantity) {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(menu.getId());
+        orderLineItem.setQuantity(quantity);
+
+        return orderLineItem;
     }
 }

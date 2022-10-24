@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -249,54 +248,11 @@ class OrderServiceTest extends ServiceTestBase {
         return order;
     }
 
-    private OrderLineItem 주문_항목_생성(final Menu menu, final long quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(quantity);
-
-        return orderLineItem;
-    }
-
-    private OrderLineItem 주문_항목_생성(final Order order, final Menu menu, final long quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(quantity);
-        orderLineItem.setOrderId(order.getId());
-
-        return orderLineItem;
-    }
-
-    private Order 주문_생성(final OrderTable orderTable) {
-        Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
-
-        return order;
-    }
-
-    private TableGroup 단체_지정_생성(final OrderTable... orderTables) {
-        List<OrderTable> orderTableList = Arrays.stream(orderTables)
-                .collect(Collectors.toList());
-
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        tableGroup.setOrderTables(orderTableList);
-
-        return tableGroup;
-    }
-
-
     private Order 주문_생성_및_저장(final OrderTable orderTable) {
         Order order = 주문_생성(orderTable);
         order.setOrderedTime(LocalDateTime.now());
         order.setOrderStatus(OrderStatus.COOKING.name());
 
         return orderDao.save(order);
-    }
-
-    private Order 주문_생성(final Long orderTableId) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-
-        return order;
     }
 }

@@ -10,10 +10,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.application.fixture.MenuFixture;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -108,7 +106,8 @@ class TableServiceTest extends ServiceTestBase {
     @Test
     void changeEmptyWithNotExistedTable() {
         // given
-        OrderTable newOrderTable = 주문_테이블_상태를_EMPTY_FALSE로();
+        OrderTable newOrderTable = new OrderTable();
+        newOrderTable.setEmpty(false);
 
         // when & then
         assertThatThrownBy(
@@ -125,7 +124,8 @@ class TableServiceTest extends ServiceTestBase {
         TableGroup tableGroup = tableGroupDao.save(단체_지정_생성(orderTable1));
         orderTable1.setTableGroupId(tableGroup.getId());
         OrderTable savedTable = orderTableDao.save(orderTable1);
-        OrderTable newOrderTable = 주문_테이블_상태를_EMPTY_FALSE로();
+        OrderTable newOrderTable = new OrderTable();
+        newOrderTable.setEmpty(false);
 
         // when & then
         assertThatThrownBy(
@@ -145,7 +145,8 @@ class TableServiceTest extends ServiceTestBase {
         OrderLineItem orderLineItem1 = 주문_항목_생성(order1, friedChicken, 1);
         orderLineItemDao.save(orderLineItem1);
 
-        OrderTable newOrderTable = 주문_테이블_상태를_EMPTY_FALSE로();
+        OrderTable newOrderTable = new OrderTable();
+        newOrderTable.setEmpty(false);
 
         // when & then
         assertThatThrownBy(
@@ -168,7 +169,8 @@ class TableServiceTest extends ServiceTestBase {
         OrderLineItem orderLineItem1 = 주문_항목_생성(savedOrder, friedChicken, 1);
         orderLineItemDao.save(orderLineItem1);
 
-        OrderTable newOrderTable = 주문_테이블_상태를_EMPTY_FALSE로();
+        OrderTable newOrderTable = new OrderTable();
+        newOrderTable.setEmpty(false);
 
         // when
         OrderTable orderTable = tableService.changeEmpty(savedTable.getId(), newOrderTable);
@@ -241,45 +243,11 @@ class TableServiceTest extends ServiceTestBase {
         assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(4);
     }
 
-    private OrderTable 주문_테이블_상태를_EMPTY_FALSE로() {
-        OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setEmpty(false);
-        return newOrderTable;
-    }
-
-
-    private TableGroup 단체_지정_생성(final OrderTable... orderTables) {
-        List<OrderTable> orderTableList = Arrays.stream(orderTables)
-                .collect(Collectors.toList());
-
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        tableGroup.setOrderTables(orderTableList);
-
-        return tableGroup;
-    }
-
     private Order 주문_생성_및_저장(final OrderTable orderTable) {
         Order order = 주문_생성(orderTable);
         order.setOrderedTime(LocalDateTime.now());
         order.setOrderStatus(OrderStatus.COOKING.name());
 
         return orderDao.save(order);
-    }
-
-    private Order 주문_생성(final OrderTable orderTable) {
-        Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
-
-        return order;
-    }
-
-    private OrderLineItem 주문_항목_생성(final Order order, final Menu menu, final long quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(quantity);
-        orderLineItem.setOrderId(order.getId());
-
-        return orderLineItem;
     }
 }
