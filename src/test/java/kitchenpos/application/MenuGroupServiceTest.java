@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.application.dto.MenuGroupRequest;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.Test;
@@ -21,9 +22,9 @@ class MenuGroupServiceTest {
     @Test
     void create() {
         // given
-        MenuGroup menuGroup = new MenuGroup("메뉴그룹");
+        MenuGroupRequest request = new MenuGroupRequest("메뉴그룹");
         // when
-        MenuGroup createdMenuGroup = menuGroupService.create(menuGroup);
+        MenuGroup createdMenuGroup = menuGroupService.create(request);
         // then
         assertThat(createdMenuGroup.getId()).isNotNull();
     }

@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 import kitchenpos.application.MenuGroupService;
+import kitchenpos.application.dto.MenuGroupRequest;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +27,15 @@ class MenuGroupRestControllerTest extends ControllerTest {
     void create() throws Exception {
         // given
         long id = 1L;
-        MenuGroup menuGroup = new MenuGroup("메뉴그룹");
-        menuGroup.setId(id);
+        String name = "메뉴그룹";
+        MenuGroup menuGroup = new MenuGroup(id, name);
 
         given(menuGroupService.create(any())).willReturn(menuGroup);
 
         // when
         ResultActions actions = mockMvc.perform(post("/api/menu-groups")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(menuGroup))
+                .content(objectMapper.writeValueAsString(new MenuGroupRequest(name)))
         );
 
         // then
