@@ -25,35 +25,64 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public Long getId() {
-        return id;
+    public void changeEmpty(boolean empty) {
+        validateTableGroupNull();
+        this.empty = empty;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    private void validateTableGroupNull() {
+        if (this.tableGroupId != null) {
+            throw new IllegalArgumentException("주문 테이블의 테이블 그룹이 없어야 합니다. : " + tableGroupId);
+        }
+    }
+
+    public void changeNumberOfGuests(int numberOfGuests) {
+        validatePositiveNumber(numberOfGuests);
+        validateNotEmpty();
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateNotEmpty() {
+        if (empty) {
+            throw new IllegalArgumentException("주문 테이블이 비어있기 때문에 손님의 수를 변경할 수 없습니다");
+        }
+    }
+
+    private void validatePositiveNumber(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("손님의 수를 음수로 변경할 수 없습니다 : " + numberOfGuests);
+        }
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public Long getTableGroupId() {
         return tableGroupId;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
     }
 
     public boolean isEmpty() {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setTableGroupId(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+    }
+
+    public void setNumberOfGuests(int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public void setEmpty(boolean empty) {
         this.empty = empty;
     }
 }
