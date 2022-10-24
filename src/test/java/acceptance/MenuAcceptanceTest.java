@@ -60,7 +60,7 @@ public class MenuAcceptanceTest {
         List<Menu> menus = getMenus();
 
         // then
-        assertThat(menus).extracting(Menu::getId, Menu::getName, p -> p.getPrice().intValueExact())
+        assertThat(menus).extracting(Menu::getId, Menu::getName, menu -> menu.getPrice().intValueExact())
                 .containsExactlyInAnyOrder(
                         tuple(menuId1, "해장 세트", 15000),
                         tuple(menuId2, "아재 세트", 13000),
