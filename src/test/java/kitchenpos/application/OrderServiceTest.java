@@ -6,18 +6,18 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.support.IntegrationServiceTest;
 import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.annotation.Rollback;
 
-@Transactional
+@Rollback
 class OrderServiceTest extends IntegrationServiceTest {
 
     private static final OrderLineItem ORDER_LINE_ITEM = new OrderLineItem(1L, 1L);
@@ -116,13 +116,20 @@ class OrderServiceTest extends IntegrationServiceTest {
         @Nested
         class 이미_계산완료된_주문의_상태를_변경하려는_경우 {
 
-            final Order savedOrder =
-                    orderDao.save(new Order(1L, OrderStatus.COMPLETION.name(), now(), ORDER_LINE_ITEMS));
-            final Long savedOrderId = savedOrder.getId();
-            final Order orderToChange = new Order(null, OrderStatus.MEAL.name(), now(), ORDER_LINE_ITEMS);
+            private final Order orderToChange = new Order(null, OrderStatus.MEAL.name(), now(), ORDER_LINE_ITEMS);
+            private Long savedOrderId;
+
+            @AfterEach
+            void tearDown() {
+                dbTableCleaner.removeRecordByPk("ORDERS", savedOrderId);
+            }
 
             @Test
+            @Rollback
             void 예외를_발생한다() {
+                this.savedOrderId =
+                        orderDao.save(new Order(1L, OrderStatus.COMPLETION.name(), now(), ORDER_LINE_ITEMS))
+                        .getId();
 
                 assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrderId, orderToChange))
                         .isInstanceOf(IllegalArgumentException.class)

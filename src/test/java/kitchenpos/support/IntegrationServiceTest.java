@@ -9,6 +9,7 @@ import kitchenpos.application.TableService;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -48,4 +49,13 @@ abstract public class IntegrationServiceTest {
     @Autowired
     protected TableGroupDao tableGroupDao;
 
+
+    // Support's
+    @Autowired
+    protected DbTableCleaner dbTableCleaner;
+
+    @AfterEach
+    void tearDown() {
+//        dbTableCleaner.clear();
+    }
 }
