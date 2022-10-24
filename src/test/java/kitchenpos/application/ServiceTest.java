@@ -1,5 +1,8 @@
 package kitchenpos.application;
 
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
 import org.assertj.core.data.Percentage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,4 +22,16 @@ public class ServiceTest {
 
     @Autowired
     protected MenuService menuService;
+
+    @Autowired
+    protected TableService tableService;
+
+    @Autowired
+    protected OrderTableDao orderTableDao;
+
+    @Autowired
+    protected TableGroupDao tableGroupDao;
+
+    @Autowired
+    protected OrderDao orderDao;
 }
