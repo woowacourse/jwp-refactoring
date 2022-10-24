@@ -162,4 +162,11 @@ public class ServiceTestBase {
         orderTable.setNumberOfGuests(3);
         return orderTableDao.save(orderTable);
     }
+
+    public OrderTable 빈_주문_테이블_생성() {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(true);
+        orderTable.setNumberOfGuests(3);
+        return orderTableDao.save(orderTable);
+    }
 }

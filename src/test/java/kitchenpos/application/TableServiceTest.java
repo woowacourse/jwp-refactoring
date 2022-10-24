@@ -133,5 +133,14 @@ class TableServiceTest extends ServiceTestBase {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    
+    @Test
+    void 비어있는_주문_테이블의_손님_수는_변경_불가능() {
+        // given
+        OrderTable orderTable = 빈_주문_테이블_생성();
+        orderTable.setNumberOfGuests(1);
+
+        // when & then
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTable))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }
