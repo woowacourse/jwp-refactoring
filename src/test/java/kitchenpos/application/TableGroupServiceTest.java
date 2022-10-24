@@ -45,7 +45,7 @@ class TableGroupServiceTest {
 
     @Test
     void createThrowExceptionNotCollectOrderTableSize() {
-        TableGroup tableGroup = TableGroup.of(LocalDateTime.now(), List.of());
+        TableGroup tableGroup = TableGroup.of(LocalDateTime.now(), new ArrayList<>());
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -107,10 +107,10 @@ class TableGroupServiceTest {
 
     @Test
     void ungroupThrowExceptionWhenStillCookingOrderTable() {
-        Long tableGroupId = tableGroupDao.save(TableGroup.of(LocalDateTime.now(), List.of()))
+        Long tableGroupId = tableGroupDao.save(TableGroup.of(LocalDateTime.now(), new ArrayList<>()))
                 .getId();
         OrderTable orderTable = orderTableDao.save(OrderTable.of(tableGroupId, 10, true));
-        orderDao.save(Order.of(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), List.of()));
+        orderDao.save(Order.of(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -119,10 +119,10 @@ class TableGroupServiceTest {
 
     @Test
     void ungroupThrowExceptionWhenStillMeal() {
-        Long tableGroupId = tableGroupDao.save(TableGroup.of(LocalDateTime.now(), List.of()))
+        Long tableGroupId = tableGroupDao.save(TableGroup.of(LocalDateTime.now(), new ArrayList<>()))
                 .getId();
         OrderTable orderTable = orderTableDao.save(OrderTable.of(tableGroupId, 10, true));
-        orderDao.save(Order.of(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), List.of()));
+        orderDao.save(Order.of(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), new ArrayList<>()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
                 .isInstanceOf(IllegalArgumentException.class)
