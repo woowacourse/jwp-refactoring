@@ -6,6 +6,9 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.exception.InvalidTableGroupExistException;
+import kitchenpos.exception.InvalidTableGroupMinimumException;
+import kitchenpos.exception.InvalidTableGroupNonUngroupIsOrderStatusException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -33,7 +36,7 @@ public class TableGroupService {
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new InvalidTableGroupMinimumException();
         }
 
         final List<Long> orderTableIds = orderTables.stream()
@@ -48,7 +51,7 @@ public class TableGroupService {
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
+                throw new InvalidTableGroupExistException();
             }
         }
 
@@ -77,7 +80,7 @@ public class TableGroupService {
 
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new InvalidTableGroupNonUngroupIsOrderStatusException();
         }
 
         for (final OrderTable orderTable : orderTables) {
