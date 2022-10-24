@@ -29,19 +29,19 @@ public class TableRestController {
         return ResponseEntity.ok().body(tableService.list());
     }
 
-    @PutMapping("/api/tables/{orderTableId}/empty")
+    @PatchMapping(value = "/api/tables/{orderTableId}", params = "empty")
     public ResponseEntity<OrderTable> changeEmpty(
             @PathVariable final Long orderTableId,
-            @RequestBody final OrderTable orderTable
+            @RequestParam final boolean empty
     ) {
-        return ResponseEntity.ok().body(tableService.changeEmpty(orderTableId, orderTable));
+        return ResponseEntity.ok().body(tableService.changeEmpty(orderTableId, empty));
     }
 
-    @PutMapping("/api/tables/{orderTableId}/number-of-guests")
+    @PatchMapping(value = "/api/tables/{orderTableId}", params = "numberOfGuests")
     public ResponseEntity<OrderTable> changeNumberOfGuests(
             @PathVariable final Long orderTableId,
-            @RequestBody final OrderTable orderTable
+            @RequestParam final int numberOfGuests
     ) {
-        return ResponseEntity.ok().body(tableService.changeNumberOfGuests(orderTableId, orderTable));
+        return ResponseEntity.ok().body(tableService.changeNumberOfGuests(orderTableId, numberOfGuests));
     }
 }

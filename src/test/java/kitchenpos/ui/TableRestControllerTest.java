@@ -1,8 +1,11 @@
 package kitchenpos.ui;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -67,12 +70,11 @@ class TableRestControllerTest extends ControllerTest {
     void changeEmpty() throws Exception {
         // given
         OrderTable orderTable = new OrderTable(1L, 0, true);
-        given(tableService.changeEmpty(any(), any())).willReturn(orderTable);
+        given(tableService.changeEmpty(any(), anyBoolean())).willReturn(orderTable);
 
         // when
-        ResultActions actions = mockMvc.perform(put("/api/tables/{orderTableId}/empty", 1L)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(orderTable))
+        ResultActions actions = mockMvc.perform(patch("/api/tables/{orderTableId}", 1L)
+                .queryParam("empty", String.valueOf(true))
         );
 
         // then
@@ -84,12 +86,11 @@ class TableRestControllerTest extends ControllerTest {
     void changeNumberOfGuests() throws Exception {
         // given
         OrderTable orderTable = new OrderTable(1L, 2, false);
-        given(tableService.changeNumberOfGuests(any(), any())).willReturn(orderTable);
+        given(tableService.changeNumberOfGuests(any(), anyInt())).willReturn(orderTable);
 
         // when
-        ResultActions actions = mockMvc.perform(put("/api/tables/{orderTableId}/number-of-guests", 1L)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(orderTable))
+        ResultActions actions = mockMvc.perform(patch("/api/tables/{orderTableId}", 1L)
+                .queryParam("numberOfGuests", String.valueOf(2))
         );
 
         // then
