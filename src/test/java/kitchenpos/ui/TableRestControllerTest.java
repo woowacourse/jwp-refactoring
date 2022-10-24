@@ -13,17 +13,19 @@ import java.util.List;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
-@WebMvcTest(TableRestController.class)
 class TableRestControllerTest extends ControllerTest {
 
-    @MockBean
     private TableService tableService;
+
+    @Autowired
+    public TableRestControllerTest(TableService tableService) {
+        this.tableService = tableService;
+    }
 
     @Test
     void create() throws Exception {

@@ -13,16 +13,14 @@ import java.util.List;
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
-@WebMvcTest(MenuRestController.class)
 class MenuRestControllerTest extends ControllerTest {
 
-    @MockBean
+    @Autowired
     private MenuService menuService;
 
     @Test
