@@ -1,6 +1,10 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuTestFixture.떡볶이;
+import static kitchenpos.fixture.ProductFixture.불맛_떡볶이;
+
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
@@ -9,9 +13,12 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.MenuGroupFixture;
@@ -74,6 +81,14 @@ public class ServiceTestBase {
                 .collect(Collectors.toList());
     }
 
+    public Menu 분식_메뉴_생성() {
+        MenuGroup menuGroup = menuGroupDao.save(MenuGroupFixture.분식.toEntity());
+        Product product = productDao.save(불맛_떡볶이.toEntity());
+        List<MenuProduct> menuProducts = 메뉴_상품_목록_생성(product);
+        Menu menu = 떡볶이.toEntity(menuGroup.getId(), menuProducts);
+        return menuService.create(menu);
+    }
+
     public List<MenuProduct> 메뉴_상품_목록(final Product... products) {
         return Arrays.stream(products)
                 .map(this::메뉴_상품)
@@ -104,6 +119,17 @@ public class ServiceTestBase {
         menuProduct.setProductId(product.getId());
         menuProduct.setQuantity(quantity);
         return menuProduct;
+    }
+
+    public void 주문_생성(final Menu menu, final OrderTable orderTable, final OrderStatus orderStatus) {
+        Order order = new Order();
+        List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목(menu.getId()));
+        order.setOrderLineItems(orderLineItems);
+        order.setOrderTableId(orderTable.getId());
+
+        Order savedOrder = orderService.create(order);
+        savedOrder.setOrderStatus(orderStatus.name());
+        orderService.changeOrderStatus(savedOrder.getId(), savedOrder);
     }
 
     public OrderLineItem 주문_항목(final Long menuId) {
