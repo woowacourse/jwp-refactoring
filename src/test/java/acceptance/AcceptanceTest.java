@@ -1,12 +1,10 @@
 package acceptance;
 
-
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import io.restassured.RestAssured;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -14,9 +12,12 @@ import kitchenpos.Application;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
@@ -25,6 +26,14 @@ import org.springframework.http.HttpStatus;
         classes = Application.class
 )
 public class AcceptanceTest {
+
+    @LocalServerPort
+    private int port;
+
+    @BeforeEach
+    void setUp() {
+        RestAssured.port = port;
+    }
 
     protected long 상품_생성(final String name, final int price) {
         Product product = givenProduct(name, price);
@@ -107,5 +116,30 @@ public class AcceptanceTest {
                 .get("/api/menus")
                 .then().log().all()
                 .extract().body().jsonPath().getList(".", Menu.class);
+    }
+
+    protected long 테이블_생성(int numberOfGuests, boolean empty) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setEmpty(empty);
+
+        return RestAssured.given().log().all()
+                .header(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .body(orderTable)
+                .when().log().all()
+                .post("/api/tables")
+                .then().log().all()
+                .statusCode(HttpStatus.CREATED.value())
+                .extract().jsonPath().getLong("id");
+    }
+
+    protected List<OrderTable> 테이블_목록_조회() {
+        return RestAssured.given().log().all()
+                .header(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .when().log().all()
+                .get("/api/tables")
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .extract().jsonPath().getList(".", OrderTable.class);
     }
 }

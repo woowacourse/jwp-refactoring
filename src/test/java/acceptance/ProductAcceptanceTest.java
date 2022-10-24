@@ -3,27 +3,16 @@ package acceptance;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
-import io.restassured.RestAssured;
 import java.util.List;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.web.server.LocalServerPort;
 
 public class ProductAcceptanceTest extends AcceptanceTest{
 
-    @LocalServerPort
-    private int port;
-
-    @BeforeEach
-    void setUp() {
-        RestAssured.port = port;
-    }
-
     @DisplayName("상품 목록을 조회한다.")
     @Test
-    void findMenuList() {
+    void getMenus() {
         // given
         long productId1 = 상품_생성("후라이드", 19000);
         long productId2 = 상품_생성("돼지국밥", 9000);
