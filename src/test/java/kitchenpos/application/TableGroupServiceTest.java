@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -65,5 +66,22 @@ class TableGroupServiceTest extends ServiceTestBase {
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 단체_지정_정상_해제() {
+        // given
+        TableGroup tableGroup = new TableGroup();
+        List<OrderTable> orderTables = Arrays.asList(빈_주문_테이블_생성(), 빈_주문_테이블_생성());
+        tableGroup.setOrderTables(orderTables);
+        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        Long tableGroupId = savedTableGroup.getId();
+
+        // when
+        tableGroupService.ungroup(tableGroupId);
+
+        // then
+        List<OrderTable> actual = orderTableDao.findAllByTableGroupId(tableGroupId);
+        assertThat(actual).isEmpty();
     }
 }
