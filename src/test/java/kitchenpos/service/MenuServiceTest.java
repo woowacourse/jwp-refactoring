@@ -23,6 +23,7 @@ import kitchenpos.application.ProductService;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 
 @SpringBootTest
@@ -50,19 +51,16 @@ public class MenuServiceTest {
     void setUp() {
         Product savedProduct = productService.create(testFixture.삼겹살());
         MenuGroup savedMenuGroup = menuGroupService.create(testFixture.삼겹살_종류());
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(1L);
+        MenuProduct menuProduct = new MenuProduct(savedProduct.getId(), 1L);
 
         this.menuGroup = savedMenuGroup;
-        this.menuProducts = new ArrayList<>();
-        this.menuProducts.add(menuProduct);
+        this.menuProducts = List.of(menuProduct);
     }
 
     @DisplayName("메뉴의 가격이 존재하지 않는다면 예외가 발생한다.")
     @Test
     public void menuWithNullPrice() {
-        Menu menu = new Menu();
+        Menu menu = new Menu("맛있는 메뉴", null, menuGroup.getId(), menuProducts);
 
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -71,8 +69,7 @@ public class MenuServiceTest {
     @DisplayName("메뉴의 가격이 음수라면 예외가 발생한다.")
     @Test
     public void menuWithNegativePrice() {
-        Menu menu = new Menu();
-        menu.setPrice(BigDecimal.valueOf(-1L));
+        Menu menu = new Menu("맛있는 메뉴", BigDecimal.valueOf(-1), menuGroup.getId(), menuProducts);
 
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -81,10 +78,7 @@ public class MenuServiceTest {
     @DisplayName("메뉴 그룹이 존재하지 않다면 예외가 발생한다.")
     @Test
     public void menuGroupNotSaved() {
-        Menu menu = new Menu();
-        menu.setName("삼겹살 정식");
-        menu.setPrice(BigDecimal.valueOf(1000L));
-        menu.setMenuGroupId(-1L);
+        Menu menu = new Menu("맛있는 메뉴", BigDecimal.valueOf(1000), null, menuProducts);
 
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -93,30 +87,19 @@ public class MenuServiceTest {
     @DisplayName("메뉴 내에 존재하지 않는 상품이 있는 경우 예외가 발생한다.")
     @Test
     public void menuProductNotContained() {
-        Menu menu = new Menu();
-        menu.setName("삼겹살 정식");
-        menu.setPrice(BigDecimal.valueOf(1000L));
-        menu.setMenuGroupId(menuGroup.getId());
-
         List<MenuProduct> copiedProducts = new ArrayList<>(menuProducts);
-        MenuProduct fakeProduct = new MenuProduct();
-        fakeProduct.setProductId(-1L);
-        fakeProduct.setQuantity(10);
+        MenuProduct fakeProduct = new MenuProduct(-1L, 10);
         copiedProducts.add(fakeProduct);
-        menu.setMenuProducts(copiedProducts);
+        Menu menu = new Menu("맛있는 메뉴", BigDecimal.valueOf(1000), null, copiedProducts);
 
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("가격의 합보다 메뉴의 가격이 비싸다면 예외가 발생한다.")
+    @DisplayName("상품의 가격 합보다 메뉴의 가격이 비싸다면 예외가 발생한다.")
     @Test
     public void menuProductPriceDoesNotExceedTotalSum() {
-        Menu menu = new Menu();
-        menu.setName("삼겹살 정식");
-        menu.setPrice(BigDecimal.valueOf(1500L));
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setMenuProducts(menuProducts);
+        Menu menu = new Menu("맛있는 메뉴", BigDecimal.valueOf(1500), menuGroup.getId(), menuProducts);
 
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
