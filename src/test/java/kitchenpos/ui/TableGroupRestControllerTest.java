@@ -25,7 +25,7 @@ public class TableGroupRestControllerTest extends ControllerTest {
     @MockBean
     private TableGroupService tableGroupService;
 
-    @DisplayName("테이블 그룹을 생성한다.")
+    @DisplayName("단체 지정을 생성한다.")
     @Test
     public void create() throws Exception {
         // given
@@ -44,7 +44,7 @@ public class TableGroupRestControllerTest extends ControllerTest {
         perform.andExpect(status().isCreated());
     }
 
-    @DisplayName("테이블 그룹을 삭제한다.")
+    @DisplayName("단체 지정을 해제한다.")
     @Test
     public void ungroup() throws Exception {
         // when
