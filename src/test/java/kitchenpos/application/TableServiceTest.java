@@ -16,13 +16,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.fixture.MenuFixture;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -36,36 +29,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
-@Sql("/truncate.sql")
-@SpringBootTest
-class TableServiceTest {
+
+class TableServiceTest extends ServiceTestBase {
 
     @Autowired
     private TableService tableService;
-
-    @Autowired
-    private OrderDao orderDao;
-
-    @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private MenuDao menuDao;
-
-    @Autowired
-    private OrderLineItemDao orderLineItemDao;
-
-    @Autowired
-    private OrderTableDao orderTableDao;
-
-    @Autowired
-    private TableGroupDao tableGroupDao;
 
     private Menu friedChicken;
     private Menu seasonedChicken;

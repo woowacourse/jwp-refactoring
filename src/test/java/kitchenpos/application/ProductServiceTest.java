@@ -8,20 +8,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
-@Sql("/truncate.sql")
-@SpringBootTest
-class ProductServiceTest {
 
-    @Autowired
-    private ProductDao productDao;
+class ProductServiceTest extends ServiceTestBase {
 
     @Autowired
     private ProductService productService;

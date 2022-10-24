@@ -6,6 +6,8 @@ import static kitchenpos.application.fixture.MenuFixture.후라이드_치킨;
 import static kitchenpos.application.fixture.MenuGroupFixture.치킨;
 import static kitchenpos.application.fixture.MenuGroupFixture.피자;
 import static kitchenpos.application.fixture.MenuProductFixture.메뉴_상품_생성;
+import static kitchenpos.application.fixture.OrderTableFixture.빈_주문_테이블_생성;
+import static kitchenpos.application.fixture.OrderTableFixture.주문_테이블_생성;
 import static kitchenpos.application.fixture.ProductFixture.양념_치킨;
 import static kitchenpos.application.fixture.ProductFixture.포테이토_피자;
 import static kitchenpos.application.fixture.ProductFixture.후라이드_치킨;
@@ -18,13 +20,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -38,36 +33,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
-@Sql("/truncate.sql")
-@SpringBootTest
-class OrderServiceTest {
+class OrderServiceTest extends ServiceTestBase {
 
     @Autowired
     private OrderService orderService;
-
-    @Autowired
-    private OrderDao orderDao;
-
-    @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private MenuDao menuDao;
-
-    @Autowired
-    private OrderLineItemDao orderLineItemDao;
-
-    @Autowired
-    private OrderTableDao orderTableDao;
-
-    @Autowired
-    private TableGroupDao tableGroupDao;
 
     private Menu friedChicken;
     private Menu seasonedChicken;
@@ -317,22 +287,6 @@ class OrderServiceTest {
         return tableGroup;
     }
 
-    private OrderTable 주문_테이블_생성() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(2);
-
-        return orderTable;
-    }
-
-
-    private OrderTable 빈_주문_테이블_생성() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        orderTable.setNumberOfGuests(0);
-
-        return orderTable;
-    }
 
     private Order 주문_생성_및_저장(final OrderTable orderTable) {
         Order order = 주문_생성(orderTable);
