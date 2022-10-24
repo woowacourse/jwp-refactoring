@@ -113,4 +113,22 @@ public class MenuServiceTest {
         assertThatThrownBy(() -> menuService.create(야채곱창_메뉴))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @DisplayName("메뉴를 등록할 때, 메뉴 그룹이 존재하지 않으면 예외가 발생한다.")
+    @Test
+    void 메뉴를_등록할_때_메뉴_그룹이_존재하지_않으면_예외가_발생한다() {
+        // given
+        Long 잘못된_메뉴그룹_아이디 = -1L;
+
+        Menu 야채곱창_메뉴 = new MenuBuilder()
+                .name(야채곱창_이름)
+                .price(야채곱창_가격)
+                .menuGroupId(잘못된_메뉴그룹_아이디)
+                .menuProducts(List.of(루나_야채곱창))
+                .build();
+
+        // when & then
+        assertThatThrownBy(() -> menuService.create(야채곱창_메뉴))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }
