@@ -121,6 +121,30 @@ class OrderServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @Test
+    void 주문_목록_조회() {
+        // given
+        Order order = new Order();
+        List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
+        order.setOrderLineItems(orderLineItems);
+        order.setOrderTableId(orderTableId);
+        Order savedOrder = orderService.create(order);
+
+        // when
+        List<Order> orders = orderService.list();
+
+        // then
+        assertThat(orders)
+                .usingRecursiveComparison()
+                .ignoringFields("orderLineItems")
+                .isEqualTo(Collections.singletonList(savedOrder));
+
+        assertThat(orders.get(0).getOrderLineItems())
+                .usingRecursiveComparison()
+                .ignoringFields("seq")
+                .isEqualTo(orderLineItems);
+    }
+
     private OrderLineItem menuId가_null인_주문_항목() {
         return 주문_항목(null);
     }
