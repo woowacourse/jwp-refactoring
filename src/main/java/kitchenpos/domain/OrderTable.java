@@ -8,6 +8,10 @@ public class OrderTable {
 
     public OrderTable(){}
 
+    public OrderTable(int numberOfGuests, boolean empty) {
+        this(null, null, numberOfGuests, empty);
+    }
+
     public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
         this(null, tableGroupId, numberOfGuests, empty);
     }

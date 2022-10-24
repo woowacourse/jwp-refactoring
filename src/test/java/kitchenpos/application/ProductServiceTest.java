@@ -1,10 +1,8 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

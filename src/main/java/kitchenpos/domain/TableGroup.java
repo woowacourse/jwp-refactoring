@@ -11,6 +11,10 @@ public class TableGroup {
 
     public TableGroup(){}
 
+    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
+        this(null, createdDate, orderTables);
+    }
+
     public TableGroup(LocalDateTime createdDate) {
         this(null, createdDate, Collections.emptyList());
     }
