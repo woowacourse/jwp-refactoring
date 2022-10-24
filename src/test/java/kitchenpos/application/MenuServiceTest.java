@@ -75,7 +75,8 @@ class MenuServiceTest extends ServiceTestBase {
         // when & then
         assertThatThrownBy(
                 () -> menuService.create(menu)
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("메뉴의 가격은 비어있거나 0보다 작을 수 없습니다.");
     }
 
     @DisplayName("메뉴의 가격이 0보다 작으면 예외가 발생한다.")
@@ -88,19 +89,21 @@ class MenuServiceTest extends ServiceTestBase {
         // when & then
         assertThatThrownBy(
                 () -> menuService.create(menu)
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("메뉴의 가격은 비어있거나 0보다 작을 수 없습니다.");
     }
 
     @DisplayName("메뉴 그룹의 아이디가 존재하지 않으면 예외를 발생한다.")
     @Test
     void createNoProduct() {
         // given
-        Menu menu = 메뉴_등록("후라이드치킨", BigDecimal.valueOf(-1000), 0L);
+        Menu menu = 메뉴_등록("후라이드치킨", BigDecimal.valueOf(18000), 0L);
 
         // when & then
         assertThatThrownBy(
                 () -> menuService.create(menu)
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("존재하지 않는 메뉴 그룹입니다.");
     }
 
     @DisplayName("MenuProduct의 product가 존재하지 않으면 예외를 발생한다.")
@@ -117,7 +120,8 @@ class MenuServiceTest extends ServiceTestBase {
         // when & then
         assertThatThrownBy(
                 () -> menuService.create(menuPizza)
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("존재하지 않는 상품입니다.");
     }
 
     @DisplayName("가격이 구매할 수 있는 product의 금액보다 크면 예외를 발생한다.")
@@ -135,7 +139,8 @@ class MenuServiceTest extends ServiceTestBase {
         // when & then
         assertThatThrownBy(
                 () -> menuService.create(menuPizza)
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("가격이 유효하지 않습니다.");
     }
 
     @DisplayName("가격이 구매할 수 있는 product의 금액보다 같거나 작으면 예외를 발생하지 않는다.")

@@ -61,10 +61,11 @@ class ProductServiceTest extends ServiceTestBase {
         // when & then
         assertThatThrownBy(
                 () -> productService.create(chicken)
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("상품의 가격은 비어있거나 0보다 작을 수 없습니다.");
     }
 
-    @DisplayName("상품 등록 시 상품의 가격이 비어있으면 예외를 발생한다.")
+    @DisplayName("상품 등록 시 상품의 가격이 음수이면 예외를 발생한다.")
     @Test
     void createPrice0Product() {
         // given
@@ -73,6 +74,7 @@ class ProductServiceTest extends ServiceTestBase {
         // when & then
         assertThatThrownBy(
                 () -> productService.create(chicken)
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("상품의 가격은 비어있거나 0보다 작을 수 없습니다.");
     }
 }
