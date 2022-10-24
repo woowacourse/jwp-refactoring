@@ -26,16 +26,17 @@ public class MenuServiceTest {
     @Test
     void create() {
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
-                "2인육회", 24000L, 3L, List.of(new MenuProductsRequest(5L, 2L)));
+                "2인육회", 24000L, 3L,
+                List.of(new MenuProductsRequest(5L, 2L)));
 
-        Menu savedMenu = menuService.create(menuCreateRequest);
+        Menu menu = menuService.create(menuCreateRequest);
 
         assertAll(
-                () -> assertThat(savedMenu.getMenuGroupId()).isEqualTo(3L),
-                () -> assertThat(savedMenu.getName()).isEqualTo("2인육회"),
-                () -> assertThat(savedMenu.getPrice()).isEqualTo(24000L),
-                () -> assertThat(savedMenu.getMenuProducts()).isEqualTo(
-                        List.of(new MenuProduct(savedMenu.getId(), 5L, 2L)))
+                () -> assertThat(menu.getMenuGroupId()).isEqualTo(3L),
+                () -> assertThat(menu.getName()).isEqualTo("2인육회"),
+                () -> assertThat(menu.getPrice()).isEqualTo(24000L),
+                () -> assertThat(menu.getMenuProducts()).isEqualTo(
+                        List.of(new MenuProduct(menu.getId(), 5L, 2L)))
         );
     }
 
