@@ -9,9 +9,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import kitchenpos.Application;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -73,12 +75,21 @@ public class AcceptanceTest {
                 .extract().body().jsonPath().getList(".", MenuGroup.class);
     }
 
-    protected long 메뉴_생성(String name, int price, long menuGroup) {
+    protected long 메뉴_생성(String name, int price, long menuGroup, List<Long> products, int quantity) {
+        List<MenuProduct> menuProducts = products.stream()
+                .map(product -> {
+                    MenuProduct menuProduct = new MenuProduct();
+                    menuProduct.setProductId(product);
+                    menuProduct.setQuantity(quantity);
+                    return menuProduct;
+                })
+                .collect(Collectors.toList());
+
         Menu menu = new Menu();
         menu.setName(name);
         menu.setPrice(BigDecimal.valueOf(price));
         menu.setMenuGroupId(menuGroup);
-        menu.setMenuProducts(new ArrayList<>());
+        menu.setMenuProducts(menuProducts);
 
         return RestAssured.given().log().all()
                 .header(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
