@@ -4,7 +4,9 @@ import static kitchenpos.fixture.MenuTestFixture.떡볶이;
 import static kitchenpos.fixture.ProductFixture.불맛_떡볶이;
 import static kitchenpos.fixture.ProductFixture.짜장맛_떡볶이;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -61,7 +63,7 @@ class OrderServiceTest {
         Long menuGroupId = menuGroupDao.save(MenuGroupFixture.분식.toEntity())
                 .getId();
 
-        List<MenuProduct> menuProducts = 메뉴_상품_목록_생성(
+        List<MenuProduct> menuProducts = 메뉴_상품_목록(
                 상품_생성(불맛_떡볶이),
                 상품_생성(짜장맛_떡볶이)
         );
@@ -82,7 +84,7 @@ class OrderServiceTest {
     void 주문_정상_생성() {
         // given
         Order order = new Order();
-        List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목_생성());
+        List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
         order.setOrderLineItems(orderLineItems);
         order.setOrderTableId(orderTableId);
 
@@ -94,7 +96,24 @@ class OrderServiceTest {
         assertThat(actual).isNotEmpty();
     }
 
-    private OrderLineItem 주문_항목_생성() {
+    @Test
+    void 주문_항목_0개인_경우_실패() {
+        // given
+        Order order = new Order();
+        order.setOrderLineItems(new ArrayList<>());
+        order.setOrderTableId(orderTableId);
+
+        // when & then
+        assertThatThrownBy(() -> orderService.create(order))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+
+    private OrderLineItem 주문_항목() {
+        return 주문_항목(menuId);
+    }
+
+    private OrderLineItem 주문_항목(final Long menuId) {
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(menuId);
         orderLineItem.setQuantity(1);
@@ -105,13 +124,13 @@ class OrderServiceTest {
         return productDao.save(productFixture.toEntity());
     }
 
-    private List<MenuProduct> 메뉴_상품_목록_생성(final Product... products) {
+    private List<MenuProduct> 메뉴_상품_목록(final Product... products) {
         return Arrays.stream(products)
-                .map(this::메뉴_상품_생성)
+                .map(this::메뉴_상품)
                 .collect(Collectors.toList());
     }
 
-    private MenuProduct 메뉴_상품_생성(final Product product) {
+    private MenuProduct 메뉴_상품(final Product product) {
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setMenuId(null);
         menuProduct.setProductId(product.getId());
