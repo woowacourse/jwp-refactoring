@@ -7,8 +7,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import com.sun.tools.javac.util.List;
 import java.math.BigDecimal;
+import java.util.List;
 import kitchenpos.common.builder.MenuBuilder;
 import kitchenpos.common.builder.MenuGroupBuilder;
 import kitchenpos.common.builder.MenuProductBuilder;
@@ -130,5 +130,66 @@ public class MenuServiceTest {
         // when & then
         assertThatThrownBy(() -> menuService.create(야채곱창_메뉴))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("메뉴를 등록할 때, 메뉴 상품이 상품에 등록되어 있지 않으면 예외가 발생한다.")
+    @Test
+    void 메뉴를_등록할_때_메뉴_상품이_상품에_등록되어_있지_않으면_예외가_발생한다() {
+        // given
+        Long 잘못된_메뉴상품_아이디 = -1L;
+        MenuProduct 등록되지_않은_메뉴상품 = new MenuProductBuilder()
+                .productId(잘못된_메뉴상품_아이디)
+                .quantity(1)
+                .build();
+
+        Menu 야채곱창_메뉴 = new MenuBuilder()
+                .name(야채곱창_이름)
+                .price(야채곱창_가격)
+                .menuGroupId(루나세트.getId())
+                .menuProducts(List.of(등록되지_않은_메뉴상품))
+                .build();
+
+        // when & then
+        assertThatThrownBy(() -> menuService.create(야채곱창_메뉴))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("메뉴를 등록할 때, 메뉴 가격이 메뉴상품 가격 합보다 크면 예외가 발생한다.")
+    @Test
+    void 메뉴를_등록할_때_메뉴_가격이_메뉴상품_가격_합보다_크면_예외가_발생한다() {
+        // given
+        BigDecimal 흑자_가격 = new BigDecimal(20000);
+
+        Menu 야채곱창_메뉴 = new MenuBuilder()
+                .name(야채곱창_이름)
+                .price(흑자_가격)
+                .menuGroupId(루나세트.getId())
+                .menuProducts(List.of(루나_야채곱창))
+                .build();
+
+        // when & then
+        assertThatThrownBy(() -> menuService.create(야채곱창_메뉴))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("메뉴 목록을 조회한다.")
+    @Test
+    void 메뉴_목록을_조회한다() {
+        // given
+        Menu 야채곱창_메뉴 = new MenuBuilder()
+                .name(야채곱창_이름)
+                .price(야채곱창_가격)
+                .menuGroupId(루나세트.getId())
+                .menuProducts(List.of(루나_야채곱창))
+                .build();
+
+        menuService.create(야채곱창_메뉴);
+
+        // when
+        List<Menu> 메뉴들 = menuService.list();
+
+        // then
+        assertThat(메뉴들).extracting(Menu::getName)
+                .contains(야채곱창_이름);
     }
 }
