@@ -16,6 +16,7 @@ public class JdbcTemplateTest {
     protected JdbcTemplateMenuDao jdbcTemplateMenuDao;
     protected JdbcTemplateMenuProductDao jdbcTemplateMenuProductDao;
     protected JdbcTemplateTableGroupDao jdbcTemplateTableGroupDao;
+    protected JdbcTemplateOrderTableDao jdbcTemplateOrderTableDao;
 
     @BeforeEach
     void setUp() {
@@ -24,5 +25,6 @@ public class JdbcTemplateTest {
         jdbcTemplateMenuDao = new JdbcTemplateMenuDao(dataSource);
         jdbcTemplateMenuProductDao = new JdbcTemplateMenuProductDao(dataSource);
         jdbcTemplateTableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
+        jdbcTemplateOrderTableDao = new JdbcTemplateOrderTableDao(dataSource);
     }
 }
