@@ -100,6 +100,24 @@ class TableGroupServiceTest {
         assertThatThrownBy(() -> sut.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+    
+    @DisplayName("테이블이 이미 그룹에 지정되어 그룹 id 를 가지고 있으면 그룹핑 할 수 없다.")
+    @Test
+    void canNotCreateTableGroupWhenTableInGroup() {
+        // given
+        final List<OrderTable> orderTables = tableService.list();
+
+        final TableGroup createdTableGroup = sut.create(new TableGroup(LocalDateTime.now(), orderTables));
+        final OrderTable orderTable = new OrderTable(createdTableGroup.getId(), 0, true);
+        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        orderTables.add(savedOrderTable);
+
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
+
+        // when & then
+        assertThatThrownBy(() -> sut.create(tableGroup))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 
     @DisplayName("단체 지정(table group)을 해제할 수 있다.")
     @Test
