@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.fixture.domain.OrderTableFixture.GUEST_ONE;
+import static kitchenpos.support.fixture.domain.OrderTableFixture.GUEST_ONE_EMPTY_TRUE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -39,8 +39,8 @@ class TableGroupServiceTest {
 
         @BeforeEach
         void setUp() {
-            orderTable1 = jdbcTemplateOrderTableDao.save(GUEST_ONE.getOrderTable());
-            orderTable2 = jdbcTemplateOrderTableDao.save(GUEST_ONE.getOrderTable());
+            orderTable1 = jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable());
+            orderTable2 = jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable());
         }
 
         @Test
@@ -66,8 +66,8 @@ class TableGroupServiceTest {
 
         @BeforeEach
         void setUp() {
-            orderTable1 = jdbcTemplateOrderTableDao.save(GUEST_ONE.getOrderTable());
-            OrderTable orderTable2 = jdbcTemplateOrderTableDao.save(GUEST_ONE.getOrderTable());
+            orderTable1 = jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable());
+            OrderTable orderTable2 = jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable());
             tableGroup = tableGroupService.create(TableGroupFixture.getTableGroup(List.of(orderTable1, orderTable2)));
         }
 
