@@ -30,7 +30,7 @@ class OrderServiceTest {
     @Test
     void create() {
         // given
-        orderTableDao.save(new OrderTable(1L, false));
+        orderTableDao.save(new OrderTable(1L, 1,false));
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 2);
         final Order order = new Order(1L, List.of(orderLineItem));
 
@@ -39,7 +39,6 @@ class OrderServiceTest {
 
         // then
         assertAll(
-                () -> assertThat(savedOrder.getOrderTableId()).isEqualTo(1L),
                 () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
                 () -> assertThat(savedOrder.getId()).isNotNull()
         );
@@ -49,7 +48,7 @@ class OrderServiceTest {
     @Test
     void create_throwException_ifOrderLineItemsEmpty() {
         // given
-        orderTableDao.save(new OrderTable(1L, false));
+        orderTableDao.save(new OrderTable(1L, 1, false));
         final Order order = new Order(1L, List.of());
 
         // when, then
@@ -63,7 +62,7 @@ class OrderServiceTest {
     void create_throwException_ifMenuNotExist() {
         // given
         final Long noExistMenuId = 999L;
-        orderTableDao.save(new OrderTable(1L, false));
+        orderTableDao.save(new OrderTable(1L, 1, false));
         final OrderLineItem orderLineItem = new OrderLineItem(noExistMenuId, 2);
         final Order order = new Order(1L, List.of(orderLineItem));
 
@@ -104,7 +103,7 @@ class OrderServiceTest {
     @Test
     void findAll() {
         // given
-        orderTableDao.save(new OrderTable(1L, false));
+        orderTableDao.save(new OrderTable(1L, 1,false));
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 2);
         final Order order = new Order(1L, List.of(orderLineItem));
         orderService.create(order);
