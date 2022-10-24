@@ -42,18 +42,9 @@ class OrderServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private ProductDao productDao;
-
-    @Autowired
     private OrderLineItemDao orderLineItemDao;
 
-    private Product product1;
-    private Product product2;
-    private Product product3;
-
     private Menu menu;
-
-    private OrderTable emptyOrderTable;
     private OrderTable noEmptyOrderTable;
 
     @BeforeEach
@@ -62,29 +53,12 @@ class OrderServiceTest {
         menuGroup.setName("테스트");
         final MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
-        final Product product1 = new Product();
-        product1.setName("상품1");
-        product1.setPrice(new BigDecimal(1));
-        final Product product2 = new Product();
-        product2.setName("상품2");
-        product2.setPrice(new BigDecimal(2));
-        final Product product3 = new Product();
-        product3.setName("상품3");
-        product3.setPrice(new BigDecimal(3));
-
-        this.product1 = productDao.save(product1);
-        this.product2 = productDao.save(product2);
-        this.product3 = productDao.save(product3);
         final Menu menu = new Menu();
         menu.setPrice(new BigDecimal(0));
         menu.setMenuGroupId(savedMenuGroup.getId());
         menu.setName("메뉴");
         menu.setMenuProducts(new ArrayList<>());
         this.menu = menuService.create(menu);
-
-        final OrderTable emptyOrderTable = new OrderTable();
-        emptyOrderTable.setEmpty(true);
-        this.emptyOrderTable = tableService.create(emptyOrderTable);
 
         final OrderTable noEmptyOrderTable = new OrderTable();
         noEmptyOrderTable.setEmpty(false);
