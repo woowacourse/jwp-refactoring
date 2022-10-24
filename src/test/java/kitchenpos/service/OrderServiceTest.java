@@ -2,7 +2,9 @@ package kitchenpos.service;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +21,7 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 
 @SpringBootTest
@@ -48,9 +51,12 @@ public class OrderServiceTest {
     @DisplayName("주문 내에 메뉴가 비어있다면 예외가 발생한다.")
     @Test
     public void orderLineItemsIsEmpty() {
-        Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(new ArrayList<>());
+        Order order = new Order(
+                orderTable.getId(),
+                OrderStatus.COOKING.name(),
+                LocalDateTime.now(),
+                Collections.emptyList()
+        );
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -59,10 +65,13 @@ public class OrderServiceTest {
     @DisplayName("사전에 저장되어 있지 않은 메뉴가 포함되어 있다면 예외가 발생한다.")
     @Test
     public void orderLineItemsIsAlreadySaved() {
-        Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
         OrderLineItem orderLineItem = new OrderLineItem(-1L, 10L);
-        order.setOrderLineItems(List.of(new OrderLineItem()));
+        Order order = new Order(
+                orderTable.getId(),
+                OrderStatus.COOKING.name(),
+                LocalDateTime.now(),
+                List.of(orderLineItem)
+        );
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -71,10 +80,13 @@ public class OrderServiceTest {
     @DisplayName("주문 테이블이 존재하지 않는 경우 예외가 발생한다.")
     @Test
     void orderTableNotSaved() {
-        Order order = new Order();
         OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 10L);
-        order.setOrderLineItems(List.of(new OrderLineItem()));
-        order.setOrderTableId(-1L);
+        Order order = new Order(
+                -1L,
+                OrderStatus.COOKING.name(),
+                LocalDateTime.now(),
+                List.of(orderLineItem)
+        );
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -83,11 +95,14 @@ public class OrderServiceTest {
     @DisplayName("주문 테이블이 EMPTY 상태인 경우 예외가 발생한다.")
     @Test
     void orderTableIsEmpty() {
-        Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
+        orderTable = orderTableDao.save(new OrderTable(100, true));
         OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 10L);
-        order.setOrderLineItems(List.of(new OrderLineItem()));
-        orderTable.setEmpty(true);
+        Order order = new Order(
+                orderTable.getId(),
+                OrderStatus.COOKING.name(),
+                LocalDateTime.now(),
+                List.of(orderLineItem)
+        );
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
