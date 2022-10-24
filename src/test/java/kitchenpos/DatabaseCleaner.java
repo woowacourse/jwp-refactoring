@@ -26,6 +26,8 @@ public class DatabaseCleaner {
         for (String tableName : tableNames) {
             jdbcTemplate.execute("TRUNCATE TABLE " + tableName);
         }
+
+        jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY TRUE");
     }
 
     private List<String> getTableNames() throws SQLException {
