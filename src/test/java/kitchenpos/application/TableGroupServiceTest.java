@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
-import static kitchenpos.fixture.TableGroupFixture.createTableGroup;
+import static kitchenpos.DomainFixture.createOrderTable;
+import static kitchenpos.DomainFixture.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -34,7 +34,7 @@ public class TableGroupServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("create : 빈 테이블이 아닐 경우 예외가 발생한다.")
+    @DisplayName("create -> 빈 테이블이 아닐 경우 예외가 발생한다.")
     void create_emptyTable_throwException() {
         // given
         final OrderTable table1 = 주문테이블등록(createOrderTable(3, true));
@@ -47,7 +47,7 @@ public class TableGroupServiceTest extends ServiceTest {
 
 
     @Test
-    @DisplayName("create : 두 개 미만의 테이블인 경우 예외가 발생한다")
+    @DisplayName("create -> 두 개 미만의 테이블인 경우 예외가 발생한다")
     void create_underTwoTables_throwException() {
         // given
         final OrderTable table = 주문테이블등록(createOrderTable(3, true));
@@ -58,7 +58,7 @@ public class TableGroupServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("create : 입력한 주문 테이블이 이미 단체로 지정된 경우 예외가 발생한다.")
+    @DisplayName("create -> 입력한 주문 테이블이 이미 단체로 지정된 경우 예외가 발생한다.")
     void create_alreadyGrouped_throwException() {
         // given
         final OrderTable groupedTable1 = 주문테이블등록(createOrderTable(3, true));

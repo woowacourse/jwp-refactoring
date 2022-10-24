@@ -1,13 +1,13 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFixture.createMenu;
-import static kitchenpos.fixture.MenuGroupFixture.메뉴그룹A;
-import static kitchenpos.fixture.OrderFixture.createOrder;
-import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
-import static kitchenpos.fixture.OrderTableFixture.forUpdateEmpty;
-import static kitchenpos.fixture.OrderTableFixture.forUpdateGuestNumber;
-import static kitchenpos.fixture.ProductFixture.탕수육;
-import static kitchenpos.fixture.TableGroupFixture.createTableGroup;
+import static kitchenpos.DomainFixture.createMenu;
+import static kitchenpos.DomainFixture.createOrder;
+import static kitchenpos.DomainFixture.createOrderTable;
+import static kitchenpos.DomainFixture.createTableGroup;
+import static kitchenpos.DomainFixture.forUpdateEmpty;
+import static kitchenpos.DomainFixture.forUpdateGuestNumber;
+import static kitchenpos.DomainFixture.메뉴그룹1;
+import static kitchenpos.DomainFixture.피자;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -41,7 +41,7 @@ public class TableServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("테이블의 빈 상태로 변경한다. ( false -> true )")
+    @DisplayName("테이블의 상태를 비어있도록 변경한다.")
     void changeEmpty_falseToTrue() {
         // given
         final OrderTable table = 주문테이블등록(createOrderTable(5, false));
@@ -54,7 +54,7 @@ public class TableServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("테이블의 빈 상태로 변경한다. ( true -> false )")
+    @DisplayName("테이블의 상태를 비어있지 않게 변경한다.")
     void changeEmpty_trueToFalse() {
         // given
         final OrderTable table = 주문테이블등록(createOrderTable(5, true));
@@ -67,7 +67,7 @@ public class TableServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("changeEmpty : 주문 테이블이 존재하지 않으면 예외가 발생한다.")
+    @DisplayName("changeEmpty -> 주문 테이블이 존재하지 않으면 예외가 발생한다.")
     void changeEmpty_noOrderTable_throwException() {
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(999L, forUpdateEmpty(true)))
@@ -75,7 +75,7 @@ public class TableServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("changeEmpty : 단체지정이 되어있으면 예외가 발생한다.")
+    @DisplayName("changeEmpty -> 단체지정이 되어있으면 예외가 발생한다.")
     void changeEmpty_groupTable_throwException() {
         // given
         final OrderTable table = 주문테이블등록(createOrderTable(3, true));
@@ -89,11 +89,11 @@ public class TableServiceTest extends ServiceTest {
 
     @ParameterizedTest
     @CsvSource(value = {"COOKING", "MEAL"})
-    @DisplayName("changeEmpty : 남아있는 주문이 존재하면 예외가 발생한다.")
+    @DisplayName("changeEmpty -> 남아있는 주문이 존재하면 예외가 발생한다.")
     void changeEmpty_existRemainOrder_throwException(final OrderStatus orderStatus) {
         // given
         final OrderTable table = 주문테이블등록(createOrderTable(3, false));
-        final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
+        final Menu menu = 메뉴등록(createMenu("양념치킨메뉴", 10_000, 메뉴그룹등록(메뉴그룹1), 상품등록(피자)));
 
         final Order order = 주문등록(createOrder(table, menu));
         주문상태변경(order, orderStatus);
@@ -117,7 +117,7 @@ public class TableServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("changeNumberOfGuests ; 손님수를 0명 미만으로 변경하려는 경우 예외가 발생한다.")
+    @DisplayName("changeNumberOfGuests -> 손님수를 0명 미만으로 변경하려는 경우 예외가 발생한다.")
     void changeNumberOfGuests_underZero_throwException() {
         // given
         final OrderTable table = 주문테이블등록(createOrderTable(4, false));
@@ -128,7 +128,7 @@ public class TableServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("changeNumberOfGuests : 빈 테이블에 손님수를 변경할경우 예외가 발생한다.")
+    @DisplayName("changeNumberOfGuests -> 빈 테이블에 손님수를 변경할경우 예외가 발생한다.")
     void changeNumberOfGuests_emptyTable_throwException() {
         // given
         final OrderTable table = 주문테이블등록(createOrderTable(4, true));

@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.ProductFixture.createProduct;
-import static kitchenpos.fixture.ProductFixture.짜장면;
-import static kitchenpos.fixture.ProductFixture.짬뽕;
-import static kitchenpos.fixture.ProductFixture.탕수육;
+import static kitchenpos.DomainFixture.createProduct;
+import static kitchenpos.DomainFixture.양념치킨;
+import static kitchenpos.DomainFixture.피자;
+import static kitchenpos.DomainFixture.후라이드치킨;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -19,7 +19,7 @@ public class ProductServiceTest extends ServiceTest {
     @DisplayName("상품을 등록한다.")
     void create() {
         // given
-        final Product product = createProduct("짜장면", 10_000);
+        final Product product = createProduct("김피탕", 10_000);
 
         // when
         final Product actual = productService.create(product);
@@ -33,10 +33,10 @@ public class ProductServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("create : 상품의 가격이 0원 미만이면 예외가 발생한다.")
+    @DisplayName("create -> 상품의 가격이 0원 미만이면 예외가 발생한다.")
     void create_invalidPrice_throwException() {
         // given
-        final Product product = createProduct("짜장면", -1);
+        final Product product = createProduct("김피탕", -1);
 
         // when & then
         assertThatThrownBy(() -> productService.create(product))
@@ -47,9 +47,9 @@ public class ProductServiceTest extends ServiceTest {
     @DisplayName("상품을 조회한다.")
     void list() {
         // given
-        상품등록(짜장면);
-        상품등록(짬뽕);
-        상품등록(탕수육);
+        상품등록(후라이드치킨);
+        상품등록(양념치킨);
+        상품등록(피자);
 
         // when
         final List<Product> list = productService.list();

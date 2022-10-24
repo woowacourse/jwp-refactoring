@@ -1,16 +1,16 @@
 package kitchenpos.application;
 
+import static kitchenpos.DomainFixture.createMenu;
+import static kitchenpos.DomainFixture.createOrder;
+import static kitchenpos.DomainFixture.createOrderTable;
+import static kitchenpos.DomainFixture.forUpdateEmpty;
+import static kitchenpos.DomainFixture.forUpdateStatus;
+import static kitchenpos.DomainFixture.메뉴그룹1;
+import static kitchenpos.DomainFixture.메뉴그룹2;
+import static kitchenpos.DomainFixture.피자;
+import static kitchenpos.DomainFixture.후라이드치킨;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
-import static kitchenpos.fixture.MenuFixture.createMenu;
-import static kitchenpos.fixture.MenuGroupFixture.메뉴그룹A;
-import static kitchenpos.fixture.MenuGroupFixture.메뉴그룹B;
-import static kitchenpos.fixture.OrderFixture.createOrder;
-import static kitchenpos.fixture.OrderFixture.forUpdateStatus;
-import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
-import static kitchenpos.fixture.OrderTableFixture.forUpdateEmpty;
-import static kitchenpos.fixture.ProductFixture.짜장면;
-import static kitchenpos.fixture.ProductFixture.탕수육;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -30,7 +30,7 @@ public class OrderServiceTest extends ServiceTest {
     void create() {
         // given
         final OrderTable table = 주문테이블등록(createOrderTable(3, false));
-        final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
+        final Menu menu = 메뉴등록(createMenu("양념치킨메뉴", 10_000, 메뉴그룹등록(메뉴그룹1), 상품등록(피자)));
 
         final Order order = createOrder(table, menu);
 
@@ -45,11 +45,11 @@ public class OrderServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("create : 주문 항목에 기재된 메뉴가 존재하지 않을 경우 예외가 발생한다.")
+    @DisplayName("create -> 주문 항목에 기재된 메뉴가 존재하지 않을 경우 예외가 발생한다.")
     void create_noMenu_throwException() {
         // given
         final OrderTable table = 주문테이블등록(createOrderTable(3, false));
-        final Menu notRegisteredMenu = createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육));
+        final Menu notRegisteredMenu = createMenu("양념치킨메뉴", 10_000, 메뉴그룹등록(메뉴그룹1), 상품등록(피자));
         notRegisteredMenu.setId(999L);
 
         final Order order = createOrder(table, notRegisteredMenu);
@@ -60,11 +60,11 @@ public class OrderServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("create : 주문 테이블이 비어있을 경우 등록할 수 없다")
+    @DisplayName("create -> 주문 테이블이 비어있을 경우 예외가 발생한다.")
     void create_emptyTable_throwException() {
         // given
         final OrderTable table = 주문테이블등록(createOrderTable(3, false));
-        final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
+        final Menu menu = 메뉴등록(createMenu("양념치킨메뉴", 10_000, 메뉴그룹등록(메뉴그룹1), 상품등록(피자)));
 
         tableService.changeEmpty(table.getId(), forUpdateEmpty(true));
 
@@ -80,12 +80,12 @@ public class OrderServiceTest extends ServiceTest {
     void list() {
         // given
         final OrderTable table1 = 주문테이블등록(createOrderTable(3, false));
-        final Menu menu1 = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
+        final Menu menu1 = 메뉴등록(createMenu("양념치킨메뉴", 10_000, 메뉴그룹등록(메뉴그룹1), 상품등록(피자)));
 
         주문등록(createOrder(table1, menu1));
 
         final OrderTable table2 = 주문테이블등록(createOrderTable(3, false));
-        final Menu menu2 = 메뉴등록(createMenu("짜장면_메뉴", 8_000, 메뉴그룹등록(메뉴그룹B), 상품등록(짜장면)));
+        final Menu menu2 = 메뉴등록(createMenu("후라이드메뉴", 8_000, 메뉴그룹등록(메뉴그룹2), 상품등록(후라이드치킨)));
 
         주문등록(createOrder(table2, menu2));
 
@@ -101,7 +101,7 @@ public class OrderServiceTest extends ServiceTest {
     void changeOrderStatus() {
         // given
         final OrderTable table = 주문테이블등록(createOrderTable(3, false));
-        final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
+        final Menu menu = 메뉴등록(createMenu("양념치킨메뉴", 10_000, 메뉴그룹등록(메뉴그룹1), 상품등록(피자)));
 
         final Order order = 주문등록(createOrder(table, menu));
 
@@ -113,11 +113,11 @@ public class OrderServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("changeOrderStatus : 주문이 존재하지 않으면 예외가 발생한다.")
+    @DisplayName("changeOrderStatus -> 주문이 존재하지 않으면 예외가 발생한다.")
     void changeOrderStatus_noOrder_throwException() {
         // given
         final OrderTable table = 주문테이블등록(createOrderTable(3, false));
-        final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
+        final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹1), 상품등록(피자)));
 
         final Order notRegisteredOrder = createOrder(table, menu);
 
@@ -127,11 +127,11 @@ public class OrderServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("changeOrderStatus : 주문이 이미 계산 완료된 경우 예외가 발생한다.")
+    @DisplayName("changeOrderStatus -> 주문이 이미 계산 완료된 경우 예외가 발생한다.")
     void changeOrderStatus_alreadyCompletion_throwException() {
         // given
         final OrderTable table = 주문테이블등록(createOrderTable(3, false));
-        final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
+        final Menu menu = 메뉴등록(createMenu("양념치킨메뉴", 10_000, 메뉴그룹등록(메뉴그룹1), 상품등록(피자)));
 
         final Order order = 주문등록(createOrder(table, menu));
         주문상태변경(order, OrderStatus.COMPLETION);
@@ -142,11 +142,11 @@ public class OrderServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("changeOrderStatus : 유효하지 않은 주문상태를 입력한 경우 예외가 발생한다.")
+    @DisplayName("changeOrderStatus -> 유효하지 않은 주문상태를 입력한 경우 예외가 발생한다.")
     void changeOrderStatus_invalidOrderStatus_throwException() {
         // given
         final OrderTable table = 주문테이블등록(createOrderTable(3, false));
-        final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
+        final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹1), 상품등록(피자)));
 
         final Order order = 주문등록(createOrder(table, menu));
 
