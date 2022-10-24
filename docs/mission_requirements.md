@@ -1,9 +1,9 @@
 # 1단계 - 테스트를 통한 코드 보호
 
-- [ ] 키친포스의 요구 사항 정리
+- [x] 키친포스의 요구 사항 정리
     - `kitchenpos` 패키지의 코드를 참고
     - 요구사항은 `README.md`에 정리
-- [ ] 테스트 코드 작성
+- [x] 테스트 코드 작성
     - @SpringBootTest를 이용한 통합 테스트
     - 또는 @ExtendWith(MockitoExtension.class)를 이용한 단위 테스트
     - Controller에 대한 테스트는 권장하나 필수가 아니다.
