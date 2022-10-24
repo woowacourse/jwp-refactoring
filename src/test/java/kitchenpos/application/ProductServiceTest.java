@@ -7,8 +7,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
+import java.util.List;
 import kitchenpos.common.builder.ProductBuilder;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,15 +24,19 @@ class ProductServiceTest {
     @Autowired
     private ProductService productService;
 
-    @DisplayName("상품을 등록한다.")
-    @Test
-    void 상품을_등록한다() {
-        // given
-        Product 야채곱창 = new ProductBuilder()
+    private Product 야채곱창;
+
+    @BeforeEach
+    void setUp() {
+        야채곱창 = new ProductBuilder()
                 .name(야채곱창_이름)
                 .price(야채곱창_가격)
                 .build();
+    }
 
+    @DisplayName("상품을 등록한다.")
+    @Test
+    void 상품을_등록한다() {
         // when
         Product actual = productService.create(야채곱창);
 
@@ -69,5 +75,19 @@ class ProductServiceTest {
         // when & then
         assertThatThrownBy(() -> productService.create(야채곱창))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("상품 목록을 조회한다.")
+    @Test
+    void 상품_목록을_조회한다() {
+        // given
+        productService.create(야채곱창);
+
+        // when
+        List<Product> 상품들 = productService.list();
+
+        // then
+        assertThat(상품들).extracting(Product::getName)
+                .contains(야채곱창_이름);
     }
 }
