@@ -32,7 +32,7 @@ public class ProductAcceptanceTest {
         RestAssured.port = port;
     }
 
-    @DisplayName("메뉴 목록을 조회한다.")
+    @DisplayName("상품 목록을 조회한다.")
     @Test
     void findMenuList() {
         // given
