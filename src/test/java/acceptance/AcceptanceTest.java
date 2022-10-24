@@ -16,6 +16,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -155,6 +156,29 @@ public class AcceptanceTest {
                 .put("/api/tables/{order_table_id}/empty", orderTableId)
                 .then().log().all()
                 .extract().as(OrderTable.class);
+    }
+
+    protected TableGroup 테이블_그룹_생성(List<OrderTable> orderTables) {
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(orderTables);
+
+        return RestAssured.given().log().all()
+                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .body(tableGroup)
+                .when().log().all()
+                .post("/api/table-groups")
+                .then().log().all()
+                .statusCode(HttpStatus.CREATED.value())
+                .extract().as(TableGroup.class);
+    }
+
+    protected void 테이블_그룹_삭제(Long id) {
+        RestAssured.given().log().all()
+                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .when().log().all()
+                .delete("/api/table-groups/{id}", id)
+                .then().log().all()
+                .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
     protected OrderTable 테이블_방문자_수_변경(long orderTableId, int numberOfGuests) {
