@@ -5,21 +5,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import javax.sql.DataSource;
-import kitchenpos.BeanAssembler;
 import kitchenpos.domain.Product;
+import kitchenpos.support.RepositoryTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
-@JdbcTest
+@RepositoryTest
 class ProductDaoTest {
 
     private ProductDao productDao;
 
     @Autowired
-    public ProductDaoTest(DataSource dataSource) {
-        this.productDao = BeanAssembler.createProductDao(dataSource);
+    public ProductDaoTest(ProductDao productDao) {
+        this.productDao = productDao;
     }
 
     @Test

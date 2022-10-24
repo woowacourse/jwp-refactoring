@@ -5,22 +5,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import javax.sql.DataSource;
-import kitchenpos.BeanAssembler;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.support.RepositoryTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
-@JdbcTest
+@RepositoryTest
 class MenuDaoTest {
 
     private MenuDao menuDao;
 
     @Autowired
-    public MenuDaoTest(DataSource dataSource) {
-        this.menuDao = BeanAssembler.createMenuDao(dataSource);
+    public MenuDaoTest(MenuDao menuDao) {
+        this.menuDao = menuDao;
     }
 
     @Test

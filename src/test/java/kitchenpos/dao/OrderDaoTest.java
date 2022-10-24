@@ -5,22 +5,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import javax.sql.DataSource;
-import kitchenpos.BeanAssembler;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.support.RepositoryTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
-@JdbcTest
+@RepositoryTest
 class OrderDaoTest {
 
     private OrderDao orderDao;
 
     @Autowired
-    public OrderDaoTest(DataSource dataSource) {
-        this.orderDao = BeanAssembler.createOrderDao(dataSource);
+    public OrderDaoTest(OrderDao orderDao) {
+        this.orderDao = orderDao;
     }
 
     @Test

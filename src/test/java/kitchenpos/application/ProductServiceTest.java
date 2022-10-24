@@ -1,28 +1,23 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import javax.sql.DataSource;
-import kitchenpos.BeanAssembler;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
-@JdbcTest
+@ServiceTest
 class ProductServiceTest {
-
-    @Autowired
-    private DataSource dataSource;
 
     private ProductService productService;
 
-    @BeforeEach
-    void setUp() {
-        productService = BeanAssembler.createProductService(dataSource);
+    @Autowired
+    public ProductServiceTest(ProductService productService) {
+        this.productService = productService;
     }
 
     @Test

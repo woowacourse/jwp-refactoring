@@ -3,21 +3,19 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import javax.sql.DataSource;
-import kitchenpos.BeanAssembler;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
-@JdbcTest
+@ServiceTest
 class MenuGroupServiceTest {
 
     private MenuGroupService menuGroupService;
 
     @Autowired
-    public MenuGroupServiceTest(DataSource dataSource) {
-        this.menuGroupService = BeanAssembler.createMenuGroupService(dataSource);
+    public MenuGroupServiceTest(MenuGroupService menuGroupService) {
+        this.menuGroupService = menuGroupService;
     }
 
     @Test

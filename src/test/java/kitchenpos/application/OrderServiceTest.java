@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.sql.DataSource;
-import kitchenpos.BeanAssembler;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -15,11 +13,11 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
-@JdbcTest
+@ServiceTest
 class OrderServiceTest {
 
     private OrderService orderService;
@@ -28,11 +26,16 @@ class OrderServiceTest {
     private OrderDao orderDao;
 
     @Autowired
-    public OrderServiceTest(DataSource dataSource) {
-        this.orderService = BeanAssembler.createOrderService(dataSource);
-        this.tableGroupDao = BeanAssembler.createTableGroupDao(dataSource);
-        this.orderTableDao = BeanAssembler.createOrderTableDao(dataSource);
-        this.orderDao = BeanAssembler.createOrderDao(dataSource);
+    public OrderServiceTest(
+            OrderService orderService,
+            TableGroupDao tableGroupDao,
+            OrderTableDao orderTableDao,
+            OrderDao orderDao
+    ) {
+        this.orderService = orderService;
+        this.tableGroupDao = tableGroupDao;
+        this.orderTableDao = orderTableDao;
+        this.orderDao = orderDao;
     }
 
     @Test

@@ -1,30 +1,27 @@
 package kitchenpos.dao;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import javax.sql.DataSource;
-import kitchenpos.BeanAssembler;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.support.RepositoryTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
-@JdbcTest
+@RepositoryTest
 class OrderLineItemDaoTest {
 
-    private DataSource dataSource;
-
     private OrderLineItemDao orderLineItemDao;
+    private OrderDao orderDao;
 
     @Autowired
-    public OrderLineItemDaoTest(DataSource dataSource) {
-        this.dataSource = dataSource;
-        orderLineItemDao = BeanAssembler.createOrderLineItemDao(dataSource);
+    public OrderLineItemDaoTest(OrderLineItemDao orderLineItemDao, OrderDao orderDao) {
+        this.orderLineItemDao = orderLineItemDao;
+        this.orderDao = orderDao;
     }
 
     private Long orderIdA;
@@ -32,7 +29,6 @@ class OrderLineItemDaoTest {
 
     @BeforeEach
     void setUp() {
-        OrderDao orderDao = BeanAssembler.createOrderDao(dataSource);
         orderIdA = orderDao.save(new Order(1L, "COOKING", LocalDateTime.now(), null)).getId();
         orderIdB = orderDao.save(new Order(2L, "COOKING", LocalDateTime.now(), null)).getId();
     }

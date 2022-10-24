@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.sql.DataSource;
-import kitchenpos.BeanAssembler;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -14,11 +12,11 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
-@JdbcTest
+@ServiceTest
 class TableServiceTest {
 
     private TableService tableService;
@@ -27,11 +25,16 @@ class TableServiceTest {
     private TableGroupDao tableGroupDao;
 
     @Autowired
-    public TableServiceTest(DataSource dataSource) {
-        this.tableService = BeanAssembler.createTableService(dataSource);
-        this.orderDao = BeanAssembler.createOrderDao(dataSource);
-        this.orderTableDao = BeanAssembler.createOrderTableDao(dataSource);
-        this.tableGroupDao = BeanAssembler.createTableGroupDao(dataSource);
+    public TableServiceTest(
+            TableService tableService,
+            OrderDao orderDao,
+            OrderTableDao orderTableDao,
+            TableGroupDao tableGroupDao
+    ) {
+        this.tableService = tableService;
+        this.orderDao = orderDao;
+        this.orderTableDao = orderTableDao;
+        this.tableGroupDao = tableGroupDao;
     }
 
     @Test
@@ -104,7 +107,7 @@ class TableServiceTest {
         // then
         assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(4);
     }
-    
+
     @Test
     void changeNumberOfGuestsWithNegativeNumber() {
         // given

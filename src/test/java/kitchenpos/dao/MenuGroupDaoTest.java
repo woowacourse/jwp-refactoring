@@ -4,21 +4,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.Optional;
-import javax.sql.DataSource;
-import kitchenpos.BeanAssembler;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.support.RepositoryTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
-@JdbcTest
+@RepositoryTest
 class MenuGroupDaoTest {
 
     private MenuGroupDao menuGroupDao;
 
     @Autowired
-    public MenuGroupDaoTest(DataSource dataSource) {
-        this.menuGroupDao = BeanAssembler.createMenuGroupDao(dataSource);
+    public MenuGroupDaoTest(MenuGroupDao menuGroupDao) {
+        this.menuGroupDao = menuGroupDao;
     }
 
     @Test

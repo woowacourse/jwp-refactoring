@@ -5,24 +5,21 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import javax.sql.DataSource;
-import kitchenpos.BeanAssembler;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
-@JdbcTest
+@ServiceTest
 class MenuServiceTest {
 
     private MenuService menuService;
 
     @Autowired
-    public MenuServiceTest(DataSource dataSource) {
-        this.menuService = BeanAssembler.createMenuService(dataSource);
+    public MenuServiceTest(MenuService menuService) {
+        this.menuService = menuService;
     }
-
 
     @Test
     void create() {
@@ -58,7 +55,12 @@ class MenuServiceTest {
     void createMenuWithInvalidMenuGroup() {
         // given
         long invalidMenuGroupId = 999L;
-        Menu menu = new Menu("메뉴", BigDecimal.valueOf(30000), invalidMenuGroupId, List.of(new MenuProduct(null, 1L, 2)));
+        Menu menu = new Menu(
+                "메뉴",
+                BigDecimal.valueOf(30000),
+                invalidMenuGroupId,
+                List.of(new MenuProduct(null, 1L, 2))
+        );
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -69,7 +71,12 @@ class MenuServiceTest {
     void createMenuWithInvalidProduct() {
         // given
         long invalidProductId = 999L;
-        Menu menu = new Menu("메뉴", BigDecimal.valueOf(30000), 1L, List.of(new MenuProduct(null, invalidProductId, 2)));
+        Menu menu = new Menu(
+                "메뉴",
+                BigDecimal.valueOf(30000),
+                1L,
+                List.of(new MenuProduct(null, invalidProductId, 2))
+        );
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))

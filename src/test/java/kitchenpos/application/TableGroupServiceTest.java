@@ -7,19 +7,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import javax.sql.DataSource;
-import kitchenpos.BeanAssembler;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
-@JdbcTest
+@ServiceTest
 class TableGroupServiceTest {
 
     private TableGroupService tableGroupService;
@@ -27,10 +25,10 @@ class TableGroupServiceTest {
     private OrderDao orderDao;
 
     @Autowired
-    public TableGroupServiceTest(DataSource dataSource) {
-        this.tableGroupService = BeanAssembler.createTableGroupService(dataSource);
-        this.orderTableDao = BeanAssembler.createOrderTableDao(dataSource);
-        this.orderDao = BeanAssembler.createOrderDao(dataSource);
+    public TableGroupServiceTest(TableGroupService tableGroupService, OrderTableDao orderTableDao, OrderDao orderDao) {
+        this.tableGroupService = tableGroupService;
+        this.orderTableDao = orderTableDao;
+        this.orderDao = orderDao;
     }
 
     @Test

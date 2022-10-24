@@ -5,32 +5,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import javax.sql.DataSource;
-import kitchenpos.BeanAssembler;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.support.RepositoryTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
-@JdbcTest
+@RepositoryTest
 class OrderTableDaoTest {
 
-    private DataSource dataSource;
+    private TableGroupDao tableGroupDao;
     private OrderTableDao orderTableDao;
 
     @Autowired
-    public OrderTableDaoTest(DataSource dataSource) {
-        this.dataSource = dataSource;
-        this.orderTableDao = BeanAssembler.createOrderTableDao(dataSource);
+    public OrderTableDaoTest(TableGroupDao tableGroupDao, OrderTableDao orderTableDao) {
+        this.tableGroupDao = tableGroupDao;
+        this.orderTableDao = orderTableDao;
     }
 
     private Long tableGroupId;
 
     @BeforeEach
     void setUp() {
-        TableGroupDao tableGroupDao = BeanAssembler.createTableGroupDao(dataSource);
         tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null)).getId();
     }
 
