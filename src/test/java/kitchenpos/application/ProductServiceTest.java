@@ -31,12 +31,12 @@ class ProductServiceTest {
             newProduct.setPrice(BigDecimal.valueOf(10000));
 
             // when
-            productService.create(newProduct);
+            final Product savedProduct = productService.create(newProduct);
 
             // then
-            List<Product> savedProducts = productService.list();
-            assertThat(savedProducts).extracting(Product::getName, (product) -> product.getPrice().intValue())
-                    .contains(tuple("상품1", 10000));
+            List<Product> products = productService.list();
+            assertThat(products).extracting(Product::getId, Product::getName, (product) -> product.getPrice().intValue())
+                    .contains(tuple(savedProduct.getId(), "상품1", 10000));
         }
 
         @Test
@@ -57,16 +57,14 @@ class ProductServiceTest {
         // given
         Product product1 = 상품을_등록한다("상품1", 10000);
         Product product2 = 상품을_등록한다("상품2", 20000);
-        productService.create(product1);
-        productService.create(product2);
 
         // when
         final List<Product> products = productService.list();
 
         // then
-        assertThat(products).extracting("name", "price.intValueExact")
+        assertThat(products).extracting(Product::getId, Product::getName, (product) -> product.getPrice().intValue())
                 .hasSize(2)
-                .contains(tuple("상품1", 10000), tuple("상품2", 20000));
+                .contains(tuple(product1.getId(), "상품1", 10000), tuple(product2.getId(), "상품2", 20000));
     }
 
     private Product 상품을_등록한다(final String name, final int price) {
@@ -74,6 +72,6 @@ class ProductServiceTest {
         product.setName(name);
         product.setPrice(BigDecimal.valueOf(price));
 
-        return product;
+        return productService.create(product);
     }
 }
