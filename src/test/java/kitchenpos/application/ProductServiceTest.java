@@ -36,7 +36,7 @@ class ProductServiceTest {
 
     @DisplayName("상품 등록 시 상품의 가격은 null 이 아니어야 한다")
     @Test
-    void createPriceIsNotNull() {
+    void createPriceIsNull() {
         final Product product = new Product();
         product.setName("상품");
         product.setPrice(null);
@@ -47,7 +47,7 @@ class ProductServiceTest {
 
     @DisplayName("상품 등록 시 상품의 가격은 0원 이상이어야 한다")
     @Test
-    void createPriceIsOverZero() {
+    void createPriceIsLowerZero() {
         final Product product = new Product();
         product.setName("상품");
         product.setPrice(new BigDecimal(-1));
