@@ -10,6 +10,13 @@ public enum OrderFixture {
     COMPLETION,
     ;
 
+    public Order getOrder() {
+        Order order = new Order();
+        order.setOrderStatus(this.name());
+        order.setOrderedTime(LocalDateTime.now());
+        return order;
+    }
+
     public Order getOrder(Long orderTableId) {
         Order order = new Order();
         order.setOrderTableId(orderTableId);
