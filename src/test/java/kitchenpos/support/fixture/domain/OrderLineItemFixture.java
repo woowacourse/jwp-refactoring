@@ -14,7 +14,14 @@ public enum OrderLineItemFixture {
         this.quantity = quantity;
     }
 
-    public OrderLineItem getOrderLineItem(Long orderId, Long menuId) {
+    public OrderLineItem getOrderLineItem(Long menuId) {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(menuId);
+        orderLineItem.setQuantity(quantity);
+        return orderLineItem;
+    }
+
+    public OrderLineItem getOrderLineItem(Long menuId, Long orderId) {
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setOrderId(orderId);
         orderLineItem.setMenuId(menuId);
