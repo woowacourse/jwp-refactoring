@@ -37,11 +37,11 @@ public class Fixtures {
         return new OrderTable(1L, null, 0, false);
     }
 
-    public static OrderTable 테이블_참_1() {
+    public static OrderTable 빈테이블_1() {
         return new OrderTable(1L, null, 0, true);
     }
 
-    public static OrderTable 테이블_참_2() {
+    public static OrderTable 빈테이블_2() {
         return new OrderTable(2L, null, 0, true);
     }
 

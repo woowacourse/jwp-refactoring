@@ -22,8 +22,8 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("단체 지정을 추가하면 특정 테이블이 단체에 속한다.")
     @Test
     void create() {
-        OrderTable 테이블_참_1 = orderTableDao.save(Fixtures.테이블_참_1());
-        OrderTable 테이블_참_2 = orderTableDao.save(Fixtures.테이블_참_2());
+        OrderTable 테이블_참_1 = orderTableDao.save(Fixtures.빈테이블_1());
+        OrderTable 테이블_참_2 = orderTableDao.save(Fixtures.빈테이블_2());
         TableGroup 테이블그룹 = Fixtures.테이블그룹(List.of(테이블_참_1, 테이블_참_2));
 
         TableGroup saved = tableGroupService.create(테이블그룹);
@@ -35,8 +35,8 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("단체지정을 삭제하면 소속된 테이블들이 단체에서 빠진다.")
     @Test
     void ungroup() {
-        OrderTable 테이블_참_1 = orderTableDao.save(Fixtures.테이블_참_1());
-        OrderTable 테이블_참_2 = orderTableDao.save(Fixtures.테이블_참_2());
+        OrderTable 테이블_참_1 = orderTableDao.save(Fixtures.빈테이블_1());
+        OrderTable 테이블_참_2 = orderTableDao.save(Fixtures.빈테이블_2());
         TableGroup 테이블그룹 = Fixtures.테이블그룹(List.of(테이블_참_1, 테이블_참_2));
         TableGroup saved = tableGroupService.create(테이블그룹);
 
