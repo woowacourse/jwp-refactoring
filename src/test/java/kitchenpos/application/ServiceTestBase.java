@@ -4,6 +4,7 @@ import static kitchenpos.fixture.MenuTestFixture.떡볶이;
 import static kitchenpos.fixture.ProductFixture.불맛_떡볶이;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -146,9 +147,24 @@ public class ServiceTestBase {
     }
 
     public TableGroup 단체_지정_생성() {
+        return 단체_지정_생성(new ArrayList<>());
+    }
+
+    public TableGroup 단체_지정_생성(final List<OrderTable> orderTables) {
         TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(orderTables);
         tableGroup.setCreatedDate(LocalDateTime.now());
-        return tableGroupDao.save(tableGroup);
+
+        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        updateOrderTables(savedTableGroup, orderTables);
+        return savedTableGroup;
+    }
+
+    private void updateOrderTables(final TableGroup tableGroup, final List<OrderTable> orderTables) {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.setTableGroupId(tableGroup.getId());
+            orderTableDao.save(orderTable);
+        }
     }
 
     public OrderTable 주문_테이블_생성() {

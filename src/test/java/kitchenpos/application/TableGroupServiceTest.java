@@ -7,9 +7,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 @SuppressWarnings("NonAsciiCharacters")
 class TableGroupServiceTest extends ServiceTestBase {
@@ -83,5 +86,19 @@ class TableGroupServiceTest extends ServiceTestBase {
         // then
         List<OrderTable> actual = orderTableDao.findAllByTableGroupId(tableGroupId);
         assertThat(actual).isEmpty();
+    }
+
+    @ParameterizedTest(name = "주문 테이블의 현재 상태: {0}")
+    @CsvSource(value = {"MEAL", "COOKING"})
+    void 요리_또는_식사_중인_주문_테이블이_있으면_단체_지정_해제_불가능(final OrderStatus orderStatus) {
+        // given
+        List<OrderTable> orderTables = Arrays.asList(주문_테이블_생성(), 주문_테이블_생성());
+        주문_생성(분식_메뉴_생성(), orderTables.get(0), orderStatus);
+        TableGroup tableGroup = 단체_지정_생성(orderTables);
+        Long tableGroupId = tableGroup.getId();
+
+        // when
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
