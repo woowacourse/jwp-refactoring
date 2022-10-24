@@ -1,0 +1,7 @@
+[[TableGroup]]
+
+=== 테이블 그룹을 만든다
+operation::table-group/group-order-table[snippets='http-request,http-response']
+
+=== 테이블 그룹을 해제한다
+operation::table-group/ungroup-group-table[snippets='http-request,http-response']

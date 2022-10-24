@@ -11,6 +11,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 
 public class DomainFixture {
 
@@ -66,5 +67,18 @@ public class DomainFixture {
         orderLineItem.setMenuId(1L);
         order.setOrderLineItems(List.of(orderLineItem));
         return order;
+    }
+
+    public static TableGroup getTableGroup() {
+        final OrderTable orderTable1 = getOrderTable(false);
+        orderTable1.setTableGroupId(1L);
+        final OrderTable orderTable2 = getOrderTable(false);
+        orderTable2.setId(2L);
+        orderTable2.setTableGroupId(1L);
+        final TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+        tableGroup.setId(1L);
+        tableGroup.setCreatedDate(LocalDateTime.now());
+        return tableGroup;
     }
 }
