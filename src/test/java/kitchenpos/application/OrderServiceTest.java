@@ -77,7 +77,7 @@ class OrderServiceTest extends ServiceTest {
 
             private final OrderTable orderTable = orderTableDao.save(new OrderTable(2, false));
             private final Order order = new Order(orderTable.getId(),
-                    List.of(new OrderLineItem(1L, 1), new OrderLineItem(7L, 1)));
+                    List.of(new OrderLineItem(1L, 1), new OrderLineItem(0L, 1)));
 
             @Test
             void 예외가_발생한다() {
