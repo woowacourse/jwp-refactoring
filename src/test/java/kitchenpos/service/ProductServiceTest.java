@@ -37,7 +37,7 @@ public class ProductServiceTest {
             @Test
             @DisplayName("값이 존재하지 않는다면 예외가 발생한다.")
             public void createWithNotContainPrice() {
-                Product product = new Product();
+                Product product = new Product("삼겹살", null);
 
                 assertThatThrownBy(() -> productService.create(product))
                         .isInstanceOf(IllegalArgumentException.class);
@@ -46,8 +46,7 @@ public class ProductServiceTest {
             @Test
             @DisplayName("값이 음수라면 예외가 발생한다.")
             public void createWithNegativePrice() {
-                Product product = new Product();
-                product.setPrice(BigDecimal.valueOf(-1L));
+                Product product = new Product("삼겹살", BigDecimal.valueOf(-1L));
 
                 assertThatThrownBy(() -> productService.create(product))
                         .isInstanceOf(IllegalArgumentException.class);
