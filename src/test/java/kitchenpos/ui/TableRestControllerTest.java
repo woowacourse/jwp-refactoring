@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 import kitchenpos.application.TableService;
+import kitchenpos.application.dto.OrderTableCreateRequest;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,15 +32,16 @@ class TableRestControllerTest extends ControllerTest {
     void create() throws Exception {
         // given
         long id = 1L;
-        OrderTable orderTable = new OrderTable(1L, 0, true);
-        orderTable.setId(id);
+        boolean empty = true;
+        int numberOfGuests = 0;
+        OrderTable orderTable = new OrderTable(id, null, numberOfGuests, empty);
 
         given(tableService.create(any())).willReturn(orderTable);
 
         // when
         ResultActions actions = mockMvc.perform(post("/api/tables")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(orderTable))
+                .content(objectMapper.writeValueAsString(new OrderTableCreateRequest(numberOfGuests, empty)))
         );
 
         // then

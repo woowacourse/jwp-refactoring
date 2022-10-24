@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.application.dto.OrderTableCreateRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -40,9 +41,9 @@ class TableServiceTest {
     @Test
     void create() {
         // given
-        OrderTable orderTable = new OrderTable(null, 3, true);
+        OrderTableCreateRequest request = new OrderTableCreateRequest(3, true);
         // when
-        OrderTable createdOrderTable = tableService.create(orderTable);
+        OrderTable createdOrderTable = tableService.create(request);
         // then
         assertThat(createdOrderTable.getId()).isNotNull();
     }
@@ -59,7 +60,7 @@ class TableServiceTest {
     @Test
     void changeEmpty() {
         // given
-        OrderTable orderTable = tableService.create(new OrderTable(null, 0, true));
+        OrderTable orderTable = tableService.create(new OrderTableCreateRequest(0, true));
 
         // when
         OrderTable changedOrderTable = tableService.changeEmpty(
@@ -96,7 +97,7 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuests() {
         // given
-        OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+        OrderTable orderTable = tableService.create(new OrderTableCreateRequest(2, false));
 
         // when
         OrderTable changedOrderTable = tableService.changeNumberOfGuests(
@@ -111,7 +112,7 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuestsWithNegativeNumber() {
         // given
-        OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+        OrderTable orderTable = tableService.create(new OrderTableCreateRequest(2, false));
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(
@@ -123,7 +124,7 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuestsWithEmpty() {
         // given
-        OrderTable orderTable = tableService.create(new OrderTable(null, 0, true));
+        OrderTable orderTable = tableService.create(new OrderTableCreateRequest(0, true));
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(
