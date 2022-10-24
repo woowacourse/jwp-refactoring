@@ -120,4 +120,18 @@ class TableServiceTest extends ServiceTestBase {
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    void 존재하지_않는_주문_테이블의_손님_수는_변경_불가능() {
+        // given
+        OrderTable orderTable = 주문_테이블_생성();
+        orderTable.setNumberOfGuests(5);
+        Long invalidOrderTableId = orderTable.getId() + 1;
+
+        // when & then
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(invalidOrderTableId, orderTable))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    
 }
