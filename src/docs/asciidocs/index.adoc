@@ -14,3 +14,6 @@ include::product.adoc[]
 
 == MenuGroup
 include::menuGroup.adoc[]
+
+== Menu
+include::menu.adoc[]
