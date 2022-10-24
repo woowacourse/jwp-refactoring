@@ -5,14 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class ProductServiceTest {
-
-    @Autowired
-    private ProductService productService;
+class ProductServiceTest extends ServiceTest {
 
     @Test
     void 제품을_저장할_때_가격이_음수이면_예외를_발생한다() {
