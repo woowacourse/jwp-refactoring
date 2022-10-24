@@ -2,8 +2,8 @@ package kitchenpos.application;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -28,31 +28,32 @@ class ProductServiceTest {
         this.productDao = productDao;
     }
 
-    @DisplayName("상품을 추가한다")
-    @ParameterizedTest
-    @ValueSource(ints = {0, 1})
-    void create(final int price) {
-        final var expected = new Product("탕수육", price);
-        final var actual = productService.create(expected);
+    @Nested
+    @ServiceTest
+    class CreateTest {
 
-        assertThat(actual.getId()).isPositive();
-        assertProductEqualsWithoutId(actual, expected);
-    }
+        @DisplayName("상품을 추가한다")
+        @ParameterizedTest
+        @ValueSource(ints = {0, 1})
+        void create(final int price) {
+            final var expected = new Product("탕수육", price);
+            final var actual = productService.create(expected);
 
-    @DisplayName("가격이 음수가 아니어야 상품을 추가할 수 있다")
-    @Test
-    void createWithNegativePrice() {
-        final var negativePrice = -1;
+            assertThat(actual.getId()).isPositive();
+            assertThat(actual.getName()).isEqualTo(expected.getName());
+            assertThat(actual.getPrice()).isEqualByComparingTo(expected.getPrice());
+        }
 
-        final var product = new Product("탕수육", negativePrice);
+        @DisplayName("가격은 음수가 아니어야 한다")
+        @Test
+        void createWithNegativePrice() {
+            final var negativePrice = -1;
 
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
+            final var product = new Product("탕수육", negativePrice);
 
-    private void assertProductEqualsWithoutId(final Product actual, final Product expected) {
-        assertThat(actual.getName()).isEqualTo(expected.getName());
-        assertThat(actual.getPrice()).isEqualByComparingTo(expected.getPrice());
+            assertThatThrownBy(() -> productService.create(product))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
     }
 
     @DisplayName("상품을 전체 조회한다")
