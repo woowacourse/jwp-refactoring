@@ -47,16 +47,16 @@
   - [x] price가 null이거나 0인 경우 예외를 던진다.
 - [x] Product를 전체 조회한다.
 
+### MenuGroupService
+- [x] menuGroup을 생성한다.
+- [x] menuGroup을 전체 조회한다.
+
 ### MenuService
 - [ ] menu를 생성한다.
   - [ ] price가 null이거나 0인 경우 예외를 던진다.
   - [ ] menuGroup이 없는경우 예외를 던진다.
   - [ ] product의 총 price가 menu보다 큰 경우 예외를 던진다.
 - [ ] menu를 전체 조회한다.
-
-### MenuGroupService
-- [ ] menuGroup을 생성한다.
-- [ ] menuGroup을 전체 조회한다.
 
 ### OrderService
 - [ ] Order를 생성한다.
