@@ -4,8 +4,10 @@ import kitchenpos.domain.MenuGroup;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.repository.Repository;
 
-public interface MenuGroupDao {
+public interface MenuGroupDao extends Repository<MenuGroup, Long> {
+
     MenuGroup save(MenuGroup entity);
 
     Optional<MenuGroup> findById(Long id);
