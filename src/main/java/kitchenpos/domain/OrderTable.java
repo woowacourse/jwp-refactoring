@@ -13,6 +13,10 @@ public class OrderTable {
         this(0, empty);
     }
 
+    public OrderTable(int numberOfGuests) {
+        this(null, numberOfGuests, false);
+    }
+
     public OrderTable(int numberOfGuests, boolean empty) {
         this(null, numberOfGuests, empty);
     }
@@ -22,7 +26,6 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
-
 
 
     public Long getId() {
