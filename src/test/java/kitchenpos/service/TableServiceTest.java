@@ -55,7 +55,7 @@ public class TableServiceTest {
     void list() {
         List<OrderTable> orderTables = tableService.list();
 
-        assertThat(orderTables.size()).isEqualTo(5);
+        assertThat(orderTables.size()).isEqualTo(8);
     }
 
     @Test

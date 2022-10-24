@@ -70,7 +70,7 @@ public class OrderServiceTest {
     void list() {
         List<Order> orders = orderService.list();
 
-        assertThat(orders.size()).isEqualTo(3);
+        assertThat(orders.size()).isEqualTo(6);
     }
 
     @Test
