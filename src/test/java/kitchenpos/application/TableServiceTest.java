@@ -116,9 +116,7 @@ class TableServiceTest {
         orderLineItems.add(new OrderLineItem(order.getId(), ramen.getId(), 1));
         orderLineItems.add(new OrderLineItem(order.getId(), chapagetti.getId(), 1));
 
-        Order targetOrder = orderService.create(order);
-        System.out.println("targetOrder = " + targetOrder);
-        //orderService.changeOrderStatus(targetOrder.getId(), targetOrder);
+        orderService.create(order);
 
         assertThatThrownBy(
                 () -> tableService.changeEmpty(orderTable.getId(),
