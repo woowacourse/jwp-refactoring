@@ -21,6 +21,11 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
+    public Order(final long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+                 final OrderLineItem... orderLineItems) {
+        this(orderTableId, orderStatus, orderedTime, List.of(orderLineItems));
+    }
+
     public Long getId() {
         return id;
     }
