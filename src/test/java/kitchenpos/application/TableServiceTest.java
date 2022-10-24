@@ -46,6 +46,7 @@ class TableServiceTest {
 
     private OrderTable dummyTable1;
     private OrderTable dummyTable2;
+    private OrderTable dummyTable3;
 
     @BeforeEach
     void setUp() {
@@ -55,6 +56,9 @@ class TableServiceTest {
         final OrderTable orderTable2 = new OrderTable();
         orderTable2.setEmpty(false);
         dummyTable2 = tableService.create(orderTable2);
+        final OrderTable orderTable3 = new OrderTable();
+        orderTable3.setEmpty(true);
+        dummyTable3 = tableService.create(orderTable3);
         final MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("테스트");
         final MenuGroup menuGroup1 = menuGroupDao.save(menuGroup);
@@ -88,7 +92,7 @@ class TableServiceTest {
     void changeEmptyWithTableGroup() {
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setCreatedDate(LocalDateTime.now());
-        tableGroup.setOrderTables(List.of(dummyTable1, dummyTable2));
+        tableGroup.setOrderTables(List.of(dummyTable1, dummyTable3));
         tableGroupService.create(tableGroup);
 
         assertThatThrownBy(() -> tableService.changeEmpty(dummyTable1.getId(), dummyTable1))
