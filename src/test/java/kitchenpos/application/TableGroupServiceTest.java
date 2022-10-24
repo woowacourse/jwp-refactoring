@@ -166,10 +166,7 @@ class TableGroupServiceTest {
 
         // then
         List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroup.getId());
-        for (OrderTable orderTable : orderTables) {
-            assertThat(orderTable.getTableGroupId()).isNull();
-            assertThat(orderTable.isEmpty()).isFalse();
-        }
+        assertThat(orderTables).isEmpty();
     }
 
     private void assertThatTableGroupIdAndEmptyIsSet(List<OrderTable> orderTables, Long tableGroupId) {
