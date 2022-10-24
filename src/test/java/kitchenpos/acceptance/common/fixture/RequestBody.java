@@ -15,9 +15,6 @@ public class RequestBody {
     public static final Map<String, Object> MENU_GROUP = Map.of("name", "menuGroup");
 
     public static Map<String, Object> getMenuProductFixture(final Long productId, final Long menuGroupId) {
-//        final MenuProduct menuProduct = new MenuProduct();
-//        menuProduct.setQuantity(2);
-//        menuProduct.setProductId(productId);
         return Map.ofEntries(
                 entry("name", "menu"),
                 entry("price", 1000),

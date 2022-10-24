@@ -5,6 +5,7 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 
 public class DomainFixture {
@@ -39,4 +40,12 @@ public class DomainFixture {
         return menu;
     }
 
+    public static OrderTable getOrderTable(final boolean isEmpty) {
+        final OrderTable orderTable = new OrderTable();
+        orderTable.setId(1L);
+        orderTable.setTableGroupId(null);
+        orderTable.setNumberOfGuests(0);
+        orderTable.setEmpty(isEmpty);
+        return orderTable;
+    }
 }
