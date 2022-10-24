@@ -23,6 +23,14 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
+    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
+    }
+
     public Long getId() {
         return id;
     }

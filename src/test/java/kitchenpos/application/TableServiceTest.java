@@ -22,11 +22,13 @@ class TableServiceTest extends ServiceTest {
     @Autowired
     private TableGroupService tableGroupService;
 
-    private OrderTable orderTable;
+    private OrderTable orderTable1;
+    private OrderTable orderTable2;
 
     @BeforeEach
     void setUp() {
-        this.orderTable = tableService.create(new OrderTable(10, false));
+        this.orderTable1 = tableService.create(new OrderTable(10, true));
+        this.orderTable2 = tableService.create(new OrderTable(15, true));
     }
 
     @DisplayName("create 메소드는")
@@ -66,7 +68,7 @@ class TableServiceTest extends ServiceTest {
             List<OrderTable> actual = tableService.list();
 
             // then
-            assertThat(actual).hasSize(4);
+            assertThat(actual).hasSize(5);
         }
     }
 
@@ -78,7 +80,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void Should_ChangeIsEmptyTable() {
             // given & when
-            OrderTable actual = tableService.changeEmpty(orderTable.getId(), new OrderTable(true));
+            OrderTable actual = tableService.changeEmpty(orderTable1.getId(), new OrderTable(true));
 
             // then
             assertThat(actual.isEmpty()).isTrue();
@@ -88,7 +90,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableDoesNotExist() {
             // given & when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId() + 1, new OrderTable(true)))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTable2.getId() + 1, new OrderTable(true)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -96,11 +98,11 @@ class TableServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableHasTableGroup() {
             // given
-            TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable));
+            TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
             tableGroupService.create(tableGroup);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTable(true)))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), new OrderTable(true)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -113,10 +115,11 @@ class TableServiceTest extends ServiceTest {
         @Test
         void Should_ChangeNumberOfGuests() {
             // given
+            OrderTable oldOrderTable = tableService.create(new OrderTable(1, false));
             OrderTable newOrderTable = new OrderTable(100);
 
             // when
-            OrderTable actual = tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable);
+            OrderTable actual = tableService.changeNumberOfGuests(oldOrderTable.getId(), newOrderTable);
 
             // then
             assertThat(actual.getNumberOfGuests()).isEqualTo(newOrderTable.getNumberOfGuests());
@@ -129,7 +132,7 @@ class TableServiceTest extends ServiceTest {
             OrderTable newOrderTable = new OrderTable(-1);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable1.getId(), newOrderTable))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -137,11 +140,23 @@ class TableServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableDoesNotExist() {
             // given
-            OrderTable oldOrderTable = tableService.create(new OrderTable(3, true));
+            OrderTable oldOrderTable = tableService.create(new OrderTable(3, false));
             OrderTable newOrderTable = new OrderTable(100);
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(oldOrderTable.getId() + 1, newOrderTable))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @DisplayName("전달된 주문 테이블 ID에 대한 주문 테이블이 비어있다면 IAE를 던진다.")
+        @Test
+        void Should_ThrowIAE_When_OrderTableIsEmpty() {
+            // given
+            OrderTable oldOrderTable = tableService.create(new OrderTable(3, true));
+            OrderTable newOrderTable = new OrderTable(100);
+
+            // when & then
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(oldOrderTable.getId(), newOrderTable))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
