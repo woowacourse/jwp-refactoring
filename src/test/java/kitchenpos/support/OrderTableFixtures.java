@@ -14,6 +14,7 @@ public enum OrderTableFixtures {
     ORDER_TABLE6(6L, 0, true),
     ORDER_TABLE7(7L, 0, true),
     ORDER_TABLE8(8L, 0, true),
+    ORDER_TABLE_NOT_EMPTY(9L, 0 ,false)
     ;
 
     private Long id;
