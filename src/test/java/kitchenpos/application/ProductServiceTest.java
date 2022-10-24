@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,40 +22,48 @@ class ProductServiceTest {
     @Autowired
     private ProductService productService;
 
-    @DisplayName("상품을 정상적으로 생성한다")
-    @Test
-    void create() {
-        Product product = new Product("짜장면", new BigDecimal(6000));
+    @Nested
+    class CreateTest {
 
-        Product actual = productService.create(product);
-        assertThat(actual.getId()).isNotNull();
+        @DisplayName("상품을 생성하면 ID가 할당된 Product객체가 반환된다")
+        @Test
+        void create() {
+            Product product = new Product("뿌링클", new BigDecimal(18_000));
+
+            Product actual = productService.create(product);
+            assertThat(actual.getId()).isNotNull();
+        }
+
+        @DisplayName("가격이 null인 상품을 생성할시 예외가 발생한다")
+        @Test
+        void throwExceptionWhenWithNullPrice() {
+            BigDecimal price = null;
+            Product product = new Product("뿌링클", price);
+
+            assertThatThrownBy(() -> productService.create(product))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @DisplayName("가격이 음수인 상품을 생성할시 예외가 발생한다")
+        @Test
+        void throwExceptionWhenWithNegativePrice() {
+            BigDecimal price = new BigDecimal(-1);
+            Product product = new Product("뿌링클", price);
+
+            assertThatThrownBy(() -> productService.create(product))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
     }
 
-    @DisplayName("가격이 null인 상품을 생성할시 예외가 발생한다")
-    @Test
-    void throwExceptionWhenCreateProductWithNullPrice() {
-        BigDecimal price = null;
-        Product product = new Product("짜장면", price);
+    @Nested
+    class ListTest {
 
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
+        @DisplayName("존재하는 모든 상품 목록을 조회한다")
+        @Test
+        void list() {
+            List<Product> products = productService.list();
 
-    @DisplayName("가격이 음의 수인 상품을 생성할시 예외가 발생한다")
-    @Test
-    void throwExceptionWhenCreateProductWithNegativePrice() {
-        BigDecimal price = new BigDecimal(-1000);
-        Product product = new Product("짜장면", price);
-
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("상품 목록을 정상적으로 조회한다")
-    @Test
-    void list() {
-        List<Product> products = productService.list();
-
-        assertThat(products).hasSize(6);
+            assertThat(products).hasSize(6);
+        }
     }
 }
