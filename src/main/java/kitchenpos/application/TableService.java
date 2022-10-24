@@ -1,15 +1,14 @@
 package kitchenpos.application;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TableService {
@@ -36,15 +35,15 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
 
         if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("이미 단체지정이 되어있습니다.");
         }
 
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("조리중이거나 식사 상태입니다.");
         }
 
         savedOrderTable.setEmpty(orderTable.isEmpty());
@@ -57,14 +56,14 @@ public class TableService {
         final int numberOfGuests = orderTable.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("방문한 손님 수는 0 이상이어야 합니다.");
         }
 
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
 
         if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("빈 테이블입니다.");
         }
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);
