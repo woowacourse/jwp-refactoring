@@ -22,6 +22,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.MenuGroupFixture;
@@ -154,7 +155,7 @@ class OrderServiceTest {
         order.setOrderTableId(orderTableId);
         Order savedOrder = orderService.create(order);
 
-        String changedStatus = "COOKING";
+        String changedStatus = OrderStatus.COOKING.name();
         savedOrder.setOrderStatus(changedStatus);
 
         // when
@@ -164,6 +165,37 @@ class OrderServiceTest {
         Optional<Order> actual = orderDao.findById(savedOrder.getId());
         assertThat(actual).isNotEmpty();
         assertThat(actual.get().getOrderStatus()).isEqualTo(changedStatus);
+    }
+
+    @Test
+    void 존재하지_않는_주문_상태_변경_시_실패() {
+        // given
+        Order order = new Order();
+        List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
+        order.setOrderLineItems(orderLineItems);
+        order.setOrderTableId(orderTableId);
+        orderService.create(order);
+
+        // when & then
+        assertThatThrownBy(() -> orderService.changeOrderStatus(100L, order))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void COMPLETION_주문_상태_변경_시_실패() {
+        // given
+        Order order = new Order();
+        List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
+        order.setOrderLineItems(orderLineItems);
+        order.setOrderTableId(orderTableId);
+
+        Order savedOrder = orderService.create(order);
+        savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
+        orderDao.save(savedOrder);
+
+        // when & then
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), savedOrder))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     private OrderLineItem menuId가_null인_주문_항목() {
