@@ -1,7 +1,0 @@
-spring:
-  flyway:
-    enabled: false
-
-  datasource:
-    initialization-mode: always
-    schema: classpath:db/migration/V1__Initialize_project_tables.sql

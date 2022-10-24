@@ -18,11 +18,17 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
-@SpringBootTest(
-        webEnvironment = WebEnvironment.RANDOM_PORT,
-        classes = Application.class
-)
-public class MenuGroupAcceptanceTest {
+@AcceptanceTest
+class MenuGroupAcceptanceTest {
+
+    private static final long 두마리메뉴_ID = 1L;
+    private static final String 두마리메뉴_이름 = "두마리메뉴";
+    private static final long 한마리메뉴_ID = 2L;
+    private static final String 한마리메뉴_이름 = "한마리메뉴";
+    private static final long 순살파닭두마리메뉴_ID = 3L;
+    private static final String 순살파닭두마리메뉴_이름 = "순살파닭두마리메뉴";
+    private static final long 신메뉴_ID = 4L;
+    private static final String 신메뉴_이름 = "신메뉴";
 
     @LocalServerPort
     private int port;
@@ -32,34 +38,59 @@ public class MenuGroupAcceptanceTest {
         RestAssured.port = port;
     }
 
-    @Test
     @DisplayName("메뉴 그룹 목록을 조회한다.")
-    void getMenuGroups() {
-        // given
-        long menuGroupId1 = createMenuGroup("추천 메뉴");
-        long menuGroupId2 = createMenuGroup("호호 메뉴");
-        long menuGroupId3 = createMenuGroup("베루스 메뉴");
-        long menuGroupId4 = createMenuGroup("라라 메뉴");
+    @Test
+    void findMenuGroups() {
+        // act
+        List<MenuGroup> menuGroups = getMenuGroups();
 
-        // when
-        List<MenuGroup> menuGroups = RestAssured.given().log().all()
+        // assert
+        assertThat(menuGroups)
+                .extracting(MenuGroup::getId, MenuGroup::getName)
+                .hasSize(4)
+                .containsExactlyInAnyOrder(
+                        tuple(두마리메뉴_ID, 두마리메뉴_이름),
+                        tuple(한마리메뉴_ID, 한마리메뉴_이름),
+                        tuple(순살파닭두마리메뉴_ID, 순살파닭두마리메뉴_이름),
+                        tuple(신메뉴_ID, 신메뉴_이름)
+                );
+    }
+
+    @Test
+    @DisplayName("메뉴 그룹을 생성한다.")
+    void createMenuGroups() {
+        // arrange
+        String name = "추천 메뉴";
+        MenuGroup createdMenuGroup = createMenuGroup(name);
+
+        // act
+        List<MenuGroup> menuGroups = getMenuGroups();
+
+        // assert
+        assertThat(createdMenuGroup.getId()).isNotNull();
+        assertThat(createdMenuGroup.getName()).isEqualTo(name);
+        assertThat(menuGroups)
+                .extracting(MenuGroup::getId, MenuGroup::getName)
+                .hasSize(5)
+                .containsExactlyInAnyOrder(
+                        tuple(두마리메뉴_ID, 두마리메뉴_이름),
+                        tuple(한마리메뉴_ID, 한마리메뉴_이름),
+                        tuple(순살파닭두마리메뉴_ID, 순살파닭두마리메뉴_이름),
+                        tuple(신메뉴_ID, 신메뉴_이름),
+                        tuple(createdMenuGroup.getId(), createdMenuGroup.getName())
+                );
+    }
+
+    private List<MenuGroup> getMenuGroups() {
+        return RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/menu-groups")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
                 .extract().body().jsonPath().getList(".", MenuGroup.class);
-
-        // then
-        assertThat(menuGroups).extracting(MenuGroup::getId, MenuGroup::getName)
-                .containsExactlyInAnyOrder(
-                        tuple(menuGroupId1, "추천 메뉴"),
-                        tuple(menuGroupId2, "호호 메뉴"),
-                        tuple(menuGroupId3, "베루스 메뉴"),
-                        tuple(menuGroupId4, "라라 메뉴")
-                );
     }
 
-    private long createMenuGroup(String name) {
+    private MenuGroup createMenuGroup(String name) {
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .body(Map.of("name", name))
@@ -67,6 +98,6 @@ public class MenuGroupAcceptanceTest {
                 .post("/api/menu-groups")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
-                .extract().body().jsonPath().getLong("id");
+                .extract().as(MenuGroup.class);
     }
 }
