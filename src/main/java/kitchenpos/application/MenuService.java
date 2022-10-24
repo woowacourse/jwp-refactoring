@@ -53,13 +53,8 @@ public class MenuService {
             final Product product = productDao.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
 
-            System.out.println("product = " + product.getPrice());
-            System.out.println("menuProduct = " + menuProduct.getQuantity());
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
-
-        System.out.println("price = " + price);
-        System.out.println("sum = " + sum);
 
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();

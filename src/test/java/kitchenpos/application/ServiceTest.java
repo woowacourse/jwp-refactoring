@@ -8,6 +8,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,9 +23,12 @@ public class ServiceTest {
 
     @Autowired
     private MenuService menuService;
+
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private TableService tableService;
 
     protected void 주문_항목을_추가한다(Order order) {
         Menu ramen = 메뉴를_생성한다("라면");
@@ -43,5 +47,15 @@ public class ServiceTest {
         menuProducts.get(0).setMenuId(ramen.getId());
 
         return ramen;
+    }
+
+    protected List<OrderTable> 주문_테이블들(boolean firstTableEmpty, boolean secondTableEmpty) {
+        OrderTable 주문_테이블1 = tableService.create(new OrderTable(null, 3, firstTableEmpty));
+        OrderTable 주문_테이블2 = tableService.create(new OrderTable(null, 4, secondTableEmpty));
+
+        List<OrderTable> orderTables = new ArrayList<>();
+        orderTables.add(주문_테이블1);
+        orderTables.add(주문_테이블2);
+        return orderTables;
     }
 }

@@ -18,7 +18,7 @@ class MenuGroupServiceTest {
     private MenuGroupService menuGroupService;
 
     @Test
-    void menu_Group을_성공적으로_저장한다() {
+    void 메뉴_그룹을_저장한다() {
         MenuGroup noodle = new MenuGroup("면");
         MenuGroup menuGroup = menuGroupService.create(noodle);
 
@@ -26,11 +26,9 @@ class MenuGroupServiceTest {
     }
 
     @Test
-    void menuGroup에_여러_메뉴를_조회할_수_있다() {
-        MenuGroup noodle = new MenuGroup("면");
-        menuGroupService.create(noodle);
-        MenuGroup pizza = new MenuGroup( "피자");
-        menuGroupService.create(pizza);
+    void 메뉴_그룹의_여러_메뉴를_조회할_수_있다() {
+        menuGroupService.create(new MenuGroup("면"));
+        menuGroupService.create(new MenuGroup( "피자"));
 
         List<MenuGroup> menuGroups = menuGroupService.list();
 
