@@ -5,11 +5,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
 
 import java.util.List;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.assertj.core.groups.Tuple;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class TableServiceTest extends ServiceTest {
 
@@ -46,13 +49,14 @@ class TableServiceTest extends ServiceTest {
     @Nested
     class changeEmpty_메소드는 {
 
-        @Test
-        void 테이블_상태를_empty로_변경한다() {
+        @ParameterizedTest
+        @ValueSource(booleans = {true, false})
+        void 테이블이_비어_있는지_여부를_변경한다(boolean isEmpty) {
             // given
             OrderTable savedOrderTable = 테이블을_저장한다(4);
 
             OrderTable emptyOrderTable = new OrderTable();
-            emptyOrderTable.setEmpty(true);
+            emptyOrderTable.setEmpty(isEmpty);
 
             // when
             tableService.changeEmpty(savedOrderTable.getId(), emptyOrderTable);
@@ -64,44 +68,38 @@ class TableServiceTest extends ServiceTest {
                     .findFirst()
                     .orElseThrow();
 
-            assertThat(findTable.isEmpty()).isTrue();
+            assertThat(findTable.isEmpty()).isEqualTo(isEmpty);
         }
 
-        // TODO
         @Test
-        @Disabled
         void 주문_상태가_계산_완료_상태가_아니라면_예외가_발생한다() {
             // given
             OrderTable savedOrderTable = 테이블을_저장한다(4);
 
-            OrderTable emptyOrderTable = new OrderTable();
-            emptyOrderTable.setEmpty(true);
-
-            // when
-            tableService.changeEmpty(savedOrderTable.getId(), emptyOrderTable);
-
-            // then
-            OrderTable findTable = tableService.list()
-                    .stream()
-                    .filter(table -> table.getId().equals(savedOrderTable.getId()))
-                    .findFirst()
-                    .orElseThrow();
-
-            assertThat(findTable.isEmpty()).isTrue();
-        }
-
-        @Test
-        @Disabled
-        void 테이블_그룹_id를_가지고_있다면_예외가_발생한다() {
-            // given
-            OrderTable savedOrderTable = 테이블을_저장한다(4);
-            // TODO 테이블 그룹화 코드 추가
+            Order savedOrder = 주문을_저장한다(savedOrderTable);
+            Order order = new Order();
+            order.setOrderStatus(OrderStatus.COOKING.name());
+            orderService.changeOrderStatus(savedOrder.getId(), order);
 
             OrderTable emptyOrderTable = new OrderTable();
             emptyOrderTable.setEmpty(true);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), emptyOrderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), emptyOrderTable));
+        }
+
+        @Test
+        void 테이블_그룹_id를_가지고_있다면_예외가_발생한다() {
+            // given
+            OrderTable savedOrderTable1 = 빈_테이블을_저장한다();
+            OrderTable savedOrderTable2 = 빈_테이블을_저장한다();
+            테이블_그룹을_저장한다(savedOrderTable1, savedOrderTable2);
+
+            OrderTable emptyOrderTable = new OrderTable();
+            emptyOrderTable.setEmpty(true);
+
+            // when & then
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable1.getId(), emptyOrderTable))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 

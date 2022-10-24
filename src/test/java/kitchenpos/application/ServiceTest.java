@@ -95,18 +95,19 @@ public abstract class ServiceTest {
         return tableService.create(orderTable);
     }
 
-    protected TableGroup 테이블_그룹을_저장한다() {
-        OrderTable orderTable1 = 빈_테이블을_저장한다();
-        OrderTable orderTable2 = 빈_테이블을_저장한다();
-
+    protected TableGroup 테이블_그룹을_저장한다(OrderTable... orderTables) {
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+        tableGroup.setOrderTables(List.of(orderTables));
 
-        return tableGroupService.create(tableGroup);
+        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        return savedTableGroup;
     }
 
     protected Order 주문을_저장한다() {
-        OrderTable orderTable = 테이블을_저장한다(4);
+        return 주문을_저장한다(테이블을_저장한다(4));
+    }
+
+    protected Order 주문을_저장한다(OrderTable orderTable) {
         Menu menu = 메뉴를_저장한다("메뉴");
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(menu.getId());

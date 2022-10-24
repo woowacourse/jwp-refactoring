@@ -7,10 +7,11 @@ import static org.assertj.core.api.Assertions.tuple;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -122,12 +123,9 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 테이블_그룹을_해제한다() {
             // given
-            OrderTable orderTable1 = 빈_테이블을_저장한다();
-            OrderTable orderTable2 = 빈_테이블을_저장한다();
-            TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
-
-            TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+            OrderTable savedOrderTable1 = 빈_테이블을_저장한다();
+            OrderTable savedOrderTable2 = 빈_테이블을_저장한다();
+            TableGroup savedTableGroup = 테이블_그룹을_저장한다(savedOrderTable1, savedOrderTable2);
 
             // when
             tableGroupService.ungroup(savedTableGroup.getId());
@@ -135,23 +133,28 @@ class TableGroupServiceTest extends ServiceTest {
             // then
             List<Long> findTableGroupIds = tableService.list()
                     .stream()
-                    .filter(table -> table.getId().equals(orderTable1.getId()) ||
-                            table.getId().equals(orderTable2.getId()))
+                    .filter(table -> table.getId().equals(savedOrderTable1.getId()) ||
+                            table.getId().equals(savedOrderTable2.getId()))
                     .map(OrderTable::getTableGroupId)
                     .collect(Collectors.toList());
 
             assertThat(findTableGroupIds).containsOnly((Long) null);
         }
 
-        // TODO
-        @Disabled
         @Test
         void 해제하려는_테이블들의_주문_상태가_계산_완료_상태가_아니라면_예외가_발생한다() {
             // given
+            OrderTable savedOrderTable1 = 빈_테이블을_저장한다();
+            OrderTable savedOrderTable2 = 빈_테이블을_저장한다();
+            TableGroup savedTableGroup = 테이블_그룹을_저장한다(savedOrderTable1, savedOrderTable2);
 
+            Order savedOrder = 주문을_저장한다(savedOrderTable1);
+            Order order = new Order();
+            order.setOrderStatus(OrderStatus.COOKING.name());
+            orderService.changeOrderStatus(savedOrder.getId(), order);
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.ungroup(1L))
+            assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
