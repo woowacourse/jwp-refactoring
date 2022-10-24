@@ -14,6 +14,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.support.ServiceTest;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,25 +35,27 @@ class TableGroupServiceTest {
     @Test
     void create() {
         // given
-        TableGroup tableGroup = new TableGroup(
-                LocalDateTime.now(),
-                List.of(new OrderTable(1L, null, 0, true), new OrderTable(2L, null, 0, true))
-        );
+        List<OrderTable> orderTables = List.of(new OrderTable(1L, 1L, 2, false), new OrderTable(2L, null, 0, true));
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
 
         // when
         TableGroup createdTableGroup = tableGroupService.create(tableGroup);
 
         // then
-        assertThat(createdTableGroup.getId()).isNotNull();
+        List<Long> expectedTableGroupIds = List.of(createdTableGroup.getId(), createdTableGroup.getId());
+        List<Boolean> expectedEmpties = List.of(false, false);
+
+        Assertions.assertAll(
+                () -> assertThat(createdTableGroup.getId()).isNotNull(),
+                () -> assertThat(orderTables).extracting("tableGroupId").containsAll(expectedTableGroupIds),
+                () -> assertThat(orderTables).extracting("empty").containsAll(expectedEmpties)
+        );
     }
 
     @Test
     void createWithEmptyOrderTable() {
         // given
-        TableGroup tableGroup = new TableGroup(
-                LocalDateTime.now(),
-                new ArrayList<>()
-        );
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), new ArrayList<>());
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
