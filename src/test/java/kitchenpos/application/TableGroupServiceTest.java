@@ -53,4 +53,17 @@ class TableGroupServiceTest extends ServiceTestBase {
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    void 저장되지_않은_주문_테이블로_테이블_그룹_생성_시_실패() {
+        // given
+        TableGroup tableGroup = new TableGroup();
+        OrderTable orderTable1 = new OrderTable();
+        OrderTable orderTable2 = new OrderTable();
+        tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2));
+
+        // when & then
+        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }
