@@ -1,5 +1,6 @@
 package kitchenpos.support;
 
+import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import kitchenpos.domain.OrderLineItem;
 public enum OrderFixture {
 
     ORDER_COOKING_1(COOKING.name(), LocalDateTime.now()),
+    ORDER_COMPLETION_1(COMPLETION.name(), LocalDateTime.now()),
     ;
 
     private final String orderStatus;

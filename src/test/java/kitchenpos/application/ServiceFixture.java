@@ -1,6 +1,13 @@
-package kitchenpos.dao;
+package kitchenpos.application;
 
-import javax.sql.DataSource;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuProductDao;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -9,37 +16,28 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
-import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@JdbcTest
-@SuppressWarnings("NonAsciiCharacters")
-public class JdbcDaoTest {
+@SpringBootTest
+public class ServiceFixture {
 
     @Autowired
-    private DataSource dataSource;
-
-    protected MenuDao menuDao;
-    protected MenuGroupDao menuGroupDao;
-    protected MenuProductDao menuProductDao;
-    protected ProductDao productDao;
-    protected TableGroupDao tableGroupDao;
-    protected OrderTableDao orderTableDao;
-    protected OrderDao orderDao;
-    protected OrderLineItemDao orderLineItemDao;
-
-    @BeforeEach
-    void setUp() {
-        this.menuDao = new JdbcTemplateMenuDao(dataSource);
-        this.menuGroupDao = new JdbcTemplateMenuGroupDao(dataSource);
-        this.menuProductDao = new JdbcTemplateMenuProductDao(dataSource);
-        this.productDao = new JdbcTemplateProductDao(dataSource);
-        this.tableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
-        this.orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
-        this.orderDao = new JdbcTemplateOrderDao(dataSource);
-        this.orderLineItemDao = new JdbcTemplateOrderLineItemDao(dataSource);
-    }
+    private MenuDao menuDao;
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+    @Autowired
+    private MenuProductDao menuProductDao;
+    @Autowired
+    private ProductDao productDao;
+    @Autowired
+    private TableGroupDao tableGroupDao;
+    @Autowired
+    private OrderTableDao orderTableDao;
+    @Autowired
+    private OrderDao orderDao;
+    @Autowired
+    private OrderLineItemDao orderLineItemDao;
 
     protected Product 제품을_저장한다(final Product product) {
         return productDao.save(product);

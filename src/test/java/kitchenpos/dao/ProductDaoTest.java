@@ -28,7 +28,7 @@ class ProductDaoTest extends JdbcDaoTest {
     @Test
     void 제품을_아이디로_조회할_수_있다() {
         // given
-        final Product savedProduct = 상품을_저장한다(PRODUCT_PRICE_10000.생성());
+        final Product savedProduct = 제품을_저장한다(PRODUCT_PRICE_10000.생성());
 
         // when
         final Product foundProduct = productDao.findById(savedProduct.getId())
@@ -46,7 +46,7 @@ class ProductDaoTest extends JdbcDaoTest {
         // given
         final int alreadyExistCount = productDao.findAll()
                 .size();
-        final Product savedProduct = 상품을_저장한다(PRODUCT_PRICE_10000.생성());
+        final Product savedProduct = 제품을_저장한다(PRODUCT_PRICE_10000.생성());
 
         // when
         final List<Product> products = productDao.findAll();

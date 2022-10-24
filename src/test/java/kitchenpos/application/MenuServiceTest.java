@@ -2,11 +2,11 @@ package kitchenpos.application;
 
 import static kitchenpos.support.MenuFixture.MENU_PRICE_10000;
 import static kitchenpos.support.MenuGroupFixture.MENU_GROUP_1;
+import static kitchenpos.support.MenuProductFixture.MENU_PRODUCT_1;
 import static kitchenpos.support.ProductFixture.PRODUCT_PRICE_1000;
 import static kitchenpos.support.ProductFixture.PRODUCT_PRICE_10000;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,6 +17,20 @@ import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
 class MenuServiceTest extends ServiceTest {
+
+    @Test
+    void 메뉴를_생성한다() {
+        // given
+        final Long productId = 제품을_저장한다(PRODUCT_PRICE_10000.생성()).getId();
+        final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
+        final Menu menu = MENU_PRICE_10000.생성(menuGroupId, List.of(MENU_PRODUCT_1.생성(productId)));
+
+        // when
+        final Menu savedMenu = menuService.create(menu);
+
+        // then
+        assertThat(savedMenu.getId()).isNotNull();
+    }
 
     @Test
     void 메뉴의_가격이_음수이면_예외를_발생한다() {
@@ -56,8 +70,7 @@ class MenuServiceTest extends ServiceTest {
         // given
         final Long productId = 제품을_저장한다(PRODUCT_PRICE_1000.생성()).getId();
         final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final MenuProduct menuProduct = new MenuProduct(null, productId, 2);
-        final Menu menu = MENU_PRICE_10000.생성(menuGroupId, List.of(menuProduct));
+        final Menu menu = MENU_PRICE_10000.생성(menuGroupId, List.of(MENU_PRODUCT_1.생성(productId)));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -69,8 +82,8 @@ class MenuServiceTest extends ServiceTest {
         // given
         final Long productId = 제품을_저장한다(PRODUCT_PRICE_10000.생성()).getId();
         final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final MenuProduct menuProduct = new MenuProduct(null, productId, 1);
-        final Menu savedMenu = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId, List.of(menuProduct)));
+        final Menu savedMenu = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId));
+        final MenuProduct savedMenuProduct = 메뉴상품을_저장한다(MENU_PRODUCT_1.생성(savedMenu.getId(), productId));
 
         // when
         final List<Menu> menus = menuService.list();
@@ -79,10 +92,8 @@ class MenuServiceTest extends ServiceTest {
         final Optional<Menu> foundMenu = menus.stream()
                 .filter(menu -> menu.getId().equals(savedMenu.getId()))
                 .findFirst();
-        assertAll(
-                () -> assertThat(foundMenu).isPresent(),
-                () -> assertThat(foundMenu.get().getMenuProducts()).usingElementComparatorIgnoringFields("seq")
-                        .containsOnly(menuProduct)
-        );
+        assertThat(foundMenu).isPresent();
+        assertThat(foundMenu.get().getMenuProducts()).usingElementComparatorIgnoringFields("seq")
+                .containsOnly(savedMenuProduct);
     }
 }

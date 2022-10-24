@@ -19,7 +19,7 @@ class MenuProductDaoTest extends JdbcDaoTest {
     @Test
     void 메뉴상품을_저장한다() {
         // given
-        final Product savedProduct = 상품을_저장한다(PRODUCT_PRICE_10000.생성());
+        final Product savedProduct = 제품을_저장한다(PRODUCT_PRICE_10000.생성());
         final MenuGroup savedMenuGroup = 메뉴그룹을_저장한다(MENU_GROUP_1.생성());
         final Menu savedMenu = 메뉴를_저장한다(MENU_PRICE_10000.생성(savedMenuGroup.getId()));
         final MenuProduct menuProduct = new MenuProduct(savedMenu.getId(), savedProduct.getId(), 10);
@@ -34,7 +34,7 @@ class MenuProductDaoTest extends JdbcDaoTest {
     @Test
     void 메뉴상품을_아이디로_조회한다() {
         // given
-        final Product savedProduct = 상품을_저장한다(PRODUCT_PRICE_10000.생성());
+        final Product savedProduct = 제품을_저장한다(PRODUCT_PRICE_10000.생성());
         final MenuGroup savedMenuGroup = 메뉴그룹을_저장한다(MENU_GROUP_1.생성());
         final Menu savedMenu = 메뉴를_저장한다(MENU_PRICE_10000.생성(savedMenuGroup.getId()));
         final MenuProduct savedMenuProduct = 메뉴상품을_저장한다(MENU_PRODUCT_1.생성(savedMenu.getId(), savedProduct.getId()));
@@ -52,7 +52,7 @@ class MenuProductDaoTest extends JdbcDaoTest {
         // given
         final int alreadyExistCount = menuProductDao.findAll()
                 .size();
-        final Product savedProduct = 상품을_저장한다(PRODUCT_PRICE_10000.생성());
+        final Product savedProduct = 제품을_저장한다(PRODUCT_PRICE_10000.생성());
         final MenuGroup savedMenuGroup = 메뉴그룹을_저장한다(MENU_GROUP_1.생성());
         final Menu savedMenu = 메뉴를_저장한다(MENU_PRICE_10000.생성(savedMenuGroup.getId()));
         final MenuProduct savedMenuProduct = 메뉴상품을_저장한다(MENU_PRODUCT_1.생성(savedMenu.getId(), savedProduct.getId()));
@@ -69,7 +69,7 @@ class MenuProductDaoTest extends JdbcDaoTest {
     @Test
     void 메뉴_아이디로_메뉴상품_목록을_조회한다() {
         // given
-        final Product savedProduct = 상품을_저장한다(PRODUCT_PRICE_10000.생성());
+        final Product savedProduct = 제품을_저장한다(PRODUCT_PRICE_10000.생성());
         final MenuGroup savedMenuGroup = 메뉴그룹을_저장한다(MENU_GROUP_1.생성());
         final Menu savedMenu = 메뉴를_저장한다(MENU_PRICE_10000.생성(savedMenuGroup.getId()));
         final MenuProduct savedMenuProduct = 메뉴상품을_저장한다(MENU_PRODUCT_1.생성(savedMenu.getId(), savedProduct.getId()));

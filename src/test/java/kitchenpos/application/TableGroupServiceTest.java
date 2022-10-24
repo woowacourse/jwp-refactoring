@@ -1,14 +1,9 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.support.MenuFixture.MENU_PRICE_10000;
-import static kitchenpos.support.MenuGroupFixture.MENU_GROUP_1;
-import static kitchenpos.support.MenuProductFixture.MENU_PRODUCT_1;
+import static kitchenpos.support.OrderFixture.ORDER_COMPLETION_1;
 import static kitchenpos.support.OrderFixture.ORDER_COOKING_1;
-import static kitchenpos.support.OrderLineItemFixture.ORDER_LINE_ITEM_1;
 import static kitchenpos.support.OrderTableFixture.ORDER_TABLE_EMPTY_1;
 import static kitchenpos.support.OrderTableFixture.ORDER_TABLE_NOT_EMPTY_1;
-import static kitchenpos.support.ProductFixture.PRODUCT_PRICE_10000;
 import static kitchenpos.support.TableGroupFixture.TABLE_GROUP_NOW;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -16,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
@@ -76,12 +70,11 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void 테이블그룹을_생성할_때_묶을_테이블중_이미_테이블_그룹이_있다면_예외를_발생한다() {
         // given
-        final OrderTable alreadySavedOrderTable1 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
-        final OrderTable alreadySavedOrderTable2 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
-        테이블_그룹을_저장한다(TABLE_GROUP_NOW.생성(List.of(alreadySavedOrderTable1, alreadySavedOrderTable2)));
+        final Long alreadySavedTableGroupId = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성()).getId();
+        final OrderTable alreadySavedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(alreadySavedTableGroupId));
 
         final OrderTable savedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
-        final TableGroup tableGroup = TABLE_GROUP_NOW.생성(List.of(alreadySavedOrderTable1, savedOrderTable));
+        final TableGroup tableGroup = TABLE_GROUP_NOW.생성(List.of(alreadySavedOrderTable, savedOrderTable));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -91,23 +84,14 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void 테이블_그룹을_해제할_수_있다() {
         // given
-        final Long productId = 제품을_저장한다(PRODUCT_PRICE_10000.생성()).getId();
-        final OrderTable alreadySavedOrderTable1 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
-        final OrderTable alreadySavedOrderTable2 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
-        final TableGroup tableGroup = 테이블_그룹을_저장한다(
-                TABLE_GROUP_NOW.생성(List.of(alreadySavedOrderTable1, alreadySavedOrderTable2)));
-
-        final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final Long menuId = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId, List.of(MENU_PRODUCT_1.생성(productId)))).getId();
-        final Order firstOrder = 주문을_저장한다(
-                ORDER_COOKING_1.생성(alreadySavedOrderTable1.getId(), List.of(ORDER_LINE_ITEM_1.생성(menuId))));
-        final Order secondOrder = 주문을_저장한다(
-                ORDER_COOKING_1.생성(alreadySavedOrderTable2.getId(), List.of(ORDER_LINE_ITEM_1.생성(menuId))));
-        주문_상태를_변경한다(firstOrder.getId(), COMPLETION);
-        주문_상태를_변경한다(secondOrder.getId(), COMPLETION);
+        final Long tableGroupId = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성()).getId();
+        final OrderTable alreadySavedOrderTable1 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroupId));
+        final OrderTable alreadySavedOrderTable2 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroupId));
+        주문을_저장한다(ORDER_COMPLETION_1.생성(alreadySavedOrderTable1.getId()));
+        주문을_저장한다(ORDER_COMPLETION_1.생성(alreadySavedOrderTable2.getId()));
 
         // when
-        tableGroupService.ungroup(tableGroup.getId());
+        tableGroupService.ungroup(tableGroupId);
 
         // then
         final Optional<OrderTable> foundOrderTable1 = tableService.list()
@@ -124,18 +108,14 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void 테이블_그룹을_해제할_때_주문테이블의_주문상태가_제조중이거나_식사중이면_예외를_발생한다() {
         // given
-        final Long productId = 제품을_저장한다(PRODUCT_PRICE_10000.생성()).getId();
-        final OrderTable alreadySavedOrderTable1 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
-        final OrderTable alreadySavedOrderTable2 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
-        final TableGroup tableGroup = 테이블_그룹을_저장한다(
-                TABLE_GROUP_NOW.생성(List.of(alreadySavedOrderTable1, alreadySavedOrderTable2)));
-        final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final Long menuId = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId, List.of(MENU_PRODUCT_1.생성(productId)))).getId();
-        주문을_저장한다(ORDER_COOKING_1.생성(alreadySavedOrderTable1.getId(), List.of(ORDER_LINE_ITEM_1.생성(menuId))));
-        주문을_저장한다(ORDER_COOKING_1.생성(alreadySavedOrderTable2.getId(), List.of(ORDER_LINE_ITEM_1.생성(menuId))));
+        final Long tableGroupId = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성()).getId();
+        final OrderTable alreadySavedOrderTable1 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroupId));
+        final OrderTable alreadySavedOrderTable2 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroupId));
+        주문을_저장한다(ORDER_COOKING_1.생성(alreadySavedOrderTable1.getId()));
+        주문을_저장한다(ORDER_COMPLETION_1.생성(alreadySavedOrderTable2.getId()));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
