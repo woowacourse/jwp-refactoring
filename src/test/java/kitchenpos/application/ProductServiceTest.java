@@ -45,14 +45,10 @@ class ProductServiceTest extends IntegrationTest {
 
     @Test
     void 상품의_리스트들을_반환할_수_있다() {
-        // given
-        Product product = new Product("짜장면", BigDecimal.valueOf(1000));
-        productService.create(product);
-
         // when
         List<Product> extract = productService.list();
 
         // then
-        assertThat(extract).hasSize(1);
+        assertThat(extract).hasSize(6);
     }
 }

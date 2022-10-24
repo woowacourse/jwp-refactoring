@@ -37,15 +37,11 @@ class TableServiceTest extends IntegrationTest {
 
     @Test
     void 테이블_목록들을_조회할_수_있다() {
-        // given
-        OrderTable orderTable = new OrderTable(null, 0, true);
-        tableService.create(orderTable);
-
         // when
         List<OrderTable> extract = tableService.list();
 
         // then
-        assertThat(extract).hasSize(1);
+        assertThat(extract).hasSize(8);
     }
 
     @ParameterizedTest
