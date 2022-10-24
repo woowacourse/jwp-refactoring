@@ -9,7 +9,12 @@ public class TableGroup {
     private List<OrderTable> orderTables;
 
     public TableGroup() {
+        this(null);
+    }
+
+    public TableGroup(List<OrderTable> orderTables) {
         this.createdDate = LocalDateTime.now();
+        this.orderTables = orderTables;
     }
 
     public Long getId() {
