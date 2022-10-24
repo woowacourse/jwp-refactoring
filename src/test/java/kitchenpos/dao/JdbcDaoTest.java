@@ -4,6 +4,7 @@ import javax.sql.DataSource;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -23,6 +24,7 @@ public class JdbcDaoTest {
     protected ProductDao productDao;
     protected TableGroupDao tableGroupDao;
     protected OrderTableDao orderTableDao;
+    protected OrderDao orderDao;
 
     @BeforeEach
     void setUp() {
@@ -32,6 +34,7 @@ public class JdbcDaoTest {
         this.productDao = new JdbcTemplateProductDao(dataSource);
         this.tableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
         this.orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
+        this.orderDao = new JdbcTemplateOrderDao(dataSource);
     }
 
     protected Product 상품을_저장한다(final Product product) {
@@ -56,5 +59,9 @@ public class JdbcDaoTest {
 
     protected OrderTable 주문테이블을_저장한다(final OrderTable orderTable) {
         return orderTableDao.save(orderTable);
+    }
+
+    protected Order 주문을_저장한다(final Order order) {
+        return orderDao.save(order);
     }
 }
