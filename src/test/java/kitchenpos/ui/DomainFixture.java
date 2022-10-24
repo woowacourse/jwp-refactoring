@@ -1,6 +1,7 @@
 package kitchenpos.ui;
 
 import java.math.BigDecimal;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 
 public class DomainFixture {
@@ -12,4 +13,12 @@ public class DomainFixture {
         product.setPrice(BigDecimal.valueOf(1000L));
         return product;
     }
+
+    public static MenuGroup getMenuGroup() {
+        final MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setId(1L);
+        menuGroup.setName("menuGroup");
+        return menuGroup;
+    }
+
 }

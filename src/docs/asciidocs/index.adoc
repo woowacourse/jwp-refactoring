@@ -11,3 +11,6 @@ endif::[]
 
 == Product
 include::product.adoc[]
+
+== MenuGroup
+include::menuGroup.adoc[]

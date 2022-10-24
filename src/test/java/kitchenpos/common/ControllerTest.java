@@ -1,6 +1,7 @@
 package kitchenpos.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kitchenpos.ui.MenuGroupRestController;
 import kitchenpos.ui.ProductRestController;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ import org.springframework.restdocs.operation.preprocess.OperationResponsePrepro
 import org.springframework.restdocs.operation.preprocess.Preprocessors;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest({ProductRestController.class})
 @AutoConfigureRestDocs
 @ExtendWith({RestDocumentationExtension.class})
 public class ControllerTest {
@@ -22,7 +22,6 @@ public class ControllerTest {
 
     @Autowired
     protected ObjectMapper objectMapper;
-    @Autowired
 
     protected OperationResponsePreprocessor getResponsePreprocessor() {
         return Preprocessors.preprocessResponse(Preprocessors.prettyPrint());
