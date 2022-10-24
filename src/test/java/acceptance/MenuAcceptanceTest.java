@@ -35,6 +35,34 @@ public class MenuAcceptanceTest {
         RestAssured.port = port;
     }
 
+    public static Menu givenMenu(String name, int price, long menuGroupId, List<MenuProduct> menuProducts) {
+        Menu menu = new Menu();
+        menu.setName(name);
+        menu.setPrice(BigDecimal.valueOf(price));
+        menu.setMenuGroupId(menuGroupId);
+        menu.setMenuProducts(menuProducts);
+        return menu;
+    }
+
+    public static MenuProduct givenMenuProduct(long productId11, int quantity) {
+        MenuProduct menuProduct1 = new MenuProduct();
+        menuProduct1.setProductId(productId11);
+        menuProduct1.setQuantity(quantity);
+        return menuProduct1;
+    }
+
+    public static long createMenu(String name, int price, long menuGroupId, List<MenuProduct> menuProducts) {
+        Menu menu = givenMenu(name, price, menuGroupId, menuProducts);
+        return RestAssured.given().log().all()
+                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .body(menu)
+                .when().log().all()
+                .post("/api/menus")
+                .then().log().all()
+                .statusCode(HttpStatus.CREATED.value())
+                .extract().jsonPath().getLong("id");
+    }
+
     @DisplayName("메뉴 목록을 조회한다.")
     @Test
     void findMenus() {
@@ -64,34 +92,6 @@ public class MenuAcceptanceTest {
                         tuple(menuId3, "피자치킨 세트", 12000),
                         tuple(menuId4, "국밥 수육 메뉴", 27000)
                 );
-    }
-
-    private MenuProduct givenMenuProduct(long productId11, int quantity) {
-        MenuProduct menuProduct1 = new MenuProduct();
-        menuProduct1.setProductId(productId11);
-        menuProduct1.setQuantity(quantity);
-        return menuProduct1;
-    }
-
-    private long createMenu(String name, int price, long menuGroupId, List<MenuProduct> menuProducts) {
-        Menu menu = givenMenu(name, price, menuGroupId, menuProducts);
-        return RestAssured.given().log().all()
-                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(menu)
-                .when().log().all()
-                .post("/api/menus")
-                .then().log().all()
-                .statusCode(HttpStatus.CREATED.value())
-                .extract().jsonPath().getLong("id");
-    }
-
-    private Menu givenMenu(String name, int price, long menuGroupId, List<MenuProduct> menuProducts) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-        return menu;
     }
 
     private List<Menu> getMenus() {
