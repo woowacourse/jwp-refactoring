@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static kitchenpos.fixture.MenuTestFixture.떡볶이;
 import static kitchenpos.fixture.ProductFixture.불맛_떡볶이;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +14,7 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -21,6 +23,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -64,6 +67,9 @@ public class ServiceTestBase {
 
     @Autowired
     public OrderDao orderDao;
+
+    @Autowired
+    public TableGroupDao tableGroupDao;
 
     @Autowired
     public OrderTableDao orderTableDao;
@@ -139,9 +145,20 @@ public class ServiceTestBase {
         return orderLineItem;
     }
 
+    public TableGroup 단체_지정_생성() {
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now());
+        return tableGroupDao.save(tableGroup);
+    }
+
     public OrderTable 주문_테이블_생성() {
+        return 주문_테이블_생성(null);
+    }
+
+    public OrderTable 주문_테이블_생성(final Long tableGroupId) {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);
+        orderTable.setTableGroupId(tableGroupId);
         orderTable.setNumberOfGuests(3);
         return orderTableDao.save(orderTable);
     }

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -70,6 +71,19 @@ class TableServiceTest extends ServiceTestBase {
         OrderTable orderTable = 주문_테이블_생성();
         주문_생성(분식_메뉴_생성(), orderTable, orderStatus);
 
+        boolean changedEmpty = !orderTable.isEmpty();
+        orderTable.setEmpty(changedEmpty);
+
+        // when & then
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTable))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 단체_지정된_주문_테이블의_상태_변경_시_실패() {
+        // given
+        TableGroup tableGroup = 단체_지정_생성();
+        OrderTable orderTable = 주문_테이블_생성(tableGroup.getId());
         boolean changedEmpty = !orderTable.isEmpty();
         orderTable.setEmpty(changedEmpty);
 
