@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import kitchenpos.acceptance.common.fixture.RequestBody;
+import kitchenpos.common.fixture.RequestBody;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.common.ControllerTest;
 import kitchenpos.domain.TableGroup;
@@ -37,7 +37,7 @@ class TableGroupRestControllerTest extends ControllerTest {
     void createGroupTable() throws Exception {
         when(tableGroupService.create(any(TableGroup.class))).thenReturn(DomainFixture.getTableGroup());
 
-        ResultActions resultActions = mockMvc.perform(post("/api/table-groups")
+        final ResultActions resultActions = mockMvc.perform(post("/api/table-groups")
                         .content(objectMapper.writeValueAsString(RequestBody.getOrderTableGroups(1L, 2L)))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -64,7 +64,7 @@ class TableGroupRestControllerTest extends ControllerTest {
     @DisplayName("테이블 그룹을 해제한다.")
     @Test
     void ungroupTable() throws Exception {
-        ResultActions resultActions = mockMvc.perform(delete("/api/table-groups/1")
+        final ResultActions resultActions = mockMvc.perform(delete("/api/table-groups/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isNoContent());

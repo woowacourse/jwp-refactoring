@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 import java.util.Map;
-import kitchenpos.acceptance.common.fixture.RequestBody;
+import kitchenpos.common.fixture.RequestBody;
 import kitchenpos.application.OrderService;
 import kitchenpos.common.ControllerTest;
 import kitchenpos.domain.Order;
@@ -40,7 +40,7 @@ class OrderRestControllerTest extends ControllerTest {
     void createOrder() throws Exception {
         when(orderService.create(any(Order.class))).thenReturn(DomainFixture.getOrder());
 
-        ResultActions resultActions = mockMvc.perform(post("/api/orders")
+        final ResultActions resultActions = mockMvc.perform(post("/api/orders")
                         .content(objectMapper.writeValueAsString(RequestBody.getOrder(1L, 1L)))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -75,7 +75,7 @@ class OrderRestControllerTest extends ControllerTest {
     void getOrders() throws Exception {
         when(orderService.list()).thenReturn(List.of(DomainFixture.getOrder()));
 
-        ResultActions resultActions = mockMvc.perform(get("/api/orders")
+        final ResultActions resultActions = mockMvc.perform(get("/api/orders")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -102,7 +102,7 @@ class OrderRestControllerTest extends ControllerTest {
     void changeOrderStatus() throws Exception {
         when(orderService.changeOrderStatus(anyLong(), any(Order.class))).thenReturn(DomainFixture.getOrder());
 
-        ResultActions resultActions = mockMvc.perform(put("/api/orders/1/order-status")
+        final ResultActions resultActions = mockMvc.perform(put("/api/orders/1/order-status")
                         .content(objectMapper.writeValueAsString(Map.of("orderStatus", "COOKING")))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())

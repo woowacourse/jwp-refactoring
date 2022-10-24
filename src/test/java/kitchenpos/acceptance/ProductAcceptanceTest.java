@@ -6,7 +6,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
 import kitchenpos.acceptance.common.httpcommunication.ProductHttpCommunication;
-import kitchenpos.acceptance.common.fixture.RequestBody;
+import kitchenpos.common.fixture.RequestBody;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ public class ProductAcceptanceTest extends AcceptanceTest {
     @DisplayName("상품을 추가해야 한다.")
     @Test
     void createProduct() {
-        ExtractableResponse<Response> response = ProductHttpCommunication.create(RequestBody.PRODUCT)
+        final ExtractableResponse<Response> response = ProductHttpCommunication.create(RequestBody.PRODUCT)
                 .getResponse();
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
@@ -29,7 +29,7 @@ public class ProductAcceptanceTest extends AcceptanceTest {
     @Test
     void getProducts() {
         ProductHttpCommunication.create(RequestBody.PRODUCT);
-        List<Product> body = ProductHttpCommunication.getProducts()
+        final List<Product> body = ProductHttpCommunication.getProducts()
                 .getResponseBodyAsList(Product.class);
 
         assertThat(body.size()).isEqualTo(1);

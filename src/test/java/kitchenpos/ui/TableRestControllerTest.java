@@ -15,10 +15,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
 import java.util.Map;
-import kitchenpos.acceptance.common.fixture.RequestBody;
+import kitchenpos.common.fixture.RequestBody;
 import kitchenpos.application.TableService;
 import kitchenpos.common.ControllerTest;
 import kitchenpos.domain.OrderTable;
@@ -41,7 +40,7 @@ class TableRestControllerTest extends ControllerTest {
     void createOrderTable() throws Exception {
         when(tableService.create(any(OrderTable.class))).thenReturn(DomainFixture.getOrderTable(true));
 
-        ResultActions resultActions = mockMvc.perform(post("/api/tables")
+        final ResultActions resultActions = mockMvc.perform(post("/api/tables")
                         .content(objectMapper.writeValueAsString(RequestBody.ORDER_TABLE_1))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -68,7 +67,7 @@ class TableRestControllerTest extends ControllerTest {
     void getOrderTables() throws Exception {
         when(tableService.list()).thenReturn(List.of(DomainFixture.getOrderTable(true)));
 
-        ResultActions resultActions = mockMvc.perform(get("/api/tables")
+        final ResultActions resultActions = mockMvc.perform(get("/api/tables")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -89,7 +88,7 @@ class TableRestControllerTest extends ControllerTest {
     void changeEmpty() throws Exception {
         when(tableService.changeEmpty(anyLong(), any(OrderTable.class))).thenReturn(DomainFixture.getOrderTable(true));
 
-        ResultActions resultActions = mockMvc.perform(put("/api/tables/1/empty")
+        final ResultActions resultActions = mockMvc.perform(put("/api/tables/1/empty")
                         .content(objectMapper.writeValueAsString(Map.of("isEmpty", true)))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -115,7 +114,7 @@ class TableRestControllerTest extends ControllerTest {
     void changeNumberOfGuests() throws Exception {
         when(tableService.changeNumberOfGuests(anyLong(), any(OrderTable.class))).thenReturn(DomainFixture.getOrderTable(true));
 
-        ResultActions resultActions = mockMvc.perform(put("/api/tables/1/number-of-guests")
+        final ResultActions resultActions = mockMvc.perform(put("/api/tables/1/number-of-guests")
                         .content(objectMapper.writeValueAsString(Map.of("numberOfGuests", 0)))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -135,5 +134,4 @@ class TableRestControllerTest extends ControllerTest {
                 )
         ));
     }
-
 }

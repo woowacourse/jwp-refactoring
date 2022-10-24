@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import kitchenpos.acceptance.common.fixture.RequestBody;
+import kitchenpos.common.fixture.RequestBody;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.common.ControllerTest;
 import kitchenpos.domain.MenuGroup;
@@ -37,7 +37,7 @@ class MenuGroupRestControllerTest extends ControllerTest {
     void createMenuGroup() throws Exception {
         when(menuGroupService.create(any(MenuGroup.class))).thenReturn(DomainFixture.getMenuGroup());
 
-        ResultActions resultActions = mockMvc.perform(post("/api/menu-groups")
+        final ResultActions resultActions = mockMvc.perform(post("/api/menu-groups")
                         .content(objectMapper.writeValueAsString(RequestBody.MENU_GROUP))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -60,7 +60,7 @@ class MenuGroupRestControllerTest extends ControllerTest {
     void getMenuGroups() throws Exception {
         when(menuGroupService.list()).thenReturn(List.of(DomainFixture.getMenuGroup()));
 
-        ResultActions resultActions = mockMvc.perform(get("/api/menu-groups")
+        final ResultActions resultActions = mockMvc.perform(get("/api/menu-groups")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());

@@ -1,10 +1,9 @@
-package kitchenpos.acceptance.common.fixture;
+package kitchenpos.common.fixture;
 
 import static java.util.Map.entry;
 
 import java.util.List;
 import java.util.Map;
-import kitchenpos.domain.MenuProduct;
 
 public class RequestBody {
 

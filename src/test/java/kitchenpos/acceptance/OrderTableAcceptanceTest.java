@@ -7,7 +7,7 @@ import io.restassured.response.Response;
 import java.util.List;
 import java.util.Map;
 import kitchenpos.acceptance.common.httpcommunication.OrderTableHttpCommunication;
-import kitchenpos.acceptance.common.fixture.RequestBody;
+import kitchenpos.common.fixture.RequestBody;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

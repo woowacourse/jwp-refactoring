@@ -8,7 +8,7 @@ import java.util.List;
 import kitchenpos.acceptance.common.httpcommunication.MenuGroupHttpCommunication;
 import kitchenpos.acceptance.common.httpcommunication.MenuHttpCommunication;
 import kitchenpos.acceptance.common.httpcommunication.ProductHttpCommunication;
-import kitchenpos.acceptance.common.fixture.RequestBody;
+import kitchenpos.common.fixture.RequestBody;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;

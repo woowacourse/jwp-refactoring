@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import kitchenpos.acceptance.common.fixture.RequestBody;
+import kitchenpos.common.fixture.RequestBody;
 import kitchenpos.application.ProductService;
 import kitchenpos.common.ControllerTest;
 import kitchenpos.domain.Product;
@@ -37,7 +37,7 @@ class ProductRestControllerTest extends ControllerTest {
     void createProduct() throws Exception {
         when(productService.create(any(Product.class))).thenReturn(DomainFixture.getProduct());
 
-        ResultActions resultActions = mockMvc.perform(post("/api/products")
+        final ResultActions resultActions = mockMvc.perform(post("/api/products")
                         .content(objectMapper.writeValueAsString(RequestBody.PRODUCT))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -63,7 +63,7 @@ class ProductRestControllerTest extends ControllerTest {
     void getProducts() throws Exception {
         when(productService.list()).thenReturn(List.of(DomainFixture.getProduct()));
 
-        ResultActions resultActions = mockMvc.perform(get("/api/products")
+        final ResultActions resultActions = mockMvc.perform(get("/api/products")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());

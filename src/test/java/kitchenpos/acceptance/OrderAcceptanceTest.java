@@ -12,7 +12,7 @@ import kitchenpos.acceptance.common.httpcommunication.MenuHttpCommunication;
 import kitchenpos.acceptance.common.httpcommunication.OrderHttpCommunication;
 import kitchenpos.acceptance.common.httpcommunication.OrderTableHttpCommunication;
 import kitchenpos.acceptance.common.httpcommunication.ProductHttpCommunication;
-import kitchenpos.acceptance.common.fixture.RequestBody;
+import kitchenpos.common.fixture.RequestBody;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -28,7 +28,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     @DisplayName("주문을 생성한다.")
     @Test
     void createOrder() {
-        ExtractableResponse<Response> response = order().getResponse();
+        final ExtractableResponse<Response> response = order().getResponse();
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
         assertThat(response.header("Location")).isNotBlank();
@@ -38,7 +38,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     @Test
     void getOrders() {
         order();
-        List<Order> orders = OrderHttpCommunication.getOrders()
+        final List<Order> orders = OrderHttpCommunication.getOrders()
                 .getResponseBodyAsList(Order.class);
 
         assertThat(orders.size()).isEqualTo(1);
@@ -60,11 +60,12 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                 .getResponseBodyAsObject(Product.class);
         final MenuGroup menuGroup = MenuGroupHttpCommunication.create(RequestBody.MENU_GROUP)
                 .getResponseBodyAsObject(MenuGroup.class);
-        final Menu menu = MenuHttpCommunication.create(RequestBody.getMenuProductFixture(product.getId(), menuGroup.getId()))
+        final Menu menu = MenuHttpCommunication.create(
+                        RequestBody.getMenuProductFixture(product.getId(), menuGroup.getId()))
                 .getResponseBodyAsObject(Menu.class);
         final OrderTable orderTable = OrderTableHttpCommunication.create(RequestBody.ORDER_TABLE_1)
                 .getResponseBodyAsObject(OrderTable.class);
-        OrderTable nonEmptyOrderTable = OrderTableHttpCommunication.changeEmpty(orderTable.getId(),
+        final OrderTable nonEmptyOrderTable = OrderTableHttpCommunication.changeEmpty(orderTable.getId(),
                         RequestBody.NON_EMPTY_TABLE)
                 .getResponseBodyAsObject(OrderTable.class);
 
