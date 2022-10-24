@@ -1,65 +1,59 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@ExtendWith(MockitoExtension.class)
-class MenuGroupServiceTest {
-    @Mock
-    private MenuGroupDao menuGroupDao;
+@DisplayName("MenuGroupService 테스트")
+class MenuGroupServiceTest extends ServiceTest {
 
-    @InjectMocks
+    @Autowired
     private MenuGroupService menuGroupService;
 
-    @DisplayName("MenuGroup을 생성한다.")
-    @Test
-    void create() {
-        MenuGroup newMenuGroup = new MenuGroup();
-        newMenuGroup.setId(1L);
-        newMenuGroup.setName("new menu group");
+    @DisplayName("create 메소드는")
+    @Nested
+    class CreateMethod {
+        @DisplayName("메뉴 그룹을 생성한다.")
+        @Test
+        void Should_CreateMenuGroup() {
+            // given
+            MenuGroup menuGroup = new MenuGroup("분식");
 
-        given(menuGroupDao.save(any()))
-                .willReturn(newMenuGroup);
+            // when
+            MenuGroup actual = menuGroupService.create(menuGroup);
 
-        MenuGroup actual = menuGroupService.create(newMenuGroup);
-        assertThat(actual).isEqualTo(newMenuGroup);
+            // then
+            assertThat(actual.getName()).isEqualTo(menuGroup.getName());
+        }
     }
 
-    @DisplayName("저장된 MenuGroup 목록을 가져온다.")
-    @Test
-    void list() {
-        // given
-        MenuGroup menu1 = new MenuGroup();
-        menu1.setId(1L);
-        menu1.setName("first menu group");
+    @DisplayName("list 메소드는")
+    @Nested
+    class ListMethod {
+        @DisplayName("생성된 메뉴 그룹 목록을 조회한다.")
+        @Test
+        void Should_ReturnMenuGroupList() {
+            // given
+            MenuGroup menuGroup1 = new MenuGroup("분식");
+            MenuGroup menuGroup2 = new MenuGroup("한식");
+            MenuGroup menuGroup3 = new MenuGroup("중식");
 
-        MenuGroup menu2 = new MenuGroup();
-        menu2.setId(2L);
-        menu2.setName("second menu group");
+            menuGroupService.create(menuGroup1);
+            menuGroupService.create(menuGroup2);
+            menuGroupService.create(menuGroup3);
 
-        MenuGroup menu3 = new MenuGroup();
-        menu3.setId(3L);
-        menu3.setName("third menu group");
+            // when
+            List<MenuGroup> actual = menuGroupService.list();
 
-        List<MenuGroup> menuGroups = List.of(menu1, menu2, menu3);
-        given(menuGroupDao.findAll())
-                .willReturn(menuGroups);
-
-        // when
-        List<MenuGroup> actual = menuGroupService.list();
-
-        // then
-        assertThat(actual).isEqualTo(menuGroups);
+            // then
+            assertThat(actual).hasSize(3);
+        }
     }
+
+
 }
