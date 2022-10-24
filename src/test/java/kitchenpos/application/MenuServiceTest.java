@@ -64,7 +64,7 @@ class MenuServiceTest extends ServiceTest {
                     .containsOnly(Product.후라이드, Product.양념치킨),
                 () -> assertThat(menuProducts)
                     .extracting("quantity")
-                    .containsOnly(2L, 1L)
+                    .containsOnly(Product.후라이드, Product.양념치킨)
             );
         }
 
@@ -94,7 +94,7 @@ class MenuServiceTest extends ServiceTest {
             MenuRequest menuRequest = new MenuRequest(
                 MENU_NAME,
                 price,
-                5L,
+                MenuGroup.없는_메뉴_그룹,
                 menuProductRequests
             );
 

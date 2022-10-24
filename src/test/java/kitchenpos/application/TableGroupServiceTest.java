@@ -80,7 +80,7 @@ class TableGroupServiceTest extends ServiceTest {
         void notExistTable() {
             // given
             TableGroupRequest tableGroupRequest = new TableGroupRequest(
-                List.of(첫번째_테이블, 9L)
+                List.of(첫번째_테이블, 없는_테이블)
             );
 
             // when then

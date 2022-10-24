@@ -84,7 +84,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void notExistTable() {
             // when then
-            assertThatThrownBy(() -> tableService.changeEmpty(9L, false))
+            assertThatThrownBy(() -> tableService.changeEmpty(없는_테이블, false))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("존재하지 않는 테이블입니다.");
         }
@@ -149,7 +149,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void notExistTable() {
             // when then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(-9L, 1))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(-없는_테이블, 1))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("존재하지 않는 테이블입니다.");
         }

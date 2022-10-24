@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.Fixture.OrderTable.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,7 +38,7 @@ class OrderServiceTest extends ServiceTest {
 
     @BeforeEach
     void init() {
-        tableService.changeEmpty(OrderTable.첫번째_테이블, false);
+        tableService.changeEmpty(첫번째_테이블, false);
         orderLineItemRequests = List.of(
             new OrderLineItemRequest(Menu.후라이드_치킨, 1),
             new OrderLineItemRequest(Menu.양념_치킨, 1)
@@ -52,7 +53,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void create() {
             // given
-            OrderRequest orderRequest = new OrderRequest(OrderTable.첫번째_테이블, orderLineItemRequests);
+            OrderRequest orderRequest = new OrderRequest(첫번째_테이블, orderLineItemRequests);
 
             // when
             OrderResponse actual = orderService.create(orderRequest);
@@ -62,7 +63,7 @@ class OrderServiceTest extends ServiceTest {
                 () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertThat(actual.getOrderStatus()).isEqualTo("COOKING"),
                 () -> assertThat(actual.getOrderLineItems()).hasSize(2),
-                () -> assertThat(actual.getOrderTableId()).isEqualTo(OrderTable.첫번째_테이블)
+                () -> assertThat(actual.getOrderTableId()).isEqualTo(첫번째_테이블)
             );
         }
 
@@ -70,7 +71,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void emptyOrderLineItems() {
             // given
-            OrderRequest orderRequest = new OrderRequest(OrderTable.첫번째_테이블, new ArrayList<>());
+            OrderRequest orderRequest = new OrderRequest(첫번째_테이블, new ArrayList<>());
 
             // when then
             assertThatThrownBy(() -> orderService.create(orderRequest))
@@ -83,9 +84,9 @@ class OrderServiceTest extends ServiceTest {
         void emptyMenu() {
             // given
             List<OrderLineItemRequest> notExistMenuRequest = new ArrayList<>(orderLineItemRequests);
-            notExistMenuRequest.add(new OrderLineItemRequest(7L, 1));
+            notExistMenuRequest.add(new OrderLineItemRequest(Menu.없는_메뉴, 1));
 
-            OrderRequest orderRequest = new OrderRequest(OrderTable.첫번째_테이블, notExistMenuRequest);
+            OrderRequest orderRequest = new OrderRequest(첫번째_테이블, notExistMenuRequest);
 
             // when then
             assertThatThrownBy(() -> orderService.create(orderRequest))
@@ -97,7 +98,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void notExistOrderTable() {
             // given
-            OrderRequest orderRequest = new OrderRequest(9L, orderLineItemRequests);
+            OrderRequest orderRequest = new OrderRequest(없는_테이블, orderLineItemRequests);
 
             // when then
             assertThatThrownBy(() -> orderService.create(orderRequest))
@@ -109,7 +110,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void emptyTable() {
             // given
-            OrderRequest orderRequest = new OrderRequest(OrderTable.두번째_테이블, orderLineItemRequests);
+            OrderRequest orderRequest = new OrderRequest(두번째_테이블, orderLineItemRequests);
 
             // when then
             assertThatThrownBy(() -> orderService.create(orderRequest))
@@ -122,10 +123,10 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void list() {
         // given
-        OrderRequest orderRequest1 = new OrderRequest(OrderTable.첫번째_테이블, orderLineItemRequests);
+        OrderRequest orderRequest1 = new OrderRequest(첫번째_테이블, orderLineItemRequests);
         orderService.create(orderRequest1);
 
-        OrderRequest orderRequest2 = new OrderRequest(OrderTable.첫번째_테이블, orderLineItemRequests);
+        OrderRequest orderRequest2 = new OrderRequest(첫번째_테이블, orderLineItemRequests);
         orderService.create(orderRequest2);
 
         // when
@@ -143,7 +144,7 @@ class OrderServiceTest extends ServiceTest {
 
         @BeforeEach
         void createOrder() {
-            OrderRequest orderRequest = new OrderRequest(OrderTable.첫번째_테이블, orderLineItemRequests);
+            OrderRequest orderRequest = new OrderRequest(첫번째_테이블, orderLineItemRequests);
             OrderResponse orderResponse = orderService.create(orderRequest);
             orderId = orderResponse.getId();
         }
