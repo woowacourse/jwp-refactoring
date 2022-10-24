@@ -15,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
 
-import kitchenpos.TestUtils;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -44,7 +43,7 @@ public class TableGroupServiceTest {
     void setUp() {
         OrderTable element1 = orderTableDao.save(new OrderTable(100, true));
         OrderTable element2 = orderTableDao.save(new OrderTable(100, true));
-        orderTables = TestUtils.of(element1, element2);
+        orderTables = List.of(element1, element2);
     }
 
 
@@ -52,7 +51,7 @@ public class TableGroupServiceTest {
     @Test
     public void createWithEmptyOrderTable() {
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(TestUtils.of());
+        tableGroup.setOrderTables(List.of());
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -62,16 +61,17 @@ public class TableGroupServiceTest {
     @Test
     public void createWithOneElementOrderTable() {
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(TestUtils.of(new OrderTable(50, true)));
+        tableGroup.setOrderTables(List.of(new OrderTable(50, true)));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 테이블이 사전에 저장되어 있지 않은 경우 예외가 발생한다.")
+    @Test
     public void createWithNoSavedOrderTable() {
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(TestUtils.of(
+        tableGroup.setOrderTables(List.of(
                 new OrderTable(50, true),
                 new OrderTable(50, true)
         ));

@@ -3,10 +3,10 @@ package kitchenpos.service;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
@@ -14,7 +14,6 @@ import org.springframework.test.context.TestConstructor.AutowireMode;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.TestFixture;
-import kitchenpos.TestUtils;
 import kitchenpos.application.OrderService;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
@@ -63,7 +62,7 @@ public class OrderServiceTest {
         Order order = new Order();
         order.setOrderTableId(orderTable.getId());
         OrderLineItem orderLineItem = new OrderLineItem(-1L, 10L);
-        order.setOrderLineItems(TestUtils.of(new OrderLineItem()));
+        order.setOrderLineItems(List.of(new OrderLineItem()));
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -74,7 +73,7 @@ public class OrderServiceTest {
     void orderTableNotSaved() {
         Order order = new Order();
         OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 10L);
-        order.setOrderLineItems(TestUtils.of(new OrderLineItem()));
+        order.setOrderLineItems(List.of(new OrderLineItem()));
         order.setOrderTableId(-1L);
 
         assertThatThrownBy(() -> orderService.create(order))
@@ -87,7 +86,7 @@ public class OrderServiceTest {
         Order order = new Order();
         order.setOrderTableId(orderTable.getId());
         OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 10L);
-        order.setOrderLineItems(TestUtils.of(new OrderLineItem()));
+        order.setOrderLineItems(List.of(new OrderLineItem()));
         orderTable.setEmpty(true);
 
         assertThatThrownBy(() -> orderService.create(order))
