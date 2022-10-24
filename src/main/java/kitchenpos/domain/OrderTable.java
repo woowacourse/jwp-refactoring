@@ -70,4 +70,13 @@ public class OrderTable {
     public int hashCode() {
         return Objects.hash(tableGroupId, numberOfGuests, empty);
     }
+
+    @Override
+    public String toString() {
+        return "OrderTable{" +
+                "tableGroupId=" + tableGroupId +
+                ", numberOfGuests=" + numberOfGuests +
+                ", empty=" + empty +
+                '}';
+    }
 }

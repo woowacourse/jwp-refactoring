@@ -3,7 +3,7 @@ package kitchenpos.domain;
 import java.util.Objects;
 
 public class MenuProduct {
-    private Long seq;
+    private Long id;
     private Long menuId;
     private Long productId;
     private long quantity;
@@ -16,13 +16,13 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public Long getSeq() {
-        return seq;
+    public Long getId() {
+        return id;
     }
 
     @Deprecated
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     public Long getMenuId() {
