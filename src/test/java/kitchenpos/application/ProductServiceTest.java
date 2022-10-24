@@ -6,11 +6,26 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.RepositoryTest;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-class ProductServiceTest extends ApplicationTest {
+@RepositoryTest
+class ProductServiceTest {
+
+    private ProductService sut;
+
+    @Autowired
+    private ProductDao productDao;
+
+    @BeforeEach
+    void setUp() {
+        sut = new ProductService(productDao);
+    }
 
     @DisplayName("새로운 상품을 등록할 수 있다.")
     @Test
@@ -19,7 +34,7 @@ class ProductServiceTest extends ApplicationTest {
         final Product product = new Product("후라이드", BigDecimal.valueOf(16000));
 
         // when
-        final Product createdProduct = productService.create(product);
+        final Product createdProduct = sut.create(product);
 
         // then
         assertThat(createdProduct).isNotNull();
@@ -33,7 +48,7 @@ class ProductServiceTest extends ApplicationTest {
         final Product product = new Product("후라이드", BigDecimal.valueOf(-1));
 
         // when & then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> sut.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -45,7 +60,7 @@ class ProductServiceTest extends ApplicationTest {
         product.setName("후라이드");
 
         // when & then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> sut.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -53,7 +68,7 @@ class ProductServiceTest extends ApplicationTest {
     @Test
     void list() {
         // when
-        final List<Product> products = productService.list();
+        final List<Product> products = sut.list();
 
         // then
         assertThat(products)

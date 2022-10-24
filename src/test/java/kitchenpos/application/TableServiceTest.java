@@ -6,14 +6,47 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.RepositoryTest;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-class TableServiceTest extends ApplicationTest {
+@RepositoryTest
+class TableServiceTest {
+
+    private TableService sut;
+    private OrderService orderService;
+
+    @Autowired
+    private OrderDao orderDao;
+
+    @Autowired
+    private MenuDao menuDao;
+
+    @Autowired
+    private OrderTableDao orderTableDao;
+
+    @Autowired
+    private OrderLineItemDao orderLineItemDao;
+
+    @Autowired
+    private TableGroupDao tableGroupDao;
+
+    @BeforeEach
+    void setUp() {
+        sut = new TableService(orderDao, orderTableDao);
+        orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+    }
 
     @DisplayName("새로운 주문 테이블을 생성할 수 있다.")
     @Test
@@ -22,7 +55,7 @@ class TableServiceTest extends ApplicationTest {
         final OrderTable orderTable = new OrderTable(0, true);
 
         // when
-        final OrderTable createdOrderTable = tableService.create(orderTable);
+        final OrderTable createdOrderTable = sut.create(orderTable);
 
         // then
         assertThat(createdOrderTable).isNotNull();
@@ -33,7 +66,7 @@ class TableServiceTest extends ApplicationTest {
     @Test
     void list() {
         // when
-        final List<OrderTable> orderTables = tableService.list();
+        final List<OrderTable> orderTables = sut.list();
 
         // then
         assertThat(orderTables)
@@ -59,7 +92,7 @@ class TableServiceTest extends ApplicationTest {
         final OrderTable orderTable = new OrderTable(0, true);
 
         // when
-        final OrderTable changedOrderTable = tableService.changeEmpty(orderTableId, orderTable);
+        final OrderTable changedOrderTable = sut.changeEmpty(orderTableId, orderTable);
 
         // then
         assertThat(changedOrderTable.isEmpty()).isTrue();
@@ -77,7 +110,7 @@ class TableServiceTest extends ApplicationTest {
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable))
+        assertThatThrownBy(() -> sut.changeEmpty(savedOrderTable.getId(), savedOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -93,7 +126,7 @@ class TableServiceTest extends ApplicationTest {
         orderService.create(order);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTable))
+        assertThatThrownBy(() -> sut.changeEmpty(orderTableId, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -102,11 +135,11 @@ class TableServiceTest extends ApplicationTest {
     void canChangeGuestsCount() {
         // given
         final OrderTable orderTable = new OrderTable(1, false);
-        final OrderTable createdOrderTable = tableService.create(orderTable);
+        final OrderTable createdOrderTable = sut.create(orderTable);
         final Long orderTableId = createdOrderTable.getId();
 
         // when
-        final OrderTable changedOrderTable = tableService.changeNumberOfGuests(orderTableId, orderTable);
+        final OrderTable changedOrderTable = sut.changeNumberOfGuests(orderTableId, orderTable);
 
         // then
         assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
@@ -117,11 +150,11 @@ class TableServiceTest extends ApplicationTest {
     void GuestsCountCanNotLessThenZero() {
         // given
         final OrderTable orderTable = new OrderTable(-1, false);
-        final OrderTable createdOrderTable = tableService.create(orderTable);
+        final OrderTable createdOrderTable = sut.create(orderTable);
         final Long orderTableId = createdOrderTable.getId();
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, orderTable));
+        assertThatThrownBy(() -> sut.changeNumberOfGuests(orderTableId, orderTable));
     }
 
     @DisplayName("주문 테이블의 손님 수를 변경하려면 주문 테이블은 비어있으면 안된다.")
@@ -129,10 +162,10 @@ class TableServiceTest extends ApplicationTest {
     void tableEmptyWhenChangeGuestsCount() {
         // given
         final OrderTable orderTable = new OrderTable(1, true);
-        final OrderTable createdOrderTable = tableService.create(orderTable);
+        final OrderTable createdOrderTable = sut.create(orderTable);
         final Long orderTableId = createdOrderTable.getId();
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, orderTable));
+        assertThatThrownBy(() -> sut.changeNumberOfGuests(orderTableId, orderTable));
     }
 }

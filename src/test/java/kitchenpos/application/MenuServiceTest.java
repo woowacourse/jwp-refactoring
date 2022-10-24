@@ -6,12 +6,39 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.RepositoryTest;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuProductDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-class MenuServiceTest extends ApplicationTest {
+@RepositoryTest
+class MenuServiceTest {
+
+    private MenuService sut;
+
+    @Autowired
+    private MenuDao menuDao;
+
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private MenuProductDao menuProductDao;
+
+    @Autowired
+    private ProductDao productDao;
+
+    @BeforeEach
+    void setUp() {
+        sut = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
+    }
 
     @DisplayName("새로운 메뉴를 등록할 수 있다.")
     @Test
@@ -21,7 +48,7 @@ class MenuServiceTest extends ApplicationTest {
         final Menu menu = new Menu("후라이드치킨", BigDecimal.valueOf(16000), 2L, List.of(menuProduct));
 
         // when
-        final Menu createdMenu = menuService.create(menu);
+        final Menu createdMenu = sut.create(menu);
 
         // then
         assertThat(createdMenu).isNotNull();
@@ -36,7 +63,7 @@ class MenuServiceTest extends ApplicationTest {
         final Menu menu = new Menu("후라이드치킨", BigDecimal.valueOf(-1), 2L, List.of(menuProduct));
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> sut.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -51,7 +78,7 @@ class MenuServiceTest extends ApplicationTest {
         menu.setMenuProducts(List.of(menuProduct));
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> sut.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -66,7 +93,7 @@ class MenuServiceTest extends ApplicationTest {
         menu.setMenuProducts(List.of(menuProduct));
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> sut.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -78,7 +105,7 @@ class MenuServiceTest extends ApplicationTest {
         final Menu menu = new Menu("후라이드치킨", BigDecimal.valueOf(16001), 2L, List.of(menuProduct));
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> sut.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -86,7 +113,7 @@ class MenuServiceTest extends ApplicationTest {
     @Test
     void list() {
         // when
-        final List<Menu> menus = menuService.list();
+        final List<Menu> menus = sut.list();
 
         // then
         assertThat(menus)

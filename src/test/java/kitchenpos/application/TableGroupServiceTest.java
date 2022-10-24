@@ -5,14 +5,39 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.RepositoryTest;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-class TableGroupServiceTest extends ApplicationTest {
+@RepositoryTest
+class TableGroupServiceTest {
+
+    private TableGroupService sut;
+    private TableService tableService;
+
+    @Autowired
+    private OrderDao orderDao;
+
+    @Autowired
+    private OrderTableDao orderTableDao;
+
+    @Autowired
+    private TableGroupDao tableGroupDao;
+
+    @BeforeEach
+    void setUp() {
+        sut = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
+        tableService = new TableService(orderDao, orderTableDao);
+    }
 
     @DisplayName("새로운 단체 지정(table group)을 생성할 수 있다.")
     @Test
@@ -22,7 +47,7 @@ class TableGroupServiceTest extends ApplicationTest {
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
 
         // when
-        final TableGroup createdTableGroup = tableGroupService.create(tableGroup);
+        final TableGroup createdTableGroup = sut.create(tableGroup);
 
         // then
         assertThat(createdTableGroup).isNotNull();
@@ -38,7 +63,7 @@ class TableGroupServiceTest extends ApplicationTest {
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> sut.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -51,7 +76,7 @@ class TableGroupServiceTest extends ApplicationTest {
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> sut.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -60,14 +85,14 @@ class TableGroupServiceTest extends ApplicationTest {
     void canNotCreateTableGroupWhenAlreadyGrouping() {
         // given
         final List<OrderTable> orderTables = tableService.list();
-        tableGroupService.create(new TableGroup(LocalDateTime.now(), orderTables));
+        sut.create(new TableGroup(LocalDateTime.now(), orderTables));
 
         final OrderTable orderTable1 = orderTables.get(0);
         final OrderTable orderTable2 = orderTables.get(1);
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> sut.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -76,10 +101,10 @@ class TableGroupServiceTest extends ApplicationTest {
     void ungroup() {
         // given
         final List<OrderTable> orderTables = tableService.list();
-        final TableGroup tableGroup = tableGroupService.create(new TableGroup(LocalDateTime.now(), orderTables));
+        final TableGroup tableGroup = sut.create(new TableGroup(LocalDateTime.now(), orderTables));
 
         // when
-        tableGroupService.ungroup(tableGroup.getId());
+        sut.ungroup(tableGroup.getId());
 
         // then
         final List<OrderTable> results = tableService.list();
@@ -100,12 +125,12 @@ class TableGroupServiceTest extends ApplicationTest {
         final OrderTable createdAnotherOrderTable = tableService.create(anotherOrderTable);
 
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(createdOrderTable, createdAnotherOrderTable));
-        final TableGroup createdTableGroup = tableGroupService.create(tableGroup);
+        final TableGroup createdTableGroup = sut.create(tableGroup);
 
         saveCookingOrder(createdOrderTable);
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.ungroup(createdTableGroup.getId()))
+        assertThatThrownBy(() -> sut.ungroup(createdTableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

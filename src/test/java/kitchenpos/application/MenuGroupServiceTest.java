@@ -3,11 +3,26 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.RepositoryTest;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-class MenuGroupServiceTest extends ApplicationTest {
+@RepositoryTest
+class MenuGroupServiceTest {
+
+    private MenuGroupService sut;
+
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @BeforeEach
+    void setUp() {
+        sut = new MenuGroupService(menuGroupDao);
+    }
 
     @DisplayName("메뉴 그룹을 생성할 수 있다.")
     @Test
@@ -16,7 +31,7 @@ class MenuGroupServiceTest extends ApplicationTest {
         final MenuGroup menuGroup = new MenuGroup("두마리메뉴");
 
         // when
-        final MenuGroup createdMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroup createdMenuGroup = sut.create(menuGroup);
 
         // then
         assertThat(createdMenuGroup).isNotNull();
@@ -27,7 +42,7 @@ class MenuGroupServiceTest extends ApplicationTest {
     @Test
     void list() {
         // when
-        final List<MenuGroup> menuGroups = menuGroupService.list();
+        final List<MenuGroup> menuGroups = sut.list();
 
         // then
         assertThat(menuGroups)

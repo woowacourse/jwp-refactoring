@@ -8,13 +8,42 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.RepositoryTest;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-class OrderServiceTest extends ApplicationTest {
+@RepositoryTest
+class OrderServiceTest {
+
+    private OrderService sut;
+    private TableService tableService;
+
+    @Autowired
+    private MenuDao menuDao;
+
+    @Autowired
+    private OrderDao orderDao;
+
+    @Autowired
+    private OrderLineItemDao orderLineItemDao;
+
+    @Autowired
+    private OrderTableDao orderTableDao;
+
+    @BeforeEach
+    void setUp() {
+        sut = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+        tableService = new TableService(orderDao, orderTableDao);
+    }
 
     @DisplayName("주문을 등록할 수 있다. (주문을 하면 조리 상태가 된다.)")
     @Test
@@ -27,7 +56,7 @@ class OrderServiceTest extends ApplicationTest {
         final Order order = new Order(createdOrderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
 
         // when
-        final Order createdOrder = orderService.create(order);
+        final Order createdOrder = sut.create(order);
 
         // then
         assertThat(createdOrder).isNotNull();
@@ -45,7 +74,7 @@ class OrderServiceTest extends ApplicationTest {
         final Order order = new Order(createdOrderTable.getId(), LocalDateTime.now(), List.of());
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> sut.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -60,7 +89,7 @@ class OrderServiceTest extends ApplicationTest {
                 invalidQuantityOrderLineItem());
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> sut.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -75,7 +104,7 @@ class OrderServiceTest extends ApplicationTest {
         final Order order = new Order(createdOrderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> sut.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -88,12 +117,12 @@ class OrderServiceTest extends ApplicationTest {
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
 
         final Order order = new Order(createdOrderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
-        final Order createdOrder = orderService.create(order);
+        final Order createdOrder = sut.create(order);
 
         // when
         final Order changeOrder = new Order(createdOrderTable.getId(), "COMPLETION", LocalDateTime.now(),
                 List.of(orderLineItem));
-        final Order changedOrder = orderService.changeOrderStatus(createdOrder.getId(), changeOrder);
+        final Order changedOrder = sut.changeOrderStatus(createdOrder.getId(), changeOrder);
 
         // then
         assertThat(changedOrder.getOrderStatus()).isEqualTo(COMPLETION.name());
@@ -109,10 +138,10 @@ class OrderServiceTest extends ApplicationTest {
 
         final Order order = new Order(createdOrderTable.getId(), "COMPLETION", LocalDateTime.now(),
                 List.of(orderLineItem));
-        final Order createdOrder = orderService.create(order);
+        final Order createdOrder = sut.create(order);
 
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(createdOrder.getOrderTableId(), createdOrder))
+        assertThatThrownBy(() -> sut.changeOrderStatus(createdOrder.getOrderTableId(), createdOrder))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -129,11 +158,11 @@ class OrderServiceTest extends ApplicationTest {
         final Order order1 = createdOrder(orderTable, orderLineItem);
         final Order order2 = createdOrder(anotherOrderTable, antherOrderLineItem);
 
-        final Order createdOrder1 = orderService.create(order1);
-        final Order createdOrder2 = orderService.create(order2);
+        final Order createdOrder1 = sut.create(order1);
+        final Order createdOrder2 = sut.create(order2);
 
         // when
-        final List<Order> orders = orderService.list();
+        final List<Order> orders = sut.list();
 
         // then
         assertThat(orders)
