@@ -8,7 +8,7 @@ public class OrderTableUpdateEmptyRequest {
         this.empty = empty;
     }
 
-    public boolean isEmpty() {
+    public boolean getEmpty() {
         return empty;
     }
 }

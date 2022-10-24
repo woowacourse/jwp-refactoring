@@ -14,7 +14,7 @@ public class OrderTableCreateRequest {
         return numberOfGuests;
     }
 
-    public boolean isEmpty() {
+    public boolean getEmpty() {
         return empty;
     }
 }
