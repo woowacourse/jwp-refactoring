@@ -1,13 +1,17 @@
 package kitchenpos.ui;
 
+
 import static kitchenpos.support.ProductFixtures.PRODUCT1;
+import static kitchenpos.support.ProductFixtures.createAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -50,5 +54,22 @@ public class ProductRestControllerTest {
 
         // then
         resultActions.andExpect(status().isCreated());
+    }
+
+    @DisplayName("product들을 조회한다.")
+    @Test
+    void list() throws Exception {
+        // given
+        final List<Product> products = createAll();
+
+        given(productService.list()).willReturn(products);
+
+        // when
+        final ResultActions resultActions = mockMvc.perform(get("/api/products")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print());
+
+        // then
+        resultActions.andExpect(status().isOk());
     }
 }

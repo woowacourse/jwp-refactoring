@@ -33,7 +33,7 @@ public enum ProductFixtures {
         return new Product(null, name, BigDecimal.valueOf(price));
     }
 
-    public List<Product> createAll() {
+    public static List<Product> createAll() {
         return Arrays.asList(PRODUCT1.create(), PRODUCT2.create(), PRODUCT3.create(), PRODUCT4.create(),
                 PRODUCT5.create(), PRODUCT6.create());
     }

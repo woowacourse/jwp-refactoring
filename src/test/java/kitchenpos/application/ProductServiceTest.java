@@ -1,9 +1,11 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.ProductFixtures.createAll;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import java.util.List;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,5 +42,20 @@ public class ProductServiceTest {
 
         // then
         assertThat(savedProduct.getId()).isNotNull();
+    }
+
+    @DisplayName("product들을 조회한다.")
+    @Test
+    void list() {
+        // given
+        final List<Product> expected = createAll();
+
+        // when
+        final List<Product> products = productService.list();
+
+        // then
+        assertThat(products).usingRecursiveFieldByFieldElementComparator()
+                .usingElementComparatorIgnoringFields("price")
+                .isEqualTo(expected);
     }
 }
