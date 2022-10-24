@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import static kitchenpos.support.MenuFixture.MENU_1;
+import static kitchenpos.support.MenuFixture.MENU_PRICE_10000;
 import static kitchenpos.support.MenuGroupFixture.MENU_GROUP_1;
 import static kitchenpos.support.OrderFixture.ORDER_1;
 import static kitchenpos.support.OrderLineItemFixture.ORDER_LINE_ITEM_1;
@@ -80,7 +80,7 @@ class OrderLineItemDaoTest extends JdbcDaoTest {
 
     private Long 메뉴_저장() {
         final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        return 메뉴를_저장한다(MENU_1.생성(menuGroupId)).getId();
+        return 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId)).getId();
     }
 
     private Long 주문_저장() {

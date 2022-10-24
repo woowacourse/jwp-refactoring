@@ -5,7 +5,9 @@ import kitchenpos.domain.Product;
 
 public enum ProductFixture {
 
-    PRODUCT_1("제품1", 10000);
+    PRODUCT_PRICE_10000("제품1", 10000),
+    PRODUCT_PRICE_1000("제품1", 1000),
+    ;
 
     private final String name;
     private final int price;

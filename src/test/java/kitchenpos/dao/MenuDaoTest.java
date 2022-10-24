@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import static kitchenpos.support.MenuFixture.MENU_1;
+import static kitchenpos.support.MenuFixture.MENU_PRICE_10000;
 import static kitchenpos.support.MenuGroupFixture.MENU_GROUP_1;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -15,7 +15,7 @@ class MenuDaoTest extends JdbcDaoTest {
     void 메뉴를_저장할_수_있다() {
         // given
         final long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final Menu menu = MENU_1.생성(menuGroupId);
+        final Menu menu = MENU_PRICE_10000.생성(menuGroupId);
 
         // when
         final Menu savedMenu = menuDao.save(menu);
@@ -28,7 +28,7 @@ class MenuDaoTest extends JdbcDaoTest {
     void 메뉴를_아이디로_조회할_수_있다() {
         // given
         final long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final Menu savedMenu = 메뉴를_저장한다(MENU_1.생성(menuGroupId));
+        final Menu savedMenu = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId));
 
         // when
         final Menu foundMenu = menuDao.findById(savedMenu.getId())
@@ -48,7 +48,7 @@ class MenuDaoTest extends JdbcDaoTest {
         final int alreadyExistCount = menuDao.findAll()
                 .size();
         final long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final Menu savedMenu = 메뉴를_저장한다(MENU_1.생성(menuGroupId));
+        final Menu savedMenu = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId));
 
         // when
         final List<Menu> menus = menuDao.findAll();
@@ -63,7 +63,7 @@ class MenuDaoTest extends JdbcDaoTest {
     void 아이디_목록으로_존재하는_메뉴의_개수를_반환한다() {
         // given
         final long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final Menu savedMenu = 메뉴를_저장한다(MENU_1.생성(menuGroupId));
+        final Menu savedMenu = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId));
         final long notExistId = Long.MAX_VALUE;
 
         // when
