@@ -9,9 +9,7 @@ public class TableGroup {
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
 
-    public TableGroup() {
-
-    }
+    public TableGroup() {}
 
     public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
         this.createdDate = createdDate;
