@@ -37,8 +37,8 @@ class OrderServiceTest {
         orderTable.setEmpty(false);
         orderTable.setNumberOfGuests(4);
         orderTableDao.save(orderTable);
-        Order order = orderService.create(
-                new Order(orderTable.getId(), createOrderLineItem()));
+
+        Order order = orderService.create(new Order(orderTable.getId(), createOrderLineItem()));
 
         assertThat(order).isNotNull();
     }
@@ -50,8 +50,8 @@ class OrderServiceTest {
         orderTable.setEmpty(false);
         orderTable.setNumberOfGuests(4);
         orderTableDao.save(orderTable);
-        assertThatThrownBy(() -> orderService.create(
-                new Order(orderTable.getId(), new ArrayList<>())))
+
+        assertThatThrownBy(() -> orderService.create(new Order(orderTable.getId(), new ArrayList<>())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -62,8 +62,8 @@ class OrderServiceTest {
         orderTable.setEmpty(false);
         orderTable.setNumberOfGuests(4);
         orderTableDao.save(orderTable);
-        assertThatThrownBy(() -> orderService.create(
-                new Order(orderTable.getId(), createInvalidOrderLineItem())))
+
+        assertThatThrownBy(() -> orderService.create(new Order(orderTable.getId(), createInvalidOrderLineItem())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -71,7 +71,7 @@ class OrderServiceTest {
     @Test
     void createWithInvalidOrderTable() {
         assertThatThrownBy(
-                () -> orderService.create(new Order(999L, createOrderLineItem())))
+                () -> orderService.create(new Order(9999L, createOrderLineItem())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -104,8 +104,7 @@ class OrderServiceTest {
         orderTable.setEmpty(false);
         orderTable.setNumberOfGuests(4);
         orderTableDao.save(orderTable);
-        Order order = orderService.create(
-                new Order(orderTable.getId(), createOrderLineItem()));
+        Order order = orderService.create(new Order(orderTable.getId(), createOrderLineItem()));
         Order changeOrder = new Order();
         changeOrder.setOrderStatus("MEAL");
 
@@ -132,8 +131,7 @@ class OrderServiceTest {
         orderTable.setEmpty(false);
         orderTable.setNumberOfGuests(4);
         orderTableDao.save(orderTable);
-        Order order = orderService.create(
-                new Order(orderTable.getId(), createOrderLineItem()));
+        Order order = orderService.create(new Order(orderTable.getId(), createOrderLineItem()));
         Order changeOrder = new Order();
         changeOrder.setOrderStatus("COMPLETION");
         orderService.changeOrderStatus(order.getId(), changeOrder);

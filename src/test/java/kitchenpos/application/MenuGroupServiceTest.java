@@ -20,7 +20,9 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 등록할 수 있다.")
     @Test
     void create() {
-        MenuGroup menuGroup = menuGroupService.create(new MenuGroup("메뉴그룹"));
+        MenuGroup firstMenuGroup = new MenuGroup("1번 메뉴");
+
+        MenuGroup menuGroup = menuGroupService.create(firstMenuGroup);
 
         assertThat(menuGroup).isNotNull();
     }

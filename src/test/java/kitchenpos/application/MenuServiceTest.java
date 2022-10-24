@@ -26,7 +26,9 @@ class MenuServiceTest {
     @DisplayName("메뉴를 생성한다.")
     @Test
     void create() {
-        Menu menu = menuService.create(new Menu("치킨", BigDecimal.valueOf(10000), 1L, createMenuProducts()));
+        Menu chicken = new Menu("치킨", BigDecimal.valueOf(10000), 1L, createMenuProducts());
+
+        Menu menu = menuService.create(chicken);
 
         assertThat(menu).isNotNull();
     }
@@ -34,7 +36,9 @@ class MenuServiceTest {
     @DisplayName("메뉴의 가격이 null이면 예외가 발생한다..")
     @Test
     void createWithNullPrice() {
-        assertThatThrownBy(() -> menuService.create(new Menu("치킨", null, 1L, createMenuProducts())))
+        Menu chicken = new Menu("치킨", null, 1L, createMenuProducts());
+
+        assertThatThrownBy(() -> menuService.create(chicken))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -42,23 +46,27 @@ class MenuServiceTest {
     @ParameterizedTest
     @ValueSource(ints = {-1, -5})
     void createWithInvalidPrice(int price) {
-        assertThatThrownBy(
-                () -> menuService.create(new Menu("치킨", BigDecimal.valueOf(price), 1L, createMenuProducts())))
+        Menu chicken = new Menu("치킨", BigDecimal.valueOf(price), 1L, createMenuProducts());
+
+        assertThatThrownBy(() -> menuService.create(chicken))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴 그룹이 존재하지 않으면 예외가 발생한다.")
     @Test
     void createWithNoMenuGroup() {
-        assertThatThrownBy(
-                () -> menuService.create(new Menu("치킨", BigDecimal.valueOf(10000), 99999L, createMenuProducts())))
+        Menu chicken = new Menu("치킨", BigDecimal.valueOf(10000), 9999L, createMenuProducts());
+
+        assertThatThrownBy(() -> menuService.create(chicken))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴상품이 비어 있으면 예외가 발생한다.")
     @Test
     void createWithNoMenuProduct() {
-        assertThatThrownBy(() -> menuService.create(new Menu("치킨", BigDecimal.valueOf(10000), 1L, new ArrayList<>())))
+        Menu chicken = new Menu("치킨", BigDecimal.valueOf(10000), 1L, new ArrayList<>());
+
+        assertThatThrownBy(() -> menuService.create(chicken))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
