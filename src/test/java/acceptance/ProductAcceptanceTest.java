@@ -34,7 +34,8 @@ public class ProductAcceptanceTest extends AcceptanceTest{
         List<Product> products = 상품_조회();
 
         // then
-        assertThat(products).extracting(Product::getId, Product::getName, p -> p.getPrice().intValueExact())
+        assertThat(products)
+                .extracting(Product::getId, Product::getName, p -> p.getPrice().intValueExact())
                 .containsExactlyInAnyOrder(
                         tuple(productId1, "후라이드", 19000),
                         tuple(productId2, "돼지국밥", 9000),

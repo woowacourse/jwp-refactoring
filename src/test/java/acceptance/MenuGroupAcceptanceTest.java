@@ -34,7 +34,8 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
         List<MenuGroup> menuGroups = 메뉴_그룹_조회();
 
         // then
-        assertThat(menuGroups).extracting(MenuGroup::getId, MenuGroup::getName)
+        assertThat(menuGroups)
+                .extracting(MenuGroup::getId, MenuGroup::getName)
                 .containsExactlyInAnyOrder(
                         tuple(menuGroupId1, "추천 메뉴"),
                         tuple(menuGroupId2, "호호 메뉴"),
