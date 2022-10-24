@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
+@DisplayName("테이블 관련 api")
 public class TableAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("테이블을 등록한다.")

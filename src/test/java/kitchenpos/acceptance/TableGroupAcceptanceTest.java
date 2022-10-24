@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
+@DisplayName("단체 지정 관련 api")
 public class TableGroupAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("여러 테이블을 단체로 지정한다.")
