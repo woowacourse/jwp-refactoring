@@ -1,12 +1,17 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.TableFixture.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
-import org.junit.jupiter.api.Disabled;
+import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -56,7 +61,7 @@ class TableServiceTest extends ServiceTest {
 
             // when
             OrderTable updatedOrderTable = tableService.changeEmpty(savedOrderTable.getId(),
-                    saveOrderTable(0, false));
+                    createOrderTable(0, false));
 
             // then
             assertThat(updatedOrderTable.isEmpty()).isFalse();
@@ -73,16 +78,35 @@ class TableServiceTest extends ServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @Disabled("tableGroup 테스트 추가 후 구현하기")
+        //        @Disabled("tableGroup 테스트 추가 후 구현하기")
         @Test
         @DisplayName("orderTable에 해당하는 tableGroupId가 null이 아닌 경우 예외를 던진다.")
         void tableGroupId_NotNull_ExceptionThrown() {
+            // given
+            OrderTable orderTable1 = saveOrderTable(2, true);
+            OrderTable orderTable2 = saveOrderTable(4, true);
+            saveTableGroup(orderTable1, orderTable2);
+
+            // when & then
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), createOrderTable(2, false)))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @Disabled("order 테스트 추가 후 구현하기")
         @Test
         @DisplayName("orderTableId에 해당하는 order의 orderStatus가 COMPLETION이 아닌 경우 예외를 던진다.")
         void orderStatus_NotCompletion_ExceptionThrown() {
+            // given
+            OrderTable orderTable = saveOrderTable(2, false);
+            MenuGroup menuGroup = saveMenuGroup("반마리치킨");
+            Product product = saveProduct("크림치킨", BigDecimal.valueOf(15000.00));
+            Menu menu1 = saveMenu("크림치킨", menuGroup, product);
+            Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
+            Order savedOrder = saveOrder(orderTable, menu1, menu2);
+            updateOrder(savedOrder, "COOKING");
+
+            // when & then
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), createOrderTable(2, false)))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 

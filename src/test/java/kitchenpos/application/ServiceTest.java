@@ -3,8 +3,9 @@ package kitchenpos.application;
 import static kitchenpos.fixture.MenuFixture.createMenu;
 import static kitchenpos.fixture.MenuFixture.createMenuGroup;
 import static kitchenpos.fixture.MenuFixture.createMenuProduct;
+import static kitchenpos.fixture.OrderFixture.createOrder;
+import static kitchenpos.fixture.OrderFixture.updatedOrder;
 import static kitchenpos.fixture.ProductFixture.createProduct;
-import static kitchenpos.fixture.TableFixture.createOrder;
 import static kitchenpos.fixture.TableFixture.createOrderTable;
 import static kitchenpos.fixture.TableFixture.createTableGroup;
 
@@ -91,5 +92,9 @@ abstract class ServiceTest {
 
     protected Order saveOrder(OrderTable orderTable, Menu... menus) {
         return orderService.create(createOrder(orderTable, menus));
+    }
+
+    protected Order updateOrder(Order order, String status) {
+        return orderService.changeOrderStatus(order.getId(), updatedOrder(status));
     }
 }

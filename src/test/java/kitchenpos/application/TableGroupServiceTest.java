@@ -6,11 +6,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -118,10 +122,24 @@ class TableGroupServiceTest extends ServiceTest {
             );
         }
 
-        @Disabled("order 테스트 추가 후 구현하기")
         @Test
         @DisplayName("orderTable에 해당하는 order의 orderStatus가 COMPLETION이 아닌 경우 예외를 던진다.")
         void orderStatus_NotCompletion_ExceptionThrown() {
+            // given
+            OrderTable orderTable1 = saveOrderTable(2, true);
+            OrderTable orderTable2 = saveOrderTable(4, true);
+            TableGroup savedTableGroup = saveTableGroup(orderTable1, orderTable2);
+
+            MenuGroup menuGroup = saveMenuGroup("반마리치킨");
+            Product product = saveProduct("크림치킨", BigDecimal.valueOf(15000.00));
+            Menu menu1 = saveMenu("크림치킨", menuGroup, product);
+            Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
+            Order savedOrder = saveOrder(orderTable1, menu1, menu2);
+            updateOrder(savedOrder, "COOKING");
+
+            // when & then
+            assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 }
