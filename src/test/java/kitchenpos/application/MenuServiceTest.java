@@ -1,7 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.Fixture.DomainFixture.createMenu;
-import static kitchenpos.Fixture.DomainFixture.createMenuProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -31,9 +29,8 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void create() {
         Product product = productDao.save(new Product("상품1", new BigDecimal(5000)));
-        MenuProduct menuProduct = createMenuProduct(product.getId(), 2L);
-        Menu menu = createMenu(
-                "메뉴1", new BigDecimal(10000), 1L, List.of(menuProduct));
+        MenuProduct menuProduct = new MenuProduct(product.getId(), 2L);
+        Menu menu = new Menu("메뉴1", new BigDecimal(10000), 1L, List.of(menuProduct));
 
         menuService.create(menu);
 
@@ -52,8 +49,8 @@ class MenuServiceTest extends ServiceTest {
     void create_Exception_NotFoundMenuGroup() {
         Long notFoundMenuGroupId = 100L;
         Product product = productDao.save(new Product("상품1", new BigDecimal(5000)));
-        MenuProduct menuProduct = createMenuProduct(product.getId(), 2L);
-        Menu menu = createMenu(
+        MenuProduct menuProduct = new MenuProduct(product.getId(), 2L);
+        Menu menu = new Menu(
                 "메뉴1", new BigDecimal(10000), notFoundMenuGroupId, List.of(menuProduct));
 
         assertThatThrownBy(() -> menuService.create(menu))
@@ -67,9 +64,9 @@ class MenuServiceTest extends ServiceTest {
     void create_Exception_InvalidPrice(int price, String expectedMessage) {
         Product product1 = productDao.save(new Product("상품1", new BigDecimal(5000)));
         Product product2 = productDao.save(new Product("상품2", new BigDecimal(6000)));
-        MenuProduct menuProduct1 = createMenuProduct(product1.getId(), 2L);
-        MenuProduct menuProduct2 = createMenuProduct(product2.getId(), 1L);
-        Menu menu = createMenu(
+        MenuProduct menuProduct1 = new MenuProduct(product1.getId(), 2L);
+        MenuProduct menuProduct2 = new MenuProduct(product2.getId(), 1L);
+        Menu menu = new Menu(
                 "메뉴1", new BigDecimal(price), 1L, List.of(menuProduct1, menuProduct2));
 
         assertThatThrownBy(() -> menuService.create(menu))

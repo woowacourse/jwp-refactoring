@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.Fixture.DomainFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -24,7 +23,7 @@ class ProductServiceTest extends ServiceTest {
     @DisplayName("상품을 생성할 수 있다.")
     @Test
     void create() {
-        Product product = createProduct(PRODUCE_NAME, PRICE);
+        Product product = new Product(PRODUCE_NAME, PRICE);
 
         productService.create(product);
 
@@ -41,7 +40,7 @@ class ProductServiceTest extends ServiceTest {
     @DisplayName("상품 가격이 존재하지 않으면 예외를 발생시킨다.")
     @Test
     void create_NullPrice() {
-        Product product = createProduct(PRODUCE_NAME, null);
+        Product product = new Product(PRODUCE_NAME, null);
 
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -51,7 +50,7 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void create_InvalidPrice() {
         BigDecimal invalidPrice = new BigDecimal(-1);
-        Product product = createProduct(PRODUCE_NAME, invalidPrice);
+        Product product = new Product(PRODUCE_NAME, invalidPrice);
 
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
