@@ -145,7 +145,7 @@ class OrderServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("주문을 등록할 때, 주문 테이블이 없으면 예외가 발생한다")
+    @DisplayName("주문을 등록할 때, 주문 테이블이 없으면 예외가 발생한다.")
     @Test
     void 주문을_등록할_때_주문_테이블이_없으면_예외가_발생한다() {
         // given
@@ -164,7 +164,7 @@ class OrderServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("주문을 등록할 때, 주문 테이블이 빈 테이블 이면 예외가 발생한다")
+    @DisplayName("주문을 등록할 때, 주문 테이블이 빈 테이블 이면 예외가 발생한다.")
     @Test
     void 주문을_등록할_때_주문_테이블이_빈_테이블_이면_예외가_발생한다() {
         // given
@@ -187,5 +187,29 @@ class OrderServiceTest {
         // when & then
         assertThatThrownBy(() -> orderService.create(야채곱창_주문))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문 목록을 조회한다.")
+    @Test
+    void 주문_목록을_조회한다() {
+        // given
+        OrderLineItem 야채곱창_주문항목 = new OrderLineItemBuilder()
+                .menuId(야채곱창_메뉴.getId())
+                .quantity(1)
+                .build();
+
+        Order 야채곱창_주문 = new OrderBuilder()
+                .orderTableId(야채곱창_주문_테이블.getId())
+                .orderLineItems(List.of(야채곱창_주문항목))
+                .build();
+
+        orderService.create(야채곱창_주문);
+
+        // when
+        List<Order> 주문들 = orderService.list();
+
+        // then
+        assertThat(주문들).extracting(Order::getOrderTableId)
+                .contains(야채곱창_주문_테이블.getId());
     }
 }
