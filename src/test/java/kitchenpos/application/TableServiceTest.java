@@ -50,15 +50,37 @@ class TableServiceTest {
     @DisplayName("존재하는 모든 테이블 목록을 조회한다")
     @Test
     void list() {
+        OrderTable orderTable = new OrderTable();
+        tableService.create(orderTable);
+        tableService.create(orderTable);
+        tableService.create(orderTable);
+
         List<OrderTable> actual = tableService.list();
-        assertThat(actual).hasSize(8);
+        assertThat(actual).hasSize(3);
     }
 
     @DisplayName("테이블을 비어있는 테이블로 설정한다")
     @Nested
     class ChangeEmptyTest {
 
-        Long orderTableId = 1L;
+        @DisplayName("테이블을 비어있는 테이블로 설정한다")
+        @Test
+        void changeEmpty() {
+            OrderTable orderTable = new OrderTable();
+            OrderTable savedOrderTable = orderTableDao.save(orderTable);
+
+            Order order = new Order();
+            order.setOrderTableId(savedOrderTable.getId());
+            order.setOrderedTime(LocalDateTime.now());
+            order.setOrderStatus(OrderStatus.COMPLETION.name());
+            orderDao.save(order);
+
+            OrderTable emptyOrderTable = new OrderTable();
+            emptyOrderTable.setEmpty(true);
+
+            OrderTable actual = tableService.changeEmpty(savedOrderTable.getId(), emptyOrderTable);
+            assertThat(actual.isEmpty()).isTrue();
+        }
 
         @DisplayName("존재하지 않는 테이블일 경우 예외가 발생한다")
         @Test
@@ -89,11 +111,14 @@ class TableServiceTest {
         @DisplayName("테이블에서 주문 상태가 Cooking, Meal인 주문이 있을 경우 예외가 발생한다")
         @Test
         void throwExceptionBecauseOrderStatusIsCookingOrMeal() {
-            Order order = new Order(orderTableId, List.of(new OrderLineItem(1L, 3)));
+            OrderTable orderTable = new OrderTable();
+            OrderTable savedOrderTable = tableService.create(orderTable);
+
+            Order order = new Order(savedOrderTable.getId(), List.of(new OrderLineItem(1L, 3)));
             order.setOrderStatus(OrderStatus.COOKING.name());
             orderDao.save(order);
 
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, new OrderTable()))
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTable()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

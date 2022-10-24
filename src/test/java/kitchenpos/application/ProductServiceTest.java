@@ -59,8 +59,14 @@ class ProductServiceTest {
     @DisplayName("존재하는 모든 상품 목록을 조회한다")
     @Test
     void list() {
+        int numOfProducts = 6;
+        Product product = new Product("뿌링클", new BigDecimal(18_000));
+        for (int i = 0; i < numOfProducts; i++) {
+            productService.create(product);
+        }
+
         List<Product> products = productService.list();
 
-        assertThat(products).hasSize(6);
+        assertThat(products).hasSize(numOfProducts);
     }
 }

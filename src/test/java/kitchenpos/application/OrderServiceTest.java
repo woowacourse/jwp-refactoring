@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,11 +14,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 
 @Transactional
 @SpringBootTest
@@ -29,22 +37,55 @@ class OrderServiceTest {
     @Autowired
     private OrderTableDao orderTableDao;
 
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private ProductDao productDao;
+
+    @Autowired
+    private MenuDao menuDao;
+
+    MenuGroup menuGroup;
+    Menu menu;
+    Product product1;
+    Product product2;
+    OrderTable orderTable;
+
+    @BeforeEach
+    void setUp() {
+        MenuGroup newMenuGroup = new MenuGroup("두마리메뉴");
+        menuGroup = menuGroupDao.save(newMenuGroup);
+
+        Product newProduct1 = new Product("후라이드", new BigDecimal(16_000));
+        product1 = productDao.save(newProduct1);
+        Product newProduct2 = new Product("양념치킨", new BigDecimal(16_000));
+        product2 = productDao.save(newProduct2);
+
+        BigDecimal price = new BigDecimal(30_000);
+        Menu newMenu = new Menu("후라이드, 양념치킨 2마리 세트", price, menuGroup.getId(),
+                List.of(new MenuProduct(1L, product1.getId(), 1), new MenuProduct(1L, product2.getId(), 1)));
+        menu = menuDao.save(newMenu);
+
+        OrderTable newOrderTable = new OrderTable();
+        newOrderTable.setEmpty(false);
+        orderTable = orderTableDao.save(newOrderTable);
+    }
+
     @DisplayName("주문을 생성한다")
     @Nested
     class CreateTest {
 
-        Long orderTableId = 1L;
-
-        @BeforeEach
-        void setUp() {
-            changeTableToNotEmpty(orderTableId);
-        }
+//        @BeforeEach
+//        void setUp() {
+//            changeTableToNotEmpty(orderTable);
+//        }
 
         @DisplayName("주문을 생성하면 ID가 할당된 Order객체가 반환된다")
         @Test
         void create() {
-            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 3));
-            Order order = new Order(orderTableId, orderLineItems);
+            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getId(), 3));
+            Order order = new Order(orderTable.getId(), orderLineItems);
 
             Order actual = orderService.create(order);
             assertThat(actual).isNotNull();
@@ -53,7 +94,7 @@ class OrderServiceTest {
         @DisplayName("orderLineItems이 비어있을 경우 예외가 발생한다")
         @Test
         void throwExceptionBecauseOfEmptyOrderLineItems() {
-            Order order = new Order(1L, List.of());
+            Order order = new Order(orderTable.getId(), List.of());
 
             assertThatThrownBy(() -> orderService.create(order))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -64,7 +105,7 @@ class OrderServiceTest {
         void throwExceptionBecauseOfNotExistMenu() {
             Long notExistId = 0L;
             List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(notExistId, 3));
-            Order order = new Order(1L, orderLineItems);
+            Order order = new Order(orderTable.getId(), orderLineItems);
 
             assertThatThrownBy(() -> orderService.create(order))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -74,7 +115,7 @@ class OrderServiceTest {
         @Test
         void throwExceptionBecauseOfNotExistTable() {
             Long notExistId = 0L;
-            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 3));
+            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getId(), 3));
             Order order = new Order(notExistId, orderLineItems);
 
             assertThatThrownBy(() -> orderService.create(order))
@@ -84,9 +125,12 @@ class OrderServiceTest {
         @DisplayName("비어있는 테이블일 경우 예외가 발생한다")
         @Test
         void throwExceptionBecauseOfEmptyTable() {
-            Long emptyTableId = 3L;
-            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 3));
-            Order order = new Order(emptyTableId, orderLineItems);
+            OrderTable newEmptyTable = new OrderTable();
+            newEmptyTable.setEmpty(true);
+            OrderTable emptyTable = orderTableDao.save(newEmptyTable);
+
+            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getId(), 3));
+            Order order = new Order(emptyTable.getId(), orderLineItems);
 
             assertThatThrownBy(() -> orderService.create(order))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -143,16 +187,16 @@ class OrderServiceTest {
             assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), orderToChange))
                     .isInstanceOf(IllegalArgumentException.class);
         }
-    }
 
-    private Order createOrder() {
-        Long orderTableId = 1L;
-        changeTableToNotEmpty(orderTableId);
+        private Order createOrder() {
+            Long orderTableId = orderTable.getId();
+            changeTableToNotEmpty(orderTableId);
 
-        List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 3));
-        Order order = new Order(orderTableId, orderLineItems);
+            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getId(), 3));
+            Order order = new Order(orderTableId, orderLineItems);
 
-        return orderService.create(order);
+            return orderService.create(order);
+        }
     }
 
     void changeTableToNotEmpty(Long tableId) {
