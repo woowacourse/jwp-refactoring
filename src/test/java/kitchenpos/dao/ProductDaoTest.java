@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
@@ -14,8 +15,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-@JdbcTest
 @DisplayName("ProductDao 테스트")
+@SuppressWarnings("NonAsciiCharacters")
+@JdbcTest
 class ProductDaoTest {
 
     @Autowired
@@ -28,51 +30,71 @@ class ProductDaoTest {
         this.productDao = new JdbcTemplateProductDao(dataSource);
     }
 
-    @DisplayName("상품을 등록한다.")
-    @Test
-    void save() {
-        // given
-        final Product product = new Product("파스타", new BigDecimal(1000));
+    @Nested
+    class save_메서드는 {
 
-        // when
-        final Product savedProduct = productDao.save(product);
+        @Nested
+        class 상품이_주어지면 {
 
-        // then
-        assertThat(savedProduct.getId()).isNotNull();
+            final Product product = new Product("파스타", new BigDecimal(1000));
+
+            @Test
+            void 저장한다() {
+                final Product savedProduct = productDao.save(product);
+
+                assertThat(savedProduct.getId()).isNotNull();
+            }
+        }
     }
 
-    @DisplayName("단일 상품을 조회한다.")
-    @Test
-    void findById() {
-        // given
-        final Product product = new Product("파스타", new BigDecimal(1000));
-        final Product savedProduct = productDao.save(product);
+    @Nested
+    class findById_메서드는 {
 
-        // when
-        final Optional<Product> foundProduct = productDao.findById(savedProduct.getId());
+        @Nested
+        class id가_주어지면 {
 
-        // then
-        assertAll(
-                () -> assertThat(foundProduct).isPresent(),
-                () -> assertThat(foundProduct.get()).usingRecursiveComparison()
-                        .isEqualTo(savedProduct)
-        );
+            final Product product = new Product("파스타", new BigDecimal(1000));
+            private Product savedProduct;
+
+            @BeforeEach
+            void setUp() {
+                savedProduct = productDao.save(product);
+            }
+
+            @Test
+            void 저장한다() {
+                final Optional<Product> foundProduct = productDao.findById(savedProduct.getId());
+
+                assertAll(
+                        () -> assertThat(foundProduct).isPresent(),
+                        () -> assertThat(foundProduct.get()).usingRecursiveComparison()
+                                .isEqualTo(savedProduct)
+                );
+            }
+        }
     }
 
-    @DisplayName("전체 상품들을 조회한다.")
-    @Test
-    void findAll() {
-        // given
-        final Product product1 = new Product("파스타", new BigDecimal(1000));
-        final Product product2 = new Product("피자", new BigDecimal(1000));
-        final Product savedProduct1 = productDao.save(product1);
-        final Product savedProduct2 = productDao.save(product2);
+    @Nested
+    class findAll_메서드는 {
 
-        // when
-        final List<Product> products = productDao.findAll();
+        @Nested
+        class 호출되면 {
 
-        // then
-        assertThat(products).usingFieldByFieldElementComparator()
-                .containsAll(List.of(savedProduct1, savedProduct2));
+            final Product product = new Product("파스타", new BigDecimal(1000));
+            private Product savedProduct;
+
+            @BeforeEach
+            void setUp() {
+                savedProduct = productDao.save(product);
+            }
+
+            @Test
+            void 모든_상품들을_반환한다() {
+                final List<Product> products = productDao.findAll();
+
+                assertThat(products).usingFieldByFieldElementComparator()
+                        .containsAll(List.of(savedProduct));
+            }
+        }
     }
 }

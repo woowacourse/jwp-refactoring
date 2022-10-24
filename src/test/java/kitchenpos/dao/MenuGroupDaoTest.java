@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @DisplayName("MenuGroup 테스트")
+@SuppressWarnings("NonAsciiCharacters")
 @JdbcTest
 class MenuGroupDaoTest {
 
@@ -28,19 +29,16 @@ class MenuGroupDaoTest {
         this.menuGroupDao = new JdbcTemplateMenuGroupDao(dataSource);
     }
 
-    @DisplayName("save 메서드는")
     @Nested
-    class save {
+    class save_메서드는 {
 
-        @DisplayName("메뉴 그룹이 주어지면")
         @Nested
-        class givenMenuGroup {
+        class 메뉴_그룹이_주어지면 {
 
             private final MenuGroup menuGroup = new MenuGroup("세마리메뉴");
 
-            @DisplayName("저장한다.")
             @Test
-            void saves() {
+            void 저장한다() {
                 final MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
                 assertThat(savedMenuGroup.getId()).isNotNull();
@@ -48,13 +46,11 @@ class MenuGroupDaoTest {
         }
     }
 
-    @DisplayName("findById 메서드는")
     @Nested
-    class findById {
+    class findById_메서드는 {
 
-        @DisplayName("id가 주어지면")
         @Nested
-        class givenMenuGroupId {
+        class id가_주어지면 {
 
             private final MenuGroup menuGroup = new MenuGroup("세마리메뉴");
             private MenuGroup savedMenuGroup;
@@ -64,9 +60,8 @@ class MenuGroupDaoTest {
                 savedMenuGroup = menuGroupDao.save(menuGroup);
             }
 
-            @DisplayName("해당하는 MenuGroup을 반환한다.")
             @Test
-            void returnsMenuGroup() {
+            void 해당하는_MenuGroup을_반환한다() {
                 final Optional<MenuGroup> foundMenuGroup = menuGroupDao.findById(savedMenuGroup.getId());
 
                 assertAll(
@@ -79,13 +74,11 @@ class MenuGroupDaoTest {
     }
 
 
-    @DisplayName("findAll 메서드는")
     @Nested
-    class findAll {
+    class findAll_메서드는 {
 
-        @DisplayName("호출되면")
         @Nested
-        class whenCalled {
+        class 호출되면 {
 
             private final MenuGroup menuGroup = new MenuGroup("세마리메뉴");
             private MenuGroup savedMenuGroup;
@@ -95,9 +88,8 @@ class MenuGroupDaoTest {
                 savedMenuGroup = menuGroupDao.save(menuGroup);
             }
 
-            @DisplayName("모든 MenuGroup들을 반환한다.")
             @Test
-            void returnsAllMenuGroups() {
+            void 모든_MenuGroup들을_반환한다() {
                 final List<MenuGroup> menuGroups = menuGroupDao.findAll();
 
                 assertThat(menuGroups).usingFieldByFieldElementComparator()
@@ -106,9 +98,8 @@ class MenuGroupDaoTest {
         }
     }
 
-    @DisplayName("existsById 메서드는")
     @Nested
-    class existsById {
+    class existsById_메서드는 {
 
         private MenuGroup menuGroup;
 
@@ -117,25 +108,21 @@ class MenuGroupDaoTest {
             this.menuGroup = menuGroupDao.save(new MenuGroup("세마리메뉴"));
         }
 
-        @DisplayName("만약 존재하는 메뉴 그룹이라면")
         @Nested
-        class withExistingMenu {
+        class 만약_존재하는_메뉴_그룹이라면 {
 
-            @DisplayName("true를 반환한다.")
             @Test
-            void returnsTrue() {
+            void true를_반환한다() {
                 final boolean actual = menuGroupDao.existsById(menuGroup.getId());
                 assertThat(actual).isTrue();
             }
         }
 
-        @DisplayName("만약 존재하지 않는 그룹이라면")
         @Nested
-        class withoutExistingMenu {
+        class 만약_존재하지_않는_그룹이라면 {
 
-            @DisplayName("false를 반환한다.")
             @Test
-            void returnsFalse() {
+            void false를_반환한다() {
                 final boolean actual = menuGroupDao.existsById(Long.MAX_VALUE);
                 assertThat(actual).isFalse();
             }
