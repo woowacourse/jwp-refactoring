@@ -9,6 +9,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 
 public class Fixture {
@@ -26,4 +27,6 @@ public class Fixture {
             BigDecimal.valueOf(17000));
 
     public static final MenuGroup MENU_GROUP = new MenuGroup(1L, "추천메뉴");
+
+    public static final OrderTable ORDER_TABLE = new OrderTable(1L,  0, true);
 }

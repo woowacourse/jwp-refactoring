@@ -48,7 +48,7 @@ class OrderServiceTest {
         //given
         Order order = new Order();
         OrderLineItem orderLineItem = new OrderLineItem(1L, 1L);
-        OrderTable orderTable = new OrderTable(1L, 1L, 1, false);
+        OrderTable orderTable = new OrderTable(1L,  1, false);
         order.setOrderLineItems(List.of(orderLineItem));
         order.setOrderTableId(orderTable.getId());
         order.setOrderStatus(OrderStatus.COOKING.name());
