@@ -50,6 +50,24 @@ class TableServiceTest {
                 .isEqualTo(expected);
     }
 
+    @Test
+    void 주문_테이블_비어있는_상태_변경() {
+        // given
+        OrderTable orderTable = 주문_테이블_생성();
+        boolean changedEmpty = !orderTable.isEmpty();
+        orderTable.setEmpty(changedEmpty);
+
+        Long orderTableId = orderTable.getId();
+
+        // when
+        tableService.changeEmpty(orderTableId, orderTable);
+
+        // then
+        Optional<OrderTable> actual = orderTableDao.findById(orderTableId);
+        assertThat(actual).isNotEmpty();
+        assertThat(actual.get().isEmpty()).isEqualTo(changedEmpty);
+    }
+
     private OrderTable 주문_테이블_생성() {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);
