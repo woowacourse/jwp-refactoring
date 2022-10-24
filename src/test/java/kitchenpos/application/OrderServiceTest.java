@@ -145,6 +145,27 @@ class OrderServiceTest {
                 .isEqualTo(orderLineItems);
     }
 
+    @Test
+    void 주문_상태_정상_변경() {
+        // given
+        Order order = new Order();
+        List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
+        order.setOrderLineItems(orderLineItems);
+        order.setOrderTableId(orderTableId);
+        Order savedOrder = orderService.create(order);
+
+        String changedStatus = "COOKING";
+        savedOrder.setOrderStatus(changedStatus);
+
+        // when
+        orderService.changeOrderStatus(savedOrder.getId(), savedOrder);
+
+        // then
+        Optional<Order> actual = orderDao.findById(savedOrder.getId());
+        assertThat(actual).isNotEmpty();
+        assertThat(actual.get().getOrderStatus()).isEqualTo(changedStatus);
+    }
+
     private OrderLineItem menuId가_null인_주문_항목() {
         return 주문_항목(null);
     }
