@@ -7,13 +7,13 @@
 - 상품 목록 조회
   - 요청 URL: `GET /api/products`
 
-### 메뉴 그룹 => 코스, 세트 메뉴 (MenuGroup)
+### 메뉴 그룹 => 카테고리 느낌 (MenuGroup)
 - 메뉴 그룹 생성
   - 요청 URL: `POST /api/menu-groups`
 - 메뉴 그룹 목록 조회
   - 요청 URL: `GET /api/menu-groups`
 
-### 메뉴 (Menu) 
+### 메뉴 (Menu)  => 코스, 세트 메뉴
 - 메뉴 생성
   - 요청 URL: `POST /api/menus`
   - 메뉴 가격(price)는 null이 아닌 0이상의 값이어야 한다.
