@@ -38,7 +38,6 @@ public class MenuAcceptanceTest {
     @DisplayName("메뉴 목록을 조회한다.")
     @Test
     void findMenus() {
-        // given
         long menuGroupId = createMenuGroup("라라 메뉴");
 
         long productId1 = createProduct("후라이드", 9000);
@@ -56,10 +55,8 @@ public class MenuAcceptanceTest {
         long menuId3 = createMenu("피자치킨 세트", 12000, menuGroupId, List.of(menuProduct1, menuProduct3));
         long menuId4 = createMenu("국밥 수육 메뉴", 27000, menuGroupId, List.of(menuProduct3, menuProduct4));
 
-        // when
         List<Menu> menus = getMenus();
 
-        // then
         assertThat(menus).extracting(Menu::getId, Menu::getName, menu -> menu.getPrice().intValueExact())
                 .containsExactlyInAnyOrder(
                         tuple(menuId1, "해장 세트", 15000),

@@ -35,13 +35,11 @@ public class MenuGroupAcceptanceTest {
     @Test
     @DisplayName("메뉴 그룹 목록을 조회한다.")
     void getMenuGroups() {
-        // given
         long menuGroupId1 = createMenuGroup("추천 메뉴");
         long menuGroupId2 = createMenuGroup("호호 메뉴");
         long menuGroupId3 = createMenuGroup("베루스 메뉴");
         long menuGroupId4 = createMenuGroup("라라 메뉴");
 
-        // when
         List<MenuGroup> menuGroups = RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/menu-groups")
@@ -49,7 +47,6 @@ public class MenuGroupAcceptanceTest {
                 .statusCode(HttpStatus.OK.value())
                 .extract().body().jsonPath().getList(".", MenuGroup.class);
 
-        // then
         assertThat(menuGroups).extracting(MenuGroup::getId, MenuGroup::getName)
                 .containsExactlyInAnyOrder(
                         tuple(menuGroupId1, "추천 메뉴"),

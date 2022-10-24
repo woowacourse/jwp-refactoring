@@ -1,14 +1,15 @@
 package acceptance;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
+import static acceptance.TableAcceptanceTest.createTable;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import io.restassured.RestAssured;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.Application;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ import org.springframework.http.HttpStatus;
         webEnvironment = WebEnvironment.RANDOM_PORT,
         classes = Application.class
 )
-public class TableAcceptanceTest {
+public class TableGroupAcceptanceTest {
 
     @LocalServerPort
     private int port;
@@ -31,46 +32,43 @@ public class TableAcceptanceTest {
         RestAssured.port = port;
     }
 
-    @DisplayName("테이블 목록을 조회한다.")
+    @DisplayName("단체 지정을 저장한다.")
     @Test
-    void findTables() {
-        long table1 = createTable(0, true);
-        long table2 = createTable(2, false);
-        long table3 = createTable(3, false);
+    void saveTableGroup() {
+        long table1 = createTable(2, true);
+        long table2 = createTable(2, true);
+        long table3 = createTable(3, true);
 
-        List<OrderTable> tables = getTables();
+        List<Long> tableIds = List.of(table1, table2, table3);
+        TableGroup tableGroup = givenTableGroup(tableIds);
 
-        assertThat(tables).extracting(OrderTable::getId, OrderTable::getNumberOfGuests, OrderTable::isEmpty)
-                .containsExactlyInAnyOrder(
-                        tuple(table1, 0, true),
-                        tuple(table2, 2, false),
-                        tuple(table3, 3, false)
-                );
-    }
-
-    public static long createTable(int numberOfGuests, boolean empty) {
-        OrderTable table = givenTable(numberOfGuests, empty);
-        return RestAssured.given().log().all()
+        RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(table)
+                .body(tableGroup)
                 .when().log().all()
-                .post("/api/tables")
+                .post("/api/table-groups")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract().jsonPath().getLong("id");
     }
 
-    public static OrderTable givenTable(final int numberOfGuests, final boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+    private TableGroup givenTableGroup(final List<Long> tableIds) {
+        List<OrderTable> orderTables = tableIds.stream()
+                .map(id -> {
+                    OrderTable orderTable = new OrderTable();
+                    orderTable.setId(id);
+                    return orderTable;
+                })
+                .collect(Collectors.toList());
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(orderTables);
+        return tableGroup;
     }
 
-    private List<OrderTable> getTables() {
+    private List<OrderTable> getTableGroups() {
         return RestAssured.given().log().all()
                 .when().log().all()
-                .get("/api/tables")
+                .get("/api/table-groups")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
                 .extract().body().jsonPath().getList(".", OrderTable.class);
