@@ -10,8 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuProductResponse;
@@ -20,9 +18,7 @@ import kitchenpos.dto.MenuResponse;
 import kitchenpos.fixture.Fixture.MenuGroup;
 import kitchenpos.fixture.Fixture.Product;
 
-@SpringBootTest
-@Transactional
-class MenuServiceTest {
+class MenuServiceTest extends ServiceTest {
 
     @Autowired
     private MenuService menuService;

@@ -4,21 +4,16 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuGroupResponse;
 
-@SpringBootTest
-@Transactional
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends ServiceTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
