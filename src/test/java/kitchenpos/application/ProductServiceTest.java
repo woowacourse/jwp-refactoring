@@ -1,19 +1,14 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.JdbcTemplateProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -72,7 +67,7 @@ class ProductServiceTest {
     void createWithNullName() {
         final Product product1 = new Product();
         product1.setPrice(new BigDecimal(1000));
-        assertThatThrownBy(() ->productService.create(product1))
+        assertThatThrownBy(() -> productService.create(product1))
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 }
