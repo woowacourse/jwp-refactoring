@@ -32,9 +32,3 @@ INSERT INTO order_table (id, number_of_guests, empty) VALUES (5, 0, true);
 INSERT INTO order_table (id, number_of_guests, empty) VALUES (6, 0, true);
 INSERT INTO order_table (id, number_of_guests, empty) VALUES (7, 0, true);
 INSERT INTO order_table (id, number_of_guests, empty) VALUES (8, 0, true);
-INSERT INTO order_table (id, number_of_guests, empty) VALUES (9, 0, false);
-
-INSERT INTO orders (id, order_table_id, order_status, ordered_time) VALUES (1, 1, 'COOKING', '2021-07-24 13:33:42');
-INSERT INTO orders (id, order_table_id, order_status, ordered_time) VALUES (2, 2, 'MEAL', '2021-07-24 13:33:42');
-INSERT INTO orders (id, order_table_id, order_status, ordered_time) VALUES (3, 3, 'COMPLETION', '2021-07-24 13:33:42');
-INSERT INTO orders (id, order_table_id, order_status, ordered_time) VALUES (4, 4, 'COMPLETION', '2021-07-24 13:33:42');
