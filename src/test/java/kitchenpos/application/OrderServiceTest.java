@@ -144,4 +144,48 @@ class OrderServiceTest {
         assertThatThrownBy(() -> orderService.create(야채곱창_주문))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @DisplayName("주문을 등록할 때, 주문 테이블이 없으면 예외가 발생한다")
+    @Test
+    void 주문을_등록할_때_주문_테이블이_없으면_예외가_발생한다() {
+        // given
+        OrderLineItem 야채곱창_주문항목 = new OrderLineItemBuilder()
+                .menuId(야채곱창_메뉴.getId())
+                .quantity(1)
+                .build();
+
+        Order 야채곱창_주문 = new OrderBuilder()
+                .orderTableId(null)
+                .orderLineItems(List.of(야채곱창_주문항목))
+                .build();
+
+        // when & then
+        assertThatThrownBy(() -> orderService.create(야채곱창_주문))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문을 등록할 때, 주문 테이블이 빈 테이블 이면 예외가 발생한다")
+    @Test
+    void 주문을_등록할_때_주문_테이블이_빈_테이블_이면_예외가_발생한다() {
+        // given
+        OrderTable 빈_테이블 = new OrderTableBuilder()
+                .numberOfGuests(4)
+                .empty(true)
+                .build();
+        빈_테이블 = tableService.create(빈_테이블);
+
+        OrderLineItem 야채곱창_주문항목 = new OrderLineItemBuilder()
+                .menuId(야채곱창_메뉴.getId())
+                .quantity(1)
+                .build();
+
+        Order 야채곱창_주문 = new OrderBuilder()
+                .orderTableId(빈_테이블.getId())
+                .orderLineItems(List.of(야채곱창_주문항목))
+                .build();
+
+        // when & then
+        assertThatThrownBy(() -> orderService.create(야채곱창_주문))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }
