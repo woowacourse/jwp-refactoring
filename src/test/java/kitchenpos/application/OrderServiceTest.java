@@ -66,7 +66,7 @@ class OrderServiceTest {
 
         List<Order> orders = orderService.list();
 
-        assertThat(orders).hasSize(1);
+        assertThat(orders).hasSize(5);
     }
 
     @Test
@@ -89,13 +89,9 @@ class OrderServiceTest {
 
     @Test
     void 주문의_상태를_바꿀때_주문의_상태가_계산완료인_경우_예외를_발생시킨다() {
-        Order order = new Order(9L, "NONE", LocalDateTime.now(), List.of(new OrderLineItem(1L, 1L, 1L, 1)));
-        orderService.create(order);
+        Order order = new Order(9L, "COMPLETION", LocalDateTime.now(), List.of(new OrderLineItem(1L, 1L, 1L, 1)));
 
-        Order completion = orderService.list().get(0);
-        completion.setOrderStatus("COMPLETION");
-
-        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, completion))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(3L, order))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 }
