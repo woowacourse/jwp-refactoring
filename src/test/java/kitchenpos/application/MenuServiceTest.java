@@ -48,11 +48,10 @@ class MenuServiceTest {
     @Test
     void 메뉴의_가격이_null이거나_0보다_작으면_예외가_발생한다() {
         Product product = productService.create(new Product("맛있는 라면", new BigDecimal(1300)));
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(new MenuProduct(null, product.getId(), 1));
-
         MenuGroup menuGroup = menuGroupService.create(new MenuGroup("면"));
-        Menu ramen = new Menu("라면", new BigDecimal(-1), menuGroup.getId(), menuProducts);
+
+        Menu ramen = new Menu("라면", new BigDecimal(-1), menuGroup.getId());
+        ramen.addMenuProduct(new MenuProduct(null, product.getId(), 1));
 
         assertThatThrownBy(
                 () -> menuService.create(ramen)
@@ -62,10 +61,9 @@ class MenuServiceTest {
     @Test
     void 메뉴_그룹이_존재하지_않으면_예외가_발생한다() {
         Product product = productService.create(new Product("맛있는 라면", new BigDecimal(1300)));
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(new MenuProduct(null, product.getId(), 1));
 
-        Menu ramen = new Menu("라면", new BigDecimal(1200), 1L, menuProducts);
+        Menu ramen = new Menu("라면", new BigDecimal(1200), 1L);
+        ramen.addMenuProduct(new MenuProduct(null, product.getId(), 1));
 
         assertThatThrownBy(
                 () -> menuService.create(ramen)
@@ -74,11 +72,9 @@ class MenuServiceTest {
 
     @Test
     void 존재하지_않는_상품을_사용하면_예외가_발생한다() {
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(new MenuProduct(null, 1L, 1));
-
         MenuGroup menuGroup = menuGroupService.create(new MenuGroup("면"));
-        Menu ramen = new Menu("라면", new BigDecimal(-1), menuGroup.getId(), menuProducts);
+        Menu ramen = new Menu("라면", new BigDecimal(-1), menuGroup.getId());
+        ramen.addMenuProduct(new MenuProduct(null, 1L, 1));
 
         assertThatThrownBy(
                 () -> menuService.create(ramen)
@@ -88,11 +84,10 @@ class MenuServiceTest {
     @Test
     void 메뉴의_가격이_상품들의_가격의_합보다_크면_예외가_발생한다() {
         Product product = productService.create(new Product("맛있는 라면", new BigDecimal(1300)));
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(new MenuProduct(null, product.getId(), 1));
 
         MenuGroup menuGroup = menuGroupService.create(new MenuGroup("면"));
-        Menu ramen = new Menu("라면", new BigDecimal(1500), menuGroup.getId(), menuProducts);
+        Menu ramen = new Menu("라면", new BigDecimal(1500), menuGroup.getId());
+        ramen.addMenuProduct(new MenuProduct(null, product.getId(), 1));
 
         assertThatThrownBy(
                 () -> menuService.create(ramen)
