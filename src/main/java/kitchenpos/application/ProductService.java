@@ -15,18 +15,19 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
+
     private final ProductDao productDao;
 
-    public ProductService(final ProductDao productDao) {
+    public ProductService(ProductDao productDao) {
         this.productDao = productDao;
     }
 
     @Transactional
-    public ProductResponse create(final ProductRequest productRequest) {
-        final BigDecimal price = productRequest.getPrice();
+    public ProductResponse create(ProductRequest productRequest) {
+        BigDecimal price = productRequest.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("가격은 0 이상이어야 합니다.");
         }
 
         Product product = productDao.save(productRequest.toEntity());
