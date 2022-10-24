@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,7 +47,7 @@ public class MenuRestControllerTest {
         final List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
         final Menu menu = new Menu("메뉴1", BigDecimal.valueOf(3000), 1L, menuProducts);
 
-        final Menu savedMenu = new Menu(1L,"메뉴1", BigDecimal.valueOf(3000), 1L, menuProducts);
+        final Menu savedMenu = new Menu(1L, "메뉴1", BigDecimal.valueOf(3000), 1L, menuProducts);
 
         given(menuService.create(any(Menu.class))).willReturn(savedMenu);
 
@@ -58,5 +59,26 @@ public class MenuRestControllerTest {
 
         // then
         resultActions.andExpect(status().isCreated());
+    }
+
+    @DisplayName("menu들을 조회한다.")
+    @Test
+    void list() throws Exception {
+        // given
+        final MenuProduct menuProduct1 = new MenuProduct(1L, 3);
+        final MenuProduct menuProduct2 = new MenuProduct(2L, 3);
+        final List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
+        final Menu menu = new Menu("메뉴1", BigDecimal.valueOf(3000), 1L, menuProducts);
+        final List<Menu> menus = Arrays.asList(menu);
+
+        given(menuService.list()).willReturn(menus);
+
+        // when
+        final ResultActions resultActions = mockMvc.perform(get("/api/menus")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print());
+
+        // then
+        resultActions.andExpect(status().isOk());
     }
 }

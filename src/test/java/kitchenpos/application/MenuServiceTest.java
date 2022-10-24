@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
@@ -91,5 +92,19 @@ public class MenuServiceTest {
 
         // then
         assertThat(savedMenu.getId()).isNotNull();
+    }
+
+    @DisplayName("menu들을 조회한다.")
+    @Test
+    void list() {
+        // when
+        final List<Menu> menus = menuService.list();
+
+        final List<Long> ids = menus.stream()
+                .map(Menu::getId)
+                .collect(Collectors.toList());
+
+        // then
+        assertThat(ids).containsExactly(1L, 2L, 3L, 4L, 5L, 6L);
     }
 }
