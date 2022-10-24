@@ -9,4 +9,11 @@ public class MenuGroupFixture {
         menuGroup.setName("name");
         return menuGroup;
     }
+
+    public static MenuGroup requestCreate(final int port) {
+        return RestTemplateFixture.create()
+                .postForEntity("http://localhost:" + port + "/api/menu-groups",
+                        createDefaultWithoutId(), MenuGroup.class)
+                .getBody();
+    }
 }

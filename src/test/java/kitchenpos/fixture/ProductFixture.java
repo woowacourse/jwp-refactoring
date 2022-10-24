@@ -21,4 +21,11 @@ public class ProductFixture {
         product.setPrice(BigDecimal.valueOf(price));
         return product;
     }
+
+    public static Product requestCreate(final int port) {
+        return RestTemplateFixture.create()
+                .postForEntity("http://localhost:" + port + "/api/products",
+                        createDefaultWithoutId(), Product.class)
+                .getBody();
+    }
 }
