@@ -41,9 +41,9 @@ public class MenuGroupServiceTest {
         final MenuGroup 꽃잎_유치원 = 메뉴_그룹_생성("꽃잎 유치원");
         final MenuGroup 솔잎_유치원 = 메뉴_그룹_생성("솔잎 유치원");
 
-        sut.create(떡잎_유치원);
-        sut.create(꽃잎_유치원);
-        sut.create(솔잎_유치원);
+        menuGroupDao.save(떡잎_유치원);
+        menuGroupDao.save(꽃잎_유치원);
+        menuGroupDao.save(솔잎_유치원);
 
         assertThat(sut.list())
                 .hasSize(3)

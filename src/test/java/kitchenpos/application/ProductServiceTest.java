@@ -50,9 +50,9 @@ class ProductServiceTest {
         @DisplayName("상품 가격이 없는 경우 등록할 수 없다.")
         @Test
         void createWithNullPrice() {
-            final Product product = 상품_생성("짱구", null);
+            final Product 짱구 = 상품_생성("짱구", null);
 
-            assertThatThrownBy(() -> sut.create(product))
+            assertThatThrownBy(() -> sut.create(짱구))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -72,8 +72,8 @@ class ProductServiceTest {
         final Product 짱구 = 상품_생성("짱구", 100);
         final Product 짱아 = 상품_생성("짱아", 100);
 
-        sut.create(짱구);
-        sut.create(짱아);
+        productDao.save(짱구);
+        productDao.save(짱아);
 
         assertThat(sut.list())
                 .hasSize(2)
