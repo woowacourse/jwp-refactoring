@@ -2,10 +2,7 @@ package acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import io.restassured.RestAssured;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -61,19 +58,6 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         // then
         assertThat(result.getOrderStatus()).isEqualTo("COMPLETION");
-    }
-
-    private static Order 주문_상태_변경(long 주문, String status) {
-        Order order = new Order();
-        order.setOrderStatus(status);
-
-        return RestAssured.given().log().all()
-                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(order)
-                .when().log().all()
-                .put("/api/orders/{order_id}/order-status", 주문)
-                .then().log().all()
-                .extract().as(Order.class);
     }
 
     private long 테이블(int numberOfGuests, boolean empty) {

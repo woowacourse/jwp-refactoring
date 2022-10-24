@@ -209,6 +209,19 @@ public class AcceptanceTest {
                 .extract().jsonPath().getLong("id");
     }
 
+    protected Order 주문_상태_변경(long 주문, String status) {
+        Order order = new Order();
+        order.setOrderStatus(status);
+
+        return RestAssured.given().log().all()
+                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .body(order)
+                .when().log().all()
+                .put("/api/orders/{order_id}/order-status", 주문)
+                .then().log().all()
+                .extract().as(Order.class);
+    }
+
     protected List<Order> 주문_목목조회() {
         return RestAssured.given().log().all()
                 .when().log().all()

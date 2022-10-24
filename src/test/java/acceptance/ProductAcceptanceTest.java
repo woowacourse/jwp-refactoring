@@ -8,7 +8,7 @@ import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class ProductAcceptanceTest extends AcceptanceTest{
+public class ProductAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("상품 목록을 조회한다.")
     @Test
