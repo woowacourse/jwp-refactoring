@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import javax.transaction.Transactional;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,9 @@ class ProductServiceTest {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductDao productDao;
 
     @Test
     @DisplayName("상품을 생성한다")
@@ -72,8 +76,8 @@ class ProductServiceTest {
         product.setName("간장 앙념 스페셜 치킨");
         product.setPrice(new BigDecimal(30000));
 
-        final Product saved = productService.create(product);
-
+        final Product saved = productDao.save(product);
+        
         // when
         final List<Product> products = productService.list();
 

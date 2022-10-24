@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.transaction.Transactional;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -31,6 +32,9 @@ class OrderServiceTest {
 
     @Autowired
     private OrderTableDao orderTableDao;
+
+    @Autowired
+    private OrderLineItemDao orderLineItemDao;
 
     @Test
     @DisplayName("주문을 생성한다")
@@ -119,18 +123,22 @@ class OrderServiceTest {
     @DisplayName("모든 주문을 조회한다")
     void list() {
         // given
-        final Order order = new Order();
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-
         final OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);
         final OrderTable notEmptyOrderTable = orderTableDao.save(orderTable);
+
+        final Order order = new Order();
         order.setOrderTableId(notEmptyOrderTable.getId());
+        order.setOrderedTime(LocalDateTime.now());
+        order.setOrderStatus(OrderStatus.COOKING.name());
+        final Order savedOrder = orderDao.save(order);
 
-        final Order saved = orderService.create(order);
-
+        final OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(1L);
+        orderLineItem.setOrderId(savedOrder.getId());
+        orderLineItem.setQuantity(2);
+        orderLineItemDao.save(orderLineItem);
+        
         // when
         final List<Order> orders = orderService.list();
 
@@ -138,7 +146,7 @@ class OrderServiceTest {
         assertAll(
                 () -> assertThat(orders).hasSizeGreaterThanOrEqualTo(1),
                 () -> assertThat(orders).extracting("id")
-                        .contains(saved.getId()),
+                        .contains(savedOrder.getId()),
                 () -> assertThat(orders).extracting("orderLineItems")
                         .isNotEmpty()
         );

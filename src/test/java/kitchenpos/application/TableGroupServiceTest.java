@@ -11,6 +11,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -34,6 +35,9 @@ class TableGroupServiceTest {
 
     @Autowired
     private OrderDao orderDao;
+
+    @Autowired
+    private TableGroupDao tableGroupDao;
 
     @Test
     @DisplayName("테이블 단체를 지정한다")
@@ -125,27 +129,29 @@ class TableGroupServiceTest {
     @DisplayName("이미 단체로 지정된 주문 테이블에 대해서 단체를 지정하려고 하면 예외가 발생한다")
     void createWithAlreadyGroupedOrderTables() {
         // given
+        final TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now());
+        final TableGroup alreadyGroupedTable = tableGroupDao.save(tableGroup);
+
         final OrderTable orderTable1 = new OrderTable();
         orderTable1.setEmpty(true);
+        orderTable1.setTableGroupId(alreadyGroupedTable.getId());
         final OrderTable alreadyGroupedOrderTable1 = orderTableDao.save(orderTable1);
 
         final OrderTable orderTable2 = new OrderTable();
         orderTable2.setEmpty(true);
-        final OrderTable alreadyGroupedOrderTable2 = orderTableDao.save(orderTable2);
-
-        final TableGroup alreadyGroupedTable = new TableGroup();
-        alreadyGroupedTable.setOrderTables(Arrays.asList(alreadyGroupedOrderTable1, alreadyGroupedOrderTable2));
-        tableGroupService.create(alreadyGroupedTable);
+        orderTable2.setTableGroupId(alreadyGroupedTable.getId());
+        orderTableDao.save(orderTable2);
 
         final OrderTable orderTable3 = new OrderTable();
         orderTable3.setEmpty(true);
         final OrderTable orderTable = orderTableDao.save(orderTable3);
 
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(orderTable, alreadyGroupedOrderTable1));
+        final TableGroup newTableGroup = new TableGroup();
+        newTableGroup.setOrderTables(Arrays.asList(orderTable, alreadyGroupedOrderTable1));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(newTableGroup))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
@@ -153,12 +159,18 @@ class TableGroupServiceTest {
     @DisplayName("테이블 단체를 해제한다")
     void ungroup() {
         // given
+        final TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now());
+        final TableGroup alreadyGroupedTable = tableGroupDao.save(tableGroup);
+
         final OrderTable orderTable1 = new OrderTable();
         orderTable1.setEmpty(true);
+        orderTable1.setTableGroupId(alreadyGroupedTable.getId());
         final OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
 
         final OrderTable orderTable2 = new OrderTable();
         orderTable2.setEmpty(true);
+        orderTable2.setTableGroupId(alreadyGroupedTable.getId());
         final OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
 
         final Order order = new Order();
@@ -167,13 +179,8 @@ class TableGroupServiceTest {
         order.setOrderTableId(savedOrderTable1.getId());
         orderDao.save(order);
 
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(savedOrderTable1, savedOrderTable2));
-
-        final TableGroup saved = tableGroupService.create(tableGroup);
-
         // when
-        tableGroupService.ungroup(saved.getId());
+        tableGroupService.ungroup(alreadyGroupedTable.getId());
 
         // then
         final List<OrderTable> ungroupedOrderTable = orderTableDao.findAllByIdIn(
@@ -193,13 +200,19 @@ class TableGroupServiceTest {
     @DisplayName("주문의 상태가 COOKING, MEAL인 경우 테이블 단체를 해제하면 예외가 발생한다")
     void ungroupExceptionNotCompletionOrder(final String status) {
         // given
+        final TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now());
+        final TableGroup alreadyGroupedTable = tableGroupDao.save(tableGroup);
+
         final OrderTable orderTable1 = new OrderTable();
         orderTable1.setEmpty(true);
+        orderTable1.setTableGroupId(alreadyGroupedTable.getId());
         final OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
 
         final OrderTable orderTable2 = new OrderTable();
         orderTable2.setEmpty(true);
-        final OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+        orderTable2.setTableGroupId(alreadyGroupedTable.getId());
+        orderTableDao.save(orderTable2);
 
         final Order order = new Order();
         order.setOrderStatus(status);
@@ -207,13 +220,8 @@ class TableGroupServiceTest {
         order.setOrderTableId(savedOrderTable1.getId());
         orderDao.save(order);
 
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(savedOrderTable1, savedOrderTable2));
-
-        final TableGroup saved = tableGroupService.create(tableGroup);
-
         // when, then
-        assertThatThrownBy(() -> tableGroupService.ungroup(saved.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(alreadyGroupedTable.getId()))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 }

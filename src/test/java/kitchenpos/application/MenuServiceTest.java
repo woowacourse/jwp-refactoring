@@ -8,6 +8,8 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import javax.transaction.Transactional;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
@@ -21,6 +23,12 @@ class MenuServiceTest {
 
     @Autowired
     private MenuService menuService;
+
+    @Autowired
+    private MenuDao menuDao;
+
+    @Autowired
+    private MenuProductDao menuProductDao;
 
     @Test
     @DisplayName("메뉴를 생성한다")
@@ -128,17 +136,17 @@ class MenuServiceTest {
     @DisplayName("모든 메뉴를 조회한다")
     void list() {
         // given
+        final MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setMenuId(1L);
+        menuProduct.setProductId(1L);
+        menuProduct.setQuantity(2);
+        menuProductDao.save(menuProduct);
+
         final Menu menu = new Menu();
         menu.setName("두마리 치킨 콤보");
         menu.setPrice(new BigDecimal("30000"));
         menu.setMenuGroupId(1L);
-
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(2);
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
-
-        final Menu saved = menuService.create(menu);
+        final Menu saved = menuDao.save(menu);
 
         // when
         final List<Menu> menus = menuService.list();
