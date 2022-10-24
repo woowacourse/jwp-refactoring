@@ -10,10 +10,10 @@ import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class ProductServiceTest {
+class ProductServiceTest extends IntegrationServiceTest {
 
     @Nested
-    class create_메서드는 extends IntegrationServiceTest {
+    class create_메서드는 {
 
         @Nested
         class 상품가에_null을_입력할_경우 {
@@ -23,20 +23,50 @@ class ProductServiceTest {
 
             @Test
             void 예외가_발생한다() {
+
                 assertThatThrownBy(() -> productService.create(product))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("가격은 양의 정수이어야 합니다.");
             }
         }
+
+        @Nested
+        class 상품가가_음수인_경우 {
+
+            private final BigDecimal MINUS_PRICE = BigDecimal.valueOf(-1);
+
+            private final Product product = new Product("후라이드", MINUS_PRICE);
+
+            @Test
+            void 예외가_발생한다() {
+
+                assertThatThrownBy(() -> productService.create(product))
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("가격은 양의 정수이어야 합니다.");
+            }
+        }
+
+        @Nested
+        class 상품을_정상적으로_생성가능한_경우 {
+
+            private final Product product = new Product("후라이드", BigDecimal.valueOf(18_000));
+
+            @Test
+            void 저장된_상품이_반환된다() {
+
+                Product actual = productService.create(product);
+                assertThat(actual).isNotNull();
+            }
+        }
     }
 
     @Nested
-    class list_메서드는 extends IntegrationServiceTest {
+    class list_메서드는 {
 
         @Test
         void 상품목록을_반환한다() {
-            List<Product> actual = productService.list();
 
+            List<Product> actual = productService.list();
             assertThat(actual).hasSize(6);
         }
     }
