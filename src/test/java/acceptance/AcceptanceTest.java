@@ -1,18 +1,23 @@
 package acceptance;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import io.restassured.RestAssured;
 import kitchenpos.Application;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.web.server.LocalServerPort;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
 @SpringBootTest(
         webEnvironment = WebEnvironment.RANDOM_PORT,
         classes = Application.class
 )
-public @interface AcceptanceTest {
+public abstract class AcceptanceTest {
+
+    @LocalServerPort
+    private int port;
+
+    @BeforeEach
+    void setUp() {
+        RestAssured.port = port;
+    }
 }

@@ -1,5 +1,6 @@
 package acceptance;
 
+import static fixture.MenuGroupFixtures.*;
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -8,35 +9,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import io.restassured.RestAssured;
 import java.util.List;
 import java.util.Map;
-import kitchenpos.Application;
 import kitchenpos.domain.MenuGroup;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
-@AcceptanceTest
-class MenuGroupAcceptanceTest {
-
-    private static final long 두마리메뉴_ID = 1L;
-    private static final String 두마리메뉴_이름 = "두마리메뉴";
-    private static final long 한마리메뉴_ID = 2L;
-    private static final String 한마리메뉴_이름 = "한마리메뉴";
-    private static final long 순살파닭두마리메뉴_ID = 3L;
-    private static final String 순살파닭두마리메뉴_이름 = "순살파닭두마리메뉴";
-    private static final long 신메뉴_ID = 4L;
-    private static final String 신메뉴_이름 = "신메뉴";
-
-    @LocalServerPort
-    private int port;
-
-    @BeforeEach
-    void setUp() {
-        RestAssured.port = port;
-    }
+class MenuGroupAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("메뉴 그룹 목록을 조회한다.")
     @Test
@@ -49,10 +27,10 @@ class MenuGroupAcceptanceTest {
                 .extracting(MenuGroup::getId, MenuGroup::getName)
                 .hasSize(4)
                 .containsExactlyInAnyOrder(
-                        tuple(두마리메뉴_ID, 두마리메뉴_이름),
-                        tuple(한마리메뉴_ID, 한마리메뉴_이름),
-                        tuple(순살파닭두마리메뉴_ID, 순살파닭두마리메뉴_이름),
-                        tuple(신메뉴_ID, 신메뉴_이름)
+                        tuple(두마리메뉴_그룹.id(), 두마리메뉴_그룹.이름()),
+                        tuple(한마리메뉴_그룹.id(), 한마리메뉴_그룹.이름()),
+                        tuple(순살파닭두마리메뉴_그룹.id(), 순살파닭두마리메뉴_그룹.이름()),
+                        tuple(신메뉴_그룹.id(), 신메뉴_그룹.이름())
                 );
     }
 
@@ -73,10 +51,10 @@ class MenuGroupAcceptanceTest {
                 .extracting(MenuGroup::getId, MenuGroup::getName)
                 .hasSize(5)
                 .containsExactlyInAnyOrder(
-                        tuple(두마리메뉴_ID, 두마리메뉴_이름),
-                        tuple(한마리메뉴_ID, 한마리메뉴_이름),
-                        tuple(순살파닭두마리메뉴_ID, 순살파닭두마리메뉴_이름),
-                        tuple(신메뉴_ID, 신메뉴_이름),
+                        tuple(두마리메뉴_그룹.id(), 두마리메뉴_그룹.이름()),
+                        tuple(한마리메뉴_그룹.id(), 한마리메뉴_그룹.이름()),
+                        tuple(순살파닭두마리메뉴_그룹.id(), 순살파닭두마리메뉴_그룹.이름()),
+                        tuple(신메뉴_그룹.id(), 신메뉴_그룹.이름()),
                         tuple(createdMenuGroup.getId(), createdMenuGroup.getName())
                 );
     }

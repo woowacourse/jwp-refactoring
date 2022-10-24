@@ -1,5 +1,6 @@
 package acceptance;
 
+import static fixture.ProductFixtures.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -9,46 +10,11 @@ import io.restassured.RestAssured;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
-@AcceptanceTest
-class ProductAcceptanceTest {
-
-    private static final long 후라이드_ID = 1L;
-    private static final String 후라이드_이름 = "후라이드";
-    private static final int 후라이드_가격 = 16000;
-
-    private static final long 양념치킨_ID = 2L;
-    private static final String 양념치킨_이름 = "양념치킨";
-    private static final int 양념치킨_가격 = 16000;
-
-    private static final long 반반치킨_ID = 3L;
-    private static final String 반반치킨_이름 = "반반치킨";
-    private static final int 반반치킨_가격 = 16000;
-
-    private static final long 통구이_ID = 4L;
-    private static final String 통구이_이름 = "통구이";
-    private static final int 통구이_가격 = 16000;
-
-    private static final long 간장치킨_ID = 5L;
-    private static final String 간장치킨_이름 = "간장치킨";
-    private static final int 간장치킨_가격 = 17000;
-
-    private static final long 순살치킨_ID = 6L;
-    private static final String 순살치킨_이름 = "순살치킨";
-    private static final int 순살치킨_가격 = 17000;
-
-    @LocalServerPort
-    private int port;
-
-    @BeforeEach
-    void setUp() {
-        RestAssured.port = port;
-    }
+class ProductAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("상품 목록을 조회한다.")
     @Test
@@ -61,12 +27,12 @@ class ProductAcceptanceTest {
                 .extracting(Product::getId, Product::getName, p -> p.getPrice().intValueExact())
                 .hasSize(6)
                 .containsExactlyInAnyOrder(
-                        tuple(후라이드_ID, 후라이드_이름, 후라이드_가격),
-                        tuple(양념치킨_ID, 양념치킨_이름, 양념치킨_가격),
-                        tuple(반반치킨_ID, 반반치킨_이름, 반반치킨_가격),
-                        tuple(통구이_ID, 통구이_이름, 통구이_가격),
-                        tuple(간장치킨_ID, 간장치킨_이름, 간장치킨_가격),
-                        tuple(순살치킨_ID, 순살치킨_이름, 순살치킨_가격)
+                        tuple(후라이드_상품.id(), 후라이드_상품.이름(), 후라이드_상품.가격()),
+                        tuple(양념치킨_상품.id(), 양념치킨_상품.이름(), 양념치킨_상품.가격()),
+                        tuple(반반치킨_상품.id(), 반반치킨_상품.이름(), 반반치킨_상품.가격()),
+                        tuple(통구이_상품.id(), 통구이_상품.이름(), 통구이_상품.가격()),
+                        tuple(간장치킨_상품.id(), 간장치킨_상품.이름(), 간장치킨_상품.가격()),
+                        tuple(순살치킨_상품.id(), 순살치킨_상품.이름(), 순살치킨_상품.가격())
                 );
     }
 
