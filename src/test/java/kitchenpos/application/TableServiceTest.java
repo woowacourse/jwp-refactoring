@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.Fixture.ORDER_TABLE;
+import static kitchenpos.Fixture.ORDER_TABLE1;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,21 +37,21 @@ class TableServiceTest {
     void create() {
         //given
         given(orderTableDao.save(any(OrderTable.class)))
-                .willReturn(ORDER_TABLE);
+                .willReturn(ORDER_TABLE1);
 
         //when
         OrderTable orderTable = new OrderTable(0, true);
         OrderTable savedOrderTable = tableService.create(orderTable);
 
         //then
-        assertThat(savedOrderTable).isEqualTo(ORDER_TABLE);
+        assertThat(savedOrderTable).isEqualTo(ORDER_TABLE1);
     }
 
     @Test
     void list() {
         //given
         given(orderTableDao.findAll())
-                .willReturn(List.of(ORDER_TABLE));
+                .willReturn(List.of(ORDER_TABLE1));
 
         //when
         List<OrderTable> orderTables = tableService.list();
@@ -65,11 +65,11 @@ class TableServiceTest {
         //given
         boolean expected = false;
         given(orderTableDao.findById(anyLong()))
-                .willReturn(Optional.of(ORDER_TABLE));
+                .willReturn(Optional.of(ORDER_TABLE1));
         given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
                 .willReturn(false);
         given(orderTableDao.save(any(OrderTable.class)))
-                .willReturn(new OrderTable(ORDER_TABLE.getId(), ORDER_TABLE.getNumberOfGuests(), expected));
+                .willReturn(new OrderTable(ORDER_TABLE1.getId(), ORDER_TABLE1.getNumberOfGuests(), expected));
 
         //when
         Long orderTableId = 1L;
@@ -85,9 +85,9 @@ class TableServiceTest {
         //given
         int expected = 4;
         given(orderTableDao.findById(anyLong()))
-                .willReturn(Optional.of(ORDER_TABLE));
+                .willReturn(Optional.of(ORDER_TABLE1));
         given(orderTableDao.save(any(OrderTable.class)))
-                .willReturn(new OrderTable(ORDER_TABLE.getId(), expected, ORDER_TABLE.isEmpty()));
+                .willReturn(new OrderTable(ORDER_TABLE1.getId(), expected, ORDER_TABLE1.isEmpty()));
 
         //when
         Long orderTableId = 1L;
