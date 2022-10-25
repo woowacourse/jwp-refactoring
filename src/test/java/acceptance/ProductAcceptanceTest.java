@@ -1,7 +1,6 @@
 package acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
 
 import java.util.List;
 import kitchenpos.domain.Product;
@@ -13,23 +12,12 @@ public class ProductAcceptanceTest extends AcceptanceTest {
     @DisplayName("상품 목록을 조회한다.")
     @Test
     void getMenus() {
-        // given
-        long productId1 = 상품_생성("후라이드", 19000);
-        long productId2 = 상품_생성("돼지국밥", 9000);
-        long productId3 = 상품_생성("피자", 31000);
-        long productId4 = 상품_생성("수육", 25000);
+        상품을_생성한다("후라이드", 19000);
+        상품을_생성한다("돼지국밥", 19000);
+        상품을_생성한다("피자", 19000);
 
-        // when
-        List<Product> products = 상품_조회();
+        List<Product> products = 상품을_조회한다();
 
-        // then
-        assertThat(products)
-                .extracting(Product::getId, Product::getName, p -> p.getPrice().intValueExact())
-                .containsExactlyInAnyOrder(
-                        tuple(productId1, "후라이드", 19000),
-                        tuple(productId2, "돼지국밥", 9000),
-                        tuple(productId3, "피자", 31000),
-                        tuple(productId4, "수육", 25000)
-                );
+        assertThat(products).hasSize(3);
     }
 }

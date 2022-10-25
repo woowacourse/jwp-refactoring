@@ -1,40 +1,34 @@
 package acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
 
+import java.lang.annotation.Documented;
 import java.util.List;
+import javax.annotation.processing.SupportedOptions;
 import kitchenpos.domain.Menu;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@SupportedOptions("")
 public class MenuAcceptanceTest extends AcceptanceTest {
 
     @Test
     @DisplayName("메뉴를 조회한다.")
     void getMenus() {
-        // given
-        long 후라이드 = 상품_생성("후라이드", 16000);
-        long 양념치킨 = 상품_생성("양념치킨", 18000);
-        long 반반치킨 = 상품_생성("반반치킨", 17000);
+        메뉴를_생성한다("후라이드", 30000, 메뉴_그룹("후라이드+후라이드"), List.of(상품("후라이드", 16000)), 2);
+        메뉴를_생성한다("양념", 34000, 메뉴_그룹("양념치킨+양념치킨"), List.of(상품("양념치킨", 18000)), 2);
+        메뉴를_생성한다("반반", 32000, 메뉴_그룹("후라이드+양념치킨"), List.of(상품("반반치킨", 17000)), 2);
 
-        long 한마리_메뉴 = 메뉴_그룹_생성("한마리 메뉴");
-        long 두마리_메뉴 = 메뉴_그룹_생성("두마리 메뉴");
+        List<Menu> menus = 메뉴를_조회한다();
 
-        long 후라이드_두마리_메뉴 = 메뉴_생성("후라이드+후라이드", 30000, 두마리_메뉴, List.of(후라이드), 2);
-        long 양념치킨_두마리_메뉴 = 메뉴_생성("양념치킨+양념치킨", 34000, 두마리_메뉴, List.of(양념치킨), 2);
-        long 반반치킨_메뉴 = 메뉴_생성("반반치킨", 17000, 한마리_메뉴, List.of(반반치킨), 1);
+        assertThat(menus).hasSize(3);
+    }
 
-        // when
-        List<Menu> menus = 메뉴_조회();
+    private long 상품(String name, int price) {
+        return 상품을_생성한다(name, price);
+    }
 
-        // then
-        assertThat(menus)
-                .extracting(Menu::getId, Menu::getName, menu -> menu.getPrice().intValueExact(), Menu::getMenuGroupId)
-                .containsExactlyInAnyOrder(
-                        tuple(후라이드_두마리_메뉴, "후라이드+후라이드", 30000, 두마리_메뉴),
-                        tuple(양념치킨_두마리_메뉴, "양념치킨+양념치킨", 34000, 두마리_메뉴),
-                        tuple(반반치킨_메뉴, "반반치킨", 17000, 한마리_메뉴)
-                );
+    private long 메뉴_그룹(String name) {
+        return 메뉴_그룹을_생성한다(name);
     }
 }
