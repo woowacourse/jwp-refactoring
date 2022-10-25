@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.common.builder.MenuGroupBuilder;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +17,9 @@ class MenuGroupServiceTest extends ServiceTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
+
+    @Autowired
+    private MenuGroupDao menuGroupDao;
 
     private MenuGroup 루나세트;
 
@@ -43,13 +47,12 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void 메뉴_그룹을_조회한다() {
         // given
-        MenuGroup actual = menuGroupService.create(루나세트);
+        menuGroupDao.save(루나세트);
 
         // when
         List<MenuGroup> 메뉴그룹들 = menuGroupService.list();
 
         // then
-        assertThat(메뉴그룹들).extracting(MenuGroup::getName)
-                .contains(루나세트_이름);
+        assertThat(메뉴그룹들).hasSize(1);
     }
 }

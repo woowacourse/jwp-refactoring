@@ -13,6 +13,8 @@ import kitchenpos.common.builder.MenuBuilder;
 import kitchenpos.common.builder.MenuGroupBuilder;
 import kitchenpos.common.builder.MenuProductBuilder;
 import kitchenpos.common.builder.ProductBuilder;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -33,6 +35,13 @@ public class MenuServiceTest extends ServiceTest {
     private ProductService productService;
 
     @Autowired
+    private ProductDao productDao;
+
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+
+    @Autowired
     private MenuGroupService menuGroupService;
 
     private MenuGroup 루나세트;
@@ -44,29 +53,24 @@ public class MenuServiceTest extends ServiceTest {
                 .name(야채곱창_이름)
                 .price(야채곱창_가격)
                 .build();
-        야채곱창 = productService.create(야채곱창);
-
-        루나세트 = new MenuGroupBuilder()
-                .name(루나세트_이름)
-                .build();
-        루나세트 = menuGroupService.create(루나세트);
+        야채곱창 = productDao.save(야채곱창);
 
         루나_야채곱창 = new MenuProductBuilder()
                 .productId(야채곱창.getId())
                 .quantity(1)
                 .build();
+
+        루나세트 = new MenuGroupBuilder()
+                .name(루나세트_이름)
+                .build();
+        루나세트 = menuGroupDao.save(루나세트);
     }
 
     @DisplayName("메뉴를 등록한다.")
     @Test
     void 메뉴를_등록한다() {
         // given
-        Menu 야채곱창_메뉴 = new MenuBuilder()
-                .name(야채곱창_이름)
-                .price(야채곱창_가격)
-                .menuGroupId(루나세트.getId())
-                .menuProducts(List.of(루나_야채곱창))
-                .build();
+        Menu 야채곱창_메뉴 = 메뉴_생성(야채곱창_이름, 야채곱창_가격, 루나세트.getId(), List.of(루나_야채곱창));
 
         // when
         Menu actual = menuService.create(야채곱창_메뉴);
@@ -189,5 +193,15 @@ public class MenuServiceTest extends ServiceTest {
         // then
         assertThat(메뉴들).extracting(Menu::getName)
                 .contains(야채곱창_이름);
+    }
+
+    private Menu 메뉴_생성(final String name, final BigDecimal price, final Long menuGroupId,
+                       final List<MenuProduct> products) {
+        return new MenuBuilder()
+                .name(name)
+                .price(price)
+                .menuGroupId(menuGroupId)
+                .menuProducts(products)
+                .build();
     }
 }
