@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,7 +15,6 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -86,7 +86,7 @@ class TableGroupServiceTest {
         TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(빈테이블을_생성한다(), 빈테이블을_생성한다()));
         TableGroup savedGroup = tableGroupService.create(tableGroup);
 
-        Assertions.assertDoesNotThrow(() -> tableGroupService.ungroup(savedGroup.getId()));
+        assertDoesNotThrow(() -> tableGroupService.ungroup(savedGroup.getId()));
     }
 
     @Test

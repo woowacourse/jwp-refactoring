@@ -26,7 +26,6 @@ class MenuServiceTest {
         this.menuGroupService = menuGroupService;
     }
 
-
     @Test
     void 메뉴를_생성한다() {
         Product jwt_후라이드 = productService.create(new Product("JWT 후라이드", new BigDecimal(100_000)));
