@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -22,10 +24,10 @@ public class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private ProductService productService;
+    private ProductDao productDao;
 
     @Autowired
-    private MenuGroupService menuGroupService;
+    private MenuGroupDao menuGroupDao;
 
     @DisplayName("메뉴를 조회한다.")
     @Test
@@ -49,13 +51,13 @@ public class MenuServiceTest {
         Product product = new Product();
         product.setName(name);
         product.setPrice(BigDecimal.valueOf(price));
-        return productService.create(product);
+        return productDao.save(product);
     }
 
     private MenuGroup givenMenuGroup(final String name) {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(name);
-        return menuGroupService.create(menuGroup);
+        return menuGroupDao.save(menuGroup);
     }
 
     private MenuProduct givenMenuProduct(long productId, int quantity) {
