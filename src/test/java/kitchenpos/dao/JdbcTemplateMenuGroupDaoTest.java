@@ -9,9 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.jdbc.Sql;
 
-@Sql("/truncate.sql")
 class JdbcTemplateMenuGroupDaoTest extends JdbcTemplateTest {
 
     @Nested
@@ -58,12 +56,18 @@ class JdbcTemplateMenuGroupDaoTest extends JdbcTemplateTest {
     @DisplayName("findAll 메서드는")
     class FindAll {
 
+        @BeforeEach
+        void setUp() {
+            jdbcTemplateMenuGroupDao.save(KOREAN.getMenuGroup());
+            jdbcTemplateMenuGroupDao.save(KOREAN.getMenuGroup());
+        }
+
         @Test
         @DisplayName("MenuGroup 전체 목록을 조회한다.")
         void success() {
             List<MenuGroup> menuGroups = jdbcTemplateMenuGroupDao.findAll();
 
-            assertThat(menuGroups).hasSize(6);
+            assertThat(menuGroups).hasSize(2);
         }
     }
 

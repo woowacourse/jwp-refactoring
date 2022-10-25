@@ -1,6 +1,10 @@
 package kitchenpos.dao;
 
 import static kitchenpos.support.fixture.domain.MenuFixture.CHICKEN_1000;
+import static kitchenpos.support.fixture.domain.MenuGroupFixture.KOREAN;
+import static kitchenpos.support.fixture.domain.MenuProductFixture.ONE;
+import static kitchenpos.support.fixture.domain.MenuProductFixture.TWO;
+import static kitchenpos.support.fixture.domain.ProductFixture.APPLE_1000;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -8,16 +12,12 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.support.fixture.domain.MenuGroupFixture;
-import kitchenpos.support.fixture.domain.MenuProductFixture;
 import kitchenpos.support.fixture.domain.ProductFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.jdbc.Sql;
 
-@Sql("/truncate.sql")
 class JdbcTemplateMenuProductDaoTest extends JdbcTemplateTest {
 
     @Nested
@@ -27,10 +27,10 @@ class JdbcTemplateMenuProductDaoTest extends JdbcTemplateTest {
         @Test
         @DisplayName("MenuProduct를 저장한다.")
         void success() {
-            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(MenuGroupFixture.KOREAN.getMenuGroup());
+            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(KOREAN.getMenuGroup());
             Menu menu = jdbcTemplateMenuDao.save(CHICKEN_1000.getMenu(menuGroup.getId()));
-            Product product = jdbcTemplateProductDao.save(ProductFixture.APPLE_1000.getProduct());
-            MenuProduct menuProduct = MenuProductFixture.ONE.getMenuProduct(menu.getId(), product.getId());
+            Product product = jdbcTemplateProductDao.save(APPLE_1000.getProduct());
+            MenuProduct menuProduct = ONE.getMenuProduct(menu.getId(), product.getId());
 
             MenuProduct savedMenuProduct = jdbcTemplateMenuProductDao.save(menuProduct);
 
@@ -47,10 +47,10 @@ class JdbcTemplateMenuProductDaoTest extends JdbcTemplateTest {
 
         @BeforeEach
         void setUp() {
-            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(MenuGroupFixture.KOREAN.getMenuGroup());
+            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(KOREAN.getMenuGroup());
             Menu menu = jdbcTemplateMenuDao.save(CHICKEN_1000.getMenu(menuGroup.getId()));
-            Product product = jdbcTemplateProductDao.save(ProductFixture.APPLE_1000.getProduct());
-            menuProduct = jdbcTemplateMenuProductDao.save(MenuProductFixture.ONE.getMenuProduct(menu.getId(), product.getId()));
+            Product product = jdbcTemplateProductDao.save(APPLE_1000.getProduct());
+            menuProduct = jdbcTemplateMenuProductDao.save(ONE.getMenuProduct(menu.getId(), product.getId()));
         }
 
         @Test
@@ -70,12 +70,21 @@ class JdbcTemplateMenuProductDaoTest extends JdbcTemplateTest {
     @DisplayName("findAll 메서드는")
     class FindAll {
 
+        @BeforeEach
+        void setUp() {
+            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(KOREAN.getMenuGroup());
+            Menu menu = jdbcTemplateMenuDao.save(CHICKEN_1000.getMenu(menuGroup.getId()));
+            Product product = jdbcTemplateProductDao.save(APPLE_1000.getProduct());
+            jdbcTemplateMenuProductDao.save(ONE.getMenuProduct(menu.getId(), product.getId()));
+            jdbcTemplateMenuProductDao.save(ONE.getMenuProduct(menu.getId(), product.getId()));
+        }
+
         @Test
         @DisplayName("MenuProduct 전체 목록을 조회한다.")
         void success() {
             List<MenuProduct> menuProducts = jdbcTemplateMenuProductDao.findAll();
 
-            assertThat(menuProducts).hasSize(6);
+            assertThat(menuProducts).hasSize(2);
         }
     }
 
@@ -87,12 +96,12 @@ class JdbcTemplateMenuProductDaoTest extends JdbcTemplateTest {
 
         @BeforeEach
         void setUp() {
-            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(MenuGroupFixture.KOREAN.getMenuGroup());
+            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(KOREAN.getMenuGroup());
             menu = jdbcTemplateMenuDao.save(CHICKEN_1000.getMenu(menuGroup.getId()));
-            Product product1 = jdbcTemplateProductDao.save(ProductFixture.APPLE_1000.getProduct());
+            Product product1 = jdbcTemplateProductDao.save(APPLE_1000.getProduct());
             Product product2 = jdbcTemplateProductDao.save(ProductFixture.PEAR_2000.getProduct());
-            jdbcTemplateMenuProductDao.save(MenuProductFixture.ONE.getMenuProduct(menu.getId(), product1.getId()));
-            jdbcTemplateMenuProductDao.save(MenuProductFixture.TWO.getMenuProduct(menu.getId(), product2.getId()));
+            jdbcTemplateMenuProductDao.save(ONE.getMenuProduct(menu.getId(), product1.getId()));
+            jdbcTemplateMenuProductDao.save(TWO.getMenuProduct(menu.getId(), product2.getId()));
         }
 
         @Test

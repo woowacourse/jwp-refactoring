@@ -2,12 +2,12 @@ package kitchenpos.dao;
 
 import static kitchenpos.support.fixture.domain.MenuFixture.CHICKEN_1000;
 import static kitchenpos.support.fixture.domain.MenuFixture.PIZZA_2000;
+import static kitchenpos.support.fixture.domain.MenuGroupFixture.KOREAN;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.support.fixture.domain.MenuGroupFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,7 +22,7 @@ class JdbcTemplateMenuDaoTest extends JdbcTemplateTest {
         @Test
         @DisplayName("Menu를 저장한다.")
         void success() {
-            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(MenuGroupFixture.KOREAN.getMenuGroup());
+            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(KOREAN.getMenuGroup());
             Menu menu = CHICKEN_1000.getMenu(menuGroup.getId());
 
             Menu savedMenu = jdbcTemplateMenuDao.save(menu);
@@ -40,7 +40,7 @@ class JdbcTemplateMenuDaoTest extends JdbcTemplateTest {
 
         @BeforeEach
         void setUp() {
-            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(MenuGroupFixture.KOREAN.getMenuGroup());
+            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(KOREAN.getMenuGroup());
             menu = jdbcTemplateMenuDao.save(CHICKEN_1000.getMenu(menuGroup.getId()));
         }
 
@@ -63,7 +63,7 @@ class JdbcTemplateMenuDaoTest extends JdbcTemplateTest {
 
         @BeforeEach
         void setUp() {
-            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(MenuGroupFixture.KOREAN.getMenuGroup());
+            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(KOREAN.getMenuGroup());
             jdbcTemplateMenuDao.save(CHICKEN_1000.getMenu(menuGroup.getId()));
             jdbcTemplateMenuDao.save(CHICKEN_1000.getMenu(menuGroup.getId()));
         }
@@ -86,7 +86,7 @@ class JdbcTemplateMenuDaoTest extends JdbcTemplateTest {
 
         @BeforeEach
         void setUp() {
-            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(MenuGroupFixture.KOREAN.getMenuGroup());
+            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(KOREAN.getMenuGroup());
             menu1 = jdbcTemplateMenuDao.save(CHICKEN_1000.getMenu(menuGroup.getId()));
             menu2 = jdbcTemplateMenuDao.save(PIZZA_2000.getMenu(menuGroup.getId()));
         }

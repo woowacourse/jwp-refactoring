@@ -1,5 +1,7 @@
 package kitchenpos.dao;
 
+import static kitchenpos.support.fixture.domain.OrderTableFixture.GUEST_ONE_EMPTY_TRUE;
+import static kitchenpos.support.fixture.domain.TableGroupFixture.getTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -8,15 +10,11 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.support.fixture.domain.OrderFixture;
-import kitchenpos.support.fixture.domain.OrderTableFixture;
-import kitchenpos.support.fixture.domain.TableGroupFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.jdbc.Sql;
 
-@Sql("/truncate.sql")
 class JdbcTemplateOrderDaoTest extends JdbcTemplateTest{
 
     @Nested
@@ -26,8 +24,8 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest{
         @Test
         @DisplayName("Order를 저장한다.")
         void success() {
-            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroupFixture.getTableGroup());
-            OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
+            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(getTableGroup());
+            OrderTable orderTable = jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
             Order order = OrderFixture.COMPLETION.getOrder(orderTable.getId());
 
             Order savedOrder = jdbcTemplateOrderDao.save(order);
@@ -45,8 +43,8 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest{
 
         @BeforeEach
         void setUp() {
-            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroupFixture.getTableGroup());
-            OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
+            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(getTableGroup());
+            OrderTable orderTable = jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
             order = jdbcTemplateOrderDao.save(OrderFixture.COMPLETION.getOrder(orderTable.getId()));
         }
 
@@ -69,8 +67,8 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest{
 
         @BeforeEach
         void setUp() {
-            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroupFixture.getTableGroup());
-            OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
+            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(getTableGroup());
+            OrderTable orderTable = jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
             jdbcTemplateOrderDao.save(OrderFixture.COMPLETION.getOrder(orderTable.getId()));
             jdbcTemplateOrderDao.save(OrderFixture.COOKING.getOrder(orderTable.getId()));
         }
@@ -80,7 +78,7 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest{
         void success() {
             List<Order> orders = jdbcTemplateOrderDao.findAll();
 
-            assertThat(orders).hasSize(8);
+            assertThat(orders).hasSize(2);
         }
     }
 
@@ -92,8 +90,8 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest{
 
         @BeforeEach
         void setUp() {
-            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroupFixture.getTableGroup());
-            orderTable = jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
+            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(getTableGroup());
+            orderTable = jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
             jdbcTemplateOrderDao.save(OrderFixture.COMPLETION.getOrder(orderTable.getId()));
         }
 
@@ -131,9 +129,9 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest{
 
         @BeforeEach
         void setUp() {
-            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroupFixture.getTableGroup());
-            orderTable1 = jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
-            orderTable2 = jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
+            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(getTableGroup());
+            orderTable1 = jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
+            orderTable2 = jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
             jdbcTemplateOrderDao.save(OrderFixture.COMPLETION.getOrder(orderTable1.getId()));
             jdbcTemplateOrderDao.save(OrderFixture.COMPLETION.getOrder(orderTable1.getId()));
         }

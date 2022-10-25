@@ -58,12 +58,18 @@ class JdbcTemplateProductDaoTest extends JdbcTemplateTest {
     @DisplayName("findAll 메서드는")
     class FindAll {
 
+        @BeforeEach
+        void setUp() {
+            jdbcTemplateProductDao.save(APPLE_1000.getProduct());
+            jdbcTemplateProductDao.save(APPLE_1000.getProduct());
+        }
+
         @Test
         @DisplayName("Product 전체 목록을 조회한다.")
         void success() {
             List<Product> products = jdbcTemplateProductDao.findAll();
 
-            assertThat(products).hasSize(6);
+            assertThat(products).hasSize(2);
         }
     }
 }

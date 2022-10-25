@@ -62,12 +62,19 @@ class JdbcTemplateOrderTableDaoTest extends JdbcTemplateTest {
     @DisplayName("findAll 메서드는")
     class FindAll {
 
+        @BeforeEach
+        void setUp() {
+            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroupFixture.getTableGroup());
+            jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
+            jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
+        }
+
         @Test
         @DisplayName("OrderTable 전체 목록을 조회한다.")
         void success() {
             List<OrderTable> orderTables = jdbcTemplateOrderTableDao.findAll();
 
-            assertThat(orderTables).hasSize(8);
+            assertThat(orderTables).hasSize(2);
         }
     }
 

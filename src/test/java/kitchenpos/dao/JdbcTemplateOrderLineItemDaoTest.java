@@ -1,6 +1,11 @@
 package kitchenpos.dao;
 
 
+import static kitchenpos.support.fixture.domain.MenuFixture.CHICKEN_1000;
+import static kitchenpos.support.fixture.domain.MenuGroupFixture.KOREAN;
+import static kitchenpos.support.fixture.domain.OrderFixture.COMPLETION;
+import static kitchenpos.support.fixture.domain.OrderLineItemFixture.ONE;
+import static kitchenpos.support.fixture.domain.OrderTableFixture.GUEST_ONE_EMPTY_TRUE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -10,19 +15,12 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.support.fixture.domain.MenuFixture;
-import kitchenpos.support.fixture.domain.MenuGroupFixture;
-import kitchenpos.support.fixture.domain.OrderFixture;
-import kitchenpos.support.fixture.domain.OrderLineItemFixture;
-import kitchenpos.support.fixture.domain.OrderTableFixture;
 import kitchenpos.support.fixture.domain.TableGroupFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.jdbc.Sql;
 
-@Sql("/truncate.sql")
 class JdbcTemplateOrderLineItemDaoTest extends JdbcTemplateTest {
 
     @Nested
@@ -33,11 +31,11 @@ class JdbcTemplateOrderLineItemDaoTest extends JdbcTemplateTest {
         @DisplayName("OrderLineItem를 저장한다.")
         void success() {
             TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroupFixture.getTableGroup());
-            OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
-            Order order = jdbcTemplateOrderDao.save(OrderFixture.COMPLETION.getOrder(orderTable.getId()));
-            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(MenuGroupFixture.KOREAN.getMenuGroup());
-            Menu menu = jdbcTemplateMenuDao.save(MenuFixture.CHICKEN_1000.getMenu(menuGroup.getId()));
-            OrderLineItem orderLineItem = OrderLineItemFixture.ONE.getOrderLineItem(menu.getId(), order.getId());
+            OrderTable orderTable = jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
+            Order order = jdbcTemplateOrderDao.save(COMPLETION.getOrder(orderTable.getId()));
+            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(KOREAN.getMenuGroup());
+            Menu menu = jdbcTemplateMenuDao.save(CHICKEN_1000.getMenu(menuGroup.getId()));
+            OrderLineItem orderLineItem = ONE.getOrderLineItem(menu.getId(), order.getId());
 
             OrderLineItem savedOrderLineItem = jdbcTemplateOrderLineItemDao.save(orderLineItem);
 
@@ -55,11 +53,11 @@ class JdbcTemplateOrderLineItemDaoTest extends JdbcTemplateTest {
         @BeforeEach
         void setUp() {
             TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroupFixture.getTableGroup());
-            OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
-            Order order = jdbcTemplateOrderDao.save(OrderFixture.COMPLETION.getOrder(orderTable.getId()));
-            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(MenuGroupFixture.KOREAN.getMenuGroup());
-            Menu menu = jdbcTemplateMenuDao.save(MenuFixture.CHICKEN_1000.getMenu(menuGroup.getId()));
-            orderLineItem = jdbcTemplateOrderLineItemDao.save(OrderLineItemFixture.ONE.getOrderLineItem(menu.getId(), order.getId()));
+            OrderTable orderTable = jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
+            Order order = jdbcTemplateOrderDao.save(COMPLETION.getOrder(orderTable.getId()));
+            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(KOREAN.getMenuGroup());
+            Menu menu = jdbcTemplateMenuDao.save(CHICKEN_1000.getMenu(menuGroup.getId()));
+            orderLineItem = jdbcTemplateOrderLineItemDao.save(ONE.getOrderLineItem(menu.getId(), order.getId()));
         }
 
         @Test
@@ -82,12 +80,12 @@ class JdbcTemplateOrderLineItemDaoTest extends JdbcTemplateTest {
         @BeforeEach
         void setUp() {
             TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroupFixture.getTableGroup());
-            OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
-            Order order = jdbcTemplateOrderDao.save(OrderFixture.COMPLETION.getOrder(orderTable.getId()));
-            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(MenuGroupFixture.KOREAN.getMenuGroup());
-            Menu menu = jdbcTemplateMenuDao.save(MenuFixture.CHICKEN_1000.getMenu(menuGroup.getId()));
-            jdbcTemplateOrderLineItemDao.save(OrderLineItemFixture.ONE.getOrderLineItem(menu.getId(), order.getId()));
-            jdbcTemplateOrderLineItemDao.save(OrderLineItemFixture.ONE.getOrderLineItem(menu.getId(), order.getId()));
+            OrderTable orderTable = jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
+            Order order = jdbcTemplateOrderDao.save(COMPLETION.getOrder(orderTable.getId()));
+            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(KOREAN.getMenuGroup());
+            Menu menu = jdbcTemplateMenuDao.save(CHICKEN_1000.getMenu(menuGroup.getId()));
+            jdbcTemplateOrderLineItemDao.save(ONE.getOrderLineItem(menu.getId(), order.getId()));
+            jdbcTemplateOrderLineItemDao.save(ONE.getOrderLineItem(menu.getId(), order.getId()));
         }
 
         @Test
@@ -108,12 +106,12 @@ class JdbcTemplateOrderLineItemDaoTest extends JdbcTemplateTest {
         @BeforeEach
         void setUp() {
             TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroupFixture.getTableGroup());
-            OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
-            order = jdbcTemplateOrderDao.save(OrderFixture.COMPLETION.getOrder(orderTable.getId()));
-            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(MenuGroupFixture.KOREAN.getMenuGroup());
-            Menu menu = jdbcTemplateMenuDao.save(MenuFixture.CHICKEN_1000.getMenu(menuGroup.getId()));
-            jdbcTemplateOrderLineItemDao.save(OrderLineItemFixture.ONE.getOrderLineItem(menu.getId(), order.getId()));
-            jdbcTemplateOrderLineItemDao.save(OrderLineItemFixture.ONE.getOrderLineItem(menu.getId(), order.getId()));
+            OrderTable orderTable = jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
+            order = jdbcTemplateOrderDao.save(COMPLETION.getOrder(orderTable.getId()));
+            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(KOREAN.getMenuGroup());
+            Menu menu = jdbcTemplateMenuDao.save(CHICKEN_1000.getMenu(menuGroup.getId()));
+            jdbcTemplateOrderLineItemDao.save(ONE.getOrderLineItem(menu.getId(), order.getId()));
+            jdbcTemplateOrderLineItemDao.save(ONE.getOrderLineItem(menu.getId(), order.getId()));
         }
 
         @Test
