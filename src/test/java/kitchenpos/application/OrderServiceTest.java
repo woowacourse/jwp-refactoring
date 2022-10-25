@@ -31,7 +31,15 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.fixture.MenuFixture;
+import kitchenpos.domain.fixture.MenuGroupFixture;
+import kitchenpos.domain.fixture.MenuProductFixture;
+import kitchenpos.domain.fixture.OrderFixture;
+import kitchenpos.domain.fixture.OrderLineItemFixture;
+import kitchenpos.domain.fixture.OrderTableFixture;
+import kitchenpos.domain.fixture.ProductFixture;
 
+@SuppressWarnings("NonAsciiCharacters")
 @DisplayName("Order 서비스 테스트")
 class OrderServiceTest {
 
@@ -56,44 +64,46 @@ class OrderServiceTest {
         orderService = new OrderService(menuDao, orderDao, new FakeOrderLineItemDao(), orderTableDao);
 
         // menu group
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("메뉴 그룹");
+        final MenuGroup menuGroup = MenuGroupFixture.치킨_세트().build();
         savedMenuGroup = menuGroupDao.save(menuGroup);
 
         // product
-        final Product product = new Product();
-        product.setName("상품");
-        product.setPrice(new BigDecimal(1000));
+        final Product product = ProductFixture.후라이드_치킨()
+            .가격(new BigDecimal(15_000))
+            .build();
         savedProduct = productDao.save(product);
 
         // menu
-        final Menu menu = new Menu();
-        menu.setName("메뉴");
-        menu.setPrice(new BigDecimal(1000));
+        final Menu menu = MenuFixture.후라이드_치킨_세트()
+            .가격(new BigDecimal(30_000))
+            .build();
         menu.setMenuGroupId(savedMenuGroup.getId());
 
         // menu product
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(1);
+        final MenuProduct menuProduct = MenuProductFixture.후라이드()
+            .상품_아이디(savedProduct.getId())
+            .수량(1)
+            .build();
         menu.setMenuProducts(List.of(menuProduct));
 
         savedMenu = menuDao.save(menu);
 
         // order table
-        final OrderTable orderTable = new OrderTable();
+        final OrderTable orderTable = OrderTableFixture.주문_테이블().build();
         savedOrderTable = orderTableDao.save(orderTable);
     }
 
     @DisplayName("주문을 등록한다")
     @Test
     void create() {
-        final Order order = new Order();
+        final OrderLineItem orderLineItem = OrderLineItemFixture.주문_항목()
+            .메뉴_아이디(savedMenu.getId())
+            .build();
 
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(savedOrderTable.getId());
+        final Order order = OrderFixture.주문()
+            .주문_테이블_아이디(savedOrderTable.getId())
+            .주문_항목들(List.of(orderLineItem))
+            .build();
 
         final Order savedOrder = orderService.create(order);
 
@@ -103,8 +113,9 @@ class OrderServiceTest {
     @DisplayName("주문 등록 시 주문 항목이 비어있으면 안된다")
     @Test
     void createOrderLineItemIsEmpty() {
-        final Order order = new Order();
-        order.setOrderLineItems(Collections.emptyList());
+        final Order order = OrderFixture.주문()
+            .주문_항목들(Collections.emptyList())
+            .build();
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -113,10 +124,13 @@ class OrderServiceTest {
     @DisplayName("주문 등록 시 주문 항목이 메뉴에 존재해야 한다")
     @Test
     void createOrderLineItemIsNotExist() {
-        final Order order = new Order();
-        final OrderLineItem notSavedOrderLineItem = new OrderLineItem();
-        notSavedOrderLineItem.setMenuId(savedMenu.getId());
-        order.setOrderLineItems(List.of(notSavedOrderLineItem));
+        final OrderLineItem notSavedOrderLineItem = OrderLineItemFixture.주문_항목()
+            .메뉴_아이디(savedMenu.getId())
+            .build();
+
+        final Order order = OrderFixture.주문()
+            .주문_항목들(List.of(notSavedOrderLineItem))
+            .build();
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -125,14 +139,15 @@ class OrderServiceTest {
     @DisplayName("주문 등록 시 주문 테이블이 존재해야 한다")
     @Test
     void createOrderTableIsNotExist() {
-        final Order order = new Order();
-
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
+        final OrderLineItem orderLineItem = OrderLineItemFixture.주문_항목()
+            .메뉴_아이디(savedMenu.getId())
+            .build();
 
         long notSavedOrderTableId = 0L;
-        order.setOrderTableId(notSavedOrderTableId);
+        final Order order = OrderFixture.주문()
+            .주문_테이블_아이디(notSavedOrderTableId)
+            .주문_항목들(List.of(orderLineItem))
+            .build();
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -141,16 +156,19 @@ class OrderServiceTest {
     @DisplayName("주문 등록 시 주문 테이블이 비어있으면 안된다")
     @Test
     void createOrderTableIsEmpty() {
-        final Order order = new Order();
+        final OrderLineItem orderLineItem = OrderLineItemFixture.주문_항목()
+            .메뉴_아이디(savedMenu.getId())
+            .build();
 
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
+        final OrderTable orderTable = OrderTableFixture.주문_테이블()
+            .빈_테이블(true)
+            .build();
+        final OrderTable savedEmptyOrderTable = orderTableDao.save(orderTable);
 
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        OrderTable savedEmptyOrderTable = orderTableDao.save(orderTable);
-        order.setOrderTableId(savedEmptyOrderTable.getId());
+        final Order order = OrderFixture.주문()
+            .주문_테이블_아이디(savedEmptyOrderTable.getId())
+            .주문_항목들(List.of(orderLineItem))
+            .build();
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -159,22 +177,29 @@ class OrderServiceTest {
     @DisplayName("주문의 목록을 조회한다")
     @Test
     void list() {
+        final int numberOfOrder = 5;
+        for (int i = 0; i < numberOfOrder; i++) {
+            orderDao.save(OrderFixture.주문().build());
+        }
+
         final List<Order> orders = orderService.list();
 
-        assertThat(orders).hasSize(0);
+        assertThat(orders).hasSize(numberOfOrder);
     }
 
     @DisplayName("주문의 상태를 변경한다")
     @Test
     void changeOrderStatus() {
-        final Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(OrderStatus.COOKING.name());
+        final Order order = OrderFixture.주문()
+            .주문_테이블_아이디(savedOrderTable.getId())
+            .주문한_시간(LocalDateTime.now())
+            .주문_상태(OrderStatus.COOKING.name())
+            .build();
         final Order savedOrder = orderDao.save(order);
 
-        final Order newOrder = new Order();
-        newOrder.setOrderStatus(OrderStatus.COMPLETION.name());
+        final Order newOrder = OrderFixture.주문()
+            .주문_상태(OrderStatus.COMPLETION.name())
+            .build();
 
         final Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), newOrder);
 
@@ -193,10 +218,11 @@ class OrderServiceTest {
     @DisplayName("주문의 상태 변경 시 주문이 완료된 상태면 안된다")
     @Test
     void changeOrderStatusOrderIsCompletion() {
-        final Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
+        final Order order = OrderFixture.주문()
+            .주문_테이블_아이디(savedOrderTable.getId())
+            .주문한_시간(LocalDateTime.now())
+            .주문_상태(OrderStatus.COMPLETION.name())
+            .build();
         final Order savedOrder = orderDao.save(order);
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), new Order()))

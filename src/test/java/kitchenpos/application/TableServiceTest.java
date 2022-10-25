@@ -20,7 +20,10 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.fixture.OrderFixture;
+import kitchenpos.domain.fixture.OrderTableFixture;
 
+@SuppressWarnings("NonAsciiCharacters")
 @DisplayName("Table 서비스 테스트")
 class TableServiceTest {
 
@@ -48,7 +51,7 @@ class TableServiceTest {
     @DisplayName("테이블을 등록한다")
     @Test
     void create() {
-        final OrderTable orderTable = new OrderTable();
+        final OrderTable orderTable = OrderTableFixture.주문_테이블().build();
 
         final OrderTable savedOrderTable = tableService.create(orderTable);
 
@@ -58,25 +61,32 @@ class TableServiceTest {
     @DisplayName("테이블의 목록을 조회한다")
     @Test
     void list() {
+        final int numberOfOrderTable = 5;
+        for (int i = 0; i < numberOfOrderTable; i++) {
+            orderTableDao.save(OrderTableFixture.주문_테이블().build());
+        }
+
         final List<OrderTable> orderTables = tableService.list();
 
-        assertThat(orderTables).hasSize(0);
+        assertThat(orderTables).hasSize(numberOfOrderTable);
     }
 
     @DisplayName("테이블을 비운다")
     @Test
     void changeEmpty() {
-        final OrderTable orderTable = new OrderTable();
+        final OrderTable orderTable = OrderTableFixture.주문_테이블().build();
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
-        order.setOrderedTime(LocalDateTime.now());
+        final Order order = OrderFixture.주문()
+            .주문_테이블_아이디(savedOrderTable.getId())
+            .주문_상태(OrderStatus.COMPLETION.name())
+            .주문한_시간(LocalDateTime.now())
+            .build();
         orderDao.save(order);
 
-        final OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setEmpty(true);
+        final OrderTable newOrderTable = OrderTableFixture.주문_테이블()
+            .빈_테이블(true)
+            .build();
         final OrderTable changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), newOrderTable);
 
         assertThat(changedOrderTable.isEmpty()).isTrue();
@@ -94,8 +104,9 @@ class TableServiceTest {
     @DisplayName("테이블을 비울 때 저장되어 있는 주문 테이블의 아이디가 null 이어야 한다")
     @Test
     void changeEmptyTableGroupIdIsNull() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(savedTableGroup.getId());
+        final OrderTable orderTable = OrderTableFixture.주문_테이블()
+            .테이블_그룹_아이디(savedTableGroup.getId())
+            .build();
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTable()))
@@ -105,13 +116,14 @@ class TableServiceTest {
     @DisplayName("테이블을 비울 때 테이블의 주문 상태가 요리중이거나 식사중일 경우 테이블을 비울 수 없다")
     @Test
     void changeEmptyOrderStatusIsCompletion() {
-        final OrderTable orderTable = new OrderTable();
+        final OrderTable orderTable = OrderTableFixture.주문_테이블().build();
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
+        final Order order = OrderFixture.주문()
+            .주문_테이블_아이디(savedOrderTable.getId())
+            .주문_상태(OrderStatus.COOKING.name())
+            .주문한_시간(LocalDateTime.now())
+            .build();
         orderDao.save(order);
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTable()))
@@ -121,11 +133,12 @@ class TableServiceTest {
     @DisplayName("테이블의 손님의 수를 변경한다")
     @Test
     void changeNumberOfGuests() {
-        final OrderTable orderTable = new OrderTable();
+        final OrderTable orderTable = OrderTableFixture.주문_테이블().build();
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setNumberOfGuests(1);
+        final OrderTable newOrderTable = OrderTableFixture.주문_테이블()
+            .손님의_수(1)
+            .build();
 
         final OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(), newOrderTable);
 
@@ -135,8 +148,9 @@ class TableServiceTest {
     @DisplayName("테이블 손님의 수 변경 시 변경하려는 손님의 수는 0보다 커야한다")
     @Test
     void changeNumberOfGuestsNumberIsLowerZero() {
-        final OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setNumberOfGuests(0);
+        final OrderTable newOrderTable = OrderTableFixture.주문_테이블()
+            .손님의_수(0)
+            .build();
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, newOrderTable))
             .isInstanceOf(IllegalArgumentException.class);
@@ -145,8 +159,9 @@ class TableServiceTest {
     @DisplayName("테이블 손님의 수 변경 시 주문 테이블이 존재해야 한다")
     @Test
     void changeNumberOfGuestsOrderTableIsNotExist() {
-        final OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setNumberOfGuests(1);
+        final OrderTable newOrderTable = OrderTableFixture.주문_테이블()
+            .손님의_수(1)
+            .build();
 
         long notSavedOrderTable = 0L;
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(notSavedOrderTable, newOrderTable))
@@ -156,12 +171,14 @@ class TableServiceTest {
     @DisplayName("테이블 손님의 수 변경 시 테이블이 비어있으면 안된다")
     @Test
     void changeNumberOfGuestsOrderTableIsEmpty() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = OrderTableFixture.주문_테이블()
+            .빈_테이블(true)
+            .build();
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setNumberOfGuests(1);
+        final OrderTable newOrderTable = OrderTableFixture.주문_테이블()
+            .손님의_수(1)
+            .build();
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), newOrderTable))
             .isInstanceOf(IllegalArgumentException.class);
