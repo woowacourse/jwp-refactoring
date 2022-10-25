@@ -1,11 +1,15 @@
 package acceptance;
 
-import static fixture.MenuGroupFixtures.*;
+import static fixture.MenuGroupFixtures.두마리메뉴_그룹;
+import static fixture.MenuGroupFixtures.순살파닭두마리메뉴_그룹;
+import static fixture.MenuGroupFixtures.신메뉴_그룹;
+import static fixture.MenuGroupFixtures.한마리메뉴_그룹;
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import common.AcceptanceTest;
 import io.restassured.RestAssured;
 import java.util.List;
 import java.util.Map;

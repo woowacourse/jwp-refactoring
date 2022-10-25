@@ -1,4 +1,4 @@
-package kitchenpos.common;
+package common;
 
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;

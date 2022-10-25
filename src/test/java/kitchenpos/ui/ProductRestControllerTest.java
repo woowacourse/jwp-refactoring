@@ -2,8 +2,8 @@ package kitchenpos.ui;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import common.IntegrationTest;
 import java.math.BigDecimal;
-import kitchenpos.common.IntegrationTest;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

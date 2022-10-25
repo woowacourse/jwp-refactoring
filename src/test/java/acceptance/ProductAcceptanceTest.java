@@ -1,11 +1,17 @@
 package acceptance;
 
-import static fixture.ProductFixtures.*;
+import static fixture.ProductFixtures.간장치킨_상품;
+import static fixture.ProductFixtures.반반치킨_상품;
+import static fixture.ProductFixtures.순살치킨_상품;
+import static fixture.ProductFixtures.양념치킨_상품;
+import static fixture.ProductFixtures.통구이_상품;
+import static fixture.ProductFixtures.후라이드_상품;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import common.AcceptanceTest;
 import io.restassured.RestAssured;
 import java.math.BigDecimal;
 import java.util.List;

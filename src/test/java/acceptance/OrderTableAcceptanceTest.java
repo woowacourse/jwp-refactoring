@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import common.AcceptanceTest;
 import io.restassured.RestAssured;
 import java.util.Arrays;
 import java.util.List;

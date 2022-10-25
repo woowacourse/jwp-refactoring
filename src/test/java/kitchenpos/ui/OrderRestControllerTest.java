@@ -4,8 +4,8 @@ import static fixture.MenuFixtures.존재하지_않는_메뉴_ID;
 import static fixture.MenuFixtures.후라이드치킨_메뉴;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import common.IntegrationTest;
 import java.util.List;
-import kitchenpos.common.IntegrationTest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;

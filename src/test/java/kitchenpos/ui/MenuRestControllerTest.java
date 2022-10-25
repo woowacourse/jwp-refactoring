@@ -6,9 +6,9 @@ import static fixture.ProductFixtures.존재하지_않는_상품_ID;
 import static fixture.ProductFixtures.후라이드_상품;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import common.IntegrationTest;
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.common.IntegrationTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
