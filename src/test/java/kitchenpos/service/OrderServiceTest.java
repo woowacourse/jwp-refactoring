@@ -1,5 +1,6 @@
 package kitchenpos.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
@@ -50,7 +51,7 @@ public class OrderServiceTest {
 
     @DisplayName("주문 내에 메뉴가 비어있다면 예외가 발생한다.")
     @Test
-    public void orderLineItemsIsEmpty() {
+    public void orderSaveWithOrderLineItemsIsEmpty() {
         Order order = new Order(
                 orderTable.getId(),
                 OrderStatus.COOKING.name(),
@@ -64,7 +65,7 @@ public class OrderServiceTest {
 
     @DisplayName("사전에 저장되어 있지 않은 메뉴가 포함되어 있다면 예외가 발생한다.")
     @Test
-    public void orderLineItemsIsAlreadySaved() {
+    public void orderSaveWithOrderLineItemsIsAlreadySaved() {
         OrderLineItem orderLineItem = new OrderLineItem(-1L, 10L);
         Order order = new Order(
                 orderTable.getId(),
@@ -79,7 +80,7 @@ public class OrderServiceTest {
 
     @DisplayName("주문 테이블이 존재하지 않는 경우 예외가 발생한다.")
     @Test
-    void orderTableNotSaved() {
+    void orderSaveWithOrderTableNotSaved() {
         OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 10L);
         Order order = new Order(
                 -1L,
@@ -94,7 +95,7 @@ public class OrderServiceTest {
 
     @DisplayName("주문 테이블이 EMPTY 상태인 경우 예외가 발생한다.")
     @Test
-    void orderTableIsEmpty() {
+    void orderSaveWithOrderTableIsEmpty() {
         orderTable = orderTableDao.save(new OrderTable(100, true));
         OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 10L);
         Order order = new Order(
@@ -106,5 +107,35 @@ public class OrderServiceTest {
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문이 성공적으로 저장되는 경우를 테스트한다")
+    @Test
+    void orderSave() {
+        OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 10L);
+        Order order = new Order(
+                orderTable.getId(),
+                OrderStatus.COOKING.name(),
+                LocalDateTime.now(),
+                List.of(orderLineItem)
+        );
+
+        Order savedOrder = orderService.create(order);
+        assertThat(savedOrder.getId()).isNotNull();
+    }
+
+    @DisplayName("주문 리스트를 출력한다.")
+    @Test
+    void list() {
+        OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 10L);
+        Order order = new Order(
+                orderTable.getId(),
+                OrderStatus.COOKING.name(),
+                LocalDateTime.now(),
+                List.of(orderLineItem)
+        );
+        orderService.create(order);
+
+        assertThat(orderService.list()).hasSize(1);
     }
 }

@@ -1,5 +1,6 @@
 package kitchenpos.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
@@ -103,5 +104,16 @@ public class MenuServiceTest {
 
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("전체 메뉴들을 출력할 수 있다.")
+    @Test
+    public void menulist() {
+        Menu menu1 = new Menu("맛있는 메뉴", BigDecimal.valueOf(1000), menuGroup.getId(), menuProducts);
+        Menu menu2 = new Menu("적당히 맛있는 메뉴", BigDecimal.valueOf(1000), menuGroup.getId(), menuProducts);
+        menuService.create(menu1);
+        menuService.create(menu2);
+
+        assertThat(menuService.list()).hasSize(2);
     }
 }

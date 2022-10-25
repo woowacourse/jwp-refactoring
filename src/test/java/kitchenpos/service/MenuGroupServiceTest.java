@@ -27,7 +27,6 @@ public class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 생성한다.")
     @Test
     public void createMenuGroup() {
-
         assertDoesNotThrow(() -> menuGroupService.create(new MenuGroup("밥류")));
     }
 
@@ -36,6 +35,7 @@ public class MenuGroupServiceTest {
     public void listMenuGroup() {
         menuGroupService.create(new MenuGroup("밥류"));
         menuGroupService.create(new MenuGroup("햄류"));
+
         assertThat(menuGroupService.list()).hasSize(2);
     }
 }

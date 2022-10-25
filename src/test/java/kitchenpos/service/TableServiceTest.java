@@ -97,8 +97,9 @@ public class TableServiceTest {
         order.setOrderTableId(orderTable.getId());
         order.setOrderStatus(OrderStatus.COMPLETION.name());
         orderDao.save(order);
+        OrderTable emptyOrderTable = tableService.changeEmpty(orderTable.getId(), orderTable);
 
-        assertThat(tableService.changeEmpty(orderTable.getId(), orderTable).isEmpty()).isTrue();
+        assertThat(emptyOrderTable.isEmpty()).isTrue();
     }
 
     @DisplayName("인원수가 음수인 경우 인원수 변경 시 예외가 발생한다.")
@@ -128,11 +129,11 @@ public class TableServiceTest {
         OrderTable orderTable = new OrderTable(10, false);
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        OrderTable changedOrderTable = new OrderTable(100, false);
+        OrderTable orderTableForChange = new OrderTable(100, false);
         Long orderTableId = savedOrderTable.getId();
+        OrderTable changedOrderTable = tableService.changeNumberOfGuests(orderTableId, orderTableForChange);
 
-        assertThat(tableService.changeNumberOfGuests(orderTableId, changedOrderTable).getNumberOfGuests())
+        assertThat(changedOrderTable.getNumberOfGuests())
                 .isEqualTo(100);
-
     }
 }
