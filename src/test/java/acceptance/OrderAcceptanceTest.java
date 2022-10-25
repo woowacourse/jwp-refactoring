@@ -69,16 +69,16 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     void findOrders() {
         // arrange
         changeTableEmptyStatus(1L, false);
-        Order order1 = createOrder(1L, new OrderLineItemRequest(후라이드치킨_메뉴.id(), 1));
+        Order expectedOrder1 = createOrder(1L, new OrderLineItemRequest(후라이드치킨_메뉴.id(), 1));
 
         changeTableEmptyStatus(2L, false);
-        Order order2 = createOrder(2L, new OrderLineItemRequest(후라이드치킨_메뉴.id(), 2));
+        Order expectedOrder2 = createOrder(2L, new OrderLineItemRequest(후라이드치킨_메뉴.id(), 2));
 
         changeTableEmptyStatus(3L, false);
-        Order order3 = createOrder(3L, new OrderLineItemRequest(양념치킨_메뉴.id(), 3));
+        Order expectedOrder3 = createOrder(3L, new OrderLineItemRequest(양념치킨_메뉴.id(), 3));
 
         // act
-        List<Order> orders = RestAssured.given().log().all()
+        List<Order> actualOrders = RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/orders")
                 .then().log().all()
@@ -86,7 +86,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                 .extract().jsonPath().getList(".", Order.class);
 
         // assert
-        assertOrders(orders, order1, order2, order3);
+        assertOrdersContainsExactlyInAnyOrder(actualOrders, expectedOrder1, expectedOrder2, expectedOrder3);
     }
 
     @DisplayName("주문의 상태를 변경한다.")
@@ -116,7 +116,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                 .extract().as(Order.class);
     }
 
-    private void assertOrders(List<Order> actualOrders, Order... expectedOrders) {
+    private void assertOrdersContainsExactlyInAnyOrder(List<Order> actualOrders, Order... expectedOrders) {
         assertThat(actualOrders).hasSize(expectedOrders.length);
 
         for (Order expectedOrder : expectedOrders) {

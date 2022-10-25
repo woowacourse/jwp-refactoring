@@ -16,6 +16,8 @@ public class DataBaseCleaner implements AfterEachCallback {
         jdbcTemplate.update("SET REFERENTIAL_INTEGRITY FALSE");
         jdbcTemplate.execute("TRUNCATE TABLE order_table");
         jdbcTemplate.execute("TRUNCATE TABLE orders");
+        jdbcTemplate.execute("TRUNCATE TABLE table_group");
+        jdbcTemplate.execute("TRUNCATE TABLE order_line_item");
         jdbcTemplate.execute("DELETE FROM product WHERE id > 6");
         jdbcTemplate.execute("DELETE FROM menu_group WHERE id > 4");
         jdbcTemplate.execute("DELETE FROM menu WHERE id > 6");
