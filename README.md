@@ -7,9 +7,15 @@
   - @SpringBootTest를 이용한 통합 테스트 코드 또는 @ExtendWith(MockitoExtension.class)를 이용한 단위 테스트 코드를 작성한다.
 - Lombok을 사용하지 않는다.
 
+## 2단계 - 서비스 리팩터링
+- 단위 테스트하기 어려운 코드와 단위 테스트 가능한 코드를 분리해 단위 테스트 가능한 코드에 대해 단위 테스트를 구현한다.
+- 주의사항: Spring Data JPA 사용 시 spring.jpa.hibernate.ddl-auto=validate 옵션을 필수로 준다.
+- 프로그래밍 요구 사항
+  - Google Java Style Guide을 적용하여 사용한다.
+  - 모든 원시 값과 문자열을 포장한다.
+  - 3개 이상의 인스턴스 변수를 가진 클래스를 쓰지 않는다.
 
-
-## 요구 사항
+## 키친포스 요구 사항
 
 ### Product
 - 상품을 생성한다.
