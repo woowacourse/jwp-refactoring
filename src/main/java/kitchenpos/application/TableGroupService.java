@@ -33,7 +33,7 @@ public class TableGroupService {
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 테이블은 2개 이상이어야 합니다.");
         }
 
         final List<Long> orderTableIds = orderTables.stream()
@@ -43,12 +43,12 @@ public class TableGroupService {
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
         if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 테이블의 수가 다릅니다.");
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("빈 주문테이블이어야 합니다.");
             }
         }
 
