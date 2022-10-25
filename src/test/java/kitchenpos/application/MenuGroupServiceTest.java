@@ -4,7 +4,6 @@ import static kitchenpos.application.fixture.MenuGroupFixture.UNSAVED_MENU_GROUP
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;

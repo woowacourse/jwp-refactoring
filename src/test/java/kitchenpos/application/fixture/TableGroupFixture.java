@@ -1,6 +1,9 @@
 package kitchenpos.application.fixture;
 
-import static kitchenpos.application.fixture.OrderTableFixture.*;
+import static kitchenpos.application.fixture.OrderTableFixture.SAVED_ORDER_TABLE_EMPTY_FIRST;
+import static kitchenpos.application.fixture.OrderTableFixture.SAVED_ORDER_TABLE_EMPTY_SECOND;
+import static kitchenpos.application.fixture.OrderTableFixture.SAVED_ORDER_TABLE_NOT_EMPTY_FIRST;
+import static kitchenpos.application.fixture.OrderTableFixture.SAVED_ORDER_TABLE_NOT_EMPTY_SECOND;
 
 import java.util.List;
 import kitchenpos.domain.TableGroup;

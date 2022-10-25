@@ -28,9 +28,6 @@ class TableGroupServiceTest extends ServiceTest {
     @Autowired
     private OrderService orderService;
 
-    @Autowired
-    private TableService tableService;
-
     @DisplayName("테이블 그룹을 생성한다. 테이블 그룹에 속한 테이블은 모두 empty가 아니게 된다.")
     @Test
     void create() {
