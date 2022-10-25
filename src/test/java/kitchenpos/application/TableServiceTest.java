@@ -53,7 +53,6 @@ class TableServiceTest {
                 .contains(saved);
     }
 
-    // TODO: 2022/10/25 order가 엮여있어서 잠깐 대기
     @Test
     @Disabled
     @DisplayName("특정 주문 테이블을 빈 테이블로 수정할 수 있다.")
