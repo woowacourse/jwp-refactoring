@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
 import static java.util.Arrays.asList;
-import static kitchenpos.support.Fixture.createMenu;
-import static kitchenpos.support.Fixture.createMenu;
-import static kitchenpos.support.Fixture.createMenuWithProduct;
+import static kitchenpos.support.MenuFixture.createMenu;
+import static kitchenpos.support.MenuFixture.createMenu;
+import static kitchenpos.support.MenuFixture.createMenuWithProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.util.Lists.emptyList;

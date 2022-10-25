@@ -8,7 +8,7 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 
-public class Fixture {
+public class MenuFixture {
 
     public static final List<MenuProduct> MENU_PRODUCTS = asList(new MenuProduct(1L, 1L));
 

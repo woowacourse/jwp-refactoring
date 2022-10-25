@@ -1,12 +1,13 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.ProductFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.support.IntegrationServiceTest;
 import kitchenpos.domain.Product;
+import kitchenpos.support.IntegrationServiceTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -33,9 +34,9 @@ class ProductServiceTest extends IntegrationServiceTest {
         @Nested
         class 상품가가_음수인_경우 {
 
-            private final BigDecimal MINUS_PRICE = BigDecimal.valueOf(-1);
+            private final int MINUS_PRICE = -1;
 
-            private final Product product = new Product("후라이드", MINUS_PRICE);
+            private final Product product = createProduct(MINUS_PRICE);
 
             @Test
             void 예외가_발생한다() {
@@ -49,7 +50,7 @@ class ProductServiceTest extends IntegrationServiceTest {
         @Nested
         class 상품을_정상적으로_생성가능한_경우 {
 
-            private final Product product = new Product("후라이드", BigDecimal.valueOf(18_000));
+            private final Product product = createProduct(18_000);
 
             @Test
             void 저장된_상품이_반환된다() {
