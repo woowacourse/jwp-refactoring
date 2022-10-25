@@ -103,7 +103,7 @@ class TableServiceTest extends ServiceTest {
 
     @Nested
     @DisplayName("changeNumberOfGuests 메서드는")
-    class changeNumberOfGuests {
+    class ChangeNumberOfGuests {
         private static final long ORDER_TABLE_ID = 1L;
 
         private OrderTable savedOrderTable;
