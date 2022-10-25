@@ -8,7 +8,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
+import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -24,13 +26,27 @@ class OrderServiceTest extends ServiceTest {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private OrderDao orderDao;
+
     @DisplayName("주문을 생성한다.")
     @Test
     void create() {
         Order savedOrder = orderService.create(UNSAVED_ORDER);
-        List<Order> orders = orderService.list();
+        Optional<Order> foundOrder = orderDao.findById(savedOrder.getId());
 
-        assertThat(orders).contains(savedOrder);
+        assertThat(foundOrder).isPresent();
+    }
+
+    @DisplayName("주문을 조회한다.")
+    @Test
+    void list() {
+        int numberOfSavedOrderBeforeCreate = orderService.list().size();
+        orderService.create(UNSAVED_ORDER);
+
+        int numberOfSavedOrder = orderService.list().size();
+
+        assertThat(numberOfSavedOrderBeforeCreate + 1).isEqualTo(numberOfSavedOrder);
     }
 
     @DisplayName("주문엔 주문내역과 테이블아이디는 반드시 있어야 한다. 그렇지 않으면 예외가 발생한다.")

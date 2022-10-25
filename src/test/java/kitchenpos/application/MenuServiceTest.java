@@ -12,7 +12,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
+import kitchenpos.dao.MenuDao;
 import kitchenpos.domain.Menu;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,13 +28,27 @@ class MenuServiceTest extends ServiceTest {
     @Autowired
     private MenuService menuService;
 
+    @Autowired
+    private MenuDao menuDao;
+
     @DisplayName("메뉴를 생성한다.")
     @Test
     void create() {
         Menu savedMenu = menuService.create(UNSAVED_MENU);
-        List<Menu> menus = menuService.list();
+        Optional<Menu> foundMenu = menuDao.findById(savedMenu.getId());
 
-        assertThat(menus).contains(savedMenu);
+        assertThat(foundMenu).isPresent();
+    }
+
+    @DisplayName("메뉴를 조회한다.")
+    @Test
+    void list() {
+        int numberOfSavedMenuBeforeCreate = menuService.list().size();
+        menuService.create(UNSAVED_MENU);
+
+        int numberOfSavedMenu = menuService.list().size();
+
+        assertThat(numberOfSavedMenuBeforeCreate + 1).isEqualTo(numberOfSavedMenu);
     }
 
     @DisplayName("메뉴에 가격 이름 메뉴그룹아이디 중 하나라도 없으면 예외가 발생한다.")

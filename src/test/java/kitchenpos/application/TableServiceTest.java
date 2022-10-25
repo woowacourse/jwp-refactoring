@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -31,15 +32,6 @@ class TableServiceTest extends ServiceTest {
     private OrderTableDao orderTableDao;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
-
-    @Autowired
-    private TableGroupService tableGroupService;
-
-    @Autowired
-    private OrderDao orderDao;
-
-    @Autowired
     private OrderService orderService;
 
     @DisplayName("테이블을 생성한다. empty유무와 상관없이 생성할 수 있다.")
@@ -47,9 +39,9 @@ class TableServiceTest extends ServiceTest {
     @MethodSource("argsOfCreate")
     void create(OrderTable table) {
         OrderTable savedTable = tableService.create(table);
-        List<OrderTable> tables = tableService.list();
+        Optional<OrderTable> savedOrderTable = orderTableDao.findById(savedTable.getId());
 
-        assertThat(tables).contains(savedTable);
+        assertThat(savedOrderTable).isPresent();
     }
 
     static Stream<Arguments> argsOfCreate() {
@@ -57,6 +49,17 @@ class TableServiceTest extends ServiceTest {
                 Arguments.of(UNSAVED_ORDER_TABLE_EMPTY),
                 Arguments.of(UNSAVED_ORDER_TABLE_NOT_EMPTY)
         );
+    }
+
+    @DisplayName("테이블을 조회한다.")
+    @Test
+    void list() {
+        int numberOfSavedTableBeforeCreate = tableService.list().size();
+        tableService.create(UNSAVED_ORDER_TABLE_EMPTY);
+
+        int numberOfSavedTable = tableService.list().size();
+
+        assertThat(numberOfSavedTableBeforeCreate + 1).isEqualTo(numberOfSavedTable);
     }
 
     @DisplayName("테이블을 empty상태로 바꾼다.")

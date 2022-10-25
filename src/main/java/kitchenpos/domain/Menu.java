@@ -85,4 +85,15 @@ public class Menu {
     public int hashCode() {
         return Objects.hash(name, price, menuGroupId, menuProducts);
     }
+
+    @Override
+    public String toString() {
+        return "Menu{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", menuGroupId=" + menuGroupId +
+                ", menuProducts=" + menuProducts +
+                '}';
+    }
 }

@@ -7,7 +7,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,13 +23,27 @@ class ProductServiceTest extends ServiceTest {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private ProductDao productDao;
+
     @DisplayName("상품을 만든다.")
     @Test
     void create() {
         Product savedProduct = productService.create(UNSAVED_PRODUCT);
-        List<Product> products = productService.list();
+        Optional<Product> foundProduct = productDao.findById(savedProduct.getId());
 
-        assertThat(products).contains(savedProduct);
+        assertThat(foundProduct).isPresent();
+    }
+
+    @DisplayName("상품을 조회한다.")
+    @Test
+    void list() {
+        int numberOfSavedProductBeforeCreate = productService.list().size();
+        productService.create(UNSAVED_PRODUCT);
+
+        int numberOfSavedProduct = productService.list().size();
+
+        assertThat(numberOfSavedProductBeforeCreate + 1).isEqualTo(numberOfSavedProduct);
     }
 
     @DisplayName("이름이나 가격이 없으면 예외가 발생한다.")
