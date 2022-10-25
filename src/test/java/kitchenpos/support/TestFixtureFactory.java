@@ -25,9 +25,7 @@ public class TestFixtureFactory {
     }
 
     public static MenuGroup 메뉴_그룹을_생성한다(final String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        return menuGroup;
+        return new MenuGroup(null, name);
     }
 
     public static Menu 메뉴를_생성한다(final String name, final BigDecimal price, final Long menuGroupId,

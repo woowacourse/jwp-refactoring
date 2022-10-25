@@ -35,6 +35,14 @@ public class MenuGroup {
         this.name = name;
     }
 
+    protected MenuGroup() {
+    }
+
+    public MenuGroup(final Long id, final String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
