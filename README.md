@@ -33,6 +33,7 @@
     - 조건
       - orderLineItems가 empty면 안된다.
       - menuId들 총 개수와 orderLineItems의 수가 같아야 한다.
+      - menuId가 꼭 저장되어 있어야 한다.
       - orderTable가 없거나 비어있으면 안된다. 
   - 현재 주문 목록을 확인할 수 있다. 
   - 주문의 OrderStatus를 수정할 수 있다.
@@ -48,6 +49,9 @@
   - 주문 테이블의 empty를 변경한다.
     - orderTableId와 empty를 입력한다.
     - 변경된 OrderTable을 반환한다.
+    - 조건
+      - tableGroupId이 null이어야 한다.
+      - 주문 상태가 COOKING, MEAL이면 수정할 수 없다.
   - 방문한 손님 수를 변경할 수 있다.
     - orderTableId, numberOfGuests를 입력한다.
     - 변경된 OrderTable을 반환한다.

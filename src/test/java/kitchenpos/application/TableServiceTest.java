@@ -6,9 +6,11 @@ import static kitchenpos.fixture.TableFixture.createRequestNumberOfGuests;
 import static kitchenpos.fixture.TableFixture.빈_테이블_1번;
 import static kitchenpos.fixture.TableFixture.사용중인_테이블_1번;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -53,6 +55,23 @@ class TableServiceTest extends ServiceTest {
         // then
         assertThat(actual.getId()).isEqualTo(table.getId());
         assertThat(actual.isEmpty()).isFalse();
+    }
+
+    @DisplayName("changeEmpty 메서드는 tableGroupId이 null이 아니면 예외를 발생시킨다.")
+    @Test
+    void changeEmpty_tableGroupId_null_throwException() {
+        // given
+        OrderTable table = orderTableDao.save(빈_테이블_1번);
+
+        TableGroup tableGroup = saveAndGetTableGroup();
+        table.setTableGroupId(tableGroup.getId());
+        orderTableDao.save(table);
+
+        OrderTable request = createRequestEmpty(false);
+
+        // when & then
+        assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), request))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 테이블의 방문 손님 수를 변경한다.")

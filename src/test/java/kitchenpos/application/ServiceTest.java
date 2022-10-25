@@ -113,11 +113,11 @@ public class ServiceTest {
     }
 
     protected OrderTable saveAndGetOrderTable() {
-        return saveOrderTable(createOrderTable(null, saveAndGetTableGroup().getId(), 1, true));
+        return saveOrderTable(createOrderTable(null, null, 1, true));
     }
 
     protected OrderTable saveAndGetOrderTable(boolean empty) {
-        return saveOrderTable(createOrderTable(null, saveAndGetTableGroup().getId(), 1, empty));
+        return saveOrderTable(createOrderTable(null, null, 1, empty));
     }
 
     protected Menu saveAndGetMenu(Long menuGroupId) {
@@ -161,5 +161,24 @@ public class ServiceTest {
         orderDao.save(order);
 
         return orderDao.save(order);
+    }
+
+    protected Order saveAndGetOrder(String status) {
+        Order order = saveAndGetOrder();
+        order.setOrderStatus(status);
+
+        return orderDao.save(order);
+    }
+
+    protected Menu createMenuRequest(BigDecimal price) {
+        Product product = saveAndGetProduct();
+        MenuProduct menuProduct = createMenuProduct(null, null, product.getId(), 1);
+        List<MenuProduct> menuProducts = List.of(menuProduct);
+
+        return createMenu(null, "후라이드", price, saveAndGetMenuGroup().getId(), menuProducts);
+    }
+
+    protected Product createProductRequest(BigDecimal price) {
+        return createProduct(null, "후라이드치킨", price);
     }
 }
