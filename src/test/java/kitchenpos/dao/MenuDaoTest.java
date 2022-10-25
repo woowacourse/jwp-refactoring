@@ -24,7 +24,7 @@ class MenuDaoTest {
     @Test
     void 메뉴를_저장하면_id가_채워진다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹")).getId();
-        Menu menu = 메뉴를_생성한다("메뉴", new BigDecimal(0), menuGroupId, null);
+        Menu menu = 메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, null);
 
         Menu savedMenu = menuDao.save(menu);
 
@@ -40,7 +40,7 @@ class MenuDaoTest {
     @Test
     void id로_메뉴를_조회할_수_있다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹")).getId();
-        Menu menu = menuDao.save(메뉴를_생성한다("메뉴", new BigDecimal(0), menuGroupId, null));
+        Menu menu = menuDao.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, null));
 
         Menu actual = menuDao.findById(menu.getId())
                 .orElseGet(Assertions::fail);
@@ -63,8 +63,8 @@ class MenuDaoTest {
     @Test
     void 모든_메뉴를_조회할_수_있다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹")).getId();
-        Menu menu1 = menuDao.save(메뉴를_생성한다("메뉴1", new BigDecimal(0), menuGroupId, null));
-        Menu menu2 = menuDao.save(메뉴를_생성한다("메뉴2", new BigDecimal(0), menuGroupId, null));
+        Menu menu1 = menuDao.save(메뉴를_생성한다("메뉴1", BigDecimal.ZERO, menuGroupId, null));
+        Menu menu2 = menuDao.save(메뉴를_생성한다("메뉴2", BigDecimal.ZERO, menuGroupId, null));
 
         List<Menu> actual = menuDao.findAll();
 
@@ -76,8 +76,8 @@ class MenuDaoTest {
     @Test
     void id_목록에_있는_메뉴의_개수를_셀_수_있다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹")).getId();
-        Menu menu1 = menuDao.save(메뉴를_생성한다("메뉴1", new BigDecimal(0), menuGroupId, null));
-        Menu menu2 = menuDao.save(메뉴를_생성한다("메뉴2", new BigDecimal(0), menuGroupId, null));
+        Menu menu1 = menuDao.save(메뉴를_생성한다("메뉴1", BigDecimal.ZERO, menuGroupId, null));
+        Menu menu2 = menuDao.save(메뉴를_생성한다("메뉴2", BigDecimal.ZERO, menuGroupId, null));
         List<Long> ids = List.of(menu1.getId(), menu2.getId());
 
         long count = menuDao.countByIdIn(ids);

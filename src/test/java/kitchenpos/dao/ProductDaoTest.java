@@ -20,7 +20,7 @@ class ProductDaoTest {
 
     @Test
     void 상품을_저장하면_id값이_채워진다() {
-        Product product = 상품을_생성한다("상품", new BigDecimal(0));
+        Product product = 상품을_생성한다("상품", BigDecimal.ZERO);
 
         Product savedProduct = productDao.save(product);
 
@@ -33,7 +33,7 @@ class ProductDaoTest {
 
     @Test
     void 상품을_id로_조회할_수_있다() {
-        Product product = productDao.save(상품을_생성한다("상품", new BigDecimal(0)));
+        Product product = productDao.save(상품을_생성한다("상품", BigDecimal.ZERO));
 
         Product actual = productDao.findById(product.getId())
                 .orElseGet(Assertions::fail);
@@ -51,8 +51,8 @@ class ProductDaoTest {
 
     @Test
     void 모든_상품을_조회할_수_있다() {
-        Product product1 = productDao.save(상품을_생성한다("상품1", new BigDecimal(1_000)));
-        Product product2 = productDao.save(상품을_생성한다("상품2", new BigDecimal(2_000)));
+        Product product1 = productDao.save(상품을_생성한다("상품1", BigDecimal.valueOf(1_000)));
+        Product product2 = productDao.save(상품을_생성한다("상품2", BigDecimal.valueOf(2_000)));
 
         List<Product> actual = productDao.findAll();
 

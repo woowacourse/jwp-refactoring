@@ -19,7 +19,7 @@ class ProductServiceTest {
 
     @Test
     void 상품을_생성할_수_있다() {
-        Product product = 상품을_생성한다("상품", new BigDecimal(0));
+        Product product = 상품을_생성한다("상품", BigDecimal.ZERO);
 
         Product savedProduct = productService.create(product);
 
@@ -32,14 +32,14 @@ class ProductServiceTest {
 
     @Test
     void 상품_가격이_0원_미만이면_예외를_반환한다() {
-        Product product = 상품을_생성한다("상품", new BigDecimal(-1));
+        Product product = 상품을_생성한다("상품", BigDecimal.valueOf(-1));
 
         assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 상품_목록을_조회할_수_있다() {
-        Product savedProduct = productService.create(상품을_생성한다("상품", new BigDecimal(0)));
+        Product savedProduct = productService.create(상품을_생성한다("상품", BigDecimal.ZERO));
 
         List<Product> products = productService.list();
 

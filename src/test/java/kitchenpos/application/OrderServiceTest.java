@@ -38,7 +38,7 @@ class OrderServiceTest {
     void 주문을_생성할_수_있다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long menuId = menuDao.save(메뉴를_생성한다("메뉴", new BigDecimal(1_000), menuGroupId, null))
+        Long menuId = menuDao.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, null))
                 .getId();
         Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
@@ -67,7 +67,7 @@ class OrderServiceTest {
     void 생성하려는_주문이_속한_주문_테이블이_존재하지_않으면_예외를_반환한다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long menuId = menuDao.save(메뉴를_생성한다("메뉴", new BigDecimal(1_000), menuGroupId, null))
+        Long menuId = menuDao.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, null))
                 .getId();
         OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
         Order order = 주문을_생성한다(0L, null, LocalDateTime.now(), List.of(orderLineItem));
@@ -79,7 +79,7 @@ class OrderServiceTest {
     void 생성하려는_주문이_속한_주문_테이블이_빈_주문_테이블이면_예외를_반환한다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long menuId = menuDao.save(메뉴를_생성한다("메뉴", new BigDecimal(1_000), menuGroupId, null))
+        Long menuId = menuDao.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, null))
                 .getId();
         Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, true))
                 .getId();
@@ -93,7 +93,7 @@ class OrderServiceTest {
     void 모든_주문_목록을_조회할_수_있다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long menuId = menuDao.save(메뉴를_생성한다("메뉴", new BigDecimal(1_000), menuGroupId, null))
+        Long menuId = menuDao.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, null))
                 .getId();
         Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
@@ -112,7 +112,7 @@ class OrderServiceTest {
     void 주문_상태를_변경할_수_있다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long menuId = menuDao.save(메뉴를_생성한다("메뉴", new BigDecimal(1_000), menuGroupId, null))
+        Long menuId = menuDao.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, null))
                 .getId();
         Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
@@ -135,7 +135,7 @@ class OrderServiceTest {
     void 상태를_변경하려는_주문이_완료된_주문이면_예외를_반환한다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long menuId = menuDao.save(메뉴를_생성한다("메뉴", new BigDecimal(1_000), menuGroupId, null))
+        Long menuId = menuDao.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, null))
                 .getId();
         Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();

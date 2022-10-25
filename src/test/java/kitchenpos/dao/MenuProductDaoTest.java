@@ -31,9 +31,9 @@ class MenuProductDaoTest {
     void 메뉴_상품을_저장하면_seq가_채워진다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long menuId = menuDao.save(메뉴를_생성한다("메뉴", new BigDecimal(0), menuGroupId, null))
+        Long menuId = menuDao.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, null))
                 .getId();
-        Long productId = productDao.save(상품을_생성한다("상품", new BigDecimal(0)))
+        Long productId = productDao.save(상품을_생성한다("상품", BigDecimal.ZERO))
                 .getId();
         MenuProduct menuProduct = 메뉴_상품을_생성한다(menuId, productId, 1);
 
@@ -51,9 +51,9 @@ class MenuProductDaoTest {
     void id로_메뉴를_조회할_수_있다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long menuId = menuDao.save(메뉴를_생성한다("메뉴", new BigDecimal(0), menuGroupId, null))
+        Long menuId = menuDao.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, null))
                 .getId();
-        Long productId = productDao.save(상품을_생성한다("상품", new BigDecimal(0)))
+        Long productId = productDao.save(상품을_생성한다("상품", BigDecimal.ZERO))
                 .getId();
         MenuProduct menuProduct = menuProductDao.save(메뉴_상품을_생성한다(menuId, productId, 1));
 
@@ -75,13 +75,13 @@ class MenuProductDaoTest {
     void 모든_메뉴_상품을_조회할_수_있다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long menuId1 = menuDao.save(메뉴를_생성한다("메뉴1", new BigDecimal(0), menuGroupId, null))
+        Long menuId1 = menuDao.save(메뉴를_생성한다("메뉴1", BigDecimal.ZERO, menuGroupId, null))
                 .getId();
-        Long menuId2 = menuDao.save(메뉴를_생성한다("메뉴2", new BigDecimal(0), menuGroupId, null))
+        Long menuId2 = menuDao.save(메뉴를_생성한다("메뉴2", BigDecimal.ZERO, menuGroupId, null))
                 .getId();
-        Long productId1 = productDao.save(상품을_생성한다("상품1", new BigDecimal(0)))
+        Long productId1 = productDao.save(상품을_생성한다("상품1", BigDecimal.ZERO))
                 .getId();
-        Long productId2 = productDao.save(상품을_생성한다("상품2", new BigDecimal(0)))
+        Long productId2 = productDao.save(상품을_생성한다("상품2", BigDecimal.ZERO))
                 .getId();
         MenuProduct menuProduct1 = menuProductDao.save(메뉴_상품을_생성한다(menuId1, productId1, 1));
         MenuProduct menuProduct2 = menuProductDao.save(메뉴_상품을_생성한다(menuId2, productId2, 2));
@@ -97,13 +97,13 @@ class MenuProductDaoTest {
     void 메뉴_id에_해당하는_모든_메뉴_상품을_조회할_수_있다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long menuId1 = menuDao.save(메뉴를_생성한다("메뉴1", new BigDecimal(0), menuGroupId, null))
+        Long menuId1 = menuDao.save(메뉴를_생성한다("메뉴1", BigDecimal.ZERO, menuGroupId, null))
                 .getId();
-        Long menuId2 = menuDao.save(메뉴를_생성한다("메뉴2", new BigDecimal(0), menuGroupId, null))
+        Long menuId2 = menuDao.save(메뉴를_생성한다("메뉴2", BigDecimal.ZERO, menuGroupId, null))
                 .getId();
-        Long productId1 = productDao.save(상품을_생성한다("상품1", new BigDecimal(0)))
+        Long productId1 = productDao.save(상품을_생성한다("상품1", BigDecimal.ZERO))
                 .getId();
-        Long productId2 = productDao.save(상품을_생성한다("상품2", new BigDecimal(0)))
+        Long productId2 = productDao.save(상품을_생성한다("상품2", BigDecimal.ZERO))
                 .getId();
         MenuProduct menuProduct1 = menuProductDao.save(메뉴_상품을_생성한다(menuId1, productId1, 1));
         menuProductDao.save(메뉴_상품을_생성한다(menuId2, productId2, 2));
