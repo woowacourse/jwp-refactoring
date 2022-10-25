@@ -42,7 +42,8 @@ class MenuServiceTest {
         Menu menu = new Menu("test", BigDecimal.valueOf(100), 1L);
 
         List<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(new MenuProduct());
+        MenuProduct menuProduct = new MenuProduct(1L, 1L, 99L, 1);
+        menuProducts.add(menuProduct);
         menu.setMenuProducts(menuProducts);
 
         //then
@@ -58,9 +59,7 @@ class MenuServiceTest {
         Menu menu = new Menu("test", BigDecimal.valueOf(price), 1L);
 
         List<MenuProduct> menuProducts = new ArrayList<>();
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(1);
+        MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L, 1);
         menuProducts.add(menuProduct);
         menu.setMenuProducts(menuProducts);
 
@@ -79,9 +78,7 @@ class MenuServiceTest {
         Menu menu = new Menu("test", BigDecimal.valueOf(10000), 1L);
 
         List<MenuProduct> menuProducts = new ArrayList<>();
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(1);
+        MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L, 1);
         menuProducts.add(menuProduct);
         menu.setMenuProducts(menuProducts);
 

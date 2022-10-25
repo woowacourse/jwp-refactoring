@@ -36,9 +36,13 @@ class MenuGroupServiceTest {
     @DisplayName("리스트 형태로 조회한다.")
     void findAsList() {
         //when
-        List<MenuGroup> result = menuGroupService.list();
+        List<MenuGroup> menus = menuGroupService.list();
+
+        //when
+        MenuGroup menuGroup = new MenuGroup("test");
+        menuGroupService.create(menuGroup);
 
         //then
-        assertThat(result).hasSize(5);
+        assertThat(menuGroupService.list()).hasSize(menus.size() + 1);
     }
 }
