@@ -9,8 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.common.builder.ProductBuilder;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,27 +22,22 @@ class ProductServiceTest extends ServiceTest {
     @Autowired
     private ProductService productService;
 
-    private Product 야채곱창;
-
-    @BeforeEach
-    void setUp() {
-        야채곱창 = new ProductBuilder()
-                .name(야채곱창_이름)
-                .price(야채곱창_가격)
-                .build();
-    }
+    @Autowired
+    private ProductDao productDao;
 
     @DisplayName("상품을 등록한다.")
     @Test
     void 상품을_등록한다() {
+        // given
+        Product 야채곱창 = 상품_생성(야채곱창_이름, 야채곱창_가격);
+
         // when
-        Product actual = productService.create(야채곱창);
+        productService.create(야채곱창);
 
         // then
         assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getName()).isEqualTo(야채곱창_이름),
-                () -> assertThat(actual.getPrice()).isEqualTo(야채곱창_가격)
+                () -> assertThat(야채곱창.getId()).isNotNull(),
+                () -> assertThat(야채곱창.getName()).isEqualTo(야채곱창_이름)
         );
     }
 
@@ -51,10 +46,7 @@ class ProductServiceTest extends ServiceTest {
     @ValueSource(ints = {-1, -2, -100})
     void 상품을_등록할_때_가격이_0원_보다_작으면_예외가_발생한다(int 잘못된_가격) {
         // given
-        Product 야채곱창 = new ProductBuilder()
-                .name(야채곱창_이름)
-                .price(BigDecimal.valueOf(잘못된_가격))
-                .build();
+        Product 야채곱창 = 상품_생성(야채곱창_이름, 잘못된_가격);
 
         // when & then
         assertThatThrownBy(() -> productService.create(야채곱창))
@@ -79,13 +71,20 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void 상품_목록을_조회한다() {
         // given
-        productService.create(야채곱창);
+        Product 야채곱창 = 상품_생성(야채곱창_이름, 야채곱창_가격);
+        productDao.save(야채곱창);
 
         // when
         List<Product> 상품들 = productService.list();
 
         // then
-        assertThat(상품들).extracting(Product::getName)
-                .contains(야채곱창_이름);
+        assertThat(상품들).hasSize(1);
+    }
+
+    private Product 상품_생성(final String name, final int price) {
+        return new ProductBuilder()
+                .name(name)
+                .price(BigDecimal.valueOf(price))
+                .build();
     }
 }
