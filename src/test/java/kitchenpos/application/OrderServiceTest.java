@@ -46,7 +46,7 @@ class OrderServiceTest extends ServiceTest {
     @Autowired
     private OrderService orderService;
 
-    @DisplayName("주문을 생성할 수 있다.")
+    @DisplayName("주문을 등록할 수 있다.")
     @Test
     void create() {
         Product product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
@@ -60,7 +60,7 @@ class OrderServiceTest extends ServiceTest {
         assertThat(order).isNotNull();
     }
 
-    @DisplayName("주문 항목이 비어있으면 예외가 발생한다.")
+    @DisplayName("주문 등록 시 주문 항목이 비어있으면 예외가 발생한다.")
     @Test
     void createWithEmptyOrderLineItem() {
         OrderTable orderTable = orderTableDao.save(new OrderTable(0, false));
@@ -69,7 +69,7 @@ class OrderServiceTest extends ServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("주문항목의 메뉴에 등록되어 있지 않은 주문 항목이 있으면 예외가 발생한다.")
+    @DisplayName("주문 등록 시 주문항목의 메뉴에 등록되어 있지 않은 주문 항목이 있으면 예외가 발생한다.")
     @Test
     void createWithInvalidOrderLineItem() {
         OrderTable orderTable = orderTableDao.save(new OrderTable(0, false));
@@ -78,14 +78,14 @@ class OrderServiceTest extends ServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("주문에서의 주문 테이블이 존재하지 않는 주문 테이블일 경우 예외가 발생한다.")
+    @DisplayName("주문 등록 시 주문에서의 주문 테이블이 존재하지 않는 주문 테이블일 경우 예외가 발생한다.")
     @Test
     void createWithInvalidOrderTable() {
         assertThatThrownBy(() -> orderService.create(new Order(9999L, createOrderLineItem())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("주문에서의 주문 테이블이 비어있으면 예외가 발생한다.")
+    @DisplayName("주문 등록 시 주문에서의 주문 테이블이 비어있으면 예외가 발생한다.")
     @Test
     void createWithEmptyOrderTable() {
         OrderTable orderTable = orderTableDao.save(new OrderTable(0, true));
@@ -127,7 +127,7 @@ class OrderServiceTest extends ServiceTest {
         assertThat(foundOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
     }
 
-    @DisplayName("존재하지 않는 주문일 경우 예외가 발생한다.")
+    @DisplayName("주문 수정 시 존재하지 않는 주문일 경우 예외가 발생한다.")
     @Test
     void changeOrderStatusWithInvalidOrder() {
         Order changeOrder = createOrderWithMealStatus("MEAL");
@@ -136,7 +136,7 @@ class OrderServiceTest extends ServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("주문 상태가 계산 완료인 경우 예외가 발생한다.")
+    @DisplayName("주문 수정 시 주문 상태가 계산 완료인 경우 예외가 발생한다.")
     @Test
     void changeOrderStatusWithCompletionOrderStatus() {
         Product product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));

@@ -50,7 +50,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Autowired
     private TableGroupService tableGroupService;
 
-    @DisplayName("테이블 그룹을 생성할 수 있다.")
+    @DisplayName("테이블 그룹을 등록할 수 있다.")
     @Test
     void create() {
         OrderTable firstOrderTable = orderTableDao.save(new OrderTable(0, true));
@@ -62,14 +62,14 @@ class TableGroupServiceTest extends ServiceTest {
         assertThat(tableGroup).isNotNull();
     }
 
-    @DisplayName("테이블 그룹에 등록된 테이블이 없으면 예외가 발생한다.")
+    @DisplayName("테이블 그룹 등록 시 테이블 그룹에 등록된 테이블이 없으면 예외가 발생한다.")
     @Test
     void createWithInvalidOrderTable() {
         assertThatThrownBy(() -> tableGroupService.create(new TableGroup(new ArrayList<>())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("테이블 그룹에 등록된 테이블이 2개 미만이면 예외가 발생한다.")
+    @DisplayName("테이블 그룹 등록 시 테이블 그룹에 등록된 테이블이 2개 미만이면 예외가 발생한다.")
     @Test
     void createWithLessThanTwoOrderTable() {
         OrderTable firstOrderTable = orderTableDao.save(new OrderTable(0, true));
@@ -79,7 +79,7 @@ class TableGroupServiceTest extends ServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("존재하지 않는 테이블이 있는 경우 예외가 발생한다.")
+    @DisplayName("테이블 그룹 등록 시 존재하지 않는 테이블이 있는 경우 예외가 발생한다.")
     @Test
     void createWithNotExistOrderTable() {
         OrderTable firstOrderTable = orderTableDao.save(new OrderTable(0, true));
@@ -89,7 +89,7 @@ class TableGroupServiceTest extends ServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("테이블이 비어있지 않으면 예외가 발생한다.")
+    @DisplayName("테이블 그룹 등록 시 테이블이 비어있지 않으면 예외가 발생한다.")
     @Test
     void createWithNotEmptyOrderTable() {
         OrderTable firstOrderTable = orderTableDao.save(new OrderTable(0, false));
@@ -100,7 +100,7 @@ class TableGroupServiceTest extends ServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("테이블의 테이블 그룹이 존재하면 예외가 발생한다.")
+    @DisplayName("테이블 그룹 등록 시 테이블의 테이블 그룹이 존재하면 예외가 발생한다.")
     @Test
     void createWithOrderTableExistingTableGroup() {
         OrderTable firstOrderTable = orderTableDao.save(new OrderTable(0, true));
@@ -130,7 +130,7 @@ class TableGroupServiceTest extends ServiceTest {
         );
     }
 
-    @DisplayName("준비중이거나 식사중인 테이블이 있으면 예외가 발생한다.")
+    @DisplayName("테이블 그룹 해제 시 준비중이거나 식사중인 테이블이 있으면 예외가 발생한다.")
     @ValueSource(strings = {"COOKING", "MEAL"})
     @ParameterizedTest
     void ungroupWithCookingOrMeal(String orderStatus) {

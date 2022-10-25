@@ -26,7 +26,7 @@ class TableServiceTest extends ServiceTest {
     @Autowired
     private TableService tableService;
 
-    @DisplayName("테이블을 생성할 수 있다.")
+    @DisplayName("테이블을 등록할 수 있다.")
     @Test
     void create() {
         OrderTable orderTable = tableService.create(new OrderTable(4, false));
@@ -55,14 +55,14 @@ class TableServiceTest extends ServiceTest {
         assertThat(foundOrderTable.isEmpty()).isTrue();
     }
 
-    @DisplayName("테이블이 존재하지 않으면 예외가 발생한다.")
+    @DisplayName("테이블을 빈 상태로 수정 시 테이블이 존재하지 않으면 예외가 발생한다.")
     @Test
     void changeEmptyWithNotExistOrderTable() {
         assertThatThrownBy(() -> tableService.changeEmpty(9999L, new OrderTable(4, false)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("테이블이 단체인 경우 예외가 발생한다.")
+    @DisplayName("테이블을 빈 상태로 수정 시 테이블이 단체인 경우 예외가 발생한다.")
     @Test
     void changeEmptyWithOrderTableGroup() {
         OrderTable firstOrderTable = orderTableDao.save(new OrderTable(0, true));
@@ -84,7 +84,7 @@ class TableServiceTest extends ServiceTest {
         assertThat(foundOrderTable.getNumberOfGuests()).isEqualTo(3);
     }
 
-    @DisplayName("손님 수가 0보다 작으면 예외가 발생한다.")
+    @DisplayName("테이블의 손님 수 변경 시 손님 수가 0보다 작으면 예외가 발생한다.")
     @Test
     void changeNumberWithInvalidNumberOfGuests() {
         OrderTable orderTable = orderTableDao.save(new OrderTable(4, false));
@@ -93,14 +93,14 @@ class TableServiceTest extends ServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("테이블이 존재하지 않으면 예외가 발생한다.")
+    @DisplayName("테이블의 손님 수 변경 시 테이블이 존재하지 않으면 예외가 발생한다.")
     @Test
     void changeNumberWithNotExistOrderTable() {
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(9999L, new OrderTable(4, true)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("테이블이 비어있으면 예외가 발생한다.")
+    @DisplayName("테이블의 손님 수 변경 시 테이블이 비어있으면 예외가 발생한다.")
     @Test
     void changeNumberWithEmptyOrderTable() {
         OrderTable orderTable = tableService.create(new OrderTable(0, true));

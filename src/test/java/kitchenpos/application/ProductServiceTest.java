@@ -18,10 +18,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 class ProductServiceTest extends ServiceTest {
 
     @Autowired
-    private ProductDao productDao;
+    private ProductService productService;
 
     @Autowired
-    private ProductService productService;
+    private ProductDao productDao;
 
     @DisplayName("상품을 등록할 수 있다.")
     @Test
@@ -33,7 +33,7 @@ class ProductServiceTest extends ServiceTest {
         assertThat(product).isNotNull();
     }
 
-    @DisplayName("상품의 가격이 null이면 예외가 발생한다.")
+    @DisplayName("상품 등록 시 상품의 가격이 null이면 예외가 발생한다.")
     @Test
     void createWithNullPrice() {
         Product chicken = new Product("치킨", null);
@@ -42,7 +42,7 @@ class ProductServiceTest extends ServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("상품의 가격이 0보다 작으면 예외가 발생한다.")
+    @DisplayName("상품 등록 시 상품의 가격이 0보다 작으면 예외가 발생한다.")
     @ValueSource(ints = {-1, -5})
     @ParameterizedTest
     void createWithInvalidPrice(int price) {
