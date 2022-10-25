@@ -9,6 +9,7 @@ import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT1_NAME;
 import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT1_PRICE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -18,7 +19,6 @@ import kitchenpos.application.dto.request.MenuProductCommand;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductRepository;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.support.cleaner.ApplicationTest;
@@ -98,7 +98,12 @@ class MenuServiceTest {
                     List.of(new MenuProductCommand(product.getId(), 1)));
 
             MenuResponse menuResponse = menuService.create(menuCommand);
-            assertThat(menuResponse.id()).isNotNull();
+
+            assertAll(
+                    () -> assertThat(menuResponse.id()).isNotNull(),
+                    () -> assertThat(menuResponse.menuProductResponses().get(0).seq()).isNotNull(),
+                    () -> assertThat(menuResponse.menuProductResponses().get(0).menuId()).isEqualTo(menuResponse.id())
+            );
         }
     }
 
@@ -111,7 +116,11 @@ class MenuServiceTest {
                 List.of(new MenuProductCommand(product.getId(), 1)));
 
         menuService.create(menuCommand);
-        List<Menu> menus = menuService.list();
-        assertThat(menus).hasSize(1);
+        List<MenuResponse> menuResponses = menuService.list();
+
+        assertAll(
+                () -> assertThat(menuResponses).hasSize(1),
+                () -> assertThat(menuResponses.get(0).menuProductResponses()).hasSize(1)
+        );
     }
 }

@@ -56,11 +56,14 @@ class MenuRestControllerTest extends ControllerTest {
 
         Menu menu2 = new Menu(2L, MENU2_NAME, MENU2_PRICE, 1L);
         menu2.addMenuProducts(List.of(new MenuProduct(menu2.getId(), 2L, 1)));
-        List<Menu> menus = List.of(menu1, menu2);
-        given(menuService.list()).willReturn(menus);
+        List<MenuResponse> menuResponses = List.of(menu1, menu2)
+                .stream()
+                .map(MenuResponse::from)
+                .toList();
+        given(menuService.list()).willReturn(menuResponses);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/menus"))
                 .andExpectAll(status().isOk(),
-                        content().string(objectMapper.writeValueAsString(menus)));
+                        content().string(objectMapper.writeValueAsString(menuResponses)));
     }
 }

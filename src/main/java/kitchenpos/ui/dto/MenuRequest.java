@@ -8,14 +8,14 @@ import kitchenpos.application.dto.request.MenuProductCommand;
 public record MenuRequest(String name,
                           BigDecimal price,
                           Long menuGroupId,
-                          List<MenuProductRequest> menuProductRequests) {
+                          List<MenuProductRequest> menuProducts) {
 
     public MenuCommand toCommand() {
         return new MenuCommand(name, price, menuGroupId, toMenuProductCommands());
     }
 
     public List<MenuProductCommand> toMenuProductCommands() {
-        return menuProductRequests.stream()
+        return menuProducts.stream()
                 .map(MenuProductRequest::toCommand)
                 .toList();
     }

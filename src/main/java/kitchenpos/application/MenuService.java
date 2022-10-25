@@ -25,10 +25,15 @@ public class MenuService {
         menuValidator.validate(menu.getMenuGroupId(), menuProducts, menu.getPrice());
         Menu savedMenu = menuRepository.save(menu);
         savedMenu.addMenuProducts(menuProducts);
-        return MenuResponse.from(savedMenu);
+        menuRepository.flush();
+        return MenuResponse.from(menuRepository.findById(savedMenu.getId()).orElseThrow());
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<MenuResponse> list() {
+        return menuRepository.findAll()
+                .stream()
+                .map(MenuResponse::from)
+                .toList();
     }
 }
