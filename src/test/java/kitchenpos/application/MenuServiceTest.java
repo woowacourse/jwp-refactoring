@@ -44,7 +44,7 @@ class MenuServiceTest extends ServiceTest {
         assertThat(menu).isNotNull();
     }
 
-    @DisplayName("메뉴의 가격이 null이면 예외가 발생한다..")
+    @DisplayName("메뉴의 가격이 null이면 예외가 발생한다.")
     @Test
     void createWithNullPrice() {
         Product product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
@@ -55,7 +55,7 @@ class MenuServiceTest extends ServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("메뉴의 가격이 0보다 작으면 예외가 발생한다..")
+    @DisplayName("메뉴의 가격이 0보다 작으면 예외가 발생한다.")
     @ParameterizedTest
     @ValueSource(ints = {-1, -5})
     void createWithInvalidPrice(int price) {
@@ -85,6 +85,18 @@ class MenuServiceTest extends ServiceTest {
         Menu menu = new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(), createMenuProducts());
 
         assertThatThrownBy(() -> menuService.create(menu))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("메뉴의 가격이 메뉴 상품의 총합 보다 크면 예외가 발생한다.")
+    @ValueSource(ints = {10001, 50000})
+    @ParameterizedTest
+    void createWithPriceMoreThanMenuProductSum(int price) {
+        Product product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
+        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("1번 메뉴 그룹"));
+        Menu menu = new Menu("1번 메뉴", BigDecimal.valueOf(price), menuGroup.getId(), createMenuProducts(product.getId()));
+
+        assertThatThrownBy(()->menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
