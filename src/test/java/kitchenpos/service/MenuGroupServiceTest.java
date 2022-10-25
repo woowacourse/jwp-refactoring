@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import org.junit.jupiter.api.DisplayName;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
@@ -37,6 +36,6 @@ public class MenuGroupServiceTest {
     public void listMenuGroup() {
         menuGroupService.create(new MenuGroup("밥류"));
         menuGroupService.create(new MenuGroup("햄류"));
-        assertThat(menuGroupService.list()).hasSize(2+4);
+        assertThat(menuGroupService.list()).hasSize(2);
     }
 }
