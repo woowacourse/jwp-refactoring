@@ -5,7 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -21,29 +25,26 @@ import org.junit.jupiter.api.Test;
 class OrderServiceTest {
 
     private final OrderDao orderDao;
+    private final OrderTableDao orderTableDao;
+    private final ProductDao productDao;
+    private final MenuDao menuDao;
+    private final MenuGroupDao menuGroupDao;
     private final OrderService orderService;
-    private final TableService tableService;
-    private final ProductService productService;
-    private final MenuService menuService;
-    private final MenuGroupService menuGroupService;
 
-    OrderServiceTest(OrderDao orderDao, OrderService orderService, TableService tableService,
-                     ProductService productService, MenuService menuService,
-                     MenuGroupService menuGroupService) {
+    OrderServiceTest(OrderDao orderDao, OrderTableDao orderTableDao, ProductDao productDao,
+                     MenuDao menuDao, MenuGroupDao menuGroupDao, OrderService orderService) {
         this.orderDao = orderDao;
+        this.orderTableDao = orderTableDao;
+        this.productDao = productDao;
+        this.menuDao = menuDao;
+        this.menuGroupDao = menuGroupDao;
         this.orderService = orderService;
-        this.tableService = tableService;
-        this.productService = productService;
-        this.menuService = menuService;
-        this.menuGroupService = menuGroupService;
     }
 
     @Test
     void 주문을_생성한다() {
-        OrderTable orderTable = new OrderTable(null, 0, false);
-        OrderTable savedTable = tableService.create(orderTable);
-        Order order = new Order(savedTable.getId(), null, null,
-                List.of(new OrderLineItem(1L, null, 메뉴를_저장한다().getId(), 1)));
+        OrderTable savedTable = orderTableDao.save(new OrderTable(null, 0, false));
+        Order order = new Order(savedTable.getId(), List.of(new OrderLineItem(1L, 메뉴를_저장한다().getId(), 1)));
 
         Order actual = orderService.create(order);
         assertThat(actual).isExactlyInstanceOf(Long.class);
@@ -51,9 +52,8 @@ class OrderServiceTest {
 
     @Test
     void 주문을_생성할때_주문정보가_없는_경우_예외를_발생시킨다() {
-        OrderTable orderTable = new OrderTable(null, 0, false);
-        OrderTable savedTable = tableService.create(orderTable);
-        Order order = new Order(savedTable.getId(), null, null, null);
+        OrderTable savedTable = orderTableDao.save(new OrderTable(null, 0, false));
+        Order order = new Order(savedTable.getId(), null);
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
@@ -61,9 +61,8 @@ class OrderServiceTest {
 
     @Test
     void 주문을_생성할때_주문정보와_저장된_메뉴와_다를_경우_예외를_발생시킨다() {
-        OrderTable orderTable = new OrderTable(null, 0, false);
-        OrderTable savedTable = tableService.create(orderTable);
-        Order order = new Order(savedTable.getId(), null, null, List.of(new OrderLineItem(1L, null, -1L, 1)));
+        OrderTable savedTable = orderTableDao.save(new OrderTable(null, 0, false));
+        Order order = new Order(savedTable.getId(), List.of(new OrderLineItem(1L, -1L, 1)));
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
@@ -71,7 +70,7 @@ class OrderServiceTest {
 
     @Test
     void 주문을_생성할때_테이블이_존재하지_않는_경우_예외를_발생시킨다() {
-        Order order = new Order(-1L, null, null, List.of(new OrderLineItem(1L, null, 메뉴를_저장한다().getId(), 1)));
+        Order order = new Order(-1L, List.of(new OrderLineItem(1L, 메뉴를_저장한다().getId(), 1)));
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
@@ -79,10 +78,8 @@ class OrderServiceTest {
 
     @Test
     void 테이블이_빈_경우_예외를_발생시킨다() {
-        OrderTable orderTable = new OrderTable(null, 0, true);
-        OrderTable savedTable = tableService.create(orderTable);
-        Order order = new Order(savedTable.getId(), null, null,
-                List.of(new OrderLineItem(1L, null, 메뉴를_저장한다().getId(), 1)));
+        OrderTable savedTable = orderTableDao.save(new OrderTable(null, 0, true));
+        Order order = new Order(savedTable.getId(), List.of(new OrderLineItem(1L, 메뉴를_저장한다().getId(), 1)));
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
@@ -99,10 +96,8 @@ class OrderServiceTest {
 
     @Test
     void 주문의_상태를_조리에서_식사로_바꾼다() {
-        OrderTable orderTable = new OrderTable(null, 0, false);
-        OrderTable savedTable = tableService.create(orderTable);
-        Order order = new Order(savedTable.getId(), null, null,
-                List.of(new OrderLineItem(1L, null, 메뉴를_저장한다().getId(), 1)));
+        OrderTable savedTable = orderTableDao.save(new OrderTable(null, 0, false));
+        Order order = new Order(savedTable.getId(), List.of(new OrderLineItem(1L, 메뉴를_저장한다().getId(), 1)));
         Order savedOrder = orderService.create(order);
 
         savedOrder.setOrderStatus("MEAL");
@@ -119,10 +114,8 @@ class OrderServiceTest {
 
     @Test
     void 주문의_상태를_바꿀때_주문의_상태가_계산완료인_경우_예외를_발생시킨다() {
-        OrderTable orderTable = new OrderTable(null, 0, false);
-        OrderTable savedTable = tableService.create(orderTable);
-        Order order = new Order(savedTable.getId(), null, null,
-                List.of(new OrderLineItem(1L, null, 메뉴를_저장한다().getId(), 1)));
+        OrderTable savedTable = orderTableDao.save(new OrderTable(null, 0, false));
+        Order order = new Order(savedTable.getId(), List.of(new OrderLineItem(1L, 메뉴를_저장한다().getId(), 1)));
         Order savedOrder = orderService.create(order);
 
         savedOrder.setOrderStatus("COMPLETION");
@@ -133,13 +126,13 @@ class OrderServiceTest {
     }
 
     Menu 메뉴를_저장한다() {
-        Product jwt_후라이드 = productService.create(new Product("JWT 후라이드", new BigDecimal(100_000)));
-        Product jwt_양념 = productService.create(new Product("JWT 양념", new BigDecimal(100_000)));
-        MenuProduct 후라이드 = new MenuProduct(1L, null, jwt_후라이드.getId(), 1);
-        MenuProduct 양념 = new MenuProduct(2L, null, jwt_양념.getId(), 1);
-        MenuGroup menuGroup = menuGroupService.create(new MenuGroup("추천메뉴"));
+        Product jwt_후라이드 = productDao.save(new Product("JWT 후라이드", new BigDecimal(100_000)));
+        Product jwt_양념 = productDao.save(new Product("JWT 양념", new BigDecimal(100_000)));
+        MenuProduct 후라이드 = new MenuProduct(1L, jwt_후라이드.getId(), 1);
+        MenuProduct 양념 = new MenuProduct(2L, jwt_양념.getId(), 1);
+        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("추천메뉴"));
         Menu menu = new Menu("반반치킨", new BigDecimal(200_000), menuGroup.getId(), List.of(후라이드, 양념));
 
-        return menuService.create(menu);
+        return menuDao.save(menu);
     }
 }
