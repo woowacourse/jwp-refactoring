@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:kitchen-pos-test;MODE=MYSQL;
+    url: jdbc:h2:mem:kitchen-pos-test;
     username: sa
     password:
   h2:
