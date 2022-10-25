@@ -5,13 +5,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-
-import java.util.List;
 
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
@@ -22,7 +21,6 @@ class ProductRestControllerTest extends ControllerTest {
     @Test
     void create() throws Exception {
         // given
-        ProductRequest productRequest = new ProductRequest("닭강정", BigDecimal.valueOf(5000L));
         ProductResponse productResponse = new ProductResponse(1L, "닭강정", BigDecimal.valueOf(5000L));
 
         given(productService.create(any(ProductRequest.class)))
@@ -31,12 +29,15 @@ class ProductRestControllerTest extends ControllerTest {
         // when
         ResultActions result = mockMvc.perform(post("/api/products")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(productRequest)));
+            .content(toJson(
+                    new ProductRequest("닭강정", BigDecimal.valueOf(5000L))
+                )
+            ));
 
         // then
         result.andExpect(status().isCreated())
             .andExpect(header().string("location", "/api/products/1"))
-            .andExpect(content().json(objectMapper.writeValueAsString(productResponse)));
+            .andExpect(content().json(toJson(productResponse)));
     }
 
     @DisplayName("상품 목록을 조회한다.")
@@ -56,6 +57,6 @@ class ProductRestControllerTest extends ControllerTest {
 
         // then
         result.andExpect(status().isOk())
-            .andExpect(content().json(objectMapper.writeValueAsString(productResponses)));
+            .andExpect(content().json(toJson(productResponses)));
     }
 }

@@ -4,12 +4,12 @@ import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-
-import java.util.List;
 
 import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.OrderTableResponse;
@@ -21,7 +21,6 @@ class TableRestControllerTest extends ControllerTest {
     @Test
     void create() throws Exception {
         // given
-        OrderTableRequest orderTableRequest = new OrderTableRequest(3, true);
         OrderTableResponse orderTableResponse = new OrderTableResponse(
             1L, null, 3, true
         );
@@ -32,12 +31,15 @@ class TableRestControllerTest extends ControllerTest {
         // when
         ResultActions result = mockMvc.perform(post("/api/tables")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(orderTableRequest)));
+            .content(toJson(
+                    new OrderTableRequest(3, true)
+                )
+            ));
 
         // then
         result.andExpect(status().isCreated())
             .andExpect(header().string("location", "/api/tables/1"))
-            .andExpect(content().json(objectMapper.writeValueAsString(orderTableResponse)));
+            .andExpect(content().json(toJson(orderTableResponse)));
     }
 
     @DisplayName("주문 테이블 목록을 조회한다.")
@@ -61,14 +63,13 @@ class TableRestControllerTest extends ControllerTest {
 
         // then
         result.andExpect(status().isOk())
-            .andExpect(content().json(objectMapper.writeValueAsString(orderTableResponses)));
+            .andExpect(content().json(toJson(orderTableResponses)));
     }
 
     @DisplayName("주문 테이블이 비었는지의 상태를 변경한다.")
     @Test
     void changeEmpty() throws Exception {
         // given
-        OrderTableUpdateRequest tableUpdateRequest = new OrderTableUpdateRequest(false, null);
         OrderTableResponse orderTableResponse = new OrderTableResponse(
             1L, null, 3, false
         );
@@ -79,18 +80,20 @@ class TableRestControllerTest extends ControllerTest {
         // when
         ResultActions result = mockMvc.perform(put("/api/tables/1/empty")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(tableUpdateRequest)));
+            .content(toJson(
+                    new OrderTableUpdateRequest(false, null)
+                )
+            ));
 
         // then
         result.andExpect(status().isOk())
-            .andExpect(content().json(objectMapper.writeValueAsString(orderTableResponse)));
+            .andExpect(content().json(toJson(orderTableResponse)));
     }
 
-    @DisplayName("주문 테이블의 손님 수를 변경한다..")
+    @DisplayName("주문 테이블의 손님 수를 변경한다.")
     @Test
     void changeNumberOfGuests() throws Exception {
         // given
-        OrderTableUpdateRequest tableUpdateRequest = new OrderTableUpdateRequest(null, 2);
         OrderTableResponse orderTableResponse = new OrderTableResponse(
             1L, null, 2, true
         );
@@ -101,10 +104,13 @@ class TableRestControllerTest extends ControllerTest {
         // when
         ResultActions result = mockMvc.perform(put("/api/tables/1/number-of-guests")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(tableUpdateRequest)));
+            .content(toJson(
+                new OrderTableUpdateRequest(null, 2))
+            )
+        );
 
         // then
         result.andExpect(status().isOk())
-            .andExpect(content().json(objectMapper.writeValueAsString(orderTableResponse)));
+            .andExpect(content().json(toJson(orderTableResponse)));
     }
 }

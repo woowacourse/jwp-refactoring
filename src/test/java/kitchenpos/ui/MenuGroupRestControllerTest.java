@@ -5,12 +5,12 @@ import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-
-import java.util.List;
 
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuGroupResponse;
@@ -21,8 +21,6 @@ class MenuGroupRestControllerTest extends ControllerTest {
     @Test
     void create() throws Exception {
         // given
-        MenuGroupRequest menuGroupRequest = new MenuGroupRequest("신메뉴");
-
         MenuGroupResponse menuGroupResponse = new MenuGroupResponse(1L, "신메뉴");
         given(menuGroupService.create(any(MenuGroupRequest.class)))
             .willReturn(menuGroupResponse);
@@ -30,12 +28,15 @@ class MenuGroupRestControllerTest extends ControllerTest {
         // when
         ResultActions result = mockMvc.perform(post("/api/menu-groups")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(menuGroupRequest)));
+            .content(toJson(
+                    new MenuGroupRequest("신메뉴")
+                )
+            ));
 
         // then
         result.andExpect(status().isCreated())
             .andExpect(header().string("location", "/api/menu-groups/1"))
-            .andExpect(content().json(objectMapper.writeValueAsString(menuGroupResponse)));
+            .andExpect(content().json(toJson(menuGroupResponse)));
     }
 
     @DisplayName("메뉴 그룹 목록을 조회한다.")
@@ -54,6 +55,6 @@ class MenuGroupRestControllerTest extends ControllerTest {
 
         // then
         result.andExpect(status().isOk())
-            .andExpect(content().json(objectMapper.writeValueAsString(responses)));
+            .andExpect(content().json(toJson(responses)));
     }
 }

@@ -6,13 +6,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-
-import java.util.List;
 
 import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.dto.TableGroupRequest;
@@ -24,9 +23,8 @@ class TableGroupRestControllerTest extends ControllerTest {
     @Test
     void create() throws Exception {
         // given
-        TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(1L, 2L));
-
-        TableGroupResponse tableGroupResponse = new TableGroupResponse(1L,
+        TableGroupResponse tableGroupResponse = new TableGroupResponse(
+            1L,
             LocalDateTime.now(),
             List.of(
                 new OrderTableResponse(1L, 1L, 2, false),
@@ -39,12 +37,14 @@ class TableGroupRestControllerTest extends ControllerTest {
         // when
         ResultActions result = mockMvc.perform(post("/api/table-groups")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(tableGroupRequest)));
+            .content(toJson(
+                new TableGroupRequest(List.of(1L, 2L)))
+            ));
 
         // then
         result.andExpect(status().isCreated())
             .andExpect(header().string("location", "/api/table-groups/1"))
-            .andExpect(content().json(objectMapper.writeValueAsString(tableGroupResponse)));
+            .andExpect(content().json(toJson(tableGroupResponse)));
     }
 
     @DisplayName("단체 테이블을 해제한다.")
