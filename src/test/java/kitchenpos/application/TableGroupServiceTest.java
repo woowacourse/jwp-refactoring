@@ -13,6 +13,7 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +37,23 @@ class TableGroupServiceTest {
     @MockBean
     private OrderDao orderDao;
 
+    private Long emptyOrderTableId1;
+    private Long emptyOrderTableId2;
+
+    @BeforeEach
+    void setUp(){
+        final OrderTable orderTable1 = orderTableDao.save(new OrderTable(0, true));
+        final OrderTable orderTable2 = orderTableDao.save(new OrderTable(0, true));
+        emptyOrderTableId1 = orderTable1.getId();
+        emptyOrderTableId2 = orderTable2.getId();
+    }
+
     @DisplayName("테이블 그룸화를 진행한다.")
     @Test
     void create() {
         // given
-        final OrderTable orderTable1 = orderTableDao.save(new OrderTable(0, true));
-        final OrderTable orderTable2 = orderTableDao.save(new OrderTable(0, true));
         final TableGroup tableGroup = new TableGroup(
-                List.of(new OrderTable(orderTable1.getId()), new OrderTable(orderTable2.getId())));
+                List.of(new OrderTable(emptyOrderTableId1), new OrderTable(emptyOrderTableId2)));
 
         // when
         final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
@@ -58,8 +68,7 @@ class TableGroupServiceTest {
     @Test
     void create_throwException_ifOrderTableSizeUnderTwo() {
         // given
-        final OrderTable orderTable = orderTableDao.save(new OrderTable(0, true));
-        final TableGroup tableGroup = new TableGroup(List.of(new OrderTable(orderTable.getId())));
+        final TableGroup tableGroup = new TableGroup(List.of(new OrderTable(emptyOrderTableId1)));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -72,9 +81,8 @@ class TableGroupServiceTest {
     void create_throwException_ifTableNotExist() {
         // given
         final Long invalidTableId = 999L;
-        final OrderTable orderTable = orderTableDao.save(new OrderTable(0, true));
         final TableGroup tableGroup = new TableGroup(
-                List.of(new OrderTable(orderTable.getId()), new OrderTable(invalidTableId)));
+                List.of(new OrderTable(emptyOrderTableId1), new OrderTable(invalidTableId)));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -88,9 +96,8 @@ class TableGroupServiceTest {
         // given
         final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(savedTableGroup.getId(), 0, true));
-        final OrderTable orderTable2 = orderTableDao.save(new OrderTable(0, true));
         final TableGroup tableGroup = new TableGroup(
-                List.of(new OrderTable(orderTable.getId()), new OrderTable(orderTable2.getId())));
+                List.of(new OrderTable(orderTable.getId()), new OrderTable(emptyOrderTableId1)));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -103,9 +110,8 @@ class TableGroupServiceTest {
     void create_throwException_ifTableNotEmpty() {
         // given
         final OrderTable orderTable = orderTableDao.save(new OrderTable(4, false));
-        final OrderTable orderTable2 = orderTableDao.save(new OrderTable(0, true));
         final TableGroup tableGroup = new TableGroup(
-                List.of(new OrderTable(orderTable.getId()), new OrderTable(orderTable2.getId())));
+                List.of(new OrderTable(orderTable.getId()), new OrderTable(emptyOrderTableId1)));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -117,11 +123,7 @@ class TableGroupServiceTest {
     @Test
     void ungroup() {
         // given
-        final OrderTable orderTable1 = orderTableDao.save(new OrderTable(0, true));
-        final OrderTable orderTable2 = orderTableDao.save(new OrderTable(0, true));
-        final TableGroup tableGroup = new TableGroup(
-                List.of(new OrderTable(orderTable1.getId()), new OrderTable(orderTable2.getId())));
-        final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
 
         // when, then
         assertThatCode(() -> tableGroupService.ungroup(savedTableGroup.getId()))
@@ -134,11 +136,7 @@ class TableGroupServiceTest {
         // given
         given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
                 .willReturn(true);
-        final OrderTable orderTable1 = orderTableDao.save(new OrderTable(0, true));
-        final OrderTable orderTable2 = orderTableDao.save(new OrderTable(0, true));
-        final TableGroup tableGroup = new TableGroup(
-                List.of(new OrderTable(orderTable1.getId()), new OrderTable(orderTable2.getId())));
-        final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
