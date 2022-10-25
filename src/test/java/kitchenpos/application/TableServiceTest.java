@@ -20,8 +20,8 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -31,6 +31,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
 @Sql("/truncate.sql")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class TableServiceTest {
 
     private final TableService tableService;
@@ -52,7 +53,6 @@ class TableServiceTest {
         this.orderService = orderService;
     }
 
-    @DisplayName("orderTable을 생성한다.")
     @Test
     void orderTable을_생성한다() {
         OrderTable 테이블_1번 = 테이블_1번();
@@ -65,7 +65,6 @@ class TableServiceTest {
         });
     }
 
-    @DisplayName("orderTable list를 조회한다.")
     @Test
     void orderTable_list를_조회한다() {
         tableService.create(테이블_1번());
@@ -79,7 +78,6 @@ class TableServiceTest {
         assertThat(actual).hasSize(5);
     }
 
-    @DisplayName("orderTable의 epmty를 변경한다.")
     @Test
     void orderTable의_empty를_변경한다() {
         MenuGroup menuGroup = menuGroupService.create(한마리메뉴());
@@ -105,7 +103,6 @@ class TableServiceTest {
         });
     }
 
-    @DisplayName("tableGroupId가 null이 아닌 경우 예외를 던진다.")
     @Test
     void tableGroupId가_null이_아닌_경우_예외를_던진다() {
         OrderTable 테이블_1번 = tableService.create(테이블_1번());
@@ -117,7 +114,6 @@ class TableServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("orderTable에 속한 order 중 COOKING, MEAL이 존재하는 경우 예외를 던진다.")
     @Test
     void orderTable에_속한_order_중_COOKING_MEAL이_존재하는_경우_예외를_던진다() {
         MenuGroup menuGroup = menuGroupService.create(한마리메뉴());
@@ -139,7 +135,6 @@ class TableServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("orderTable의 chagneNumberOfGuests를 변경한다.")
     @Test
     void orderTable의_changeNumberOfGuests를_변경한다() {
         OrderTable 테이블_1번 = tableService.create(테이블_1번());
@@ -154,8 +149,7 @@ class TableServiceTest {
         });
     }
 
-    @DisplayName("numberOfGuests가 0미만인 경우 예외를 던진다.")
-    @ParameterizedTest
+    @ParameterizedTest(name = "numberOfGuests가 {0}미만인 경우 예외를 던진다")
     @ValueSource(ints = {-15000, -10, Integer.MIN_VALUE})
     void numberOfGuests가_0미만인_경우_예외를_던진다(final int numberOfGuests) {
         OrderTable 테이블_1번 = tableService.create(테이블_1번());
@@ -166,7 +160,6 @@ class TableServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("저장된 orderTable이 비어있는 경우 예외를 던진다.")
     @Test
     void 저장된_orderTable이_비어있는_경우_예외를_던진다() {
         OrderTable 테이블_1번 = tableService.create(테이블_1번());

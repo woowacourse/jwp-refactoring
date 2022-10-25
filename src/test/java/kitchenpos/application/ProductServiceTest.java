@@ -9,7 +9,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -19,6 +20,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
 @Sql("/truncate.sql")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class ProductServiceTest {
 
     private final ProductService productService;
@@ -28,7 +30,6 @@ class ProductServiceTest {
         this.productService = productService;
     }
 
-    @DisplayName("product를 생성한다.")
     @Test
     void product를_생성한다() {
         Product 후라이드 = 후라이드();
@@ -42,7 +43,6 @@ class ProductServiceTest {
         });
     }
 
-    @DisplayName("price가 null인 경우 예외를 던진다.")
     @Test
     void price가_null인_경우_예외를_던진다() {
         Product 후라이드 = generateProduct("후라이드", null);
@@ -51,8 +51,7 @@ class ProductServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("price가 0미만인 경우 예외를 던진다.")
-    @ParameterizedTest
+    @ParameterizedTest(name = "price가 {0}미만인 경우 예외를 던진다")
     @ValueSource(ints = {-15000, -10, Integer.MIN_VALUE})
     void price가_0미만인_경우_예외를_던진다(final int price) {
         Product 후라이드 = generateProduct("후라이드", BigDecimal.valueOf(price));
@@ -61,7 +60,6 @@ class ProductServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("product list를 조회한다.")
     @Test
     void product_list를_조회한다() {
         Product 후라이드 = productService.create(후라이드());

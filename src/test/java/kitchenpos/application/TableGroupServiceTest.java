@@ -18,7 +18,8 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +27,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
 @Sql("/truncate.sql")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class TableGroupServiceTest {
 
     private final TableService tableService;
@@ -47,7 +49,6 @@ class TableGroupServiceTest {
         this.orderService = orderService;
     }
 
-    @DisplayName("tableGroup을 생성한다.")
     @Test
     void tableGroup을_생성한다() {
         OrderTable 테이블_1번 = tableService.create(테이블_1번());
@@ -58,7 +59,6 @@ class TableGroupServiceTest {
         assertThat(actual.getOrderTables()).hasSize(2);
     }
 
-    @DisplayName("orderTables가 비어있으면 예외를 던진다.")
     @Test
     void orderTables가_비어있으면_예외를_던진다() {
         TableGroup tableGroup = generateTableGroup(List.of());
@@ -67,7 +67,6 @@ class TableGroupServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("orderTables의 사이즈가 2미만인 경우 예외를 던진다.")
     @Test
     void orderTables의_사이즈가_2미만인_경우_예외를_던진다() {
         OrderTable 테이블_1번 = tableService.create(테이블_1번());
@@ -76,7 +75,6 @@ class TableGroupServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("orderGroup이 가진 orderTables의 사이즈와 저장된 orderTables의 사이즈가 다른 경우 예외를 던진다.")
     @Test
     void orderGroup이_가진_orderTables의_사이즈와_저장된_orderTables의_사이즈가_다른_경우_예외를_던진다() {
         OrderTable 테이블_1번 = tableService.create(테이블_1번());
@@ -87,7 +85,6 @@ class TableGroupServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("저장된 orderTables 중 비어있지 않은 table이 존재하는 경우 예외를 던진다.")
     @Test
     void 저장된_orderTables_중_비어있지_않은_table이_존재하는_경우_예외를_던진다() {
         OrderTable 테이블_1번 = tableService.create(테이블_1번());
@@ -98,7 +95,6 @@ class TableGroupServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("저장된 orderTables 중 tableGroupId가 null이 아닌 경우 예외를 던진다.")
     @Test
     void 저장된_orderTables_중_tableGroupId가_null이_아닌_경우_예외를_던진다() {
         OrderTable 테이블_1번 = tableService.create(테이블_1번());
@@ -112,7 +108,6 @@ class TableGroupServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
     
-    @DisplayName("tableGroup을 해제한다.")
     @Test
     void tableGroup을_해제한다() {
         OrderTable 테이블_1번 = tableService.create(테이블_1번());
@@ -131,7 +126,6 @@ class TableGroupServiceTest {
         });
     }
 
-    @DisplayName("orderTables의 orderStatus가 COOKING, MEAL인 경우 예외를 던진다.")
     @Test
     void orderTables의_orderStatus가_COOKING_MEAL인_경우_예외를_던진다() {
         OrderTable 테이블_1번 = tableService.create(테이블_1번());

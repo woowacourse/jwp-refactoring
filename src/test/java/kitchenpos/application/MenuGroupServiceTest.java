@@ -7,7 +7,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +16,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
 @Sql("/truncate.sql")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class MenuGroupServiceTest {
 
     private final MenuGroupService menuGroupService;
@@ -24,7 +26,6 @@ class MenuGroupServiceTest {
         this.menuGroupService = menuGroupService;
     }
 
-    @DisplayName("menuGroup을 생성한다.")
     @Test
     void menuGroup을_생성한다() {
         MenuGroup 신메뉴 = 신메뉴();
@@ -35,7 +36,6 @@ class MenuGroupServiceTest {
                 .isEqualTo(신메뉴.getName());
     }
 
-    @DisplayName("menuGroup list를 조회한다.")
     @Test
     void menuGroup_list를_조회한다() {
         MenuGroup 두마리메뉴 = menuGroupService.create(두마리메뉴());
