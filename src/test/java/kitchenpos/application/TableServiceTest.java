@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +21,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.support.SpringBootNestedTest;
 
 @Transactional
 @SpringBootTest
@@ -61,7 +61,7 @@ class TableServiceTest {
     }
 
     @DisplayName("테이블을 비어있는 테이블로 설정한다")
-    @Nested
+    @SpringBootNestedTest
     class ChangeEmptyTest {
 
         @DisplayName("테이블을 비어있는 테이블로 설정한다")
@@ -108,7 +108,7 @@ class TableServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @DisplayName("테이블에서 주문 상태가 Cooking, Meal인 주문이 있을 경우 예외가 발생한다")
+        @DisplayName("테이블 중 주문 상태가 Cooking, Meal인 주문이 있을 경우 예외가 발생한다")
         @Test
         void throwExceptionBecauseOrderStatusIsCookingOrMeal() {
             OrderTable newOrderTable = new OrderTable();
@@ -124,7 +124,7 @@ class TableServiceTest {
     }
 
     @DisplayName("손님 수를 변경한다")
-    @Nested
+    @SpringBootNestedTest
     class ChangeNumberOfGuestsTest {
 
         OrderTable orderTable;

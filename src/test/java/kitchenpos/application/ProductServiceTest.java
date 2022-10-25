@@ -7,14 +7,16 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.Product;
+import kitchenpos.fixture.ProductFixture;
+import kitchenpos.support.SpringBootNestedTest;
 
+@SuppressWarnings("NonAsciiCharacters")
 @Transactional
 @SpringBootTest
 class ProductServiceTest {
@@ -23,13 +25,13 @@ class ProductServiceTest {
     private ProductService productService;
 
     @DisplayName("상품을 생성한다")
-    @Nested
+    @SpringBootNestedTest
     class CreateTest {
 
         @DisplayName("상품을 생성하면 ID가 할당된 Product객체가 반환된다")
         @Test
         void create() {
-            Product product = new Product("뿌링클", new BigDecimal(18_000));
+            Product product = ProductFixture.양념치킨.toProduct();
 
             Product actual = productService.create(product);
             assertThat(actual.getId()).isNotNull();
@@ -39,7 +41,8 @@ class ProductServiceTest {
         @Test
         void throwExceptionWhenWithNullPrice() {
             BigDecimal price = null;
-            Product product = new Product("뿌링클", price);
+            Product product = ProductFixture.양념치킨.toProduct();
+            product.setPrice(price);
 
             assertThatThrownBy(() -> productService.create(product))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -49,7 +52,8 @@ class ProductServiceTest {
         @Test
         void throwExceptionWhenWithNegativePrice() {
             BigDecimal price = new BigDecimal(-1);
-            Product product = new Product("뿌링클", price);
+            Product product = ProductFixture.양념치킨.toProduct();
+            product.setPrice(price);
 
             assertThatThrownBy(() -> productService.create(product))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -60,9 +64,8 @@ class ProductServiceTest {
     @Test
     void list() {
         int numOfProducts = 6;
-        Product product = new Product("뿌링클", new BigDecimal(18_000));
         for (int i = 0; i < numOfProducts; i++) {
-            productService.create(product);
+            productService.create(ProductFixture.양념치킨.toProduct());
         }
 
         List<Product> products = productService.list();

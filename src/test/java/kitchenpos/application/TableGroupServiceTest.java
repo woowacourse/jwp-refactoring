@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +21,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.support.SpringBootNestedTest;
 
 @Transactional
 @SpringBootTest
@@ -51,7 +51,7 @@ class TableGroupServiceTest {
     }
 
     @DisplayName("단체 테이블을 만든다")
-    @Nested
+    @SpringBootNestedTest
     class CreateTest {
 
         @DisplayName("단체 테이블을 생성하면 ID를 할당된 TableGroup객체가 반환된다")
@@ -113,7 +113,7 @@ class TableGroupServiceTest {
     }
 
     @DisplayName("단체 테이블을 분리한다")
-    @Nested
+    @SpringBootNestedTest
     class Ungroup {
 
         TableGroup tableGroup;
