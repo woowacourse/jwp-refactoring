@@ -78,4 +78,20 @@ public class OrderTable {
     public boolean isEmpty() {
         return empty;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setTableGroupId(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+    }
+
+    public void setNumberOfGuests(int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public void setEmpty(boolean empty) {
+        this.empty = empty;
+    }
 }

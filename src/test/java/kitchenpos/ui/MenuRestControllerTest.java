@@ -10,6 +10,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import kitchenpos.MenuFixtures;
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
 import org.junit.jupiter.api.Test;
@@ -26,9 +29,7 @@ class MenuRestControllerTest extends ControllerTest {
     @Test
     void create() throws Exception {
         // given
-        long id = 1L;
-        Menu menu = new Menu("메뉴", BigDecimal.valueOf(1000), 1L, List.of());
-        menu.setId(id);
+        Menu menu = MenuFixtures.createMenu();
         given(menuService.create(any())).willReturn(menu);
 
         // when
@@ -39,13 +40,13 @@ class MenuRestControllerTest extends ControllerTest {
 
         // then
         actions.andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/api/menus/" + id));
+                .andExpect(header().exists("Location"));
     }
 
     @Test
     void list() throws Exception {
         // given
-        Menu menu = new Menu("메뉴", BigDecimal.valueOf(1000), 1L, List.of());
+        Menu menu = MenuFixtures.createMenu();
         given(menuService.list()).willReturn(List.of(menu));
 
         // when
