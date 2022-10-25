@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.fixture.OrderFixture.INVALID_ORDER_ID;
 import static kitchenpos.application.fixture.OrderFixture.ORDER_LINE_ITEMS;
 import static kitchenpos.application.fixture.OrderFixture.ORDER_TABLE_EMPTY_ID;
 import static kitchenpos.application.fixture.OrderFixture.ORDER_TABLE_NOT_EMPTY_ID;
@@ -103,6 +104,13 @@ class OrderServiceTest extends ServiceTest {
         orderService.changeOrderStatus(savedOrder.getId(), UNSAVED_ORDER);
         UNSAVED_ORDER.equals(OrderStatus.COOKING.name());
         assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), UNSAVED_ORDER))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("존재하지 않은 주문의 상태를 변경하려 하면 예외가 발생한다.")
+    @Test
+    void changeOrderStatus_Exception_Invalid_Order() {
+        assertThatThrownBy(() -> orderService.changeOrderStatus(INVALID_ORDER_ID, UNSAVED_ORDER))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

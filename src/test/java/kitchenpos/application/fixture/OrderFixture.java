@@ -10,6 +10,7 @@ import kitchenpos.domain.OrderLineItem;
 
 public class OrderFixture {
 
+    public static final Long INVALID_ORDER_ID = -1L;
     public static final Long ORDER_TABLE_NOT_EMPTY_ID = 1L;
     public static final Long ORDER_TABLE_EMPTY_ID = 3L;
     public static final List<OrderLineItem> ORDER_LINE_ITEMS = List.of(
