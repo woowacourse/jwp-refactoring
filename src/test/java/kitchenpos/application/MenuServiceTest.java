@@ -2,12 +2,14 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -35,6 +37,9 @@ class MenuServiceTest extends ServiceTest {
 
     @Autowired
     private MenuDao menuDao;
+
+    @Autowired
+    private MenuProductDao menuProductDao;
 
     @Autowired
     private DatabaseCleaner databaseCleaner;
@@ -114,13 +119,18 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴들을 조회할 수 있다.")
     @Test
     void list() {
-        Menu menu = new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(),
+        Menu newMenu = new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(),
                 createMenuProducts(product.getId()));
-        menuDao.save(menu);
+        Menu menu = menuDao.save(newMenu);
+        MenuProduct menuProduct = new MenuProduct(menu.getId(), product.getId(), 10);
+        menuProductDao.save(menuProduct);
 
         List<Menu> menus = menuService.list();
 
-        assertThat(menus).hasSize(1);
+        assertAll(
+                () -> assertThat(menus).hasSize(1),
+                () -> assertThat(menus.get(0).getMenuProducts()).isNotEmpty()
+        );
     }
 
     private List<MenuProduct> createMenuProducts(Long... productIds) {

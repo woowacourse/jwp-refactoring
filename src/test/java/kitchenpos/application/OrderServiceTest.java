@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
@@ -46,6 +48,9 @@ class OrderServiceTest extends ServiceTest {
 
     @Autowired
     private MenuDao menuDao;
+
+    @Autowired
+    private OrderLineItemDao orderLineItemDao;
 
     @Autowired
     private DatabaseCleaner databaseCleaner;
@@ -127,12 +132,14 @@ class OrderServiceTest extends ServiceTest {
         OrderTable orderTable = orderTableDao.save(newOrderTable);
         Order newOrder = new Order(orderTable.getId(), "COOKING", LocalDateTime.now(),
                 createOrderLineItem(menu.getId()));
-        orderDao.save(newOrder);
-        orderDao.save(newOrder);
-
+        Order order = orderDao.save(newOrder);
+        orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 10));
         List<Order> orders = orderService.list();
 
-        assertThat(orders.size()).isEqualTo(2L);
+        assertAll(
+                () -> assertThat(orders.size()).isEqualTo(1L),
+                () -> assertThat(orders.get(0).getOrderLineItems()).isNotEmpty()
+        );
     }
 
     @DisplayName("주문의 상태를 수정할 수 있다.")
