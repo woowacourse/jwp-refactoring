@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.ProductFixture.PRODUCT_NAME;
-import static kitchenpos.application.ProductFixture.PRODUCT_PRICE;
-import static kitchenpos.application.ProductFixture.UNSAVED_PRODUCT;
+import static kitchenpos.application.fixture.ProductFixture.PRODUCT_NAME;
+import static kitchenpos.application.fixture.ProductFixture.PRODUCT_PRICE;
+import static kitchenpos.application.fixture.ProductFixture.UNSAVED_PRODUCT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

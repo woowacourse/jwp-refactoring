@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.application.support;
 
 import java.util.List;
 import javax.persistence.EntityManager;

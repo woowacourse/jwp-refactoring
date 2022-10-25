@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.OrderFixture.ORDER_LINE_ITEMS;
-import static kitchenpos.application.TableGroupFixture.SAVED_TABLE_GROUP;
-import static kitchenpos.application.TableGroupFixture.UNSAVED_TABLE_GROUP;
-import static kitchenpos.application.TableGroupFixture.UNSAVED_TABLE_GROUP_INVALID_INCLUDE_NOT_EMPTY_TABLE;
-import static kitchenpos.application.TableGroupFixture.UNSAVED_TABLE_GROUP_INVALID_TOO_LITTLE_TABLE;
+import static kitchenpos.application.fixture.OrderFixture.ORDER_LINE_ITEMS;
+import static kitchenpos.application.fixture.TableGroupFixture.SAVED_TABLE_GROUP;
+import static kitchenpos.application.fixture.TableGroupFixture.UNSAVED_TABLE_GROUP;
+import static kitchenpos.application.fixture.TableGroupFixture.UNSAVED_TABLE_GROUP_INVALID_INCLUDE_NOT_EMPTY_TABLE;
+import static kitchenpos.application.fixture.TableGroupFixture.UNSAVED_TABLE_GROUP_INVALID_TOO_LITTLE_TABLE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;

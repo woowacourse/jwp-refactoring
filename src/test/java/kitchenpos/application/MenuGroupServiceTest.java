@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.MenuGroupFixture.UNSAVED_MENU_GROUP;
+import static kitchenpos.application.fixture.MenuGroupFixture.UNSAVED_MENU_GROUP;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

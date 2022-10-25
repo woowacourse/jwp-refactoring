@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.MenuFixture.MENU_EXPENSIVE_PRICE;
-import static kitchenpos.application.MenuFixture.MENU_INVALID_PRICE;
-import static kitchenpos.application.MenuFixture.MENU_NAME;
-import static kitchenpos.application.MenuFixture.MENU_PRICE;
-import static kitchenpos.application.MenuFixture.MENU_PRODUCTS;
-import static kitchenpos.application.MenuFixture.UNSAVED_MENU;
-import static kitchenpos.application.MenuGroupFixture.MENU_GROUP_ID;
+import static kitchenpos.application.fixture.MenuFixture.MENU_EXPENSIVE_PRICE;
+import static kitchenpos.application.fixture.MenuFixture.MENU_INVALID_PRICE;
+import static kitchenpos.application.fixture.MenuFixture.MENU_NAME;
+import static kitchenpos.application.fixture.MenuFixture.MENU_PRICE;
+import static kitchenpos.application.fixture.MenuFixture.MENU_PRODUCTS;
+import static kitchenpos.application.fixture.MenuFixture.UNSAVED_MENU;
+import static kitchenpos.application.fixture.MenuGroupFixture.MENU_GROUP_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

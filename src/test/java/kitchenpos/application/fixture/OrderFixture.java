@@ -1,8 +1,8 @@
-package kitchenpos.application;
+package kitchenpos.application.fixture;
 
-import static kitchenpos.application.MenuFixture.MENU_FIRST_ID;
-import static kitchenpos.application.MenuFixture.MENU_SECOND_ID;
-import static kitchenpos.application.MenuFixture.MENU_THIRD_ID;
+import static kitchenpos.application.fixture.MenuFixture.MENU_FIRST_ID;
+import static kitchenpos.application.fixture.MenuFixture.MENU_SECOND_ID;
+import static kitchenpos.application.fixture.MenuFixture.MENU_THIRD_ID;
 
 import java.util.List;
 import kitchenpos.domain.Order;

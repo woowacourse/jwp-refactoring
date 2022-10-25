@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.OrderFixture.ORDER_LINE_ITEMS;
-import static kitchenpos.application.OrderFixture.ORDER_TABLE_EMPTY_ID;
-import static kitchenpos.application.OrderFixture.ORDER_TABLE_NOT_EMPTY_ID;
-import static kitchenpos.application.OrderFixture.UNSAVED_ORDER;
+import static kitchenpos.application.fixture.OrderFixture.ORDER_LINE_ITEMS;
+import static kitchenpos.application.fixture.OrderFixture.ORDER_TABLE_EMPTY_ID;
+import static kitchenpos.application.fixture.OrderFixture.ORDER_TABLE_NOT_EMPTY_ID;
+import static kitchenpos.application.fixture.OrderFixture.UNSAVED_ORDER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

@@ -1,9 +1,9 @@
-package kitchenpos.application;
+package kitchenpos.application.fixture;
 
-import static kitchenpos.application.MenuGroupFixture.MENU_GROUP_ID;
-import static kitchenpos.application.ProductFixture.PRODUCT_ID_ONE;
-import static kitchenpos.application.ProductFixture.PRODUCT_ID_THREE;
-import static kitchenpos.application.ProductFixture.PRODUCT_ID_TWO;
+import static kitchenpos.application.fixture.MenuGroupFixture.MENU_GROUP_ID;
+import static kitchenpos.application.fixture.ProductFixture.PRODUCT_ID_ONE;
+import static kitchenpos.application.fixture.ProductFixture.PRODUCT_ID_THREE;
+import static kitchenpos.application.fixture.ProductFixture.PRODUCT_ID_TWO;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

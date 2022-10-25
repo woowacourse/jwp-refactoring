@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.OrderFixture.UNSAVED_ORDER;
-import static kitchenpos.application.OrderTableFixture.SAVED_ORDER_TABLE_EMPTY_FIRST;
-import static kitchenpos.application.OrderTableFixture.SAVED_ORDER_TABLE_NOT_EMPTY_FIRST;
-import static kitchenpos.application.OrderTableFixture.UNSAVED_ORDER_TABLE_EMPTY;
-import static kitchenpos.application.OrderTableFixture.UNSAVED_ORDER_TABLE_NOT_EMPTY;
-import static kitchenpos.application.TableGroupFixture.SAVED_TABLE_GROUP;
+import static kitchenpos.application.fixture.OrderFixture.UNSAVED_ORDER;
+import static kitchenpos.application.fixture.OrderTableFixture.SAVED_ORDER_TABLE_EMPTY_FIRST;
+import static kitchenpos.application.fixture.OrderTableFixture.SAVED_ORDER_TABLE_NOT_EMPTY_FIRST;
+import static kitchenpos.application.fixture.OrderTableFixture.UNSAVED_ORDER_TABLE_EMPTY;
+import static kitchenpos.application.fixture.OrderTableFixture.UNSAVED_ORDER_TABLE_NOT_EMPTY;
+import static kitchenpos.application.fixture.TableGroupFixture.SAVED_TABLE_GROUP;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
