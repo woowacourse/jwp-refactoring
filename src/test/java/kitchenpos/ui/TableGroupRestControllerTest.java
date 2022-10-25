@@ -1,10 +1,17 @@
 package kitchenpos.ui;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,4 +60,14 @@ class TableGroupRestControllerTest extends ControllerTest {
         assertThatThrownBy(() -> tableGroupController.create(tableGroup))
                 .hasMessage("빈 주문테이블이어야 합니다.");
     }
+
+    @Test
+    void ungroup() {
+        OrderTable orderTable1 = createOrderTable(2, true);
+        OrderTable orderTable2 = createOrderTable(2, true);
+        TableGroup tableGroup = createTableGroup(List.of(orderTable1, orderTable2));
+
+        assertThatCode(() -> tableGroupController.ungroup(tableGroup.getId()));
+    }
+
 }
