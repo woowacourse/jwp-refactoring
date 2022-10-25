@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.util.stream.Collectors;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,51 +19,67 @@ class ProductServiceTest {
     @Autowired
     private ProductService productService;
 
-    @DisplayName("상품 저장")
-    @Test
-    void create() {
-        final var product = new Product("콜라", new BigDecimal(1000));
-        final var result = productService.create(product);
+    @DisplayName("create 메서드는")
+    @Nested
+    class create {
 
-        assertThat(product).isEqualTo(result);
+        @DisplayName("상품을 저장하고, 저장된 상품을 반환한다")
+        @Test
+        void saveProduct() {
+            final var product = new Product("콜라", new BigDecimal(1000));
+            final var result = productService.create(product);
+
+            assertThat(product).isEqualTo(result);
+        }
+
+        @DisplayName("상품 가격이 null 이라면")
+        @Nested
+        class priceIsNull {
+
+            private final BigDecimal invalidPrice = null;
+
+            @DisplayName("예외를 던진다")
+            @Test
+            void throwsException() {
+                final var invalidPriceProduct = new Product("사이다", invalidPrice);
+                assertThatThrownBy(
+                        () -> productService.create(invalidPriceProduct)
+                ).isInstanceOf(IllegalArgumentException.class);
+            }
+        }
+
+        @DisplayName("상품 가격이 null 이라면")
+        @Nested
+        class priceIsUnderZero {
+
+            private final BigDecimal invalidPrice = new BigDecimal(-1);
+
+            @DisplayName("예외를 던진다")
+            @Test
+            void throwsException() {
+                final var invalidPriceProduct = new Product("환타", invalidPrice);
+                assertThatThrownBy(
+                        () -> productService.create(invalidPriceProduct)
+                ).isInstanceOf(IllegalArgumentException.class);
+            }
+        }
     }
 
-    @DisplayName("상품 저장 시 가격이 null이라면 예외 발생")
-    @Test
-    void create_priceIsNull_throwsException() {
-        final var invalidProduct = new Product("사이다", null);
+    @DisplayName("list 메서드는")
+    @Nested
+    class list {
 
-        assertThatThrownBy(
-                () -> productService.create(invalidProduct)
-        ).isInstanceOf(IllegalArgumentException.class);
-    }
+        @DisplayName("등록된 모든 상품 목록을 조회해 반환한다")
+        @Test
+        void findAllProducts() {
+            final var coke = new Product("콜라", new BigDecimal(1000));
+            final var rice = new Product("공기밥", new BigDecimal(1500));
 
-    @DisplayName("상품 저장 시 가격이 0 미만이라면 예외 발생")
-    @Test
-    void create_priceIsUnderZero_throwsException() {
-        final var invalidProduct = new Product("환타", new BigDecimal(-1));
+            productService.create(coke);
+            productService.create(rice);
 
-        assertThatThrownBy(
-                () -> productService.create(invalidProduct)
-        ).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("모든 상품 목록 조회")
-    @Test
-    void list() {
-        final var existingProducts = productService.list();
-
-        final var coke = new Product("콜라", new BigDecimal(1000));
-        final var rice = new Product("공기밥", new BigDecimal(1500));
-
-        productService.create(coke);
-        productService.create(rice);
-
-        final var result = productService.list();
-        final var filteredResult = result.stream()
-                .filter(product -> !existingProducts.contains(product))
-                .collect(Collectors.toList());
-
-        assertThat(filteredResult).containsExactly(coke, rice);
+            final var result = productService.list();
+            assertThat(result).contains(coke, rice);
+        }
     }
 }
