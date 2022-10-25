@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 
@@ -12,9 +13,11 @@ import org.junit.jupiter.api.Test;
 @ApplicationTest
 class ProductServiceTest {
 
+    private final ProductDao productDao;
     private final ProductService productService;
 
-    ProductServiceTest(ProductService productService) {
+    ProductServiceTest(ProductDao productDao, ProductService productService) {
+        this.productDao = productDao;
         this.productService = productService;
     }
 
@@ -44,8 +47,10 @@ class ProductServiceTest {
 
     @Test
     void 모든_상품을_조회한다() {
+        productDao.save(new Product());
+
         List<Product> products = productService.list();
 
-        assertThat(products).hasSize(6);
+        assertThat(products).hasSizeGreaterThanOrEqualTo(1);
     }
 }

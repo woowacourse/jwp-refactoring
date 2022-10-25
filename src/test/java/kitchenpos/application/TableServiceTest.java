@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -18,15 +19,17 @@ import org.junit.jupiter.api.Test;
 @ApplicationTest
 class TableServiceTest {
 
+    private final OrderTableDao orderTableDao;
     private final TableService tableService;
     private final OrderService orderService;
     private final ProductService productService;
     private final MenuService menuService;
     private final MenuGroupService menuGroupService;
 
-    TableServiceTest(TableService tableService, OrderService orderService,
-                     ProductService productService, MenuService menuService,
-                     MenuGroupService menuGroupService) {
+    TableServiceTest(OrderTableDao orderTableDao, TableService tableService,
+                     OrderService orderService, ProductService productService,
+                     MenuService menuService, MenuGroupService menuGroupService) {
+        this.orderTableDao = orderTableDao;
         this.tableService = tableService;
         this.orderService = orderService;
         this.productService = productService;
@@ -44,9 +47,11 @@ class TableServiceTest {
 
     @Test
     void 테이블을_모두_조회한다() {
+        orderTableDao.save(new OrderTable());
+
         List<OrderTable> orderTables = tableService.list();
 
-        assertThat(orderTables).hasSize(8);
+        assertThat(orderTables).hasSizeGreaterThanOrEqualTo(1);
     }
 
     @Test

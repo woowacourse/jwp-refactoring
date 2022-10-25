@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 
@@ -10,9 +11,11 @@ import org.junit.jupiter.api.Test;
 @ApplicationTest
 class MenuGroupServiceTest {
 
+    private final MenuGroupDao menuGroupDao;
     private final MenuGroupService menuGroupService;
 
-    MenuGroupServiceTest(MenuGroupService menuGroupService) {
+    MenuGroupServiceTest(MenuGroupDao menuGroupDao, MenuGroupService menuGroupService) {
+        this.menuGroupDao = menuGroupDao;
         this.menuGroupService = menuGroupService;
     }
 
@@ -26,8 +29,10 @@ class MenuGroupServiceTest {
 
     @Test
     void 메뉴그룹을_모두_조회한다() {
+        menuGroupDao.save(new MenuGroup("햄버거"));
+
         List<MenuGroup> menuGroups = menuGroupService.list();
 
-        assertThat(menuGroups).hasSize(4);
+        assertThat(menuGroups).hasSizeGreaterThanOrEqualTo(1);
     }
 }
