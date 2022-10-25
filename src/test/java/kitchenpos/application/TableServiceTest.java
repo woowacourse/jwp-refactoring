@@ -110,7 +110,7 @@ class TableServiceTest {
         tableService.changeEmpty(1L, orderTable);
 
         // then
-        assertThat(foundOrderTable.isEmpty()).isTrue();
+        assertThat(foundOrderTable.isEmptyOrderTable()).isTrue();
     }
 
     @Test

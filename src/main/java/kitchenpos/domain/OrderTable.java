@@ -44,7 +44,7 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public boolean isEmpty() {
+    public boolean isEmptyOrderTable() {
         return empty;
     }
 

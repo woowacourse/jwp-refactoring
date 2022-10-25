@@ -62,7 +62,7 @@ class JdbcTemplateOrderTableDaoTest {
         Assertions.assertAll(
                 () -> assertThat(updatedOrderTable.getId()).isEqualTo(savedOrderTable.getId()),
                 () -> assertThat(updatedOrderTable.getNumberOfGuests()).isEqualTo(5),
-                () -> assertThat(updatedOrderTable.isEmpty()).isEqualTo(false)
+                () -> assertThat(updatedOrderTable.isEmptyOrderTable()).isEqualTo(false)
         );
     }
 

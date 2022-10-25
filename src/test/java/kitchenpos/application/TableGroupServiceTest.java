@@ -177,7 +177,7 @@ class TableGroupServiceTest {
         // then
         Assertions.assertAll(
                 () -> assertThat(orderTable1.getTableGroupId()).isNull(),
-                () -> assertThat(orderTable1.isEmpty()).isFalse()
+                () -> assertThat(orderTable1.isEmptyOrderTable()).isFalse()
         );
     }
 }

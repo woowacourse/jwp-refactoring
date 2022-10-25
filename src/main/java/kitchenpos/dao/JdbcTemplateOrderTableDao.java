@@ -88,7 +88,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("tableGroupId", entity.getTableGroupId())
                 .addValue("numberOfGuests", entity.getNumberOfGuests())
-                .addValue("empty", entity.isEmpty())
+                .addValue("empty", entity.isEmptyOrderTable())
                 .addValue("id", entity.getId());
         jdbcTemplate.update(sql, parameters);
     }
