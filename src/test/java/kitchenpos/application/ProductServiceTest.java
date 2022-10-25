@@ -79,7 +79,7 @@ class ProductServiceTest {
         // then
         assertThat(products)
                 .hasSize(6)
-                .extracting("name", "price")
+                .extracting(Product::getName, Product::getPrice)
                 .containsExactlyInAnyOrder(
                         tuple("후라이드", BigDecimal.valueOf(16_000L)),
                         tuple("양념치킨", BigDecimal.valueOf(16_000L)),

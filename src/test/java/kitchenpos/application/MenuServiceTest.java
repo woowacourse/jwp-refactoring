@@ -135,7 +135,7 @@ class MenuServiceTest {
         // then
         assertThat(menus)
                 .hasSize(6)
-                .extracting("name", "price", "menuGroupId")
+                .extracting(Menu::getName, Menu::getPrice, Menu::getMenuGroupId)
                 .containsExactlyInAnyOrder(
                         tuple("후라이드치킨", BigDecimal.valueOf(16000), 2L),
                         tuple("양념치킨", BigDecimal.valueOf(16000), 2L),

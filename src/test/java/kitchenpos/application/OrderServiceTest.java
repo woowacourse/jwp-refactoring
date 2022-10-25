@@ -189,7 +189,7 @@ class OrderServiceTest {
         // then
         assertThat(orders)
                 .hasSize(2)
-                .extracting("id", "orderTableId", "orderStatus")
+                .extracting(Order::getId, Order::getOrderTableId, Order::getOrderStatus)
                 .containsExactlyInAnyOrder(
                         tuple(createdOrder1.getId(), createdOrder1.getOrderTableId(), createdOrder1.getOrderStatus()),
                         tuple(createdOrder2.getId(), createdOrder2.getOrderTableId(), createdOrder2.getOrderStatus())

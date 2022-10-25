@@ -52,7 +52,7 @@ class MenuGroupServiceTest {
         // then
         assertThat(menuGroups)
                 .hasSize(4)
-                .extracting("name")
+                .extracting(MenuGroup::getName)
                 .containsExactlyInAnyOrder(
                         "두마리메뉴", "한마리메뉴", "순살파닭두마리메뉴", "신메뉴"
                 );

@@ -76,7 +76,7 @@ class TableServiceTest {
         // then
         assertThat(orderTables)
                 .hasSize(8)
-                .extracting("numberOfGuests", "empty")
+                .extracting(OrderTable::getNumberOfGuests, OrderTable::isEmpty)
                 .containsExactlyInAnyOrder(
                         tuple(0, true),
                         tuple(0, true),

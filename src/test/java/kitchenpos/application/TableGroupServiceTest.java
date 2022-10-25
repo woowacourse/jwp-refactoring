@@ -133,7 +133,7 @@ class TableGroupServiceTest {
         final List<OrderTable> results = tableService.list();
         assertThat(results)
                 .hasSize(8)
-                .extracting("tableGroupId")
+                .extracting(OrderTable::getTableGroupId)
                 .containsExactly(null, null, null, null, null, null, null, null);
     }
 
