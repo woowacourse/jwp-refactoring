@@ -1,14 +1,14 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.ProductFixture.상품_생성;
+import static kitchenpos.fixture.ProductFixtures.상품_목록_조회;
+import static kitchenpos.fixture.ProductFixtures.상품_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
+import java.util.List;
 import kitchenpos.application.support.IntegrationTest;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -23,16 +23,13 @@ class ProductServiceTest {
     @Autowired
     private ProductService sut;
 
-    @Autowired
-    private ProductDao productDao;
-
     @Nested
     @DisplayName("상품 등록")
     class CreateTest {
 
         @DisplayName("정상적인 경우 상품을 등록할 수 있다.")
         @ParameterizedTest(name = "[{index}] {displayName} price = {0}")
-        @ValueSource(longs = {0, 1_000_000_000})
+        @ValueSource(longs = {0, 1_000})
         void createProduct(final Long price) {
             final Product product = new Product();
             product.setName("짱구");
@@ -43,7 +40,7 @@ class ProductServiceTest {
             assertAll(
                     () -> assertThat(actual.getId()).isNotNull(),
                     () -> assertThat(actual.getName()).isEqualTo(product.getName()),
-                    () -> assertThat(actual.getPrice()).isNotNull()
+                    () -> assertThat(actual.getPrice().longValue()).isEqualTo(price)
             );
         }
 
@@ -69,18 +66,12 @@ class ProductServiceTest {
     @DisplayName("상품 목록을 조회할 수 있다.")
     @Test
     void getProducts() {
-        final Product 짱구 = 상품_생성("짱구", 100);
-        final Product 짱아 = 상품_생성("짱아", 100);
-
-        productDao.save(짱구);
-        productDao.save(짱아);
+        final List<Product> products = 상품_목록_조회();
 
         assertThat(sut.list())
-                .hasSize(2)
-                .extracting("name", "price")
-                .containsExactly(
-                        tuple(짱구.getName(), 짱구.getPrice()),
-                        tuple(짱아.getName(), 짱아.getPrice())
-                );
+                .hasSize(6)
+                .extracting(product -> 상품_생성(product.getId(), product.getName(), product.getPrice().intValue()))
+                .usingRecursiveFieldByFieldElementComparator()
+                .isEqualTo(products);
     }
 }

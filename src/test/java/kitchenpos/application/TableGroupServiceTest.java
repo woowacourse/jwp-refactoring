@@ -1,13 +1,15 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixture.MenuFixture.메뉴_생성;
-import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹_생성;
+import static kitchenpos.fixture.MenuGroupFixtures.한마리메뉴_그룹;
 import static kitchenpos.fixture.MenuProductFixture.메뉴_상품_생성;
 import static kitchenpos.fixture.OrderFixture.주문_생성;
 import static kitchenpos.fixture.OrderLineItemFixture.주문_항목_생성;
-import static kitchenpos.fixture.OrderTableFixture.빈_테이블_생성;
-import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
-import static kitchenpos.fixture.ProductFixture.상품_생성;
+import static kitchenpos.fixture.OrderTableFixtures.빈_테이블1;
+import static kitchenpos.fixture.OrderTableFixtures.빈_테이블2;
+import static kitchenpos.fixture.OrderTableFixtures.주문_테이블9;
+import static kitchenpos.fixture.OrderTableFixtures.테이블_생성;
+import static kitchenpos.fixture.ProductFixtures.후라이드_상품;
 import static kitchenpos.fixture.TableGroupFixture.단체_지정_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -21,15 +23,11 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -43,16 +41,10 @@ public class TableGroupServiceTest {
     private TableGroupService sut;
 
     @Autowired
-    private OrderService orderService;
-
-    @Autowired
     private OrderDao orderDao;
 
     @Autowired
     private OrderTableDao orderTableDao;
-
-    @Autowired
-    private TableGroupDao tableGroupDao;
 
     @Autowired
     private ProductDao productDao;
@@ -70,12 +62,12 @@ public class TableGroupServiceTest {
         @DisplayName("정상적인 경우 단체로 지정할 수 있다.")
         @Test
         void groupTable() {
-            final OrderTable 빈_테이블_1번 = orderTableDao.save(빈_테이블_생성(5));
-            final OrderTable 빈_테이블_2번 = orderTableDao.save(빈_테이블_생성(5));
+            final OrderTable emptyTable1 = orderTableDao.save(테이블_생성(빈_테이블1.getNumberOfGuests(), 빈_테이블1.isEmpty()));
+            final OrderTable emptyTable2 = orderTableDao.save(테이블_생성(빈_테이블2.getNumberOfGuests(), 빈_테이블2.isEmpty()));
 
             final TableGroup tableGroup = new TableGroup();
             tableGroup.setCreatedDate(LocalDateTime.now());
-            tableGroup.setOrderTables(List.of(빈_테이블_1번, 빈_테이블_2번));
+            tableGroup.setOrderTables(List.of(emptyTable1, emptyTable2));
 
             final TableGroup actual = sut.create(tableGroup);
 
@@ -88,55 +80,55 @@ public class TableGroupServiceTest {
         @DisplayName("단체로 지정할 테이블이 비어있으면 단체로 지정할 수 없다.")
         @Test
         void groupTableWithOrderTable() {
-            final TableGroup 단체_지정 = 단체_지정_생성(List.of());
+            final TableGroup tableGroup = 단체_지정_생성(List.of());
 
-            assertThatThrownBy(() -> sut.create(단체_지정))
+            assertThatThrownBy(() -> sut.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("두 개 미만의 테이블은 단체로 지정할 수 없다.")
         @Test
         void groupTableLessThanTwo() {
-            final OrderTable 빈_테이블 = orderTableDao.save(빈_테이블_생성(5));
-            final TableGroup 단체_지정 = 단체_지정_생성(List.of(빈_테이블));
+            final OrderTable emptyTable = orderTableDao.save(테이블_생성(빈_테이블1.getNumberOfGuests(), 빈_테이블1.isEmpty()));
+            final TableGroup tableGroup = 단체_지정_생성(List.of(emptyTable));
 
-            assertThatThrownBy(() -> sut.create(단체_지정))
+            assertThatThrownBy(() -> sut.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("존재하지 않는 테이블이 존재하면 단체로 지정할 수 없다.")
         @Test
         void groupTableWithNotExistTable() {
-            final OrderTable 빈_테이블 = 빈_테이블_생성(5);
-            final TableGroup 단체_지정 = 단체_지정_생성(List.of(빈_테이블));
+            final Long 존재하지_않는_테이블_ID = -1L;
+            final OrderTable emptyTable = orderTableDao.save(테이블_생성(빈_테이블1.getNumberOfGuests(), 빈_테이블1.isEmpty()));
+            final OrderTable notExistentTable = 테이블_생성(존재하지_않는_테이블_ID, 0, true);
+            final TableGroup tableGroup = 단체_지정_생성(List.of(emptyTable, notExistentTable));
 
-            assertThatThrownBy(() -> sut.create(단체_지정))
+            assertThatThrownBy(() -> sut.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("빈 테이블이 아니면 단체로 지정할 수 없다.")
         @Test
         void groupTableWithNotEmptyTable() {
-            final OrderTable 주문_테이블_1번 = orderTableDao.save(주문_테이블_생성(5));
-            final OrderTable 주문_테이블_2번 = orderTableDao.save(주문_테이블_생성(5));
-            final TableGroup 단체_지정 = 단체_지정_생성(List.of(주문_테이블_1번, 주문_테이블_2번));
+            final OrderTable emptyTable = orderTableDao.save(테이블_생성(빈_테이블1.getNumberOfGuests(), 빈_테이블1.isEmpty()));
+            final OrderTable orderTable = orderTableDao.save(테이블_생성(주문_테이블9.getNumberOfGuests(), 주문_테이블9.isEmpty()));
+            final TableGroup tableGroup = 단체_지정_생성(List.of(emptyTable, orderTable));
 
-            assertThatThrownBy(() -> sut.create(단체_지정))
+            assertThatThrownBy(() -> sut.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("이미 단체로 지정된 테이블인 경우 단체로 지정할 수 없다.")
         @Test
         void groupAlreadyGroupingTable() {
-            final OrderTable 빈_테이블_1번 = orderTableDao.save(빈_테이블_생성(5));
-            final OrderTable 빈_테이블_2번 = orderTableDao.save(빈_테이블_생성(5));
-            sut.create(단체_지정_생성(List.of(빈_테이블_1번, 빈_테이블_2번)));
+            final OrderTable emptyTable1 = orderTableDao.save(테이블_생성(빈_테이블1.getNumberOfGuests(), 빈_테이블1.isEmpty()));
+            final OrderTable emptyTable2 = orderTableDao.save(테이블_생성(빈_테이블2.getNumberOfGuests(), 빈_테이블2.isEmpty()));
+            sut.create(단체_지정_생성(List.of(emptyTable1, emptyTable2)));
 
-            final OrderTable 단체_지정된_테이블 = orderTableDao.findById(빈_테이블_1번.getId()).get();
-            final OrderTable 빈_테이블_3번 = orderTableDao.save(빈_테이블_생성(5));
-            final TableGroup 단체_지정 = 단체_지정_생성(List.of(단체_지정된_테이블, 빈_테이블_3번));
+            final TableGroup tableGroup = 단체_지정_생성(List.of(emptyTable1, emptyTable2));
 
-            assertThatThrownBy(() -> sut.create(단체_지정))
+            assertThatThrownBy(() -> sut.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -148,33 +140,31 @@ public class TableGroupServiceTest {
         @DisplayName("정상적인 경우 단체 지정을 해제할 수 있다.")
         @Test
         void clearGroupTable() {
-            final OrderTable 빈_테이블_1번 = orderTableDao.save(빈_테이블_생성(5));
-            final OrderTable 빈_테이블_2번 = orderTableDao.save(빈_테이블_생성(5));
-            final TableGroup 단체_지정 = sut.create(단체_지정_생성(List.of(빈_테이블_1번, 빈_테이블_2번)));
+            final OrderTable emptyTable1 = orderTableDao.save(테이블_생성(빈_테이블1.getNumberOfGuests(), 빈_테이블1.isEmpty()));
+            final OrderTable emptyTable2 = orderTableDao.save(테이블_생성(빈_테이블2.getNumberOfGuests(), 빈_테이블2.isEmpty()));
+            final TableGroup tableGroup = sut.create(단체_지정_생성(List.of(emptyTable1, emptyTable2)));
 
-            sut.ungroup(단체_지정.getId());
+            sut.ungroup(tableGroup.getId());
 
             assertAll(
-                    () -> assertThat(orderTableDao.findById(빈_테이블_1번.getId()).get().getTableGroupId()).isNull(),
-                    () -> assertThat(orderTableDao.findById(빈_테이블_2번.getId()).get().getTableGroupId()).isNull()
+                    () -> assertThat(orderTableDao.findById(emptyTable1.getId()).get().getTableGroupId()).isNull(),
+                    () -> assertThat(orderTableDao.findById(emptyTable2.getId()).get().getTableGroupId()).isNull()
             );
         }
 
         @DisplayName("계산 완료되지 않은 테이블이 존재하는 경우 단체 지정을 해제할 수 없다.")
         @Test
         void clearGroupTableWithNotCompletionTable() {
-            final OrderTable 빈_테이블_1번 = orderTableDao.save(빈_테이블_생성(5));
-            final OrderTable 빈_테이블_2번 = orderTableDao.save(빈_테이블_생성(5));
-            final TableGroup 단체_지정 = sut.create(단체_지정_생성(List.of(빈_테이블_1번, 빈_테이블_2번)));
+            final OrderTable emptyTable1 = orderTableDao.save(테이블_생성(빈_테이블1.getNumberOfGuests(), 빈_테이블1.isEmpty()));
+            final OrderTable emptyTable2 = orderTableDao.save(테이블_생성(빈_테이블2.getNumberOfGuests(), 빈_테이블2.isEmpty()));
+            final TableGroup tableGroup = sut.create(단체_지정_생성(List.of(emptyTable1, emptyTable2)));
 
-            final Product 짱구 = productDao.save(상품_생성("짱구", 100));
-            final MenuProduct 짱구_메뉴_상품 = 메뉴_상품_생성(짱구.getId(), 5L);
-            final MenuGroup 떡잎_유치원 = menuGroupDao.save(메뉴_그룹_생성("떡잎 유치원"));
-            final Menu 해바라기반 = menuDao.save(메뉴_생성("해바라기반", 500, 떡잎_유치원.getId(), List.of(짱구_메뉴_상품)));
-            final OrderLineItem 주문_항목 = 주문_항목_생성(해바라기반.getId(), 1);
-            final Order 주문 = orderDao.save(주문_생성(빈_테이블_1번.getId(), OrderStatus.COOKING.name(), List.of(주문_항목)));
+            final MenuProduct menuProduct = 메뉴_상품_생성(후라이드_상품.getId(), 5L);
+            final Menu menu = menuDao.save(메뉴_생성("한마리메뉴", 500, 한마리메뉴_그룹.getId(), List.of(menuProduct)));
+            final OrderLineItem orderLineItem = 주문_항목_생성(menu.getId(), 1);
+            orderDao.save(주문_생성(emptyTable1.getId(), OrderStatus.COOKING.name(), List.of(orderLineItem)));
 
-            assertThatThrownBy(() -> sut.ungroup(단체_지정.getId()))
+            assertThatThrownBy(() -> sut.ungroup(tableGroup.getId()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

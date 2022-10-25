@@ -1,14 +1,15 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.OrderTableFixture.빈_테이블_생성;
-import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
+import static kitchenpos.fixture.OrderTableFixtures.빈_테이블1;
+import static kitchenpos.fixture.OrderTableFixtures.주문_테이블9;
+import static kitchenpos.fixture.OrderTableFixtures.테이블_목록_조회;
+import static kitchenpos.fixture.OrderTableFixtures.테이블_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
 import kitchenpos.application.support.IntegrationTest;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
@@ -25,10 +26,7 @@ public class TableServiceTest {
     private TableService sut;
 
     @Autowired
-    private OrderDao orderDao;
-
-    @Autowired
-    OrderTableDao orderTableDao;
+    private OrderTableDao orderTableDao;
 
     @DisplayName("테이블을 등록할 수 있다.")
     @ParameterizedTest
@@ -51,23 +49,12 @@ public class TableServiceTest {
     @DisplayName("테이블 목록을 조회할 수 있다.")
     @Test
     void getTables() {
-        final OrderTable 주문_테이블_1번 = 빈_테이블_생성(5);
-        orderTableDao.save(주문_테이블_1번);
-
-        final OrderTable 주문_테이블_2번 = 주문_테이블_생성(5);
-        orderTableDao.save(주문_테이블_2번);
-
-        final OrderTable 주문_테이블_3번 = 주문_테이블_생성(6);
-        orderTableDao.save(주문_테이블_3번);
+        final List<OrderTable> orderTables = 테이블_목록_조회();
 
         assertThat(sut.list())
-                .hasSize(3)
-                .extracting("numberOfGuests", "empty")
-                .containsExactly(
-                        tuple(주문_테이블_1번.getNumberOfGuests(), 주문_테이블_1번.isEmpty()),
-                        tuple(주문_테이블_2번.getNumberOfGuests(), 주문_테이블_2번.isEmpty()),
-                        tuple(주문_테이블_3번.getNumberOfGuests(), 주문_테이블_3번.isEmpty())
-                );
+                .hasSize(8)
+                .usingRecursiveFieldByFieldElementComparator()
+                .isEqualTo(orderTables);
     }
 
     @Nested
@@ -77,9 +64,10 @@ public class TableServiceTest {
         @DisplayName("정상적인 경우 빈 테이블로 변경할 수 있다.")
         @Test
         void changeEmptyTable() {
-            final OrderTable 주문_테이블 = orderTableDao.save(주문_테이블_생성(5));
+            final OrderTable table = orderTableDao.save(테이블_생성(주문_테이블9.getNumberOfGuests(), 주문_테이블9.isEmpty()));
 
-            final OrderTable actual = sut.changeEmpty(주문_테이블.getId(), 빈_테이블_생성(주문_테이블.getNumberOfGuests()));
+            final OrderTable actual =
+                    sut.changeEmpty(table.getId(), 테이블_생성(table.getNumberOfGuests(), true));
 
             assertThat(actual.isEmpty()).isTrue();
         }
@@ -87,9 +75,9 @@ public class TableServiceTest {
         @DisplayName("주문 테이블이 존재하지 않으면 변경할 수 없다.")
         @Test
         void changeNotExistTableAsEmptyTable() {
-            final Long 존재하지_않는_주문_테이블_ID = -1L;
+            final Long 존재하지_않는_테이블_ID = -1L;
 
-            assertThatThrownBy(() -> sut.changeEmpty(존재하지_않는_주문_테이블_ID, 빈_테이블_생성(5)))
+            assertThatThrownBy(() -> sut.changeEmpty(존재하지_않는_테이블_ID, 테이블_생성(0, true)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -101,9 +89,10 @@ public class TableServiceTest {
         @DisplayName("정상적인 경우 손님 수를 변경할 수 있다.")
         @Test
         void changeNumberOfGuests() {
-            final OrderTable 주문_테이블 = orderTableDao.save(주문_테이블_생성(5));
+            final OrderTable table = orderTableDao.save(테이블_생성(주문_테이블9.getNumberOfGuests(), 주문_테이블9.isEmpty()));
 
-            final OrderTable actual = sut.changeNumberOfGuests(주문_테이블.getId(), 주문_테이블_생성(10));
+            final OrderTable actual =
+                    sut.changeNumberOfGuests(table.getId(), 테이블_생성(10, table.isEmpty()));
 
             assertThat(actual.getNumberOfGuests()).isEqualTo(10);
         }
@@ -111,9 +100,9 @@ public class TableServiceTest {
         @DisplayName("손님 수를 0명 미만으로 변경할 수 없다.")
         @Test
         void changeNumberOfGuestsLessThanZero() {
-            final OrderTable 주문_테이블 = orderTableDao.save(주문_테이블_생성(5));
+            final OrderTable table = orderTableDao.save(테이블_생성(주문_테이블9.getNumberOfGuests(), 주문_테이블9.isEmpty()));
 
-            assertThatThrownBy(() -> sut.changeNumberOfGuests(주문_테이블.getId(), 주문_테이블_생성(-1)))
+            assertThatThrownBy(() -> sut.changeNumberOfGuests(table.getId(), 테이블_생성(-1, table.isEmpty())))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -122,17 +111,18 @@ public class TableServiceTest {
         void changeNumberOfGuestsWithNotExistTable() {
             final Long 존재하지_않는_테이블_ID = -1L;
 
-            assertThatThrownBy(() -> sut.changeNumberOfGuests(존재하지_않는_테이블_ID, 주문_테이블_생성(10)))
+            assertThatThrownBy(() -> sut.changeNumberOfGuests(존재하지_않는_테이블_ID, 테이블_생성(-1, false)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("빈 테이블이면 변경할 수 없다.")
         @Test
         void changeNumberOfGuestsWithEmptyTable() {
-            final OrderTable 빈_테이블 = orderTableDao.save(빈_테이블_생성(5));
+            final OrderTable table = orderTableDao.save(테이블_생성(빈_테이블1.getNumberOfGuests(), 빈_테이블1.isEmpty()));
 
-            assertThatThrownBy(() -> sut.changeNumberOfGuests(빈_테이블.getId(), 주문_테이블_생성(10)))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(
+                    () -> sut.changeNumberOfGuests(table.getId(), 테이블_생성(10, table.isEmpty()))
+            ).isInstanceOf(IllegalArgumentException.class);
         }
     }
 }
