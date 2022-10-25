@@ -11,12 +11,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
+import kitchenpos.application.dto.request.MenuCommand;
+import kitchenpos.application.dto.request.MenuProductCommand;
+import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.support.cleaner.ApplicationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +37,7 @@ class MenuServiceTest {
     private MenuGroupDao menuGroupDao;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Nested
     @DisplayName("Menu를 생성할 때 ")
@@ -44,9 +47,10 @@ class MenuServiceTest {
         @DisplayName("가격이 음수일 경우 실패한다.")
         void priceNegativeFailed() {
             MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(MENU_GROUP_NAME1));
-
+            MenuCommand menuCommand = new MenuCommand(MENU1_NAME, BigDecimal.valueOf(-1000), menuGroup.getId(),
+                    Collections.emptyList());
             assertThatThrownBy(
-                    () -> menuService.create(new Menu(MENU1_NAME, BigDecimal.valueOf(-1000), menuGroup.getId())))
+                    () -> menuService.create(menuCommand))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("가격은 0보다 커야합니다.");
         }
@@ -54,7 +58,8 @@ class MenuServiceTest {
         @Test
         @DisplayName("MenuGroup이 존재하지 않을 경우 실패한다.")
         void menuGroupNotExistFailed() {
-            assertThatThrownBy(() -> menuService.create(new Menu(MENU1_NAME, MENU1_PRICE, 0L)))
+            MenuCommand menuCommand = new MenuCommand(MENU1_NAME, MENU1_PRICE, 0L, Collections.emptyList());
+            assertThatThrownBy(() -> menuService.create(menuCommand))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("메뉴 그룹이 존재하지 않습니다.");
         }
@@ -63,10 +68,10 @@ class MenuServiceTest {
         @DisplayName("Product가 존재하지 않을 경우 실패한다.")
         void productNotFoundFailed() {
             MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(MENU_GROUP_NAME1));
-            Menu menu = new Menu(MENU1_NAME, MENU1_PRICE, menuGroup.getId());
-            menu.addMenuProducts(List.of(new MenuProduct(menu.getId(), 0L, 2)));
+            MenuCommand menuCommand = new MenuCommand(MENU1_NAME, MENU1_PRICE, menuGroup.getId(),
+                    List.of(new MenuProductCommand(0L, 1)));
 
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(menuCommand))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("제품이 존재하지 않습니다.");
         }
@@ -75,11 +80,11 @@ class MenuServiceTest {
         @DisplayName("Product가격의 합보다 메뉴 가격이 높을 경우 실패한다.")
         void priceIsOverProductPriceSumFailed() {
             MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(MENU_GROUP_NAME1));
-            Product product = productDao.save(new Product(PRODUCT1_NAME, PRODUCT1_PRICE));
-            Menu menu = new Menu(MENU2_NAME, MENU2_PRICE, menuGroup.getId());
-            menu.addMenuProducts(List.of(new MenuProduct(menu.getId(), product.getId(), 1)));
+            Product product = productRepository.save(new Product(PRODUCT1_NAME, PRODUCT1_PRICE));
+            MenuCommand menuCommand = new MenuCommand(MENU2_NAME, MENU2_PRICE, menuGroup.getId(),
+                    List.of(new MenuProductCommand(product.getId(), 1)));
 
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(menuCommand))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("잘못된 가격입니다.");
         }
@@ -88,14 +93,12 @@ class MenuServiceTest {
         @DisplayName("메뉴를 생성한다.")
         void createMenu() {
             MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(MENU_GROUP_NAME1));
-            Product product = productDao.save(new Product(PRODUCT1_NAME, PRODUCT1_PRICE));
-            Menu menu = new Menu(MENU1_NAME, MENU1_PRICE, menuGroup.getId());
-            menu.addMenuProducts(List.of(new MenuProduct(menu.getId(), product.getId(), 1)));
+            Product product = productRepository.save(new Product(PRODUCT1_NAME, PRODUCT1_PRICE));
+            MenuCommand menuCommand = new MenuCommand(MENU1_NAME, MENU1_PRICE, menuGroup.getId(),
+                    List.of(new MenuProductCommand(product.getId(), 1)));
 
-            Menu savedMenu = menuService.create(menu);
-            assertThat(savedMenu).usingRecursiveComparison()
-                    .comparingOnlyFields("name", "menuGroupId")
-                    .isEqualTo(menu);
+            MenuResponse menuResponse = menuService.create(menuCommand);
+            assertThat(menuResponse.id()).isNotNull();
         }
     }
 
@@ -103,13 +106,12 @@ class MenuServiceTest {
     @DisplayName("모든 메뉴를 조회한다.")
     void list() {
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(MENU_GROUP_NAME1));
-        Product product = productDao.save(new Product(PRODUCT1_NAME, PRODUCT1_PRICE));
-        Menu menu = new Menu(MENU1_NAME, MENU1_PRICE, menuGroup.getId());
-        menu.addMenuProducts(List.of(new MenuProduct(menu.getId(), product.getId(), 1)));
+        Product product = productRepository.save(new Product(PRODUCT1_NAME, PRODUCT1_PRICE));
+        MenuCommand menuCommand = new MenuCommand(MENU1_NAME, MENU1_PRICE, menuGroup.getId(),
+                List.of(new MenuProductCommand(product.getId(), 1)));
 
-        Menu savedMenu = menuService.create(menu);
+        menuService.create(menuCommand);
         List<Menu> menus = menuService.list();
-
-        assertThat(menus).containsExactly(savedMenu);
+        assertThat(menus).hasSize(1);
     }
 }

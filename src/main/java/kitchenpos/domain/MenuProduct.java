@@ -1,11 +1,33 @@
 package kitchenpos.domain;
 
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Entity
+@Table(name = "menu_product")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class MenuProduct {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
+
+    @Column(name = "menu_id", length = 20, nullable = false)
     private Long menuId;
+
+    @Column(name = "product_id", length = 20, nullable = false)
     private Long productId;
+
+    @Column(length = 20, nullable = false)
     private long quantity;
 
     public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity) {
@@ -19,39 +41,8 @@ public class MenuProduct {
         this(null, menuId, productId, quantity);
     }
 
-    private MenuProduct() {
-    }
-
-    public Long getSeq() {
-        return seq;
-    }
-
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
-
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
+    public void belongsTo(final Long menuId) {
         this.menuId = menuId;
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(final Long productId) {
-        this.productId = productId;
-    }
-
-    public long getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 
     @Override
@@ -62,11 +53,21 @@ public class MenuProduct {
         if (!(o instanceof MenuProduct menuProduct)) {
             return false;
         }
-        return Objects.equals(seq, menuProduct.seq);
+        return Objects.equals(seq, menuProduct.getSeq());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(seq);
+    }
+
+    @Override
+    public String toString() {
+        return "MenuProduct{" +
+                "seq=" + seq +
+                ", menuId=" + menuId +
+                ", productId=" + productId +
+                ", quantity=" + quantity +
+                '}';
     }
 }
