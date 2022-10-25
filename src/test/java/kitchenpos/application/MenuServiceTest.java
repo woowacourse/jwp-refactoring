@@ -130,25 +130,18 @@ class MenuServiceTest {
     void list() {
         // when
         final List<Menu> menus = sut.list();
-        changeBigDecimalToLong(menus);
 
         // then
         assertThat(menus)
                 .hasSize(6)
-                .extracting(Menu::getName, Menu::getPrice, Menu::getMenuGroupId)
+                .extracting(Menu::getName, menu -> menu.getPrice().longValue(), Menu::getMenuGroupId)
                 .containsExactlyInAnyOrder(
-                        tuple("후라이드치킨", BigDecimal.valueOf(16000), 2L),
-                        tuple("양념치킨", BigDecimal.valueOf(16000), 2L),
-                        tuple("반반치킨", BigDecimal.valueOf(16000), 2L),
-                        tuple("통구이", BigDecimal.valueOf(16000), 2L),
-                        tuple("간장치킨", BigDecimal.valueOf(17000), 2L),
-                        tuple("순살치킨", BigDecimal.valueOf(17000), 2L)
+                        tuple("후라이드치킨", 16000L, 2L),
+                        tuple("양념치킨", 16000L, 2L),
+                        tuple("반반치킨", 16_000L, 2L),
+                        tuple("통구이", 16_000L, 2L),
+                        tuple("간장치킨", 17_000L, 2L),
+                        tuple("순살치킨", 17_000L, 2L)
                 );
-    }
-
-    private static void changeBigDecimalToLong(final List<Menu> menus) {
-        for (Menu menu : menus) {
-            menu.setPrice(BigDecimal.valueOf(menu.getPrice().longValue()));
-        }
     }
 }

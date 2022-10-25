@@ -74,25 +74,18 @@ class ProductServiceTest {
     void list() {
         // when
         final List<Product> products = sut.list();
-        changeBigDecimalToLong(products);
 
         // then
         assertThat(products)
                 .hasSize(6)
-                .extracting(Product::getName, Product::getPrice)
+                .extracting(Product::getName, product -> product.getPrice().longValue())
                 .containsExactlyInAnyOrder(
-                        tuple("후라이드", BigDecimal.valueOf(16_000L)),
-                        tuple("양념치킨", BigDecimal.valueOf(16_000L)),
-                        tuple("반반치킨", BigDecimal.valueOf(16_000L)),
-                        tuple("통구이", BigDecimal.valueOf(16_000L)),
-                        tuple("간장치킨", BigDecimal.valueOf(17_000L)),
-                        tuple("순살치킨", BigDecimal.valueOf(17_000L))
+                        tuple("후라이드", 16_000L),
+                        tuple("양념치킨", 16_000L),
+                        tuple("반반치킨", 16_000L),
+                        tuple("통구이", 16_000L),
+                        tuple("간장치킨", 17_000L),
+                        tuple("순살치킨", 17_000L)
                 );
-    }
-
-    private static void changeBigDecimalToLong(final List<Product> products) {
-        for (Product product : products) {
-            product.setPrice(BigDecimal.valueOf(product.getPrice().longValue()));
-        }
     }
 }
