@@ -1,5 +1,8 @@
 package kitchenpos.domain;
 
+/**
+ * 메뉴 묶음, 분류
+ */
 public class MenuGroup {
     private Long id;
     private String name;

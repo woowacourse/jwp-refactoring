@@ -3,6 +3,9 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * 통합 계산을 위해 개별 주문 테이블을 그룹화하는 기능
+ */
 public class TableGroup {
     private Long id;
     private LocalDateTime createdDate;

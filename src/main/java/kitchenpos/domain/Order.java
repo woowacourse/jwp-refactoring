@@ -3,6 +3,9 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * 매장에서 발생하는 주문
+ */
 public class Order {
     private Long id;
     private Long orderTableId;
