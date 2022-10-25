@@ -11,34 +11,35 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.fake.FakeOrderDao;
+import kitchenpos.dao.fake.FakeOrderTableDao;
+import kitchenpos.dao.fake.FakeTableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 @DisplayName("TableGroup 서비스 테스트")
-@SpringBootTest
-@Transactional
 class TableGroupServiceTest {
 
-    @Autowired
+    private OrderDao orderDao;
+    private OrderTableDao orderTableDao;
+    private TableGroupDao tableGroupDao;
+
     private TableGroupService tableGroupService;
 
-    @Autowired
-    private OrderTableDao orderTableDao;
+    @BeforeEach
+    void setUp() {
+        orderDao = new FakeOrderDao();
+        orderTableDao = new FakeOrderTableDao();
+        tableGroupDao = new FakeTableGroupDao();
 
-    @Autowired
-    private OrderDao orderDao;
-
-    @Autowired
-    private TableGroupDao tableGroupDao;
+        tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
+    }
 
     @DisplayName("테이블 그룹을 등록한다")
     @Test
@@ -123,16 +124,16 @@ class TableGroupServiceTest {
         // table group
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setCreatedDate(LocalDateTime.now());
+        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         final OrderTable orderTable1 = new OrderTable();
         final OrderTable orderTable2 = new OrderTable();
         orderTable1.setEmpty(true);
         orderTable2.setEmpty(true);
-        final OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-        final OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
-        tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
-
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        orderTable1.setTableGroupId(savedTableGroup.getId());
+        orderTable2.setTableGroupId(savedTableGroup.getId());
+        orderTableDao.save(orderTable1);
+        orderTableDao.save(orderTable2);
 
         // order table
         final OrderTable orderTable = new OrderTable();
@@ -155,16 +156,16 @@ class TableGroupServiceTest {
         // table group
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setCreatedDate(LocalDateTime.now());
+        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         final OrderTable orderTable1 = new OrderTable();
         final OrderTable orderTable2 = new OrderTable();
         orderTable1.setEmpty(true);
         orderTable2.setEmpty(true);
-        final OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-        final OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
-        tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
-
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        orderTable1.setTableGroupId(savedTableGroup.getId());
+        orderTable2.setTableGroupId(savedTableGroup.getId());
+        orderTableDao.save(orderTable1);
+        orderTableDao.save(orderTable2);
 
         // order table
         final OrderTable orderTable = new OrderTable();

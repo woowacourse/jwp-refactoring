@@ -4,21 +4,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.dao.fake.FakeMenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 
 @DisplayName("MenuGroup 서비스 테스트")
-@SpringBootTest
-@Transactional
 class MenuGroupServiceTest {
 
-    @Autowired
     private MenuGroupService menuGroupService;
+
+    @BeforeEach
+    void setUp() {
+        menuGroupService = new MenuGroupService(new FakeMenuGroupDao());
+    }
 
     @DisplayName("메뉴 그룹을 등록한다")
     @Test
@@ -36,6 +37,6 @@ class MenuGroupServiceTest {
     void list() {
         final List<MenuGroup> menuGroups = menuGroupService.list();
 
-        assertThat(menuGroups).hasSize(4);
+        assertThat(menuGroups).hasSize(0);
     }
 }

@@ -9,39 +9,36 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.fake.FakeOrderDao;
+import kitchenpos.dao.fake.FakeOrderTableDao;
+import kitchenpos.dao.fake.FakeTableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 @DisplayName("Table 서비스 테스트")
-@SpringBootTest
-@Transactional
 class TableServiceTest {
 
-    @Autowired
     private TableService tableService;
 
-    @Autowired
-    private OrderTableDao orderTableDao;
-
-    @Autowired
-    private TableGroupDao tableGroupDao;
-
-    @Autowired
     private OrderDao orderDao;
+    private OrderTableDao orderTableDao;
 
     private TableGroup savedTableGroup;
 
     @BeforeEach
     void setUp() {
+        final TableGroupDao tableGroupDao = new FakeTableGroupDao();
+        orderDao = new FakeOrderDao();
+        orderTableDao = new FakeOrderTableDao();
+
+        tableService = new TableService(orderDao, orderTableDao);
+
         // table group
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setCreatedDate(LocalDateTime.now());
@@ -63,7 +60,7 @@ class TableServiceTest {
     void list() {
         final List<OrderTable> orderTables = tableService.list();
 
-        assertThat(orderTables).hasSize(8);
+        assertThat(orderTables).hasSize(0);
     }
 
     @DisplayName("테이블을 비운다")

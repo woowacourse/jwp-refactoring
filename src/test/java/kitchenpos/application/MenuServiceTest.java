@@ -9,42 +9,41 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.fake.FakeMenuDao;
+import kitchenpos.dao.fake.FakeMenuGroupDao;
+import kitchenpos.dao.fake.FakeMenuProductDao;
+import kitchenpos.dao.fake.FakeProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 
 @DisplayName("Menu 서비스 테스트")
-@SpringBootTest
-@Transactional
 class MenuServiceTest {
 
-    @Autowired
     private MenuService menuService;
-
-    @Autowired
-    private MenuGroupService menuGroupService;
-
-    @Autowired
-    private ProductService productService;
 
     private MenuGroup savedMenuGroup;
     private Product savedProduct;
 
     @BeforeEach
     void setUp() {
+        final MenuGroupDao menuGroupDao = new FakeMenuGroupDao();
+        final ProductDao productDao = new FakeProductDao();
+
+        menuService = new MenuService(new FakeMenuDao(), menuGroupDao, new FakeMenuProductDao(), productDao);
+
         final MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("메뉴 그룹");
-        savedMenuGroup = menuGroupService.create(menuGroup);
+        savedMenuGroup = menuGroupDao.save(menuGroup);
 
         final Product product = new Product();
         product.setName("상품");
         product.setPrice(new BigDecimal(1000));
-        savedProduct = productService.create(product);
+        savedProduct = productDao.save(product);
     }
 
     @DisplayName("메뉴를 등록한다")
@@ -138,6 +137,6 @@ class MenuServiceTest {
     void list() {
         final List<Menu> menus = menuService.list();
 
-        assertThat(menus).hasSize(6);
+        assertThat(menus).hasSize(0);
     }
 }

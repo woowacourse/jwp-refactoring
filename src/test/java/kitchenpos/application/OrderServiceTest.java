@@ -11,15 +11,18 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.fake.FakeMenuDao;
+import kitchenpos.dao.fake.FakeMenuGroupDao;
+import kitchenpos.dao.fake.FakeOrderDao;
+import kitchenpos.dao.fake.FakeOrderLineItemDao;
+import kitchenpos.dao.fake.FakeOrderTableDao;
+import kitchenpos.dao.fake.FakeProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -30,27 +33,12 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 
 @DisplayName("Order 서비스 테스트")
-@SpringBootTest
-@Transactional
 class OrderServiceTest {
 
-    @Autowired
     private OrderService orderService;
 
-    @Autowired
-    private MenuDao menuDao;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    private OrderTableDao orderTableDao;
-
-    @Autowired
     private OrderDao orderDao;
+    private OrderTableDao orderTableDao;
 
     private MenuGroup savedMenuGroup;
     private Product savedProduct;
@@ -59,6 +47,14 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
+        final MenuGroupDao menuGroupDao = new FakeMenuGroupDao();
+        final ProductDao productDao = new FakeProductDao();
+        final MenuDao menuDao = new FakeMenuDao();
+        orderDao = new FakeOrderDao();
+        orderTableDao = new FakeOrderTableDao();
+
+        orderService = new OrderService(menuDao, orderDao, new FakeOrderLineItemDao(), orderTableDao);
+
         // menu group
         final MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("메뉴 그룹");
@@ -119,6 +115,7 @@ class OrderServiceTest {
     void createOrderLineItemIsNotExist() {
         final Order order = new Order();
         final OrderLineItem notSavedOrderLineItem = new OrderLineItem();
+        notSavedOrderLineItem.setMenuId(savedMenu.getId());
         order.setOrderLineItems(List.of(notSavedOrderLineItem));
 
         assertThatThrownBy(() -> orderService.create(order))
