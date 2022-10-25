@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -22,13 +22,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 class TableGroupServiceTest {
 
     private TableGroupService tableGroupService;
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
     private OrderDao orderDao;
 
     @Autowired
-    public TableGroupServiceTest(TableGroupService tableGroupService, OrderTableDao orderTableDao, OrderDao orderDao) {
+    public TableGroupServiceTest(TableGroupService tableGroupService, OrderTableRepository orderTableRepository, OrderDao orderDao) {
         this.tableGroupService = tableGroupService;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
         this.orderDao = orderDao;
     }
 
@@ -93,7 +93,7 @@ class TableGroupServiceTest {
     @Test
     void createWithNotEmptyOrderTable() {
         // given
-        OrderTable emptyOrderTable = orderTableDao.save(new OrderTable(1L, null, 2, false));
+        OrderTable emptyOrderTable = orderTableRepository.save(new OrderTable(1L, null, 2, false));
         TableGroup tableGroup = new TableGroup(
                 LocalDateTime.now(),
                 List.of(emptyOrderTable, new OrderTable(2L, null, 0, true))

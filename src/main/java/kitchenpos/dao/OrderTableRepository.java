@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.repository.Repository;
 
-public interface OrderTableDao extends Repository<OrderTable, Long> {
+public interface OrderTableRepository extends Repository<OrderTable, Long> {
     OrderTable save(OrderTable entity);
 
     Optional<OrderTable> findById(Long id);

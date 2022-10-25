@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.dto.OrderTableCreateRequest;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -22,19 +22,19 @@ class TableServiceTest {
 
     private TableService tableService;
     private OrderDao orderDao;
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
     private TableGroupDao tableGroupDao;
 
     @Autowired
     public TableServiceTest(
             TableService tableService,
             OrderDao orderDao,
-            OrderTableDao orderTableDao,
+            OrderTableRepository orderTableRepository,
             TableGroupDao tableGroupDao
     ) {
         this.tableService = tableService;
         this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
         this.tableGroupDao = tableGroupDao;
     }
 
@@ -73,7 +73,7 @@ class TableServiceTest {
     void changeEmptyWithTableGroupId() {
         // given
         TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
-        OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 3, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 3, false));
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))

@@ -13,15 +13,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RepositoryTest
-class OrderTableDaoTest {
+class OrderTableRepositoryTest {
 
     private TableGroupDao tableGroupDao;
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    public OrderTableDaoTest(TableGroupDao tableGroupDao, OrderTableDao orderTableDao) {
+    public OrderTableRepositoryTest(TableGroupDao tableGroupDao, OrderTableRepository orderTableRepository) {
         this.tableGroupDao = tableGroupDao;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
     }
 
     private Long tableGroupId;
@@ -36,7 +36,7 @@ class OrderTableDaoTest {
         // given
         OrderTable orderTable = new OrderTable(tableGroupId, 4, false);
         // when
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         // then
         assertThat(savedOrderTable.getId()).isNotNull();
     }
@@ -45,10 +45,10 @@ class OrderTableDaoTest {
     void findById() {
         // given
         OrderTable orderTable = new OrderTable(tableGroupId, 4, false);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         // when
-        Optional<OrderTable> foundOrderTable = orderTableDao.findById(savedOrderTable.getId());
+        Optional<OrderTable> foundOrderTable = orderTableRepository.findById(savedOrderTable.getId());
 
         // then
         assertThat(foundOrderTable).isNotNull();
@@ -57,11 +57,11 @@ class OrderTableDaoTest {
     @Test
     void findAll() {
         // given
-        orderTableDao.save(new OrderTable(tableGroupId, 4, false));
-        orderTableDao.save(new OrderTable(tableGroupId, 2, false));
+        orderTableRepository.save(new OrderTable(tableGroupId, 4, false));
+        orderTableRepository.save(new OrderTable(tableGroupId, 2, false));
 
         // when
-        List<OrderTable> orderTables = orderTableDao.findAll();
+        List<OrderTable> orderTables = orderTableRepository.findAll();
 
         // then
         int defaultSize = 8;
@@ -71,11 +71,11 @@ class OrderTableDaoTest {
     @Test
     void findAllByIdIn() {
         // given
-        OrderTable orderTableA = orderTableDao.save(new OrderTable(tableGroupId, 4, false));
-        OrderTable orderTableB = orderTableDao.save(new OrderTable(tableGroupId, 2, false));
+        OrderTable orderTableA = orderTableRepository.save(new OrderTable(tableGroupId, 4, false));
+        OrderTable orderTableB = orderTableRepository.save(new OrderTable(tableGroupId, 2, false));
 
         // when
-        List<OrderTable> orderTables = orderTableDao.findAllByIdIn(List.of(orderTableA.getId(), orderTableB.getId()));
+        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(List.of(orderTableA.getId(), orderTableB.getId()));
 
         // then
         assertThat(orderTables).hasSize(2);
@@ -84,11 +84,11 @@ class OrderTableDaoTest {
     @Test
     void findAllByTableGroupId() {
         // given
-        orderTableDao.save(new OrderTable(tableGroupId, 4, false));
-        orderTableDao.save(new OrderTable(tableGroupId, 2, false));
+        orderTableRepository.save(new OrderTable(tableGroupId, 4, false));
+        orderTableRepository.save(new OrderTable(tableGroupId, 2, false));
 
         // when
-        List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
+        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
 
         // then
         assertThat(orderTables).hasSize(2);

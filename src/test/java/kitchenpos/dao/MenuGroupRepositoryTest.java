@@ -10,13 +10,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RepositoryTest
-class MenuGroupDaoTest {
+class MenuGroupRepositoryTest {
 
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    public MenuGroupDaoTest(MenuGroupDao menuGroupDao) {
-        this.menuGroupDao = menuGroupDao;
+    public MenuGroupRepositoryTest(MenuGroupRepository menuGroupRepository) {
+        this.menuGroupRepository = menuGroupRepository;
     }
 
     @Test
@@ -25,7 +25,7 @@ class MenuGroupDaoTest {
         MenuGroup menuGroup = new MenuGroup("메뉴그룹");
 
         // when
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 
         // then
         assertThat(savedMenuGroup.getId()).isNotNull();
@@ -34,10 +34,10 @@ class MenuGroupDaoTest {
     @Test
     void findById() {
         // given
-        MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹"));
+        MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴그룹"));
 
         // when
-        Optional<MenuGroup> foundMenuGroup = menuGroupDao.findById(savedMenuGroup.getId());
+        Optional<MenuGroup> foundMenuGroup = menuGroupRepository.findById(savedMenuGroup.getId());
 
         // then
         assertThat(foundMenuGroup).isPresent();
@@ -46,11 +46,11 @@ class MenuGroupDaoTest {
     @Test
     void findAll() {
         // given
-        menuGroupDao.save(new MenuGroup("메뉴그룹A"));
-        menuGroupDao.save(new MenuGroup("메뉴그룹B"));
+        menuGroupRepository.save(new MenuGroup("메뉴그룹A"));
+        menuGroupRepository.save(new MenuGroup("메뉴그룹B"));
 
         // when
-        List<MenuGroup> menuGroups = menuGroupDao.findAll();
+        List<MenuGroup> menuGroups = menuGroupRepository.findAll();
 
         // then
         int defaultSize = 4;
@@ -60,10 +60,10 @@ class MenuGroupDaoTest {
     @Test
     void existsById() {
         // given
-        MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹"));
+        MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴그룹"));
 
         // when
-        boolean exists = menuGroupDao.existsById(savedMenuGroup.getId());
+        boolean exists = menuGroupRepository.existsById(savedMenuGroup.getId());
 
         // then
         assertThat(exists).isTrue();
@@ -75,7 +75,7 @@ class MenuGroupDaoTest {
         long invalidId = 999L;
 
         // when
-        boolean exists = menuGroupDao.existsById(invalidId);
+        boolean exists = menuGroupRepository.existsById(invalidId);
 
         // then
         assertThat(exists).isFalse();

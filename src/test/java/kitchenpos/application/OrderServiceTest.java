@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -22,19 +22,19 @@ class OrderServiceTest {
 
     private OrderService orderService;
     private TableGroupDao tableGroupDao;
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
     private OrderDao orderDao;
 
     @Autowired
     public OrderServiceTest(
             OrderService orderService,
             TableGroupDao tableGroupDao,
-            OrderTableDao orderTableDao,
+            OrderTableRepository orderTableRepository,
             OrderDao orderDao
     ) {
         this.orderService = orderService;
         this.tableGroupDao = tableGroupDao;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
         this.orderDao = orderDao;
     }
 
@@ -42,7 +42,7 @@ class OrderServiceTest {
     void create() {
         // given
         TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
-        OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 3, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 3, false));
         Order order = new Order(orderTable.getId(), null, LocalDateTime.now(), List.of(new OrderLineItem(null, 1L, 2)));
 
         // when
@@ -56,7 +56,7 @@ class OrderServiceTest {
     void createWithEmptyOrderLineItems() {
         // given
         TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
-        OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 3, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 3, false));
         Order order = new Order(orderTable.getId(), null, LocalDateTime.now(), List.of());
 
         // when & then
@@ -69,7 +69,7 @@ class OrderServiceTest {
         // given
         long invalidMenuId = 999L;
         TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
-        OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 3, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 3, false));
         Order order = new Order(orderTable.getId(), null, LocalDateTime.now(),
                 List.of(new OrderLineItem(null, invalidMenuId, 2)));
 
@@ -94,7 +94,7 @@ class OrderServiceTest {
     void createWithEmptyOrderTable() {
         // given
         TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
-        OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, true));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, true));
         Order order = new Order(orderTable.getId(), null, LocalDateTime.now(), List.of(new OrderLineItem(null, 1L, 2)));
 
         // when & then
@@ -114,7 +114,7 @@ class OrderServiceTest {
     void changeOrderStatus() {
         // given
         TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
-        OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 3, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 3, false));
         Order createdOrder = orderService.create(
                 new Order(orderTable.getId(), null, LocalDateTime.now(), List.of(new OrderLineItem(null, 1L, 2)))
         );
@@ -132,7 +132,7 @@ class OrderServiceTest {
     void changeOrderStatusWithInvalidOrder() {
         // given
         TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
-        OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 3, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 3, false));
         long invalidOrderId = 999L;
 
         // when
@@ -147,7 +147,7 @@ class OrderServiceTest {
         String orderStatus = OrderStatus.COMPLETION.name();
 
         TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
-        OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 3, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 3, false));
         Order createdOrder = orderDao.save(new Order(
                 orderTable.getId(),
                 orderStatus,
