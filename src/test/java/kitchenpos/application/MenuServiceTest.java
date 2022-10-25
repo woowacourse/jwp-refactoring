@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 class MenuServiceTest extends ServiceTest {
 
     @Nested
-    class 메뉴_등록_메소드는 {
+    class 메뉴_등록_메소드는 extends ServiceTest {
 
         @Test
         void 입력받은_메뉴를_저장한다() {
@@ -67,7 +67,7 @@ class MenuServiceTest extends ServiceTest {
             Menu newMenu = new Menu();
             newMenu.setName("메뉴");
             newMenu.setPrice(BigDecimal.valueOf(3000));
-            newMenu.setMenuGroupId(1000L);
+            newMenu.setMenuGroupId(0L);
             newMenu.setMenuProducts(List.of(menuProduct1, menuProduct2));
 
             // when & then
@@ -80,7 +80,7 @@ class MenuServiceTest extends ServiceTest {
             // given
             MenuProduct menuProduct1 = 메뉴_상품을_생성한다("상품 1", 1000, 1L);
             MenuProduct menuProduct2 = new MenuProduct();
-            menuProduct2.setProductId(1000L);
+            menuProduct2.setProductId(0L);
             menuProduct2.setQuantity(1L);
 
             MenuGroup menuGroup = 메뉴_그룹을_저장한다("메뉴 그룹");

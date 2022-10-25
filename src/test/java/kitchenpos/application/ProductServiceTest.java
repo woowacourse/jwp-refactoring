@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 class ProductServiceTest extends ServiceTest {
 
     @Nested
-    class 상품_등록_메소드는 {
+    class 상품_등록_메소드는 extends ServiceTest {
 
         @Test
         void 입력받은_상품을_저장한다() {

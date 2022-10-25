@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 class TableGroupServiceTest extends ServiceTest {
 
     @Nested
-    class 그룹_생성_메소드는 {
+    class 그룹_생성_메소드는 extends ServiceTest {
 
         @Test
         void 입력받은_테이블로_그룹을_저장한다() {
@@ -118,7 +118,7 @@ class TableGroupServiceTest extends ServiceTest {
     }
 
     @Nested
-    class 테이블_그룹_해제_메소드는 {
+    class 테이블_그룹_해제_메소드는 extends ServiceTest {
 
         @Test
         void 테이블_그룹을_해제한다() {

@@ -47,7 +47,7 @@ class TableServiceTest extends ServiceTest {
     }
 
     @Nested
-    class changeEmpty_메소드는 {
+    class changeEmpty_메소드는 extends ServiceTest {
 
         @ParameterizedTest
         @ValueSource(booleans = {true, false})
@@ -110,13 +110,13 @@ class TableServiceTest extends ServiceTest {
             emptyOrderTable.setEmpty(true);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(20L, emptyOrderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(0L, emptyOrderTable))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
     @Nested
-    class changeNumberOfGuests_메소드는 {
+    class changeNumberOfGuests_메소드는 extends ServiceTest {
 
         @Test
         void 테이블_손님_수를_변경한다() {
@@ -148,7 +148,7 @@ class TableServiceTest extends ServiceTest {
             orderTable.setEmpty(false);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(20L, orderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, orderTable))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 

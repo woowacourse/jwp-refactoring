@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 class OrderServiceTest extends ServiceTest {
 
     @Nested
-    class 주문_등록_메소드는 {
+    class 주문_등록_메소드는 extends ServiceTest {
 
         @Test
         void 입력받은_주문을_저장한다() {
@@ -60,7 +60,7 @@ class OrderServiceTest extends ServiceTest {
             // given
             OrderTable orderTable = 테이블을_저장한다(4);
             OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(20L);
+            orderLineItem.setMenuId(0L);
             orderLineItem.setQuantity(3L);
 
             Order order = new Order();
@@ -81,7 +81,7 @@ class OrderServiceTest extends ServiceTest {
             orderLineItem.setQuantity(3L);
 
             Order order = new Order();
-            order.setOrderTableId(20L);
+            order.setOrderTableId(0L);
             order.setOrderLineItems(List.of(orderLineItem));
 
             // when & then
@@ -124,7 +124,7 @@ class OrderServiceTest extends ServiceTest {
     }
 
     @Nested
-    class 주문_상태_변경_메소드는 {
+    class 주문_상태_변경_메소드는 extends ServiceTest {
 
         @Test
         void 주문_상태를_변경한다() {
