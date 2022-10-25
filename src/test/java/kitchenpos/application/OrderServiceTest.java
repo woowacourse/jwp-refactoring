@@ -21,13 +21,11 @@ class OrderServiceTest extends ServiceTest {
         // given
         OrderTable orderTable = getOrderTable(1L, 1L, 3, false);
 
-        Order inputOrder = getOrder(null, orderTable.getId(), null, null, new ArrayList<>());
-        Order order = getOrder(1L, orderTable.getId(), OrderStatus.COOKING.name(), null, new ArrayList<>());
-
-        OrderLineItem orderLineItem = getOrderLineItem(1L, order.getId(), 1L, 3);
+        OrderLineItem orderLineItem = getOrderLineItem(1L, null, 1L, 3);
         List<OrderLineItem> orderLineItems = List.of(orderLineItem);
-        inputOrder.setOrderLineItems(orderLineItems);
-        order.setOrderLineItems(orderLineItems);
+
+        Order inputOrder = getOrder(null, orderTable.getId(), null, null, orderLineItems);
+        Order order = getOrder(1L, orderTable.getId(), OrderStatus.COOKING.name(), null, orderLineItems);
 
         given(orderTableDao.findById(order.getOrderTableId()))
                 .willReturn(Optional.of(orderTable));
@@ -47,10 +45,14 @@ class OrderServiceTest extends ServiceTest {
     void list() {
         // given
         OrderTable orderTable = getOrderTable(1L, 1L, 3, false);
-        Order order1 = getOrder(1L, orderTable.getId(), OrderStatus.COOKING.name(), null, new ArrayList<>());
-        Order order2 = getOrder(2L, orderTable.getId(), OrderStatus.COOKING.name(), null, new ArrayList<>());
-        List<Order> orders = List.of(order1, order2);
 
+        OrderLineItem orderLineItem = getOrderLineItem(1L, null, 1L, 3);
+        List<OrderLineItem> orderLineItems = List.of(orderLineItem);
+
+        Order order1 = getOrder(1L, orderTable.getId(), OrderStatus.COOKING.name(), null, orderLineItems);
+        Order order2 = getOrder(2L, orderTable.getId(), OrderStatus.COOKING.name(), null, orderLineItems);
+
+        List<Order> orders = List.of(order1, order2);
         given(orderDao.findAll())
                 .willReturn(orders);
 
@@ -65,13 +67,11 @@ class OrderServiceTest extends ServiceTest {
     void changeOrderStatus() {
         // given
         OrderTable orderTable = getOrderTable(1L, 1L, 3, false);
-        Order savedOrder = getOrder(1L, orderTable.getId(), OrderStatus.COOKING.name(), null, new ArrayList<>());
-        Order updatedOrder = getOrder(1L, orderTable.getId(), OrderStatus.COMPLETION.name(), null, new ArrayList<>());
-        OrderLineItem orderLineItem = getOrderLineItem(1L, savedOrder.getId(), 1L, 3);
-
+        OrderLineItem orderLineItem = getOrderLineItem(1L, null, 1L, 3);
         List<OrderLineItem> orderLineItems = List.of(orderLineItem);
-        savedOrder.setOrderLineItems(orderLineItems);
-        updatedOrder.setOrderLineItems(orderLineItems);
+
+        Order savedOrder = getOrder(1L, orderTable.getId(), OrderStatus.COOKING.name(), null, orderLineItems);
+        Order updatedOrder = getOrder(1L, orderTable.getId(), OrderStatus.COMPLETION.name(), null, orderLineItems);
 
         given(orderDao.findById(savedOrder.getId()))
                 .willReturn(Optional.of(savedOrder));

@@ -47,19 +47,19 @@ class MenuServiceTest extends ServiceTest {
     void list() {
         // given
         String friedChickenName = "후라이드";
-        String seasonedChickenName = "양념치킨";
         Product friedChicken = getProduct(1L, friedChickenName, BigDecimal.valueOf(16000));
-        Product seasonedChicken = getProduct(2L, seasonedChickenName, BigDecimal.valueOf(16000));
-
         MenuProduct menuProductFriedChicken = getMenuProduct(null, null, friedChicken.getId(), 1);
-        MenuProduct menuProductSeasonedChicken = getMenuProduct(null, null, seasonedChicken.getId(), 1);
+        Menu friedChickenMenu = getMenu(null, friedChickenName, BigDecimal.valueOf(16000), 1L,
+                List.of(menuProductFriedChicken));
 
-        Menu menu1 = getMenu(null, friedChickenName, BigDecimal.valueOf(16000), 1L, List.of(menuProductFriedChicken));
-        Menu menu2 = getMenu(null, seasonedChickenName, BigDecimal.valueOf(16000), 1L,
+        String seasonedChickenName = "양념치킨";
+        Product seasonedChicken = getProduct(2L, seasonedChickenName, BigDecimal.valueOf(16000));
+        MenuProduct menuProductSeasonedChicken = getMenuProduct(null, null, seasonedChicken.getId(), 1);
+        Menu seasonedChickenMenu = getMenu(null, seasonedChickenName, BigDecimal.valueOf(16000), 1L,
                 List.of(menuProductSeasonedChicken));
 
         given(menuDao.findAll())
-                .willReturn(List.of(menu1, menu2));
+                .willReturn(List.of(friedChickenMenu, seasonedChickenMenu));
 
         // when
         List<Menu> actual = menuService.list();
@@ -67,7 +67,7 @@ class MenuServiceTest extends ServiceTest {
         // then
         assertAll(
                 () -> assertThat(actual).hasSize(2),
-                () -> assertThat(actual).contains(menu1, menu2)
+                () -> assertThat(actual).contains(friedChickenMenu, seasonedChickenMenu)
         );
     }
 }

@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -130,6 +131,9 @@ public class ServiceTest {
         order.setOrderTableId(orderTableId);
         order.setOrderStatus(orderStatus);
         order.setOrderedTime(orderedTime);
+        order.setOrderLineItems(orderLineItems);
+        orderLineItems
+                .forEach(it -> it.setOrderId(id));
         order.setOrderLineItems(orderLineItems);
 
         return order;
