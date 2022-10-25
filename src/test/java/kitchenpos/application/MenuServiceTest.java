@@ -25,22 +25,10 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Test
-    @DisplayName("가격이 null이면 예외를 발생시킨다.")
-    void createWithNullPriceError() {
-        //given, when
-        Menu menu = new Menu();
-
-        //then
-        assertThatThrownBy(() -> menuService.create(menu))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     @DisplayName("존재하지 않는 MenuGroupId면 예외를 발생시킨다.")
     void createWithNotExistMenuGroupIdError() {
         //given, when
-        Menu menu = new Menu();
-        menu.setPrice(BigDecimal.valueOf(100));
+        Menu menu = new Menu("test", BigDecimal.valueOf(100), 999L);
 
         //then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -51,10 +39,7 @@ class MenuServiceTest {
     @DisplayName("메뉴중 존재하지 않는 product가 있다면 예외를 발생시킨다.")
     void createWithNotExistProductError() {
         //given, when
-        Menu menu = new Menu();
-        menu.setName("test");
-        menu.setPrice(BigDecimal.valueOf(100));
-        menu.setMenuGroupId(1L);
+        Menu menu = new Menu("test", BigDecimal.valueOf(100), 1L);
 
         List<MenuProduct> menuProducts = new ArrayList<>();
         menuProducts.add(new MenuProduct());
@@ -70,10 +55,7 @@ class MenuServiceTest {
     @DisplayName("개별 상품의 합이 menu 가격의 합보다 클 경우 예외를 발생시킨다.")
     void createWithCheaperPriceError(int price) {
         //when
-        Menu menu = new Menu();
-        menu.setName("test");
-        menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuGroupId(1L);
+        Menu menu = new Menu("test", BigDecimal.valueOf(price), 1L);
 
         List<MenuProduct> menuProducts = new ArrayList<>();
         MenuProduct menuProduct = new MenuProduct();
@@ -94,10 +76,7 @@ class MenuServiceTest {
         List<Menu> menus = menuService.list();
 
         //when
-        Menu menu = new Menu();
-        menu.setName("test");
-        menu.setPrice(BigDecimal.valueOf(1000));
-        menu.setMenuGroupId(1L);
+        Menu menu = new Menu("test", BigDecimal.valueOf(10000), 1L);
 
         List<MenuProduct> menuProducts = new ArrayList<>();
         MenuProduct menuProduct = new MenuProduct();
