@@ -11,6 +11,7 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class DatabaseCleaner {
@@ -40,6 +41,7 @@ public class DatabaseCleaner {
         tableNames.remove("flyway_schema_history");
     }
 
+    @Transactional
     public void clear() {
         try (final Connection connection = dataSource.getConnection()) {
             connection.prepareStatement(REFERENTIAL_INTEGRITY + "FALSE").execute();
