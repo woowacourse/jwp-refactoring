@@ -2,9 +2,6 @@ package kitchenpos.ui;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -15,12 +12,12 @@ import kitchenpos.domain.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(OrderRestController.class)
 class OrderRestControllerTest extends ControllerTest {
 
+    private final String defaultOrderUrl = "/api/orders";
     @MockBean
     private OrderService orderService;
 
@@ -31,9 +28,7 @@ class OrderRestControllerTest extends ControllerTest {
         when(orderService.create(any(Order.class))).thenReturn(order);
 
         // when
-        ResultActions response = mockMvc.perform(post("/api/orders")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(order)));
+        ResultActions response = postRequestWithJson(defaultOrderUrl, order);
 
         // then
         response.andExpect(status().isCreated())
@@ -47,7 +42,7 @@ class OrderRestControllerTest extends ControllerTest {
         when(orderService.list()).thenReturn(Arrays.asList(order));
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/orders"));
+        ResultActions response = getRequest(defaultOrderUrl);
 
         // then
         response.andExpect(status().isOk())
@@ -61,9 +56,7 @@ class OrderRestControllerTest extends ControllerTest {
         when(orderService.changeOrderStatus(any(Long.class), any(Order.class))).thenReturn(order);
 
         // when
-        ResultActions response = mockMvc.perform(put("/api/orders/1/order-status")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(order)));
+        ResultActions response = putRequestWithJson(defaultOrderUrl + "/1/order-status", order);
 
         // then
         response.andExpect(status().isOk())

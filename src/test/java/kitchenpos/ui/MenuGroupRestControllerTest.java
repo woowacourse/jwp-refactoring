@@ -3,8 +3,6 @@ package kitchenpos.ui;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -15,11 +13,12 @@ import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(MenuGroupRestController.class)
 class MenuGroupRestControllerTest extends ControllerTest {
+
+    private final String defaultMenuGroupUrl = "/api/menu-groups";
 
     @MockBean
     private MenuGroupService menuGroupService;
@@ -34,13 +33,10 @@ class MenuGroupRestControllerTest extends ControllerTest {
         given(menuGroupService.create(any(MenuGroup.class))).willReturn(menuGroup);
 
         // when
-        ResultActions response = mockMvc.perform(post("/api/menu-groups")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(new MenuGroup())));
+        ResultActions response = postRequestWithJson(defaultMenuGroupUrl, menuGroup);
 
         // then
-        response
-                .andExpect(status().isCreated())
+        response.andExpect(status().isCreated())
                 .andExpect(content().string(objectMapper.writeValueAsString(menuGroup)));
     }
 
@@ -50,10 +46,11 @@ class MenuGroupRestControllerTest extends ControllerTest {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setId(1L);
         menuGroup.setName("menu-group");
+
         when(menuGroupService.list()).thenReturn(Arrays.asList(menuGroup));
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/menu-groups"));
+        ResultActions response = getRequest(defaultMenuGroupUrl);
 
         // then
         response.andExpect(status().isOk())

@@ -18,36 +18,36 @@ import org.springframework.test.web.servlet.ResultActions;
 @WebMvcTest(TableRestController.class)
 class TableRestControllerTest extends ControllerTest {
 
+    private final String defaultTableUrl = "/api/tables";
+
     @MockBean
     private TableService tableService;
 
     @Test
     void table을_생성할_수_있다() throws Exception {
         // given
-        String url = "/api/tables";
         OrderTable orderTable = new OrderTable();
         orderTable.setId(1L);
         when(tableService.create(any(OrderTable.class))).thenReturn(orderTable);
 
         // when
-        ResultActions response = postRequestWithJson(url, orderTable);
+        ResultActions response = postRequestWithJson(defaultTableUrl, orderTable);
 
         // then
         response.andExpect(status().isCreated())
-                .andExpect(header().string("Location", url + "/" + 1))
+                .andExpect(header().string("Location", defaultTableUrl + "/" + 1))
                 .andExpect(content().string(objectMapper.writeValueAsString(orderTable)));
     }
 
     @Test
     void table_목록을_조회할_수_있다() throws Exception {
         // given
-        String url = "/api/tables";
         OrderTable orderTable = new OrderTable();
         orderTable.setId(1L);
         when(tableService.list()).thenReturn(Arrays.asList(orderTable));
 
         // when
-        ResultActions response = getRequest(url);
+        ResultActions response = getRequest(defaultTableUrl);
 
         // then
         response.andExpect(status().isOk())

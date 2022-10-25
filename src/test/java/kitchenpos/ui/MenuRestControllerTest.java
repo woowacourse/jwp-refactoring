@@ -2,8 +2,6 @@ package kitchenpos.ui;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -16,11 +14,12 @@ import kitchenpos.domain.Menu;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(MenuRestController.class)
 class MenuRestControllerTest extends ControllerTest {
+
+    private final String defaultMenuUrl = "/api/menus";
 
     @MockBean
     private MenuService menuService;
@@ -31,10 +30,9 @@ class MenuRestControllerTest extends ControllerTest {
         BigDecimal price = BigDecimal.valueOf(13000);
         Menu menu = new Menu(1L, "pasta", price, 1L, new ArrayList<>());
         when(menuService.create(any(Menu.class))).thenReturn(menu);
+
         // when
-        ResultActions response = mockMvc.perform(post("/api/menus")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(menu)));
+        ResultActions response = postRequestWithJson(defaultMenuUrl, menu);
 
         // then
         response.andExpect(status().isCreated())
@@ -49,7 +47,7 @@ class MenuRestControllerTest extends ControllerTest {
         when(menuService.list()).thenReturn(Arrays.asList(menu));
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/menus"));
+        ResultActions response = getRequest(defaultMenuUrl);
 
         // then
         response.andExpect(status().isOk())

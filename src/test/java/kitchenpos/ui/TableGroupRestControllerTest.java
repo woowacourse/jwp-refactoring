@@ -17,6 +17,8 @@ import org.springframework.test.web.servlet.ResultActions;
 @WebMvcTest(TableGroupRestController.class)
 class TableGroupRestControllerTest extends ControllerTest {
 
+    private final String defaultTableGroupUrl = "/api/table-groups";
+
     @MockBean
     private TableGroupService tableGroupService;
 
@@ -26,26 +28,19 @@ class TableGroupRestControllerTest extends ControllerTest {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setId(1L);
         when(tableGroupService.create(any(TableGroup.class))).thenReturn(tableGroup);
-        String url = "/api/table-groups";
 
         // when
-        ResultActions response = postRequestWithJson(url, tableGroup);
+        ResultActions response = postRequestWithJson(defaultTableGroupUrl, tableGroup);
 
         // then
         response.andExpect(status().isCreated())
-                .andExpect(header().string("location", url + "/" + tableGroup.getId()))
+                .andExpect(header().string("location", defaultTableGroupUrl + "/" + tableGroup.getId()))
                 .andExpect(content().string(objectMapper.writeValueAsString(tableGroup)));
     }
 
     @Test
     void table_group을_취소할_수_있다() throws Exception {
-        // given
-        String url = "/api/table-groups/1";
-
-        // when
-        ResultActions response = deleteRequest(url);
-
-        // then
+        ResultActions response = deleteRequest(defaultTableGroupUrl + "/1");
         response.andExpect(status().isNoContent());
     }
 }
