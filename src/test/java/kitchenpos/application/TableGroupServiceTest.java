@@ -20,7 +20,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class TableGroupTest extends ServiceTest {
+class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
     private TableGroupService tableGroupService;
