@@ -9,6 +9,9 @@ import kitchenpos.domain.Product;
 
 public class DomainFixtures {
 
+    private DomainFixtures() {
+    }
+
     public static Product 맛있는_라면() {
         return new Product("맛있는 라면", new BigDecimal(1300));
     }
