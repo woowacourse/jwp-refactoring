@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static kitchenpos.Fixtures.상품_후라이드;
+import static kitchenpos.Fixtures.검증_필드비교_값포함;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -24,15 +25,15 @@ class ProductServiceTest extends ServiceTest {
 
         List<Product> 상품들 = productService.list();
 
-        assertThat(상품들)
-                .usingRecursiveFieldByFieldElementComparator()
-                .contains(상품_후라이드);
+        검증_필드비교_값포함(assertThat(상품들), 상품_후라이드);
     }
 
     @DisplayName("상품 가격은 0 이상이어야 한다.")
     @Test
     void createAndList_invalidPrice() {
-        assertThatThrownBy(() -> new Product(1L, "후라이드", BigDecimal.valueOf(-10000)))
+        BigDecimal 음수_가격 = BigDecimal.valueOf(-10000);
+
+        assertThatThrownBy(() -> new Product(1L, "후라이드", 음수_가격))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("상품 가격은 0 이상이어야 한다.");
     }

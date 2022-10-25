@@ -7,6 +7,7 @@ import static kitchenpos.Fixtures.주문_테이블1;
 import static kitchenpos.Fixtures.주문아이템;
 import static kitchenpos.Fixtures.주문아이템_후라이드;
 import static kitchenpos.Fixtures.테이블_1;
+import static kitchenpos.Fixtures.검증_필드비교_값포함;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -56,9 +57,7 @@ class OrderServiceTest extends ServiceTest {
     void create() {
         Order 주문 = orderService.create(주문_테이블1());
 
-        assertThat(orderService.list())
-                .usingRecursiveFieldByFieldElementComparator()
-                .contains(주문);
+        검증_필드비교_값포함(assertThat(orderService.list()), 주문);
     }
 
     @DisplayName("하나 이상의 메뉴를 주문해야 한다.")
@@ -111,29 +110,26 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 상태를 변경하면 변경된 주문 상태가 반영된다.")
     @Test
     void changeOrderStatus() {
-        Order 주문_테이블1 = orderService.create(주문_테이블1());
-        String 주문상태 = OrderStatus.MEAL.name();
-        주문_테이블1.updateOrderStatus(주문상태);
-        assertThat(주문_테이블1.getOrderStatus()).isEqualTo(주문상태);
+        Order 변경된_주문 = 주문_상태를_변경했다(orderService.create(주문_테이블1()), OrderStatus.MEAL);
 
-        orderService.changeOrderStatus(주문_테이블1.getId(), 주문_테이블1);
+        List<Order> 주문_목록 = orderService.list();
 
-        assertThat(orderService.list())
-                .usingRecursiveFieldByFieldElementComparator()
-                .contains(주문_테이블1);
+        검증_필드비교_값포함(assertThat(주문_목록), 변경된_주문);
     }
 
     @DisplayName("주문 상태가 COMPLETION일 시 주문 상태를 변경할 수 없다.")
     @Test
     void changeOrderStatus_noComplete() {
-        Order 주문_테이블1 = orderService.create(주문_테이블1());
-
-        주문_테이블1.updateOrderStatus(OrderStatus.COMPLETION.name());
-        Order 완료된_주문 = orderService.changeOrderStatus(주문_테이블1.getId(), 주문_테이블1);
-        assertThat(완료된_주문.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
+        Order 완료된_주문 = 주문_상태를_변경했다(orderService.create(주문_테이블1()), OrderStatus.COMPLETION);
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(완료된_주문.getId(), 완료된_주문))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 상태가 COMPLETION일 시 주문 상태를 변경할 수 없다.");
+    }
+
+    private Order 주문_상태를_변경했다(Order order, OrderStatus 주문상태) {
+        order.updateOrderStatus(주문상태.name());
+        assertThat(order.getOrderStatus()).isEqualTo(주문상태.name());
+        return orderService.changeOrderStatus(order.getId(), order);
     }
 }

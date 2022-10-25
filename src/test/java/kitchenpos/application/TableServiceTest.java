@@ -97,13 +97,14 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("특정 테이블의 손님 수를 변경할 수 있다.")
     @Test
     void changeNumberOfGuests() {
-        OrderTable 테이블_1 = tableService.create(테이블_1());
+        int 손님수 = 100;
+        OrderTable 테이블_손님수_변경 = 테이블_손님수_변경(tableService.create(테이블_1()), 손님수);
 
-        테이블_1.updateNumberOfGuests(100);
-        tableService.changeNumberOfGuests(테이블_1.getId(), 테이블_1);
+        OrderTable 저장된_테이블_1 = orderTableDao.findById(테이블_손님수_변경.getId())
+                .orElseThrow();
 
-        assertThat(orderTableDao.findById(테이블_1.getId()).orElseThrow().getNumberOfGuests())
-                .isEqualTo(100);
+        assertThat(저장된_테이블_1.getNumberOfGuests())
+                .isEqualTo(손님수);
     }
 
     @DisplayName("테이블은 차있어야 한다.")
@@ -111,8 +112,7 @@ class TableServiceTest extends ServiceTest {
     void changeNumberOfGuests_noFillTable() {
         OrderTable 빈테이블_1 = tableService.create(빈테이블_1());
 
-        빈테이블_1.updateNumberOfGuests(100);
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(빈테이블_1.getId(), 빈테이블_1))
+        assertThatThrownBy(() -> 테이블_손님수_변경(빈테이블_1, 100))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블은 차있어야 한다.");
     }
@@ -120,11 +120,16 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블 고객 수는 0 이상이어야 한다.")
     @Test
     void changeNumberOfGuests_zeroCustomer() {
-        OrderTable 빈테이블_1 = tableService.create(빈테이블_1());
+        OrderTable 테이블_1 = tableService.create(테이블_1());
+        int 음수_손님수 = -1;
 
-        빈테이블_1.updateNumberOfGuests(-1);
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(빈테이블_1.getId(), 빈테이블_1))
+        assertThatThrownBy(() -> 테이블_손님수_변경(테이블_1, 음수_손님수))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블 고객 수는 0 이상이어야 한다.");
+    }
+
+    private OrderTable 테이블_손님수_변경(OrderTable 테이블_1, int numberOfGuests) {
+        테이블_1.updateNumberOfGuests(numberOfGuests);
+        return tableService.changeNumberOfGuests(테이블_1.getId(), 테이블_1);
     }
 }

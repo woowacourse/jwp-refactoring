@@ -1,5 +1,7 @@
 package kitchenpos;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -13,6 +15,8 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import org.assertj.core.api.ListAssert;
+
 @SuppressWarnings("NonAsciiCharacters")
 public class Fixtures {
 
@@ -70,7 +74,7 @@ public class Fixtures {
     }
 
     public static OrderLineItem 주문아이템_후라이드() {
-        return new OrderLineItem(1L, 주문_테이블1().getId(), 상품_후라이드().getId(), 1L);
+        return new OrderLineItem(1L, 1L, 상품_후라이드().getId(), 1L);
     }
 
     public static Order 주문_테이블1() {
@@ -93,4 +97,23 @@ public class Fixtures {
                 LocalDateTime.now(),
                 items);
     }
+
+    @SafeVarargs
+    public static <ELEMENT> void 검증_필드비교_값포함(ListAssert<ELEMENT> assertThat, ELEMENT... values) {
+        assertThat.usingRecursiveFieldByFieldElementComparator()
+                .contains(values);
+    }
+
+    public static <ELEMENT> void 검증_필드비교_동일_목록(List<ELEMENT> list, List<ELEMENT> values, String... ignore) {
+        for (int i = 0; i < list.size(); i++) {
+            assertThat(list.get(i)).usingRecursiveComparison()
+                    .ignoringFields(ignore)
+                    .isEqualTo(values.get(i));
+        }
+    }
+
+//    public static <ELEMENT> ListAssert<ELEMENT> 검증_필드비교_값포함(ListAssert<ELEMENT> assertThat, ELEMENT... values) {
+//        return assertThat.usingRecursiveFieldByFieldElementComparator()
+//                .contains(values);
+//    }
 }

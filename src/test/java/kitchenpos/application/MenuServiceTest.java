@@ -5,6 +5,7 @@ import static kitchenpos.Fixtures.메뉴_치킨그룹;
 import static kitchenpos.Fixtures.메뉴_후라이드치킨;
 import static kitchenpos.Fixtures.메뉴상품_후라이드;
 import static kitchenpos.Fixtures.상품_후라이드;
+import static kitchenpos.Fixtures.검증_필드비교_값포함;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -42,9 +43,9 @@ class MenuServiceTest extends ServiceTest {
     void createAndList() {
         Menu 메뉴_후라이드치킨 = menuService.create(메뉴_후라이드치킨());
 
-        assertThat(menuService.list())
-                .usingRecursiveFieldByFieldElementComparator()
-                .contains(메뉴_후라이드치킨);
+        List<Menu> 메뉴_목록 = menuService.list();
+
+        검증_필드비교_값포함(assertThat(메뉴_목록), 메뉴_후라이드치킨);
     }
 
     @DisplayName("메뉴 그룹은 DB에 등록되어야 한다.")
