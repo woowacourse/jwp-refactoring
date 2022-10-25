@@ -21,7 +21,7 @@ class MenuServiceTest {
     @Test
     void create() {
         MenuProduct menuProduct = MenuProduct.of(1L, 1L, 10);
-        Menu menu = Menu.of("name", BigDecimal.valueOf(1000), 1L, List.of(menuProduct));
+        Menu menu = new Menu(null, "name", BigDecimal.valueOf(1000), 1L, List.of(menuProduct));
 
         Menu savedMenu = menuService.create(menu);
 
@@ -30,7 +30,7 @@ class MenuServiceTest {
 
     @Test
     void createThrowExceptionWhenPriceIsNegative() {
-        Menu menu = Menu.of("name", BigDecimal.valueOf(-100), 1L, new ArrayList<>());
+        Menu menu = new Menu(null, "name", BigDecimal.valueOf(-100), 1L, new ArrayList<>());
 
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -40,7 +40,7 @@ class MenuServiceTest {
     @Test
     void createThrowExceptionWhenNotExistProduct() {
         MenuProduct menuProduct = MenuProduct.of( 0L, 0L, 10);
-        Menu menu = Menu.of("name", BigDecimal.valueOf(100), 1L, List.of(menuProduct));
+        Menu menu = new Menu(null, "name", BigDecimal.valueOf(100), 1L, List.of(menuProduct));
 
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -50,7 +50,7 @@ class MenuServiceTest {
     @Test
     void createThrowExceptionWhenNotExistMenuId() {
         MenuProduct menuProduct = MenuProduct.of(1L, 1L, 10);
-        Menu menu = Menu.of("name", BigDecimal.valueOf(100), 0L, List.of(menuProduct));
+        Menu menu = new Menu(null, "name", BigDecimal.valueOf(100), 0L, List.of(menuProduct));
 
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class)

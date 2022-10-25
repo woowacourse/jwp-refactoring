@@ -23,11 +23,6 @@ public class Menu {
         return new Menu(id, name, price, menuGroupId, null);
     }
 
-    public static Menu of(final String name, final BigDecimal price, final Long menuGroupId,
-                          final List<MenuProduct> menuProducts) {
-        return new Menu(null, name, price, menuGroupId, menuProducts);
-    }
-
     public Long getId() {
         return id;
     }
