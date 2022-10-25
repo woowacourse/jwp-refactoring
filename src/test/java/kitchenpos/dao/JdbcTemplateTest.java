@@ -1,12 +1,14 @@
 package kitchenpos.dao;
 
 import javax.sql.DataSource;
+import kitchenpos.support.tool.DataBaseCleaner;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 @JdbcTest
-public class JdbcTemplateTest {
+public abstract class JdbcTemplateTest {
 
     @Autowired
     private DataSource dataSource;
@@ -30,5 +32,7 @@ public class JdbcTemplateTest {
         jdbcTemplateOrderTableDao = new JdbcTemplateOrderTableDao(dataSource);
         jdbcTemplateOrderDao = new JdbcTemplateOrderDao(dataSource);
         jdbcTemplateOrderLineItemDao = new JdbcTemplateOrderLineItemDao(dataSource);
+        DataBaseCleaner dataBaseCleaner = new DataBaseCleaner(new JdbcTemplate(dataSource));
+        dataBaseCleaner.clean();
     }
 }
