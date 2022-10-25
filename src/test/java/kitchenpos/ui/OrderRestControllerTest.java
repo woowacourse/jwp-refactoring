@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.InstanceOfAssertFactories.predicate;
 
 import java.util.Collections;
 import java.util.List;
@@ -151,6 +152,43 @@ class OrderRestControllerTest extends ControllerTest {
 
         assertThat(response.getBody()).hasSize(3);
         assertThat(response.getStatusCodeValue()).isEqualTo(HttpStatus.OK.value());
+    }
+
+
+    @Test
+    void changeOrderStatus() {
+        OrderLineItem orderLineItem = getOrderLineItem();
+        OrderTable orderTable = createOrderTable(2, false);
+
+        Order order = createOrder(orderTable.getId(), List.of(orderLineItem));
+        order.setOrderStatus("COOKING");
+
+        ResponseEntity<Order> response = orderRestController.changeOrderStatus(order.getId(), order);
+
+        assertThat(response.getBody().getOrderStatus()).isEqualTo("COOKING");
+        assertThat(response.getStatusCodeValue()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    void changeOrderStatusNotFoundOrder() {
+        Order order = new Order();
+        order.setOrderStatus("COOKING");
+
+        assertThatThrownBy(() -> orderRestController.changeOrderStatus(order.getId(), order))
+                .hasMessage("주문이 존재하지 않습니다.");
+    }
+
+    @Test
+    void changeOrderStatusCompletion() {
+        OrderLineItem orderLineItem = getOrderLineItem();
+        OrderTable orderTable = createOrderTable(2, false);
+
+        Order order = createOrder(orderTable.getId(), List.of(orderLineItem));
+        order.setOrderStatus("COMPLETION");
+        orderRestController.changeOrderStatus(order.getId(), order);
+
+        assertThatThrownBy(() -> orderRestController.changeOrderStatus(order.getId(), order))
+                .hasMessage("계산 완료된 주문입니다.");
     }
 
     private OrderLineItem getOrderLineItem() {
