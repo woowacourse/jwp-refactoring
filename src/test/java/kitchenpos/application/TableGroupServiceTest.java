@@ -7,7 +7,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Menu;
@@ -118,11 +117,15 @@ class TableGroupServiceTest extends ServiceTest {
             tableGroupService.ungroup(savedTableGroup.getId());
 
             // then
+            Optional<OrderTable> actualOrderTable1 = orderTableDao.findById(orderTable1.getId());
+            Optional<OrderTable> actualOrderTable2 = orderTableDao.findById(orderTable2.getId());
+            assertThat(actualOrderTable1).isPresent();
+            assertThat(actualOrderTable2).isPresent();
             assertAll(
-                    () -> assertThat(orderTableDao.findById(orderTable1.getId()).get().getTableGroupId()).isNull(),
-                    () -> assertThat(orderTableDao.findById(orderTable1.getId()).get().isEmpty()).isFalse(),
-                    () -> assertThat(orderTableDao.findById(orderTable2.getId()).get().getTableGroupId()).isNull(),
-                    () -> assertThat(orderTableDao.findById(orderTable2.getId()).get().isEmpty()).isFalse()
+                    () -> assertThat(actualOrderTable1.get().getTableGroupId()).isNull(),
+                    () -> assertThat(actualOrderTable1.get().isEmpty()).isFalse(),
+                    () -> assertThat(actualOrderTable2.get().getTableGroupId()).isNull(),
+                    () -> assertThat(actualOrderTable2.get().isEmpty()).isFalse()
             );
         }
 
