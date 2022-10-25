@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import kitchenpos.domain.Product;
@@ -32,7 +33,12 @@ class ProductServiceTest extends ServiceTest {
             Product actual = productService.create(product);
 
             //then
-            assertThat(actual.getName()).isEqualTo("productA");
+            assertAll(
+                    () -> assertThat(actual.getId()).isNotNull(),
+                    () -> assertThat(actual.getName()).isEqualTo("productA"),
+                    () -> assertThat(actual.getPrice().compareTo(BigDecimal.valueOf(1000))).isSameAs(0)
+            );
+
         }
 
         @Test
