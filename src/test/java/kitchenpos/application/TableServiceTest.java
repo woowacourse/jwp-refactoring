@@ -69,9 +69,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블 점유 여부를 변경한다")
     void changeIsEmpty() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        OrderTable createdOrderTable = tableService.create(orderTable);
+        OrderTable createdOrderTable = createEmptyOrderTable();
 
         Order order = new Order();
         order.setOrderTableId(createdOrderTable.getId());
@@ -108,10 +106,8 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블 그룹이 설정된 테이블의 점유 여부를 변경할 수 없다")
     void changeIsEmptyWithoutTableGroup() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        OrderTable createdOrderTable = tableService.create(orderTable);
-        OrderTable createdOrderTable2 = tableService.create(orderTable);
+        OrderTable createdOrderTable = createEmptyOrderTable();
+        OrderTable createdOrderTable2 = createEmptyOrderTable();
 
         // when
         TableGroup tableGroup = new TableGroup();
@@ -119,7 +115,7 @@ class TableServiceTest extends ServiceTest {
         tableGroupService.create(tableGroup);
 
         // then
-        assertThatThrownBy(() -> tableService.changeEmpty(createdOrderTable.getId(), orderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(createdOrderTable.getId(), createdOrderTable))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -127,9 +123,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("식사 완료 상태가 아닌 테이블의 점유 여부를 변경할 수 없다")
     void changeIsEmptyBeforeCompleted() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        OrderTable createdOrderTable = tableService.create(orderTable);
+        OrderTable createdOrderTable = createEmptyOrderTable();
 
         Order order = new Order();
         order.setOrderTableId(createdOrderTable.getId());
@@ -138,7 +132,77 @@ class TableServiceTest extends ServiceTest {
         orderDao.save(order);
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(createdOrderTable.getId(), orderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(createdOrderTable.getId(), createdOrderTable))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("테이블의 고객 수를 변경한다")
+    void changeNumberOfGuests() {
+        // given
+        int expectedNumberOfGuests = 5;
+        OrderTable targetOrderTable = new OrderTable();
+        targetOrderTable.setNumberOfGuests(expectedNumberOfGuests);
+
+        OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(false);
+        OrderTable createdOrderTable = tableService.create(orderTable);
+
+        // when
+        OrderTable changedOrderTable = tableService.changeNumberOfGuests(createdOrderTable.getId(), targetOrderTable);
+
+        // then
+        assertAll(
+            () -> assertThat(changedOrderTable.getId()).isEqualTo(createdOrderTable.getId()),
+            () -> assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(targetOrderTable.getNumberOfGuests())
+        );
+    }
+
+    @Test
+    @DisplayName("고객 수를 음수로 설정할 수 없다")
+    void minusNumberOfGuests() {
+        // given
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(-1);
+
+        Long fakeOrderTableId = 999L;
+
+        // when, then
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(fakeOrderTableId, orderTable))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("등록되지 않은 테이블의 고객 수를 변경할 수 없다")
+    void changeNumberOfGuestsWithNonRegisteredOrderTable() {
+        // given
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(5);
+
+        Long fakeOrderTableId = 999L;
+
+        // when, then
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(fakeOrderTableId, orderTable))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("점유되지 않은 테이블의 고객 수를 변경할 수 없다")
+    void changeNumberOfGuestsOfEmptyTable() {
+        // given
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(5);
+
+        OrderTable createdOrderTable = createEmptyOrderTable();
+
+        // when, then
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(createdOrderTable.getId(), orderTable))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private OrderTable createEmptyOrderTable() {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(true);
+        return orderTableDao.save(orderTable);
     }
 }
