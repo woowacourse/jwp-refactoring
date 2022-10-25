@@ -9,13 +9,11 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
 
-@SpringBootTest
-public class ProductServiceTest {
+public class ProductServiceTest extends ServiceTest {
 
     @Autowired
     private ProductService productService;
@@ -34,6 +32,17 @@ public class ProductServiceTest {
         assertThat(savedProduct).usingRecursiveComparison()
             .ignoringFields("id", "price")
             .isEqualTo(product);
+    }
+
+    @Test
+    @DisplayName("가격이 음수면 예외를 반환한다.")
+    void create_price_negative() {
+        // given
+        Product product = new Product("후라이드", BigDecimal.valueOf(-1));
+
+        // when, then
+        assertThatThrownBy(() -> productService.create(product))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

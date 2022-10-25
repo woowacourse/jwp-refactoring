@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
 
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
@@ -15,6 +16,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Sql("classpath:truncate.sql")
 public class AcceptanceTest {
 
     @Value("${local.server.port}")
@@ -24,6 +26,7 @@ public class AcceptanceTest {
     public void setUp() {
         RestAssured.port = port;
     }
+
     public ValidatableResponse post(String url, Object request) {
         return RestAssured.given().log().all()
             .contentType(MediaType.APPLICATION_JSON_VALUE)

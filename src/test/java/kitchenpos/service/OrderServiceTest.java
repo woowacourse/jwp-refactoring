@@ -9,15 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.application.MenuGroupService;
-import kitchenpos.application.MenuService;
-import kitchenpos.application.OrderService;
-import kitchenpos.application.ProductService;
-import kitchenpos.application.TableService;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -26,26 +18,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 
-@SpringBootTest
-public class OrderServiceTest {
-
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private OrderDao orderDao;
-
-    @Autowired
-    private MenuGroupService menuGroupService;
-
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private MenuService menuService;
-
-    @Autowired
-    private TableService tableService;
+public class OrderServiceTest extends ServiceTest {
 
     @Test
     @DisplayName("주문을 생성한다.")

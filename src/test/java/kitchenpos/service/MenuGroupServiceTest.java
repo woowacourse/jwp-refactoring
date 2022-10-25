@@ -6,17 +6,10 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
 
-@SpringBootTest
-public class MenuGroupServiceTest {
-
-    @Autowired
-    private MenuGroupService menuGroupService;
+public class MenuGroupServiceTest extends ServiceTest {
 
     @Test
     @DisplayName("메뉴를 등록한다.")

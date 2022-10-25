@@ -6,17 +6,10 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
 
-@SpringBootTest
-public class TableServiceTest {
-
-    @Autowired
-    private TableService tableService;
+public class TableServiceTest extends ServiceTest {
 
     @Test
     @DisplayName("테이블을 등록한다.")
