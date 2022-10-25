@@ -182,7 +182,6 @@ class TableGroupServiceTest {
         final Order order = OrderFixture.create(savedTable1, OrderStatus.COMPLETION, orderLineItem1);
          orderService.create(order);
 
-
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
