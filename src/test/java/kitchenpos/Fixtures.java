@@ -13,7 +13,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
-
+@SuppressWarnings("NonAsciiCharacters")
 public class Fixtures {
 
     public static MenuGroup 메뉴그룹_한마리메뉴() {

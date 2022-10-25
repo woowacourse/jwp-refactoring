@@ -228,4 +228,4 @@ Content-Type: application/json
 - [ ] usingRecursiveComparison 등을 통한 필드값 검증
 - [ ] DirtiesContext 제거 및 DatabaseCleaner 로 변경
 - [ ] 일부 테스트코드 도메인 테스트로 이동
-- [ ] @SuppressWarnings("NonAsciiCharacters") 추가
+- [x] @SuppressWarnings("NonAsciiCharacters") 추가

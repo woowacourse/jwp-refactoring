@@ -13,13 +13,13 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@SuppressWarnings("NonAsciiCharacters")
 class TableServiceTest extends ServiceTest {
 
     @Autowired
