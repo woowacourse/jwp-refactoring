@@ -1,14 +1,37 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class Order {
     private Long id;
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+
+    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
+        this.id = id;
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        this.orderLineItems.addAll(orderLineItems);
+    }
+
+    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
+        this(id, orderTableId, orderStatus, orderedTime, Collections.emptyList());
+    }
+
+    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
+        this(null, orderTableId, orderStatus, orderedTime, Collections.emptyList());
+    }
+
+    private Order() {
+    }
 
     public Long getId() {
         return id;
@@ -46,7 +69,23 @@ public class Order {
         return orderLineItems;
     }
 
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+    public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        this.orderLineItems.addAll(orderLineItems);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Order order)) {
+            return false;
+        }
+        return Objects.equals(id, order.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
