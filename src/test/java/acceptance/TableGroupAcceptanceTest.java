@@ -7,6 +7,7 @@ import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("테이블 그룹 인수테스트에서")
 public class TableGroupAcceptanceTest extends AcceptanceTest {
 
     @Test

@@ -7,6 +7,7 @@ import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("메뉴 그룹 인수테스트에서")
 public class MenuGroupAcceptanceTest extends AcceptanceTest {
 
     @Test

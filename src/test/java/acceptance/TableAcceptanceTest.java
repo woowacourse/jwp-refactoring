@@ -7,6 +7,7 @@ import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("테이블 인수테스트에서")
 public class TableAcceptanceTest extends AcceptanceTest {
 
     @Test

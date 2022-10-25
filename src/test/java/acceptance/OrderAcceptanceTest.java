@@ -8,6 +8,7 @@ import kitchenpos.domain.OrderLineItem;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("주문 인수테스트에서")
 public class OrderAcceptanceTest extends AcceptanceTest {
 
     @Test

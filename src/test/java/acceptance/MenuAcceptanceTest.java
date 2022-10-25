@@ -2,14 +2,12 @@ package acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.lang.annotation.Documented;
 import java.util.List;
-import javax.annotation.processing.SupportedOptions;
 import kitchenpos.domain.Menu;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@SupportedOptions("")
+@DisplayName("메뉴 인수테스트에서")
 public class MenuAcceptanceTest extends AcceptanceTest {
 
     @Test

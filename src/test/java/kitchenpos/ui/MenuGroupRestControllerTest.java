@@ -18,6 +18,7 @@ class MenuGroupRestControllerTest extends ControllerTest {
     void create() {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("추천 메뉴");
+
         ResponseEntity<MenuGroup> response = menuGroupController.create(menuGroup);
 
         assertThat(response.getBody().getId()).isNotNull();
