@@ -135,6 +135,18 @@ class TableServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @DisplayName("주문 테이블의 조회결과가 없는 경우 테이블을 빈 상태로 변경할 수 없다.")
+    @Test
+    void changeEmptyWithEmptyOrderTable() {
+        // given
+        final long invalidOrderTableId = -1L;
+        final OrderTable orderTable = new OrderTable(0, false);
+
+        // when & then
+        assertThatThrownBy(() -> sut.changeEmpty(invalidOrderTableId, orderTable))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
     @DisplayName("주문 테이블의 손님 수를 변경할 수 있다.")
     @Test
     void canChangeGuestsCount() {

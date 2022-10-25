@@ -95,8 +95,6 @@ public class OrderService {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        System.out.println("savedOrder.getOrderStatus() = " + savedOrder.getOrderStatus());
-
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException("이미 계산 완료 상태이므로 주문 상태 변경이 불가합니다.");
         }

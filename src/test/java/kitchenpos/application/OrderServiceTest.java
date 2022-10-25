@@ -133,6 +133,23 @@ class OrderServiceTest {
         assertThat(changedOrder.getOrderStatus()).isEqualTo(COMPLETION.name());
     }
 
+    @DisplayName("주문의 조회결과가 없는 경우 주문의 상태를 변경할 수 없다.")
+    @Test
+    void canNotChangeOrderStatusWhenEmptyOrder() {
+        // given
+        final OrderTable orderTable = new OrderTable(1, false);
+        final OrderTable createdOrderTable = tableService.create(orderTable);
+        final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
+
+        final Order order = new Order(createdOrderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
+        final Order changeOrder = new Order(createdOrderTable.getId(), "COMPLETION", LocalDateTime.now(),
+                List.of(orderLineItem));
+
+        // when & then
+        assertThatThrownBy(() -> sut.changeOrderStatus(order.getId(), changeOrder))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
     @DisplayName("주문의 상태가 이미 계산 완료이면 주문 상태를 변경할 수 없다.")
     @Test
     void canNotChangeOrderStatusWhenAlreadyCompletion() {

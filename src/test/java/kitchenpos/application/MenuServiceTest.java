@@ -114,6 +114,17 @@ class MenuServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @DisplayName("상품(Product)의 조회결과가 없는 경우 메뉴를 생성할 수 없다.")
+    @Test
+    void createMenuWithEmptyProduct() {
+        // given
+        final Menu menu = new Menu("후라이드치킨", BigDecimal.valueOf(16000), 2L, List.of());
+
+        // when & then
+        assertThatThrownBy(() -> sut.create(menu))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
     @DisplayName("전체 메뉴 리스트를 조회할 수 있다.")
     @Test
     void list() {
