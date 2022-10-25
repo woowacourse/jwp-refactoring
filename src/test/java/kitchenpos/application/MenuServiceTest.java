@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.fixture.MenuFixture.INVALID_MENU_PRODUCTS;
 import static kitchenpos.application.fixture.MenuFixture.MENU_EXPENSIVE_PRICE;
 import static kitchenpos.application.fixture.MenuFixture.MENU_INVALID_PRICE;
 import static kitchenpos.application.fixture.MenuFixture.MENU_NAME;
@@ -80,6 +81,15 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void create_Exception_TOO_EXPENSIVE_PRICE() {
         Menu menu = new Menu(MENU_NAME, MENU_EXPENSIVE_PRICE, MENU_GROUP_ID, MENU_PRODUCTS);
+
+        assertThatThrownBy(() -> menuService.create(menu))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("메뉴에 포함된 상품들 중 유효하지 않은 상품이 있으면 예외가 발생한다.")
+    @Test
+    void create_Exception_Invalid_Product() {
+        Menu menu = new Menu(MENU_NAME, MENU_PRICE, MENU_GROUP_ID, INVALID_MENU_PRODUCTS);
 
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);

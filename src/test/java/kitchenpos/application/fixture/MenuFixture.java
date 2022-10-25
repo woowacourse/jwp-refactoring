@@ -1,6 +1,7 @@
 package kitchenpos.application.fixture;
 
 import static kitchenpos.application.fixture.MenuGroupFixture.MENU_GROUP_ID;
+import static kitchenpos.application.fixture.ProductFixture.INVALID_PRODUCT_ID;
 import static kitchenpos.application.fixture.ProductFixture.PRODUCT_ID_ONE;
 import static kitchenpos.application.fixture.ProductFixture.PRODUCT_ID_THREE;
 import static kitchenpos.application.fixture.ProductFixture.PRODUCT_ID_TWO;
@@ -21,6 +22,7 @@ public class MenuFixture {
     public static final BigDecimal MENU_EXPENSIVE_PRICE = BigDecimal.valueOf(11001);
     public static final String MENU_NAME = "빵";
     public static final List<MenuProduct> MENU_PRODUCTS = new ArrayList<>();
+    public static final List<MenuProduct> INVALID_MENU_PRODUCTS = new ArrayList<>();
     public static final Menu UNSAVED_MENU = new Menu(MENU_NAME, MENU_PRICE, MENU_GROUP_ID, MENU_PRODUCTS);
 
     static {
@@ -32,5 +34,8 @@ public class MenuFixture {
 
         MenuProduct menuProduct3 = new MenuProduct(PRODUCT_ID_THREE, 1);
         MENU_PRODUCTS.add(menuProduct3);
+
+        MenuProduct invalidMenuProduct = new MenuProduct(INVALID_PRODUCT_ID, 1);
+        INVALID_MENU_PRODUCTS.add(invalidMenuProduct);
     }
 }
