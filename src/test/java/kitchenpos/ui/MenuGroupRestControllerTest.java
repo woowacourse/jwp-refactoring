@@ -9,6 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import kitchenpos.application.dto.request.MenuGroupCommand;
+import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,12 +23,12 @@ class MenuGroupRestControllerTest extends ControllerTest {
     @Test
     @DisplayName("MenuGroup을 생성한다.")
     void create() throws Exception {
-        MenuGroup menuGroup = new MenuGroup(1L, MENU_GROUP_NAME1);
-        given(menuGroupService.create(any(MenuGroup.class))).willReturn(menuGroup);
+        MenuGroupResponse menuGroupResponse = new MenuGroupResponse(1L, MENU_GROUP_NAME1);
+        given(menuGroupService.create(any(MenuGroupCommand.class))).willReturn(menuGroupResponse);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/menu-groups")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(menuGroup)))
+                        .content(objectMapper.writeValueAsString(new MenuGroupCommand(MENU_GROUP_NAME1))))
                 .andExpectAll(status().isCreated(),
                         header().string(HttpHeaders.LOCATION, "/api/menu-groups/1"));
     }
