@@ -60,10 +60,9 @@ class TableServiceTest extends ServiceTest {
         void success() {
             // given
             OrderTable orderTable = saveOrderTable(0, true);
-            OrderTable savedOrderTable = tableService.create(orderTable);
 
             // when
-            OrderTable updatedOrderTable = tableService.changeEmpty(savedOrderTable.getId(),
+            OrderTable updatedOrderTable = tableService.changeEmpty(orderTable.getId(),
                     createOrderTable(0, false));
 
             // then
@@ -81,7 +80,6 @@ class TableServiceTest extends ServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        //        @Disabled("tableGroup 테스트 추가 후 구현하기")
         @Test
         @DisplayName("orderTable에 해당하는 tableGroupId가 null이 아닌 경우 예외를 던진다.")
         void tableGroupId_NotNull_ExceptionThrown() {
@@ -122,35 +120,37 @@ class TableServiceTest extends ServiceTest {
     class ChangeNumberOfGuests {
 
         @Test
+        @DisplayName("테이블 인원 수를 변경한다.")
         void success() {
             // given
-            OrderTable orderTable = saveOrderTable(2, true);
+            OrderTable orderTable = saveOrderTable(2, false);
 
             // when
-            OrderTable savedOrderTable = tableService.create(orderTable);
+            OrderTable updatedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(),
+                    createOrderTable(4, false));
 
             // then
-            Optional<OrderTable> actual = orderTableDao.findById(savedOrderTable.getId());
+            Optional<OrderTable> actual = orderTableDao.findById(updatedOrderTable.getId());
             assertThat(actual).isPresent();
-            assertThat(actual.get().getNumberOfGuests()).isEqualTo(2);
+            assertThat(actual.get().getNumberOfGuests()).isEqualTo(4);
         }
 
         @Test
         @DisplayName("테이블 인원 수가 0 미만인 경우 예외를 던진다.")
         void numberOfGuest_IsNegative_ExceptionThrown() {
             // given
-            OrderTable savedOrderTable = tableService.create(saveOrderTable(0, true));
+            OrderTable savedOrderTable = saveOrderTable(0, true);
 
             // when & then
             assertThatThrownBy(
-                    () -> tableService.changeNumberOfGuests(savedOrderTable.getId(), saveOrderTable(-1, true)))
+                    () -> tableService.changeNumberOfGuests(savedOrderTable.getId(), createOrderTable(-1, true)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         @DisplayName("orderTable이 존재하지 않는 경우 예외를 던진다.")
         void orderTableId_NotExist_ExceptionThrown() {
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(9L, saveOrderTable(0, false)))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(9L, createOrderTable(0, false)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -158,11 +158,11 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("orderTable이 빈 테이블인 경우 예외를 던진다.")
         void emptyTable_ExceptionThrown() {
             // given
-            OrderTable savedOrderTable = tableService.create(saveOrderTable(0, true));
+            OrderTable savedOrderTable = saveOrderTable(0, true);
 
             // when & then
             assertThatThrownBy(
-                    () -> tableService.changeNumberOfGuests(savedOrderTable.getId(), saveOrderTable(2, false)))
+                    () -> tableService.changeNumberOfGuests(savedOrderTable.getId(), createOrderTable(2, false)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

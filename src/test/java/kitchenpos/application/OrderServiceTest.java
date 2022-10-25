@@ -61,8 +61,6 @@ class OrderServiceTest extends ServiceTest {
             Order updateOrder = new Order();
             updateOrder.setOrderStatus("MEAL");
 
-            orderService.changeOrderStatus(savedOrder.getId(), updateOrder);
-
             // when
             Order actual = orderService.changeOrderStatus(savedOrder.getId(), updateOrder);
 
