@@ -75,8 +75,9 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문하는_테이블이_존재하지_않는다면_예외가_발생한다() {
             // given
+            Menu menu = 메뉴를_저장한다("메뉴");
             OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(20L);
+            orderLineItem.setMenuId(menu.getId());
             orderLineItem.setQuantity(3L);
 
             Order order = new Order();
@@ -92,9 +93,9 @@ class OrderServiceTest extends ServiceTest {
         void 주문하는_테이블이_비어_있다면_예외가_발생한다() {
             // given
             OrderTable orderTable = 빈_테이블을_저장한다();
-
+            Menu menu = 메뉴를_저장한다("메뉴");
             OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(20L);
+            orderLineItem.setMenuId(menu.getId());
             orderLineItem.setQuantity(3L);
 
             Order order = new Order();
