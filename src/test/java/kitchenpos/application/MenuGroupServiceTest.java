@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.common.fixtures.MenuGroupFixtures.루나세트_이름;
+import static kitchenpos.common.constants.Constants.루나세트_이름;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 

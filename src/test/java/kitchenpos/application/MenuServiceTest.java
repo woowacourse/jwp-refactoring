@@ -1,11 +1,10 @@
 package kitchenpos.application;
 
-import static kitchenpos.common.fixtures.MenuFixtures.야채곱창_메뉴_가격;
-import static kitchenpos.common.fixtures.MenuFixtures.야채곱창_수량;
-import static kitchenpos.common.fixtures.MenuFixtures.잘못된_상품_아이디;
-import static kitchenpos.common.fixtures.MenuGroupFixtures.루나세트_이름;
-import static kitchenpos.common.fixtures.ProductFixtures.야채곱창_가격;
-import static kitchenpos.common.fixtures.ProductFixtures.야채곱창_이름;
+import static kitchenpos.common.constants.Constants.루나세트_이름;
+import static kitchenpos.common.constants.Constants.야채곱창_가격;
+import static kitchenpos.common.constants.Constants.야채곱창_수량;
+import static kitchenpos.common.constants.Constants.야채곱창_이름;
+import static kitchenpos.common.constants.Constants.잘못된_아이디;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -70,7 +69,7 @@ public class MenuServiceTest extends ServiceTest {
     @Test
     void 메뉴를_등록한다() {
         // given
-        Menu 야채곱창_메뉴 = 메뉴_생성(야채곱창_이름, 야채곱창_메뉴_가격, 루나세트.getId(), List.of(루나_야채곱창));
+        Menu 야채곱창_메뉴 = 메뉴_생성(야채곱창_이름, 야채곱창_가격, 루나세트.getId(), List.of(루나_야채곱창));
 
         // when
         Menu actual = menuService.create(야채곱창_메뉴);
@@ -115,7 +114,7 @@ public class MenuServiceTest extends ServiceTest {
     void 메뉴를_등록할_때_메뉴_그룹이_존재하지_않으면_예외가_발생한다() {
         // given
         Long 잘못된_메뉴그룹_아이디 = -1L;
-        Menu 야채곱창_메뉴 = 메뉴_생성(야채곱창_이름, 야채곱창_메뉴_가격, 잘못된_메뉴그룹_아이디, List.of(루나_야채곱창));
+        Menu 야채곱창_메뉴 = 메뉴_생성(야채곱창_이름, 야채곱창_가격, 잘못된_메뉴그룹_아이디, List.of(루나_야채곱창));
 
         // when & then
         assertThatThrownBy(() -> menuService.create(야채곱창_메뉴))
@@ -126,8 +125,8 @@ public class MenuServiceTest extends ServiceTest {
     @Test
     void 메뉴를_등록할_때_메뉴_상품이_상품에_등록되어_있지_않으면_예외가_발생한다() {
         // given
-        MenuProduct 등록되지_않은_메뉴상품 = 메뉴상품_생성(잘못된_상품_아이디, 야채곱창_수량);
-        Menu 야채곱창_메뉴 = 메뉴_생성(야채곱창_이름, 야채곱창_메뉴_가격, 루나세트.getId(), List.of(등록되지_않은_메뉴상품));
+        MenuProduct 등록되지_않은_메뉴상품 = 메뉴상품_생성(잘못된_아이디, 야채곱창_수량);
+        Menu 야채곱창_메뉴 = 메뉴_생성(야채곱창_이름, 야채곱창_가격, 루나세트.getId(), List.of(등록되지_않은_메뉴상품));
 
         // when & then
         assertThatThrownBy(() -> menuService.create(야채곱창_메뉴))

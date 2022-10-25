@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import static kitchenpos.common.fixtures.OrderTableFixtures.빈_테이블;
-import static kitchenpos.common.fixtures.OrderTableFixtures.사용중인_테이블;
-import static kitchenpos.common.fixtures.OrderTableFixtures.테이블_1번_손님_수;
+import static kitchenpos.common.constants.Constants.사용가능_테이블;
+import static kitchenpos.common.constants.Constants.사용중인_테이블;
+import static kitchenpos.common.constants.Constants.테이블_손님_수;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -27,7 +27,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문_테이블을_등록한다() {
         // given
-        OrderTable 야채곱창_주문_테이블 = 주문_테이블_생성(테이블_1번_손님_수, 사용중인_테이블);
+        OrderTable 야채곱창_주문_테이블 = 주문_테이블_생성(테이블_손님_수, 사용중인_테이블);
 
         // when
         OrderTable actual = tableService.create(야채곱창_주문_테이블);
@@ -35,7 +35,7 @@ class TableServiceTest extends ServiceTest {
         // then
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getNumberOfGuests()).isEqualTo(테이블_1번_손님_수)
+                () -> assertThat(actual.getNumberOfGuests()).isEqualTo(테이블_손님_수)
         );
     }
 
@@ -43,7 +43,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문_테이블_목록을_조회한다() {
         // given
-        OrderTable 야채곱창_주문_테이블 = 주문_테이블_생성(테이블_1번_손님_수, 사용중인_테이블);
+        OrderTable 야채곱창_주문_테이블 = 주문_테이블_생성(테이블_손님_수, 사용중인_테이블);
         orderTableDao.save(야채곱창_주문_테이블);
 
         // when
@@ -57,11 +57,11 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문_테이블을_빈_테이블로_변경한다() {
         // given
-        OrderTable 야채곱창_주문_테이블 = 주문_테이블_생성(테이블_1번_손님_수, 사용중인_테이블);
+        OrderTable 야채곱창_주문_테이블 = 주문_테이블_생성(테이블_손님_수, 사용중인_테이블);
         야채곱창_주문_테이블 = orderTableDao.save(야채곱창_주문_테이블);
 
         // when
-        OrderTable actual = tableService.changeEmpty(야채곱창_주문_테이블.getId(), new OrderTable(빈_테이블));
+        OrderTable actual = tableService.changeEmpty(야채곱창_주문_테이블.getId(), new OrderTable(사용가능_테이블));
 
         // then
         assertThat(actual.isEmpty()).isTrue();
@@ -74,7 +74,7 @@ class TableServiceTest extends ServiceTest {
         Long 잘못된_주문_테이블_아이디 = -1L;
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(잘못된_주문_테이블_아이디, new OrderTable(빈_테이블)))
+        assertThatThrownBy(() -> tableService.changeEmpty(잘못된_주문_테이블_아이디, new OrderTable(사용가능_테이블)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -82,7 +82,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문_테이블의_방문한_손님_수를_변경한다() {
         // given
-        OrderTable 야채곱창_주문_테이블 = 주문_테이블_생성(테이블_1번_손님_수, 사용중인_테이블);
+        OrderTable 야채곱창_주문_테이블 = 주문_테이블_생성(테이블_손님_수, 사용중인_테이블);
         야채곱창_주문_테이블 = orderTableDao.save(야채곱창_주문_테이블);
 
         int 변경할_테이블_1번_손님_수 = 5;
@@ -98,7 +98,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문_테이블의_방문한_손님_수를_변경할_때_변경할_손님_수가_0명_미만이면_예외를_발생한다() {
         // given
-        OrderTable 야채곱창_주문_테이블 = 주문_테이블_생성(테이블_1번_손님_수, 사용중인_테이블);
+        OrderTable 야채곱창_주문_테이블 = 주문_테이블_생성(테이블_손님_수, 사용중인_테이블);
         야채곱창_주문_테이블 = orderTableDao.save(야채곱창_주문_테이블);
         Long 야채곱창_주문_테이블_아이디 = 야채곱창_주문_테이블.getId();
 

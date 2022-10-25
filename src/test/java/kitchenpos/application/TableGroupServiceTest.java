@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.common.fixtures.OrderTableFixtures.빈_테이블;
-import static kitchenpos.common.fixtures.OrderTableFixtures.사용중인_테이블;
+import static kitchenpos.common.constants.Constants.사용가능_테이블;
+import static kitchenpos.common.constants.Constants.사용중인_테이블;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -35,9 +35,9 @@ class TableGroupServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        야채곱창_주문_테이블 = 주문_테이블_생성(4, 빈_테이블);
-        치킨_주문_테이블 = 주문_테이블_생성(3, 빈_테이블);
-        피자_주문_테이블 = 주문_테이블_생성(5, 빈_테이블);
+        야채곱창_주문_테이블 = 주문_테이블_생성(4, 사용가능_테이블);
+        치킨_주문_테이블 = 주문_테이블_생성(3, 사용가능_테이블);
+        피자_주문_테이블 = 주문_테이블_생성(5, 사용가능_테이블);
 
         야채곱창_주문_테이블 = orderTableDao.save(야채곱창_주문_테이블);
         치킨_주문_테이블 = orderTableDao.save(치킨_주문_테이블);

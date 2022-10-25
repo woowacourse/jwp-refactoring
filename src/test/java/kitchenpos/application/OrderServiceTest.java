@@ -1,13 +1,12 @@
 package kitchenpos.application;
 
-import static kitchenpos.common.fixtures.MenuFixtures.야채곱창_메뉴_가격;
-import static kitchenpos.common.fixtures.MenuFixtures.야채곱창_메뉴_이름;
-import static kitchenpos.common.fixtures.MenuGroupFixtures.루나세트_이름;
-import static kitchenpos.common.fixtures.MenuProductFixtures.메뉴_상품_수량;
-import static kitchenpos.common.fixtures.OrderTableFixtures.사용중인_테이블;
-import static kitchenpos.common.fixtures.OrderTableFixtures.테이블_1번_손님_수;
-import static kitchenpos.common.fixtures.ProductFixtures.야채곱창_가격;
-import static kitchenpos.common.fixtures.ProductFixtures.야채곱창_이름;
+import static kitchenpos.common.constants.Constants.루나세트_이름;
+import static kitchenpos.common.constants.Constants.메뉴_상품_수량;
+import static kitchenpos.common.constants.Constants.사용가능_테이블;
+import static kitchenpos.common.constants.Constants.사용중인_테이블;
+import static kitchenpos.common.constants.Constants.야채곱창_가격;
+import static kitchenpos.common.constants.Constants.야채곱창_이름;
+import static kitchenpos.common.constants.Constants.테이블_손님_수;
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,7 +24,6 @@ import kitchenpos.common.builder.OrderBuilder;
 import kitchenpos.common.builder.OrderLineItemBuilder;
 import kitchenpos.common.builder.OrderTableBuilder;
 import kitchenpos.common.builder.ProductBuilder;
-import kitchenpos.common.fixtures.OrderTableFixtures;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
@@ -75,8 +73,8 @@ class OrderServiceTest extends ServiceTest {
         Product 야채곱창 = productDao.save(상품_생성(야채곱창_이름, 야채곱창_가격));
         MenuProduct 루나_야채곱창 = 메뉴_상품_생성(야채곱창, 메뉴_상품_수량);
 
-        야채곱창_메뉴 = menuDao.save(메뉴_생성(야채곱창_메뉴_이름, 야채곱창_메뉴_가격, 루나세트, 루나_야채곱창));
-        야채곱창_주문_테이블 = orderTableDao.save(주문_테이블_생성(테이블_1번_손님_수, 사용중인_테이블));
+        야채곱창_메뉴 = menuDao.save(메뉴_생성(야채곱창_이름, 야채곱창_가격, 루나세트, 루나_야채곱창));
+        야채곱창_주문_테이블 = orderTableDao.save(주문_테이블_생성(테이블_손님_수, 사용중인_테이블));
     }
 
     @DisplayName("주문을 등록한다.")
@@ -126,7 +124,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문을_등록할_때_주문_테이블이_빈_테이블_이면_예외가_발생한다() {
         // given
-        OrderTable 빈_테이블 = orderTableDao.save(주문_테이블_생성(테이블_1번_손님_수, OrderTableFixtures.빈_테이블));
+        OrderTable 빈_테이블 = orderTableDao.save(주문_테이블_생성(테이블_손님_수, 사용가능_테이블));
         OrderLineItem 야채곱창_주문항목 = 주문_항목_생성(야채곱창_메뉴);
         Order 야채곱창_주문 = 주문_생성(빈_테이블, List.of(야채곱창_주문항목), COOKING);
 

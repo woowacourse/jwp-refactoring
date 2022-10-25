@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.common.fixtures.ProductFixtures.야채곱창_가격;
-import static kitchenpos.common.fixtures.ProductFixtures.야채곱창_이름;
+import static kitchenpos.common.constants.Constants.야채곱창_가격;
+import static kitchenpos.common.constants.Constants.야채곱창_이름;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -32,12 +32,12 @@ class ProductServiceTest extends ServiceTest {
         Product 야채곱창 = 상품_생성(야채곱창_이름, 야채곱창_가격);
 
         // when
-        productService.create(야채곱창);
+        Product actaul = productService.create(야채곱창);
 
         // then
         assertAll(
-                () -> assertThat(야채곱창.getId()).isNotNull(),
-                () -> assertThat(야채곱창.getName()).isEqualTo(야채곱창_이름)
+                () -> assertThat(actaul.getId()).isNotNull(),
+                () -> assertThat(actaul.getName()).isEqualTo(야채곱창_이름)
         );
     }
 
