@@ -33,7 +33,7 @@ class MenuServiceTest extends ServiceTest {
             // when
             Menu savedMenu = menuService.create(newMenu);
 
-            // when
+            // then
             List<Menu> menus = menuService.list();
             assertThat(menus)
                     .extracting(Menu::getId, Menu::getName, (menu) -> menu.getPrice().intValue(), Menu::getMenuGroupId)
