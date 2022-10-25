@@ -4,8 +4,6 @@ import static fixture.MenuGroupFixtures.두마리메뉴_그룹;
 import static fixture.MenuGroupFixtures.존재하지않는_그룹_ID;
 import static fixture.ProductFixtures.존재하지_않는_상품_ID;
 import static fixture.ProductFixtures.후라이드_상품;
-import static org.assertj.core.api.Assertions.*;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;

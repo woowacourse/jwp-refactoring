@@ -1,6 +1,5 @@
 package kitchenpos.ui;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
@@ -11,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @IntegrationTest
-public class ProductRestControllerTest {
+class ProductRestControllerTest {
 
     @Autowired
     private ProductRestController sut;
