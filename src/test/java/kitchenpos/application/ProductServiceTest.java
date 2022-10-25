@@ -23,7 +23,7 @@ class ProductServiceTest extends ServiceTest {
     void list() {
         // given
         saveProduct("크림치킨", BigDecimal.valueOf(10000.00));
-        saveProduct("크림어니언치킨", BigDecimal.valueOf(10000.00));
+        saveProduct("크림어니언치킨", BigDecimal.valueOf(15000));
 
         // when
         List<Product> products = productService.list();
