@@ -1,12 +1,18 @@
 package kitchenpos.application;
 
+import static kitchenpos.Fixtures.메뉴상품_후라이드;
+import static kitchenpos.Fixtures.빈테이블_1;
+import static kitchenpos.Fixtures.상품_후라이드;
+import static kitchenpos.Fixtures.주문_테이블1;
+import static kitchenpos.Fixtures.주문아이템;
+import static kitchenpos.Fixtures.주문아이템_후라이드;
+import static kitchenpos.Fixtures.테이블_1;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.Fixtures;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
@@ -39,29 +45,26 @@ class OrderServiceTest extends ServiceTest {
 
     @BeforeEach
     void setup() {
-        productDao.save(Fixtures.상품_후라이드());
-        menuProductDao.save(Fixtures.메뉴상품_후라이드());
-        orderTableDao.save(Fixtures.테이블_1());
+        productDao.save(상품_후라이드());
+        menuProductDao.save(메뉴상품_후라이드());
+        orderTableDao.save(테이블_1());
     }
 
     @DisplayName("주문을 추가하면 주문 목록에 추가된다.")
     @Test
     void create() {
-        Order 주문 = Fixtures.주문_테이블1_후라이드();
-
-        Order saved = orderService.create(주문);
+        Order 주문 = orderService.create(주문_테이블1());
 
         assertThat(orderService.list())
                 .usingRecursiveFieldByFieldElementComparator()
-                .contains(saved);
+                .contains(주문);
     }
 
     @DisplayName("하나 이상의 메뉴를 주문해야 한다.")
     @Test
     void create_noMenu() {
-        ArrayList<OrderLineItem> emptyItem = new ArrayList<>();
-        Order 주문 = new Order(1L, 1L, OrderStatus.MEAL.name(),
-                LocalDateTime.now(), emptyItem);
+        ArrayList<OrderLineItem> 빈_메뉴들 = new ArrayList<>();
+        Order 주문 = 주문_테이블1(빈_메뉴들);
 
         assertThatThrownBy(() -> orderService.create(주문))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -71,10 +74,9 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문한 메뉴들은 모두 DB에 등록되어야 한다.")
     @Test
     void create_invalidMenu() {
-        long menuId = 500L;
-        OrderLineItem invalidItem = new OrderLineItem(1L, 1L, menuId, 10);
+        long 잘못된_메뉴_ID = 500L;
         Order 주문 = new Order(1L, 1L, OrderStatus.MEAL.name(),
-                LocalDateTime.now(), List.of(invalidItem));
+                LocalDateTime.now(), List.of(주문아이템(잘못된_메뉴_ID)));
 
         assertThatThrownBy(() -> orderService.create(주문))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -84,9 +86,9 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 테이블은 DB에 등록되어야 한다.")
     @Test
     void create_invalidTable() {
-        long orderTableId = 500L;
-        Order 주문 = new Order(1L, orderTableId, OrderStatus.MEAL.name(),
-                LocalDateTime.now(), List.of(Fixtures.주문아이템_후라이드()));
+        long 잘못된_테이블_ID = 500L;
+        Order 주문 = new Order(1L, 잘못된_테이블_ID, OrderStatus.MEAL.name(),
+                LocalDateTime.now(), List.of(주문아이템_후라이드()));
 
         assertThatThrownBy(() -> orderService.create(주문))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -96,9 +98,9 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 테이블은 손님이 존재해야 한다.")
     @Test
     void create_noCustomer() {
-        OrderTable orderTable = orderTableDao.save(Fixtures.빈테이블_1());
-        Order 주문 = new Order(1L, orderTable.getId(), OrderStatus.MEAL.name(),
-                LocalDateTime.now(), List.of(Fixtures.주문아이템_후라이드()));
+        OrderTable 빈테이블_1 = orderTableDao.save(빈테이블_1());
+        Order 주문 = new Order(1L, 빈테이블_1.getId(), OrderStatus.MEAL.name(),
+                LocalDateTime.now(), List.of(주문아이템_후라이드()));
 
         assertThatThrownBy(() -> orderService.create(주문))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -108,30 +110,28 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 상태를 변경하면 변경된 주문 상태가 반영된다.")
     @Test
     void changeOrderStatus() {
-        Order saved = orderService.create(Fixtures.주문_테이블1_후라이드());
+        Order 주문_테이블1 = orderService.create(주문_테이블1());
         String 주문상태 = OrderStatus.MEAL.name();
-        saved.updateOrderStatus(주문상태);
-        assertThat(saved.getOrderStatus()).isEqualTo(주문상태);
+        주문_테이블1.updateOrderStatus(주문상태);
+        assertThat(주문_테이블1.getOrderStatus()).isEqualTo(주문상태);
 
-        orderService.changeOrderStatus(saved.getId(), saved);
+        orderService.changeOrderStatus(주문_테이블1.getId(), 주문_테이블1);
 
         assertThat(orderService.list())
                 .usingRecursiveFieldByFieldElementComparator()
-                .contains(saved);
+                .contains(주문_테이블1);
     }
 
     @DisplayName("주문 상태가 COMPLETION일 시 주문 상태를 변경할 수 없다.")
     @Test
     void changeOrderStatus_noComplete() {
-        Order 주문_후라이드 = orderService.create(Fixtures.주문_테이블1_후라이드());
+        Order 주문_테이블1 = orderService.create(주문_테이블1());
 
-        주문_후라이드.updateOrderStatus(OrderStatus.COMPLETION.name());
-        Order saved = orderService.changeOrderStatus(주문_후라이드.getId(), 주문_후라이드);
-        assertThat(saved.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
+        주문_테이블1.updateOrderStatus(OrderStatus.COMPLETION.name());
+        Order 완료된_주문 = orderService.changeOrderStatus(주문_테이블1.getId(), 주문_테이블1);
+        assertThat(완료된_주문.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
 
-        saved.updateOrderStatus(OrderStatus.MEAL.name());
-
-        assertThatThrownBy(() -> orderService.changeOrderStatus(saved.getId(), saved))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(완료된_주문.getId(), 완료된_주문))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 상태가 COMPLETION일 시 주문 상태를 변경할 수 없다.");
     }

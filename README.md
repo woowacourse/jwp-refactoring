@@ -5,7 +5,7 @@
 - [x] kitchenpos 패키지의 코드를 보고 키친포스의 요구 사항을 README.md에 작성한다.
 - [x] 정리한 키친포스의 요구 사항을 토대로 테스트 코드를 작성한다.
 - [x] 정리한 키친포스의 요구 사항을 토대로 예외사항에 대한 테스트 코드를 작성한다.
-- [ ] 모든 Business Object에 대한 테스트 코드를 작성한다.
+- [x] 모든 Business Object에 대한 테스트 코드를 작성한다.
 - [x] @SpringBootTest를 이용한 통합 테스트 코드 또는 @ExtendWith(MockitoExtension.class)를 이용한 단위 테스트 코드를 작성한다.
 - [x] 이번 과정에서는 Lombok 없이 미션을 진행해 본다.
 
@@ -216,6 +216,16 @@ Content-Type: application/json
 
 ## 리팩토링 목록
 
+### 비즈니스
+
 - [x] 도메인 세터 삭제 및 생성자 수정
 - [ ] 도메인과 Dto 분리
+
+### 테스트
+
 - [ ] 테스트 픽스처 추가 분리
+- [x] 테스트 픽스처 생성 방식 변경(Fixtures. 제거)
+- [ ] usingRecursiveComparison 등을 통한 필드값 검증
+- [ ] DirtiesContext 제거 및 DatabaseCleaner 로 변경
+- [ ] 일부 테스트코드 도메인 테스트로 이동
+- [ ] @SuppressWarnings("NonAsciiCharacters") 추가

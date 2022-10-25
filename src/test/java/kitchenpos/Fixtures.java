@@ -2,6 +2,7 @@ package kitchenpos;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -29,8 +30,19 @@ public class Fixtures {
                 List.of(메뉴상품_후라이드()));
     }
 
+    public static Menu 메뉴_치킨그룹(MenuProduct... menuProducts) {
+        return new Menu(1L, "후라이드치킨", BigDecimal.valueOf(16000),
+                메뉴그룹_한마리메뉴().getId(),
+                Arrays.asList(menuProducts));
+    }
+
     public static MenuProduct 메뉴상품_후라이드() {
         return new MenuProduct(1L, 1L, 상품_후라이드().getId(), 1);
+    }
+
+
+    public static OrderTable 테이블_1(long tableGroupId) {
+        return new OrderTable(1L, tableGroupId, 0, false);
     }
 
     public static OrderTable 테이블_1() {
@@ -53,20 +65,31 @@ public class Fixtures {
         return new TableGroup(2L, LocalDateTime.now(), tables);
     }
 
-    public static OrderLineItem 주문아이템_후라이드() {
-        return new OrderLineItem(1L, 1L, 상품_후라이드().getId(), 1L);
+    public static OrderLineItem 주문아이템(long menuId) {
+        return new OrderLineItem(1L, 1L, menuId, 1L);
     }
 
-    public static Order 주문_테이블1_후라이드() {
+    public static OrderLineItem 주문아이템_후라이드() {
+        return new OrderLineItem(1L, 주문_테이블1().getId(), 상품_후라이드().getId(), 1L);
+    }
+
+    public static Order 주문_테이블1() {
         return new Order(1L, 테이블_1().getId(),
                 OrderStatus.COOKING.name(),
                 LocalDateTime.now(),
                 List.of(주문아이템_후라이드()));
     }
 
-    public static Order 주문_테이블1_후라이드(List<OrderLineItem> items) {
+    public static Order 주문_테이블1(List<OrderLineItem> items) {
         return new Order(1L, 테이블_1().getId(),
                 OrderStatus.COOKING.name(),
+                LocalDateTime.now(),
+                items);
+    }
+
+    public static Order 주문_테이블1(OrderStatus status, List<OrderLineItem> items) {
+        return new Order(1L, 테이블_1().getId(),
+                status.name(),
                 LocalDateTime.now(),
                 items);
     }

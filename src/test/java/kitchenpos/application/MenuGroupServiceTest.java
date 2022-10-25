@@ -1,8 +1,9 @@
 package kitchenpos.application;
 
+import static kitchenpos.Fixtures.메뉴그룹_한마리메뉴;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import kitchenpos.Fixtures;
+import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +15,12 @@ class MenuGroupServiceTest extends ServiceTest {
 
     @Test
     void create() {
-        MenuGroup 메뉴그룹_한마리메뉴 = Fixtures.메뉴그룹_한마리메뉴();
+        MenuGroup 메뉴그룹_한마리메뉴 = menuGroupService.create(메뉴그룹_한마리메뉴());
 
-        MenuGroup saved = menuGroupService.create(메뉴그룹_한마리메뉴);
+        List<MenuGroup> 메뉴그룹_목록 = menuGroupService.list();
 
-        assertThat(menuGroupService.list())
+        assertThat(메뉴그룹_목록)
                 .usingRecursiveFieldByFieldElementComparator()
-                .contains(saved);
+                .contains(메뉴그룹_한마리메뉴);
     }
 }
