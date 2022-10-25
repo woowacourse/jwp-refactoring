@@ -53,7 +53,7 @@ class OrderServiceTest {
     class Save {
 
         @Test
-        @DisplayName("Order를 저장한다.")
+        @DisplayName("주문을 저장한다.")
         void success() {
             TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroupFixture.getTableGroup());
             OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_FALSE.getOrderTable(tableGroup.getId()));
@@ -86,7 +86,7 @@ class OrderServiceTest {
         }
 
         @Test
-        @DisplayName("Order 전체 목록을 조회한다.")
+        @DisplayName("주문 전체 목록을 조회한다.")
         void success() {
             List<Order> orders = orderService.list();
 
@@ -112,7 +112,7 @@ class OrderServiceTest {
         }
 
         @Test
-        @DisplayName("OrderStatus를 변경한다.")
+        @DisplayName("주문상태를 변경한다.")
         void success() {
             Order actual = orderService.changeOrderStatus(order.getId(), OrderFixture.MEAL.getOrder());
 

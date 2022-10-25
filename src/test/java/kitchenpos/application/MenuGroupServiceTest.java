@@ -27,7 +27,7 @@ class MenuGroupServiceTest {
     class Create {
 
         @Test
-        @DisplayName("MenuGroup을 생성한다.")
+        @DisplayName("메뉴 그룹을 생성한다.")
         void success() {
             MenuGroup menuGroup = KOREAN.getMenuGroup();
 
@@ -50,7 +50,7 @@ class MenuGroupServiceTest {
         }
 
         @Test
-        @DisplayName("MenuGroup 전체 목록을 조회한다.")
+        @DisplayName("메뉴 그룹 전체 목록을 조회한다.")
         void success() {
             List<MenuGroup> menuGroups = menuGroupService.list();
 

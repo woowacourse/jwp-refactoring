@@ -27,7 +27,7 @@ class ProductServiceTest {
     class Create {
 
         @Test
-        @DisplayName("Product를 생성한다.")
+        @DisplayName("상품을 생성한다.")
         void success() {
             Product product = APPLE_1000.getProduct();
 
@@ -49,7 +49,7 @@ class ProductServiceTest {
         }
 
         @Test
-        @DisplayName("Product 전체 목록을 조회한다.")
+        @DisplayName("상품 전체 목록을 조회한다.")
         void success() {
             List<Product> products = productService.list();
 

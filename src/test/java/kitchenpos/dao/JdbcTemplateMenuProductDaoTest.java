@@ -25,7 +25,7 @@ class JdbcTemplateMenuProductDaoTest extends JdbcTemplateTest {
     class Save {
 
         @Test
-        @DisplayName("MenuProduct를 저장한다.")
+        @DisplayName("메뉴 상품을 저장한다.")
         void success() {
             MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(KOREAN.getMenuGroup());
             Menu menu = jdbcTemplateMenuDao.save(CHICKEN_1000.getMenu(menuGroup.getId()));
@@ -54,7 +54,7 @@ class JdbcTemplateMenuProductDaoTest extends JdbcTemplateTest {
         }
 
         @Test
-        @DisplayName("MenuProduct ID로 menuProduct를 단일 조회한다.")
+        @DisplayName("아이디로 메뉴 상품을 단일 조회한다.")
         void success() {
             Long seq = menuProduct.getSeq();
 
@@ -80,7 +80,7 @@ class JdbcTemplateMenuProductDaoTest extends JdbcTemplateTest {
         }
 
         @Test
-        @DisplayName("MenuProduct 전체 목록을 조회한다.")
+        @DisplayName("메뉴 상품 전체 목록을 조회한다.")
         void success() {
             List<MenuProduct> menuProducts = jdbcTemplateMenuProductDao.findAll();
 
@@ -105,7 +105,7 @@ class JdbcTemplateMenuProductDaoTest extends JdbcTemplateTest {
         }
 
         @Test
-        @DisplayName("MenuId를 받으면 MenuId를 포함한 MenuProduct 목록을 조회한다.")
+        @DisplayName("메뉴 아이디를 받으면 포함한 메뉴 상품 목록을 조회한다.")
         void success() {
             List<MenuProduct> menuProducts = jdbcTemplateMenuProductDao.findAllByMenuId(menu.getId());
 

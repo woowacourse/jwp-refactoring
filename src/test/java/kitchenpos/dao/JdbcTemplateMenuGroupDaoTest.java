@@ -17,7 +17,7 @@ class JdbcTemplateMenuGroupDaoTest extends JdbcTemplateTest {
     class Save {
 
         @Test
-        @DisplayName("MenuGroup을 저장한다.")
+        @DisplayName("메뉴 그룹을 저장한다.")
         void success() {
             MenuGroup menuGroup = KOREAN.getMenuGroup();
 
@@ -40,7 +40,7 @@ class JdbcTemplateMenuGroupDaoTest extends JdbcTemplateTest {
         }
 
         @Test
-        @DisplayName("MenuGroup ID로 MenuGroup을 단일 조회한다.")
+        @DisplayName("아이디로 메뉴 그룹을 단일 조회한다.")
         void success() {
             Long id = menuGroup.getId();
 
@@ -63,7 +63,7 @@ class JdbcTemplateMenuGroupDaoTest extends JdbcTemplateTest {
         }
 
         @Test
-        @DisplayName("MenuGroup 전체 목록을 조회한다.")
+        @DisplayName("메뉴 그룹 전체 목록을 조회한다.")
         void success() {
             List<MenuGroup> menuGroups = jdbcTemplateMenuGroupDao.findAll();
 
@@ -83,7 +83,7 @@ class JdbcTemplateMenuGroupDaoTest extends JdbcTemplateTest {
         }
 
         @Test
-        @DisplayName("MenuGroup ID가 존재하면 True를 반환한다.")
+        @DisplayName("메뉴 그룹 아이디가 존재하면 true를 반환한다.")
         void success_true() {
             Long id = menuGroup.getId();
 
@@ -93,7 +93,7 @@ class JdbcTemplateMenuGroupDaoTest extends JdbcTemplateTest {
         }
 
         @Test
-        @DisplayName("MenuGroup ID가 존재하지 않으면 False를 반환한다.")
+        @DisplayName("메뉴 그룹 아이디가 존재하지 않으면 false를 반환한다.")
         void success_false() {
             Long id = Long.MAX_VALUE;
 

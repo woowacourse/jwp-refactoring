@@ -22,7 +22,7 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest{
     class Save {
 
         @Test
-        @DisplayName("Order를 저장한다.")
+        @DisplayName("주문을 저장한다.")
         void success() {
             TableGroup tableGroup = jdbcTemplateTableGroupDao.save(getTableGroup());
             OrderTable orderTable = jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
@@ -49,7 +49,7 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest{
         }
 
         @Test
-        @DisplayName("Order ID로 Order를 단일 조회한다.")
+        @DisplayName("아이디로 주문을 단일 조회한다.")
         void success() {
             Long id = order.getId();
 
@@ -74,7 +74,7 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest{
         }
 
         @Test
-        @DisplayName("OrderTable 전체 목록을 조회한다.")
+        @DisplayName("주문 전체 목록을 조회한다.")
         void success() {
             List<Order> orders = jdbcTemplateOrderDao.findAll();
 
@@ -96,7 +96,7 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest{
         }
 
         @Test
-        @DisplayName("OrderTable ID와 orderStatus 목록을 받아 일치하는 Order가 있으면 true를 반환한다.")
+        @DisplayName("아이디 하나와 주문 상태 목록을 받아 일치하는 주문이 있으면 true를 반환한다.")
         void success_true() {
             Long orderTableId = orderTable.getId();
             OrderStatus orderStatus = OrderStatus.COMPLETION;
@@ -108,7 +108,7 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest{
         }
 
         @Test
-        @DisplayName("OrderTable ID와 orderStatus 목록을 받아 일치하는 Order가 없으면 false를 반환한다.")
+        @DisplayName("아이디 하나와 주문 상태 목록을 받아 일치하는 주문이 없으면 false를 반환한다.")
         void success_false() {
             Long orderTableId = orderTable.getId();
             OrderStatus orderStatus = OrderStatus.COOKING;
@@ -137,7 +137,7 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest{
         }
 
         @Test
-        @DisplayName("OrderTable ID 목록과 orderStatus 목록을 받아 일치하는 Order가 있으면 true를 반환한다.")
+        @DisplayName("아이디 목록과 주문 상태 목록을 받아 일치하는 주문이 있으면 true를 반환한다.")
         void success_true() {
             List<Long> orderTableIds = List.of(orderTable1.getId(), orderTable2.getId());
             OrderStatus orderStatus = OrderStatus.COMPLETION;
@@ -149,7 +149,7 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest{
         }
 
         @Test
-        @DisplayName("OrderTable ID와 orderStatus 목록을 받아 일치하는 Order가 없으면 false를 반환한다.")
+        @DisplayName("아이디 목록과 주문 상태 목록을 받아 일치하는 주문이 없으면 false를 반환한다.")
         void success_false() {
             List<Long> orderTableIds = List.of(orderTable2.getId());
             OrderStatus orderStatus = OrderStatus.COMPLETION;

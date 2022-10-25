@@ -19,7 +19,7 @@ class JdbcTemplateProductDaoTest extends JdbcTemplateTest {
     class Save {
 
         @Test
-        @DisplayName("Product를 저장한다.")
+        @DisplayName("상품을 저장한다.")
         void success() {
             Product product = APPLE_1000.getProduct();
 
@@ -42,7 +42,7 @@ class JdbcTemplateProductDaoTest extends JdbcTemplateTest {
         }
 
         @Test
-        @DisplayName("Product ID로 Product를 단일 조회한다.")
+        @DisplayName("아이디로 상품을 단일 조회한다.")
         void success() {
             Long id = product.getId();
 
@@ -65,7 +65,7 @@ class JdbcTemplateProductDaoTest extends JdbcTemplateTest {
         }
 
         @Test
-        @DisplayName("Product 전체 목록을 조회한다.")
+        @DisplayName("상품 전체 목록을 조회한다.")
         void success() {
             List<Product> products = jdbcTemplateProductDao.findAll();
 

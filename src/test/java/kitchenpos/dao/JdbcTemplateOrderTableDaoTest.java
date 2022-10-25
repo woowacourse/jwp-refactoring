@@ -21,7 +21,7 @@ class JdbcTemplateOrderTableDaoTest extends JdbcTemplateTest {
     class Save {
 
         @Test
-        @DisplayName("OrderTable를 저장한다.")
+        @DisplayName("주문 테이블을 저장한다.")
         void success() {
             TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroupFixture.getTableGroup());
             OrderTable orderTable = OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId());
@@ -46,7 +46,7 @@ class JdbcTemplateOrderTableDaoTest extends JdbcTemplateTest {
         }
 
         @Test
-        @DisplayName("OrderTable ID로 OrderTable를 단일 조회한다.")
+        @DisplayName("아이디로로 주문 테이블을 단일 조회한다.")
         void success() {
             Long id = orderTable.getId();
 
@@ -70,7 +70,7 @@ class JdbcTemplateOrderTableDaoTest extends JdbcTemplateTest {
         }
 
         @Test
-        @DisplayName("OrderTable 전체 목록을 조회한다.")
+        @DisplayName("주문 테이블 전체 목록을 조회한다.")
         void success() {
             List<OrderTable> orderTables = jdbcTemplateOrderTableDao.findAll();
 
@@ -93,7 +93,7 @@ class JdbcTemplateOrderTableDaoTest extends JdbcTemplateTest {
         }
 
         @Test
-        @DisplayName("OrderTable ID들을 받으면 해당 아이디의 OrderTable 목록을 조회한다.")
+        @DisplayName("아이디 목록을 받으면 주문 테이블 목록을 조회한다.")
         void success() {
             List<OrderTable> orderTables = jdbcTemplateOrderTableDao.findAllByIdIn(
                 List.of(orderTable1.getId(), orderTable2.getId()));
@@ -116,7 +116,7 @@ class JdbcTemplateOrderTableDaoTest extends JdbcTemplateTest {
         }
 
         @Test
-        @DisplayName("TableGroupId ID를 받으면 포함된 OrderTable 목록을 조회한다.")
+        @DisplayName("테이블 그룹 아이디를 받으면 포함된 주문 테이블 목록을 조회한다.")
         void success() {
             List<OrderTable> orderTables = jdbcTemplateOrderTableDao.findAllByTableGroupId(tableGroup.getId());
 

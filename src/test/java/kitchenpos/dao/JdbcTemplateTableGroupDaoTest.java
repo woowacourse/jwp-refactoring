@@ -17,7 +17,7 @@ class JdbcTemplateTableGroupDaoTest extends JdbcTemplateTest{
     class Save {
 
         @Test
-        @DisplayName("TableGroup을 저장한다.")
+        @DisplayName("테이블 그룹을 저장한다.")
         void success() {
             TableGroup tableGroup = TableGroupFixture.getTableGroup();
 
@@ -40,7 +40,7 @@ class JdbcTemplateTableGroupDaoTest extends JdbcTemplateTest{
         }
 
         @Test
-        @DisplayName("TableGroup ID로 TableGroup을 단일 조회한다.")
+        @DisplayName("아이디로 테이블 그룹을 단일 조회한다.")
         void success() {
             Long id = tableGroup.getId();
 
@@ -63,7 +63,7 @@ class JdbcTemplateTableGroupDaoTest extends JdbcTemplateTest{
         }
 
         @Test
-        @DisplayName("TableGroup 전체 목록을 조회한다.")
+        @DisplayName("테이블 그룹 전체 목록을 조회한다.")
         void success() {
             List<TableGroup> tableGroups = jdbcTemplateTableGroupDao.findAll();
 

@@ -23,9 +23,6 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private JdbcTemplateTableGroupDao jdbcTemplateTableGroupDao;
-
-    @Autowired
     private JdbcTemplateOrderTableDao jdbcTemplateOrderTableDao;
 
     @NestedApplicationTest
@@ -42,7 +39,7 @@ class TableGroupServiceTest {
         }
 
         @Test
-        @DisplayName("TableGroup을 생성한다.")
+        @DisplayName("테이블 그룹을 생성한다.")
         void success() {
             TableGroup tableGroup = TableGroupFixture.getTableGroup(List.of(orderTable1, orderTable2));
 
@@ -69,7 +66,7 @@ class TableGroupServiceTest {
         }
 
         @Test
-        @DisplayName("TableGroup ID를 받으면 포함되어 있는 OrderTable들을 그룹해제한다.")
+        @DisplayName("테이블 그룹 아이디를 받으면 포함되어 있는 주문 테이블들을 그룹 해제한다.")
         void success() {
             Long tableGroupId = tableGroup.getId();
 

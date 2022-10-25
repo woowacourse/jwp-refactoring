@@ -28,7 +28,7 @@ class JdbcTemplateOrderLineItemDaoTest extends JdbcTemplateTest {
     class Save {
 
         @Test
-        @DisplayName("OrderLineItem를 저장한다.")
+        @DisplayName("주문 라인 아이템을 저장한다.")
         void success() {
             TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroupFixture.getTableGroup());
             OrderTable orderTable = jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
@@ -61,7 +61,7 @@ class JdbcTemplateOrderLineItemDaoTest extends JdbcTemplateTest {
         }
 
         @Test
-        @DisplayName("OrderLineItem ID로 OrderLineItem를 단일 조회한다.")
+        @DisplayName("아이디로 주문 라인 아이템을 단일 조회한다.")
         void success() {
             Long seq = orderLineItem.getSeq();
 
@@ -89,7 +89,7 @@ class JdbcTemplateOrderLineItemDaoTest extends JdbcTemplateTest {
         }
 
         @Test
-        @DisplayName("OrderLineItem 전체 목록을 조회한다.")
+        @DisplayName("주문 라인 아이템 전체 목록을 조회한다.")
         void success() {
             List<OrderLineItem> orderLineItems = jdbcTemplateOrderLineItemDao.findAll();
 
@@ -115,7 +115,7 @@ class JdbcTemplateOrderLineItemDaoTest extends JdbcTemplateTest {
         }
 
         @Test
-        @DisplayName("OrderId를 받으면 해당 아이디를 포함한 목록을 조회한다.")
+        @DisplayName("주문 아이디를 받으면 포함한 목록을 조회한다.")
         void success() {
             List<OrderLineItem> orderLineItems = jdbcTemplateOrderLineItemDao.findAllByOrderId(order.getId());
 

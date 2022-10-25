@@ -29,7 +29,7 @@ class TableServiceTest {
     class Create {
 
         @Test
-        @DisplayName("OrderTable을 생성한다.")
+        @DisplayName("주문 테이블을 생성한다.")
         void success() {
             OrderTable orderTable = GUEST_ONE_EMPTY_TRUE.getOrderTable();
             OrderTable actual = tableService.create(orderTable);
@@ -51,7 +51,7 @@ class TableServiceTest {
         }
 
         @Test
-        @DisplayName("OrderTable 전체 목록을 조회한다.")
+        @DisplayName("주문 테이블 전체 목록을 조회한다.")
         void success() {
             List<OrderTable> orderTables = tableService.list();
 
@@ -71,7 +71,7 @@ class TableServiceTest {
         }
 
         @Test
-        @DisplayName("Empty 여부를 변경한다.")
+        @DisplayName("공석 여부를 변경한다.")
         void success() {
             orderTable.setEmpty(false);
             OrderTable actual = tableService.changeEmpty(orderTable.getId(), orderTable);

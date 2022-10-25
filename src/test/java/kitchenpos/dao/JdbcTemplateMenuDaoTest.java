@@ -20,7 +20,7 @@ class JdbcTemplateMenuDaoTest extends JdbcTemplateTest {
     class Save {
 
         @Test
-        @DisplayName("Menu를 저장한다.")
+        @DisplayName("메뉴를 저장한다.")
         void success() {
             MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(KOREAN.getMenuGroup());
             Menu menu = CHICKEN_1000.getMenu(menuGroup.getId());
@@ -45,7 +45,7 @@ class JdbcTemplateMenuDaoTest extends JdbcTemplateTest {
         }
 
         @Test
-        @DisplayName("Menu ID로 Menu 단일 조회한다.")
+        @DisplayName("아이디로 메뉴를 단일 조회한다.")
         void success() {
             Long id = menu.getId();
 
@@ -69,7 +69,7 @@ class JdbcTemplateMenuDaoTest extends JdbcTemplateTest {
         }
 
         @Test
-        @DisplayName("Menu 전체 목록을 조회한다.")
+        @DisplayName("메뉴 전체 목록을 조회한다.")
         void success() {
             List<Menu> menus = jdbcTemplateMenuDao.findAll();
 
@@ -92,7 +92,7 @@ class JdbcTemplateMenuDaoTest extends JdbcTemplateTest {
         }
 
         @Test
-        @DisplayName("Menu Id 리스트를 전달하면 데이터베이스에 존재하는 개수를 조회한다.")
+        @DisplayName("아이디 리스트를 전달하면 데이터베이스에 존재하는 메뉴 개수를 조회한다.")
         void success() {
             Long actual = jdbcTemplateMenuDao.countByIdIn(List.of(menu1.getId(), menu2.getId()));
 

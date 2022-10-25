@@ -42,7 +42,7 @@ class MenuServiceTest {
     class Create {
 
         @Test
-        @DisplayName("Menu를 생성한다.")
+        @DisplayName("메뉴를 생성한다.")
         void success() {
             MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(KOREAN.getMenuGroup());
             Menu menu = PIZZA_2000.getMenu(menuGroup.getId());
@@ -78,7 +78,7 @@ class MenuServiceTest {
         }
 
         @Test
-        @DisplayName("Menu 전체 목록을 조회한다.")
+        @DisplayName("메뉴 전체 목록을 조회한다.")
         void success() {
             List<Menu> menus = menuService.list();
 
