@@ -54,7 +54,7 @@ public class MenuServiceTest {
         return productDao.save(product);
     }
 
-    private MenuGroup givenMenuGroup(final String name) {
+    private MenuGroup givenMenuGroup( String name) {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(name);
         return menuGroupDao.save(menuGroup);

@@ -35,7 +35,7 @@ class MenuGroupServiceTest {
                 );
     }
 
-    private MenuGroup givenMenuGroup(final String name) {
+    private MenuGroup givenMenuGroup( String name) {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(name);
         return menuGroup;
