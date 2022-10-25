@@ -39,7 +39,7 @@ class ProductServiceTest {
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
-    public static Stream<BigDecimal> createFailureWhenPriceIsNullOrNegative() {
+    private static Stream<BigDecimal> createFailureWhenPriceIsNullOrNegative() {
         return Stream.of(BigDecimal.valueOf(-1L), BigDecimal.valueOf(-100L));
     }
 
