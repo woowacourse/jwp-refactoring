@@ -11,6 +11,9 @@ import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @DisplayName("ProductService 클래스의")
 class ProductServiceTest extends ServiceTest {
@@ -49,11 +52,13 @@ class ProductServiceTest extends ServiceTest {
             assertThat(actual).isPresent();
         }
 
-        @Test
-        @DisplayName("price가 0보다 작은 경우 예외를 던진다.")
-        void price_LessThanZero_ExceptionThrown() {
+        @ParameterizedTest
+        @NullSource
+        @ValueSource(strings = {"-1"})
+        @DisplayName("price가 null이거나 0보다 작은 경우 예외를 던진다.")
+        void price_isNull_ExceptionThrown(BigDecimal price) {
             // given
-            Product product = createProduct("크림치킨", BigDecimal.valueOf(-1));
+            Product product = createProduct("크림치킨", price);
 
             // when & then
             assertThatThrownBy(() -> productService.create(product))
