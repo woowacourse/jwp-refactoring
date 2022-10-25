@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -96,8 +97,10 @@ class MenuServiceTest {
     @DisplayName("메뉴를 성공적으로 조회할 수 있다.")
     void 메뉴를_성공적으로_조회할_수_있다() {
         Product 라면 = productService.create(맛있는_라면());
-        List<MenuProduct> 메뉴_상품들 = 메뉴_상품(라면);
-        메뉴_상품들.add(new MenuProduct(null, 라면.getId(), 1));
+        List<MenuProduct> 메뉴_상품들 = Arrays.asList(
+                new MenuProduct(null, 라면.getId(), 1),
+                new MenuProduct(null, 라면.getId(), 1)
+        );
 
         MenuGroup menuGroup = menuGroupService.create(면_메뉴_그룹());
         Menu ramen = menuService.create(new Menu("라면", new BigDecimal(1200), menuGroup.getId(), 메뉴_상품들));

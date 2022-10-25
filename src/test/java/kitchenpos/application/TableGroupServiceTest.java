@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -44,9 +45,8 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Test
     void 주문_테이블이_1개_이하이면_예외가_발생한다() {
-        List<OrderTable> 주문_테이블 = new ArrayList<>();
         OrderTable 테이블1 = tableService.create(빈_주문_테이블_3인());
-        주문_테이블.add(테이블1);
+        List<OrderTable> 주문_테이블  = Arrays.asList(테이블1);
 
         assertThatThrownBy(
                 () -> tableGroupService.create(new TableGroup(LocalDateTime.now(), 주문_테이블))
@@ -65,8 +65,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void 주문과_존재하는_테이블의_수가_같지_않으면_예외가_발생한다() {
         OrderTable 테이블1 = tableService.create(빈_주문_테이블_3인());
-        List<OrderTable> 주문_테이블 = new ArrayList<>();
-        주문_테이블.add(테이블1);
+        List<OrderTable> 주문_테이블 = Arrays.asList(테이블1);
         tableService.create(빈_주문_테이블_4인());
 
         assertThatThrownBy(
