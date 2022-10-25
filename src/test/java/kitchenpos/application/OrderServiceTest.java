@@ -80,7 +80,7 @@ class OrderServiceTest extends ServiceTest {
     }
 
     @Test
-    void 주문을_생성할_때_테이블이_비어있지_않으면_예외가_발생한다() {
+    void 주문을_생성할_때_테이블이_비어있으면_예외가_발생한다() {
         주문_테이블 = tableService.create(new OrderTable(null, 3, true));
         요리중_주문.setOrderTableId(주문_테이블.getId());
         주문_항목을_추가한다(요리중_주문);
