@@ -2,19 +2,20 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.support.ClassConstructor;
-import org.junit.jupiter.api.Assertions;
+import kitchenpos.application.dto.TableGroupCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -26,16 +27,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
-    TableGroupService tableGroupService;
+    private TableGroupService tableGroupService;
 
     @MockBean
-    OrderTableDao orderTableDao;
-
+    private OrderTableDao orderTableDao;
     @MockBean
-    TableGroupDao tableGroupDao;
-
+    private TableGroupDao tableGroupDao;
     @MockBean
-    OrderDao orderDao;
+    private OrderDao orderDao;
 
     @Nested
     @DisplayName("create 메서드는")
@@ -46,21 +45,21 @@ class TableGroupServiceTest extends ServiceTest {
 
         private OrderTable orderTableA;
         private OrderTable orderTableB;
-        private TableGroup tableGroup;
+        private TableGroupCreateRequest createRequest;
         private TableGroup savedTableGroup;
 
         @BeforeEach
         void setUp() {
-            orderTableA = ClassConstructor.orderTable(ORDER_TABLE_A_ID, null, 0, true);
-            orderTableB = ClassConstructor.orderTable(ORDER_TABLE_B_ID, null, 0, true);
+            orderTableA = new OrderTable(ORDER_TABLE_A_ID, null, 0, true);
+            orderTableB = new OrderTable(ORDER_TABLE_B_ID, null, 0, true);
 
-            tableGroup = ClassConstructor.tableGroup(null, null, Arrays.asList(orderTableA, orderTableB));
-            savedTableGroup = ClassConstructor.tableGroup(TABLE_GROUP_ID, LocalDateTime.now(),
+            createRequest = new TableGroupCreateRequest(Arrays.asList(orderTableA, orderTableB));
+            savedTableGroup = new TableGroup(TABLE_GROUP_ID, LocalDateTime.now(),
                     Arrays.asList(orderTableA, orderTableB));
 
             given(orderTableDao.findAllByIdIn(any()))
                     .willReturn(Arrays.asList(orderTableA, orderTableB));
-            given(tableGroupDao.save(tableGroup))
+            given(tableGroupDao.save(any(TableGroup.class)))
                     .willReturn(savedTableGroup);
         }
 
@@ -68,10 +67,10 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("테이블 그룹을 만들 수 있다.")
         void success() {
             //when
-            TableGroup actual = tableGroupService.create(tableGroup);
+            TableGroup actual = tableGroupService.create(createRequest);
 
             //then
-            Assertions.assertAll(
+            assertAll(
                     () -> assertThat(actual.getOrderTables()).hasSize(2),
                     () -> assertThat(orderTableA.isEmpty()).isFalse(),
                     () -> assertThat(orderTableB.isEmpty()).isFalse()
@@ -82,10 +81,13 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("그룹으로 지정할 주문 테이블의 갯수가 2개보다 적으면, 예외를 던진다.")
         void fail_lessThanTwoTables() {
             //given
-            tableGroup.setOrderTables(Arrays.asList(orderTableA));
+            List<OrderTable> orderTables = Arrays.asList(orderTableA);
+            createRequest = new TableGroupCreateRequest(orderTables);
+            given(orderTableDao.findAllByIdIn(any()))
+                    .willReturn(orderTables);
 
             //when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(createRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -97,7 +99,7 @@ class TableGroupServiceTest extends ServiceTest {
                     .willReturn(Arrays.asList(orderTableB));
 
             //when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(createRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -105,11 +107,11 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("그룹으로 지정할 주문 테이블이 비어있지 않으면, 예외를 던진다.")
         void fail_notEmptyTable() {
             //given
-            orderTableA.setEmpty(false);
-            orderTableB.setEmpty(false);
+            orderTableA.updateEmpty(false);
+            orderTableB.updateEmpty(false);
 
             //when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(createRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -121,7 +123,7 @@ class TableGroupServiceTest extends ServiceTest {
             orderTableB.setTableGroupId(2L);
 
             //when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(createRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -135,14 +137,11 @@ class TableGroupServiceTest extends ServiceTest {
 
         private OrderTable orderTableA;
         private OrderTable orderTableB;
-        private TableGroup tableGroup;
 
         @BeforeEach
         void setUp() {
-            orderTableA = ClassConstructor.orderTable(ORDER_TABLE_A_ID, null, 0, true);
-            orderTableB = ClassConstructor.orderTable(ORDER_TABLE_B_ID, null, 0, true);
-
-            tableGroup = ClassConstructor.tableGroup(null, null, Arrays.asList(orderTableA, orderTableB));
+            orderTableA = new OrderTable(ORDER_TABLE_A_ID, null, 0, true);
+            orderTableB = new OrderTable(ORDER_TABLE_B_ID, null, 0, true);
 
             given(orderTableDao.findAllByTableGroupId(TABLE_GROUP_ID))
                     .willReturn(Arrays.asList(orderTableA, orderTableB));
@@ -154,12 +153,13 @@ class TableGroupServiceTest extends ServiceTest {
         }
 
         @Test
+        @DisplayName("테이블 그룹을 해체할 수 있다.")
         void success() {
             //when
             tableGroupService.ungroup(TABLE_GROUP_ID);
 
             //then
-            Assertions.assertAll(
+            assertAll(
                     () -> assertThat(orderTableA.isEmpty()).isFalse(),
                     () -> assertThat(orderTableA.getTableGroupId()).isNull(),
                     () -> assertThat(orderTableB.isEmpty()).isFalse(),
