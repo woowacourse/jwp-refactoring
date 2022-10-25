@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.fixture.domain.MenuGroupFixture.KOREAN;
 import static kitchenpos.support.fixture.domain.ProductFixture.APPLE_1000;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,13 +29,12 @@ class ProductServiceTest {
         @Test
         @DisplayName("Product를 생성한다.")
         void success() {
-            Product product = productService.create(APPLE_1000.getProduct());
+            Product product = APPLE_1000.getProduct();
 
-            Product actual = jdbcTemplateProductDao.findById(product.getId())
-                .orElseThrow();
+            Product actual = productService.create(product);
 
-            assertThat(actual).usingRecursiveComparison()
-                .isEqualTo(product);
+            assertThat(actual).extracting(Product::getName, it -> it.getPrice().longValue())
+                .contains(product.getName(), product.getPrice().longValue());
         }
     }
 

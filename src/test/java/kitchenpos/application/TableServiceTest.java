@@ -1,14 +1,13 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.fixture.domain.OrderTableFixture.GUEST_ONE_EMPTY_TRUE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import kitchenpos.NestedApplicationTest;
 import kitchenpos.dao.JdbcTemplateOrderTableDao;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.support.fixture.domain.OrderTableFixture;
-import kitchenpos.support.fixture.domain.TableGroupFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,12 +31,11 @@ class TableServiceTest {
         @Test
         @DisplayName("OrderTable을 생성한다.")
         void success() {
-            OrderTable orderTable = tableService.create(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable());
-
-            OrderTable actual = jdbcTemplateOrderTableDao.findById(orderTable.getId())
-                .orElseThrow();
+            OrderTable orderTable = GUEST_ONE_EMPTY_TRUE.getOrderTable();
+            OrderTable actual = tableService.create(orderTable);
 
             assertThat(actual).usingRecursiveComparison()
+                .ignoringFields("id")
                 .isEqualTo(orderTable);
         }
     }
@@ -48,8 +46,8 @@ class TableServiceTest {
 
         @BeforeEach
         void setUp() {
-            jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable());
-            jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable());
+            jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable());
+            jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable());
         }
 
         @Test
@@ -69,7 +67,7 @@ class TableServiceTest {
 
         @BeforeEach
         void setUp() {
-            orderTable = tableService.create(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable());
+            orderTable = tableService.create(GUEST_ONE_EMPTY_TRUE.getOrderTable());
         }
 
         @Test

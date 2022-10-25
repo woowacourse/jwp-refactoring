@@ -45,7 +45,6 @@ class MenuServiceTest {
         @DisplayName("Menu를 생성한다.")
         void success() {
             MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(KOREAN.getMenuGroup());
-
             Menu menu = PIZZA_2000.getMenu(menuGroup.getId());
             Product product1 = jdbcTemplateProductDao.save(APPLE_1000.getProduct());
             Product product2 = jdbcTemplateProductDao.save(APPLE_1000.getProduct());
@@ -56,13 +55,10 @@ class MenuServiceTest {
                 ONE.getMenuProduct(product2.getId()),
                 ONE.getMenuProduct(product3.getId())));
 
-            Menu savedMenu = menuService.create(menu);
+            Menu actual = menuService.create(menu);
 
-            Menu actual = jdbcTemplateMenuDao.findById(savedMenu.getId())
-                .orElseThrow();
-            assertThat(actual).usingRecursiveComparison()
-                .ignoringFields("menuProducts")
-                .isEqualTo(savedMenu);
+            assertThat(actual).extracting(Menu::getName, it -> it.getPrice().longValue(), Menu::getMenuGroupId)
+                    .contains(menu.getName(), menu.getPrice().longValue(), menu.getMenuGroupId());
         }
     }
 

@@ -62,13 +62,11 @@ class OrderServiceTest {
             Menu menu = jdbcTemplateMenuDao.save(MenuFixture.CHICKEN_1000.getMenu(menuGroup.getId()));
             order.setOrderLineItems(List.of(OrderLineItemFixture.ONE.getOrderLineItem(menu.getId())));
 
-            Order savedOrder = orderService.create(order);
+            Order actual = orderService.create(order);
 
-            Order actual = jdbcTemplateOrderDao.findById(savedOrder.getId())
-                .orElseThrow();
             assertThat(actual).usingRecursiveComparison()
-                .ignoringFields("orderLineItems")
-                .isEqualTo(savedOrder);
+                .ignoringFields("id", "orderLineItems")
+                .isEqualTo(order);
         }
     }
 

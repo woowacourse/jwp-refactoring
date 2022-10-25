@@ -44,13 +44,12 @@ class TableGroupServiceTest {
         @Test
         @DisplayName("TableGroup을 생성한다.")
         void success() {
-            TableGroup tableGroup = tableGroupService.create(TableGroupFixture.getTableGroup(List.of(orderTable1, orderTable2)));
+            TableGroup tableGroup = TableGroupFixture.getTableGroup(List.of(orderTable1, orderTable2));
 
-            TableGroup actual = jdbcTemplateTableGroupDao.findById(tableGroup.getId())
-                .orElseThrow();
+            TableGroup actual = tableGroupService.create(tableGroup);
 
             assertThat(actual).usingRecursiveComparison()
-                .ignoringFields("orderTables")
+                .ignoringFields("id", "orderTables")
                 .isEqualTo(tableGroup);
         }
     }

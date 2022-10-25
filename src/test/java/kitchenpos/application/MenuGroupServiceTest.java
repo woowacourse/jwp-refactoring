@@ -29,11 +29,12 @@ class MenuGroupServiceTest {
         @Test
         @DisplayName("MenuGroup을 생성한다.")
         void success() {
-            MenuGroup menuGroup = menuGroupService.create(KOREAN.getMenuGroup());
+            MenuGroup menuGroup = KOREAN.getMenuGroup();
 
-            MenuGroup actual = jdbcTemplateMenuGroupDao.findById(menuGroup.getId())
-                .orElseThrow();
+            MenuGroup actual = menuGroupService.create(menuGroup);
+
             assertThat(actual).usingRecursiveComparison()
+                .ignoringFields("id")
                 .isEqualTo(menuGroup);
         }
     }
