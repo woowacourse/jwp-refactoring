@@ -11,13 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RepositoryTest
-class ProductDaoTest {
+class ProductRepositoryTest {
 
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    public ProductDaoTest(ProductDao productDao) {
-        this.productDao = productDao;
+    public ProductRepositoryTest(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Test
@@ -26,7 +26,7 @@ class ProductDaoTest {
         Product product = new Product("상품", BigDecimal.valueOf(1000));
 
         // when
-        Product savedProduct = productDao.save(product);
+        Product savedProduct = productRepository.save(product);
 
         // then
         assertThat(savedProduct.getId()).isNotNull();
@@ -35,10 +35,10 @@ class ProductDaoTest {
     @Test
     void findById() {
         // given
-        Product savedProduct = productDao.save(new Product("상품", BigDecimal.valueOf(1000)));
+        Product savedProduct = productRepository.save(new Product("상품", BigDecimal.valueOf(1000)));
 
         // when
-        Optional<Product> foundProduct = productDao.findById(savedProduct.getId());
+        Optional<Product> foundProduct = productRepository.findById(savedProduct.getId());
 
         // then
         assertThat(foundProduct).isPresent();
@@ -47,11 +47,11 @@ class ProductDaoTest {
     @Test
     void findAll() {
         // given
-        productDao.save(new Product("상품A", BigDecimal.valueOf(1000)));
-        productDao.save(new Product("상품B", BigDecimal.valueOf(2000)));
+        productRepository.save(new Product("상품A", BigDecimal.valueOf(1000)));
+        productRepository.save(new Product("상품B", BigDecimal.valueOf(2000)));
 
         // when
-        List<Product> products = productDao.findAll();
+        List<Product> products = productRepository.findAll();
 
         // then
         int defaultSize = 6;
