@@ -14,7 +14,6 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.support.IntegrationServiceTest;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -183,7 +182,7 @@ class TableServiceTest extends IntegrationServiceTest {
         }
 
         @Nested
-        class 정상적인_경우 extends IntegrationServiceTest{
+        class 정상적인_경우 extends IntegrationServiceTest {
 
             private static final int CHANGE_NUMBER_OF_GUESTS = 4;
 
