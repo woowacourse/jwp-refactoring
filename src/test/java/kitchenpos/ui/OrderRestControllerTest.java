@@ -14,6 +14,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 class OrderRestControllerTest extends ControllerTest {
@@ -135,6 +136,37 @@ class OrderRestControllerTest extends ControllerTest {
 
         assertThatThrownBy(() -> orderRestController.create(order))
                 .hasMessage("빈 테이블입니다.");
+    }
+
+    @Test
+    void list() {
+        OrderLineItem orderLineItem = getOrderLineItem();
+        OrderTable orderTable = createOrderTable(2, false);
+
+        createOrder(orderTable.getId(), List.of(orderLineItem));
+        createOrder(orderTable.getId(), List.of(orderLineItem));
+        createOrder(orderTable.getId(), List.of(orderLineItem));
+
+        ResponseEntity<List<Order>> response = orderRestController.list();
+
+        assertThat(response.getBody()).hasSize(3);
+        assertThat(response.getStatusCodeValue()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    private OrderLineItem getOrderLineItem() {
+        MenuGroup menuGroup = createMenuGroup("추천 메뉴");
+        Product product = createProduct("강정치킨", 18000);
+
+        MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setProductId(product.getId());
+        menuProduct.setQuantity(2);
+
+        Menu menu = createMenu("강정치킨", 18000, menuGroup.getId(), List.of(menuProduct));
+
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(menu.getId());
+        orderLineItem.setQuantity(1);
+        return orderLineItem;
     }
 
 }
