@@ -1,9 +1,11 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -46,17 +48,21 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        orderRequest = createOrderRequest();
+        Menu menu = createMenu();
+        orderRequest = createOrderRequest(menu.getId(), OrderStatus.MEAL);
         savedOrder = orderDao.save(orderRequest);
     }
 
-    private Order createOrderRequest() {
+    private Order createOrderRequest(Long menuId, OrderStatus orderStatus) {
         OrderTable orderTable = orderTableDao.save(new OrderTable(null, 1, false));
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("A그룹"));
-        Menu menu = menuDao.save(new Menu("신메뉴", BigDecimal.ONE, menuGroup.getId(), List.of()));
 
-        return new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
-                List.of(new OrderLineItem(null, menu.getId(), 1)));
+        return new Order(orderTable.getId(), orderStatus.name(), LocalDateTime.now(),
+                List.of(new OrderLineItem(null, menuId, 1)));
+    }
+
+    private Menu createMenu() {
+        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("A그룹"));
+        return menuDao.save(new Menu("신메뉴", BigDecimal.ONE, menuGroup.getId(), List.of()));
     }
 
     @DisplayName("주문을 생성한다.")
@@ -67,6 +73,46 @@ class OrderServiceTest {
 
         //then
         assertThat(order.getId()).isNotNull();
+    }
+
+    @DisplayName("주문 항목이 없으면 예외가 발생한다.")
+    @Test
+    void createFailureWhenNotExistsOrderLineItems() {
+        //given
+        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 1, false));
+        final List<OrderLineItem> emptyOrderLineItem = Collections.emptyList();
+        //when
+        //then
+        assertThatThrownBy(() -> orderService.create(
+                new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), emptyOrderLineItem)));
+    }
+
+    @DisplayName("주문 항목의 메뉴가 디비안에 없으면 예외가 발생한다")
+    @Test
+    void createFailureWhenNotExistsMenu() {
+        //given
+        Order order = createOrderRequest(null, OrderStatus.COOKING);
+
+        //when
+        //then
+        assertThatThrownBy(() -> orderService.create(order))
+                .isExactlyInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문 테이블이 비어있으면 예외가 발생한다")
+    @Test
+    void createFailureWhenNotOrderTableIsEmpty() {
+        //given
+        Menu menu = createMenu();
+        final Long emptyOrderTableId = null;
+
+        Order order = new Order(emptyOrderTableId, OrderStatus.MEAL.name(), LocalDateTime.now(),
+                List.of(new OrderLineItem(null, menu.getId(), 1)));
+
+        //when
+        //then
+        assertThatThrownBy(() -> orderService.create(order))
+                .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문의 목록들을 반환한다.")
@@ -89,5 +135,16 @@ class OrderServiceTest {
 
         //then
         assertThat(findOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+    }
+
+    @DisplayName("기존의 주문 상태가 COMPLETION일 때, 주문 상태를 바꾸려고 하면 예외가 발생한다")
+    @Test
+    void changeOrderStatusFailureWhenOrderStatusIsCOMPLETION() {
+        //given
+        Menu menu = createMenu();
+        Order order = createOrderRequest(menu.getId(), OrderStatus.COMPLETION);
+        //when
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), new Order()))
+                .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 }
