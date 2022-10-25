@@ -55,7 +55,7 @@ public class OrderService {
         order.setId(null);
 
         final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
-                .orElseThrow(() -> new IllegalArgumentException("주문 테이블을 입력해야 합니다."));
+                .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("주문 테이블이 비어있습니다.");

@@ -35,7 +35,9 @@ class TableServiceTest {
     void create() {
         OrderTable orderTable = OrderTable.of(1L, 10, false);
 
-        tableService.create(orderTable);
+        OrderTable savedOrderTable = tableService.create(orderTable);
+
+        assertThat(savedOrderTable.getId()).isNotNull();
     }
 
     @Test

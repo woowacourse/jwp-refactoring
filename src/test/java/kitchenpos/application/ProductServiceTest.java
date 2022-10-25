@@ -28,7 +28,7 @@ class ProductServiceTest {
 
     @Test
     @DisplayName("Product 생성 시, 가격이 0원 이하일 때 예외가 발생한다.")
-    void createThrowException() {
+    void createThrowExceptionWhenPriceNegative() {
         assertThatThrownBy(() -> productService.create(Product.of("name", BigDecimal.valueOf(-10))))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("product의 가격은 0원 이상이어야 합니다.");

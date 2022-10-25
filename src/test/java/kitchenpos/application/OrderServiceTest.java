@@ -83,10 +83,10 @@ class OrderServiceTest {
         Long savedId = orderDao.save(order)
                 .getId();
 
-        Order changeOrder = Order.of(1L, OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
+        Order changeOrder = Order.of(1L, OrderStatus.MEAL.name(), LocalDateTime.now(), new ArrayList<>());
         Order changedOrder = orderService.changeOrderStatus(savedId, changeOrder);
 
-        assertThat(changedOrder.getOrderedTime()).isEqualTo(changedOrder.getOrderedTime());
+        assertThat(changedOrder.getOrderStatus()).isEqualTo(changeOrder.getOrderStatus());
     }
 
     @Test

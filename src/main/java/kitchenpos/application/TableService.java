@@ -56,7 +56,7 @@ public class TableService {
         final int numberOfGuests = orderTable.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("Guest는 0명 이하일 수 없습니다.");
+            throw new IllegalArgumentException("Guest는 0명 미만일 수 없습니다.");
         }
 
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
