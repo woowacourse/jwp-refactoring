@@ -105,10 +105,6 @@ class JdbcTemplateMenuProductDaoTest {
         assertThat(menuProducts).hasSize(1)
                 .usingRecursiveComparison()
                 .ignoringFields("seq")
-                .isEqualTo(
-                        Arrays.asList(
-                                new MenuProduct(null, 1L, 1L, 1)
-                        )
-                );
+                .isEqualTo(Arrays.asList(new MenuProduct(null, 1L, 1L, 1)));
     }
 }

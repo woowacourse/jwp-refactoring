@@ -90,6 +90,7 @@ class TableServiceTest {
         when(orderTableDao.findById(any(Long.class))).thenReturn(Optional.of(foundOrderTable));
         when(orderDao.existsByOrderTableIdAndOrderStatusIn(1L, Arrays.asList(COOKING.name(), MEAL.name()))).thenReturn(
                 true);
+
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);

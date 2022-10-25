@@ -82,8 +82,6 @@ class ProductServiceTest {
         assertThat(products).hasSize(1)
                 .usingRecursiveComparison()
                 .ignoringFields("price")
-                .isEqualTo(
-                        Arrays.asList(product)
-                );
+                .isEqualTo(Arrays.asList(product));
     }
 }

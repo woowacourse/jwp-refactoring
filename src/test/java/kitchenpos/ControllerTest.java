@@ -25,7 +25,6 @@ public class ControllerTest {
                 .content(objectMapper.writeValueAsString(object)));
     }
 
-
     protected ResultActions getRequest(final String url) throws Exception {
         return mockMvc.perform(get(url));
     }

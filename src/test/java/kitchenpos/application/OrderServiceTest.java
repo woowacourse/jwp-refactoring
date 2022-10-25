@@ -139,7 +139,6 @@ class OrderServiceTest {
         );
     }
 
-
     @Test
     void order_목록을_조회할_수_있다() {
         // given

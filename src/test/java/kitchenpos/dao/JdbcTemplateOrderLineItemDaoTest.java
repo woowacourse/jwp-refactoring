@@ -70,6 +70,7 @@ class JdbcTemplateOrderLineItemDaoTest {
 
         // when
         Optional<OrderLineItem> foundOrderLineItem = orderLineItemDao.findById(savedOrderLineItem.getSeq());
+
         // then
         Assertions.assertAll(
                 () -> assertThat(foundOrderLineItem).isPresent(),

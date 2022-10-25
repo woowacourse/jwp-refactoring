@@ -94,5 +94,4 @@ class JdbcTemplateMenuGroupDaoTest {
         // when & then
         assertThat(actual).isEqualTo(expected);
     }
-
 }

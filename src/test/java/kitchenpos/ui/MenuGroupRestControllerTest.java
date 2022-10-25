@@ -59,6 +59,4 @@ class MenuGroupRestControllerTest extends ControllerTest {
         response.andExpect(status().isOk())
                 .andExpect(content().string(objectMapper.writeValueAsString(Arrays.asList(menuGroup))));
     }
-
-
 }

@@ -58,11 +58,6 @@ class MenuGroupServiceTest {
                 .hasSize(1)
                 .usingRecursiveComparison()
                 .ignoringFields("id")
-                .isEqualTo(
-                        Arrays.asList(
-                                new MenuGroup(null, "menu-group")
-                        )
-                );
+                .isEqualTo(Arrays.asList(new MenuGroup(null, "menu-group")));
     }
-
 }
