@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 import kitchenpos.application.dto.request.MenuGroupCommand;
 import kitchenpos.application.dto.response.MenuGroupResponse;
-import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -36,12 +35,12 @@ class MenuGroupRestControllerTest extends ControllerTest {
     @Test
     @DisplayName("MenuGroup을 모두 조회한다.")
     void list() throws Exception {
-        List<MenuGroup> menuGroups = List.of(new MenuGroup(1L, MENU_GROUP_NAME1),
-                new MenuGroup(2L, MENU_GROUP_NAME2));
-        given(menuGroupService.list()).willReturn(menuGroups);
+        List<MenuGroupResponse> menuGroupResponses = List.of(new MenuGroupResponse(1L, MENU_GROUP_NAME1),
+                new MenuGroupResponse(2L, MENU_GROUP_NAME2));
+        given(menuGroupService.list()).willReturn(menuGroupResponses);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/menu-groups"))
                 .andExpectAll(status().isOk(),
-                        content().string(objectMapper.writeValueAsString(menuGroups)));
+                        content().string(objectMapper.writeValueAsString(menuGroupResponses)));
     }
 }

@@ -21,7 +21,9 @@ public class MenuGroupService {
         return MenuGroupResponse.from(menuGroup);
     }
 
-    public List<MenuGroup> list() {
-        return menuGroupRepository.findAll();
+    public List<MenuGroupResponse> list() {
+        return menuGroupRepository.findAll().stream()
+                .map(MenuGroupResponse::from)
+                .toList();
     }
 }
