@@ -111,7 +111,7 @@ class MenuServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("메뉴 그룹에 속해있지 않을 수 없다")
+    @DisplayName("구성 상품 가격의 합을 초과하는 가격을 설정할 수 없다")
     void priceBiggerThanSum() {
         // given
         MenuGroup createdMenuGroup = createMenuGroup();

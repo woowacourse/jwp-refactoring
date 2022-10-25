@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -12,7 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 class TableServiceTest extends ServiceTest {
 
@@ -26,7 +30,6 @@ class TableServiceTest extends ServiceTest {
     protected TableGroupDao tableGroupDao;
     @Autowired
     protected TableGroupService tableGroupService;
-
 
     @Test
     @DisplayName("새 주문 테이블을 생성한다")
@@ -45,7 +48,7 @@ class TableServiceTest extends ServiceTest {
 
     @Test
     @DisplayName("주문 테이블 목록을 조회한다")
-    void list(){
+    void list() {
         // given
         int default_data_size = 8;
 
@@ -65,7 +68,28 @@ class TableServiceTest extends ServiceTest {
     @Test
     @DisplayName("테이블 점유 여부를 변경한다")
     void changeIsEmpty() {
+        // given
+        OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(true);
+        OrderTable createdOrderTable = tableService.create(orderTable);
 
+        Order order = new Order();
+        order.setOrderTableId(createdOrderTable.getId());
+        order.setOrderStatus(OrderStatus.COMPLETION.name());
+        order.setOrderedTime(LocalDateTime.now());
+        orderDao.save(order);
+
+        OrderTable targetOrderTable = new OrderTable();
+        targetOrderTable.setEmpty(false);
+
+        // when
+        OrderTable changedOrderTable = tableService.changeEmpty(createdOrderTable.getId(), targetOrderTable);
+
+        // then
+        assertAll(
+            () -> assertThat(changedOrderTable.getId()).isEqualTo(createdOrderTable.getId()),
+            () -> assertThat(changedOrderTable.isEmpty()).isEqualTo(targetOrderTable.isEmpty())
+        );
     }
 
     @Test
@@ -85,9 +109,36 @@ class TableServiceTest extends ServiceTest {
     void changeIsEmptyWithoutTableGroup() {
         // given
         OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(true);
+        OrderTable createdOrderTable = tableService.create(orderTable);
+        OrderTable createdOrderTable2 = tableService.create(orderTable);
+
+        // when
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(List.of(createdOrderTable, createdOrderTable2));
+        tableGroupService.create(tableGroup);
+
+        // then
+        assertThatThrownBy(() -> tableService.changeEmpty(createdOrderTable.getId(), orderTable))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("식사 완료 상태가 아닌 테이블의 점유 여부를 변경할 수 없다")
+    void changeIsEmptyBeforeCompleted() {
+        // given
+        OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(true);
         OrderTable createdOrderTable = tableService.create(orderTable);
 
-       // tableGroupService.create()
+        Order order = new Order();
+        order.setOrderTableId(createdOrderTable.getId());
+        order.setOrderStatus(OrderStatus.COOKING.name());
+        order.setOrderedTime(LocalDateTime.now());
+        orderDao.save(order);
 
+        // when, then
+        assertThatThrownBy(() -> tableService.changeEmpty(createdOrderTable.getId(), orderTable))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 }
