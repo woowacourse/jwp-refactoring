@@ -138,4 +138,21 @@ public class OrderServiceTest {
 
         assertThat(orderService.list()).hasSize(1);
     }
+
+    @DisplayName("주문 상태를 변경한다.")
+    @Test
+    void changeStatus() {
+        OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 10L);
+        Order order = new Order(
+                orderTable.getId(),
+                OrderStatus.COOKING.name(),
+                LocalDateTime.now(),
+                List.of(orderLineItem)
+        );
+        Order savedOrder = orderService.create(order);
+        savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
+        Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), savedOrder);
+
+        assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
+    }
 }

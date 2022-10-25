@@ -10,6 +10,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 @SpringBootTest
+@Transactional
 @TestConstructor(autowireMode = AutowireMode.ALL)
 public class TableGroupServiceTest {
 

@@ -136,4 +136,19 @@ public class TableServiceTest {
         assertThat(changedOrderTable.getNumberOfGuests())
                 .isEqualTo(100);
     }
+
+    @DisplayName("주문 테이블을 생성할 수 있다.")
+    @Test
+    void create() {
+        OrderTable orderTable = new OrderTable(10, false);
+        OrderTable savedOrderTable = tableService.create(orderTable);
+
+        assertThat(savedOrderTable.getId()).isNotNull();
+    }
+
+    @DisplayName("모든 주문 테이블을 조회할 수 있다.")
+    @Test
+    void list() {
+        assertThat(tableService.list()).hasSize(2);
+    }
 }
