@@ -152,6 +152,7 @@ class TableGroupServiceTest extends ServiceTest {
         }
 
         @Test
+        @DisplayName("테이블 그룹을 해체할 수 있다.")
         void success() {
             //when
             tableGroupService.ungroup(TABLE_GROUP_ID);
