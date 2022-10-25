@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.domain.repository;
 
 import static kitchenpos.support.TestFixtureFactory.메뉴_그룹을_생성한다;
 import static kitchenpos.support.TestFixtureFactory.메뉴_상품을_생성한다;
@@ -11,27 +11,28 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.TransactionalTest;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.repository.MenuGroupRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @TransactionalTest
-class MenuProductDaoTest {
+class MenuProductRepositoryTest {
 
     @Autowired
-    private MenuGroupRepository menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
     @Autowired
     private MenuDao menuDao;
     @Autowired
     private ProductDao productDao;
     @Autowired
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductDao;
 
     @Test
     void 메뉴_상품을_저장하면_seq가_채워진다() {
-        Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
+        Long menuGroupId = menuGroupRepository.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
         Long menuId = menuDao.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, null))
                 .getId();
@@ -51,7 +52,7 @@ class MenuProductDaoTest {
 
     @Test
     void id로_메뉴를_조회할_수_있다() {
-        Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
+        Long menuGroupId = menuGroupRepository.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
         Long menuId = menuDao.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, null))
                 .getId();
@@ -75,7 +76,7 @@ class MenuProductDaoTest {
 
     @Test
     void 모든_메뉴_상품을_조회할_수_있다() {
-        Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
+        Long menuGroupId = menuGroupRepository.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
         Long menuId1 = menuDao.save(메뉴를_생성한다("메뉴1", BigDecimal.ZERO, menuGroupId, null))
                 .getId();
@@ -97,7 +98,7 @@ class MenuProductDaoTest {
 
     @Test
     void 메뉴_id에_해당하는_모든_메뉴_상품을_조회할_수_있다() {
-        Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
+        Long menuGroupId = menuGroupRepository.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
         Long menuId1 = menuDao.save(메뉴를_생성한다("메뉴1", BigDecimal.ZERO, menuGroupId, null))
                 .getId();
