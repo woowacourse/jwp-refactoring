@@ -42,23 +42,28 @@ class OrderServiceTest {
     private OrderDao orderDao;
 
     private Order savedOrder;
-    private Order notSavedOrder;
+    private Order orderRequest;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
+        orderRequest = createOrderRequest();
+        savedOrder = orderDao.save(orderRequest);
+    }
+
+    private Order createOrderRequest() {
         OrderTable orderTable = orderTableDao.save(new OrderTable(null, 1, false));
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("A그룹"));
         Menu menu = menuDao.save(new Menu("신메뉴", BigDecimal.ONE, menuGroup.getId(), List.of()));
 
-        notSavedOrder = new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), List.of(new OrderLineItem(null, menu.getId(), 1)));
-        savedOrder = orderDao.save(notSavedOrder);
+        return new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
+                List.of(new OrderLineItem(null, menu.getId(), 1)));
     }
 
     @DisplayName("주문을 생성한다.")
     @Test
     void create() {
         //when
-        Order order = orderService.create(notSavedOrder);
+        Order order = orderService.create(orderRequest);
 
         //then
         assertThat(order.getId()).isNotNull();
