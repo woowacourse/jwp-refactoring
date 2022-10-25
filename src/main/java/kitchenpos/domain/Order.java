@@ -17,9 +17,10 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems, final String orderStatus) {
         this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
+        this.orderStatus = orderStatus;
     }
 
     public Long getId() {
