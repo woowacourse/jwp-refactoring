@@ -19,7 +19,7 @@ class TableServiceTest extends ServiceTest {
 
     @Nested
     @DisplayName("create()")
-    class create {
+    class CreateMethod {
 
         @Test
         @DisplayName("예외사항이 존재하지 않는 경우 새로운 테이블을 생성한다.")
@@ -38,7 +38,7 @@ class TableServiceTest extends ServiceTest {
 
     @Nested
     @DisplayName("list()")
-    class list {
+    class ListMethod {
 
         @Test
         @DisplayName("전체 테이블을 조회한다.")
@@ -51,7 +51,7 @@ class TableServiceTest extends ServiceTest {
 
     @Nested
     @DisplayName("changeEmpty()")
-    class changeEmpty {
+    class ChangeEmptyMethod {
 
         @Test
         @DisplayName("예외사항이 존재하지 않는 경우 상태를 변경한다.")
@@ -115,7 +115,7 @@ class TableServiceTest extends ServiceTest {
 
     @Nested
     @DisplayName("changeNumberOfGuests()")
-    class changeNumberOfGuests {
+    class ChangeNumberOfGuestsMethod {
 
         @Test
         @DisplayName("예외사항이 존재하지 않는 경우 방문자 수를 변경한다.")

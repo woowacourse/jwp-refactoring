@@ -21,7 +21,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Nested
     @DisplayName("create()")
-    class create {
+    class CreateMethod {
 
         @Test
         @DisplayName("예외사항이 존재하지 않는 경우 새로운 주문을 생성한다.")
@@ -102,7 +102,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Nested
     @DisplayName("list()")
-    class list {
+    class ListMethod {
 
         @Test
         @DisplayName("전체 주문을 조회한다.")
@@ -115,7 +115,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Nested
     @DisplayName("changeOrderStatus()")
-    class changeOrderStatus {
+    class ChangeOrderStatusMethod {
 
         @Test
         @DisplayName("특정 주문의 주문 상태를 변경한다.")

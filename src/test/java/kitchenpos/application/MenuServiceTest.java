@@ -19,7 +19,7 @@ class MenuServiceTest extends ServiceTest {
 
     @Nested
     @DisplayName("create()")
-    class create {
+    class CreateMethod {
 
         @Test
         @DisplayName("예외사항이 존재하지 않는 경우 새로운 메뉴를 생성한다.")
@@ -113,11 +113,17 @@ class MenuServiceTest extends ServiceTest {
 
     }
 
-    @Test
-    @DisplayName("전체 메뉴를 조회한다.")
-    void list() {
-        List<Menu> menus = menuService.list();
-        assertThat(menus).isNotNull();
+    @Nested
+    @DisplayName("list()")
+    class ListMethod {
+
+        @Test
+        @DisplayName("전체 메뉴를 조회한다.")
+        void list() {
+            List<Menu> menus = menuService.list();
+            assertThat(menus).isNotNull();
+        }
+
     }
 
     private Product createAndSaveProduct() {

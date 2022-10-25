@@ -21,7 +21,7 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Nested
     @DisplayName("create()")
-    class create {
+    class CreateMethod {
 
         @Test
         @DisplayName("예외사항이 존재하지 않는 경우 새로운 테이블 그룹을 생성한다.")
@@ -116,7 +116,7 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Nested
     @DisplayName("ungroup()")
-    class ungroup {
+    class UngroupMethod {
 
         @Test
         @DisplayName("예외사항이 존재하지 않는 경우 그룹이 해제된다.")
