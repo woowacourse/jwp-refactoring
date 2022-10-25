@@ -19,10 +19,10 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 public class MenuServiceTest {
 
     @Autowired
-    private ProductService productService;
+    private MenuService menuService;
 
     @Autowired
-    private MenuService menuService;
+    private ProductService productService;
 
     @Autowired
     private MenuGroupService menuGroupService;
