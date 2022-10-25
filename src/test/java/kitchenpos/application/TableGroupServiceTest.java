@@ -26,16 +26,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
-    TableGroupService tableGroupService;
+    private TableGroupService tableGroupService;
 
     @MockBean
-    OrderTableDao orderTableDao;
-
+    private OrderTableDao orderTableDao;
     @MockBean
-    TableGroupDao tableGroupDao;
-
+    private TableGroupDao tableGroupDao;
     @MockBean
-    OrderDao orderDao;
+    private OrderDao orderDao;
 
     @Nested
     @DisplayName("create 메서드는")

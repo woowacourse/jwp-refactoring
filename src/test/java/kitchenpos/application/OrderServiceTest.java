@@ -34,19 +34,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 class OrderServiceTest extends ServiceTest {
 
     @Autowired
-    OrderService orderService;
+    private OrderService orderService;
 
     @MockBean
-    MenuDao menuDao;
-
+    private MenuDao menuDao;
     @MockBean
-    OrderTableDao orderTableDao;
-
+    private OrderTableDao orderTableDao;
     @MockBean
-    OrderDao orderDao;
-
+    private OrderDao orderDao;
     @MockBean
-    OrderLineItemDao orderLineItemDao;
+    private OrderLineItemDao orderLineItemDao;
 
     @Nested
     @DisplayName("create 메서드는")

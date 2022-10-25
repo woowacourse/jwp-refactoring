@@ -27,16 +27,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 public class MenuServiceTest extends ServiceTest {
 
     @Autowired
-    MenuService menuService;
+    private MenuService menuService;
 
     @MockBean
-    MenuGroupDao menuGroupDao;
-
+    private MenuGroupDao menuGroupDao;
     @MockBean
-    ProductDao productDao;
-
+    private ProductDao productDao;
     @MockBean
-    MenuProductDao menuProductDao;
+    private MenuProductDao menuProductDao;
 
     @Nested
     @DisplayName("create 메서드는")

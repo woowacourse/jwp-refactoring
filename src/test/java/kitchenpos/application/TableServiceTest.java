@@ -22,13 +22,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 class TableServiceTest extends ServiceTest {
 
     @Autowired
-    TableService tableService;
+    private TableService tableService;
 
     @MockBean
-    OrderTableDao orderTableDao;
-
+    private OrderTableDao orderTableDao;
     @MockBean
-    OrderDao orderDao;
+    private OrderDao orderDao;
 
     @Nested
     @DisplayName("changeEmpty 메서드는")
@@ -143,6 +142,7 @@ class TableServiceTest extends ServiceTest {
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(ORDER_TABLE_ID, orderTable))
                     .isInstanceOf(IllegalArgumentException.class);
         }
+
         @Test
         @DisplayName("주문 테이블이 존재하지 않으면, 예외를 던진다.")
         void fail_noExistOrderTable() {
