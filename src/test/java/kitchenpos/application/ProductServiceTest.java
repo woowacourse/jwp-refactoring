@@ -21,7 +21,9 @@ class ProductServiceTest {
     @Test
     void 상품을_생성한다() {
         Product product = new Product("맥도날드 페페로니 피자 버거", new BigDecimal(7_300));
-        assertThat(productService.create(product)).isInstanceOf(Product.class);
+
+        Product actual = productService.create(product);
+        assertThat(actual).isExactlyInstanceOf(Long.class);
     }
 
     @Test

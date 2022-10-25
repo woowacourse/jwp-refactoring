@@ -43,7 +43,8 @@ class TableGroupServiceTest {
     void 테이블그룹을_생성한다() {
         TableGroup tableGroup = new TableGroup(null, List.of(빈테이블을_생성한다(), 빈테이블을_생성한다()));
 
-        assertThat(tableGroupService.create(tableGroup)).isInstanceOf(TableGroup.class);
+        TableGroup actual = tableGroupService.create(tableGroup);
+        assertThat(actual).isExactlyInstanceOf(Long.class);
     }
 
     @Test

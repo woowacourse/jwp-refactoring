@@ -38,7 +38,8 @@ class TableServiceTest {
     void 테이블을_생성한다() {
         OrderTable orderTable = new OrderTable(null, 0, true);
 
-        assertThat(tableService.create(orderTable)).isInstanceOf(OrderTable.class);
+        OrderTable actual = tableService.create(orderTable);
+        assertThat(actual).isExactlyInstanceOf(Long.class);
     }
 
     @Test

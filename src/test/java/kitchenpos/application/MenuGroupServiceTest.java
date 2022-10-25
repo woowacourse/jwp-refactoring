@@ -20,7 +20,8 @@ class MenuGroupServiceTest {
     void 메뉴그룹을_생성한다() {
         MenuGroup menuGroup = new MenuGroup("햄버거");
 
-        assertThat(menuGroupService.create(menuGroup)).isInstanceOf(MenuGroup.class);
+        MenuGroup actual = menuGroupService.create(menuGroup);
+        assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
     }
 
     @Test

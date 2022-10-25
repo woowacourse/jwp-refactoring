@@ -35,7 +35,8 @@ class MenuServiceTest {
         MenuGroup menuGroup = menuGroupService.create(new MenuGroup("추천메뉴"));
         Menu menu = new Menu("반반치킨", new BigDecimal(200_000), menuGroup.getId(), List.of(후라이드, 양념));
 
-        assertThat(menuService.create(menu)).isInstanceOf(Menu.class);
+        Menu actual = menuService.create(menu);
+        assertThat(actual).isExactlyInstanceOf(Long.class);
     }
 
     @Test
