@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,10 +24,6 @@ class MenuGroupServiceTest {
         final MenuGroup menuGroup = new MenuGroup("추천메뉴");
 
         // when, then
-        final List<MenuGroup> all = menuGroupService.findAll();
-        for (MenuGroup group : all) {
-            System.out.println(group.getName());
-        }
         assertThat(menuGroupService.create(menuGroup)).usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(new MenuGroup("추천메뉴"));
