@@ -5,11 +5,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.TransactionalTest;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@ServiceTest
+@TransactionalTest
 class MenuGroupServiceTest {
 
     @Autowired
@@ -23,9 +24,7 @@ class MenuGroupServiceTest {
 
         assertAll(
                 () -> assertThat(savedMenuGroup.getId()).isNotNull(),
-                () -> assertThat(savedMenuGroup).usingRecursiveComparison()
-                        .ignoringFields("id")
-                        .isEqualTo(menuGroup)
+                () -> assertThat(savedMenuGroup).isEqualTo(menuGroup)
         );
     }
 
@@ -37,7 +36,6 @@ class MenuGroupServiceTest {
         List<MenuGroup> actual = menuGroupService.list();
 
         assertThat(actual).hasSize(2)
-                .usingFieldByFieldElementComparator()
                 .containsExactly(menuGroup1, menuGroup2);
     }
 }

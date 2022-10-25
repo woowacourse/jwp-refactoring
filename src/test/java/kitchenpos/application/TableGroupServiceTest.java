@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.TransactionalTest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
@@ -18,7 +19,7 @@ import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@ServiceTest
+@TransactionalTest
 class TableGroupServiceTest {
 
     @Autowired

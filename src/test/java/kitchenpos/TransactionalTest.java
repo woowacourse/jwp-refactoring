@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,5 +11,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Retention(RetentionPolicy.RUNTIME)
 @SpringBootTest
 @Transactional
-public @interface ServiceTest {
+public @interface TransactionalTest {
 }

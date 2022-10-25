@@ -1,6 +1,4 @@
 spring:
-  flyway:
-    enabled: false
   jpa:
     show-sql: true
     hibernate:
@@ -8,6 +6,9 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  h2:
+    console:
+      enabled: true
 logging:
   level:
     org:

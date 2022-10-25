@@ -10,12 +10,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.TransactionalTest;
 import kitchenpos.domain.Order;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@DaoTest
+@TransactionalTest
 class OrderDaoTest {
 
     @Autowired

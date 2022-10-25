@@ -14,16 +14,18 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.TransactionalTest;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@DaoTest
+@TransactionalTest
 class OrderLineItemDaoTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupDao;
     @Autowired
     private MenuDao menuDao;
     @Autowired

@@ -7,11 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.TransactionalTest;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@ServiceTest
+@TransactionalTest
 class ProductServiceTest {
 
     @Autowired

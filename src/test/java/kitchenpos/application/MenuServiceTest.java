@@ -10,20 +10,21 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.TransactionalTest;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@ServiceTest
+@TransactionalTest
 class MenuServiceTest {
 
     @Autowired
     private ProductDao productDao;
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupDao;
     @Autowired
     private MenuService menuService;
 

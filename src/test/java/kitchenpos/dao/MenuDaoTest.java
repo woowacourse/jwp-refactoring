@@ -8,16 +8,18 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.TransactionalTest;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@DaoTest
+@TransactionalTest
 class MenuDaoTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupDao;
     @Autowired
     private MenuDao menuDao;
 
