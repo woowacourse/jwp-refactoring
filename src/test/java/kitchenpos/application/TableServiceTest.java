@@ -105,7 +105,6 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("changeNumberOfGuests 메서드는")
     class changeNumberOfGuests {
         private static final long ORDER_TABLE_ID = 1L;
-        private static final long TABLE_GROUP_ID = 1L;
 
         private OrderTable savedOrderTable;
         private OrderTable orderTable;
