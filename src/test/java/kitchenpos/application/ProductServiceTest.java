@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.fixture.ProductFixture.INVALID_PRODUCT_PRICE;
 import static kitchenpos.application.fixture.ProductFixture.PRODUCT_NAME;
 import static kitchenpos.application.fixture.ProductFixture.PRODUCT_PRICE;
 import static kitchenpos.application.fixture.ProductFixture.UNSAVED_PRODUCT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import kitchenpos.dao.ProductDao;
@@ -59,5 +59,13 @@ class ProductServiceTest extends ServiceTest {
                 Arguments.of(new Product(null, PRODUCT_PRICE)),
                 Arguments.of(new Product(PRODUCT_NAME, null))
         );
+    }
+
+    @DisplayName("상품 가격이 0원 미만이면 예외가 발생한다.")
+    @Test
+    void create_Exception_Invalid_Price() {
+        Product wrongPriceProduct = new Product(PRODUCT_NAME, INVALID_PRODUCT_PRICE);
+        assertThatThrownBy(() -> productService.create(wrongPriceProduct))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
