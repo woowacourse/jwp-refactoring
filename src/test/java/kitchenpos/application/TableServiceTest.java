@@ -50,16 +50,6 @@ class TableServiceTest extends ServiceTest {
                 .contains(테이블_1);
     }
 
-    @DisplayName("테이블 고객 수는 0 이상이어야 한다.")
-    @Test
-    void create_invalidCustomerCount() {
-        int 음수_고객수 = -1;
-
-        assertThatThrownBy(() -> new OrderTable(1L, null, 음수_고객수, true))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("테이블 고객 수는 0 이상이어야 한다.");
-    }
-
     @DisplayName("테이블의 빈 상태 여부를 변경할 수 있다.")
     @Test
     void changeEmpty() {

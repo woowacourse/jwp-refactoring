@@ -71,17 +71,6 @@ class MenuServiceTest extends ServiceTest {
                 .hasMessage("메뉴 속 상품들은 모두 DB에 등록되어야 한다");
     }
 
-    @DisplayName("메뉴 가격은 0 이상이어야 한다.")
-    @Test
-    void createAndList_invalidPrice() {
-        BigDecimal 음수_가격 = BigDecimal.valueOf(-10000);
-
-        assertThatThrownBy(() -> new Menu(1L, "후라이드", 음수_가격,
-                1L, List.of(메뉴상품_후라이드())))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("메뉴 가격은 0 이상이어야 한다.");
-    }
-
     @DisplayName("메뉴 가격은 내부 모든 상품가격보다 낮아야 한다.")
     @Test
     void createAndList_invalidDiscount() {

@@ -227,5 +227,5 @@ Content-Type: application/json
 - [x] 테스트 픽스처 생성 방식 변경(Fixtures. 제거)
 - [x] usingRecursiveComparison 등을 통한 필드값 검증
 - [ ] DirtiesContext 제거 및 DatabaseCleaner 로 변경
-- [ ] 일부 테스트코드 도메인 테스트로 이동
+- [x] 일부 테스트코드 도메인 테스트로 이동
 - [x] @SuppressWarnings("NonAsciiCharacters") 추가
