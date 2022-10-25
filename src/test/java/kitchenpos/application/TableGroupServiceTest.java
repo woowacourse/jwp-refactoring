@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.common.builder.OrderTableBuilder;
 import kitchenpos.common.builder.TableGroupBuilder;
@@ -118,16 +119,24 @@ class TableGroupServiceTest extends ServiceTest {
         // given
         List<OrderTable> 주문_테이블들 = List.of(야채곱창_주문_테이블, 치킨_주문_테이블, 피자_주문_테이블);
         TableGroup 단체_테이블 = 테이블_그룹_생성(주문_테이블들);
-        단체_테이블 = tableGroupService.create(단체_테이블);
+        단체_테이블 = tableGroupDao.save(단체_테이블);
 
-        // when & then
+        // when
         tableGroupService.ungroup(단체_테이블.getId());
+
+        // then
+        Long 단체_테이블_아이디 = 단체_테이블.getId();
+        assertAll(
+                () -> assertThat(orderTableDao.findAllByTableGroupId(단체_테이블_아이디)).isEmpty()
+        );
     }
 
     private TableGroup 테이블_그룹_생성(final List<OrderTable> orderTables) {
-        return new TableGroupBuilder()
+        TableGroup tableGroup = new TableGroupBuilder()
                 .orderTables(orderTables)
                 .build();
+        tableGroup.setCreatedDate(LocalDateTime.now());
+        return tableGroup;
     }
 
     private OrderTable 주문_테이블_생성(final int numberOfGuests, final boolean empty) {
