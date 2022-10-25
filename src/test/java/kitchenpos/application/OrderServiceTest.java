@@ -21,7 +21,6 @@ import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.fixture.Fixture.Menu;
-import kitchenpos.fixture.Fixture.OrderTable;
 
 class OrderServiceTest extends ServiceTest {
 
