@@ -25,8 +25,8 @@ class MenuRestControllerTest {
     @Test
     void priceMustOverZero() {
         // arrange
-        MenuProduct menuProduct = createMenuProduct(후라이드_상품.id(), 2);
-        Menu menu = createMenu("후라이드+후라이드", BigDecimal.ONE.negate(), 두마리메뉴_그룹.id(), menuProduct);
+        MenuProduct menuProduct = createMenuProductRequest(후라이드_상품.id(), 2);
+        Menu menu = createMenuRequest("후라이드+후라이드", BigDecimal.ONE.negate(), 두마리메뉴_그룹.id(), menuProduct);
 
         // act & assert
         assertThatThrownBy(() -> sut.create(menu))
@@ -37,11 +37,11 @@ class MenuRestControllerTest {
     @Test
     void priceMustNotNull() {
         // arrange
-        MenuProduct menuProduct = createMenuProduct(후라이드_상품.id(), 2);
-        Menu menu = createMenu("후라이드+후라이드", null, 두마리메뉴_그룹.id(), menuProduct);
+        MenuProduct menuProductRequest = createMenuProductRequest(후라이드_상품.id(), 2);
+        Menu menuRequest = createMenuRequest("후라이드+후라이드", null, 두마리메뉴_그룹.id(), menuProductRequest);
 
         // act & assert
-        assertThatThrownBy(() -> sut.create(menu))
+        assertThatThrownBy(() -> sut.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -49,11 +49,12 @@ class MenuRestControllerTest {
     @Test
     void menuGroupMustExist() {
         // arrange
-        MenuProduct menuProduct = createMenuProduct(후라이드_상품.id(), 2);
-        Menu menu = createMenu("후라이드+후라이드", BigDecimal.ZERO, 존재하지않는_그룹_ID(), menuProduct);
+        MenuProduct menuProductRequest = createMenuProductRequest(후라이드_상품.id(), 2);
+        Menu menuRequest = createMenuRequest("후라이드+후라이드", BigDecimal.ZERO, 존재하지않는_그룹_ID(),
+                menuProductRequest);
 
         // act & assert
-        assertThatThrownBy(() -> sut.create(menu))
+        assertThatThrownBy(() -> sut.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -61,11 +62,12 @@ class MenuRestControllerTest {
     @Test
     void productMustExist() {
         // arrange
-        MenuProduct menuProduct = createMenuProduct(존재하지_않는_상품_ID(), 1);
-        Menu menu = createMenu("후라이드+후라이드", BigDecimal.ZERO, 두마리메뉴_그룹.id(), menuProduct);
+        MenuProduct menuProductRequest = createMenuProductRequest(존재하지_않는_상품_ID(), 1);
+        Menu menuRequest = createMenuRequest("후라이드+후라이드", BigDecimal.ZERO, 두마리메뉴_그룹.id(),
+                menuProductRequest);
 
         // act & assert
-        assertThatThrownBy(() -> sut.create(menu))
+        assertThatThrownBy(() -> sut.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -73,17 +75,17 @@ class MenuRestControllerTest {
     @Test
     void priceMustUnderTotalOfMenuProductPrice() {
         // arrange
-        MenuProduct menuProduct = createMenuProduct(후라이드_상품.id(), 1);
+        MenuProduct menuProductRequest = createMenuProductRequest(후라이드_상품.id(), 1);
         BigDecimal overPrice = BigDecimal.valueOf(후라이드_상품.가격() + 1);
-        Menu menu = createMenu("후라이드+후라이드", overPrice, 두마리메뉴_그룹.id(), menuProduct);
+        Menu menuRequest = createMenuRequest("후라이드+후라이드", overPrice, 두마리메뉴_그룹.id(), menuProductRequest);
 
         // act & assert
-        assertThatThrownBy(() -> sut.create(menu))
+        assertThatThrownBy(() -> sut.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private Menu createMenu(String name, BigDecimal price, long menuGroupId,
-                            MenuProduct... menuProduct) {
+    private Menu createMenuRequest(String name, BigDecimal price, long menuGroupId,
+                                   MenuProduct... menuProduct) {
         Menu menu = new Menu();
         menu.setName(name);
         menu.setMenuGroupId(menuGroupId);
@@ -92,7 +94,7 @@ class MenuRestControllerTest {
         return menu;
     }
 
-    private MenuProduct createMenuProduct(long productId, int quantity) {
+    private MenuProduct createMenuProductRequest(long productId, int quantity) {
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(productId);
         menuProduct.setQuantity(quantity);

@@ -18,22 +18,22 @@ class ProductRestControllerTest {
     @DisplayName("가격은 0원 미만일 수 없다.")
     @Test
     void priceMustOverZero() {
-        Product product = createProduct("국밥", BigDecimal.ONE.negate());
+        Product productRequest = createProductRequest("국밥", BigDecimal.ONE.negate());
 
-        assertThatThrownBy(() -> sut.create(product))
+        assertThatThrownBy(() -> sut.create(productRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("가격은 null일 수 없다.")
     @Test
     void priceMustNotNull() {
-        Product product = createProduct("국밥", null);
+        Product productRequest = createProductRequest("국밥", null);
 
-        assertThatThrownBy(() -> sut.create(product))
+        assertThatThrownBy(() -> sut.create(productRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private Product createProduct(String name, BigDecimal price) {
+    private Product createProductRequest(String name, BigDecimal price) {
         Product product = new Product();
         product.setName(name);
         product.setPrice(price);
