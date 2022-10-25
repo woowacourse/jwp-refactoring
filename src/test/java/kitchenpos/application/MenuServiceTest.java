@@ -114,7 +114,8 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴들을 조회할 수 있다.")
     @Test
     void list() {
-        Menu menu = new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(), createMenuProducts(product.getId()));
+        Menu menu = new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(),
+                createMenuProducts(product.getId()));
         menuDao.save(menu);
 
         List<Menu> menus = menuService.list();

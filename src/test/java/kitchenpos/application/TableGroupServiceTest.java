@@ -162,7 +162,8 @@ class TableGroupServiceTest extends ServiceTest {
         Menu menu = menuDao.save(
                 new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(), createMenuProducts(product.getId())));
         orderDao.save(
-                new Order(firstOrderTable.getId(), orderStatus, LocalDateTime.now(), createOrderLineItem(menu.getId())));
+                new Order(firstOrderTable.getId(), orderStatus, LocalDateTime.now(),
+                        createOrderLineItem(menu.getId())));
         List<OrderTable> orderTables = createOrderTable(firstOrderTable, secondOrderTable);
         TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), orderTables));
         firstOrderTable.setTableGroupId(tableGroup.getId());
