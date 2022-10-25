@@ -24,9 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 class MenuServiceTest {
 
-    private Long validMenuGroupId;
-    private Long validProductId;
-
     @Autowired
     private MenuService menuService;
 
@@ -38,6 +35,9 @@ class MenuServiceTest {
 
     @Autowired
     private ProductDao productDao;
+
+    private Long validMenuGroupId;
+    private Long validProductId;
 
     @BeforeEach
     void setUp() {
