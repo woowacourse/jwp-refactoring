@@ -28,7 +28,7 @@ class MenuGroupServiceTest extends ServiceTest {
                 .map(MenuGroup::getName)
                 .collect(Collectors.toUnmodifiableList());
         assertAll(
-                () -> assertThat(menuGroups).hasSize(5),
+                () -> assertThat(menuGroups).hasSize(1),
                 () -> assertThat(menuGroupNames).contains("햄버거")
         );
     }

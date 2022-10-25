@@ -38,7 +38,7 @@ class TableServiceTest extends ServiceTest {
 
         tableService.create(orderTable);
 
-        assertThat(tableService.list()).hasSize(9);
+        assertThat(tableService.list()).hasSize(1);
     }
 
     @DisplayName("OrderTable의 empty 상태를 변경할 수 있다.")

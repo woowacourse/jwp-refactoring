@@ -7,8 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -23,14 +25,18 @@ class MenuServiceTest extends ServiceTest {
     private MenuService menuService;
 
     @Autowired
-    ProductDao productDao;
+    private ProductDao productDao;
+
+    @Autowired
+    private MenuGroupDao menuGroupDao;
 
     @DisplayName("Menu를 등록할 수 있다.")
     @Test
     void create() {
+        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹1"));
         Product product = productDao.save(new Product("상품1", new BigDecimal(5000)));
         MenuProduct menuProduct = new MenuProduct(product.getId(), 2L);
-        Menu menu = new Menu("메뉴1", new BigDecimal(10000), 1L, List.of(menuProduct));
+        Menu menu = new Menu("메뉴1", new BigDecimal(10000), menuGroup.getId(), List.of(menuProduct));
 
         menuService.create(menu);
 
@@ -39,7 +45,7 @@ class MenuServiceTest extends ServiceTest {
                 .map(Menu::getName)
                 .collect(Collectors.toUnmodifiableList());
         assertAll(
-                () -> assertThat(menus).hasSize(7),
+                () -> assertThat(menus).hasSize(1),
                 () -> assertThat(menuNames).contains("메뉴1")
         );
     }
@@ -62,12 +68,12 @@ class MenuServiceTest extends ServiceTest {
     @ParameterizedTest
     @CsvSource({"-1, 메뉴 가격은 0원 이상입니다.", "16001, 메뉴 가격은 상품의 합보다 작거나 같아야 합니다."})
     void create_Exception_InvalidPrice(int price, String expectedMessage) {
+        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹1"));
         Product product1 = productDao.save(new Product("상품1", new BigDecimal(5000)));
         Product product2 = productDao.save(new Product("상품2", new BigDecimal(6000)));
         MenuProduct menuProduct1 = new MenuProduct(product1.getId(), 2L);
         MenuProduct menuProduct2 = new MenuProduct(product2.getId(), 1L);
-        Menu menu = new Menu(
-                "메뉴1", new BigDecimal(price), 1L, List.of(menuProduct1, menuProduct2));
+        Menu menu = new Menu("메뉴1", new BigDecimal(price), menuGroup.getId(), List.of(menuProduct1, menuProduct2));
 
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class)

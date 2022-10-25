@@ -32,7 +32,7 @@ class ProductServiceTest extends ServiceTest {
                 .map(Product::getName)
                 .collect(Collectors.toUnmodifiableList());
         assertAll(
-                () -> assertThat(products).hasSize(7),
+                () -> assertThat(products).hasSize(1),
                 () -> assertThat(productNames).contains(PRODUCE_NAME)
         );
     }
