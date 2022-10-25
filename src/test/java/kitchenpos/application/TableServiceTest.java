@@ -3,19 +3,19 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.NestedApplicationTest;
 import kitchenpos.dao.JdbcTemplateOrderTableDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.support.fixture.domain.OrderTableFixture;
+import kitchenpos.support.fixture.domain.TableGroupFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
-@Sql("/truncate.sql")
 class TableServiceTest {
 
     @Autowired
@@ -25,7 +25,7 @@ class TableServiceTest {
     private JdbcTemplateOrderTableDao jdbcTemplateOrderTableDao;
 
 
-    @Nested
+    @NestedApplicationTest
     @DisplayName("create 메서드는")
     class Create {
 
@@ -42,20 +42,26 @@ class TableServiceTest {
         }
     }
 
-    @Nested
+    @NestedApplicationTest
     @DisplayName("list 메서드는")
     class ListTest {
+
+        @BeforeEach
+        void setUp() {
+            jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable());
+            jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable());
+        }
 
         @Test
         @DisplayName("OrderTable 전체 목록을 조회한다.")
         void success() {
             List<OrderTable> orderTables = tableService.list();
 
-            assertThat(orderTables).hasSize(8);
+            assertThat(orderTables).hasSize(2);
         }
     }
 
-    @Nested
+    @NestedApplicationTest
     @DisplayName("changeEmpty 메서드는")
     class ChangeEmpty {
 
@@ -76,7 +82,7 @@ class TableServiceTest {
         }
     }
 
-    @Nested
+    @NestedApplicationTest
     @DisplayName("changeNumberOfGuests 메서드는")
     class ChangeNumberOfGuests {
 

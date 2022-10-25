@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.NestedApplicationTest;
 import kitchenpos.dao.JdbcTemplateMenuDao;
 import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.dao.JdbcTemplateOrderDao;
@@ -22,14 +23,11 @@ import kitchenpos.support.fixture.domain.OrderTableFixture;
 import kitchenpos.support.fixture.domain.TableGroupFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
-@Sql("/truncate.sql")
 class OrderServiceTest {
 
     @Autowired
@@ -50,7 +48,7 @@ class OrderServiceTest {
     @Autowired
     private JdbcTemplateMenuGroupDao jdbcTemplateMenuGroupDao;
 
-    @Nested
+    @NestedApplicationTest
     @DisplayName("save 메서드는")
     class Save {
 
@@ -74,15 +72,19 @@ class OrderServiceTest {
         }
     }
 
-    @Nested
+    @NestedApplicationTest
     @DisplayName("list 메서드는")
     class ListTest {
 
         @BeforeEach
         void setUp() {
-            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroupFixture.getTableGroup());
-            OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
-            jdbcTemplateOrderDao.save(OrderFixture.COMPLETION.getOrder(orderTable.getId()));
+            TableGroup tableGroup1 = jdbcTemplateTableGroupDao.save(TableGroupFixture.getTableGroup());
+            OrderTable orderTable1 = jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup1.getId()));
+            jdbcTemplateOrderDao.save(OrderFixture.COMPLETION.getOrder(orderTable1.getId()));
+
+            TableGroup tableGroup2 = jdbcTemplateTableGroupDao.save(TableGroupFixture.getTableGroup());
+            OrderTable orderTable2 = jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup2.getId()));
+            jdbcTemplateOrderDao.save(OrderFixture.COMPLETION.getOrder(orderTable2.getId()));
         }
 
         @Test
@@ -90,11 +92,11 @@ class OrderServiceTest {
         void success() {
             List<Order> orders = orderService.list();
 
-            assertThat(orders).hasSize(1);
+            assertThat(orders).hasSize(2);
         }
     }
 
-    @Nested
+    @NestedApplicationTest
     @DisplayName("changeOrderStatus 메서드는")
     class ChangeOrderStatus {
 

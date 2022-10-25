@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.fixture.domain.MenuFixture.CHICKEN_1000;
 import static kitchenpos.support.fixture.domain.MenuFixture.PIZZA_2000;
 import static kitchenpos.support.fixture.domain.MenuGroupFixture.KOREAN;
 import static kitchenpos.support.fixture.domain.MenuProductFixture.ONE;
@@ -7,21 +8,21 @@ import static kitchenpos.support.fixture.domain.ProductFixture.APPLE_1000;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.NestedApplicationTest;
 import kitchenpos.dao.JdbcTemplateMenuDao;
 import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.dao.JdbcTemplateProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.support.fixture.domain.MenuGroupFixture;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
-@Sql("/truncate.sql")
 class MenuServiceTest {
 
     @Autowired
@@ -36,7 +37,7 @@ class MenuServiceTest {
     @Autowired
     private JdbcTemplateProductDao jdbcTemplateProductDao;
 
-    @Nested
+    @NestedApplicationTest
     @DisplayName("create 메서드는")
     class Create {
 
@@ -65,16 +66,27 @@ class MenuServiceTest {
         }
     }
 
-    @Nested
+    @NestedApplicationTest
     @DisplayName("list 메서드는")
     class ListTest {
+
+        @BeforeEach
+        void setUp() {
+            MenuGroup menuGroup1 = jdbcTemplateMenuGroupDao.save(MenuGroupFixture.KOREAN.getMenuGroup());
+            Menu menu1 = CHICKEN_1000.getMenu(menuGroup1.getId());
+            jdbcTemplateMenuDao.save(menu1);
+
+            MenuGroup menuGroup2 = jdbcTemplateMenuGroupDao.save(MenuGroupFixture.KOREAN.getMenuGroup());
+            Menu menu2 = CHICKEN_1000.getMenu(menuGroup2.getId());
+            jdbcTemplateMenuDao.save(menu2);
+        }
 
         @Test
         @DisplayName("Menu 전체 목록을 조회한다.")
         void success() {
             List<Menu> menus = menuService.list();
 
-            assertThat(menus).hasSize(6);
+            assertThat(menus).hasSize(2);
         }
     }
 }

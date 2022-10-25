@@ -4,6 +4,7 @@ import static kitchenpos.support.fixture.domain.OrderTableFixture.GUEST_ONE_EMPT
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.NestedApplicationTest;
 import kitchenpos.dao.JdbcTemplateOrderTableDao;
 import kitchenpos.dao.JdbcTemplateTableGroupDao;
 import kitchenpos.domain.OrderTable;
@@ -11,14 +12,11 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.support.fixture.domain.TableGroupFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
-@Sql("/truncate.sql")
 class TableGroupServiceTest {
 
     @Autowired
@@ -30,7 +28,7 @@ class TableGroupServiceTest {
     @Autowired
     private JdbcTemplateOrderTableDao jdbcTemplateOrderTableDao;
 
-    @Nested
+    @NestedApplicationTest
     @DisplayName("create 메서드는")
     class Create {
 
@@ -57,7 +55,7 @@ class TableGroupServiceTest {
         }
     }
 
-    @Nested
+    @NestedApplicationTest
     @DisplayName("ungroup 메서드는")
     class Ungroup {
 
