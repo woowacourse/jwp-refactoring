@@ -10,11 +10,14 @@ import java.util.Optional;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 @DisplayName("TableService 클래스의")
 class TableServiceTest extends ServiceTest {
@@ -92,9 +95,13 @@ class TableServiceTest extends ServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @Test
+        @ParameterizedTest
+        @EnumSource(
+                value = OrderStatus.class,
+                names = {"COMPLETION"},
+                mode = EnumSource.Mode.EXCLUDE)
         @DisplayName("orderTableId에 해당하는 order의 orderStatus가 COMPLETION이 아닌 경우 예외를 던진다.")
-        void orderStatus_NotCompletion_ExceptionThrown() {
+        void orderStatus_NotCompletion_ExceptionThrown(OrderStatus orderStatus) {
             // given
             OrderTable orderTable = saveOrderTable(2, false);
             MenuGroup menuGroup = saveMenuGroup("반마리치킨");
@@ -102,7 +109,7 @@ class TableServiceTest extends ServiceTest {
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
             Order savedOrder = saveOrder(orderTable, menu1, menu2);
-            updateOrder(savedOrder, "COOKING");
+            updateOrder(savedOrder, orderStatus.name());
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), createOrderTable(2, false)))

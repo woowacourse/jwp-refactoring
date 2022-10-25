@@ -7,17 +7,21 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
+import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 @DisplayName("TableGroupService 클래스의")
 class TableGroupServiceTest extends ServiceTest {
@@ -122,9 +126,13 @@ class TableGroupServiceTest extends ServiceTest {
             );
         }
 
-        @Test
+        @ParameterizedTest
+        @EnumSource(
+                value = OrderStatus.class,
+                names = {"COMPLETION"},
+                mode = EnumSource.Mode.EXCLUDE)
         @DisplayName("orderTable에 해당하는 order의 orderStatus가 COMPLETION이 아닌 경우 예외를 던진다.")
-        void orderStatus_NotCompletion_ExceptionThrown() {
+        void orderStatus_NotCompletion_ExceptionThrown(OrderStatus orderStatus) {
             // given
             OrderTable orderTable1 = saveOrderTable(2, true);
             OrderTable orderTable2 = saveOrderTable(4, true);
@@ -135,7 +143,7 @@ class TableGroupServiceTest extends ServiceTest {
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
             Order savedOrder = saveOrder(orderTable1, menu1, menu2);
-            updateOrder(savedOrder, "COOKING");
+            updateOrder(savedOrder, orderStatus.name());
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
