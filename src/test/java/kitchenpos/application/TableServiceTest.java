@@ -24,6 +24,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RepositoryTest
 class TableServiceTest {
 
+    private static final long SEQUENCE = 1L;
+    private static final long ORDER_ID = 1L;
+    private static final long MENU_ID = 1L;
+    private static final long QUANTITY = 1L;
+    private static final int INVALID_NUMBER_OF_GUESTS = -1;
+
     private TableService sut;
     private OrderService orderService;
 
@@ -126,7 +132,7 @@ class TableServiceTest {
         final OrderTable orderTable = orderTableDao.save(new OrderTable(0, false));
         final Long orderTableId = orderTable.getId();
 
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
+        final OrderLineItem orderLineItem = createOrderLineItem();
         final Order order = new Order(orderTableId, "COOKING", LocalDateTime.now(), List.of(orderLineItem));
         orderService.create(order);
 
@@ -166,7 +172,7 @@ class TableServiceTest {
     @Test
     void GuestsCountCanNotLessThenZero() {
         // given
-        final OrderTable orderTable = new OrderTable(-1, false);
+        final OrderTable orderTable = new OrderTable(INVALID_NUMBER_OF_GUESTS, false);
         final OrderTable createdOrderTable = sut.create(orderTable);
         final Long orderTableId = createdOrderTable.getId();
 
@@ -184,5 +190,9 @@ class TableServiceTest {
 
         // when & then
         assertThatThrownBy(() -> sut.changeNumberOfGuests(orderTableId, orderTable));
+    }
+
+    private OrderLineItem createOrderLineItem() {
+        return new OrderLineItem(SEQUENCE, ORDER_ID, MENU_ID, QUANTITY);
     }
 }

@@ -24,6 +24,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RepositoryTest
 class OrderServiceTest {
 
+    private static final long QUANTITY = 1L;
+    private static final long MENU_ID = 1L;
+    private static final long ORDER_ID = 1L;
+    private static final long SEQUENCE = 1L;
+
     private OrderService sut;
     private TableService tableService;
 
@@ -51,7 +56,7 @@ class OrderServiceTest {
         // given
         final OrderTable orderTable = new OrderTable(1, false);
         final OrderTable createdOrderTable = tableService.create(orderTable);
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
+        final OrderLineItem orderLineItem = createOrderLineItem();
 
         final Order order = new Order(createdOrderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
 
@@ -104,7 +109,7 @@ class OrderServiceTest {
         // given
         final OrderTable orderTable = new OrderTable(1, true);
         final OrderTable createdOrderTable = tableService.create(orderTable);
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
+        final OrderLineItem orderLineItem = createOrderLineItem();
 
         final Order order = new Order(createdOrderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
 
@@ -119,7 +124,7 @@ class OrderServiceTest {
         // given
         final OrderTable orderTable = new OrderTable(1, false);
         final OrderTable createdOrderTable = tableService.create(orderTable);
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
+        final OrderLineItem orderLineItem = createOrderLineItem();
 
         final Order order = new Order(createdOrderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
         final Order createdOrder = sut.create(order);
@@ -139,7 +144,7 @@ class OrderServiceTest {
         // given
         final OrderTable orderTable = new OrderTable(1, false);
         final OrderTable createdOrderTable = tableService.create(orderTable);
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
+        final OrderLineItem orderLineItem = createOrderLineItem();
 
         final Order order = new Order(createdOrderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
         final Order changeOrder = new Order(createdOrderTable.getId(), "COMPLETION", LocalDateTime.now(),
@@ -156,7 +161,7 @@ class OrderServiceTest {
         // given
         final OrderTable orderTable = new OrderTable(1, false);
         final OrderTable createdOrderTable = tableService.create(orderTable);
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
+        final OrderLineItem orderLineItem = createOrderLineItem();
 
         final Order order = new Order(createdOrderTable.getId(), "COMPLETION", LocalDateTime.now(),
                 List.of(orderLineItem));
@@ -172,13 +177,10 @@ class OrderServiceTest {
     void list() {
         // given
         final OrderTable orderTable = new OrderTable(1, false);
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
-
         final OrderTable anotherOrderTable = new OrderTable(1, false);
-        final OrderLineItem antherOrderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
 
-        final Order order1 = createdOrder(orderTable, orderLineItem);
-        final Order order2 = createdOrder(anotherOrderTable, antherOrderLineItem);
+        final Order order1 = createdOrder(orderTable, createOrderLineItem());
+        final Order order2 = createdOrder(anotherOrderTable, createOrderLineItem());
 
         final Order createdOrder1 = sut.create(order1);
         final Order createdOrder2 = sut.create(order2);
@@ -194,6 +196,10 @@ class OrderServiceTest {
                         tuple(createdOrder1.getId(), createdOrder1.getOrderTableId(), createdOrder1.getOrderStatus()),
                         tuple(createdOrder2.getId(), createdOrder2.getOrderTableId(), createdOrder2.getOrderStatus())
                 );
+    }
+
+    private OrderLineItem createOrderLineItem() {
+        return new OrderLineItem(SEQUENCE, ORDER_ID, MENU_ID, QUANTITY);
     }
 
     private Order createdOrder(final OrderTable orderTable, final OrderLineItem orderLineItem) {

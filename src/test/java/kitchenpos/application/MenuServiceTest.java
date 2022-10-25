@@ -21,6 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RepositoryTest
 class MenuServiceTest {
 
+    private static final long MENU_ID = 1L;
+    private static final long PRODUCT_ID = 1L;
+    private static final long QUANTITY = 1L;
+
     private MenuService sut;
 
     @Autowired
@@ -44,7 +48,7 @@ class MenuServiceTest {
     @Test
     void create() {
         // given
-        final MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L);
+        final MenuProduct menuProduct = createMenuProduct();
         final Menu menu = new Menu("후라이드치킨", BigDecimal.valueOf(16000), 2L, List.of(menuProduct));
 
         // when
@@ -64,7 +68,7 @@ class MenuServiceTest {
     @Test
     void createWithMinusPrice() {
         // given
-        final MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L);
+        final MenuProduct menuProduct = createMenuProduct();
         final Menu menu = new Menu("후라이드치킨", BigDecimal.valueOf(-1), 2L, List.of(menuProduct));
 
         // when & then
@@ -76,7 +80,7 @@ class MenuServiceTest {
     @Test
     void createWithNullPrice() {
         // given
-        final MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L);
+        final MenuProduct menuProduct = createMenuProduct();
         final Menu menu = new Menu();
         menu.setName("후라이드치킨");
         menu.setMenuGroupId(2L);
@@ -91,7 +95,7 @@ class MenuServiceTest {
     @Test
     void createWithNonGroup() {
         // given
-        final MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L);
+        final MenuProduct menuProduct = createMenuProduct();
         final Menu menu = new Menu();
         menu.setName("후라이드치킨");
         menu.setPrice(BigDecimal.valueOf(16000));
@@ -106,7 +110,7 @@ class MenuServiceTest {
     @Test
     void createWithLessPriceThenTotalProductPrice() {
         // given
-        final MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L);
+        final MenuProduct menuProduct = createMenuProduct();
         final Menu menu = new Menu("후라이드치킨", BigDecimal.valueOf(16001), 2L, List.of(menuProduct));
 
         // when & then
@@ -143,5 +147,9 @@ class MenuServiceTest {
                         tuple("간장치킨", 17_000L, 2L),
                         tuple("순살치킨", 17_000L, 2L)
                 );
+    }
+
+    private MenuProduct createMenuProduct() {
+        return new MenuProduct(MENU_ID, PRODUCT_ID, QUANTITY);
     }
 }
