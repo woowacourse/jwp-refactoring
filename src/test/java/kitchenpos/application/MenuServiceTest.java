@@ -8,13 +8,17 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 
 @SpringBootTest
+@Transactional
 class MenuServiceTest {
 
     @Autowired
@@ -61,19 +65,20 @@ class MenuServiceTest {
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(ints = {500000, 16001})
     @DisplayName("개별 상품의 합이 menu 가격의 합보다 클 경우 예외를 발생시킨다.")
-    void createWithCheaperPriceError() {
+    void createWithCheaperPriceError(int price) {
         //when
         Menu menu = new Menu();
         menu.setName("test");
-        menu.setPrice(BigDecimal.valueOf(1000));
+        menu.setPrice(BigDecimal.valueOf(price));
         menu.setMenuGroupId(1L);
 
         List<MenuProduct> menuProducts = new ArrayList<>();
         MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(1L);
         menuProduct.setProductId(1L);
+        menuProduct.setQuantity(1);
         menuProducts.add(menuProduct);
         menu.setMenuProducts(menuProducts);
 
@@ -85,6 +90,25 @@ class MenuServiceTest {
     @Test
     @DisplayName("전체 메뉴목록을 조회한다.")
     void findByList() {
-        assertThat(menuService.list()).hasSize(6);
+        //given
+        List<Menu> menus = menuService.list();
+
+        //when
+        Menu menu = new Menu();
+        menu.setName("test");
+        menu.setPrice(BigDecimal.valueOf(1000));
+        menu.setMenuGroupId(1L);
+
+        List<MenuProduct> menuProducts = new ArrayList<>();
+        MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setProductId(1L);
+        menuProduct.setQuantity(1);
+        menuProducts.add(menuProduct);
+        menu.setMenuProducts(menuProducts);
+
+        menuService.create(menu);
+
+        //then
+        assertThat(menuService.list()).hasSize(menus.size() + 1);
     }
 }

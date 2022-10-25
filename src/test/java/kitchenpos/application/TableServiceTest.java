@@ -11,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
@@ -19,6 +20,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 @SpringBootTest
+@Transactional
 class TableServiceTest {
 
     private final OrderTable orderTable = new OrderTable();
