@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -154,8 +155,7 @@ class OrderServiceTest extends ServiceTest {
         assertAll(
             () -> assertThat(orders).hasSize(1),
             () -> assertThat(orders.get(0).getId()).isEqualTo(createdOrder.getId()),
-            () -> assertThat(orders.get(0).getOrderTableId()).isEqualTo(createdOrder.getOrderTableId()),
-            () -> assertThat(orders.get(0).getOrderLineItems()).hasSize(createdOrder.getOrderLineItems().size())
+            () -> assertThat(orders.get(0).getOrderTableId()).isEqualTo(createdOrder.getOrderTableId())
         );
     }
 
@@ -227,7 +227,6 @@ class OrderServiceTest extends ServiceTest {
 
     private Order createOrder(Menu menu) {
         OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
 
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);
@@ -235,8 +234,17 @@ class OrderServiceTest extends ServiceTest {
 
         Order order = new Order();
         order.setOrderLineItems(List.of(orderLineItem));
+        order.setOrderedTime(LocalDateTime.now());
         order.setOrderTableId(createdOrderTable.getId());
+        order.setOrderStatus(OrderStatus.COOKING.name());
 
-        return orderService.create(order);
+        Order createdOrder = orderDao.save(order);
+
+        orderLineItem.setMenuId(menu.getId());
+        orderLineItem.setOrderId(createdOrder.getId());
+        orderLineItem.setQuantity(100);
+        orderLineItemDao.save(orderLineItem);
+
+        return createdOrder;
     }
 }

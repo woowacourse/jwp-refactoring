@@ -67,14 +67,13 @@ public class ProductServiceTest extends ServiceTest {
     @DisplayName("상품 목록을 조회한다")
     void list() {
         // given
-        int default_data_size = 6;
 
         // when
         List<Product> products = productService.list();
 
         // then
         assertAll(
-            () -> assertThat(products).hasSize(default_data_size)
+            () -> assertThat(products).hasSameSizeAs(productDao.findAll())
         );
     }
 }

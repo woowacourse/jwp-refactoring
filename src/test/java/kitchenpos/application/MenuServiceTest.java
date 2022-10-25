@@ -133,14 +133,13 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴 목록 조회한다")
     void list() {
         // given
-        int default_data_size = 6;
 
         // when
         List<Menu> menus = menuService.list();
 
         // then
         assertAll(
-            () -> assertThat(menus).hasSize(default_data_size)
+            () -> assertThat(menus).hasSameSizeAs(menuDao.findAll())
         );
     }
 

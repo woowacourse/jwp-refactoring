@@ -23,13 +23,13 @@ class TableServiceTest extends ServiceTest {
     @Autowired
     protected TableService tableService;
     @Autowired
+    protected TableGroupService tableGroupService;
+    @Autowired
     protected OrderDao orderDao;
     @Autowired
     protected OrderTableDao orderTableDao;
     @Autowired
     protected TableGroupDao tableGroupDao;
-    @Autowired
-    protected TableGroupService tableGroupService;
 
     @Test
     @DisplayName("새 주문 테이블을 생성한다")
@@ -50,7 +50,6 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("주문 테이블 목록을 조회한다")
     void list() {
         // given
-        int default_data_size = 8;
 
         // when
         List<OrderTable> orderTables = tableService.list();
@@ -58,9 +57,9 @@ class TableServiceTest extends ServiceTest {
 
         // then
         assertAll(
-            () -> assertThat(orderTables).hasSize(default_data_size),
-            () -> assertThat(firstTable.getId()).isEqualTo(1),
-            () -> assertThat(firstTable.getNumberOfGuests()).isEqualTo(0),
+            () -> assertThat(orderTables).hasSameSizeAs(orderTableDao.findAll()),
+            () -> assertThat(firstTable.getId()).isOne(),
+            () -> assertThat(firstTable.getNumberOfGuests()).isZero(),
             () -> assertThat(firstTable.isEmpty()).isTrue()
         );
     }

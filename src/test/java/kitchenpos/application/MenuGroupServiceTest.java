@@ -18,6 +18,7 @@ class MenuGroupServiceTest extends ServiceTest{
     protected MenuGroupService menuGroupService;
     @Autowired
     protected MenuGroupDao menuGroupDao;
+
     @Test
     @DisplayName("메뉴 그룹을 저장한다")
     void create() {
@@ -39,14 +40,13 @@ class MenuGroupServiceTest extends ServiceTest{
     @DisplayName("메뉴 그룹을 조회한다")
     void list() {
         // given
-        int default_data_size = 4;
 
         // when
         List<MenuGroup> menuGroups = menuGroupService.list();
 
         // then
         assertAll(
-            () -> assertThat(menuGroups).hasSize(default_data_size)
+            () -> assertThat(menuGroups).hasSameSizeAs(menuGroupDao.findAll())
         );
     }
 }
