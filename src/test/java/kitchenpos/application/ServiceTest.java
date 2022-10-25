@@ -13,7 +13,6 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
 
 @SpringBootTest
-@Transactional
 public class ServiceTest {
 
     @Autowired
