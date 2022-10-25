@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderTableDao;
@@ -34,6 +35,7 @@ public class OrderTableFakeDao implements OrderTableDao {
     @Override
     public List<OrderTable> findAllByIdIn(List<Long> ids) {
         return ids.stream()
+                .filter(repository::containsKey)
                 .map(repository::get)
                 .collect(Collectors.toList());
     }
@@ -42,7 +44,7 @@ public class OrderTableFakeDao implements OrderTableDao {
     public List<OrderTable> findAllByTableGroupId(Long tableGroupId) {
         return repository.values()
                 .stream()
-                .filter(orderTable -> orderTable.getTableGroupId().equals(tableGroupId))
+                .filter(orderTable -> Objects.equals(orderTable.getTableGroupId(), tableGroupId))
                 .collect(Collectors.toList());
     }
 }
