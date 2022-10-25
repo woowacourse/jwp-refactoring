@@ -54,8 +54,11 @@ class TableServiceTest {
     @DisplayName("테이블을 전체 조회한다.")
     @Test
     void findAll() {
-        // given, when, then
-        assertThat(tableService.findAll()).hasSize(8);
+        // given
+        orderTableDao.save(new OrderTable(4, false));
+
+        // when, then
+        assertThat(tableService.findAll()).hasSize(1);
     }
 
     @DisplayName("테이블의 사용 여부를 변경한다.")

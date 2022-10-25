@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,9 @@ class ProductServiceTest {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductDao productDao;
 
     @DisplayName("상품을 저장한다.")
     @Test
@@ -62,7 +66,10 @@ class ProductServiceTest {
     @DisplayName("전체 상품을 조회한다.")
     @Test
     void findAll() {
-        // given, when, then
-        assertThat(productService.findAll()).hasSize(6);
+        // given
+        productDao.save(new Product("후라이드", new BigDecimal(10000)));
+
+        // when, then
+        assertThat(productService.findAll()).hasSize(1);
     }
 }

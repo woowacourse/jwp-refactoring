@@ -4,12 +4,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,15 +30,32 @@ class OrderServiceTest {
     private OrderTableDao orderTableDao;
 
     @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private MenuDao menuDao;
+
+    @Autowired
     private OrderService orderService;
+
+    private Long validOrderTableId;
+    private Long validMenuId;
+
+    @BeforeEach
+    void setUp() {
+        final OrderTable orderTable = orderTableDao.save(new OrderTable(1, false));
+        validOrderTableId = orderTable.getId();
+        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("추가메뉴"));
+        final Menu menu = menuDao.save(new Menu("후라후라후라", new BigDecimal(27000), menuGroup.getId()));
+        validMenuId = menu.getId();
+    }
 
     @DisplayName("주문을 저장한다.")
     @Test
     void create() {
         // given
-        final OrderTable savedOrderTable = orderTableDao.save(new OrderTable(1, false));
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 2);
-        final Order order = new Order(savedOrderTable.getId(), List.of(orderLineItem));
+        final OrderLineItem orderLineItem = new OrderLineItem(validMenuId, 2);
+        final Order order = new Order(validOrderTableId, List.of(orderLineItem));
 
         // when
         final Order savedOrder = orderService.create(order);
@@ -48,8 +71,7 @@ class OrderServiceTest {
     @Test
     void create_throwException_ifOrderLineItemsEmpty() {
         // given
-        orderTableDao.save(new OrderTable(1, false));
-        final Order order = new Order(1L, List.of());
+        final Order order = new Order(validOrderTableId, List.of());
 
         // when, then
         assertThatThrownBy(() -> orderService.create(order))
@@ -62,9 +84,8 @@ class OrderServiceTest {
     void create_throwException_ifMenuNotExist() {
         // given
         final Long noExistMenuId = 999L;
-        orderTableDao.save(new OrderTable(1, false));
         final OrderLineItem orderLineItem = new OrderLineItem(noExistMenuId, 2);
-        final Order order = new Order(1L, List.of(orderLineItem));
+        final Order order = new Order(validOrderTableId, List.of(orderLineItem));
 
         // when, then
         assertThatThrownBy(() -> orderService.create(order))
@@ -77,7 +98,7 @@ class OrderServiceTest {
     void create_throwException_ifTableNotExist() {
         // given
         final Long noExistTableId = 999L;
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 2);
+        final OrderLineItem orderLineItem = new OrderLineItem(validMenuId, 2);
         final Order order = new Order(noExistTableId, List.of(orderLineItem));
 
         // when, then
@@ -86,13 +107,13 @@ class OrderServiceTest {
                 .hasMessage("없는 테이블에서는 주문할 수 없습니다.");
     }
 
-    @DisplayName("주문하려는 테이블이 비어있지 않으면 예외를 반환한다.")
+    @DisplayName("주문하려는 테이블이 비어있으면 예외를 반환한다.")
     @Test
     void create_throwException_ifTableNotEmpty() {
         // given
-        final OrderTable savedOrderTable = orderTableDao.save(new OrderTable(1, true));
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 2);
-        final Order order = new Order(savedOrderTable.getId(), List.of(orderLineItem));
+        final OrderTable emptyOrderTable = orderTableDao.save(new OrderTable(0, true));
+        final OrderLineItem orderLineItem = new OrderLineItem(validMenuId, 2);
+        final Order order = new Order(emptyOrderTable.getId(), List.of(orderLineItem));
 
         // when, then
         assertThatThrownBy(() -> orderService.create(order))
@@ -104,9 +125,8 @@ class OrderServiceTest {
     @Test
     void findAll() {
         // given
-        final OrderTable savedOrderTable = orderTableDao.save(new OrderTable(1, false));
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 2);
-        final Order order = new Order(savedOrderTable.getId(), List.of(orderLineItem));
+        final OrderLineItem orderLineItem = new OrderLineItem(validMenuId, 2);
+        final Order order = new Order(validOrderTableId, List.of(orderLineItem));
         orderService.create(order);
 
         // when, then

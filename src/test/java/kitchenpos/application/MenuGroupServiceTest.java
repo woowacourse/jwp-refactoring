@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,9 @@ class MenuGroupServiceTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
+
+    @Autowired
+    private MenuGroupDao menuGroupDao;
 
     @DisplayName("메뉴 그룹을 저장한다.")
     @Test
@@ -44,7 +48,10 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 전체 조회한다.")
     @Test
     void findAll() {
-        // given, when, then
-        assertThat(menuGroupService.findAll()).hasSize(4);
+        // given
+        menuGroupDao.save(new MenuGroup("추천메뉴"));
+
+        // when, then
+        assertThat(menuGroupService.findAll()).hasSize(1);
     }
 }

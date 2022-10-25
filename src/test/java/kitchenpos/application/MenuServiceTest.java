@@ -6,8 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +24,35 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 class MenuServiceTest {
 
+    private Long validMenuGroupId;
+    private Long validProductId;
+
     @Autowired
     private MenuService menuService;
+
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private MenuDao menuDao;
+
+    @Autowired
+    private ProductDao productDao;
+
+    @BeforeEach
+    void setUp() {
+        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("추천메뉴"));
+        validMenuGroupId = menuGroup.getId();
+        final Product product = productDao.save(new Product("후라이드", new BigDecimal(16000)));
+        validProductId = product.getId();
+    }
 
     @DisplayName("메뉴를 저장한다.")
     @Test
     void create() {
         // given
-        final MenuProduct menuProduct = new MenuProduct(1L, 3);
-        final Menu menu = new Menu("후라후라후라", new BigDecimal(19000), 1L, List.of(menuProduct));
+        final MenuProduct menuProduct = new MenuProduct(validProductId, 3);
+        final Menu menu = new Menu("후라후라후라", new BigDecimal(19000), validMenuGroupId, List.of(menuProduct));
 
         // when
         final Menu savedMenu = menuService.create(menu);
@@ -44,8 +70,8 @@ class MenuServiceTest {
     @Test
     void create_throwException_ifPriceNotPositive() {
         // given
-        final MenuProduct menuProduct = new MenuProduct(1L, 3);
-        final Menu menu = new Menu("후라후라후라", new BigDecimal(-1), 1L, List.of(menuProduct));
+        final MenuProduct menuProduct = new MenuProduct(validProductId, 3);
+        final Menu menu = new Menu("후라후라후라", new BigDecimal(-1), validMenuGroupId, List.of(menuProduct));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -57,7 +83,7 @@ class MenuServiceTest {
     void create_throwException_ifMenuGroupNotExist() {
         // given
         final Long noExistMenuGroupId = 900L;
-        final MenuProduct menuProduct = new MenuProduct(1L, 3);
+        final MenuProduct menuProduct = new MenuProduct(validProductId, 3);
         final Menu menu = new Menu("후라후라후라", new BigDecimal(19000), noExistMenuGroupId, List.of(menuProduct));
 
         // when, then
@@ -71,7 +97,7 @@ class MenuServiceTest {
         // given
         final Long noExistProductId = 900L;
         final MenuProduct menuProduct = new MenuProduct(noExistProductId, 3);
-        final Menu menu = new Menu("후라후라후라", new BigDecimal(19000), 1L, List.of(menuProduct));
+        final Menu menu = new Menu("후라후라후라", new BigDecimal(19000), validMenuGroupId, List.of(menuProduct));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -82,8 +108,8 @@ class MenuServiceTest {
     @Test
     void create_throwException_ifPriceMoreExpensiveThanTotalMenuProduct() {
         // given
-        final MenuProduct menuProduct = new MenuProduct(1L, 3);
-        final Menu menu = new Menu("후라후라후라", new BigDecimal(50000), 1L, List.of(menuProduct));
+        final MenuProduct menuProduct = new MenuProduct(validProductId, 3);
+        final Menu menu = new Menu("후라후라후라", new BigDecimal(50000), validMenuGroupId, List.of(menuProduct));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -93,7 +119,10 @@ class MenuServiceTest {
     @DisplayName("메뉴 전체를 조회한다.")
     @Test
     void findAll() {
-        // given, when, then
-        assertThat(menuService.findAll()).hasSize(6);
+        // given
+        menuDao.save(new Menu("후라후라후라", new BigDecimal(19000), validMenuGroupId));
+
+        // when, then
+        assertThat(menuService.findAll()).hasSize(1);
     }
 }
