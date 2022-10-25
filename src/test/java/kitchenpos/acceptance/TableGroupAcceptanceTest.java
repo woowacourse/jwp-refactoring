@@ -51,7 +51,7 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
         주문_테이블들.add(테이블2);
 
         TableGroup 테이블_그룹 = new TableGroup(LocalDateTime.now(), 주문_테이블들);
-        final TableGroup 저장된_테이블_그룹 = testRestTemplate.postForObject("http://localhost:" + port + "/api/table-groups",
+        TableGroup 저장된_테이블_그룹 = testRestTemplate.postForObject("http://localhost:" + port + "/api/table-groups",
                 테이블_그룹, TableGroup.class);
 
         assertDoesNotThrow(

@@ -51,7 +51,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
     void 메뉴들을_조회한다() {
         testRestTemplate.postForObject("http://localhost:" + port + "/api/menus", 라면_메뉴, Menu.class);
 
-        final List<Menu> menus = Arrays.asList(
+        List<Menu> menus = Arrays.asList(
                 testRestTemplate.getForObject("http://localhost:" + port + "/api/menus", Menu[].class));
 
         assertThat(menus).hasSize(1);

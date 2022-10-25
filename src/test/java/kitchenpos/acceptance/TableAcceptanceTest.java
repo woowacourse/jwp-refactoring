@@ -31,7 +31,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
         testRestTemplate.postForObject("http://localhost:" + port + "/api/tables", 테이블_4인,
                 OrderTable.class);
 
-        final List<OrderTable> orderTables = Arrays.asList(
+        List<OrderTable> orderTables = Arrays.asList(
                 testRestTemplate.getForObject("http://localhost:" + port + "/api/tables", OrderTable[].class));
 
         assertThat(orderTables).hasSize(2);
@@ -47,7 +47,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
         testRestTemplate.put("http://localhost:" + port + "/api/tables/" + 테이블.getId() + "/empty",
                 테이블, OrderTable.class);
 
-        final List<OrderTable> orderTables = Arrays.asList(
+        List<OrderTable> orderTables = Arrays.asList(
                 testRestTemplate.getForObject("http://localhost:" + port + "/api/tables", OrderTable[].class));
 
         assertThat(orderTables.get(0).isEmpty()).isEqualTo(true);
@@ -63,7 +63,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
         testRestTemplate.put("http://localhost:" + port + "/api/tables/" + 테이블.getId() + "/number-of-guests",
                 테이블, OrderTable.class);
 
-        final List<OrderTable> orderTables = Arrays.asList(
+        List<OrderTable> orderTables = Arrays.asList(
                 testRestTemplate.getForObject("http://localhost:" + port + "/api/tables", OrderTable[].class));
 
         assertThat(orderTables.get(0).getNumberOfGuests()).isEqualTo(4);

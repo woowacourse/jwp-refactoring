@@ -26,7 +26,7 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
         testRestTemplate.postForObject("http://localhost:" + port + "/api/menu-groups",
                 new MenuGroup("육류"), MenuGroup.class);
 
-        final List<MenuGroup> groups = Arrays.asList(
+        List<MenuGroup> groups = Arrays.asList(
                 testRestTemplate.getForObject("http://localhost:" + port + "/api/menu-groups", MenuGroup[].class));
 
         assertThat(groups).hasSize(2);
