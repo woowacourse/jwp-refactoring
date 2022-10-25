@@ -5,13 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
-import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class MenuGroupServiceTest extends ServiceTest {
 
+    @DisplayName("메뉴 그룹을 추가한다.")
     @Test
     void create() {
         // given
@@ -32,6 +33,7 @@ class MenuGroupServiceTest extends ServiceTest {
         );
     }
 
+    @DisplayName("메뉴 그룹 목록을 조회한다.")
     @Test
     void list() {
         // given

@@ -1,9 +1,7 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
 
 import java.util.Arrays;
@@ -11,12 +9,12 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 class TableServiceTest extends ServiceTest {
 
+    @DisplayName("주문 테이블을 추가한다.")
     @Test
     void create() {
         // given
@@ -32,6 +30,7 @@ class TableServiceTest extends ServiceTest {
         assertThat(actual).isNotNull();
     }
 
+    @DisplayName("주문 테이블 목록을 조회한다.")
     @Test
     void list() {
         // given
@@ -50,6 +49,7 @@ class TableServiceTest extends ServiceTest {
         assertThat(actual).hasSize(orderTables.size());
     }
 
+    @DisplayName("주문 테이블의 사용 여부를 변경한다.")
     @Test
     void changeEmpty() {
         // given
@@ -59,7 +59,8 @@ class TableServiceTest extends ServiceTest {
 
         given(orderTableDao.findById(id))
                 .willReturn(Optional.ofNullable(savedOrderTable));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(id, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+        given(orderDao.existsByOrderTableIdAndOrderStatusIn(id,
+                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                 .willReturn(false);
         given(orderTableDao.save(any()))
                 .willReturn(updatedOrderTable);
@@ -71,6 +72,7 @@ class TableServiceTest extends ServiceTest {
         assertThat(actual.isEmpty()).isFalse();
     }
 
+    @DisplayName("주문 테이블의 방문 손님 수를 변경한다.")
     @Test
     void changeNumberOfGuests() {
         // given

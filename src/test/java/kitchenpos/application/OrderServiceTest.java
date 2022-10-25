@@ -5,17 +5,18 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class OrderServiceTest extends ServiceTest {
 
+    @DisplayName("주문을 추가한다.")
     @Test
     void create() {
         // given
@@ -41,6 +42,7 @@ class OrderServiceTest extends ServiceTest {
         assertThat(actual.getId()).isNotNull();
     }
 
+    @DisplayName("주문 목록을 조회한다.")
     @Test
     void list() {
         // given
@@ -63,6 +65,7 @@ class OrderServiceTest extends ServiceTest {
         assertThat(actual).hasSize(2);
     }
 
+    @DisplayName("주문의 상태를 변경한다.")
     @Test
     void changeOrderStatus() {
         // given

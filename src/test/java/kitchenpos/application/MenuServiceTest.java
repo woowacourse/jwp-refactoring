@@ -10,10 +10,12 @@ import java.util.Optional;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class MenuServiceTest extends ServiceTest {
 
+    @DisplayName("메뉴를 추가한다.")
     @Test
     void create() {
         // given
@@ -43,6 +45,7 @@ class MenuServiceTest extends ServiceTest {
         );
     }
 
+    @DisplayName("메뉴 목록을 조회한다.")
     @Test
     void list() {
         // given

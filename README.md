@@ -55,7 +55,7 @@
       - orderTableId이 있어야 한다.
       - numberOfGuests는 0이상이어야 한다.
 - TableGroup(주문 테이블 묶음)
-  - 주문 테이블 묶음을 추가할 수 있다.
+  - 통합 계산을 위해 개별 주문 테이블을 그룹화할 수 있다.
     - orderTables을 입력받는다.
       - OrderTable은 
     - 조건

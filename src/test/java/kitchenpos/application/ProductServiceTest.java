@@ -1,22 +1,19 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 class ProductServiceTest extends ServiceTest {
 
+    @DisplayName("상품을 추가한다.")
     @Test
     void create() {
         // given
@@ -36,6 +33,7 @@ class ProductServiceTest extends ServiceTest {
         );
     }
 
+    @DisplayName("상품 목록을 조회한다.")
     @Test
     void list() {
         // given

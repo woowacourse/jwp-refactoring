@@ -9,10 +9,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class TableGroupServiceTest extends ServiceTest {
 
+    @DisplayName("개별 주문 테이블을 그룹화한다.")
     @Test
     void create() {
         // given
@@ -36,6 +38,7 @@ class TableGroupServiceTest extends ServiceTest {
         );
     }
 
+    @DisplayName("그룹화된 주문 테이블 그룹을 개별 주문 테이블로 설정한다.")
     @Test
     void ungroup() {
         // given
