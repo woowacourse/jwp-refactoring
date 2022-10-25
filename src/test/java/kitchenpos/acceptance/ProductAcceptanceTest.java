@@ -17,7 +17,7 @@ public class ProductAcceptanceTest extends AcceptanceTest {
         Product product = new Product("후라이드", BigDecimal.valueOf(16000));
 
         // when, then
-        _상품등록검증(product);
+        _상품등록_Id반환(product);
     }
 
     @Test
@@ -27,16 +27,11 @@ public class ProductAcceptanceTest extends AcceptanceTest {
         Product product1 = new Product("후라이드", BigDecimal.valueOf(16000));
         Product product2 = new Product("양념치킨", BigDecimal.valueOf(16000));
 
-        _상품등록검증(product1);
-        _상품등록검증(product2);
+        _상품등록_Id반환(product1);
+        _상품등록_Id반환(product2);
 
         // when, then
         _상품조회검증();
-    }
-
-    private void _상품등록검증(final Product product) {
-        post("/api/products", product).assertThat()
-            .statusCode(HttpStatus.CREATED.value());
     }
 
     private void _상품조회검증() {

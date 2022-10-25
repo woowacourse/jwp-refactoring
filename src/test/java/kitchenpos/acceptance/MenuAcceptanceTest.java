@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 
 public class MenuAcceptanceTest extends AcceptanceTest {
 
@@ -16,7 +18,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
     @DisplayName("메뉴를 등록한다.")
     void createMenu() {
         // given
-        Menu menu = new Menu("후라이드+후라이드", new BigDecimal(32000), 1L, List.of(new MenuProduct(1L, 2)));
+        Menu menu = createMenuFixture();
 
         // when, then
         _메뉴등록검증(menu);
@@ -26,8 +28,8 @@ public class MenuAcceptanceTest extends AcceptanceTest {
     @DisplayName("전체 메뉴를 조회한다.")
     void findAll() {
         // given
-        Menu menu1 = new Menu("후라이드+후라이드", new BigDecimal(32000), 1L, List.of(new MenuProduct(1L, 2)));
-        Menu menu2 = new Menu("양념치킨+양념치킨", new BigDecimal(32000), 1L, List.of(new MenuProduct(2L, 2)));
+        Menu menu1 = createMenuFixture();
+        Menu menu2 = createMenuFixture();
 
         _메뉴등록검증(menu1);
         _메뉴등록검증(menu2);
@@ -44,5 +46,16 @@ public class MenuAcceptanceTest extends AcceptanceTest {
     private void _메뉴조회검증() {
         get("api/menus").assertThat()
             .statusCode(HttpStatus.OK.value());
+    }
+
+    private Menu createMenuFixture() {
+        MenuGroup menuGroup = new MenuGroup("세마리메뉴");
+        long menuGroupId = _메뉴그룹등록_Id반환(menuGroup);
+
+        Product product = new Product("후라이드", BigDecimal.valueOf(16000));
+        long productId = _상품등록_Id반환(product);
+
+        return new Menu("후라이드+후라이드+후라이드", new BigDecimal(48000), menuGroupId,
+            List.of(new MenuProduct(productId, 3)));
     }
 }

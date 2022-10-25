@@ -22,7 +22,7 @@ public class TableServiceTest {
     @DisplayName("테이블을 등록한다.")
     void create() {
         // given
-        OrderTable orderTable = new OrderTable(1L, 1, false);
+        OrderTable orderTable = new OrderTable(1, false);
 
         // when
         OrderTable savedOrderTable = tableService.create(orderTable);
@@ -37,7 +37,7 @@ public class TableServiceTest {
     @DisplayName("전체 테이블을 조회한다.")
     void list() {
         // given
-        OrderTable orderTable = new OrderTable(1L, 1, false);
+        OrderTable orderTable = new OrderTable(1, false);
         OrderTable savedOrderTable = tableService.create(orderTable);
 
         // when

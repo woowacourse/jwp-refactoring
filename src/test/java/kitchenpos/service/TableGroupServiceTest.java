@@ -3,7 +3,6 @@ package kitchenpos.service;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,11 +31,7 @@ public class TableGroupServiceTest {
     @DisplayName("테이블 그룹을 등록한다.")
     void create() {
         // given
-        OrderTable orderTable1 = new OrderTable(1L, 1, true);
-        OrderTable orderTable2 = new OrderTable(1L, 2, true);
-        OrderTable savedOrderTable1 = tableService.create(orderTable1);
-        OrderTable savedOrderTable2 = tableService.create(orderTable2);
-        TableGroup tableGroup = new TableGroup(List.of(savedOrderTable1, savedOrderTable2));
+        TableGroup tableGroup = createTableGroupFixture();
 
         // when
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
@@ -51,11 +46,7 @@ public class TableGroupServiceTest {
     @DisplayName("테이블 그룹에 속한 OrderTable 을 삭제한다.")
     void ungroup() {
         // given
-        OrderTable orderTable1 = new OrderTable(1L, 1, true);
-        OrderTable orderTable2 = new OrderTable(1L, 2, true);
-        OrderTable savedOrderTable1 = tableService.create(orderTable1);
-        OrderTable savedOrderTable2 = tableService.create(orderTable2);
-        TableGroup tableGroup = new TableGroup(List.of(savedOrderTable1, savedOrderTable2));
+        TableGroup tableGroup = createTableGroupFixture();
 
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
@@ -66,5 +57,13 @@ public class TableGroupServiceTest {
 
         // then
         assertThat(foundTableGroup.getOrderTables()).isNull();
+    }
+
+    private TableGroup createTableGroupFixture() {
+        OrderTable orderTable1 = new OrderTable(1, true);
+        OrderTable orderTable2 = new OrderTable(2, true);
+        OrderTable savedOrderTable1 = tableService.create(orderTable1);
+        OrderTable savedOrderTable2 = tableService.create(orderTable2);
+        return new TableGroup(List.of(savedOrderTable1, savedOrderTable2));
     }
 }

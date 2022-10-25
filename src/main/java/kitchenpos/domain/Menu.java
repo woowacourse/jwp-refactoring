@@ -11,10 +11,10 @@ import java.util.Objects;
  */
 public class Menu {
 
-    private final String name;
-    private final BigDecimal price;
-    private final Long menuGroupId;
-    private final List<MenuProduct> menuProducts;
+    private String name;
+    private BigDecimal price;
+    private Long menuGroupId;
+    private List<MenuProduct> menuProducts;
     private Long id;
 
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
@@ -23,7 +23,7 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = new ArrayList<>(menuProducts);
+        this.menuProducts = List.copyOf(menuProducts);
     }
 
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
@@ -33,6 +33,9 @@ public class Menu {
     public Menu(final String name, final BigDecimal price, final Long menuGroupId,
         final List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
+    }
+
+    public Menu() {
     }
 
     public Long getId() {
@@ -60,7 +63,7 @@ public class Menu {
     }
 
     public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts.addAll(menuProducts);
+        this.menuProducts = List.copyOf(menuProducts);
     }
 
     @Override
