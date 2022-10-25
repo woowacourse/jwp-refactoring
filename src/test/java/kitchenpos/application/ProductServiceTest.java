@@ -1,9 +1,8 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.DomainCreator.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,19 +16,15 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        String name = "후라이드";
-        Product product = getProduct(1L, name, BigDecimal.valueOf(16000));
-
-        given(productDao.save(any()))
-                .willReturn(product);
+        Product request = createProduct(null, "후라이드", BigDecimal.valueOf(16000));
 
         // when
-        Product actual = productService.create(product);
+        Product actual = productService.create(request);
 
         // then
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getName()).isEqualTo(name)
+                () -> assertThat(actual.getName()).isEqualTo("후라이드")
         );
     }
 
@@ -37,16 +32,12 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void list() {
         // given
-        Product product1 = getProduct(1L, "후라이드", BigDecimal.valueOf(16000));
-        Product product2 = getProduct(2L, "양념치킨", BigDecimal.valueOf(16000));
-
-        given(productDao.findAll())
-                .willReturn(List.of(product1, product2));
+        saveAndGetProduct();
 
         // when
         List<Product> actual = productService.list();
 
         // then
-        assertThat(actual).hasSize(2);
+        assertThat(actual).hasSize(1);
     }
 }

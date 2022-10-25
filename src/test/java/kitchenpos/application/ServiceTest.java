@@ -1,7 +1,17 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.DomainCreator.createMenu;
+import static kitchenpos.fixture.DomainCreator.createMenuGroup;
+import static kitchenpos.fixture.DomainCreator.createMenuProduct;
+import static kitchenpos.fixture.DomainCreator.createOrder;
+import static kitchenpos.fixture.DomainCreator.createOrderLineItem;
+import static kitchenpos.fixture.DomainCreator.createOrderTable;
+import static kitchenpos.fixture.DomainCreator.createProduct;
+import static kitchenpos.fixture.DomainCreator.createTableGroup;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -16,136 +26,140 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@Transactional
 public class ServiceTest {
 
-    @Mock
+    @Autowired
     protected ProductDao productDao;
 
-    @Mock
+    @Autowired
     protected MenuDao menuDao;
 
-    @Mock
+    @Autowired
     protected MenuGroupDao menuGroupDao;
 
-    @Mock
+    @Autowired
     protected MenuProductDao menuProductDao;
 
-    @Mock
+    @Autowired
     protected OrderDao orderDao;
 
-    @Mock
+    @Autowired
     protected OrderTableDao orderTableDao;
 
-    @Mock
+    @Autowired
     protected OrderLineItemDao orderLineItemDao;
 
-    @Mock
+    @Autowired
     protected TableGroupDao tableGroupDao;
 
-    @InjectMocks
+    @Autowired
     protected ProductService productService;
 
-    @InjectMocks
+    @Autowired
     protected MenuService menuService;
 
-    @InjectMocks
+    @Autowired
     protected MenuGroupService menuGroupService;
 
-    @InjectMocks
+    @Autowired
     protected OrderService orderService;
 
-    @InjectMocks
+    @Autowired
     protected TableService tableService;
 
-    @InjectMocks
+    @Autowired
     protected TableGroupService tableGroupService;
 
-    protected Menu getMenu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        Menu menu = new Menu();
-        menu.setId(id);
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-
-        return menu;
+    protected MenuGroup saveMenuGroup(MenuGroup menuGroup) {
+        return menuGroupDao.save(menuGroup);
     }
 
-    protected MenuGroup getMenuGroup(Long id, String menuName) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(id);
-        menuGroup.setName(menuName);
-        return menuGroup;
+    protected Menu saveMenu(Menu menu) {
+        return menuDao.save(menu);
     }
 
-    protected Product getProduct(Long id, String name, BigDecimal price) {
-        Product product = new Product();
-        product.setId(id);
-        product.setName(name);
-        product.setPrice(price);
-
-        return product;
+    protected OrderLineItem saveOrderLineItem(OrderLineItem orderLineItem) {
+        return orderLineItemDao.save(orderLineItem);
     }
 
-    protected MenuProduct getMenuProduct(Long id, Long menuId, Long productId, int quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setSeq(id);
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-
-        return menuProduct;
+    protected Product saveProduct(Product product) {
+        return productDao.save(product);
     }
 
-    protected OrderTable getOrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-
-        return orderTable;
+    protected MenuProduct saveMenuProduct(MenuProduct menuProduct) {
+        return menuProductDao.save(menuProduct);
     }
 
-    protected TableGroup getTableGroup(Long id, List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(id);
-        tableGroup.setOrderTables(orderTables);
-
-        return tableGroup;
+    protected OrderTable saveOrderTable(OrderTable orderTable) {
+        return orderTableDao.save(orderTable);
     }
 
-    protected Order getOrder(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
-                             List<OrderLineItem> orderLineItems) {
-        Order order = new Order();
-        order.setId(id);
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(orderedTime);
-        order.setOrderLineItems(orderLineItems);
-        orderLineItems
-                .forEach(it -> it.setOrderId(id));
-        order.setOrderLineItems(orderLineItems);
-
-        return order;
+    protected Order saveOrder(Order order) {
+        return orderDao.save(order);
     }
 
-    protected OrderLineItem getOrderLineItem(Long seq, Long orderId, Long menuId, int quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setSeq(seq);
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
+    protected TableGroup saveAndGetTableGroup() {
+        return tableGroupDao.save(createTableGroup(null, new ArrayList<>()));
+    }
 
-        return orderLineItem;
+    protected OrderTable saveAndGetOrderTable() {
+        return saveOrderTable(createOrderTable(null, saveAndGetTableGroup().getId(), 1, true));
+    }
+
+    protected OrderTable saveAndGetOrderTable(boolean empty) {
+        return saveOrderTable(createOrderTable(null, saveAndGetTableGroup().getId(), 1, empty));
+    }
+
+    protected Menu saveAndGetMenu(Long menuGroupId) {
+        return saveMenu(createMenu(null, "후라이드치킨", BigDecimal.valueOf(16_000L), menuGroupId, new ArrayList<>()));
+    }
+
+    protected MenuGroup saveAndGetMenuGroup() {
+        return saveMenuGroup(createMenuGroup(null, "한마리메뉴"));
+    }
+
+    protected Product saveAndGetProduct() {
+        return saveProduct(createProduct(null, "후라이드", BigDecimal.valueOf(16_000L)));
+    }
+
+    protected MenuProduct saveAndGetMenuProduct(Long menuId, Long productId) {
+        return saveMenuProduct(createMenuProduct(null, menuId, productId, 1));
+    }
+
+    private OrderLineItem saveAndGetOrderLineItem(Long menuId, Long orderId) {
+        return saveOrderLineItem(createOrderLineItem(null, orderId, menuId, 1));
+    }
+
+    protected Order saveAndGetOrder() {
+        MenuGroup menuGroup = saveAndGetMenuGroup();
+        Menu menu = saveAndGetMenu(menuGroup.getId());
+
+        Product product = saveAndGetProduct();
+        MenuProduct menuProduct = saveAndGetMenuProduct(menu.getId(), product.getId());
+        menu.setMenuProducts(List.of(menuProduct));
+        menuDao.save(menu);
+
+        TableGroup tableGroup = saveAndGetTableGroup();
+        OrderTable orderTable = saveAndGetOrderTable();
+        tableGroup.setOrderTables(List.of(orderTable));
+        tableGroupDao.save(tableGroup);
+
+        Order order = saveOrder(createOrder(
+                null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
+        OrderLineItem orderLineItem = saveAndGetOrderLineItem(menu.getId(), order.getId());
+        order.setOrderLineItems(List.of(orderLineItem));
+        orderDao.save(order);
+
+        return orderDao.save(order);
     }
 }

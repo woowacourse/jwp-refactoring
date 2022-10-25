@@ -1,9 +1,8 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.DomainCreator.createMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
@@ -17,14 +16,10 @@ class MenuGroupServiceTest extends ServiceTest {
     void create() {
         // given
         String menuName = "두마리메뉴";
-
-        MenuGroup menuGroup = getMenuGroup(1L, menuName);
-
-        given(menuGroupDao.save(any()))
-                .willReturn(menuGroup);
+        MenuGroup request = createMenuGroup(null, menuName);
 
         // when
-        MenuGroup actual = menuGroupService.create(menuGroup);
+        MenuGroup actual = menuGroupService.create(request);
 
         // then
         assertAll(
@@ -37,16 +32,12 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void list() {
         // given
-        MenuGroup menuGroup1 = getMenuGroup(1L, "한마리메뉴");
-        MenuGroup menuGroup2 = getMenuGroup(2L, "두마리메뉴");
-
-        given(menuGroupDao.findAll())
-                .willReturn(List.of(menuGroup1, menuGroup2));
+        saveAndGetMenuGroup();
 
         // when
         List<MenuGroup> actual = menuGroupService.list();
 
         // then
-        assertThat(actual).hasSize(2);
+        assertThat(actual).hasSize(1);
     }
 }

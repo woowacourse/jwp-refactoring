@@ -1,12 +1,13 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.DomainCreator.createTableGroup;
+import static kitchenpos.fixture.TableFixture.빈_테이블_1번;
+import static kitchenpos.fixture.TableFixture.빈_테이블_2번;
+import static kitchenpos.fixture.TableGroupFixture.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -18,23 +19,18 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        OrderTable orderTable1 = getOrderTable(1L, null, 3, true);
-        OrderTable orderTable2 = getOrderTable(2L, null, 3, true);
-        List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
-        TableGroup tableGroup = getTableGroup(1L, orderTables);
+        OrderTable orderTable1 = orderTableDao.save(빈_테이블_1번);
+        OrderTable orderTable2 = orderTableDao.save(빈_테이블_2번);
 
-        given(orderTableDao.findAllByIdIn(List.of(1L, 2L)))
-                .willReturn(orderTables);
-        given(tableGroupDao.save(any()))
-                .willReturn(tableGroup);
+        TableGroup request = createTableGroup(null, List.of(orderTable1, orderTable2));
 
         // when
-        TableGroup actual = tableGroupService.create(tableGroup);
+        TableGroup actual = tableGroupService.create(request);
 
         // then
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getOrderTables()).hasSize(orderTables.size())
+                () -> assertThat(actual.getOrderTables()).hasSize(2)
         );
     }
 
@@ -42,27 +38,32 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void ungroup() {
         // given
-        OrderTable orderTable1 = getOrderTable(1L, null, 3, true);
-        OrderTable orderTable2 = getOrderTable(2L, null, 3, true);
-        List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
-        TableGroup tableGroup = getTableGroup(1L, orderTables);
+        OrderTable orderTable1 = orderTableDao.save(빈_테이블_1번);
+        OrderTable orderTable2 = orderTableDao.save(빈_테이블_2번);
 
-        given(orderTableDao.findAllByTableGroupId(tableGroup.getId()))
-                .willReturn(orderTables);
+        TableGroup tableGroup = saveTableGroup(orderTable1, orderTable2);
 
         // when
-        tableGroupService.ungroup(1L);
+        tableGroupService.ungroup(tableGroup.getId());
 
         // then
-        List<Long> tableGroupIds = orderTables.stream()
-                .map(OrderTable::getTableGroupId)
-                .collect(Collectors.toList());
-        List<Boolean> empties = orderTables.stream()
-                .map(OrderTable::isEmpty)
-                .collect(Collectors.toList());
+        OrderTable actual1 = orderTableDao.findById(orderTable1.getId()).orElseThrow();
+        OrderTable actual2 = orderTableDao.findById(orderTable2.getId()).orElseThrow();
         assertAll(
-                () -> assertThat(tableGroupIds).containsOnlyNulls(),
-                () -> assertThat(empties).containsOnly(false)
+                () -> assertThat(actual1.getTableGroupId()).isNull(),
+                () -> assertThat(actual1.isEmpty()).isFalse(),
+                () -> assertThat(actual2.getTableGroupId()).isNull(),
+                () -> assertThat(actual2.isEmpty()).isFalse()
         );
+    }
+
+    private TableGroup saveTableGroup(OrderTable... orderTables) {
+        TableGroup tableGroup = tableGroupDao.save(createTableGroup(1L, orderTables));
+        for (OrderTable orderTable : orderTables) {
+            orderTable.setTableGroupId(tableGroup.getId());
+            orderTableDao.save(orderTable);
+        }
+
+        return tableGroup;
     }
 }
