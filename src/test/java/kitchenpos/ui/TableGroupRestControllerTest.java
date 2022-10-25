@@ -1,14 +1,11 @@
 package kitchenpos.ui;
 
 import static fixture.MenuFixtures.후라이드치킨_메뉴;
-import static org.assertj.core.api.Assertions.*;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.TableGroupService;
 import kitchenpos.common.IntegrationTest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -93,7 +90,7 @@ class TableGroupRestControllerTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("그룹 해제를 원하는 테이블은 주문 완료여야 한다.")
+    @DisplayName("그룹 해제를 원하는 테이블은 계산 완료여야 한다.")
     @Test
     void ungroupingOrderTablesMustCompletion() {
         // arrange

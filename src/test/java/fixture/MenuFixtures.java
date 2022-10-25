@@ -36,4 +36,8 @@ public enum MenuFixtures {
     public long 그룹_ID() {
         return menuGroupId;
     }
+
+    public static long 존재하지_않는_메뉴_ID() {
+        return -1L;
+    }
 }

@@ -1,7 +1,6 @@
 package kitchenpos.ui;
 
 import static fixture.MenuFixtures.후라이드치킨_메뉴;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Arrays;
