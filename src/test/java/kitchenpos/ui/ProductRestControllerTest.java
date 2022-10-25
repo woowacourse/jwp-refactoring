@@ -15,7 +15,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 import kitchenpos.application.dto.request.ProductCommand;
 import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,13 +41,13 @@ class ProductRestControllerTest extends ControllerTest {
     @Test
     @DisplayName("모든 Product를 조회한다.")
     void list() throws Exception {
-        List<Product> products = List.of(new Product(1L, PRODUCT1_NAME, PRODUCT1_PRICE),
-                new Product(2L, PRODUCT2_NAME, PRODUCT2_PRICE));
+        List<ProductResponse> productResponses = List.of(new ProductResponse(1L, PRODUCT1_NAME, PRODUCT1_PRICE),
+                new ProductResponse(2L, PRODUCT2_NAME, PRODUCT2_PRICE));
 
-        given(productService.list()).willReturn(products);
+        given(productService.list()).willReturn(productResponses);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/products"))
                 .andExpectAll(status().isOk(),
-                        content().string(objectMapper.writeValueAsString(products)));
+                        content().string(objectMapper.writeValueAsString(productResponses)));
     }
 }

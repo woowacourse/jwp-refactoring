@@ -62,9 +62,9 @@ class ProductServiceTest {
     @Test
     @DisplayName("Product를 모두 조회한다.")
     void list() {
-        Product product1 = productRepository.save(new Product(PRODUCT1_NAME, PRODUCT1_PRICE));
-        Product product2 = productRepository.save(new Product(PRODUCT2_NAME, PRODUCT2_PRICE));
+        productRepository.save(new Product(PRODUCT1_NAME, PRODUCT1_PRICE));
+        productRepository.save(new Product(PRODUCT2_NAME, PRODUCT2_PRICE));
 
-        assertThat(productService.list()).containsExactly(product1, product2);
+        assertThat(productService.list()).hasSize(2);
     }
 }

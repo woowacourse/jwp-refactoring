@@ -21,7 +21,10 @@ public class ProductService {
         return ProductResponse.from(product);
     }
 
-    public List<Product> list() {
-        return productRepository.findAll();
+    public List<ProductResponse> list() {
+        return productRepository.findAll()
+                .stream()
+                .map(ProductResponse::from)
+                .toList();
     }
 }
