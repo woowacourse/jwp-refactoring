@@ -38,7 +38,7 @@ class MenuGroupServiceTest extends ServiceTest {
         );
     }
 
-    @DisplayName("메뉴 그룹 목록을 조회한다..")
+    @DisplayName("메뉴 그룹 목록을 조회한다.")
     @Test
     void list() {
         // when

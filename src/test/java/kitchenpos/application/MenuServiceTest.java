@@ -15,8 +15,8 @@ import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuProductResponse;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
-import kitchenpos.fixture.Fixture.MenuGroup;
-import kitchenpos.fixture.Fixture.Product;
+import kitchenpos.fixture.Fixture.MenuGroupId;
+import kitchenpos.fixture.Fixture.ProductId;
 
 class MenuServiceTest extends ServiceTest {
 
@@ -30,8 +30,8 @@ class MenuServiceTest extends ServiceTest {
         private static final String MENU_NAME = "앙념 두마리 치킨";
 
         private final List<MenuProductRequest> menuProductRequests = List.of(
-            new MenuProductRequest(Product.후라이드, 2),
-            new MenuProductRequest(Product.양념치킨, 1)
+            new MenuProductRequest(ProductId.후라이드, 2),
+            new MenuProductRequest(ProductId.양념치킨, 1)
         );
 
         @DisplayName("등록한다.")
@@ -42,7 +42,7 @@ class MenuServiceTest extends ServiceTest {
             MenuRequest menuRequest = new MenuRequest(
                 MENU_NAME,
                 price,
-                MenuGroup.두마리_메뉴,
+                MenuGroupId.두마리_메뉴,
                 menuProductRequests
             );
 
@@ -61,10 +61,10 @@ class MenuServiceTest extends ServiceTest {
                     .containsOnly(menuId),
                 () -> assertThat(menuProducts)
                     .extracting("productId")
-                    .containsOnly(Product.후라이드, Product.양념치킨),
+                    .containsOnly(ProductId.후라이드, ProductId.양념치킨),
                 () -> assertThat(menuProducts)
                     .extracting("quantity")
-                    .containsOnly(Product.후라이드, Product.양념치킨)
+                    .containsOnly(ProductId.후라이드, ProductId.양념치킨)
             );
         }
 
@@ -76,7 +76,7 @@ class MenuServiceTest extends ServiceTest {
             MenuRequest menuRequest = new MenuRequest(
                 MENU_NAME,
                 price,
-                MenuGroup.두마리_메뉴,
+                MenuGroupId.두마리_메뉴,
                 menuProductRequests
             );
 
@@ -94,7 +94,7 @@ class MenuServiceTest extends ServiceTest {
             MenuRequest menuRequest = new MenuRequest(
                 MENU_NAME,
                 price,
-                MenuGroup.없는_메뉴_그룹,
+                MenuGroupId.없는_메뉴_그룹,
                 menuProductRequests
             );
 
@@ -112,7 +112,7 @@ class MenuServiceTest extends ServiceTest {
             MenuRequest menuRequest = new MenuRequest(
                 MENU_NAME,
                 price,
-                MenuGroup.두마리_메뉴,
+                MenuGroupId.두마리_메뉴,
                 menuProductRequests
             );
 

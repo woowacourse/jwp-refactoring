@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.Fixture.OrderTable.*;
+import static kitchenpos.fixture.Fixture.OrderTableId.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,7 +20,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderResponse;
-import kitchenpos.fixture.Fixture.Menu;
+import kitchenpos.fixture.Fixture.MenuId;
 
 class OrderServiceTest extends ServiceTest {
 
@@ -39,8 +39,8 @@ class OrderServiceTest extends ServiceTest {
     void init() {
         tableService.changeEmpty(첫번째_테이블, false);
         orderLineItemRequests = List.of(
-            new OrderLineItemRequest(Menu.후라이드_치킨, 1),
-            new OrderLineItemRequest(Menu.양념_치킨, 1)
+            new OrderLineItemRequest(MenuId.후라이드_치킨, 1),
+            new OrderLineItemRequest(MenuId.양념_치킨, 1)
         );
     }
 
@@ -83,7 +83,7 @@ class OrderServiceTest extends ServiceTest {
         void emptyMenu() {
             // given
             List<OrderLineItemRequest> notExistMenuRequest = new ArrayList<>(orderLineItemRequests);
-            notExistMenuRequest.add(new OrderLineItemRequest(Menu.없는_메뉴, 1));
+            notExistMenuRequest.add(new OrderLineItemRequest(MenuId.없는_메뉴, 1));
 
             OrderRequest orderRequest = new OrderRequest(첫번째_테이블, notExistMenuRequest);
 
