@@ -36,6 +36,7 @@ class MenuServiceTest {
                 .getId();
         MenuProduct menuProduct = 메뉴_상품을_생성한다(null, productId, 1);
         Menu menu = 메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, List.of(menuProduct));
+        menuProduct.setMenu(menu);
 
         Menu savedMenu = menuService.create(menu);
 
@@ -91,13 +92,10 @@ class MenuServiceTest {
     void 모든_메뉴를_조회할_수_있다() {
         Long menuGroupId = menuGroupRepository.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long productId = productDao.save(상품을_생성한다("상품", BigDecimal.valueOf(1_000)))
-                .getId();
-        MenuProduct menuProduct = 메뉴_상품을_생성한다(null, productId, 1);
         Menu menu1 = menuService.create(
-                메뉴를_생성한다("메뉴1", BigDecimal.ZERO, menuGroupId, List.of(menuProduct)));
+                메뉴를_생성한다("메뉴1", BigDecimal.ZERO, menuGroupId, List.of()));
         Menu menu2 = menuService.create(
-                메뉴를_생성한다("메뉴2", BigDecimal.ZERO, menuGroupId, List.of(menuProduct)));
+                메뉴를_생성한다("메뉴2", BigDecimal.ZERO, menuGroupId, List.of()));
 
         List<Menu> actual = menuService.list();
 

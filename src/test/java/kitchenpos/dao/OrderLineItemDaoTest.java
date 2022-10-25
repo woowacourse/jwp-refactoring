@@ -17,6 +17,7 @@ import java.util.Optional;
 import kitchenpos.TransactionalTest;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ class OrderLineItemDaoTest {
     @Autowired
     private MenuGroupRepository menuGroupDao;
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
     @Autowired
     private OrderTableDao orderTableDao;
     @Autowired
@@ -39,7 +40,7 @@ class OrderLineItemDaoTest {
     void 주문_항목을_저장하면_id가_채워진다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long menuId = menuDao.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, null))
+        Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, null))
                 .getId();
         Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, true))
                 .getId();
@@ -61,7 +62,7 @@ class OrderLineItemDaoTest {
     void id로_주문_항목을_조회할_수_있다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long menuId = menuDao.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, null))
+        Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, null))
                 .getId();
         Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, true))
                 .getId();
@@ -87,7 +88,7 @@ class OrderLineItemDaoTest {
     void 모든_주문_항목을_조회할_수_있다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long menuId = menuDao.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, null))
+        Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, null))
                 .getId();
         Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, true))
                 .getId();
@@ -107,7 +108,7 @@ class OrderLineItemDaoTest {
     void 주문에_포함된_주문_항목을_조회할_수_있다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long menuId = menuDao.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, null))
+        Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, null))
                 .getId();
         Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, true))
                 .getId();

@@ -11,24 +11,25 @@ import java.util.Optional;
 import kitchenpos.TransactionalTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @TransactionalTest
-class MenuDaoTest {
+class MenuRepositoryTest {
 
     @Autowired
     private MenuGroupRepository menuGroupDao;
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Test
     void 메뉴를_저장하면_id가_채워진다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹")).getId();
         Menu menu = 메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, null);
 
-        Menu savedMenu = menuDao.save(menu);
+        Menu savedMenu = menuRepository.save(menu);
 
         assertAll(
                 () -> assertThat(savedMenu.getId()).isNotNull(),
@@ -42,9 +43,9 @@ class MenuDaoTest {
     @Test
     void id로_메뉴를_조회할_수_있다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹")).getId();
-        Menu menu = menuDao.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, null));
+        Menu menu = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, null));
 
-        Menu actual = menuDao.findById(menu.getId())
+        Menu actual = menuRepository.findById(menu.getId())
                 .orElseGet(Assertions::fail);
 
         assertAll(
@@ -57,7 +58,7 @@ class MenuDaoTest {
 
     @Test
     void 없는_메뉴_id로_조회하면_Optional_empty를_반환한다() {
-        Optional<Menu> actual = menuDao.findById(0L);
+        Optional<Menu> actual = menuRepository.findById(0L);
 
         assertThat(actual).isEmpty();
     }
@@ -65,10 +66,10 @@ class MenuDaoTest {
     @Test
     void 모든_메뉴를_조회할_수_있다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹")).getId();
-        Menu menu1 = menuDao.save(메뉴를_생성한다("메뉴1", BigDecimal.ZERO, menuGroupId, null));
-        Menu menu2 = menuDao.save(메뉴를_생성한다("메뉴2", BigDecimal.ZERO, menuGroupId, null));
+        Menu menu1 = menuRepository.save(메뉴를_생성한다("메뉴1", BigDecimal.ZERO, menuGroupId, null));
+        Menu menu2 = menuRepository.save(메뉴를_생성한다("메뉴2", BigDecimal.ZERO, menuGroupId, null));
 
-        List<Menu> actual = menuDao.findAll();
+        List<Menu> actual = menuRepository.findAll();
 
         assertThat(actual).hasSize(2)
                 .usingElementComparatorIgnoringFields("price")
@@ -78,11 +79,11 @@ class MenuDaoTest {
     @Test
     void id_목록에_있는_메뉴의_개수를_셀_수_있다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹")).getId();
-        Menu menu1 = menuDao.save(메뉴를_생성한다("메뉴1", BigDecimal.ZERO, menuGroupId, null));
-        Menu menu2 = menuDao.save(메뉴를_생성한다("메뉴2", BigDecimal.ZERO, menuGroupId, null));
+        Menu menu1 = menuRepository.save(메뉴를_생성한다("메뉴1", BigDecimal.ZERO, menuGroupId, null));
+        Menu menu2 = menuRepository.save(메뉴를_생성한다("메뉴2", BigDecimal.ZERO, menuGroupId, null));
         List<Long> ids = List.of(menu1.getId(), menu2.getId());
 
-        long count = menuDao.countByIdIn(ids);
+        long count = menuRepository.countByIdIn(ids);
 
         assertThat(count).isEqualTo(ids.size());
     }
