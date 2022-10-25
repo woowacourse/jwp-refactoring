@@ -164,6 +164,7 @@ public class MenuServiceTest extends ServiceTest {
         @Test
         @DisplayName("전체 메뉴를 조회할 때, 메뉴상품도 같이 조회할 수 있다.")
         void success_getMenuProducts() {
+            //given
             menuProductA = ClassConstructor.menuProduct(null, MENU_ID, PRODUCT_A_ID, 2);
             menuProductB = ClassConstructor.menuProduct(null, MENU_ID, PRODUCT_B_ID, 2);
 

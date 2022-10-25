@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -14,7 +15,6 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.support.ClassConstructor;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -69,7 +69,7 @@ class TableGroupServiceTest extends ServiceTest {
             TableGroup actual = tableGroupService.create(tableGroup);
 
             //then
-            Assertions.assertAll(
+            assertAll(
                     () -> assertThat(actual.getOrderTables()).hasSize(2),
                     () -> assertThat(orderTableA.isEmpty()).isFalse(),
                     () -> assertThat(orderTableB.isEmpty()).isFalse()
@@ -133,14 +133,11 @@ class TableGroupServiceTest extends ServiceTest {
 
         private OrderTable orderTableA;
         private OrderTable orderTableB;
-        private TableGroup tableGroup;
 
         @BeforeEach
         void setUp() {
             orderTableA = ClassConstructor.orderTable(ORDER_TABLE_A_ID, null, 0, true);
             orderTableB = ClassConstructor.orderTable(ORDER_TABLE_B_ID, null, 0, true);
-
-            tableGroup = ClassConstructor.tableGroup(null, null, Arrays.asList(orderTableA, orderTableB));
 
             given(orderTableDao.findAllByTableGroupId(TABLE_GROUP_ID))
                     .willReturn(Arrays.asList(orderTableA, orderTableB));
@@ -158,7 +155,7 @@ class TableGroupServiceTest extends ServiceTest {
             tableGroupService.ungroup(TABLE_GROUP_ID);
 
             //then
-            Assertions.assertAll(
+            assertAll(
                     () -> assertThat(orderTableA.isEmpty()).isFalse(),
                     () -> assertThat(orderTableA.getTableGroupId()).isNull(),
                     () -> assertThat(orderTableB.isEmpty()).isFalse(),
