@@ -6,12 +6,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,23 +25,39 @@ import org.springframework.boot.test.context.SpringBootTest;
 class MenuServiceTest extends ServiceTest {
 
     @Autowired
+    private MenuService menuService;
+
+    @Autowired
     private MenuGroupDao menuGroupDao;
 
     @Autowired
     private ProductDao productDao;
 
     @Autowired
-    private MenuService menuService;
+    private MenuDao menuDao;
+
+    @Autowired
+    private DatabaseCleaner databaseCleaner;
+
+    private Product product;
+
+    private MenuGroup menuGroup;
+
+    @BeforeEach
+    void setUp() {
+        databaseCleaner.tableClear();
+
+        product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
+        menuGroup = menuGroupDao.save(new MenuGroup("1번 메뉴 그룹"));
+    }
 
     @DisplayName("메뉴를 등록할 수 있다.")
     @Test
     void create() {
-        Product product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("1번 메뉴 그룹"));
-        Menu firstMenu = new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(),
+        Menu newMenu = new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(),
                 createMenuProducts(product.getId()));
 
-        Menu menu = menuService.create(firstMenu);
+        Menu menu = menuService.create(newMenu);
 
         assertThat(menu).isNotNull();
     }
@@ -47,8 +65,6 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴 등록 시 메뉴의 가격이 null이면 예외가 발생한다.")
     @Test
     void createWithNullPrice() {
-        Product product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("1번 메뉴 그룹"));
         Menu menu = new Menu("1번 메뉴", null, menuGroup.getId(), createMenuProducts(product.getId()));
 
         assertThatThrownBy(() -> menuService.create(menu))
@@ -59,8 +75,6 @@ class MenuServiceTest extends ServiceTest {
     @ParameterizedTest
     @ValueSource(ints = {-1, -5})
     void createWithInvalidPrice(int price) {
-        Product product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("1번 메뉴 그룹"));
         Menu menu = new Menu("1번 메뉴", BigDecimal.valueOf(price), menuGroup.getId(),
                 createMenuProducts(product.getId()));
 
@@ -71,7 +85,6 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴 등록 시 메뉴 그룹이 존재하지 않으면 예외가 발생한다.")
     @Test
     void createWithNoMenuGroup() {
-        Product product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
         Menu menu = new Menu("1번 메뉴", BigDecimal.valueOf(10000), 9999L, createMenuProducts(product.getId()));
 
         assertThatThrownBy(() -> menuService.create(menu))
@@ -81,7 +94,6 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴 등록 시 메뉴상품이 비어 있으면 예외가 발생한다.")
     @Test
     void createWithNoMenuProduct() {
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("1번 메뉴 그룹"));
         Menu menu = new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(), new ArrayList<>());
 
         assertThatThrownBy(() -> menuService.create(menu))
@@ -92,8 +104,6 @@ class MenuServiceTest extends ServiceTest {
     @ValueSource(ints = {10001, 50000})
     @ParameterizedTest
     void createWithPriceMoreThanMenuProductSum(int price) {
-        Product product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("1번 메뉴 그룹"));
         Menu menu = new Menu("1번 메뉴", BigDecimal.valueOf(price), menuGroup.getId(),
                 createMenuProducts(product.getId()));
 
@@ -104,11 +114,8 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴들을 조회할 수 있다.")
     @Test
     void list() {
-        Product product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("1번 메뉴 그룹"));
-        Menu menu = new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(),
-                createMenuProducts(product.getId()));
-        menuService.create(menu);
+        Menu menu = new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(), createMenuProducts(product.getId()));
+        menuDao.save(menu);
 
         List<Menu> menus = menuService.list();
 

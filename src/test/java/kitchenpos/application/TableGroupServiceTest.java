@@ -14,6 +14,7 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -22,6 +23,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,6 +33,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class TableGroupServiceTest extends ServiceTest {
+
+    @Autowired
+    private TableGroupService tableGroupService;
+
+    @Autowired
+    private TableGroupDao tableGroupDao;
 
     @Autowired
     private OrderTableDao orderTableDao;
@@ -48,13 +56,23 @@ class TableGroupServiceTest extends ServiceTest {
     private MenuDao menuDao;
 
     @Autowired
-    private TableGroupService tableGroupService;
+    private DatabaseCleaner databaseCleaner;
+
+    private OrderTable firstOrderTable;
+
+    private OrderTable secondOrderTable;
+
+    @BeforeEach
+    void setUp() {
+        databaseCleaner.tableClear();
+
+        firstOrderTable = orderTableDao.save(new OrderTable(0, true));
+        secondOrderTable = orderTableDao.save(new OrderTable(0, true));
+    }
 
     @DisplayName("테이블 그룹을 등록할 수 있다.")
     @Test
     void create() {
-        OrderTable firstOrderTable = orderTableDao.save(new OrderTable(0, true));
-        OrderTable secondOrderTable = orderTableDao.save(new OrderTable(0, true));
         List<OrderTable> orderTables = createOrderTable(firstOrderTable, secondOrderTable);
 
         TableGroup tableGroup = tableGroupService.create(new TableGroup(orderTables));
@@ -72,7 +90,6 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("테이블 그룹 등록 시 테이블 그룹에 등록된 테이블이 2개 미만이면 예외가 발생한다.")
     @Test
     void createWithLessThanTwoOrderTable() {
-        OrderTable firstOrderTable = orderTableDao.save(new OrderTable(0, true));
         List<OrderTable> orderTables = createOrderTable(firstOrderTable);
 
         assertThatThrownBy(() -> tableGroupService.create(new TableGroup(orderTables)))
@@ -82,7 +99,6 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("테이블 그룹 등록 시 존재하지 않는 테이블이 있는 경우 예외가 발생한다.")
     @Test
     void createWithNotExistOrderTable() {
-        OrderTable firstOrderTable = orderTableDao.save(new OrderTable(0, true));
         List<OrderTable> orderTables = createOrderTable(firstOrderTable, new OrderTable());
 
         assertThatThrownBy(() -> tableGroupService.create(new TableGroup(orderTables)))
@@ -92,9 +108,8 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("테이블 그룹 등록 시 테이블이 비어있지 않으면 예외가 발생한다.")
     @Test
     void createWithNotEmptyOrderTable() {
-        OrderTable firstOrderTable = orderTableDao.save(new OrderTable(0, false));
-        OrderTable secondOrderTable = orderTableDao.save(new OrderTable(0, false));
-        List<OrderTable> orderTables = createOrderTable(firstOrderTable, secondOrderTable);
+        OrderTable thirdOrderTable = orderTableDao.save(new OrderTable(4, false));
+        List<OrderTable> orderTables = createOrderTable(firstOrderTable, secondOrderTable, thirdOrderTable);
 
         assertThatThrownBy(() -> tableGroupService.create(new TableGroup(orderTables)))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -103,10 +118,14 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("테이블 그룹 등록 시 테이블의 테이블 그룹이 존재하면 예외가 발생한다.")
     @Test
     void createWithOrderTableExistingTableGroup() {
-        OrderTable firstOrderTable = orderTableDao.save(new OrderTable(0, true));
-        OrderTable secondOrderTable = orderTableDao.save(new OrderTable(0, true));
         List<OrderTable> orderTables = createOrderTable(firstOrderTable, secondOrderTable);
-        tableGroupService.create(new TableGroup(orderTables));
+        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), orderTables));
+        firstOrderTable.setTableGroupId(tableGroup.getId());
+        firstOrderTable.setEmpty(false);
+        secondOrderTable.setTableGroupId(tableGroup.getId());
+        secondOrderTable.setEmpty(false);
+        orderTableDao.save(firstOrderTable);
+        orderTableDao.save(secondOrderTable);
 
         assertThatThrownBy(() -> tableGroupService.create(new TableGroup(orderTables)))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -115,10 +134,14 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("테이블 그룹을 해제할 수 있다.")
     @Test
     void ungroup() {
-        OrderTable firstOrderTable = orderTableDao.save(new OrderTable(0, true));
-        OrderTable secondOrderTable = orderTableDao.save(new OrderTable(0, true));
         List<OrderTable> orderTables = createOrderTable(firstOrderTable, secondOrderTable);
-        TableGroup tableGroup = tableGroupService.create(new TableGroup(orderTables));
+        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), orderTables));
+        firstOrderTable.setTableGroupId(tableGroup.getId());
+        firstOrderTable.setEmpty(false);
+        secondOrderTable.setTableGroupId(tableGroup.getId());
+        secondOrderTable.setEmpty(false);
+        orderTableDao.save(firstOrderTable);
+        orderTableDao.save(secondOrderTable);
 
         tableGroupService.ungroup(tableGroup.getId());
         OrderTable foundFirstOrderTable = orderTableDao.findById(firstOrderTable.getId()).get();
@@ -134,8 +157,6 @@ class TableGroupServiceTest extends ServiceTest {
     @ValueSource(strings = {"COOKING", "MEAL"})
     @ParameterizedTest
     void ungroupWithCookingOrMeal(String orderStatus) {
-        OrderTable firstOrderTable = orderTableDao.save(new OrderTable(0, true));
-        OrderTable secondOrderTable = orderTableDao.save(new OrderTable(0, true));
         Product product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("1번 메뉴 그룹"));
         Menu menu = menuDao.save(
@@ -143,7 +164,13 @@ class TableGroupServiceTest extends ServiceTest {
         orderDao.save(
                 new Order(firstOrderTable.getId(), orderStatus, LocalDateTime.now(), createOrderLineItem(menu.getId())));
         List<OrderTable> orderTables = createOrderTable(firstOrderTable, secondOrderTable);
-        TableGroup tableGroup = tableGroupService.create(new TableGroup(orderTables));
+        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), orderTables));
+        firstOrderTable.setTableGroupId(tableGroup.getId());
+        firstOrderTable.setEmpty(false);
+        secondOrderTable.setTableGroupId(tableGroup.getId());
+        secondOrderTable.setEmpty(false);
+        orderTableDao.save(firstOrderTable);
+        orderTableDao.save(secondOrderTable);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);

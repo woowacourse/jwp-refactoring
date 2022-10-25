@@ -3,10 +3,12 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -18,13 +20,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 class TableServiceTest extends ServiceTest {
 
     @Autowired
-    private TableGroupService tableGroupService;
+    private TableService tableService;
 
     @Autowired
     private OrderTableDao orderTableDao;
 
     @Autowired
-    private TableService tableService;
+    private TableGroupDao tableGroupDao;
+
 
     @DisplayName("테이블을 등록할 수 있다.")
     @Test
@@ -68,7 +71,13 @@ class TableServiceTest extends ServiceTest {
         OrderTable firstOrderTable = orderTableDao.save(new OrderTable(0, true));
         OrderTable secondOrderTable = orderTableDao.save(new OrderTable(0, true));
         List<OrderTable> orderTables = createOrderTable(firstOrderTable, secondOrderTable);
-        tableGroupService.create(new TableGroup(orderTables));
+        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), orderTables));
+        firstOrderTable.setTableGroupId(tableGroup.getId());
+        firstOrderTable.setEmpty(false);
+        secondOrderTable.setTableGroupId(tableGroup.getId());
+        secondOrderTable.setEmpty(false);
+        orderTableDao.save(firstOrderTable);
+        orderTableDao.save(secondOrderTable);
 
         assertThatThrownBy(() -> tableService.changeEmpty(1L, new OrderTable(4, true)))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -103,7 +112,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블의 손님 수 변경 시 테이블이 비어있으면 예외가 발생한다.")
     @Test
     void changeNumberWithEmptyOrderTable() {
-        OrderTable orderTable = tableService.create(new OrderTable(0, true));
+        OrderTable orderTable = orderTableDao.save(new OrderTable(0, true));
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), new OrderTable(4, false)))
                 .isInstanceOf(IllegalArgumentException.class);
