@@ -3,6 +3,8 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -70,14 +72,9 @@ class TableServiceTest {
         OrderTable newOrderTable = new OrderTable();
         Long notEmptyOrderTableId = tableService.create(newOrderTable).getId();
 
-        Order order = new Order();
-        order.setOrderTableId(notEmptyOrderTableId);
-
         //when
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1);
-        order.setOrderLineItems(convertToList(orderLineItem));
+        Order order = new Order(notEmptyOrderTableId, "COOKING", LocalDateTime.now(),
+            generateOrderLineItemAsList(1L, 1));
         orderService.create(order);
 
         //then
@@ -143,5 +140,16 @@ class TableServiceTest {
     private <T> List<T> convertToList(T... values) {
         return Arrays.stream(values)
             .collect(Collectors.toList());
+    }
+
+    private ArrayList<OrderLineItem> generateOrderLineItemAsList(Long menuId, int quantity) {
+        ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
+
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(menuId);
+        orderLineItem.setQuantity(quantity);
+
+        orderLineItems.add(orderLineItem);
+        return orderLineItems;
     }
 }

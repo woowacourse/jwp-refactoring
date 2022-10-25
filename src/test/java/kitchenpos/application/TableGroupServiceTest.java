@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -118,14 +119,13 @@ class TableGroupServiceTest {
         tableGroup.setOrderTables(generateTableList(orderTable1, orderTable2));
         Long savedTableGroupId = tableGroupService.create(tableGroup).getId();
 
-        Order order = new Order();
-        order.setOrderTableId(orderTable1.getId());
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(1L);
         orderLineItem.setQuantity(1);
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         orderLineItems.add(orderLineItem);
-        order.setOrderLineItems(orderLineItems);
+
+        Order order = new Order(orderTable1.getId(), "COOKING", LocalDateTime.now(), orderLineItems);
         orderService.create(order);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroupId))
