@@ -10,7 +10,7 @@ public class TestExecutionListener extends AbstractTestExecutionListener {
     @Override
     public void afterTestMethod(final TestContext testContext) {
         final JdbcTemplate jdbcTemplate = getJdbcTemplate(testContext);
-        final List<String> truncateQueries = getTruncateQueries(jdbcTemplate);
+        final List<String> truncateQueries = getTruncateQueries();
         truncateTables(jdbcTemplate, truncateQueries);
     }
 
@@ -19,11 +19,16 @@ public class TestExecutionListener extends AbstractTestExecutionListener {
                 .getBean(JdbcTemplate.class);
     }
 
-    private List<String> getTruncateQueries(final JdbcTemplate jdbcTemplate) {
-        return jdbcTemplate.queryForList(
-                "SELECT Concat('TRUNCATE TABLE ', TABLE_NAME, ';') AS query "
-                + "FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PUBLIC'",
-                String.class
+    private List<String> getTruncateQueries() {
+        return List.of(
+                "TRUNCATE TABLE orders",
+                "TRUNCATE TABLE table_group",
+                "TRUNCATE TABLE order_line_item",
+                "DELETE FROM product WHERE id > 6",
+                "DELETE FROM menu_group WHERE id > 4",
+                "DELETE FROM menu WHERE id > 6",
+                "DELETE FROM menu_product WHERE seq > 6",
+                "DELETE FROM order_table WHERE id > 8"
         );
     }
 
