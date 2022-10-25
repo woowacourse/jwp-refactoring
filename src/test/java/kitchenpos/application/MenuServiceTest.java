@@ -13,75 +13,80 @@ import kitchenpos.domain.Product;
 import kitchenpos.exception.InvalidMenuPriceException;
 import kitchenpos.exception.InvalidMenuTotalPriceException;
 import kitchenpos.exception.NotFoundProductException;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class MenuServiceTest extends IntegrationTest {
+class MenuServiceTest {
 
-    @Test
-    void 메뉴를_생상할_수_있다() {
-        // given
-        MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-        Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
-        Menu menu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
-        menu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
+    @Nested
+    class 메뉴_생성 extends IntegrationTest {
 
-        // when
-        Menu extract = menuService.create(menu);
+        @Test
+        void 요청을_할_수_있다() {
+            // given
+            MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
+            Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            Menu menu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
+            menu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
 
-        // then
-        assertThat(extract).isNotNull();
-    }
+            // when
+            Menu extract = menuService.create(menu);
 
-    @Test
-    void 메뉴_금액이_0원_미만인_경우_예외가_발생한다() {
-        // given
-        MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-        Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
-        Menu menu = new Menu("짜장면", BigDecimal.valueOf(-1), menuGroup.getId());
-        menu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
+            // then
+            assertThat(extract).isNotNull();
+        }
 
-        // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
-            .isInstanceOf(InvalidMenuPriceException.class);
-    }
+        @Test
+        void 요청에서_메뉴_금액이_0원_미만인_경우_예외가_발생한다() {
+            // given
+            MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
+            Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            Menu menu = new Menu("짜장면", BigDecimal.valueOf(-1), menuGroup.getId());
+            menu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
 
-    @Test
-    void 메뉴_금액이_NULL일_경우_예외가_발생한다() {
-        // given
-        MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-        Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
-        Menu menu = new Menu("짜장면", null, menuGroup.getId());
-        menu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
+            // when & then
+            assertThatThrownBy(() -> menuService.create(menu))
+                .isInstanceOf(InvalidMenuPriceException.class);
+        }
 
-        // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
-            .isInstanceOf(InvalidMenuPriceException.class);
-    }
+        @Test
+        void 요청에서_메뉴_금액이_NULL_일_경우_예외가_발생한다() {
+            // given
+            MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
+            Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            Menu menu = new Menu("짜장면", null, menuGroup.getId());
+            menu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
 
-    @Test
-    void 메뉴에_포함된_메뉴상품의_상품_번호가_존재하지_않는_번호일_경우_예외가_발생한다() {
-        // given
-        MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-        Menu menu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
-        Long notRegisterProductId = 100L;
-        menu.addMenuProducts(List.of(new MenuProduct(1L, null, notRegisterProductId, 1)));
+            // when & then
+            assertThatThrownBy(() -> menuService.create(menu))
+                .isInstanceOf(InvalidMenuPriceException.class);
+        }
 
-        // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
-            .isInstanceOf(NotFoundProductException.class);
-    }
+        @Test
+        void 요청에서_메뉴를_추가할때_메뉴의_상품_번호가_존재하지_않는_번호일_경우_예외가_발생한다() {
+            // given
+            MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
+            Menu menu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
+            Long notRegisterProductId = 100L;
+            menu.addMenuProducts(List.of(new MenuProduct(1L, null, notRegisterProductId, 1)));
 
-    @Test
-    void 메뉴에_포함된_메뉴상품의_각_상품별_총_가격_합이_0원_이하일_경우_예외가_발생한다() {
-        // given
-        MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-        Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(0)));
-        Menu menu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
-        menu.addMenuProducts(List.of(new MenuProduct(1L, menu.getId(), product.getId(), 1)));
+            // when & then
+            assertThatThrownBy(() -> menuService.create(menu))
+                .isInstanceOf(NotFoundProductException.class);
+        }
 
-        // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
-            .isInstanceOf(InvalidMenuTotalPriceException.class);
+        @Test
+        void 요청에서_메뉴를_추가할때_추가한_각_상품별_총_가격의_합이_0원이_이하일경우_예외가_발생한다() {
+            // given
+            MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
+            Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(0)));
+            Menu menu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
+            menu.addMenuProducts(List.of(new MenuProduct(1L, menu.getId(), product.getId(), 1)));
+
+            // when & then
+            assertThatThrownBy(() -> menuService.create(menu))
+                .isInstanceOf(InvalidMenuTotalPriceException.class);
+        }
     }
 
     /**
