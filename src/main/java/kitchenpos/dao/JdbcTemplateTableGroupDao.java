@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @Repository
 public class JdbcTemplateTableGroupDao implements TableGroupDao {
+
     private static final String TABLE_NAME = "table_group";
     private static final String KEY_COLUMN_NAME = "id";
 

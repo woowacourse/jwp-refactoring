@@ -119,6 +119,7 @@ class MenuServiceTest {
     void list() {
         // when
         final List<Menu> menus = sut.list();
+        changeBigDecimalToLong(menus);
 
         // then
         assertThat(menus)
@@ -132,5 +133,11 @@ class MenuServiceTest {
                         tuple("간장치킨", BigDecimal.valueOf(17000), 2L),
                         tuple("순살치킨", BigDecimal.valueOf(17000), 2L)
                 );
+    }
+
+    private static void changeBigDecimalToLong(final List<Menu> menus) {
+        for (Menu menu : menus) {
+            menu.setPrice(BigDecimal.valueOf(menu.getPrice().longValue()));
+        }
     }
 }

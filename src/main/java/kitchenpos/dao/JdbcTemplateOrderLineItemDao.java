@@ -17,6 +17,7 @@ import java.util.Optional;
 
 @Repository
 public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
+
     private static final String TABLE_NAME = "order_line_item";
     private static final String KEY_COLUMN_NAME = "seq";
 

@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @Repository
 public class JdbcTemplateOrderTableDao implements OrderTableDao {
+
     private static final String TABLE_NAME = "order_table";
     private static final String KEY_COLUMN_NAME = "id";
 
