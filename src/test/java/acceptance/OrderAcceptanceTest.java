@@ -98,18 +98,18 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         Order order = createOrder(1L, new OrderLineItemRequest(후라이드치킨_메뉴.id(), 1));
 
         // act
-        Order changedOrder = changeOrderStatus(order.getId());
+        Order changedOrder = changeOrderStatus(order.getId(), "MEAL");
 
         // assert
         assertThat(changedOrder.getId()).isEqualTo(order.getId());
         assertThat(changedOrder.getOrderStatus()).isEqualTo("MEAL");
     }
 
-    private Order changeOrderStatus(long id) {
+    private Order changeOrderStatus(long id, String status) {
         return RestAssured.given().log().all()
                 .contentType(APPLICATION_JSON_VALUE)
                 .pathParam("order-id", id)
-                .body(Map.of("orderStatus", "MEAL"))
+                .body(Map.of("orderStatus", status))
                 .when().log().all()
                 .put("/api/orders/{order-id}/order-status")
                 .then().log().all()

@@ -25,11 +25,12 @@ class MenuRestControllerTest {
     @Test
     void priceMustOverZero() {
         // arrange
-        MenuProduct menuProduct = createMenuProductRequest(후라이드_상품.id(), 2);
-        Menu menu = createMenuRequest("후라이드+후라이드", BigDecimal.ONE.negate(), 두마리메뉴_그룹.id(), menuProduct);
+        MenuProduct menuProductRequest = createMenuProductRequest(후라이드_상품.id(), 2);
+        Menu menuRequest = createMenuRequest("후라이드+후라이드", BigDecimal.ONE.negate(), 두마리메뉴_그룹.id(),
+                menuProductRequest);
 
         // act & assert
-        assertThatThrownBy(() -> sut.create(menu))
+        assertThatThrownBy(() -> sut.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
