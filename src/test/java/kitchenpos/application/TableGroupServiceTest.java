@@ -13,9 +13,9 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.fixtures.OrderFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -173,10 +173,7 @@ class TableGroupServiceTest {
         orderTable2.setTableGroupId(alreadyGroupedTable.getId());
         final OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
 
-        final Order order = new Order();
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(savedOrderTable1.getId());
+        final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableId(savedOrderTable1.getId());
         orderDao.save(order);
 
         // when
@@ -196,9 +193,9 @@ class TableGroupServiceTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"COOKING", "MEAL"})
+    @ValueSource(strings = {"COOKING_ORDER", "MEAL_ORDER"})
     @DisplayName("주문의 상태가 COOKING, MEAL인 경우 테이블 단체를 해제하면 예외가 발생한다")
-    void ungroupExceptionNotCompletionOrder(final String status) {
+    void ungroupExceptionNotCompletionOrder(final OrderFixtures orderFixtures) {
         // given
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setCreatedDate(LocalDateTime.now());
@@ -214,10 +211,7 @@ class TableGroupServiceTest {
         orderTable2.setTableGroupId(alreadyGroupedTable.getId());
         orderTableDao.save(orderTable2);
 
-        final Order order = new Order();
-        order.setOrderStatus(status);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(savedOrderTable1.getId());
+        final Order order = orderFixtures.createWithOrderTableId(savedOrderTable1.getId());
         orderDao.save(order);
 
         // when, then

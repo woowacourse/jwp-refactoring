@@ -4,16 +4,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.fixtures.MenuFixtures;
+import kitchenpos.fixtures.OrderFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,11 +44,7 @@ class OrderLineItemDaoTest {
         orderTable.setEmpty(false);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderStatus(OrderStatus.MEAL.name());
-        order.setOrderedTime(LocalDateTime.now());
-
+        final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
         final Order savedOrder = orderDao.save(order);
 
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
@@ -103,11 +98,7 @@ class OrderLineItemDaoTest {
         orderTable.setEmpty(false);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderStatus(OrderStatus.MEAL.name());
-        order.setOrderedTime(LocalDateTime.now());
-
+        final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
         final Order savedOrder = orderDao.save(order);
 
         final OrderLineItem orderLineItem = new OrderLineItem();
@@ -129,11 +120,7 @@ class OrderLineItemDaoTest {
         orderTable.setEmpty(false);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderStatus(OrderStatus.MEAL.name());
-        order.setOrderedTime(LocalDateTime.now());
-
+        final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
         final Order savedOrder = orderDao.save(order);
 
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
@@ -174,11 +161,7 @@ class OrderLineItemDaoTest {
         orderTable.setEmpty(false);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderStatus(OrderStatus.MEAL.name());
-        order.setOrderedTime(LocalDateTime.now());
-
+        final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
         final Order savedOrder = orderDao.save(order);
 
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
@@ -211,11 +194,7 @@ class OrderLineItemDaoTest {
         orderTable.setEmpty(false);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderStatus(OrderStatus.MEAL.name());
-        order.setOrderedTime(LocalDateTime.now());
-
+        final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
         final Order savedOrder = orderDao.save(order);
 
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();

@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import javax.transaction.Transactional;
 import kitchenpos.dao.OrderDao;
@@ -15,6 +14,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.fixtures.OrderFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,15 +40,15 @@ class OrderServiceTest {
     @DisplayName("주문을 생성한다")
     void create() {
         // given
-        final Order order = new Order();
         final OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(1L);
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
 
         final OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);
         final OrderTable notEmptyOrderTable = orderTableDao.save(orderTable);
-        order.setOrderTableId(notEmptyOrderTable.getId());
+
+        final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(
+                notEmptyOrderTable.getId(), orderLineItem);
 
         // when
         final Order saved = orderService.create(order);
@@ -68,7 +68,7 @@ class OrderServiceTest {
     @DisplayName("주문 항목이 비어있는 상태로 주문을 생성하면 예외가 발생한다")
     void createExceptionEmptyOrderLineItems() {
         // given
-        final Order order = new Order();
+        final Order order = OrderFixtures.COOKING_ORDER.create();
 
         // when, then
         assertThatThrownBy(() -> orderService.create(order))
@@ -79,10 +79,10 @@ class OrderServiceTest {
     @DisplayName("주문 항목의 메뉴들이 실제 존재하지 않은 메뉴로 주문을 생성하면 예외가 발생한다")
     void createExceptionWrongOrderLineItems() {
         // given
-        final Order order = new Order();
         final OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(-1L);
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
+
+        final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(1L, orderLineItem);
 
         // when, then
         assertThatThrownBy(() -> orderService.create(order))
@@ -93,11 +93,10 @@ class OrderServiceTest {
     @DisplayName("주문 테이블이 존재하지 않은 테이블이면 주문을 생성할 때 예외가 발생한다")
     void createExceptionNotExistOrderTable() {
         // given
-        final Order order = new Order();
         final OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(1L);
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        order.setOrderTableId(-1L);
+
+        final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(-1L, orderLineItem);
 
         // when, then
         assertThatThrownBy(() -> orderService.create(order))
@@ -108,11 +107,10 @@ class OrderServiceTest {
     @DisplayName("주문 테이블이 주문을 등록할 수 없는 상태로 주문을 생성할 때 예외가 발생한다")
     void createExceptionNotEmptyOrderTable() {
         // given
-        final Order order = new Order();
         final OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(1L);
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        order.setOrderTableId(1L);
+
+        final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(1L, orderLineItem);
 
         // when, then
         assertThatThrownBy(() -> orderService.create(order))
@@ -127,10 +125,7 @@ class OrderServiceTest {
         orderTable.setEmpty(false);
         final OrderTable notEmptyOrderTable = orderTableDao.save(orderTable);
 
-        final Order order = new Order();
-        order.setOrderTableId(notEmptyOrderTable.getId());
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(OrderStatus.COOKING.name());
+        final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableId(notEmptyOrderTable.getId());
         final Order savedOrder = orderDao.save(order);
 
         final OrderLineItem orderLineItem = new OrderLineItem();
@@ -138,7 +133,7 @@ class OrderServiceTest {
         orderLineItem.setOrderId(savedOrder.getId());
         orderLineItem.setQuantity(2);
         orderLineItemDao.save(orderLineItem);
-        
+
         // when
         final List<Order> orders = orderService.list();
 
@@ -156,15 +151,9 @@ class OrderServiceTest {
     @DisplayName("주문의 상태를 변경한다")
     void changeOrderStatus() {
         // given
-        final Order order = new Order();
-        order.setOrderTableId(1L);
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-
+        final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableId(1L);
         final Order saved = orderDao.save(order);
-
-        final Order orderInMeal = new Order();
-        orderInMeal.setOrderStatus(OrderStatus.MEAL.name());
+        final Order orderInMeal = OrderFixtures.MEAL_ORDER.create();
 
         // when
         final Order changedOrder = orderService.changeOrderStatus(saved.getId(), orderInMeal);
@@ -181,7 +170,7 @@ class OrderServiceTest {
     @DisplayName("변경하려는 주문이 존재하지 않을 때 주문의 상태를 변경하려고 하면 예외가 발생한다.")
     void changeOrderStatusExceptionWrongOrderId() {
         // given
-        final Order order = new Order();
+        final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableId(1L);
 
         // when, then
         assertThatThrownBy(() -> orderService.changeOrderStatus(-1L, order))
@@ -192,11 +181,7 @@ class OrderServiceTest {
     @DisplayName("주문이 이미 완료된 상태에서 주문의 상태를 변경하려고 하면 예외가 발생한다.")
     void changeOrderStatusExceptionAlreadyCompletion() {
         // given
-        final Order order = new Order();
-        order.setOrderTableId(1L);
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
-        order.setOrderedTime(LocalDateTime.now());
-
+        final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableId(1L);
         final Order completionOrder = orderDao.save(order);
 
         // when, then

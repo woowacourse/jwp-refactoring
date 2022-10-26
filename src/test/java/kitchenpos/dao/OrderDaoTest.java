@@ -39,10 +39,7 @@ class OrderDaoTest {
         orderTable.setEmpty(false);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderStatus(OrderStatus.MEAL.name());
-        order.setOrderedTime(LocalDateTime.now());
+        final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
 
         // when
         final Order saved = orderDao.save(order);
@@ -60,10 +57,7 @@ class OrderDaoTest {
     @DisplayName("존재하지 않는 주문 테이블로 주문을 저장하려고 하면 예외가 발생한다")
     void saveExceptionNotExistOrderTable() {
         // given
-        final Order order = new Order();
-        order.setOrderTableId(-1L);
-        order.setOrderStatus(OrderStatus.MEAL.name());
-        order.setOrderedTime(LocalDateTime.now());
+        final Order order = new Order(null, -1L, OrderStatus.MEAL.name(), LocalDateTime.now());
 
         // when, then
         assertThatThrownBy(() -> orderDao.save(order))
@@ -79,11 +73,7 @@ class OrderDaoTest {
         orderTable.setEmpty(false);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderStatus(OrderStatus.MEAL.name());
-        order.setOrderedTime(LocalDateTime.now());
-
+        final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
         final Order saved = orderDao.save(order);
 
         // when
@@ -114,11 +104,7 @@ class OrderDaoTest {
         orderTable.setEmpty(false);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderStatus(OrderStatus.MEAL.name());
-        order.setOrderedTime(LocalDateTime.now());
-
+        final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
         final Order saved = orderDao.save(order);
 
         // when
@@ -141,11 +127,7 @@ class OrderDaoTest {
         orderTable.setEmpty(false);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderStatus(OrderStatus.MEAL.name());
-        order.setOrderedTime(LocalDateTime.now());
-
+        final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
         orderDao.save(order);
 
         // when
@@ -175,11 +157,7 @@ class OrderDaoTest {
         orderTable.setEmpty(false);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderStatus(OrderStatus.MEAL.name());
-        order.setOrderedTime(LocalDateTime.now());
-
+        final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
         orderDao.save(order);
 
         // when

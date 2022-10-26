@@ -11,9 +11,9 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.fixtures.OrderFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -84,10 +84,7 @@ class TableServiceTest {
         final OrderTable notEmptyOrderTable = new OrderTable();
         notEmptyOrderTable.setEmpty(false);
 
-        final Order order = new Order();
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
-        order.setOrderTableId(savedOrderTable.getId());
+        final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableId(savedOrderTable.getId());
         orderDao.save(order);
 
         // when
@@ -137,9 +134,9 @@ class TableServiceTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"COOKING", "MEAL"})
+    @ValueSource(strings = {"COOKING_ORDER", "MEAL_ORDER"})
     @DisplayName("주문이 상태가 COOKING, MEAL인 경우 주문 테이블의 주문 가능 여부를 변경할 때 예외가 발생한다")
-    void changeEmptyExceptionNotCompletionOrder(final String status) {
+    void changeEmptyExceptionNotCompletionOrder(final OrderFixtures orderFixtures) {
         // given
         final OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(2);
@@ -149,10 +146,7 @@ class TableServiceTest {
         final OrderTable notEmptyOrderTable = new OrderTable();
         notEmptyOrderTable.setEmpty(false);
 
-        final Order order = new Order();
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(status);
-        order.setOrderTableId(savedOrderTable.getId());
+        final Order order = orderFixtures.createWithOrderTableId(savedOrderTable.getId());
         orderDao.save(order);
 
         // when, then

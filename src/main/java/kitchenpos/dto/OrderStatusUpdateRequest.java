@@ -10,9 +10,7 @@ public class OrderStatusUpdateRequest {
     }
 
     public Order toOrder() {
-        final Order order = new Order();
-        order.setOrderStatus(orderStatus);
-        return order;
+        return new Order(null, null, orderStatus, null, null);
     }
 
     public String getOrderStatus() {
