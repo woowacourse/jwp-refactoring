@@ -19,7 +19,7 @@ public class ProductServiceTest extends ServiceTest {
     private ProductService productService;
 
     @Test
-    @DisplayName("메뉴를 등록한다.")
+    @DisplayName("상품을 등록한다.")
     void create() {
         // given
         Product product = new Product("후라이드", BigDecimal.valueOf(16000));
@@ -46,7 +46,7 @@ public class ProductServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("전체 메뉴를 조회한다.")
+    @DisplayName("전체 상품을 조회한다.")
     void list() {
         // given
         Product product = new Product("후라이드", BigDecimal.valueOf(16000));

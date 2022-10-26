@@ -26,7 +26,7 @@ public class MenuServiceTest extends ServiceTest {
 
         // then
         assertThat(savedMenu).usingRecursiveComparison()
-            .ignoringFields("id", "menuProducts", "price")
+            .ignoringFields("id", "price")
             .isEqualTo(menu);
     }
 

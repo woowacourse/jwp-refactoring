@@ -40,8 +40,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
         long tableId = _테이블생성_Id반환(orderTable);
 
         // when, then
-        put("/api/tables/" + tableId + "/empty", orderTable).assertThat()
-            .statusCode(HttpStatus.OK.value());
+        _테이블_빈테이블_변경검증(orderTable, tableId);
     }
 
     @Test
@@ -53,8 +52,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
 
         // when, then
         OrderTable orderTableToChange = new OrderTable(2, false);
-        put("/api/tables/" + tableId + "/number-of-guests", orderTableToChange).assertThat()
-            .statusCode(HttpStatus.OK.value());
+        _테이블_손님수_변경검증(tableId, orderTableToChange);
     }
 
     private void _테이블생성검증(final OrderTable orderTable) {
@@ -64,6 +62,16 @@ public class TableAcceptanceTest extends AcceptanceTest {
 
     private void _테이블조회검증() {
         get("/api/tables").assertThat()
+            .statusCode(HttpStatus.OK.value());
+    }
+
+    private void _테이블_빈테이블_변경검증(final OrderTable orderTable, final long tableId) {
+        put("/api/tables/" + tableId + "/empty", orderTable).assertThat()
+            .statusCode(HttpStatus.OK.value());
+    }
+
+    private void _테이블_손님수_변경검증(final long tableId, final OrderTable orderTableToChange) {
+        put("/api/tables/" + tableId + "/number-of-guests", orderTableToChange).assertThat()
             .statusCode(HttpStatus.OK.value());
     }
 }
