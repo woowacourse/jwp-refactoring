@@ -89,7 +89,7 @@ class TableServiceTest {
     @Test
     void 존재하지_않는_주문_테이블의_상태를_변경할_수_없다() {
         // given
-        long invalidOrderTable = 99999999L;
+        long invalidOrderTable = -1L;
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(invalidOrderTable, new OrderTable()))
@@ -167,7 +167,7 @@ class TableServiceTest {
     @Test
     void 존재하지않는_주문_테이블의_방문_손님의_수를_변경할_수_없다() {
         // given
-        long invalidOrderTableId = 999999999L;
+        long invalidOrderTableId = -1L;
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(invalidOrderTableId, new OrderTable()))
