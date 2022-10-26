@@ -50,7 +50,7 @@ class ProductServiceTest {
 
         @Test
         void 상품명이_누락된_경우_예외발생() {
-            CreateProductDto product = new CreateProductDto("", BigDecimal.valueOf(1000));
+            CreateProductDto product = new CreateProductDto(null, BigDecimal.valueOf(1000));
 
             assertThatThrownBy(() -> productService.create(product))
                     .isInstanceOf(IllegalArgumentException.class);
