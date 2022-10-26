@@ -1,6 +1,7 @@
 package kitchenpos.menu.domain;
 
 import static kitchenpos.DomainFixture.뿌링클;
+import static kitchenpos.DomainFixture.뿌링클_치즈볼;
 import static kitchenpos.DomainFixture.치즈볼;
 import static kitchenpos.DomainFixture.한개;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -8,10 +9,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import kitchenpos.common.exception.CustomErrorCode;
 import kitchenpos.common.exception.DomainLogicException;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.Name;
-import kitchenpos.menu.domain.Price;
 import org.junit.jupiter.api.Test;
 
 class MenuTest {
@@ -20,7 +17,7 @@ class MenuTest {
     void 메뉴_가격이_메뉴_상품들의_가격의_합보다_크면_예외를_던진다() {
         // when & then
         assertThatThrownBy(() -> new Menu(
-                        new Name("뿌링클+치즈볼"),
+                        뿌링클_치즈볼,
                         Price.valueOf(30_000),
                         0L,
                         List.of(new MenuProduct(뿌링클, 한개), new MenuProduct(치즈볼, 한개))
