@@ -8,7 +8,6 @@ import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,7 +28,7 @@ class TableServiceTest extends ServiceTest {
         // then
         List<OrderTable> tables = tableService.list();
         assertThat(tables).extracting(OrderTable::getId, OrderTable::getNumberOfGuests, OrderTable::isEmpty)
-                .contains(Tuple.tuple(savedOrderTable.getId(), 4, false));
+                .contains(tuple(savedOrderTable.getId(), 4, false));
     }
 
     @Test
@@ -43,7 +42,9 @@ class TableServiceTest extends ServiceTest {
 
         // then
         assertThat(tables).extracting(OrderTable::getId, OrderTable::getNumberOfGuests, OrderTable::isEmpty)
-                .contains(Tuple.tuple(orderTable1.getId(), 4, false), tuple(orderTable2.getId(), 0, true));
+                .contains(
+                        tuple(orderTable1.getId(), orderTable1.getNumberOfGuests(), orderTable1.isEmpty()),
+                        tuple(orderTable2.getId(), orderTable2.getNumberOfGuests(), orderTable2.isEmpty()));
     }
 
     @Nested

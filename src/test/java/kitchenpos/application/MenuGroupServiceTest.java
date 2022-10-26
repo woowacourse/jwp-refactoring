@@ -35,6 +35,7 @@ class MenuGroupServiceTest extends ServiceTest {
 
         // then
         assertThat(menuGroups).extracting(MenuGroup::getId, MenuGroup::getName)
-                .contains(tuple(menuGroup1.getId(), "추천 메뉴 1"), tuple(menuGroup2.getId(), "추천 메뉴 2"));
+                .contains(tuple(menuGroup1.getId(), menuGroup1.getName()),
+                        tuple(menuGroup2.getId(), menuGroup2.getName()));
     }
 }

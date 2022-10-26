@@ -126,8 +126,8 @@ class MenuServiceTest extends ServiceTest {
 
         // then
         assertThat(menus)
-                .extracting(Menu::getId, Menu::getName, (menu) -> menu.getPrice().intValue(), Menu::getMenuGroupId)
-                .contains(tuple(menu1.getId(), "메뉴 1", 3000, 1L),
-                        tuple(menu2.getId(), "메뉴 2", 3000, 2L));
+                .extracting(Menu::getId, Menu::getName, Menu::getPrice, Menu::getMenuGroupId)
+                .contains(tuple(menu1.getId(), menu1.getName(), menu1.getPrice(), menu1.getMenuGroupId()),
+                        tuple(menu2.getId(), menu2.getName(), menu2.getPrice(), menu2.getMenuGroupId()));
     }
 }

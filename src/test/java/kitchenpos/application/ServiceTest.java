@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -73,15 +74,22 @@ public abstract class ServiceTest {
     }
 
     protected Menu 메뉴를_저장한다(String menuName) {
-        MenuProduct menuProduct1 = 메뉴_상품을_생성한다("상품 1", 1000, 1L);
-        MenuProduct menuProduct2 = 메뉴_상품을_생성한다("상품 2", 2000, 1L);
+        return 메뉴를_저장한다(menuName, "상품 1", "상품 2");
+    }
+
+    protected Menu 메뉴를_저장한다(String menuName, String... menuProductNames) {
+        List<MenuProduct> menuProducts = new ArrayList<>();
+        for (String name : menuProductNames) {
+            menuProducts.add(메뉴_상품을_생성한다(name, 5000, 1L));
+        }
+
         MenuGroup menuGroup = 메뉴_그룹을_저장한다("메뉴 그룹");
 
         Menu menu = new Menu();
         menu.setName(menuName);
-        menu.setPrice(BigDecimal.valueOf(3000));
+        menu.setPrice(BigDecimal.valueOf(menuProducts.size() * 5000L));
         menu.setMenuGroupId(menuGroup.getId());
-        menu.setMenuProducts(List.of(menuProduct1, menuProduct2));
+        menu.setMenuProducts(menuProducts);
 
         return menuService.create(menu);
     }

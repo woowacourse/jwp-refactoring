@@ -55,8 +55,9 @@ class ProductServiceTest extends ServiceTest {
         final List<Product> products = productService.list();
 
         // then
-        assertThat(products).extracting(Product::getId, Product::getName, (product) -> product.getPrice().intValue())
-                .hasSize(2)
-                .contains(tuple(product1.getId(), "상품1", 10000), tuple(product2.getId(), "상품2", 20000));
+        assertThat(products).hasSize(2)
+                .extracting(Product::getId, Product::getName, Product::getPrice)
+                .contains(tuple(product1.getId(), product1.getName(), product1.getPrice()),
+                        tuple(product2.getId(), product2.getName(), product2.getPrice()));
     }
 }
