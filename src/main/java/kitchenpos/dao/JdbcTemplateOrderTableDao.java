@@ -34,13 +34,9 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
 
     @Override
     public OrderTable save(final OrderTable entity) {
-        if (Objects.isNull(entity.getId())) {
-            final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
-            final Number key = jdbcInsert.executeAndReturnKey(parameters);
-            return select(key.longValue());
-        }
-        update(entity);
-        return entity;
+        final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
+        final Number key = jdbcInsert.executeAndReturnKey(parameters);
+        return select(key.longValue());
     }
 
     @Override
