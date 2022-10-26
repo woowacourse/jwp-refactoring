@@ -8,26 +8,30 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.dao.FakeProductDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
-@SpringBootTest
-@Sql("/truncate.sql")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class ProductServiceTest {
 
+    private final ProductDao productDao;
     private final ProductService productService;
 
-    @Autowired
-    ProductServiceTest(final ProductService productService) {
-        this.productService = productService;
+    ProductServiceTest() {
+        this.productDao = new FakeProductDao();
+        this.productService = new ProductService(productDao);
+    }
+
+    @BeforeEach
+    void setUp() {
+        FakeProductDao.deleteAll();
     }
 
     @Test
@@ -62,8 +66,8 @@ class ProductServiceTest {
 
     @Test
     void product_list를_조회한다() {
-        Product 후라이드 = productService.create(후라이드());
-        Product 양념치킨 = productService.create(양념치킨());
+        Product 후라이드 = productDao.save(generateProduct("후라이드"));
+        Product 양념치킨 = productDao.save(generateProduct("양념치킨"));
 
         List<String> actual = productService.list()
                 .stream()
