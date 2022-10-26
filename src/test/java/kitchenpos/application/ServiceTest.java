@@ -1,17 +1,20 @@
 package kitchenpos.application;
 
-import javax.transaction.Transactional;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
+@Sql("classpath:truncate.sql")
 class ServiceTest {
 
     @Autowired
@@ -49,4 +52,7 @@ class ServiceTest {
 
     @Autowired
     protected OrderDao orderDao;
+
+    @Autowired
+    protected OrderLineItemDao orderLineItemDao;
 }

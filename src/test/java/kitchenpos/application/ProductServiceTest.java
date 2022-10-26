@@ -10,13 +10,13 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
-class ProductServiceTest extends ServiceTest {
+class ProductServiceTest {
 
     @Nested
     class create_메서드는 {
 
         @Nested
-        class 유효한_상품이_입력되면 {
+        class 유효한_상품이_입력되면 extends ServiceTest {
 
             private final Product product = new Product("치킨", new BigDecimal(100));
 
@@ -29,7 +29,7 @@ class ProductServiceTest extends ServiceTest {
         }
 
         @Nested
-        class 가격이_null인_상품이_입력되면 {
+        class 가격이_null인_상품이_입력되면 extends ServiceTest {
 
             private final Product product = new Product("치킨", null);
 
@@ -41,7 +41,7 @@ class ProductServiceTest extends ServiceTest {
         }
 
         @Nested
-        class 가격이_0_미만인_상품이_입력되면 {
+        class 가격이_0_미만인_상품이_입력되면 extends ServiceTest {
 
             private final Product product = new Product("치킨", new BigDecimal(-1));
 
@@ -57,16 +57,13 @@ class ProductServiceTest extends ServiceTest {
     class list_메서드는 {
 
         @Nested
-        class 호출되면 {
-
-            private final Product product = new Product("치킨", new BigDecimal(100));
+        class 호출되면 extends ServiceTest {
 
             @Test
             void 모든_상품을_반환한다() {
-                productService.create(product);
                 final List<Product> products = productService.list();
 
-                assertThat(products).hasSize(1);
+                assertThat(products).isEmpty();
             }
         }
     }

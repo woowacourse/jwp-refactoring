@@ -1,7 +1,13 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.fixtures.TestFixtures.메뉴_그룹_생성;
+import static kitchenpos.fixtures.TestFixtures.메뉴_생성;
+import static kitchenpos.fixtures.TestFixtures.주문_생성;
+import static kitchenpos.fixtures.TestFixtures.주문_테이블_생성;
+import static kitchenpos.fixtures.TestFixtures.주문_항목_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -9,37 +15,37 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
-class OrderServiceTest extends ServiceTest {
-
-    @BeforeEach
-    void setUp() {
-        menuDao.save(new Menu("후라이드", new BigDecimal(1000), createMenuGroup(), createMenuProducts()));
-    }
+class OrderServiceTest {
 
     @Nested
     class create_메서드는 {
 
         @Nested
-        class 정상적인_주문이_입력되면 {
+        class 정상적인_주문이_입력되면 extends ServiceTest {
 
-            private final Order order = new Order(createOrderTable(), MEAL.name(), LocalDateTime.now(),
-                    createOrderLineItems(new OrderLineItem(1L, 1L, 5)));
+            private final OrderLineItem orderLineItem = 주문_항목_생성(1L, 1L, 5);
+            private final MenuGroup menuGroup = 메뉴_그룹_생성("한마리메뉴");
+            private final Menu menu = 메뉴_생성("치킨", BigDecimal.valueOf(1_000L), 1L, new ArrayList<>());
+            private final OrderTable orderTable = 주문_테이블_생성(null, 5, false);
+            private final Order order = 주문_생성(1L, MEAL.name(), LocalDateTime.now(), List.of(orderLineItem));
+
+            @BeforeEach
+            void setUp() {
+                menuGroupDao.save(menuGroup);
+                menuDao.save(menu);
+                orderTableDao.save(orderTable);
+            }
 
             @Test
             void 해당_주문을_반환한다() {
@@ -53,22 +59,9 @@ class OrderServiceTest extends ServiceTest {
         }
 
         @Nested
-        class 빈_주문_항목으로_주문이_입력되면 {
+        class 빈_주문_항목으로_주문이_입력되면 extends ServiceTest {
 
-            private final Order order = new Order(createOrderTable(), MEAL.name(), LocalDateTime.now(), null);
-
-            @Test
-            void 예외가_발생한다() {
-                assertThatThrownBy(() -> orderService.create(order))
-                        .isInstanceOf(IllegalArgumentException.class);
-            }
-        }
-
-        @Nested
-        class 존재하지_않는_메뉴로_주문이_입력되면 {
-
-            private final Order order = new Order(createOrderTable(), MEAL.name(), LocalDateTime.now(),
-                    createOrderLineItems(new OrderLineItem(1L, 2L, 5)));
+            private final Order order = 주문_생성(null, MEAL.name(), LocalDateTime.now(), null);
 
             @Test
             void 예외가_발생한다() {
@@ -78,10 +71,10 @@ class OrderServiceTest extends ServiceTest {
         }
 
         @Nested
-        class 주문_테이블없이_주문을_입력하면 {
+        class 존재하지_않는_메뉴로_주문이_입력되면 extends ServiceTest {
 
-            private final Order order = new Order(null, MEAL.name(), LocalDateTime.now(),
-                    createOrderLineItems(new OrderLineItem(1L, 1L, 5)));
+            private final OrderLineItem orderLineItem = 주문_항목_생성(1L, 1L, 5);
+            private final Order order = 주문_생성(null, MEAL.name(), LocalDateTime.now(), List.of(orderLineItem));
 
             @Test
             void 예외가_발생한다() {
@@ -91,10 +84,41 @@ class OrderServiceTest extends ServiceTest {
         }
 
         @Nested
-        class 비어있는_주문_테이블로_주문을_입력하면 {
+        class 주문_테이블없이_주문을_입력하면 extends ServiceTest {
 
-            private final Order order = new Order(createEmptyOrderTable(), MEAL.name(), LocalDateTime.now(),
-                    createOrderLineItems(new OrderLineItem(1L, 1L, 5)));
+            private final OrderLineItem orderLineItem = 주문_항목_생성(1L, 1L, 5);
+            private final MenuGroup menuGroup = 메뉴_그룹_생성("한마리메뉴");
+            private final Menu menu = 메뉴_생성("치킨", BigDecimal.valueOf(1_000L), 1L, new ArrayList<>());
+            private final Order order = 주문_생성(null, MEAL.name(), LocalDateTime.now(), List.of(orderLineItem));
+
+            @BeforeEach
+            void setUp() {
+                menuGroupDao.save(menuGroup);
+                menuDao.save(menu);
+            }
+
+            @Test
+            void 예외가_발생한다() {
+                assertThatThrownBy(() -> orderService.create(order))
+                        .isInstanceOf(IllegalArgumentException.class);
+            }
+        }
+
+        @Nested
+        class 비어있는_주문_테이블로_주문을_입력하면 extends ServiceTest {
+
+            private final OrderLineItem orderLineItem = 주문_항목_생성(1L, 1L, 5);
+            private final MenuGroup menuGroup = 메뉴_그룹_생성("한마리메뉴");
+            private final Menu menu = 메뉴_생성("치킨", BigDecimal.valueOf(1_000L), 1L, new ArrayList<>());
+            private final OrderTable orderTable = 주문_테이블_생성(null, 5, true);
+            private final Order order = 주문_생성(1L, MEAL.name(), LocalDateTime.now(), List.of(orderLineItem));
+
+            @BeforeEach
+            void setUp() {
+                menuGroupDao.save(menuGroup);
+                menuDao.save(menu);
+                orderTableDao.save(orderTable);
+            }
 
             @Test
             void 예외가_발생한다() {
@@ -108,7 +132,7 @@ class OrderServiceTest extends ServiceTest {
     class list_메서드는 {
 
         @Nested
-        class 호출되면 {
+        class 호출되면 extends ServiceTest {
 
             @Test
             void 모든_주문을_반환한다() {
@@ -122,57 +146,26 @@ class OrderServiceTest extends ServiceTest {
     class changeOrderStatus_메서드는 {
 
         @Nested
-        class 주문_id와_주문이_입력되면 {
+        class 주문_id와_주문이_입력되면 extends ServiceTest {
 
+            private final OrderTable orderTable = 주문_테이블_생성(null, 5, true);
+            private final OrderLineItem orderLineItem = 주문_항목_생성(1L, 1L, 5);
+            private final Order order = 주문_생성(1L, MEAL.name(), LocalDateTime.now(), List.of(orderLineItem));
+            final Order orderToUpdateTo = 주문_생성(null, COMPLETION.name(), LocalDateTime.now(), null);
             private Order savedOrder;
 
             @BeforeEach
             void setUp() {
-                final Order order = new Order(createOrderTable(), MEAL.name(), LocalDateTime.now(),
-                        createOrderLineItems(new OrderLineItem(1L, 1L, 5)));
+                orderTableDao.save(orderTable);
                 savedOrder = orderDao.save(order);
             }
 
             @Test
             void 주문상태를_변경하고_주문을_반환한다() {
-                final Order orderToUpdateTo = new Order(null, COOKING.name(), LocalDateTime.now(), null);
                 final Order updatedOrder = orderService.changeOrderStatus(savedOrder.getId(), orderToUpdateTo);
 
                 assertThat(updatedOrder.getOrderStatus()).isEqualTo(orderToUpdateTo.getOrderStatus());
             }
         }
-    }
-
-    private Long createOrderTable() {
-        final OrderTable orderTable = new OrderTable(createTableGroup(), 5, false);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        return savedOrderTable.getId();
-    }
-
-    private Long createEmptyOrderTable() {
-        final OrderTable orderTable = new OrderTable(createTableGroup(), 0, true);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        return savedOrderTable.getId();
-    }
-
-    private Long createTableGroup() {
-        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()));
-        return savedTableGroup.getId();
-    }
-
-    private List<OrderLineItem> createOrderLineItems(final OrderLineItem... orderLineItems) {
-        return Arrays.stream(orderLineItems)
-                .collect(Collectors.toList());
-    }
-
-    private Long createMenuGroup() {
-        final MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("한마리치킨"));
-        return savedMenuGroup.getId();
-    }
-
-    private List<MenuProduct> createMenuProducts() {
-        final Product savedProduct = productDao.save(new Product("후라이드", new BigDecimal(1000)));
-        final MenuProduct menuProduct = new MenuProduct(1L, savedProduct.getId(), 1);
-        return List.of(menuProduct);
     }
 }

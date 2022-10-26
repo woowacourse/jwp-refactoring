@@ -3,9 +3,13 @@ package kitchenpos.dao;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,6 +23,26 @@ class MenuProductDaoTest {
 
     @Autowired
     private MenuProductDao menuProductDao;
+
+    @Autowired
+    private ProductDao productDao;
+
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private MenuDao menuDao;
+
+    private final Product product = new Product("치킨", BigDecimal.valueOf(1_000L));
+    private final MenuGroup menuGroup = new MenuGroup("한마리치킨");
+    private final Menu menu = new Menu("후라이드", BigDecimal.valueOf(1_000L), 1L, null);
+
+    @BeforeEach
+    void setUp() {
+        productDao.save(product);
+        menuGroupDao.save(menuGroup);
+        menuDao.save(menu);
+    }
 
     @Nested
     class save_메서드는 {
