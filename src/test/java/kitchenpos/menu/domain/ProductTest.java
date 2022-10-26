@@ -1,7 +1,7 @@
 package kitchenpos.menu.domain;
 
-import static kitchenpos.DomainFixture.두개;
-import static kitchenpos.DomainFixture.뿌링클;
+import static kitchenpos.support.DomainFixture.두개;
+import static kitchenpos.support.DomainFixture.뿌링클;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;

@@ -1,9 +1,9 @@
 package kitchenpos.menu.application;
 
-import static kitchenpos.DomainFixture.뿌링클;
-import static kitchenpos.DomainFixture.뿌링클_치즈볼_메뉴_생성;
-import static kitchenpos.DomainFixture.세트_메뉴;
-import static kitchenpos.DomainFixture.치즈볼;
+import static kitchenpos.support.DomainFixture.뿌링클;
+import static kitchenpos.support.DomainFixture.뿌링클_치즈볼_메뉴_생성;
+import static kitchenpos.support.DomainFixture.세트_메뉴;
+import static kitchenpos.support.DomainFixture.치즈볼;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;

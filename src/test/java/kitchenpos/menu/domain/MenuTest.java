@@ -1,9 +1,9 @@
 package kitchenpos.menu.domain;
 
-import static kitchenpos.DomainFixture.뿌링클;
-import static kitchenpos.DomainFixture.뿌링클_치즈볼;
-import static kitchenpos.DomainFixture.치즈볼;
-import static kitchenpos.DomainFixture.한개;
+import static kitchenpos.support.DomainFixture.뿌링클;
+import static kitchenpos.support.DomainFixture.뿌링클_치즈볼;
+import static kitchenpos.support.DomainFixture.치즈볼;
+import static kitchenpos.support.DomainFixture.한개;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;

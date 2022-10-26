@@ -1,4 +1,4 @@
-package kitchenpos;
+package kitchenpos.support;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;

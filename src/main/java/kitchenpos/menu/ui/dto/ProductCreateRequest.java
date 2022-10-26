@@ -24,4 +24,12 @@ public class ProductCreateRequest {
     public Product toProduct() {
         return new Product(new Name(this.name), Price.valueOf(this.price));
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
 }

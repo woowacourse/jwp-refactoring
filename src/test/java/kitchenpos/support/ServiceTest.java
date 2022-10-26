@@ -1,6 +1,6 @@
-package kitchenpos;
+package kitchenpos.support;
 
-import static kitchenpos.DomainFixture.주문_생성;
+import static kitchenpos.support.DomainFixture.주문_생성;
 
 import java.time.LocalDateTime;
 import kitchenpos.menu.repository.MenuRepository;

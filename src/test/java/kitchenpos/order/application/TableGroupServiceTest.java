@@ -7,8 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.ServiceTest;
-import kitchenpos.order.application.TableGroupService;
+import kitchenpos.support.ServiceTest;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
