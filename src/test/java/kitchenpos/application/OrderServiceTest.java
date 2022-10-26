@@ -4,169 +4,84 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
-class OrderServiceTest {
-
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private TableService tableService;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private MenuService menuService;
-
-    @Autowired
-    private OrderLineItemDao orderLineItemDao;
-
-    private Menu menu;
-    private OrderTable noEmptyOrderTable;
-
-    @BeforeEach
-    void setUp() {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("테스트");
-        final MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
-
-        final Menu menu = new Menu();
-        menu.setPrice(new BigDecimal(0));
-        menu.setMenuGroupId(savedMenuGroup.getId());
-        menu.setName("메뉴");
-        menu.setMenuProducts(new ArrayList<>());
-        this.menu = menuService.create(menu);
-
-        final OrderTable noEmptyOrderTable = new OrderTable();
-        noEmptyOrderTable.setEmpty(false);
-        this.noEmptyOrderTable = tableService.create(noEmptyOrderTable);
-    }
+class OrderServiceTest extends ServiceTest {
 
     @Test
     @DisplayName("주문 항목 없는 주문은 있을 수 없다.")
     void createNoOrderLineItems() {
-        final Order order = new Order();
-        order.setOrderTableId(noEmptyOrderTable.getId());
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderLineItems(new ArrayList<>());
-
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> 주문_요청한다(손님있는_테이블))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("존재하지 않는 메뉴는 주문할 수 없다.")
     void createNoExistMenu() {
-        final Order order = new Order();
-        order.setOrderTableId(noEmptyOrderTable.getId());
-        order.setOrderedTime(LocalDateTime.now());
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(9999L);
-        orderLineItem.setQuantity(10);
-        order.setOrderLineItems(List.of(orderLineItem));
+        final Menu notExistMenu = new Menu();
 
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> 주문_요청한다(손님있는_테이블, notExistMenu))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("존재하지 않는 테이블에선 주문할 수 없다.")
     void createNoExistTable() {
-        final Order order = new Order();
-        order.setOrderTableId(1818181818L);
-        order.setOrderedTime(LocalDateTime.now());
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(10);
-        order.setOrderLineItems(List.of(orderLineItem));
+        final OrderTable notExistTable = new OrderTable();
 
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> 주문_요청한다(notExistTable, 파스타한상))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("주문을 저장한다.")
     void create() {
-        final Order order = new Order();
-        order.setOrderTableId(noEmptyOrderTable.getId());
-        order.setOrderedTime(LocalDateTime.now());
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(10);
-        order.setOrderLineItems(List.of(orderLineItem));
+        final Order order = 주문_요청한다(손님있는_테이블, 파스타한상);
 
-        final Order savedOrder = orderService.create(order);
-
-        final List<OrderLineItem> savedOrderLineItems = orderLineItemDao.findAllByOrderId(savedOrder.getId());
+        final List<OrderLineItem> savedOrderLineItems = order.getOrderLineItems();
 
         assertAll(
-                () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
-                () -> assertThat(savedOrderLineItems).usingElementComparatorIgnoringFields("seq", "orderId")
-                        .contains(orderLineItem)
+                () -> assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+                () -> assertThat(savedOrderLineItems).extracting("menuId")
+                        .containsExactly(파스타한상.getId())
         );
     }
 
     @Test
-    @DisplayName("주문의 상태를 변경한다.")
-    void changeOrderStatus() {
-        final Order order = new Order();
-        order.setOrderTableId(noEmptyOrderTable.getId());
-        order.setOrderedTime(LocalDateTime.now());
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(10);
-        order.setOrderLineItems(List.of(orderLineItem));
+    @DisplayName("주문을 식사 상태로 변경한다.")
+    void changeOrderStatusMeal() {
+        final Order order = 주문_요청한다(손님있는_테이블, 파스타한상);
 
-        final Order savedOrder = orderService.create(order);
+        final Order mealOrder = 주문을_식사_상태로_만든다(order);
 
-        savedOrder.setOrderStatus(OrderStatus.MEAL.name());
+        assertThat(mealOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+    }
 
-        final Order changedOrderStatus = orderService.changeOrderStatus(savedOrder.getId(), savedOrder);
+    @Test
+    @DisplayName("주문을 완료 상태로 변경한다.")
+    void changeOrderStatusComplete() {
+        final Order order = 주문_요청한다(손님있는_테이블, 파스타한상);
 
-        assertThat(changedOrderStatus.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+        final Order completedOrder = 주문을_완료_상태로_만든다(order);
+
+        assertThat(completedOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
     }
 
     @Test
     @DisplayName("주문의 상태가 완료상태면 상태를 변경할 수 없다.")
-    void changeOrderStatusComplete() {
-        final Order order = new Order();
-        order.setOrderTableId(noEmptyOrderTable.getId());
-        order.setOrderedTime(LocalDateTime.now());
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(10);
-        order.setOrderLineItems(List.of(orderLineItem));
+    void changeOrderStatusFail() {
+        final Order order = 주문_요청한다(손님있는_테이블, 파스타한상);
 
-        final Order savedOrder = orderService.create(order);
+        final Order completedOrder = 주문을_완료_상태로_만든다(order);
 
-        savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
-
-        final Order changedOrderStatus = orderService.changeOrderStatus(savedOrder.getId(), savedOrder);
-        changedOrderStatus.setOrderStatus(OrderStatus.MEAL.name());
-        assertThatThrownBy(() -> orderService.changeOrderStatus(changedOrderStatus.getId(), changedOrderStatus))
+        assertThatThrownBy(() -> 주문을_완료_상태로_만든다(completedOrder))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -2,203 +2,93 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.dao.DataIntegrityViolationException;
 
-@SpringBootTest
-@Transactional
-class MenuServiceTest {
-
-    @Autowired
-    private MenuService menuService;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    private MenuProductDao menuProductDao;
-
-    private MenuGroup menuGroup;
-
-    private Product product1;
-    private Product product2;
-    private Product product3;
-
-    @BeforeEach
-    void setUp() {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("테스트");
-        this.menuGroup = menuGroupDao.save(menuGroup);
-
-        final Product product1 = new Product();
-        product1.setName("상품1");
-        product1.setPrice(new BigDecimal(1));
-        final Product product2 = new Product();
-        product2.setName("상품2");
-        product2.setPrice(new BigDecimal(2));
-        final Product product3 = new Product();
-        product3.setName("상품3");
-        product3.setPrice(new BigDecimal(3));
-
-        this.product1 = productDao.save(product1);
-        this.product2 = productDao.save(product2);
-        this.product3 = productDao.save(product3);
-    }
+class MenuServiceTest extends ServiceTest {
 
     @Test
     @DisplayName("메뉴를 추가할 수 있다.")
     void create() {
-        final Menu menu1 = new Menu();
-        menu1.setPrice(new BigDecimal(0));
-        menu1.setMenuGroupId(menuGroup.getId());
-        menu1.setName("메뉴1");
-        menu1.setMenuProducts(new ArrayList<>());
-        final Menu menu2 = new Menu();
-        menu2.setPrice(new BigDecimal(0));
-        menu2.setMenuGroupId(menuGroup.getId());
-        menu2.setName("메뉴1");
-        menu2.setMenuProducts(new ArrayList<>());
+        final Menu menu1 = 메뉴_등록("런치세트", 15000L, 세트, 토마토파스타, 탄산음료);
+        final Menu menu2 = 메뉴_등록("목살스테이크", 20000L, 스테이크, 목살스테이크);
 
-        final Menu savedMenu1 = menuService.create(menu1);
-        final Menu savedMenu2 = menuService.create(menu2);
+        final List<Menu> findMenus = 메뉴_전체_조회();
+        final Menu findMenu1 = 메뉴_찾기(menu1.getId());
+        final Menu findMenu2 = 메뉴_찾기(menu2.getId());
 
-        final List<Menu> findMenus = menuService.list();
-
-        assertThat(findMenus).usingElementComparatorIgnoringFields()
-                .contains(savedMenu1, savedMenu2);
+        assertAll(
+                () -> assertThat(findMenus).usingElementComparatorIgnoringFields("menuProducts")
+                        .contains(menu1, menu2),
+                () -> assertThat(findMenu1.getMenuProducts()).extracting("productId")
+                        .containsExactly(토마토파스타.getId(), 탄산음료.getId()),
+                () -> assertThat(findMenu2.getMenuProducts()).extracting("productId")
+                        .containsExactly(목살스테이크.getId())
+        );
     }
 
     @Test
     @DisplayName("메뉴의 가격은 null일 수 없다.")
     void createWithNullPrice() {
-        final Menu menu = new Menu();
-        menu.setPrice(null);
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setName("메뉴");
-        menu.setMenuProducts(new ArrayList<>());
-
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> 메뉴_등록("런치세트", null, 세트, 토마토파스타, 탄산음료))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("메뉴의 가격은 0보다 작을 수 없다.")
     void createWithUnderZeroPrice() {
-        final Menu menu = new Menu();
-        menu.setPrice(new BigDecimal(-1));
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setName("메뉴");
-        menu.setMenuProducts(new ArrayList<>());
-
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> 메뉴_등록("런치세트", -1L, 세트, 토마토파스타, 탄산음료))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("메뉴의 이름은 null일 수 없다.")
     void createWithNullName() {
-        final Menu menu = new Menu();
-        menu.setPrice(new BigDecimal(1));
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setName(null);
-        menu.setMenuProducts(new ArrayList<>());
-
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> 메뉴_등록(null, 15000L, 세트, 토마토파스타, 탄산음료))
+                .isInstanceOf(DataIntegrityViolationException.class);
     }
 
     @Test
     @DisplayName("등록되는 메뉴는 메뉴 그룹에 반드시 포함되어야 한다.")
     void createWithNullMenuGroup() {
-        final Menu menu = new Menu();
-        menu.setPrice(new BigDecimal(1));
-        menu.setMenuGroupId(null);
-        menu.setName("메뉴");
-        menu.setMenuProducts(new ArrayList<>());
+        final MenuGroup emptyMenuGroup = new MenuGroup();
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> 메뉴_등록("런치세트", 15000L, emptyMenuGroup, 토마토파스타, 탄산음료))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("메뉴를 등록할 때 메뉴에 포함되는 메뉴상품은 모두 상품목록에 존재해야한다.")
     void createWithNotExistProduct() {
-        final Menu menu = new Menu();
-        menu.setPrice(new BigDecimal(1));
-        menu.setMenuGroupId(null);
-        menu.setName("메뉴");
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(9999L);
-        menuProduct.setQuantity(10L);
-        menu.setMenuProducts(List.of(menuProduct));
+        final Product emptyProduct = new Product();
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> 메뉴_등록("런치세트", 15000L, 세트, emptyProduct))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("메뉴의 가격은 메뉴 상품의 가격 합보다 더 클 수 없다.")
     void createWithOverPrice() {
-        final Menu menu = new Menu();
-        menu.setPrice(new BigDecimal(10));
-        menu.setMenuGroupId(null);
-        menu.setName("메뉴");
-        final MenuProduct menuProduct1 = new MenuProduct();
-        menuProduct1.setProductId(product1.getId());
-        menuProduct1.setQuantity(10L);
-        final MenuProduct menuProduct2 = new MenuProduct();
-        menuProduct2.setProductId(product2.getId());
-        menuProduct2.setQuantity(10L);
-        final MenuProduct menuProduct3 = new MenuProduct();
-        menuProduct3.setProductId(product3.getId());
-        menuProduct3.setQuantity(10L);
-        menu.setMenuProducts(List.of(menuProduct1, menuProduct2, menuProduct3));
-
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> 메뉴_등록("런치세트", 19001L, 세트, 토마토파스타, 탄산음료))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("메뉴가 등록될 때 메뉴 상품도 같이 등록한다.")
     void createWithMenuProducts() {
-        final Menu menu = new Menu();
-        menu.setPrice(new BigDecimal(6));
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setName("메뉴");
-        final MenuProduct menuProduct1 = new MenuProduct();
-        menuProduct1.setProductId(product1.getId());
-        menuProduct1.setQuantity(10L);
-        final MenuProduct menuProduct2 = new MenuProduct();
-        menuProduct2.setProductId(product2.getId());
-        menuProduct2.setQuantity(10L);
-        final MenuProduct menuProduct3 = new MenuProduct();
-        menuProduct3.setProductId(product3.getId());
-        menuProduct3.setQuantity(10L);
-        menu.setMenuProducts(List.of(menuProduct1, menuProduct2, menuProduct3));
+        final Menu menu = 메뉴_등록("런치세트", 15000L, 세트, 토마토파스타, 탄산음료);
 
-        final Menu savedMenu = menuService.create(menu);
+        final List<MenuProduct> menuProducts = menu.getMenuProducts();
 
-        final List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(savedMenu.getId());
-
-        assertThat(menuProducts).usingElementComparatorIgnoringFields("seq")
-                .contains(menuProduct1, menuProduct2, menuProduct3);
+        assertThat(menuProducts).extracting("productId")
+                .contains(토마토파스타.getId(), 탄산음료.getId());
     }
 }

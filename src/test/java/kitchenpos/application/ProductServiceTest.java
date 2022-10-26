@@ -3,71 +3,44 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
-class ProductServiceTest {
-
-    @Autowired
-    private ProductService productService;
+class ProductServiceTest extends ServiceTest {
 
     @Test
     @DisplayName("상품을 저장한다.")
     void create() {
-        final Product product1 = new Product();
-        product1.setPrice(new BigDecimal(1000));
-        product1.setName("상품1");
-        final Product product2 = new Product();
-        product2.setPrice(new BigDecimal(1000));
-        product2.setName("상품2");
-        final Product savedProduct1 = productService.create(product1);
-        final Product savedProduct2 = productService.create(product2);
+        final Product product1 = 상품_등록("상품1", 1000L);
+        final Product product2 = 상품_등록("상품2", 1000L);
 
-        final List<Product> list = productService.list();
+        final List<Product> products = 상품_전체_조회();
 
-        final List<Long> savedIds = list.stream()
-                .map(Product::getId)
-                .collect(Collectors.toList());
-
-        assertThat(savedIds).contains(savedProduct1.getId(), savedProduct2.getId());
+        assertThat(products).usingElementComparatorIgnoringFields()
+                .contains(product1, product2);
     }
 
     @Test
     @DisplayName("상품의 가격은 null일 수 없다.")
     void createWithNullPrice() {
-        final Product product = new Product();
-        product.setName("상품");
-        product.setPrice(null);
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> 상품_등록("상품", null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("상품의 가격은 0보다 작을 수 없다.")
     void createWithUnderZeroPrice() {
-        final Product product = new Product();
-        product.setName("상품");
-        product.setPrice(new BigDecimal(-1));
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> 상품_등록("상품", -1L))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("상품 이름은 null일 수 없다.")
     void createWithNullName() {
-        final Product product1 = new Product();
-        product1.setPrice(new BigDecimal(1000));
-        assertThatThrownBy(() -> productService.create(product1))
+        assertThatThrownBy(() -> 상품_등록(null, 1000L))
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 }
