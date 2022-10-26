@@ -31,28 +31,6 @@ class ProductServiceTest extends ServiceTest {
             assertThat(savedProduct.getId()).isNotNull();
         }
 
-        @Test
-        @DisplayName("가격이 빈값일 경우 예외가 발생한다.")
-        void nullPrice() {
-            // given
-            ProductCreateRequest product = new ProductCreateRequest("이름", null);
-
-            // when, then
-            assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("가격이 0 미만인 경우 예외가 발생한다.")
-        void negativePrice() {
-            // given
-            ProductCreateRequest product = new ProductCreateRequest("이름", BigDecimal.valueOf(-1));
-
-            // when, then
-            assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-        }
-
     }
 
     @Nested
