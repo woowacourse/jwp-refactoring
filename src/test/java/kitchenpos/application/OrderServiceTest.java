@@ -9,16 +9,15 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.application.dto.OrderCreateRequestDto;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,9 +53,8 @@ class OrderServiceTest {
         given(orderLineItemDao.save(any(OrderLineItem.class))).willReturn(ORDER_LINE_ITEM);
 
         //when
-        Order order = new Order(1L, OrderStatus.COOKING.name(),
-                LocalDateTime.now(), List.of(new OrderLineItem(1L, 1L)));
-        Order savedOrder = orderService.create(order);
+        OrderCreateRequestDto dto = new OrderCreateRequestDto(1L, List.of(new OrderLineItem(1L, 1L)));
+        Order savedOrder = orderService.create(dto);
 
         //then
         assertThat(savedOrder.getOrderStatus()).isNotNull();
