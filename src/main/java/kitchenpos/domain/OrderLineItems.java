@@ -11,7 +11,7 @@ public class OrderLineItems {
     }
 
     private void validateItem() {
-        if (CollectionUtils.isEmpty(items)) {
+        if (items.isEmpty()) {
             throw new IllegalArgumentException("하나 이상의 메뉴를 주문해야 한다.");
         }
     }

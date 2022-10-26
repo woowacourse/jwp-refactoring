@@ -67,7 +67,7 @@ public class TableService {
                                                    final TableGuestChangeRequest changeRequest) {
         final OrderTable orderTable = orderTableDao.findById(orderTableId);
         orderTable.validateTableIsFull();
-        orderTable.changeNumberOfGuests(changeRequest.getNumberOfGuests());
+        orderTable.placeNumberOfGuests(changeRequest.getNumberOfGuests());
         return toOrderTableResponse(orderTableDao.save(orderTable));
     }
 }

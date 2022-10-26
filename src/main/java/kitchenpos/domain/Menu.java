@@ -19,7 +19,7 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public void updateMenuProducts(final List<MenuProduct> menuProducts) {
+    public void placeMenuProducts(final List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
     }
 

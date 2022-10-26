@@ -37,8 +37,8 @@ public class TableGroupService {
 
         final TableGroup tableGroup = tableGroupDao.save(
                 new TableGroup(null, LocalDateTime.now(), orderTables.getOrderTables()));
-        tableGroup.updateTablesFull();
-        tableGroup.addTableGroupId();
+        tableGroup.fillTables();
+        tableGroup.placeTableGroupId();
 
         updateAllTables(tableGroup);
         return toTableGroupResponse(tableGroup);
@@ -61,7 +61,7 @@ public class TableGroupService {
         for (final OrderTable table : tableGroup.getOrderTables()) {
             orderTables.add(orderTableDao.save(table));
         }
-        tableGroup.updateOrderTables(orderTables);
+        tableGroup.placeOrderTables(orderTables);
     }
 
     private TableGroupResponse toTableGroupResponse(TableGroup savedTableGroup) {
@@ -96,7 +96,7 @@ public class TableGroupService {
 
     private void deleteTableGroupId(List<OrderTable> orderTables) {
         for (final OrderTable orderTable : orderTables) {
-            orderTable.updateTableGroupId(null);
+            orderTable.placeTableGroupId(null);
             orderTableDao.save(orderTable);
         }
     }

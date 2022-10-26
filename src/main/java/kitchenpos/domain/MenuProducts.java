@@ -13,22 +13,18 @@ public class MenuProducts {
     }
 
     private void validateAmount(Price price) {
-        if (price.isExpensive(getSum())) {
+        if (price.isExpensive(sum())) {
             throw new IllegalArgumentException("메뉴 가격은 내부 모든 상품가격보다 낮아야 한다.");
         }
     }
 
-    public void updateMenuId(Long menuId) {
+    public void changeAllMenuId(Long menuId) {
         for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.updateMenuId(menuId);
+            menuProduct.placeMenuId(menuId);
         }
     }
 
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
-
-    public BigDecimal getSum() {
+    public BigDecimal sum() {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
             sum = sum.add(menuProduct.getPrice());

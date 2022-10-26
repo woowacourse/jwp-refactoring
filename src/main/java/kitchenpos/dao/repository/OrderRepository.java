@@ -36,10 +36,10 @@ public class OrderRepository implements OrderDao {
     private void saveItems(Order entity, Order save) {
         List<OrderLineItem> items = new ArrayList<>();
         for (OrderLineItem item : entity.getOrderLineItems()) {
-            item.updateOrderId(save.getId());
+            item.placeOrderId(save.getId());
             saveItem(items, item);
         }
-        save.updateOrderLineItems(items);
+        save.placeOrderLineItems(items);
     }
 
     private void saveItem(List<OrderLineItem> items, OrderLineItem item) {
@@ -55,7 +55,7 @@ public class OrderRepository implements OrderDao {
     public Order findById(Long id) {
         Order order = orderDao.findById(id)
                 .orElseThrow(() -> new InvalidDataAccessApiUsageException("해당 아이디의 주문은 존재하지 않는다."));
-        order.updateOrderLineItems(itemRepository.findAllByOrderId(order.getId()));
+        order.placeOrderLineItems(itemRepository.findAllByOrderId(order.getId()));
         return order;
     }
 
@@ -63,7 +63,7 @@ public class OrderRepository implements OrderDao {
     public List<Order> findAll() {
         List<Order> orders = orderDao.findAll();
         for (Order order : orders) {
-            order.updateOrderLineItems(itemRepository.findAllByOrderId(order.getId()));
+            order.placeOrderLineItems(itemRepository.findAllByOrderId(order.getId()));
         }
         return orders;
     }

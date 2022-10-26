@@ -3,7 +3,7 @@ package kitchenpos.domain;
 import java.util.Objects;
 
 public class OrderTable {
-    private Long id;
+    private final Long id;
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
@@ -28,11 +28,11 @@ public class OrderTable {
         }
     }
 
-    public void updateTableGroupId(final Long tableGroupId) {
+    public void placeTableGroupId(final Long tableGroupId) {
         this.tableGroupId = tableGroupId;
     }
 
-    public void changeNumberOfGuests(final int numberOfGuests) {
+    public void placeNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException("테이블 고객 수는 0 이상이어야 한다.");
         }

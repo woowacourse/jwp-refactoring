@@ -29,13 +29,13 @@ public class TableGroupRepository implements TableGroupDao {
         List<OrderTable> orderTables = entity.getOrderTables().stream()
                 .map(orderTable -> getTable(save.getId(), orderTable))
                 .collect(Collectors.toList());
-        save.updateOrderTables(orderTables);
+        save.placeOrderTables(orderTables);
         return save;
     }
 
     private OrderTable getTable(Long id, OrderTable orderTable) {
         OrderTable table = tableRepository.findById(orderTable.getId());
-        table.updateTableGroupId(id);
+        table.placeTableGroupId(id);
         return table;
     }
 
@@ -43,7 +43,7 @@ public class TableGroupRepository implements TableGroupDao {
     public TableGroup findById(Long id) {
         TableGroup tableGroup = tableGroupDao.findById(id)
                 .orElseThrow(() -> new InvalidDataAccessApiUsageException("단체 지정은 존재해야 한다."));
-        tableGroup.updateOrderTables(tableRepository.findAllByTableGroupId(id));
+        tableGroup.placeOrderTables(tableRepository.findAllByTableGroupId(id));
         return tableGroup;
     }
 

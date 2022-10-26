@@ -17,7 +17,7 @@ public class OrderLineItem {
         this(null, orderId, menuId, quantity);
     }
 
-    public void updateOrderId(final Long orderId) {
+    public void placeOrderId(final Long orderId) {
         this.orderId = orderId;
     }
 

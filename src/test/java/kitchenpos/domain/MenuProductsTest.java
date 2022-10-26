@@ -17,7 +17,7 @@ class MenuProductsTest {
                         new MenuProduct(1L, 10, new Price(10000))
                 )
         );
-        assertThat(menuProducts.getSum()).isEqualTo(new BigDecimal("20000.0"));
+        assertThat(menuProducts.sum()).isEqualTo(new BigDecimal("20000.0"));
     }
 
     @Test

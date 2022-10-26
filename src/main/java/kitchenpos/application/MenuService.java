@@ -36,11 +36,11 @@ public class MenuService {
         final MenuProducts menuProducts = new MenuProducts(
                 new Price(menuRequest.getPrice()),
                 toMenuProducts(menuRequest.getMenuProducts()));
-        final Menu savedMenu = menuDao.save(toMenu(menuRequest));
 
-        menuProducts.updateMenuId(savedMenu.getId());
+        final Menu menu = menuDao.save(toMenu(menuRequest));
+        menuProducts.changeAllMenuId(menu.getId());
 
-        return toMenuResponse(savedMenu, toMenuProductResponses(savedMenu.getId(), savedMenu.getMenuProducts()));
+        return toMenuResponse(menu, toMenuProductResponses(menu.getId(), menu.getMenuProducts()));
     }
 
     private Menu toMenu(MenuRequest menuRequest) {
@@ -73,7 +73,6 @@ public class MenuService {
 
     public List<MenuResponse> list() {
         final List<Menu> menus = menuDao.findAll();
-
         return menus.stream()
                 .map(menu -> toMenuResponse(menu, toMenuProductResponses(menu.getId(), menu.getMenuProducts())))
                 .collect(Collectors.toList());

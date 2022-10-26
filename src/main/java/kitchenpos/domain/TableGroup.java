@@ -26,19 +26,19 @@ public class TableGroup {
         }
     }
 
-    public void updateTablesFull() {
+    public void fillTables() {
         for (final OrderTable table : orderTables) {
             table.changeToFull();
         }
     }
 
-    public void addTableGroupId() {
+    public void placeTableGroupId() {
         for (final OrderTable table : orderTables) {
-            table.updateTableGroupId(id);
+            table.placeTableGroupId(id);
         }
     }
 
-    public void updateOrderTables(final List<OrderTable> orderTables) {
+    public void placeOrderTables(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
     }
 

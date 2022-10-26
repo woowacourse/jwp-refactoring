@@ -19,11 +19,11 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public void updateOrderLineItems(final List<OrderLineItem> orderLineItems) {
+    public void placeOrderLineItems(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
     }
 
-    public void updateOrderStatus(final String orderStatus) {
+    public void placeOrderStatus(final String orderStatus) {
         validateNoCompletion();
         this.orderStatus = orderStatus;
     }

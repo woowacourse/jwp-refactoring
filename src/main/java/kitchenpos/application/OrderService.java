@@ -81,7 +81,7 @@ public class OrderService {
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final ChangeOrderStatusRequest statusRequest) {
         final Order order = orderDao.findById(orderId);
-        order.updateOrderStatus(statusRequest.getOrderStatus().name());
+        order.placeOrderStatus(statusRequest.getOrderStatus().name());
         Order save = orderDao.save(order);
         return toOrderResponse(save);
     }

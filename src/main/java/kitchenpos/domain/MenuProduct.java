@@ -21,7 +21,7 @@ public class MenuProduct {
         this(null, null, productId, quantity, price);
     }
 
-    public void updateMenuId(final Long menuId) {
+    public void placeMenuId(final Long menuId) {
         this.menuId = menuId;
     }
 

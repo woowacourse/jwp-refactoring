@@ -7,9 +7,13 @@ public class Tables {
     private final List<OrderTable> orderTables;
 
     public Tables(List<OrderTable> orderTables) {
+        validate(orderTables);
+        this.orderTables = orderTables;
+    }
+
+    private void validate(List<OrderTable> orderTables){
         validateNoGroupedTable(orderTables);
         validateTableIsEmpty(orderTables);
-        this.orderTables = orderTables;
     }
 
     private void validateTableIsEmpty(List<OrderTable> orderTables) {
