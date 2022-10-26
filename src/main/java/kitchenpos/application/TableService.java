@@ -53,7 +53,7 @@ public class TableService {
 
     private boolean existNotCompletedOrder(Long orderTableId) {
         return orderRepository.existsByOrderTableIdAndOrderStatusIn(
-            orderTableId, List.of(OrderStatus.COOKING, OrderStatus.MEAL)
+            orderTableId, OrderStatus.listInProgress()
         );
     }
 

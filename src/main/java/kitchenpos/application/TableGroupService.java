@@ -24,7 +24,8 @@ public class TableGroupService {
     private final OrderTableRepository orderTableRepository;
     private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(OrderRepository orderRepository, OrderTableRepository orderTableRepository, TableGroupDao tableGroupDao) {
+    public TableGroupService(OrderRepository orderRepository, OrderTableRepository orderTableRepository,
+        TableGroupDao tableGroupDao) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupDao = tableGroupDao;
@@ -33,12 +34,12 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(TableGroupRequest tableGroupRequest) {
         List<Long> orderTableIds = tableGroupRequest.getOrderTableIds();
+        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        validateNotExistTables(orderTableIds, orderTables);
 
-        List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-        validateNotExistTables(orderTableIds, savedOrderTables);
-
-        TableGroup tableGroup = TableGroup.group(savedOrderTables, LocalDateTime.now());
-        tableGroupDao.save(tableGroup);
+        TableGroup tableGroup = tableGroupDao.save(
+            TableGroup.group(orderTables, LocalDateTime.now())
+        );
         return TableGroupResponse.from(tableGroup);
     }
 
@@ -75,7 +76,7 @@ public class TableGroupService {
 
     private boolean existNotCompletedOrder(List<Long> orderTableIds) {
         return orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-            orderTableIds, List.of(OrderStatus.COOKING, OrderStatus.MEAL)
+            orderTableIds, OrderStatus.listInProgress()
         );
     }
 }

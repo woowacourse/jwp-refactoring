@@ -36,13 +36,11 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(MenuRequest menuRequest) {
-        MenuGroup menuGroup = getMenuGroupById(menuRequest.getMenuGroupId());
-        List<MenuProduct> menuProducts = createMenuProducts(menuRequest);
         Menu menu = menuRepository.save(new Menu(
             menuRequest.getName(),
             menuRequest.getPrice(),
-            menuGroup,
-            menuProducts
+            getMenuGroupById(menuRequest.getMenuGroupId()),
+            createMenuProducts(menuRequest)
         ));
         return MenuResponse.from(menu);
     }

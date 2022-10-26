@@ -41,8 +41,10 @@ public class OrderService {
         List<Menu> menus = menuRepository.findAllById(orderRequest.getMenuIds());
         validateMenuExist(orderRequest.getOrderLineItems(), menus);
 
-        OrderTable orderTable = getOrderTableById(orderRequest.getOrderTableId());
-        Order order = orderRepository.save(Order.take(orderTable, createLineItems(orderRequest, menus)));
+        Order order = orderRepository.save(Order.take(
+            getOrderTableById(orderRequest.getOrderTableId()),
+            createLineItems(orderRequest, menus)
+        ));
         return OrderResponse.from(order);
     }
 

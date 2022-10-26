@@ -82,12 +82,12 @@ public class Order {
     }
 
     public void updateStatus(OrderStatus orderStatus) {
-        validateOrderStateComplete(this.orderStatus);
+        validateOrderStateComplete();
         this.orderStatus = orderStatus;
     }
 
-    private void validateOrderStateComplete(OrderStatus orderStatus) {
-        if (OrderStatus.COMPLETION.equals(orderStatus)) {
+    private void validateOrderStateComplete() {
+        if (orderStatus.isCompleted()) {
             throw new IllegalArgumentException("완료 주문은 상태를 변경할 수 없습니다.");
         }
     }
