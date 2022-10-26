@@ -4,6 +4,7 @@ public enum CustomErrorCode {
 
     PRICE_MIN_VALUE_ERROR("가격은 0원 이상이어야 합니다."),
     QUANTITY_NEGATIVE_ERROR("수량은 0개 이상이어야 합니다."),
+    NAME_BLANK_ERROR("이름은 빈칸일 수 없습니다."),
 
     PRODUCT_NOT_FOUND_ERROR("존재하지 않는 상품입니다."),
 

@@ -3,6 +3,8 @@ package kitchenpos.menu.domain;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import kitchenpos.common.exception.CustomErrorCode;
+import kitchenpos.common.exception.DomainLogicException;
 
 @Embeddable
 public class Name {
@@ -14,7 +16,14 @@ public class Name {
     }
 
     public Name(final String value) {
+        validateNotBlank(value);
         this.value = value;
+    }
+
+    private void validateNotBlank(final String value) {
+        if (value.isBlank()) {
+            throw new DomainLogicException(CustomErrorCode.NAME_BLANK_ERROR);
+        }
     }
 
     public String getValue() {

@@ -33,7 +33,7 @@ public class Product {
         this.price = price;
     }
 
-    public Price calculateTotalPrice(final Quantity quantity) {
+    public Price multiplyPriceWith(final Quantity quantity) {
         return price.multiply(quantity);
     }
 

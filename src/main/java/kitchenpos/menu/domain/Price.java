@@ -1,6 +1,7 @@
 package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import kitchenpos.common.exception.CustomErrorCode;
@@ -44,5 +45,22 @@ public class Price {
 
     public BigDecimal getValue() {
         return this.value;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Price price = (Price) o;
+        return Objects.equals(value, price.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
     }
 }

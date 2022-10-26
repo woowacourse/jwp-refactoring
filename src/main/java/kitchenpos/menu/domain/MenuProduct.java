@@ -34,6 +34,6 @@ public class MenuProduct {
     }
 
     public Price calculateTotalPrice() {
-        return this.product.calculateTotalPrice(quantity);
+        return this.product.multiplyPriceWith(quantity);
     }
 }

@@ -18,6 +18,7 @@ import kitchenpos.menu.domain.Quantity;
 public class DomainFixture {
 
     public static final Quantity 한개 = new Quantity(1);
+    public static final Quantity 두개 = new Quantity(2);
     public static final Name 뿌링클_치즈볼 = new Name("뿌링클+치즈볼");
 
     public static final Product 뿌링클 = new Product(new Name("뿌링클"), Price.valueOf(18_000));
