@@ -1,5 +1,9 @@
 package kitchenpos.newdomain;
 
+import kitchenpos.newdomain.vo.Name;
+import kitchenpos.newdomain.vo.Price;
+import kitchenpos.newdomain.vo.Quantity;
+
 public class Product {
 
     private Long id;
@@ -15,5 +19,9 @@ public class Product {
         this.id = id;
         this.name = name;
         this.price = price;
+    }
+
+    public Price calculateTotalPrice(final Quantity quantity) {
+        return price.multiply(quantity);
     }
 }

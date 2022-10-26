@@ -1,4 +1,4 @@
-package kitchenpos.newdomain;
+package kitchenpos.newdomain.vo;
 
 public class Name {
 

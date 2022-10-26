@@ -1,4 +1,4 @@
-package kitchenpos.newdomain;
+package kitchenpos.newdomain.vo;
 
 import java.math.BigDecimal;
 import kitchenpos.exception.CustomErrorCode;
@@ -21,6 +21,18 @@ public class Price {
         if (value.compareTo(BigDecimal.ZERO) < 0) {
             throw new DomainLogicException(CustomErrorCode.PRICE_MIN_VALUE_ERROR);
         }
+    }
+
+    public Price multiply(final Quantity quantity) {
+        return new Price(this.value.multiply(BigDecimal.valueOf(quantity.getValue())));
+    }
+
+    public Price sum(final Price price) {
+        return new Price(this.value.add(price.value));
+    }
+
+    public boolean isGreaterThan(final Price price) {
+        return this.value.compareTo(price.getValue()) > 0;
     }
 
     public BigDecimal getValue() {
