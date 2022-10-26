@@ -1,25 +1,22 @@
 package kitchenpos.service;
 
 import kitchenpos.application.MenuGroupService;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuGroupCreateRequest;
+import kitchenpos.util.FakeMenuGroupDao;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest
-@Sql({"classpath:/truncate.sql", "classpath:/set_up.sql"})
 public class MenuGroupServiceTest {
 
-    @Autowired
-    private MenuGroupService menuGroupService;
+    private final MenuGroupDao menuGroupDao = new FakeMenuGroupDao();
+    private final MenuGroupService menuGroupService = new MenuGroupService(menuGroupDao);
 
     @DisplayName("메뉴 그룹을 생성한다")
     @Test
@@ -41,8 +38,10 @@ public class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹의 리스트를 조회한다")
     @Test
     void list() {
+        menuGroupDao.save(new MenuGroup("test1"));
+        menuGroupDao.save(new MenuGroup("test2"));
         List<MenuGroup> menuGroups = menuGroupService.list();
 
-        assertThat(menuGroups.size()).isEqualTo(3);
+        assertThat(menuGroups.size()).isEqualTo(2);
     }
 }
