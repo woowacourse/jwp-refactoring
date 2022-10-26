@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.DomainCreator.createMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,16 +15,16 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        String menuName = "두마리메뉴";
-        MenuGroup request = createMenuGroup(null, menuName);
+        final String menuName = "두마리메뉴";
+        final MenuGroupCreateRequest request = createMenuGroupCreateRequest(menuName);
 
         // when
-        MenuGroup actual = menuGroupService.create(request);
+        final MenuGroup actual = menuGroupService.create(request);
 
         // then
         assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getName()).isEqualTo(menuName)
+            () -> assertThat(actual.getId()).isNotNull(),
+            () -> assertThat(actual.getName()).isEqualTo(menuName)
         );
     }
 
@@ -35,7 +35,7 @@ class MenuGroupServiceTest extends ServiceTest {
         saveAndGetMenuGroup();
 
         // when
-        List<MenuGroup> actual = menuGroupService.list();
+        final List<MenuGroup> actual = menuGroupService.list();
 
         // then
         assertThat(actual).hasSize(1);

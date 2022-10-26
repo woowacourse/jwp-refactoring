@@ -30,6 +30,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.MenuGroupCreateRequest;
 import kitchenpos.dto.ProductCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -183,5 +184,9 @@ public class ServiceTest {
 
     protected ProductCreateRequest createProductCreateRequest(final BigDecimal price) {
         return new ProductCreateRequest("후라이드", price);
+    }
+
+    public static MenuGroupCreateRequest createMenuGroupCreateRequest(final String name) {
+        return new MenuGroupCreateRequest(name);
     }
 }

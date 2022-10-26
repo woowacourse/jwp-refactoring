@@ -11,6 +11,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.MenuGroupCreateRequest;
 
 public class DomainCreator {
 
@@ -26,11 +27,8 @@ public class DomainCreator {
         return menu;
     }
 
-    public static MenuGroup createMenuGroup(final Long id, final String menuName) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(id);
-        menuGroup.setName(menuName);
-        return menuGroup;
+    public static MenuGroup createMenuGroup(final Long id, final String name) {
+        return new MenuGroup(id, name);
     }
 
     public static Product createProduct(final Long id, final String name, final BigDecimal price) {
