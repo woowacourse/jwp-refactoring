@@ -113,7 +113,7 @@ class TableGroupServiceTest extends IntegrationTest {
         }
 
         @DisplayName("테이블들의 주문들 중 조리, 식사 상태가 있는 경우 예외가 발생한다.")
-        @ParameterizedTest
+        @ParameterizedTest(name = "테이블들의 주문이 {0} 상태인 경우 예외가 발생한다.")
         @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
         void ungroup(OrderStatus orderStatus) {
             orderDao.save(new Order(orderTable1.getId(), orderStatus.name(), LocalDateTime.now(), Collections.emptyList()));

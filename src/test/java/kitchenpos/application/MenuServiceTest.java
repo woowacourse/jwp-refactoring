@@ -40,7 +40,7 @@ public class MenuServiceTest extends IntegrationTest {
         }
 
         @DisplayName("메뉴의 가격이 null 이거나 음수이면 예외가 발생한다.")
-        @ParameterizedTest
+        @ParameterizedTest(name = "메뉴의 가격이 {0} 이면 예외가 발생한다.")
         @NullSource
         @ValueSource(strings = {"-1"})
         void create_Exception_Price(BigDecimal price) {

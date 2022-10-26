@@ -103,7 +103,7 @@ class TableServiceTest extends IntegrationTest {
         }
 
         @DisplayName("주문테이블에서 일어난 주문들 중 상태가 조리, 식사인 주문이 존재할 경우 예외가 발생한다.")
-        @ParameterizedTest
+        @ParameterizedTest(name = "주문테이블에서 일어난 주문들 중 상태가 {0} 인 주문이 존재할 경우 예외가 발생한다.")
         @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
         void changeEmpty_Exception_OrderStatus(OrderStatus orderStatus) {
             orderDao.save(

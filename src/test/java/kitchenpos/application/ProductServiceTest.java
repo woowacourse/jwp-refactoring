@@ -32,7 +32,7 @@ class ProductServiceTest extends IntegrationTest {
     }
 
     @DisplayName("가격이 null 이거나 0미만인 상품은 등록할 수 없다.")
-    @ParameterizedTest
+    @ParameterizedTest(name = "가격이 {0} 인 상품은 등록할 수 없다.")
     @NullSource
     @ValueSource(strings = {"-1"})
     void create_Exception_Price(BigDecimal price) {
