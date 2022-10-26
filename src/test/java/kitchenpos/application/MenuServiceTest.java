@@ -57,8 +57,8 @@ public class MenuServiceTest extends ServiceTest {
             productA = new Product(PRODUCT_A_ID, "상품A", BigDecimal.valueOf(PRODUCT_PRICE));
             productB = new Product(PRODUCT_B_ID, "상품B", BigDecimal.valueOf(PRODUCT_PRICE));
 
-            menuProductA = ClassConstructor.menuProduct(null, MENU_ID, PRODUCT_A_ID, 2);
-            menuProductB = ClassConstructor.menuProduct(null, MENU_ID, PRODUCT_B_ID, 2);
+            menuProductA = new MenuProduct(null, MENU_ID, PRODUCT_A_ID, 2);
+            menuProductB = new MenuProduct(null, MENU_ID, PRODUCT_B_ID, 2);
 
             menu = ClassConstructor.menu(MENU_ID, "메뉴 이름", BigDecimal.valueOf(MENU_PRICE), MENU_GROUP_ID,
                     Arrays.asList(menuProductA, menuProductB));
@@ -136,9 +136,9 @@ public class MenuServiceTest extends ServiceTest {
         void fail_sumIsCheaperThenPrice() {
             //given
             productA = new Product(PRODUCT_A_ID, "상품A", BigDecimal.valueOf(100));
-            menuProductA.setQuantity(1);
+            menuProductA = new MenuProduct(null, MENU_ID, PRODUCT_A_ID, 1);
             productB = new Product(PRODUCT_B_ID, "상품B", BigDecimal.valueOf(100));
-            menuProductB.setQuantity(1);
+            menuProductB = new MenuProduct(null, MENU_ID, PRODUCT_B_ID, 1);
 
             given(productDao.findById(PRODUCT_A_ID))
                     .willReturn(Optional.of(productA));
@@ -146,6 +146,7 @@ public class MenuServiceTest extends ServiceTest {
                     .willReturn(Optional.of(productB));
 
             menu.setPrice(BigDecimal.valueOf(201));
+            menu.setMenuProducts(Arrays.asList(menuProductA, menuProductB));
 
             //when & then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -170,11 +171,11 @@ public class MenuServiceTest extends ServiceTest {
         @DisplayName("전체 메뉴를 조회할 때, 메뉴상품도 같이 조회할 수 있다.")
         void success_getMenuProducts() {
             //given
-            menuProductA = ClassConstructor.menuProduct(null, MENU_ID, PRODUCT_A_ID, 2);
-            menuProductB = ClassConstructor.menuProduct(null, MENU_ID, PRODUCT_B_ID, 2);
+            menuProductA = new MenuProduct(null, MENU_ID, PRODUCT_A_ID, 2);
+            menuProductB = new MenuProduct(null, MENU_ID, PRODUCT_B_ID, 2);
 
-            menu = ClassConstructor.menu(MENU_ID, "메뉴 이름", BigDecimal.valueOf(MENU_PRICE), MENU_GROUP_ID,
-                    Arrays.asList(menuProductA, menuProductB));
+//            menu = ClassConstructor.menu(MENU_ID, "메뉴 이름", BigDecimal.valueOf(MENU_PRICE), MENU_GROUP_ID,
+//                    Arrays.asList(menuProductA, menuProductB));
 
             given(menuProductDao.findAllByMenuId(1L))
                     .willReturn(Arrays.asList(menuProductA, menuProductB));

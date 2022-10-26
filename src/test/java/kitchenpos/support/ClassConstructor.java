@@ -12,15 +12,6 @@ import kitchenpos.domain.TableGroup;
 
 public class ClassConstructor {
 
-    public static MenuProduct menuProduct(Long seq, Long menuId, Long productId, long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setSeq(seq);
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
-    }
-
     public static Menu menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         Menu menu = new Menu();
         menu.setId(id);
