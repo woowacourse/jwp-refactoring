@@ -26,7 +26,7 @@ class ProductServiceTest {
         Product product = new Product("맥도날드 페페로니 피자 버거", new BigDecimal(7_300));
 
         Product actual = productService.create(product);
-        assertThat(actual).isExactlyInstanceOf(Long.class);
+        assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
     }
 
     @Test

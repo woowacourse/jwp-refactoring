@@ -47,7 +47,7 @@ class OrderServiceTest {
         Order order = new Order(savedTable.getId(), List.of(new OrderLineItem(1L, 메뉴를_저장한다().getId(), 1)));
 
         Order actual = orderService.create(order);
-        assertThat(actual).isExactlyInstanceOf(Long.class);
+        assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
     }
 
     @Test

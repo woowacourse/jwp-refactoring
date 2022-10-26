@@ -45,7 +45,7 @@ class TableServiceTest {
         OrderTable orderTable = new OrderTable(null, 0, true);
 
         OrderTable actual = tableService.create(orderTable);
-        assertThat(actual).isExactlyInstanceOf(Long.class);
+        assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
     }
 
     @Test

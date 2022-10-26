@@ -47,7 +47,7 @@ class TableGroupServiceTest {
         TableGroup tableGroup = new TableGroup(null, List.of(빈테이블을_생성한다(), 빈테이블을_생성한다()));
 
         TableGroup actual = tableGroupService.create(tableGroup);
-        assertThat(actual).isExactlyInstanceOf(Long.class);
+        assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
     }
 
     @Test
