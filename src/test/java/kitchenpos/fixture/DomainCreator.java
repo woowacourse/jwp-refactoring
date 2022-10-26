@@ -14,9 +14,9 @@ import kitchenpos.domain.TableGroup;
 
 public class DomainCreator {
 
-    public static Menu createMenu(Long id, String name, BigDecimal price, Long menuGroupId,
-                                  List<MenuProduct> menuProducts) {
-        Menu menu = new Menu();
+    public static Menu createMenu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
+        final List<MenuProduct> menuProducts) {
+        final Menu menu = new Menu();
         menu.setId(id);
         menu.setName(name);
         menu.setPrice(price);
@@ -26,24 +26,20 @@ public class DomainCreator {
         return menu;
     }
 
-    public static MenuGroup createMenuGroup(Long id, String menuName) {
-        MenuGroup menuGroup = new MenuGroup();
+    public static MenuGroup createMenuGroup(final Long id, final String menuName) {
+        final MenuGroup menuGroup = new MenuGroup();
         menuGroup.setId(id);
         menuGroup.setName(menuName);
         return menuGroup;
     }
 
-    public static Product createProduct(Long id, String name, BigDecimal price) {
-        Product product = new Product();
-        product.setId(id);
-        product.setName(name);
-        product.setPrice(price);
-
-        return product;
+    public static Product createProduct(final Long id, final String name, final BigDecimal price) {
+        return new Product(id, name, price);
     }
 
-    public static MenuProduct createMenuProduct(Long id, Long menuId, Long productId, int quantity) {
-        MenuProduct menuProduct = new MenuProduct();
+    public static MenuProduct createMenuProduct(final Long id, final Long menuId, final Long productId,
+        final int quantity) {
+        final MenuProduct menuProduct = new MenuProduct();
         menuProduct.setSeq(id);
         menuProduct.setMenuId(menuId);
         menuProduct.setProductId(productId);
@@ -52,8 +48,9 @@ public class DomainCreator {
         return menuProduct;
     }
 
-    public static OrderTable createOrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
-        OrderTable orderTable = new OrderTable();
+    public static OrderTable createOrderTable(final Long id, final Long tableGroupId, final int numberOfGuests,
+        final boolean empty) {
+        final OrderTable orderTable = new OrderTable();
         orderTable.setId(id);
         orderTable.setTableGroupId(tableGroupId);
         orderTable.setNumberOfGuests(numberOfGuests);
@@ -62,8 +59,8 @@ public class DomainCreator {
         return orderTable;
     }
 
-    public static TableGroup createTableGroup(Long id, List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
+    public static TableGroup createTableGroup(final Long id, final List<OrderTable> orderTables) {
+        final TableGroup tableGroup = new TableGroup();
         tableGroup.setId(id);
         tableGroup.setCreatedDate(LocalDateTime.now());
         tableGroup.setOrderTables(orderTables);
@@ -71,23 +68,25 @@ public class DomainCreator {
         return tableGroup;
     }
 
-    public static Order createOrder(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
-                                    List<OrderLineItem> orderLineItems) {
-        Order order = new Order();
+    public static Order createOrder(final Long id, final Long orderTableId, final String orderStatus,
+        final LocalDateTime orderedTime,
+        final List<OrderLineItem> orderLineItems) {
+        final Order order = new Order();
         order.setId(id);
         order.setOrderTableId(orderTableId);
         order.setOrderStatus(orderStatus);
         order.setOrderedTime(orderedTime);
         order.setOrderLineItems(orderLineItems);
         orderLineItems
-                .forEach(it -> it.setOrderId(id));
+            .forEach(it -> it.setOrderId(id));
         order.setOrderLineItems(orderLineItems);
 
         return order;
     }
 
-    public static OrderLineItem createOrderLineItem(Long seq, Long orderId, Long menuId, int quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
+    public static OrderLineItem createOrderLineItem(final Long seq, final Long orderId, final Long menuId,
+        final int quantity) {
+        final OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setSeq(seq);
         orderLineItem.setOrderId(orderId);
         orderLineItem.setMenuId(menuId);
