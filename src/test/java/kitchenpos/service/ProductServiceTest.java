@@ -1,13 +1,12 @@
 package kitchenpos.service;
 
 import kitchenpos.application.ProductService;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductCreateRequest;
+import kitchenpos.util.FakeProductDao;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
@@ -15,12 +14,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@SpringBootTest
-@Sql({"classpath:/truncate.sql", "classpath:/set_up.sql"})
 public class ProductServiceTest {
 
-    @Autowired
-    private ProductService productService;
+    private final ProductDao productDao = new FakeProductDao();
+    private final ProductService productService = new ProductService(productDao);
     @DisplayName("제품을 생성한다")
     @Test
     void create() {
@@ -52,8 +49,10 @@ public class ProductServiceTest {
     @DisplayName("제품 목록을 조회한다")
     @Test
     void list() {
+        productDao.save(new Product("test1", 1L));
+        productDao.save(new Product("test2", 1L));
         List<Product> products = productService.list();
 
-        assertThat(products.size()).isEqualTo(5);
+        assertThat(products.size()).isEqualTo(2);
     }
 }
