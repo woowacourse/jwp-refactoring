@@ -26,7 +26,7 @@ class ProductServiceTest {
         }
 
         @Test
-        void 요청에서_가격이_없을_경우_예외가_발생한다() {
+        void 요청에서_가격이_음수일_경우_예외가_발생한다() {
             // given
             Product product = new Product("짜장면", BigDecimal.valueOf(-1));
 
