@@ -31,8 +31,7 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void Should_CreateProduct() {
             // given
-            Product product = new ProductRequestBuilder()
-                    .build();
+            Product product = new ProductRequestBuilder().build();
 
             // when
             Product actual = productService.create(product);
@@ -89,9 +88,7 @@ class ProductServiceTest extends ServiceTest {
             List<Product> actual = productService.list();
 
             // then
-            assertAll(() -> {
-                assertThat(actual).hasSize(expected);
-            });
+            assertThat(actual).hasSize(expected);
         }
     }
 }

@@ -1,16 +1,11 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixtures.domain.MenuGroupFixture.createMenuGroup;
 import static kitchenpos.fixtures.domain.MenuProductFixture.createMenuProduct;
-import static kitchenpos.fixtures.domain.ProductFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -27,21 +22,13 @@ class MenuServiceTest extends ServiceTest {
     @Autowired
     private MenuService menuService;
 
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private ProductDao productDao;
-
-    private MenuGroup menuGroup;
-    private Product product;
-    private MenuProduct menuProduct;
+    private MenuGroup savedMenuGroup;
+    private Product savedProduct;
 
     @BeforeEach
     void setUp() {
-        this.menuGroup = menuGroupDao.save(createMenuGroup("세트 메뉴"));
-        this.product = productDao.save(createProduct("짜장면", new BigDecimal(30_000)));
-        this.menuProduct = createMenuProduct(product.getId(), 10L);
+        savedMenuGroup = saveMenuGroup("메뉴 그룹");
+        savedProduct = saveProduct("상품", 100_000);
     }
 
     @DisplayName("create 메소드는 ")
@@ -52,10 +39,12 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_CreateMenu() {
             // given
+            MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
+
             Menu menu = new MenuRequestBuilder()
                     .name("세트1")
                     .price(20_000)
-                    .menuGroupId(menuGroup.getId())
+                    .menuGroupId(savedMenuGroup.getId())
                     .menuProducts(menuProduct)
                     .build();
 
@@ -73,9 +62,11 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_PriceOfMenuIsNull() {
             // given
+            MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
+
             Menu menu = new MenuRequestBuilder()
                     .price(null)
-                    .menuGroupId(menuGroup.getId())
+                    .menuGroupId(savedMenuGroup.getId())
                     .menuProducts(menuProduct)
                     .build();
 
@@ -84,12 +75,15 @@ class MenuServiceTest extends ServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
+
         @DisplayName("메뉴의 메뉴 그룹이 존재하지 않는다면 IAE를 던진다.")
         @Test
         void Should_ThrowIAE_When_MenuGroupDoesNotExist() {
             // given
+            MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
+
             Menu menu = new MenuRequestBuilder()
-                    .menuGroupId(menuGroup.getId() + 1)
+                    .menuGroupId(savedMenuGroup.getId() + 1)
                     .menuProducts(menuProduct)
                     .build();
 
@@ -102,9 +96,10 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_ProductDoesNotExistInMenuProductList() {
             // given
-            MenuProduct notSavedMenuProduct = createMenuProduct(product.getId() + 1, 1L);
+            MenuProduct notSavedMenuProduct = createMenuProduct(savedProduct.getId() + 1, 1L);
+
             Menu menu = new MenuRequestBuilder()
-                    .menuGroupId(menuGroup.getId())
+                    .menuGroupId(savedMenuGroup.getId())
                     .menuProducts(notSavedMenuProduct)
                     .build();
 
@@ -117,9 +112,11 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_MenuPriceIsBiggerThanSumOfProductOfProductPriceAndQuantity() {
             // given
+            MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
+
             Menu menu = new MenuRequestBuilder()
                     .price(1_000_000)
-                    .menuGroupId(menuGroup.getId())
+                    .menuGroupId(savedMenuGroup.getId())
                     .menuProducts(menuProduct)
                     .build();
 
@@ -137,6 +134,11 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ReturnAllMenuList() {
             // given
+            MenuGroup menuGroup = saveMenuGroup("메뉴 그룹");
+
+            Product product = saveProduct("상품", 1_000_000);
+            MenuProduct menuProduct = createMenuProduct(product.getId(), 1L);
+
             int expected = 4;
             for (int i = 0; i < expected; i++) {
                 Menu menu = new MenuRequestBuilder()

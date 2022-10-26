@@ -39,14 +39,13 @@ class TableGroupServiceTest extends ServiceTest {
     @Autowired
     private OrderDao orderDao;
 
-    private List<OrderTable> orderTables;
+    private OrderTable orderTable1;
+    private OrderTable orderTable2;
 
     @BeforeEach
     void setUp() {
-        this.orderTables = List.of(
-                orderTableDao.save(createOrderTable(10, true)),
-                orderTableDao.save(createOrderTable(10, true))
-        );
+        orderTable1 = saveOrderTable(10, true);
+        orderTable2 = saveOrderTable(10, true);
     }
 
     @DisplayName("create 메소드는")
@@ -57,17 +56,17 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_CreateTableGroup() {
             // given
-            TableGroup tableGroup = new TableGroupRequestBuilder()
-                    .addOrderTables(orderTables)
+            TableGroup request = new TableGroupRequestBuilder()
+                    .addOrderTables(orderTable1, orderTable2)
                     .build();
 
             // when
-            TableGroup actual = tableGroupService.create(tableGroup);
+            TableGroup actual = tableGroupService.create(request);
 
             // then
             assertAll(() -> {
-                assertThat(tableGroup.getCreatedDate()).isEqualTo(actual.getCreatedDate());
-                assertThat(tableGroup.getOrderTables()).hasSize(actual.getOrderTables().size());
+                assertThat(request.getCreatedDate()).isEqualTo(actual.getCreatedDate());
+                assertThat(request.getOrderTables()).hasSize(actual.getOrderTables().size());
             });
         }
 
@@ -75,10 +74,10 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTablesIsEmpty() {
             // given
-            TableGroup tableGroup = new TableGroupRequestBuilder().build();
+            TableGroup request = new TableGroupRequestBuilder().build();
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -86,12 +85,12 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTablesSizeIsLessThan2() {
             // given
-            TableGroup tableGroup = new TableGroupRequestBuilder()
-                    .addOrderTables(orderTables.get(0))
+            TableGroup request = new TableGroupRequestBuilder()
+                    .addOrderTables(orderTable1)
                     .build();
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -101,12 +100,12 @@ class TableGroupServiceTest extends ServiceTest {
             // given
             OrderTable notSavedTable1 = createOrderTable(10, true);
             OrderTable notSavedTable2 = createOrderTable(15, true);
-            TableGroup tableGroup = new TableGroupRequestBuilder()
+            TableGroup request = new TableGroupRequestBuilder()
                     .addOrderTables(notSavedTable1, notSavedTable2)
                     .build();
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -114,14 +113,14 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_TableIsNotEmpty() {
             // given
-            OrderTable orderTable1 = orderTableDao.save(createOrderTable(10, true));
-            OrderTable orderTable2 = orderTableDao.save(createOrderTable(10, false));
-            TableGroup tableGroup = new TableGroupRequestBuilder()
-                    .addOrderTables(orderTable1, orderTable2)
+            OrderTable emptyOrderTable = saveOrderTable(10, true);
+            OrderTable notEmptyOrderTable = saveOrderTable(10, false);
+            TableGroup request = new TableGroupRequestBuilder()
+                    .addOrderTables(emptyOrderTable, notEmptyOrderTable)
                     .build();
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -129,9 +128,6 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableHasTableGroup() {
             // given
-            OrderTable orderTable1 = orderTableDao.save(createOrderTable(10, true));
-            OrderTable orderTable2 = orderTableDao.save(createOrderTable(10, true));
-
             TableGroup request = new TableGroupRequestBuilder()
                     .addOrderTables(orderTable1, orderTable2)
                     .build();
@@ -152,7 +148,8 @@ class TableGroupServiceTest extends ServiceTest {
         void Should_Ungroup() {
             // given
             TableGroup request = new TableGroupRequestBuilder()
-                    .addOrderTables(orderTables).build();
+                    .addOrderTables(orderTable1, orderTable2)
+                    .build();
             TableGroup tableGroup = tableGroupService.create(request);
 
             // when
@@ -162,10 +159,7 @@ class TableGroupServiceTest extends ServiceTest {
             assertAll(() -> {
                 assertThat(tableGroupDao.findById(tableGroup.getId())).isNotEmpty();
                 assertThat(orderTableDao.findAll())
-                        .allMatch(orderTable -> Objects.isNull(orderTable.getTableGroupId()));
-                List<OrderTable> all = orderTableDao.findAll();
-                System.out.println("all = " + all);
-                assertThat(all)
+                        .allMatch(orderTable -> Objects.isNull(orderTable.getTableGroupId()))
                         .allMatch(orderTable -> !orderTable.isEmpty());
             });
         }
@@ -181,11 +175,11 @@ class TableGroupServiceTest extends ServiceTest {
             orderDao.save(createOrder(orderTable1.getId(), orderStatus, LocalDateTime.now(), List.of()));
             orderDao.save(createOrder(orderTable1.getId(), OrderStatus.COMPLETION, LocalDateTime.now(), List.of()));
 
-            TableGroup tableGroup = tableGroupService.create(
+            TableGroup request = tableGroupService.create(
                     createTableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+            assertThatThrownBy(() -> tableGroupService.ungroup(request.getId()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

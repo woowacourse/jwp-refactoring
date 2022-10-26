@@ -1,17 +1,12 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixtures.domain.MenuFixture.createMenu;
-import static kitchenpos.fixtures.domain.MenuGroupFixture.createMenuGroup;
 import static kitchenpos.fixtures.domain.MenuProductFixture.createMenuProduct;
 import static kitchenpos.fixtures.domain.OrderFixture.createOrder;
 import static kitchenpos.fixtures.domain.OrderLineItemFixture.createOrderLineItem;
-import static kitchenpos.fixtures.domain.OrderTableFixture.createOrderTable;
-import static kitchenpos.fixtures.domain.ProductFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
@@ -21,7 +16,6 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -56,22 +50,23 @@ class OrderServiceTest extends ServiceTest {
     @Autowired
     private MenuDao menuDao;
 
-    private Menu menu;
-    private OrderTable orderTable;
-    private OrderLineItem orderLineItem;
-    private Order order;
+    private OrderTable savedOrderTable;
+    private MenuGroup savedMenuGroup;
+    private Product savedProduct;
+    private Menu savedMenu;
+
+    private OrderLineItem createdOrderLineItem;
 
     @BeforeEach
     void setUp() {
-        Product product = productDao.save(createProduct("짜장면", new BigDecimal(15_000)));
-        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup("중식"));
-        MenuProduct menuProduct = createMenuProduct(product.getId(), 1L);
+        savedOrderTable = saveOrderTable(10, false);
+        savedMenuGroup = saveMenuGroup("메뉴 그룹");
+        savedProduct = saveProduct("상품", 5_000);
+        savedMenu = saveMenu("메뉴", 10_000, savedMenuGroup, List.of(
+                createMenuProduct(savedProduct.getId(), 10)
+        ));
+        createdOrderLineItem = createOrderLineItem(savedMenu.getId(), 10);
 
-        this.menu = menuDao.save(createMenu("세트1", new BigDecimal(10_000), menuGroup.getId(), List.of(menuProduct)));
-        this.orderLineItem = createOrderLineItem(menu.getId(), 1L);
-        this.orderTable = orderTableDao.save(createOrderTable(1, false));
-        this.order = orderDao.save(
-                createOrder(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), List.of(orderLineItem)));
     }
 
     @DisplayName("create 메소드는")
@@ -83,8 +78,8 @@ class OrderServiceTest extends ServiceTest {
         void Should_CreateOrder() {
             // given
             Order order = new OrderRequestBuilder()
-                    .orderTableId(orderTable.getId())
-                    .addOrderLineItem(orderLineItem)
+                    .orderTableId(savedOrderTable.getId())
+                    .addOrderLineItem(createdOrderLineItem)
                     .build();
 
             // when
@@ -102,7 +97,7 @@ class OrderServiceTest extends ServiceTest {
         void Should_ThrowIAE_When_OrderLineItemsIsEmpty() {
             // given
             Order order = new OrderRequestBuilder()
-                    .orderTableId(orderTable.getId())
+                    .orderTableId(savedOrderTable.getId())
                     .build();
 
             // when & then
@@ -114,9 +109,10 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_MenuDoesNotExist() {
             // given
-            OrderLineItem orderLineItemHasNotSavedMenu = createOrderLineItem(menu.getId() + 1, 1L);
+            OrderLineItem orderLineItemHasNotSavedMenu = createOrderLineItem(savedMenu.getId() + 1, 1L);
+
             Order order = new OrderRequestBuilder()
-                    .orderTableId(orderTable.getId())
+                    .orderTableId(savedOrderTable.getId())
                     .addOrderLineItem(orderLineItemHasNotSavedMenu)
                     .build();
 
@@ -129,10 +125,9 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableDoesNotExist() {
             // given
-            long notSavedOrderTableId = orderTable.getId() + 1;
             Order order = new OrderRequestBuilder()
-                    .orderTableId(notSavedOrderTableId)
-                    .addOrderLineItem(orderLineItem)
+                    .orderTableId(savedOrderTable.getId() + 1)
+                    .addOrderLineItem(createdOrderLineItem)
                     .build();
 
             // when & then
@@ -144,10 +139,11 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableIsEmpty() {
             // given
-            OrderTable emptyTable = orderTableDao.save(createOrderTable(1, true));
+            OrderTable emptyOrderTable = saveOrderTable(10, true);
+
             Order order = new OrderRequestBuilder()
-                    .orderTableId(emptyTable.getId())
-                    .addOrderLineItem(orderLineItem)
+                    .orderTableId(emptyOrderTable.getId())
+                    .addOrderLineItem(createdOrderLineItem)
                     .build();
 
             // when & then
@@ -166,8 +162,8 @@ class OrderServiceTest extends ServiceTest {
             // given
             int expected = 3;
             for (int i = 0; i < expected; i++) {
-                Order order = createOrder(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
-                        List.of(orderLineItem));
+                Order order = createOrder(savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
+                        List.of(createdOrderLineItem));
                 orderDao.save(order);
             }
 
@@ -175,7 +171,7 @@ class OrderServiceTest extends ServiceTest {
             List<Order> actual = orderService.list();
 
             // then
-            assertThat(actual).hasSize(expected + 1); // TODO: @BeforeEach에 영향받는 assertion
+            assertThat(actual).hasSize(expected);
         }
     }
 
@@ -188,16 +184,16 @@ class OrderServiceTest extends ServiceTest {
         @ParameterizedTest
         void Should_ChangeOrderStatus(final String after) {
             // given
-            Order oldOrder = createOrder(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
-                    List.of(orderLineItem));
-            orderDao.save(oldOrder);
+            Order oldOrder = orderDao.save(
+                    createOrder(savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
+                            List.of(createdOrderLineItem)));
 
-            Order orderRequest = new OrderRequestBuilder()
+            Order request = new OrderRequestBuilder()
                     .orderStatus(after)
                     .build();
 
             // when
-            Order actual = orderService.changeOrderStatus(order.getId(), orderRequest);
+            Order actual = orderService.changeOrderStatus(oldOrder.getId(), request);
 
             // then
             assertThat(actual.getOrderStatus()).isEqualTo(after);
@@ -207,7 +203,11 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderDoesNotExist() {
             // given
-            Order orderRequest = new OrderRequestBuilder().build();
+            Order order = orderDao.save(createOrder(savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
+                    List.of(createdOrderLineItem)));
+
+            Order orderRequest = new OrderRequestBuilder()
+                    .build();
 
             // when & then
             assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId() + 1, orderRequest))
@@ -218,15 +218,16 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderStatusIsCompletion() {
             // given
-            Order order = orderDao.save(createOrder(orderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
-                    List.of(orderLineItem)));
+            Order completionOrder = orderDao.save(
+                    createOrder(savedOrderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
+                            List.of(createdOrderLineItem)));
 
             Order request = new OrderRequestBuilder()
                     .orderStatus(OrderStatus.COOKING)
                     .build();
 
             // when & then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), request))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(completionOrder.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
