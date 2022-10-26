@@ -2,6 +2,11 @@ package kitchenpos.domain;
 
 public class OrderLineItem {
 
+    private Long seq;
+    private Long orderId;
+    private Long menuId;
+    private long quantity;
+
     public OrderLineItem() {
     }
 
@@ -9,11 +14,6 @@ public class OrderLineItem {
         this.menuId = menuId;
         this.quantity = quantity;
     }
-
-    private Long seq;
-    private Long orderId;
-    private Long menuId;
-    private long quantity;
 
     public Long getSeq() {
         return seq;
