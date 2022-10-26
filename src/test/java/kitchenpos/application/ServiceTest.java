@@ -33,7 +33,9 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuGroupCreateRequest;
 import kitchenpos.dto.MenuProductCreateRequest;
+import kitchenpos.dto.OrderTableIdRequest;
 import kitchenpos.dto.ProductCreateRequest;
+import kitchenpos.dto.TableGroupCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -199,8 +201,14 @@ public class ServiceTest {
             "후라이드", price, saveAndGetMenuGroup().getId(), menuProducts);
     }
 
-    public static MenuCreateRequest createMenuCreateRequest(final String name, final BigDecimal price,
+    public static MenuCreateRequest createMenuCreateRequest(final String name,
+        final BigDecimal price,
         final Long menuGroupId, final List<MenuProductCreateRequest> menuProducts) {
         return new MenuCreateRequest(name, price, menuGroupId, menuProducts);
+    }
+
+    public TableGroupCreateRequest createTableGroupCreateRequest(
+        final List<OrderTableIdRequest> orderTableIdRequest) {
+        return new TableGroupCreateRequest(orderTableIdRequest);
     }
 }

@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.DomainCreator.createTableGroup;
 import static kitchenpos.fixture.TableFixture.빈_테이블_1번;
 import static kitchenpos.fixture.TableFixture.빈_테이블_2번;
 import static kitchenpos.fixture.TableGroupFixture.createTableGroup;
@@ -10,6 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableIdRequest;
+import kitchenpos.dto.TableGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -19,18 +20,23 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        OrderTable orderTable1 = orderTableDao.save(빈_테이블_1번);
-        OrderTable orderTable2 = orderTableDao.save(빈_테이블_2번);
+        final OrderTable orderTable1 = orderTableDao.save(빈_테이블_1번);
+        final OrderTable orderTable2 = orderTableDao.save(빈_테이블_2번);
+        final OrderTableIdRequest orderTableIdRequest1 = new OrderTableIdRequest(
+            orderTable1.getId());
+        final OrderTableIdRequest orderTableIdRequest2 = new OrderTableIdRequest(
+            orderTable2.getId());
 
-        TableGroup request = createTableGroup(null, List.of(orderTable1, orderTable2));
+        final TableGroupCreateRequest request = createTableGroupCreateRequest(
+            List.of(orderTableIdRequest1, orderTableIdRequest2));
 
         // when
-        TableGroup actual = tableGroupService.create(request);
+        final TableGroup actual = tableGroupService.create(request);
 
         // then
         assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getOrderTables()).hasSize(2)
+            () -> assertThat(actual.getId()).isNotNull(),
+            () -> assertThat(actual.getOrderTables()).hasSize(2)
         );
     }
 
@@ -38,28 +44,28 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void ungroup() {
         // given
-        OrderTable orderTable1 = orderTableDao.save(빈_테이블_1번);
-        OrderTable orderTable2 = orderTableDao.save(빈_테이블_2번);
+        final OrderTable orderTable1 = orderTableDao.save(빈_테이블_1번);
+        final OrderTable orderTable2 = orderTableDao.save(빈_테이블_2번);
 
-        TableGroup tableGroup = saveTableGroup(orderTable1, orderTable2);
+        final TableGroup tableGroup = saveTableGroup(orderTable1, orderTable2);
 
         // when
         tableGroupService.ungroup(tableGroup.getId());
 
         // then
-        OrderTable actual1 = orderTableDao.findById(orderTable1.getId()).orElseThrow();
-        OrderTable actual2 = orderTableDao.findById(orderTable2.getId()).orElseThrow();
+        final OrderTable actual1 = orderTableDao.findById(orderTable1.getId()).orElseThrow();
+        final OrderTable actual2 = orderTableDao.findById(orderTable2.getId()).orElseThrow();
         assertAll(
-                () -> assertThat(actual1.getTableGroupId()).isNull(),
-                () -> assertThat(actual1.isEmpty()).isFalse(),
-                () -> assertThat(actual2.getTableGroupId()).isNull(),
-                () -> assertThat(actual2.isEmpty()).isFalse()
+            () -> assertThat(actual1.getTableGroupId()).isNull(),
+            () -> assertThat(actual1.isEmpty()).isFalse(),
+            () -> assertThat(actual2.getTableGroupId()).isNull(),
+            () -> assertThat(actual2.isEmpty()).isFalse()
         );
     }
 
-    private TableGroup saveTableGroup(OrderTable... orderTables) {
-        TableGroup tableGroup = tableGroupDao.save(createTableGroup(1L, orderTables));
-        for (OrderTable orderTable : orderTables) {
+    private TableGroup saveTableGroup(final OrderTable... orderTables) {
+        final TableGroup tableGroup = tableGroupDao.save(createTableGroup(1L, orderTables));
+        for (final OrderTable orderTable : orderTables) {
             orderTable.setTableGroupId(tableGroup.getId());
             orderTableDao.save(orderTable);
         }

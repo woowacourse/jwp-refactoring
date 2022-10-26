@@ -35,7 +35,7 @@ public class DomainCreator {
     public static OrderTable createOrderTable(final Long id, final Long tableGroupId,
         final int numberOfGuests,
         final boolean empty) {
-        final OrderTable orderTable = new OrderTable();
+        final OrderTable orderTable = new OrderTable(id, tableGroupId, numberOfGuests, empty);
         orderTable.setId(id);
         orderTable.setTableGroupId(tableGroupId);
         orderTable.setNumberOfGuests(numberOfGuests);
@@ -45,12 +45,7 @@ public class DomainCreator {
     }
 
     public static TableGroup createTableGroup(final Long id, final List<OrderTable> orderTables) {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(id);
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        tableGroup.setOrderTables(orderTables);
-
-        return tableGroup;
+        return new TableGroup(id, LocalDateTime.now(), orderTables);
     }
 
     public static Order createOrder(final Long id, final Long orderTableId,
