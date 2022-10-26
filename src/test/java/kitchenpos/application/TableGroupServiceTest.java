@@ -34,7 +34,7 @@ class TableGroupServiceTest {
     private final TableGroupService tableGroupService;
 
     @Autowired
-    public TableGroupServiceTest() {
+    private TableGroupServiceTest() {
         this.orderDao = new FakeOrderDao();
         this.orderTableDao = new FakeOrderTableDao();
         this.tableGroupDao = new FakeTableGroupDao();

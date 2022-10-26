@@ -24,7 +24,7 @@ class ProductServiceTest {
     private final ProductDao productDao;
     private final ProductService productService;
 
-    ProductServiceTest() {
+    private ProductServiceTest() {
         this.productDao = new FakeProductDao();
         this.productService = new ProductService(productDao);
     }

@@ -39,7 +39,7 @@ class MenuServiceTest {
     private final MenuService menuService;
 
     @Autowired
-    public MenuServiceTest() {
+    private MenuServiceTest() {
         this.menuDao = new FakeMenuDao();
         this.menuGroupDao = new FakeMenuGroupDao();
         this.menuProductDao = new FakeMenuProductDao();

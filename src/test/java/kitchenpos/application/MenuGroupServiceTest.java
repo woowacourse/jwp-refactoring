@@ -13,12 +13,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class MenuGroupServiceTest {
 
-    private final MenuGroupDao menuGroupDao = new FakeMenuGroupDao();
-    private final MenuGroupService menuGroupService = new MenuGroupService(menuGroupDao);
+    private final MenuGroupDao menuGroupDao;
+    private final MenuGroupService menuGroupService;
+
+    @Autowired
+    private MenuGroupServiceTest() {
+        this.menuGroupDao = new FakeMenuGroupDao();
+        this.menuGroupService = new MenuGroupService(menuGroupDao);
+    }
 
     @BeforeEach
     void setUp() {

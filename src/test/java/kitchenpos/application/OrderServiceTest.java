@@ -50,7 +50,7 @@ class OrderServiceTest {
     private final OrderService orderService;
 
     @Autowired
-    public OrderServiceTest() {
+    private OrderServiceTest() {
         this.menuGroupDao = new FakeMenuGroupDao();
         this.productDao = new FakeProductDao();
         this.menuDao = new FakeMenuDao();
