@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.MenuGroupDtoMapper;
 import kitchenpos.ui.dto.MenuGroupMapper;
 import kitchenpos.ui.dto.request.MenuGroupCreateRequest;
 import kitchenpos.ui.dto.response.MenuGroupCreateResponse;
@@ -18,10 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class MenuGroupRestController {
 
     private final MenuGroupMapper menuGroupMapper;
+    private final MenuGroupDtoMapper menuGroupDtoMapper;
     private final MenuGroupService menuGroupService;
 
-    public MenuGroupRestController(final MenuGroupMapper menuGroupMapper, final MenuGroupService menuGroupService) {
+    public MenuGroupRestController(final MenuGroupMapper menuGroupMapper, final MenuGroupDtoMapper menuGroupDtoMapper,
+                                   final MenuGroupService menuGroupService) {
         this.menuGroupMapper = menuGroupMapper;
+        this.menuGroupDtoMapper = menuGroupDtoMapper;
         this.menuGroupService = menuGroupService;
     }
 
@@ -29,7 +33,7 @@ public class MenuGroupRestController {
     public ResponseEntity<MenuGroupCreateResponse> create(
             @RequestBody final MenuGroupCreateRequest menuGroupCreateRequest) {
         MenuGroup menuGroup = menuGroupMapper.createRequestToMenuGroup(menuGroupCreateRequest);
-        MenuGroupCreateResponse created = menuGroupMapper.menuGroupToCreateResponse(
+        MenuGroupCreateResponse created = menuGroupDtoMapper.menuGroupToCreateResponse(
                 menuGroupService.create(menuGroup)
         );
         URI uri = URI.create("/api/menu-groups/" + created.getId());
@@ -38,7 +42,7 @@ public class MenuGroupRestController {
 
     @GetMapping("/api/menu-groups")
     public ResponseEntity<List<MenuGroupResponse>> list() {
-        List<MenuGroupResponse> menuGroupResponses = menuGroupMapper.menuGroupsToResponses(
+        List<MenuGroupResponse> menuGroupResponses = menuGroupDtoMapper.menuGroupsToResponses(
                 menuGroupService.list()
         );
         return ResponseEntity.ok().body(menuGroupResponses);
