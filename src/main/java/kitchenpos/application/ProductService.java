@@ -22,13 +22,13 @@ public class ProductService {
         final BigDecimal price = product.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("가격이 올바르지 않습니다.");
         }
 
         return productDao.save(product);
     }
 
-    public List<Product> list() {
+    public List<Product> findAll() {
         return productDao.findAll();
     }
 }
