@@ -90,15 +90,6 @@ class MenuServiceTest {
         }
 
         @Test
-        void 개별_상품을_따로_판매할_때에_비해_가격이_높은_경우_예외발생() {
-            CreateMenuDto menu = new CreateMenuDto("후라이드+후라이드", BigDecimal.valueOf(999999999), 1L,
-                    List.of(new CreateMenuProductDto(1L, 2)));
-
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         void 메뉴를_구성하는_개별_상품에_대한_정보가_누락된_경우_예외발생() {
             CreateMenuDto menu = new CreateMenuDto("후라이드+후라이드", BigDecimal.valueOf(19000), 1L, List.of());
 
