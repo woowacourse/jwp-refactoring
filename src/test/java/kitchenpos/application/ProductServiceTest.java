@@ -42,7 +42,7 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void 상품_전체를_조회한다() {
         // given
-        final Product expected = productDao.save(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
+        final Product expected = 상품을_저장한다(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
 
         // when
         final List<Product> actual = productService.list();

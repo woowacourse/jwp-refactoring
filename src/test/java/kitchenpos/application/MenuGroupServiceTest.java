@@ -26,7 +26,7 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void 테이블_그룹_전체를_조회한다() {
         // given
-        final MenuGroup expected = menuGroupDao.save(메뉴_그룹_생성("테스트-메뉴-그룹"));
+        final MenuGroup expected = 메뉴_그룹을_저장한다(메뉴_그룹_생성("테스트-메뉴-그룹"));
 
         // when
         final List<MenuGroup> actual = menuGroupService.list();

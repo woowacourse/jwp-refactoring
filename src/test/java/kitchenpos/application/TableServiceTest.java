@@ -44,9 +44,9 @@ class TableServiceTest extends ServiceTest {
     }
 
     @Test
-    void 주문_테이블_전체를_조회한다() {
+    void 주문_테이블을_전체_조회한다() {
         // given
-        final OrderTable expected = orderTableDao.save(주문_테이블_생성(1, true));
+        final OrderTable expected = 주문_테이블을_저장한다(주문_테이블_생성(1, true));
 
         // when
         final List<OrderTable> actual = tableService.list();
@@ -62,7 +62,7 @@ class TableServiceTest extends ServiceTest {
     @ValueSource(booleans = {true, false})
     void 주문_테이블을_상태를_변경한다(final boolean expected) {
         // given
-        final Long orderTableId = orderTableDao.save(주문_테이블_생성(1, true)).getId();
+        final Long orderTableId = 주문_테이블을_저장한다(주문_테이블_생성(1, true)).getId();
 
         // when
         final OrderTable actual = tableService.changeEmpty(orderTableId, 주문_테이블_생성(1, expected));
@@ -81,14 +81,14 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문_테이블_상태_변경시_주문_상태가_COOKING_인_경우_예외가_발생한다() {
         // given
-        final OrderTable orderTable = orderTableDao.save(주문_테이블_생성(1, true));
-        final Product product = productDao.save(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
+        final OrderTable orderTable = 주문_테이블을_저장한다(주문_테이블_생성(1, true));
+        final Product product = 상품을_저장한다(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
         final MenuProduct menuProduct = 메뉴_상품_생성(product.getId(), 1L);
-        final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("테스트-메뉴-그룹"));
-        final Menu menu = menuDao.save(
+        final MenuGroup menuGroup = 메뉴_그룹을_저장한다(메뉴_그룹_생성("테스트-메뉴-그룹"));
+        final Menu menu = 메뉴를_저장한다(
                 메뉴_생성("테스트-메뉴-1", BigDecimal.valueOf(99999), menuGroup.getId(), List.of(menuProduct)));
         final OrderLineItem orderLineItem = 주문_상품_생성(menu.getId());
-        orderDao.save(주문_생성(List.of(orderLineItem), orderTable.getId(), OrderStatus.COOKING));
+        주문을_저장한다(주문_생성(List.of(orderLineItem), orderTable.getId(), OrderStatus.COOKING));
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), 주문_테이블_생성(1, false)))
@@ -98,14 +98,14 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문_테이블_상태_변경시_주문_상태가_MEAL_인_경우_예외가_발생한다() {
         // given
-        final OrderTable orderTable = orderTableDao.save(주문_테이블_생성(1, true));
-        final Product product = productDao.save(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
+        final OrderTable orderTable = 주문_테이블을_저장한다(주문_테이블_생성(1, true));
+        final Product product = 상품을_저장한다(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
         final MenuProduct menuProduct = 메뉴_상품_생성(product.getId(), 1L);
-        final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("테스트-메뉴-그룹"));
-        final Menu menu = menuDao.save(
+        final MenuGroup menuGroup = 메뉴_그룹을_저장한다(메뉴_그룹_생성("테스트-메뉴-그룹"));
+        final Menu menu = 메뉴를_저장한다(
                 메뉴_생성("테스트-메뉴-1", BigDecimal.valueOf(99999), menuGroup.getId(), List.of(menuProduct)));
         final OrderLineItem orderLineItem = 주문_상품_생성(menu.getId());
-        orderDao.save(주문_생성(List.of(orderLineItem), orderTable.getId(), OrderStatus.MEAL));
+        주문을_저장한다(주문_생성(List.of(orderLineItem), orderTable.getId(), OrderStatus.MEAL));
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), 주문_테이블_생성(1, false)))
@@ -115,7 +115,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 테이블_손님_수를_변경한다() {
         // given
-        final Long orderTableId = orderTableDao.save(주문_테이블_생성(1, false)).getId();
+        final Long orderTableId = 주문_테이블을_저장한다(주문_테이블_생성(1, false)).getId();
 
         // when
         final OrderTable actual = tableService.changeNumberOfGuests(orderTableId, 주문_테이블_생성(2, false));
