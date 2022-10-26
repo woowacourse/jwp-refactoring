@@ -3,8 +3,8 @@ package kitchenpos.application;
 import static kitchenpos.KitchenPosFixtures.삼인용_테이블;
 import static kitchenpos.KitchenPosFixtures.오인용_테이블;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -76,10 +76,8 @@ class TableGroupServiceTest extends ServiceTest {
             final var tableGroupRequest = new TableGroupCreateRequest(List.of(tableA.getId()));
 
             // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> tableGroupService.create(tableGroupRequest)
-            );
+            assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("orderTableId가 유효하지 않으면 예외가 발생한다")
@@ -89,10 +87,8 @@ class TableGroupServiceTest extends ServiceTest {
             final var tableGroupRequest = new TableGroupCreateRequest(List.of(-1L, -2L));
 
             // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> tableGroupService.create(tableGroupRequest)
-            );
+            assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("그룹화 대상 테이블 중 하나라도 이미 다른 그룹에 속해있으면 예외가 발생한다")
@@ -107,10 +103,8 @@ class TableGroupServiceTest extends ServiceTest {
             final var request = new TableGroupCreateRequest(List.of(tableA.getId(), tableC.getId()));
 
             // then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> tableGroupService.create(request)
-            );
+            assertThatThrownBy(() -> tableGroupService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("그룹화 대상 테이블 중 하나라도 주문 가능 상태(empty=false)이면 예외가 발생한다")
@@ -122,10 +116,8 @@ class TableGroupServiceTest extends ServiceTest {
             final var tableGroupRequest = new TableGroupCreateRequest(List.of(emptyTrueTableId, emptyFalseTableId));
 
             // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> tableGroupService.create(tableGroupRequest)
-            );
+            assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -160,14 +152,10 @@ class TableGroupServiceTest extends ServiceTest {
             // when & then
             assertAll(
                     () -> assertThat(tableGroup.getId()).isEqualTo(1L),
-                    () -> assertThrows(
-                            IllegalArgumentException.class,
-                            () -> tableGroupService.ungroup(null)
-                    ),
-                    () -> assertThrows(
-                            IllegalArgumentException.class,
-                            () -> tableGroupService.ungroup(-1L)
-                    )
+                    () -> assertThatThrownBy(() -> tableGroupService.ungroup(null))
+                            .isInstanceOf(IllegalArgumentException.class),
+                    () -> assertThatThrownBy(() -> tableGroupService.ungroup(-1L))
+                            .isInstanceOf(IllegalArgumentException.class)
             );
         }
 
@@ -179,10 +167,8 @@ class TableGroupServiceTest extends ServiceTest {
             orderRepository.save(new Order(tableA.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), null));
 
             // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> tableGroupService.ungroup(tableGroup.getId())
-            );
+            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("그룹에 속한 테이블 중 하나라도 식사중(MEAL)인 주문이 있으면 예외가 발생한다")
@@ -193,10 +179,8 @@ class TableGroupServiceTest extends ServiceTest {
             orderRepository.save(new Order(tableA.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), null));
 
             // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> tableGroupService.ungroup(tableGroup.getId())
-            );
+            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         private TableGroup createTableGroup() {

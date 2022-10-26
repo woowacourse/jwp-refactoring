@@ -32,7 +32,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 신규_메뉴를_생성할_수_있다() {
-        // given & when
+        // given
         final var 메뉴명 = "까르보 한 마리 + 짜장 한 마리";
         final var 메뉴가격 = new BigDecimal(30000);
         final var 메뉴_생성요청_데이터 = Map.of(
@@ -45,6 +45,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
                 )
         );
 
+        // when
         final var 메뉴_생성응답 = 생성요청(메뉴_URL, 메뉴_생성요청_데이터);
         final var 생성된_메뉴 = 메뉴_생성응답.body().as(Menu.class);
         final var 메뉴_내_상품들 = 생성된_메뉴.getMenuProducts();

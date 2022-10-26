@@ -3,8 +3,8 @@ package kitchenpos.application;
 import static kitchenpos.KitchenPosFixtures.까르보치킨_생성요청;
 import static kitchenpos.KitchenPosFixtures.짜장치킨_생성요청;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
 import java.util.stream.Collectors;
@@ -45,10 +45,8 @@ class ProductServiceTest extends ServiceTest {
         final var productRequest = new ProductCreateRequest(name, price);
 
         // when & then
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> productService.create(productRequest)
-        );
+        assertThatThrownBy(() -> productService.create(productRequest))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     private static Stream<Arguments> createProductFailCases() {
@@ -69,10 +67,8 @@ class ProductServiceTest extends ServiceTest {
         productService.create(productRequest);
 
         // when & then
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> productService.create(productRequest)
-        );
+        assertThatThrownBy(() -> productService.create(productRequest))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("전체 프로덕트를 조회할 수 있다")

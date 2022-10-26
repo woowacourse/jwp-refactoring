@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -80,10 +80,8 @@ class MenuServiceTest extends ServiceTest {
             final var menuRequest = new MenuCreateRequest(name, null, menuGroupId, List.of(menuProductA, menuProductB));
 
             // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> menuService.create(menuRequest)
-            );
+            assertThatThrownBy(() -> menuService.create(menuRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("price가 음수일 경우 예외가 발생한다")
@@ -94,10 +92,8 @@ class MenuServiceTest extends ServiceTest {
                     List.of(menuProductA, menuProductB));
 
             // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> menuService.create(menuRequest)
-            );
+            assertThatThrownBy(() -> menuService.create(menuRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("메뉴 그룹 아이디가 유효하지 않으면 예외가 발생한다")
@@ -107,10 +103,8 @@ class MenuServiceTest extends ServiceTest {
             final var menuRequest = new MenuCreateRequest(name, price, -1L, List.of(menuProductA, menuProductB));
 
             // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> menuService.create(menuRequest)
-            );
+            assertThatThrownBy(() -> menuService.create(menuRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("menuProducts가 null이면 예외가 발생한다")
@@ -120,10 +114,8 @@ class MenuServiceTest extends ServiceTest {
             final var menuRequest = new MenuCreateRequest(name, price, menuGroupId, null);
 
             // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> menuService.create(menuRequest)
-            );
+            assertThatThrownBy(() -> menuService.create(menuRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("menuProducts가 비어있으면 예외가 발생한다")
@@ -133,10 +125,8 @@ class MenuServiceTest extends ServiceTest {
             final var menuRequest = new MenuCreateRequest(name, price, -1L, new ArrayList<>());
 
             // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> menuService.create(menuRequest)
-            );
+            assertThatThrownBy(() -> menuService.create(menuRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("price가 menuProducts 총합계액 보다 크면 예외가 발생한다")
@@ -147,10 +137,8 @@ class MenuServiceTest extends ServiceTest {
                     List.of(menuProductA, menuProductB));
 
             // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> menuService.create(menuRequest)
-            );
+            assertThatThrownBy(() -> menuService.create(menuRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 

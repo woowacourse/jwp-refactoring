@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -109,10 +109,8 @@ class OrderServiceTest extends ServiceTest {
             final var orderRequest = new OrderCreateRequest(tableA.getId(), null);
 
             // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> orderService.create(orderRequest)
-            );
+            assertThatThrownBy(() -> orderService.create(orderRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("주문 내역이 비어있으면 예외가 발생한다")
@@ -122,10 +120,8 @@ class OrderServiceTest extends ServiceTest {
             final var orderRequest = new OrderCreateRequest(tableA.getId(), new ArrayList<>());
 
             // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> orderService.create(orderRequest)
-            );
+            assertThatThrownBy(() -> orderService.create(orderRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("존재하지 않는 메뉴 아이디를 전달하면 예외가 발생한다")
@@ -138,10 +134,8 @@ class OrderServiceTest extends ServiceTest {
             );
 
             // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> orderService.create(orderRequest)
-            );
+            assertThatThrownBy(() -> orderService.create(orderRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("테이블 아이디로 null을 전달하면 예외가 발생한다")
@@ -154,10 +148,8 @@ class OrderServiceTest extends ServiceTest {
             );
 
             // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> orderService.create(orderRequest)
-            );
+            assertThatThrownBy(() -> orderService.create(orderRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("존재하지 않는 테이블 아이디를 전달하면 예외가 발생한다")
@@ -170,10 +162,8 @@ class OrderServiceTest extends ServiceTest {
             );
 
             // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> orderService.create(orderRequest)
-            );
+            assertThatThrownBy(() -> orderService.create(orderRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("주문 대상 테이블이 주문 불가 상태(empty=true)면 예외가 발생한다")
@@ -187,10 +177,8 @@ class OrderServiceTest extends ServiceTest {
             );
 
             // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> orderService.create(orderRequest)
-            );
+            assertThatThrownBy(() -> orderService.create(orderRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -263,14 +251,13 @@ class OrderServiceTest extends ServiceTest {
             );
             orderService.create(orderRequest);
 
-            // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> orderService.changeOrderStatus(
-                            null,
-                            new OrderChangeStatusRequest(OrderStatus.COMPLETION.name())
-                    )
-            );
+            // when
+            final Long nullOrderId = null;
+            final var request = new OrderChangeStatusRequest(OrderStatus.COMPLETION.name());
+
+            // then
+            assertThatThrownBy(() -> orderService.changeOrderStatus(nullOrderId, request))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("존재하지 않는 주문 아이디일 경우 예외가 발생한다.")
@@ -278,15 +265,11 @@ class OrderServiceTest extends ServiceTest {
         void should_fail_when_orderId_is_invalid() {
             // given
             final var invalidOrderId = -1L;
+            final var request = new OrderChangeStatusRequest(OrderStatus.COMPLETION.name());
 
             // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> orderService.changeOrderStatus(
-                            invalidOrderId,
-                            new OrderChangeStatusRequest(OrderStatus.COMPLETION.name())
-                    )
-            );
+            assertThatThrownBy(() -> orderService.changeOrderStatus(invalidOrderId, request))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("주문 아이디로 조회한 주문이 이미 계산 완료라면(OrderStatus=COMPLETION) 예외가 발생한다.")
@@ -304,14 +287,13 @@ class OrderServiceTest extends ServiceTest {
                     new OrderChangeStatusRequest(OrderStatus.COMPLETION.name())
             );
 
-            // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> orderService.changeOrderStatus(
-                            order.getId(),
-                            new OrderChangeStatusRequest(orderStatus.name())
-                    )
-            );
+            // when
+            final var orderId = order.getId();
+            final var request = new OrderChangeStatusRequest(orderStatus.name());
+
+            // then
+            assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, request))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 }

@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import kitchenpos.ui.dto.request.MenuGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -44,10 +44,8 @@ class MenuGroupServiceTest extends ServiceTest {
             final var request = new MenuGroupCreateRequest(nullOrEmptyString);
 
             // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> menuGroupService.create(request)
-            );
+            assertThatThrownBy(() -> menuGroupService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("name이 공백으로만 이루어진 문자열일 경우 예외가 발생한다")
@@ -57,10 +55,8 @@ class MenuGroupServiceTest extends ServiceTest {
             final var request = new MenuGroupCreateRequest("    ");
 
             // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> menuGroupService.create(request)
-            );
+            assertThatThrownBy(() -> menuGroupService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("이미 존재하는 name일 경우 예외가 발생한다")
@@ -72,10 +68,8 @@ class MenuGroupServiceTest extends ServiceTest {
             menuGroupService.create(request);
 
             // when & then
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> menuGroupService.create(request)
-            );
+            assertThatThrownBy(() -> menuGroupService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
