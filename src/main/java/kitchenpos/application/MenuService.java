@@ -8,25 +8,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.ProductRepository;
 
 @Service
 public class MenuService {
 
     private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
+    private final MenuGroupRepository menuGroupRepository;
     private final MenuProductDao menuProductDao;
     private final ProductRepository productRepository;
 
-    public MenuService(MenuDao menuDao, MenuGroupDao menuGroupDao, MenuProductDao menuProductDao,
-        ProductRepository productRepository) {
+    public MenuService(MenuDao menuDao, MenuGroupRepository menuGroupRepository,
+        MenuProductDao menuProductDao, ProductRepository productRepository) {
         this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
+        this.menuGroupRepository = menuGroupRepository;
         this.menuProductDao = menuProductDao;
         this.productRepository = productRepository;
     }
@@ -35,7 +35,7 @@ public class MenuService {
     public Menu create(final Menu menu) {
         final BigDecimal price = menu.getPrice();
 
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
+        if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
             throw new IllegalArgumentException("해당 group이 존재하지 않습니다.");
         }
 
