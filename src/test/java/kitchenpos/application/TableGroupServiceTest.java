@@ -114,7 +114,7 @@ class TableGroupServiceTest {
 
     @DisplayName("단체 지정을 해체한다.")
     @Test
-    void list() {
+    void ungroup() {
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(table1, table2));
         final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
