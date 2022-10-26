@@ -44,7 +44,7 @@ class TableRestControllerTest extends ControllerTest {
 
         ResponseEntity<List<OrderTable>> response = tableController.list();
 
-        assertThat(response.getBody().size()).isEqualTo(2);
+        assertThat(response.getBody()).hasSize(2);
         assertThat(response.getStatusCodeValue()).isEqualTo(HttpStatus.OK.value());
     }
 
@@ -208,4 +208,3 @@ class TableRestControllerTest extends ControllerTest {
         return orderLineItem;
     }
 }
-

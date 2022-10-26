@@ -47,7 +47,7 @@ class MenuRestControllerTest extends ControllerTest {
         class Exception {
 
             @Test
-            @DisplayName("가격이 0원 이하면 예외가 발생한다.")
+            @DisplayName("가격이 0원 미만이면 예외가 발생한다.")
             void createMenuPriceLessThanZero() {
                 Menu menu = new Menu();
                 menu.setName("강정치킨");
@@ -56,7 +56,7 @@ class MenuRestControllerTest extends ControllerTest {
                 menu.setMenuProducts(List.of(createMenuProduct(createProduct("강정치킨", 18000))));
 
                 assertThatThrownBy(() -> menuController.create(menu))
-                        .hasMessage("가격이 0 이상이어야 합니다");
+                        .hasMessage("가격이 0원 이상이어야 합니다");
             }
 
             @Test

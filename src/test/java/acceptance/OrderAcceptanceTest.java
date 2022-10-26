@@ -7,6 +7,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @DisplayName("주문 인수테스트에서")
 public class OrderAcceptanceTest extends AcceptanceTest {
@@ -23,24 +25,15 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         assertThat(orders).hasSize(3);
     }
 
-    @Test
-    @DisplayName("주문 상태를 변경한다. -MEAL")
-    void changeStatusMeal() {
+    @ParameterizedTest(name = "{0}으로 변경한다.")
+    @DisplayName("주문 상태를 변경한다.")
+    @ValueSource(strings = {"MEAL", "COMPLETION"})
+    void changeStatus(String orderStatus) {
         long 주문 = 주문을_생성한다(테이블(), 주문항목());
 
-        Order result = 주문_상태를_변경한다(주문, "MEAL");
+        Order result = 주문_상태를_변경한다(주문, orderStatus);
 
-        assertThat(result.getOrderStatus()).isEqualTo("MEAL");
-    }
-
-    @Test
-    @DisplayName("주문 상태를 변경한다. -COMPLETION")
-    void changeStatusCompletion() {
-        long 주문 = 주문을_생성한다(테이블(), 주문항목());
-
-        Order result = 주문_상태를_변경한다(주문, "COMPLETION");
-
-        assertThat(result.getOrderStatus()).isEqualTo("COMPLETION");
+        assertThat(result.getOrderStatus()).isEqualTo(orderStatus);
     }
 
     private long 테이블() {

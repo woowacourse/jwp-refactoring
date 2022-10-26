@@ -1,7 +1,7 @@
 package kitchenpos.ui;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
@@ -69,7 +69,7 @@ class TableGroupRestControllerTest extends ControllerTest {
             OrderTable orderTable2 = createOrderTable(2, true);
             TableGroup tableGroup = createTableGroup(List.of(orderTable1, orderTable2));
 
-            assertThatCode(() -> tableGroupController.ungroup(tableGroup.getId()));
+            assertThatNoException().isThrownBy(() -> tableGroupController.ungroup(tableGroup.getId()));
         }
     }
 }

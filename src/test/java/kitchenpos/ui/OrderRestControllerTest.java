@@ -152,7 +152,7 @@ class OrderRestControllerTest extends ControllerTest {
             }
 
             @Test
-            @DisplayName("계산 완료 상태로 변경하면 예외가 발생한다.")
+            @DisplayName("계산 완료 상태인 주문을 변경하면 예외가 발생한다.")
             void changeOrderStatusCompletion() {
                 Order order = createOrder(createOrderTable(2, false).getId(), List.of(getOrderLineItem()));
                 order.setOrderStatus("COMPLETION");

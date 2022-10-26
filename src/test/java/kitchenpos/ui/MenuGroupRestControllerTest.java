@@ -17,7 +17,7 @@ class MenuGroupRestControllerTest extends ControllerTest {
     private MenuGroupRestController menuGroupController;
 
     @Test
-    @DisplayName("메뉴를 정상적으로 생성한다.")
+    @DisplayName("메뉴 그룹을 정상적으로 생성한다.")
     void create() {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("추천 메뉴");
@@ -29,7 +29,7 @@ class MenuGroupRestControllerTest extends ControllerTest {
     }
 
     @Test
-    @DisplayName("존재하는 메뉴를 모두 조회한다.")
+    @DisplayName("존재하는 메뉴 그룹을 모두 조회한다.")
     void list() {
         createMenuGroup("추천 메뉴");
         createMenuGroup("할인 메뉴");
