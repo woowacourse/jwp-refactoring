@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 public class OrderTable {
     private Long id;
     private Long tableGroupId;
@@ -39,5 +41,11 @@ public class OrderTable {
 
     public void setTableGroupId(Long tableGroupId) {
         this.tableGroupId = tableGroupId;
+    }
+
+    public void checkCanGroup() {
+        if (!empty || Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
     }
 }

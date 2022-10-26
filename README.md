@@ -133,3 +133,12 @@
    - [x] OrderLineItem
 
    - [x] Order
+
+
+
+Controller에서 받아온 객체를 그대로 save하거나, 해당 객체의 값을 update하는 부분들이 있어서 setter를 올바르게 삭제하지 못한 곳이 있다. 이어서 Controller에 요청받는 dto를 만들어 개선하려고한다.
+
+
+
+2. Controller에서 요청받을 때 사용할 RequestDto를 만든다
+   - [ ] TableGroupCreateRequest

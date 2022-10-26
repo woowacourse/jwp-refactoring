@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.given;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -43,7 +44,7 @@ class TableGroupServiceTest extends ServiceTest {
 
         private OrderTable orderTableA;
         private OrderTable orderTableB;
-        private TableGroup tableGroup;
+        private TableGroupCreateRequest createRequest;
         private TableGroup savedTableGroup;
 
         @BeforeEach
@@ -51,13 +52,13 @@ class TableGroupServiceTest extends ServiceTest {
             orderTableA = new OrderTable(ORDER_TABLE_A_ID, null, 0, true);
             orderTableB = new OrderTable(ORDER_TABLE_B_ID, null, 0, true);
 
-            tableGroup = new TableGroup(null, null, Arrays.asList(orderTableA, orderTableB));
+            createRequest = new TableGroupCreateRequest(Arrays.asList(orderTableA, orderTableB));
             savedTableGroup = new TableGroup(TABLE_GROUP_ID, LocalDateTime.now(),
                     Arrays.asList(orderTableA, orderTableB));
 
             given(orderTableDao.findAllByIdIn(any()))
                     .willReturn(Arrays.asList(orderTableA, orderTableB));
-            given(tableGroupDao.save(tableGroup))
+            given(tableGroupDao.save(any(TableGroup.class)))
                     .willReturn(savedTableGroup);
         }
 
@@ -65,7 +66,7 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("테이블 그룹을 만들 수 있다.")
         void success() {
             //when
-            TableGroup actual = tableGroupService.create(tableGroup);
+            TableGroup actual = tableGroupService.create(createRequest);
 
             //then
             assertAll(
@@ -79,10 +80,10 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("그룹으로 지정할 주문 테이블의 갯수가 2개보다 적으면, 예외를 던진다.")
         void fail_lessThanTwoTables() {
             //given
-            tableGroup.setOrderTables(Arrays.asList(orderTableA));
+            createRequest = new TableGroupCreateRequest(Arrays.asList(orderTableA));
 
             //when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(createRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -94,7 +95,7 @@ class TableGroupServiceTest extends ServiceTest {
                     .willReturn(Arrays.asList(orderTableB));
 
             //when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(createRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -106,7 +107,7 @@ class TableGroupServiceTest extends ServiceTest {
             orderTableB.setEmpty(false);
 
             //when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(createRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -118,7 +119,7 @@ class TableGroupServiceTest extends ServiceTest {
             orderTableB.setTableGroupId(2L);
 
             //when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(createRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
