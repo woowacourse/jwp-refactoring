@@ -24,16 +24,15 @@ public class MenuCreateRequest {
     }
 
     public Menu toMenu() {
-        final Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(new BigDecimal(price));
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(
+        return new Menu(
+                null,
+                name,
+                new BigDecimal(price),
+                menuGroupId,
                 menuProducts.stream()
                         .map(MenuProductRequest::toMenuProduct)
                         .collect(Collectors.toList())
         );
-        return menu;
     }
 
     public String getName() {

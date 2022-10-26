@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +13,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.fixtures.MenuFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,11 +52,7 @@ class OrderLineItemDaoTest {
 
         final Order savedOrder = orderDao.save(order);
 
-        final Menu menu = new Menu();
-        menu.setName("치킨치킨");
-        menu.setPrice(new BigDecimal(3000));
-        menu.setMenuGroupId(1L);
-
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuDao.save(menu);
 
         final OrderLineItem orderLineItem = new OrderLineItem();
@@ -85,11 +81,7 @@ class OrderLineItemDaoTest {
         orderTable.setEmpty(false);
         orderTableDao.save(orderTable);
 
-        final Menu menu = new Menu();
-        menu.setName("치킨치킨");
-        menu.setPrice(new BigDecimal(3000));
-        menu.setMenuGroupId(1L);
-
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuDao.save(menu);
 
         final OrderLineItem orderLineItem = new OrderLineItem();
@@ -144,11 +136,7 @@ class OrderLineItemDaoTest {
 
         final Order savedOrder = orderDao.save(order);
 
-        final Menu menu = new Menu();
-        menu.setName("치킨치킨");
-        menu.setPrice(new BigDecimal(3000));
-        menu.setMenuGroupId(1L);
-
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuDao.save(menu);
 
         final OrderLineItem orderLineItem = new OrderLineItem();
@@ -193,11 +181,7 @@ class OrderLineItemDaoTest {
 
         final Order savedOrder = orderDao.save(order);
 
-        final Menu menu = new Menu();
-        menu.setName("치킨치킨");
-        menu.setPrice(new BigDecimal(3000));
-        menu.setMenuGroupId(1L);
-
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuDao.save(menu);
 
         final OrderLineItem orderLineItem = new OrderLineItem();
@@ -234,11 +218,7 @@ class OrderLineItemDaoTest {
 
         final Order savedOrder = orderDao.save(order);
 
-        final Menu menu = new Menu();
-        menu.setName("치킨치킨");
-        menu.setPrice(new BigDecimal(3000));
-        menu.setMenuGroupId(1L);
-
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuDao.save(menu);
 
         final OrderLineItem orderLineItem = new OrderLineItem();

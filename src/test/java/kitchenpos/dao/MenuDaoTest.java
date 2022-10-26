@@ -28,10 +28,7 @@ class MenuDaoTest {
     @DisplayName("메뉴를 저장한다")
     void save() {
         // given
-        final Menu menu = new Menu();
-        menu.setName("치킨치킨");
-        menu.setPrice(new BigDecimal(3000));
-        menu.setMenuGroupId(1L);
+        final Menu menu = new Menu(null, "치킨치킨", new BigDecimal(3000), 1L);
 
         // when
         final Menu saved = menuDao.save(menu);
@@ -49,10 +46,7 @@ class MenuDaoTest {
     @DisplayName("id로 메뉴를 조회한다")
     void findById() {
         // given
-        final Menu menu = new Menu();
-        menu.setName("치킨치킨");
-        menu.setPrice(new BigDecimal(3000));
-        menu.setMenuGroupId(1L);
+        final Menu menu = new Menu(null, "치킨치킨", new BigDecimal(3000), 1L);
         final Menu saved = menuDao.save(menu);
 
         // when
@@ -78,10 +72,7 @@ class MenuDaoTest {
     @DisplayName("모든 메뉴를 조회한다")
     void findByAll() {
         // given
-        final Menu menu = new Menu();
-        menu.setName("치킨치킨");
-        menu.setPrice(new BigDecimal(3000));
-        menu.setMenuGroupId(1L);
+        final Menu menu = new Menu(null, "치킨치킨", new BigDecimal(3000), 1L);
         final Menu saved = menuDao.save(menu);
 
         // when
@@ -99,10 +90,7 @@ class MenuDaoTest {
     @DisplayName("id에 일치하는 메뉴들의 개수를 반환한다")
     void countByIdIn() {
         // given
-        final Menu menu = new Menu();
-        menu.setName("치킨치킨");
-        menu.setPrice(new BigDecimal(3000));
-        menu.setMenuGroupId(1L);
+        final Menu menu = new Menu(null, "치킨치킨", new BigDecimal(3000), 1L);
         final Menu saved = menuDao.save(menu);
 
         // when

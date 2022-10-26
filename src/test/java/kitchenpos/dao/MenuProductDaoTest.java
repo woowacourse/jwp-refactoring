@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.fixtures.MenuFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +36,7 @@ class MenuProductDaoTest {
     @DisplayName("메뉴 상품을 저장한다")
     void save() {
         // given
-        final Menu menu = new Menu();
-        menu.setName("치킨치킨");
-        menu.setPrice(new BigDecimal(3000));
-        menu.setMenuGroupId(1L);
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuDao.save(menu);
 
         final Product product = new Product();
@@ -86,10 +84,7 @@ class MenuProductDaoTest {
     @DisplayName("존재하지 않는 상품으로 메뉴 상품을 저장하려면 예외가 발생한다")
     void saveExceptionNotExistProduct() {
         // given
-        final Menu menu = new Menu();
-        menu.setName("치킨치킨");
-        menu.setPrice(new BigDecimal(3000));
-        menu.setMenuGroupId(1L);
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuDao.save(menu);
 
         final MenuProduct menuProduct = new MenuProduct();
@@ -106,10 +101,7 @@ class MenuProductDaoTest {
     @DisplayName("id로 메뉴 상품을 조회한다")
     void findById() {
         // given
-        final Menu menu = new Menu();
-        menu.setName("치킨치킨");
-        menu.setPrice(new BigDecimal(3000));
-        menu.setMenuGroupId(1L);
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuDao.save(menu);
 
         final Product product = new Product();
@@ -147,10 +139,7 @@ class MenuProductDaoTest {
     @DisplayName("메뉴 id로 모든 메뉴 상품을 조회한다")
     void findAllByMenuId() {
         // given
-        final Menu menu = new Menu();
-        menu.setName("치킨치킨");
-        menu.setPrice(new BigDecimal(3000));
-        menu.setMenuGroupId(1L);
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuDao.save(menu);
 
         final Product product = new Product();
