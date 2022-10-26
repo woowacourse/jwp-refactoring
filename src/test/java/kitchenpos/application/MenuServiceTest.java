@@ -74,7 +74,7 @@ class MenuServiceTest {
     }
 
     @Test
-    void price가_null인_경우_예외를_던진다() {
+    void menu를_등록할_때_price가_null인_경우_예외를_던진다() {
         Menu menu = generateMenu("후라이드치킨", null, 1L);
 
         assertThatThrownBy(() -> menuService.create(menu))
@@ -83,7 +83,7 @@ class MenuServiceTest {
 
     @ParameterizedTest(name = "price가 {0}미만인 경우 예외를 던진다")
     @ValueSource(ints = {-15000, -10, Integer.MIN_VALUE})
-    void price가_0미만인_경우_예외를_던진다(final int price) {
+    void menu를_등록할_때_price가_0미만인_경우_예외를_던진다(final int price) {
         Menu menu = generateMenu("후라이드치킨", BigDecimal.valueOf(price), 1L);
 
         assertThatThrownBy(() -> menuService.create(menu))
@@ -91,7 +91,7 @@ class MenuServiceTest {
     }
 
     @Test
-    void 존재하지_않는_menuGroupId인_경우_예외를_던진다() {
+    void menu를_등록할_때_존재하지_않는_menuGroupId인_경우_예외를_던진다() {
         Menu menu = generateMenu("후라이드치킨", BigDecimal.valueOf(16000), 0L);
 
         assertThatThrownBy(() -> menuService.create(menu))
@@ -99,7 +99,7 @@ class MenuServiceTest {
     }
 
     @Test
-    void price가_menu에_속한_product의_총_price보다_큰_경우_예외를_던진다() {
+    void menu를_등록할_때_price가_menu에_속한_product의_총_price보다_큰_경우_예외를_던진다() {
         MenuGroup 한마리메뉴 = menuGroupDao.save(generateMenuGroup("한마리메뉴"));
         Product 후라이드 = productDao.save(generateProduct("후라이드", BigDecimal.valueOf(16000)));
 
