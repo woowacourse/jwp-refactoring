@@ -5,11 +5,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.FakeProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ProductServiceTest {
 
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
 
-    @Autowired
-    private ProductDao productDao;
+    public ProductServiceTest() {
+        this.productService = new ProductService(new FakeProductDao());
+    }
 
     @Test
     @DisplayName("상품을 생성한다.")
@@ -66,10 +65,20 @@ public class ProductServiceTest {
     @Test
     @DisplayName("상품 목록을 조회한다.")
     void list() {
+        // given
+        Product product1 = new Product();
+        product1.setName("뿌링클");
+        product1.setPrice(BigDecimal.valueOf(19000));
+        Product product2 = new Product();
+        product2.setName("뿌링클");
+        product2.setPrice(BigDecimal.valueOf(19000));
+        productService.create(product1);
+        productService.create(product2);
+
         // when
         List<Product> products = productService.list();
 
         // then
-        assertThat(products.size()).isEqualTo(6);
+        assertThat(products.size()).isEqualTo(2);
     }
 }
