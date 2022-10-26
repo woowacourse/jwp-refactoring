@@ -1,19 +1,17 @@
 package kitchenpos.application;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.OrderTableResponse;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class TableService {
@@ -41,39 +39,32 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(Long orderTableId, Boolean empty) {
-        OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
-
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException("단체로 지정된 테이블은 상태를 변경할 수 없습니다.");
-        }
-
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("주문이 완료되지 않아 상태를 변경할 수 없습니다.");
-        }
-
+        OrderTable savedOrderTable = getById(orderTableId);
+        validateNotCompletedOrderExist(orderTableId);
         savedOrderTable.changeEmpty(empty);
-
         OrderTable orderTable = orderTableDao.save(savedOrderTable);
         return OrderTableResponse.from(orderTable);
     }
 
+    private void validateNotCompletedOrderExist(Long orderTableId) {
+        boolean existNotCompletedOrder = orderDao.existsByOrderTableIdAndOrderStatusIn(
+            orderTableId, List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
+        );
+        if (existNotCompletedOrder) {
+            throw new IllegalArgumentException("주문이 완료되지 않아 상태를 변경할 수 없습니다.");
+        }
+    }
+
     @Transactional
     public OrderTableResponse changeNumberOfGuests(Long orderTableId, Integer numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("1명 이상으로 변경할 수 있습니다.");
-        }
+        OrderTable savedOrderTable = getById(orderTableId);
+        savedOrderTable.updateNumberOfGuests(numberOfGuests);
+        OrderTable orderTable = orderTableDao.save(savedOrderTable);
+        return OrderTableResponse.from(orderTable);
+    }
 
-        OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException("빈 테이블은 손님 수 변경을 할 수 없습니다.");
-        }
-
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
-        return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
+    private OrderTable getById(Long orderTableId) {
+        return orderTableDao.findById(orderTableId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
     }
 }
