@@ -56,14 +56,14 @@ public class TableGroupService {
 
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
-        // 각각의 주문 테이블에 테이블 그룹과 빈 상태가 아님을 등록
         final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
-            savedOrderTable.setEmpty(false);
-            orderTableDao.save(savedOrderTable);
-        }
-        savedTableGroup.setOrderTables(savedOrderTables);
+
+        savedTableGroup.setOrderTables(
+                savedOrderTables.stream()
+                        .map(orderTable -> orderTableDao.save(
+                                new OrderTable(orderTable.getId(), tableGroupId, orderTable.getNumberOfGuests(), false)))
+                        .collect(Collectors.toList())
+        );
 
         return savedTableGroup;
     }
@@ -82,9 +82,7 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
-            orderTableDao.save(orderTable);
+            orderTableDao.save(new OrderTable(orderTable.getId(), null, orderTable.getNumberOfGuests(), false));
         }
     }
 }

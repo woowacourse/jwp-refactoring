@@ -122,8 +122,7 @@ class OrderServiceTest {
     @Test
     void 주문에_등록된_주문_테이블이_존재하지않으면_주문을_생성할_수_없다() {
         // given
-        OrderTable invalidOrderTable = new OrderTable();
-        invalidOrderTable.setId(-1L);
+        OrderTable invalidOrderTable = new OrderTable(-1L, null, 0, false);
         Order order = 주문(invalidOrderTable, 후라이드_세트_메뉴_주문_항목());
 
         // when & then
@@ -200,12 +199,11 @@ class OrderServiceTest {
     }
 
     public OrderTable 주문_테이블() {
-        return orderTableDao.save(new OrderTable());
+        return orderTableDao.save(new OrderTable(null, null, 0, false));
     }
 
     public OrderTable 빈_상태의_주문_테이블() {
-        OrderTable emptyOrderTable = new OrderTable();
-        emptyOrderTable.setEmpty(true);
+        OrderTable emptyOrderTable = new OrderTable(null, null, 0, true);
         return orderTableDao.save(emptyOrderTable);
     }
 
