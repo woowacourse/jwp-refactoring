@@ -15,7 +15,6 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.support.ClassConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -60,7 +59,7 @@ public class MenuServiceTest extends ServiceTest {
             menuProductA = new MenuProduct(null, MENU_ID, PRODUCT_A_ID, 2);
             menuProductB = new MenuProduct(null, MENU_ID, PRODUCT_B_ID, 2);
 
-            menu = ClassConstructor.menu(MENU_ID, "메뉴 이름", BigDecimal.valueOf(MENU_PRICE), MENU_GROUP_ID,
+            menu = new Menu(MENU_ID, "메뉴 이름", BigDecimal.valueOf(MENU_PRICE), MENU_GROUP_ID,
                     Arrays.asList(menuProductA, menuProductB));
 
             given(menuGroupDao.existsById(menu.getMenuGroupId()))
@@ -89,7 +88,7 @@ public class MenuServiceTest extends ServiceTest {
         @DisplayName("메뉴 가격이 없으면, 예외를 던진다.")
         void fail_noPrice() {
             //given
-            menu.setPrice(null);
+            menu = new Menu(MENU_ID, "메뉴 이름", null, MENU_GROUP_ID, Arrays.asList(menuProductA, menuProductB));
 
             //when & then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -100,7 +99,8 @@ public class MenuServiceTest extends ServiceTest {
         @DisplayName("메뉴 가격이 음수면, 예외를 던진다.")
         void fail_priceIsNegative() {
             //given
-            menu.setPrice(BigDecimal.valueOf(-1));
+            menu = new Menu(MENU_ID, "메뉴 이름", BigDecimal.valueOf(-1), MENU_GROUP_ID,
+                    Arrays.asList(menuProductA, menuProductB));
 
             //when & then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -145,8 +145,7 @@ public class MenuServiceTest extends ServiceTest {
             given(productDao.findById(PRODUCT_B_ID))
                     .willReturn(Optional.of(productB));
 
-            menu.setPrice(BigDecimal.valueOf(201));
-            menu.setMenuProducts(Arrays.asList(menuProductA, menuProductB));
+            menu = new Menu(MENU_ID, "메뉴 이름", BigDecimal.valueOf(201), MENU_GROUP_ID, Arrays.asList(menuProductA, menuProductB));
 
             //when & then
             assertThatThrownBy(() -> menuService.create(menu))
