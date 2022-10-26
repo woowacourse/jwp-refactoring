@@ -9,7 +9,7 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface MenuGroupDtoMapper {
 
-    MenuGroupCreateResponse menuGroupToCreateResponse(MenuGroup menuGroup);
+    MenuGroupCreateResponse toMenuGroupCreateResponse(MenuGroup menuGroup);
 
-    List<MenuGroupResponse> menuGroupsToResponses(List<MenuGroup> menuGroups);
+    List<MenuGroupResponse> toMenuGroupResponses(List<MenuGroup> menuGroups);
 }

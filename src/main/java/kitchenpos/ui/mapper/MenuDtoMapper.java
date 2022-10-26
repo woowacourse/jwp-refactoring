@@ -7,7 +7,7 @@ import kitchenpos.ui.dto.response.MenuResponse;
 
 public interface MenuDtoMapper {
 
-    MenuCreateResponse menuToMenuCreateResponse(Menu menu);
+    MenuCreateResponse toMenuCreateResponse(Menu menu);
 
-    List<MenuResponse> menusToMenuResponses(List<Menu> menus);
+    List<MenuResponse> toMenuResponses(List<Menu> menus);
 }

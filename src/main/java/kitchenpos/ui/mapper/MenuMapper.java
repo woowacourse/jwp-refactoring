@@ -5,5 +5,5 @@ import kitchenpos.ui.dto.request.MenuCreateRequest;
 
 public interface MenuMapper {
 
-    Menu menuCreateRequestToMenu(MenuCreateRequest menuCreateRequest);
+    Menu toMenu(MenuCreateRequest menuCreateRequest);
 }

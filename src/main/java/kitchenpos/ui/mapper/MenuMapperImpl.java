@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class MenuMapperImpl implements MenuMapper {
 
     @Override
-    public Menu menuCreateRequestToMenu(final MenuCreateRequest menuCreateRequest) {
+    public Menu toMenu(final MenuCreateRequest menuCreateRequest) {
         if (menuCreateRequest == null) {
             return null;
         }

@@ -9,5 +9,5 @@ import org.mapstruct.Mapping;
 public interface MenuGroupMapper {
 
     @Mapping(target = "id", ignore = true)
-    MenuGroup createRequestToMenuGroup(MenuGroupCreateRequest menuGroupCreateRequest);
+    MenuGroup toMenuGroup(MenuGroupCreateRequest menuGroupCreateRequest);
 }

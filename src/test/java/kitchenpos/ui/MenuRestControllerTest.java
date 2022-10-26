@@ -37,7 +37,7 @@ class MenuRestControllerTest extends RestControllerTest {
         Menu expectedMenu = new Menu(1L, "메뉴", new Price(BigDecimal.valueOf(1_000)), 1L, new ArrayList<>());
         new MenuProduct(1L, expectedMenu, 1L, 1);
 
-        when(menuService.create(menuMapper.menuCreateRequestToMenu(menuCreateRequest)))
+        when(menuService.create(menuMapper.toMenu(menuCreateRequest)))
                 .thenReturn(expectedMenu);
 
         mockMvc.perform(post("/api/menus")

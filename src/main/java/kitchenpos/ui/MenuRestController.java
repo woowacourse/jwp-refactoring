@@ -31,15 +31,15 @@ public class MenuRestController {
 
     @PostMapping("/api/menus")
     public ResponseEntity<MenuCreateResponse> create(@RequestBody final MenuCreateRequest menuCreateRequest) {
-        Menu menu = menuMapper.menuCreateRequestToMenu(menuCreateRequest);
-        MenuCreateResponse created = menuDtoMapper.menuToMenuCreateResponse(menuService.create(menu));
+        Menu menu = menuMapper.toMenu(menuCreateRequest);
+        MenuCreateResponse created = menuDtoMapper.toMenuCreateResponse(menuService.create(menu));
         final URI uri = URI.create("/api/menus/" + created.getId());
         return ResponseEntity.created(uri).body(created);
     }
 
     @GetMapping("/api/menus")
     public ResponseEntity<List<MenuResponse>> list() {
-        List<MenuResponse> menuResponses = menuDtoMapper.menusToMenuResponses(
+        List<MenuResponse> menuResponses = menuDtoMapper.toMenuResponses(
                 menuService.list()
         );
         return ResponseEntity.ok().body(menuResponses);

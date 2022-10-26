@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class MenuDtoMapperImpl implements MenuDtoMapper {
 
     @Override
-    public MenuCreateResponse menuToMenuCreateResponse(final Menu menu) {
+    public MenuCreateResponse toMenuCreateResponse(final Menu menu) {
         return new MenuCreateResponse(
                 menu.getId(),
                 menu.getName(),
@@ -36,7 +36,7 @@ public class MenuDtoMapperImpl implements MenuDtoMapper {
     }
 
     @Override
-    public List<MenuResponse> menusToMenuResponses(final List<Menu> menus) {
+    public List<MenuResponse> toMenuResponses(final List<Menu> menus) {
         return menus.stream()
                 .map(this::menuToResponse)
                 .collect(Collectors.toList());
