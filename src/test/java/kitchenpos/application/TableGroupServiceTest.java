@@ -99,6 +99,9 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("단체 지정 속 모든 테이블들의 주문이 있다면 COMPLETION 상태여야 한다.")
     @Test
     void ungroup_noCompleteOrder() {
+        menuGroupDao.save(메뉴그룹_한마리메뉴());
+        productDao.save(상품_후라이드());
+        menuDao.save(메뉴_후라이드치킨());
         TableGroup 테이블그룹 = tableGroupService.create(테이블그룹(List.of(빈테이블_1, 빈테이블_2)));
 
         테이블의_그룹변경(테이블그룹, 테이블_1());

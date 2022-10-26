@@ -24,6 +24,10 @@ public class Fixtures {
         return new MenuGroup(1L, "한마리메뉴");
     }
 
+    public static MenuGroup 메뉴그룹_두마리메뉴() {
+        return new MenuGroup(2L, "두마리메뉴");
+    }
+
     public static Product 상품_후라이드() {
         return new Product(1L, "후라이드", BigDecimal.valueOf(16000));
     }

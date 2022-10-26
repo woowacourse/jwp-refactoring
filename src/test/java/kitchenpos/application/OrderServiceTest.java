@@ -32,6 +32,15 @@ class OrderServiceTest extends ServiceTest {
         검증_필드비교_값포함(assertThat(orderService.list()), 주문);
     }
 
+    @DisplayName("주문들을 추가하면 주문 목록에 추가된다.")
+    @Test
+    void list() {
+        Order 주문 = orderService.create(주문_테이블1());
+        Order 주문2 = orderService.create(주문_테이블1());
+
+        검증_필드비교_동일_목록(orderService.list(), List.of(주문, 주문2));
+    }
+
     @DisplayName("하나 이상의 메뉴를 주문해야 한다.")
     @Test
     void create_noMenu() {

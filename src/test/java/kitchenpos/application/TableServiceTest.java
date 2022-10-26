@@ -73,6 +73,9 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블의 주문이 있다면 COMPLETION 상태여야 한다.")
     @Test
     void changeEmpty_noOrderComplete() {
+        menuGroupDao.save(메뉴그룹_한마리메뉴());
+        productDao.save(상품_후라이드());
+        menuDao.save(메뉴_후라이드치킨());
         OrderTable 테이블_1 = tableService.create(테이블_1());
         orderService.create(주문(테이블_1.getId()));
 

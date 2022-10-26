@@ -30,6 +30,17 @@ class MenuServiceTest extends ServiceTest {
         검증_필드비교_값포함(assertThat(메뉴_목록), 메뉴_후라이드치킨);
     }
 
+    @DisplayName("여러 메뉴를 추가할 시 메뉴 목록에 추가된다.")
+    @Test
+    void createAndList_multi() {
+        Menu 메뉴_후라이드치킨 = menuService.create(메뉴_후라이드치킨());
+        Menu 메뉴_후라이드치킨2 = menuService.create(메뉴_후라이드치킨());
+
+        List<Menu> 메뉴_목록 = menuService.list();
+
+        검증_필드비교_동일_목록(메뉴_목록, List.of(메뉴_후라이드치킨, 메뉴_후라이드치킨2));
+    }
+
     @DisplayName("메뉴 그룹은 DB에 등록되어야 한다.")
     @Test
     void createAndList_invalidMenuGroup() {
