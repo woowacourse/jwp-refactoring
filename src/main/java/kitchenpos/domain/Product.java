@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class Product {
     private Long id;
@@ -15,6 +16,12 @@ public class Product {
 
     public BigDecimal calculateTotalPrice(final long quantity) {
         return price.multiply(BigDecimal.valueOf(quantity));
+    }
+
+    public void validatePrice() {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
