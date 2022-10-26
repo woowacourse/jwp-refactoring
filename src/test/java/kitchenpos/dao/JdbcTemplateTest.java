@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
 import javax.sql.DataSource;
+import kitchenpos.product.domain.dao.JdbcTemplateProductDao;
 import kitchenpos.support.tool.DataBaseCleaner;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;

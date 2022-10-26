@@ -1,12 +1,16 @@
 package kitchenpos.application;
 
 import static kitchenpos.support.fixture.domain.ProductFixture.APPLE_1000;
+import static kitchenpos.support.fixture.dto.ProductDtoFixture.상품_생성_요청;
+import static kitchenpos.support.fixture.dto.ProductDtoFixture.상품_생성_응답;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import kitchenpos.NestedApplicationTest;
-import kitchenpos.dao.JdbcTemplateProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.application.dto.ProductResponse;
+import kitchenpos.product.domain.dao.JdbcTemplateProductDao;
+import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,10 +35,12 @@ class ProductServiceTest {
         void success() {
             Product product = APPLE_1000.getProduct();
 
-            Product actual = productService.create(product);
+            ProductResponse actual = productService.create(상품_생성_요청(product));
 
-            assertThat(actual).extracting(Product::getName, it -> it.getPrice().longValue())
-                .contains(product.getName(), product.getPrice().longValue());
+            ProductResponse expected = 상품_생성_응답(product);
+            assertThat(actual).usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(expected);
         }
     }
 
@@ -51,9 +57,9 @@ class ProductServiceTest {
         @Test
         @DisplayName("상품 전체 목록을 조회한다.")
         void success() {
-            List<Product> products = productService.list();
+            List<ProductResponse> responses = productService.list();
 
-            assertThat(products).hasSize(2);
+            assertThat(responses).hasSize(2);
         }
     }
 }

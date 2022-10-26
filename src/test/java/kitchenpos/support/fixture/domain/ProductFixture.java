@@ -1,35 +1,29 @@
 package kitchenpos.support.fixture.domain;
 
-import java.math.BigDecimal;
-import kitchenpos.domain.Product;
+import kitchenpos.common.domain.Name;
+import kitchenpos.common.domain.Price;
+import kitchenpos.product.domain.Product;
 
 public enum ProductFixture {
 
-    APPLE_1000("apple", new BigDecimal(1000)),
-    PEAR_2000("pear", new BigDecimal(2000)),
-    BANANA_3000("banana", new BigDecimal(3000))
+    APPLE_1000("apple", 1000),
+    PEAR_2000("pear", 2000),
+    BANANA_3000("banana", 3000)
     ;
 
-    private final String name;
-    private final BigDecimal price;
+    private final Name name;
+    private final Price price;
 
-    ProductFixture(String name, BigDecimal price) {
-        this.name = name;
-        this.price = price;
+    ProductFixture(String name, Integer price) {
+        this.name = Name.of(name);
+        this.price = Price.valueOf(price);
     }
 
     public Product getProduct() {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-        return product;
+        return new Product(name, price);
     }
 
     public Product getProduct(Long id) {
-        Product product = new Product();
-        product.setId(id);
-        product.setName(name);
-        product.setPrice(price);
-        return product;
+        return new Product(id, name, price);
     }
 }
