@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductRepository;
@@ -38,7 +38,7 @@ class OrderServiceTest extends ServiceTest {
     private ProductRepository productRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private MenuDao menuDao;
@@ -49,7 +49,7 @@ class OrderServiceTest extends ServiceTest {
     @BeforeEach
     void setUp() {
         Product product = productRepository.save(Product.of("상품1", 2500.0));
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹1"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
         Menu menu1 = menuDao.save(new Menu("메뉴1", new BigDecimal(5000), menuGroup.getId(),
                 List.of(new MenuProduct(product.getId(), 1L))));
         Menu menu2 = menuDao.save(new Menu("메뉴2", new BigDecimal(4500), menuGroup.getId(),

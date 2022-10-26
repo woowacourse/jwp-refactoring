@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +18,17 @@ class MenuGroupServiceTest extends ServiceTest {
     @DisplayName("메뉴 그룹을 생성할 수 있다.")
     @Test
     void create() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("햄버거");
+        MenuGroupDto menuGroupDto = new MenuGroupDto();
+        menuGroupDto.setName("햄버거");
 
-        menuGroupService.create(menuGroup);
+        menuGroupService.create(menuGroupDto);
 
-        List<MenuGroup> menuGroups = menuGroupService.list();
-        List<String> menuGroupNames = menuGroups.stream()
-                .map(MenuGroup::getName)
+        List<MenuGroupDto> menuGroupDtos = menuGroupService.list();
+        List<String> menuGroupNames = menuGroupDtos.stream()
+                .map(MenuGroupDto::getName)
                 .collect(Collectors.toUnmodifiableList());
         assertAll(
-                () -> assertThat(menuGroups).hasSize(1),
+                () -> assertThat(menuGroupDtos).hasSize(1),
                 () -> assertThat(menuGroupNames).contains("햄버거")
         );
     }

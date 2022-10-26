@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -28,12 +28,12 @@ class MenuServiceTest extends ServiceTest {
     private ProductRepository productRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @DisplayName("Menu를 등록할 수 있다.")
     @Test
     void create() {
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹1"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
         Product product = productRepository.save(Product.of("상품1", 5000.0));
         MenuProduct menuProduct = new MenuProduct(product.getId(), 2L);
         Menu menu = new Menu("메뉴1", new BigDecimal(10000), menuGroup.getId(), List.of(menuProduct));
@@ -68,7 +68,7 @@ class MenuServiceTest extends ServiceTest {
     @ParameterizedTest
     @CsvSource({"-1, 메뉴 가격은 0원 이상입니다.", "16001, 메뉴 가격은 상품의 합보다 작거나 같아야 합니다."})
     void create_Exception_InvalidPrice(int price, String expectedMessage) {
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹1"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
         Product product1 = productRepository.save(Product.of("상품1", 5000.0));
         Product product2 = productRepository.save(Product.of("상품2", 6000.0));
         MenuProduct menuProduct1 = new MenuProduct(product1.getId(), 2L);
