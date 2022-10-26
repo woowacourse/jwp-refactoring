@@ -14,7 +14,6 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.support.ClassConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -52,8 +51,8 @@ class TableGroupServiceTest extends ServiceTest {
             orderTableA = new OrderTable(ORDER_TABLE_A_ID, null, 0, true);
             orderTableB = new OrderTable(ORDER_TABLE_B_ID, null, 0, true);
 
-            tableGroup = ClassConstructor.tableGroup(null, null, Arrays.asList(orderTableA, orderTableB));
-            savedTableGroup = ClassConstructor.tableGroup(TABLE_GROUP_ID, LocalDateTime.now(),
+            tableGroup = new TableGroup(null, null, Arrays.asList(orderTableA, orderTableB));
+            savedTableGroup = new TableGroup(TABLE_GROUP_ID, LocalDateTime.now(),
                     Arrays.asList(orderTableA, orderTableB));
 
             given(orderTableDao.findAllByIdIn(any()))
