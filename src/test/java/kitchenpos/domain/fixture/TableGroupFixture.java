@@ -16,21 +16,33 @@ public class TableGroupFixture {
     private TableGroupFixture() {
     }
 
-    public static TableGroupFixture 테이블_그룹() {
+    public static TableGroup 새로운_테이블_그룹() {
+        return 테이블_그룹()
+            .그룹화한_시간(LocalDateTime.now())
+            .build();
+    }
+
+    public static TableGroup 테이블_그룹의_주문_테이블들은(final List<OrderTable> orderTables) {
+        return 테이블_그룹()
+            .주문_테이블들(orderTables)
+            .build();
+    }
+
+    private static TableGroupFixture 테이블_그룹() {
         return new TableGroupFixture();
     }
 
-    public TableGroupFixture 그룹화한_시간(final LocalDateTime createdDate) {
+    private TableGroupFixture 그룹화한_시간(final LocalDateTime createdDate) {
         this.createdDate = createdDate;
         return this;
     }
 
-    public TableGroupFixture 주문_테이블들(final List<OrderTable> orderTables) {
+    private TableGroupFixture 주문_테이블들(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
         return this;
     }
 
-    public TableGroup build() {
+    private TableGroup build() {
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setId(id);
         tableGroup.setCreatedDate(createdDate);

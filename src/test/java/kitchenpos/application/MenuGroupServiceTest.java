@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.fixture.MenuGroupFixture.치킨_세트;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -11,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.fake.FakeMenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.fixture.MenuGroupFixture;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayName("MenuGroup 서비스 테스트")
@@ -30,7 +30,7 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 등록한다")
     @Test
     void create() {
-        final MenuGroup menuGroup = MenuGroupFixture.치킨_세트().build();
+        final MenuGroup menuGroup = 치킨_세트();
 
         final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
@@ -42,7 +42,7 @@ class MenuGroupServiceTest {
     void list() {
         final int numberOfMenuGroup = 5;
         for (int i = 0; i < numberOfMenuGroup; i++) {
-            menuGroupDao.save(MenuGroupFixture.치킨_세트().build());
+            menuGroupDao.save(치킨_세트());
         }
 
         final List<MenuGroup> menuGroups = menuGroupService.list();

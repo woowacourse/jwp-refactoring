@@ -11,13 +11,22 @@ public class MenuGroupFixture {
     private MenuGroupFixture() {
     }
 
-    public static MenuGroupFixture 치킨_세트() {
-        final MenuGroupFixture menuGroupFixture = new MenuGroupFixture();
-        menuGroupFixture.name = "치킨 세트";
-        return menuGroupFixture;
+    public static MenuGroup 치킨_세트() {
+        return MenuGroupFixture.메뉴_그룹()
+            .이름("치킨 세트")
+            .build();
     }
 
-    public MenuGroup build() {
+    private static MenuGroupFixture 메뉴_그룹() {
+        return new MenuGroupFixture();
+    }
+
+    private MenuGroupFixture 이름(final String name) {
+        this.name = name;
+        return this;
+    }
+
+    private MenuGroup build() {
         final MenuGroup menuGroup = new MenuGroup();
         menuGroup.setId(id);
         menuGroup.setName(name);

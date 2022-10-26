@@ -18,28 +18,68 @@ public class MenuFixture {
     private MenuFixture() {
     }
 
-    public static MenuFixture 후라이드_치킨_세트() {
-        final MenuFixture menuFixture = new MenuFixture();
-        menuFixture.name = "후라이드";
-        return menuFixture;
+    public static Menu 후라이드_치킨_세트() {
+        return 메뉴()
+            .이름("후라이드")
+            .build();
     }
 
-    public MenuFixture 메뉴_그룹_아이디(final Long menuGroupId) {
+    public static Menu 후라이드_치킨_세트(final Long menuGroupId) {
+        return 메뉴()
+            .메뉴_그룹_아이디(menuGroupId)
+            .이름("후라이드")
+            .build();
+    }
+
+    public static Menu 후라이드_치킨_세트의_가격은(final Long menuGroupId, final BigDecimal price) {
+        return 메뉴()
+            .메뉴_그룹_아이디(menuGroupId)
+            .이름("후라이드")
+            .가격(price)
+            .build();
+    }
+
+    public static Menu 후라이드_치킨_세트의_가격과_메뉴_상품_리스트는(final Long menuGroupId, final BigDecimal price, final List<MenuProduct> menuProducts) {
+        return 메뉴()
+            .메뉴_그룹_아이디(menuGroupId)
+            .가격(price)
+            .메뉴_상품_리스트(menuProducts)
+            .build();
+    }
+
+    public static Menu 후라이드_치킨_세트의_메뉴_상품들은(final Long menuGroupId, final List<MenuProduct> menuProducts) {
+        return 메뉴()
+            .메뉴_그룹_아이디(menuGroupId)
+            .가격(new BigDecimal(15_000))
+            .메뉴_상품_리스트(menuProducts)
+            .build();
+    }
+
+    private static MenuFixture 메뉴() {
+        return new MenuFixture();
+    }
+
+    private MenuFixture 메뉴_그룹_아이디(final Long menuGroupId) {
         this.menuGroupId = menuGroupId;
         return this;
     }
 
-    public MenuFixture 가격(final BigDecimal price) {
+    private MenuFixture 이름(final String name) {
+        this.name = name;
+        return this;
+    }
+
+    private MenuFixture 가격(final BigDecimal price) {
         this.price = price;
         return this;
     }
 
-    public MenuFixture 메뉴_상품_리스트(final List<MenuProduct> menuProducts) {
+    private MenuFixture 메뉴_상품_리스트(final List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
         return this;
     }
 
-    public Menu build() {
+    private Menu build() {
         final Menu menu = new Menu();
         menu.setId(id);
         menu.setName(name);

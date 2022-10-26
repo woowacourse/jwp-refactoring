@@ -14,18 +14,35 @@ public class ProductFixture {
     private ProductFixture() {
     }
 
-    public static ProductFixture 후라이드_치킨() {
-        final ProductFixture productFixture = new ProductFixture();
-        productFixture.name = "후라이드 치킨";
-        return productFixture;
+    public static Product 후라이드_치킨() {
+        return 상품()
+            .이름("후라이드 치킨")
+            .가격(new BigDecimal(15_000))
+            .build();
     }
 
-    public ProductFixture 가격(final BigDecimal price) {
+    public static Product 후라이드_치킨의_가격은(final BigDecimal price) {
+        return 상품()
+            .이름("후라이드 치킨")
+            .가격(price)
+            .build();
+    }
+
+    private static ProductFixture 상품() {
+        return new ProductFixture();
+    }
+
+    private ProductFixture 이름(final String name) {
+        this.name = name;
+        return this;
+    }
+
+    private ProductFixture 가격(final BigDecimal price) {
         this.price = price;
         return this;
     }
 
-    public Product build() {
+    private Product build() {
         final Product product = new Product();
         product.setId(id);
         product.setName(name);
