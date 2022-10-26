@@ -10,7 +10,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.TableGroupFixtures;
 import kitchenpos.application.TableGroupService;
+import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,21 +32,17 @@ class TableGroupRestControllerTest extends ControllerTest {
     @Test
     void create() throws Exception {
         // given
-        long id = 1L;
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of());
-        tableGroup.setId(id);
-
-        given(tableGroupService.create(any())).willReturn(tableGroup);
+        given(tableGroupService.create(any())).willReturn(TableGroupFixtures.createTableGroupResponse());
 
         // when
         ResultActions actions = mockMvc.perform(post("/api/table-groups")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(tableGroup))
+                .content(objectMapper.writeValueAsString(new TableGroupCreateRequest(List.of(1L, 2L))))
         );
 
         // then
         actions.andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/api/table-groups/" + id));
+                .andExpect(header().exists("Location"));
     }
 
     @Test

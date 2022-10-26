@@ -7,15 +7,16 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import kitchenpos.OrderTableFixtures;
 import kitchenpos.application.TableService;
 import kitchenpos.application.dto.OrderTableCreateRequest;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -55,7 +56,7 @@ class TableRestControllerTest extends ControllerTest {
     @Test
     void list() throws Exception {
         // given
-        OrderTable orderTable = new OrderTable(1L, 0, true);
+        OrderTable orderTable = OrderTableFixtures.createOrderTable();
         given(tableService.list()).willReturn(List.of(orderTable));
 
         // when
@@ -69,7 +70,7 @@ class TableRestControllerTest extends ControllerTest {
     @Test
     void changeEmpty() throws Exception {
         // given
-        OrderTable orderTable = new OrderTable(1L, 0, true);
+        OrderTable orderTable = OrderTableFixtures.createOrderTable();
         given(tableService.changeEmpty(any(), anyBoolean())).willReturn(orderTable);
 
         // when
@@ -85,7 +86,7 @@ class TableRestControllerTest extends ControllerTest {
     @Test
     void changeNumberOfGuests() throws Exception {
         // given
-        OrderTable orderTable = new OrderTable(1L, 2, false);
+        OrderTable orderTable = OrderTableFixtures.createOrderTable();
         given(tableService.changeNumberOfGuests(any(), anyInt())).willReturn(orderTable);
 
         // when

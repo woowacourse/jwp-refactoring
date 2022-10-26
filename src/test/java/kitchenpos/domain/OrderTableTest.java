@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import kitchenpos.TableGroupFixtures;
 import org.junit.jupiter.api.Test;
 
 class OrderTableTest {
@@ -24,7 +25,7 @@ class OrderTableTest {
     void changeEmptyWithTableGroupId() {
         // given
         boolean empty = true;
-        OrderTable orderTable = new OrderTable(1L, 2, false);
+        OrderTable orderTable = new OrderTable(TableGroupFixtures.createTableGroup(), 2, false);
         // when & then
         assertThatThrownBy(() -> orderTable.changeEmpty(empty))
                 .isInstanceOf(IllegalArgumentException.class);

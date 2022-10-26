@@ -1,8 +1,10 @@
 package kitchenpos.dao;
 
+import static kitchenpos.OrderTableFixtures.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.OrderTable;
@@ -15,26 +17,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RepositoryTest
 class OrderTableRepositoryTest {
 
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    public OrderTableRepositoryTest(TableGroupDao tableGroupDao, OrderTableRepository orderTableRepository) {
-        this.tableGroupDao = tableGroupDao;
+    public OrderTableRepositoryTest(
+            TableGroupRepository tableGroupRepository,
+            OrderTableRepository orderTableRepository
+    ) {
+        this.tableGroupRepository = tableGroupRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
-    private Long tableGroupId;
+    private TableGroup tableGroup;
 
     @BeforeEach
     void setUp() {
-        tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null)).getId();
+        List<OrderTable> orderTables = Arrays.asList(createOrderTable(), createOrderTable());
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
+        this.tableGroup = tableGroupRepository.save(tableGroup);
     }
 
     @Test
     void save() {
         // given
-        OrderTable orderTable = new OrderTable(tableGroupId, 4, false);
+        OrderTable orderTable = createOrderTable();
         // when
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         // then
@@ -44,8 +51,7 @@ class OrderTableRepositoryTest {
     @Test
     void findById() {
         // given
-        OrderTable orderTable = new OrderTable(tableGroupId, 4, false);
-        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(createOrderTable());
 
         // when
         Optional<OrderTable> foundOrderTable = orderTableRepository.findById(savedOrderTable.getId());
@@ -56,11 +62,7 @@ class OrderTableRepositoryTest {
 
     @Test
     void findAll() {
-        // given
-        orderTableRepository.save(new OrderTable(tableGroupId, 4, false));
-        orderTableRepository.save(new OrderTable(tableGroupId, 2, false));
-
-        // when
+        // given & when
         List<OrderTable> orderTables = orderTableRepository.findAll();
 
         // then
@@ -71,11 +73,12 @@ class OrderTableRepositoryTest {
     @Test
     void findAllByIdIn() {
         // given
-        OrderTable orderTableA = orderTableRepository.save(new OrderTable(tableGroupId, 4, false));
-        OrderTable orderTableB = orderTableRepository.save(new OrderTable(tableGroupId, 2, false));
+        OrderTable orderTableA = orderTableRepository.save(new OrderTable(tableGroup, 4, false));
+        OrderTable orderTableB = orderTableRepository.save(new OrderTable(tableGroup, 2, false));
 
         // when
-        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(List.of(orderTableA.getId(), orderTableB.getId()));
+        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(
+                List.of(orderTableA.getId(), orderTableB.getId()));
 
         // then
         assertThat(orderTables).hasSize(2);
@@ -83,12 +86,8 @@ class OrderTableRepositoryTest {
 
     @Test
     void findAllByTableGroupId() {
-        // given
-        orderTableRepository.save(new OrderTable(tableGroupId, 4, false));
-        orderTableRepository.save(new OrderTable(tableGroupId, 2, false));
-
-        // when
-        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        // given & when
+        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
 
         // then
         assertThat(orderTables).hasSize(2);

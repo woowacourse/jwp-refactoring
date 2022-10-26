@@ -5,10 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.TableGroupFixtures;
 import kitchenpos.application.dto.OrderTableCreateRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -23,19 +24,19 @@ class TableServiceTest {
     private TableService tableService;
     private OrderDao orderDao;
     private OrderTableRepository orderTableRepository;
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
     public TableServiceTest(
             TableService tableService,
             OrderDao orderDao,
             OrderTableRepository orderTableRepository,
-            TableGroupDao tableGroupDao
+            TableGroupRepository tableGroupRepository
     ) {
         this.tableService = tableService;
         this.orderDao = orderDao;
         this.orderTableRepository = orderTableRepository;
-        this.tableGroupDao = tableGroupDao;
+        this.tableGroupRepository = tableGroupRepository;
     }
 
     @Test
@@ -72,8 +73,8 @@ class TableServiceTest {
     @Test
     void changeEmptyWithTableGroupId() {
         // given
-        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
-        OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 3, false));
+        TableGroup tableGroup = tableGroupRepository.save(TableGroupFixtures.createTableGroup());
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup, 3, false));
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))
