@@ -15,30 +15,35 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class TableServiceTest extends ServiceTest {
+class TableServiceTest {
 
-    @Test
-    void create_success() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(5);
+    @Nested
+    class CreateTest extends ServiceTest {
+        @Test
+        void create_success() {
+            OrderTable orderTable = new OrderTable();
+            orderTable.setEmpty(false);
+            orderTable.setNumberOfGuests(5);
 
-        OrderTable savedTable = tableService.create(orderTable);
+            OrderTable savedTable = tableService.create(orderTable);
 
-        assertThat(savedTable.getNumberOfGuests()).isEqualTo(5);
-    }
-
-    @Test
-    void list_success() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(5);
-
-        assertThat(tableService.list()).hasSize(15);
+            assertThat(savedTable.getNumberOfGuests()).isEqualTo(5);
+        }
     }
 
     @Nested
-    class ChangeEmptyTest {
+    class ListTest extends ServiceTest {
+        @Test
+        void list_success() {
+            OrderTable orderTable = new OrderTable();
+            orderTable.setEmpty(false);
+            orderTable.setNumberOfGuests(5);
+            assertThat(tableService.list()).hasSize(8);
+        }
+    }
+
+    @Nested
+    class ChangeEmptyTest extends ServiceTest {
 
         private OrderTable orderTable;
         private OrderTable savedOrderTable;
@@ -117,7 +122,7 @@ class TableServiceTest extends ServiceTest {
     }
 
     @Nested
-    class ChangeNumberOfGuestsTest {
+    class ChangeNumberOfGuestsTest extends ServiceTest {
 
         private OrderTable orderTable;
         private OrderTable savedOrderTable;

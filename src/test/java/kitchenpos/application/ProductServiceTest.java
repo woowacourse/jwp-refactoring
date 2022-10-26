@@ -9,10 +9,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class ProductServiceTest extends ServiceTest{
+class ProductServiceTest {
 
     @Nested
-    class CreateTest {
+    class CreateTest extends ServiceTest {
 
         Product product;
 
@@ -41,7 +41,7 @@ class ProductServiceTest extends ServiceTest{
     }
 
     @Nested
-    class ListTest {
+    class ListTest extends ServiceTest {
 
         @Test
         void list() {

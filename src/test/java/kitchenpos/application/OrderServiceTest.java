@@ -16,10 +16,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-public class OrderServiceTest extends ServiceTest {
+public class OrderServiceTest {
 
     @Nested
-    class CreateOrderServiceTest {
+    class CreateOrderServiceTest extends ServiceTest {
 
         Order order;
 
@@ -74,7 +74,7 @@ public class OrderServiceTest extends ServiceTest {
             OrderTable orderTable = new OrderTable();
             orderTable.setNumberOfGuests(5);
             orderTable.setEmpty(false);
-            OrderTable savedOrderTable =  orderTableDao.save(orderTable);
+            OrderTable savedOrderTable = orderTableDao.save(orderTable);
             order.setOrderTableId(savedOrderTable.getId());
             Order savedOrder = orderService.create(order);
 
@@ -83,7 +83,7 @@ public class OrderServiceTest extends ServiceTest {
     }
 
     @Nested
-    class ListOrderServiceTest {
+    class ListOrderServiceTest extends ServiceTest {
         @Test
         void list_success() {
             assertThat(menuService.list()).hasSize(6);
@@ -91,7 +91,7 @@ public class OrderServiceTest extends ServiceTest {
     }
 
     @Nested
-    class ChangeOrderStatusTest {
+    class ChangeOrderStatusTest extends ServiceTest {
 
         Order order;
 
@@ -116,7 +116,7 @@ public class OrderServiceTest extends ServiceTest {
             OrderTable orderTable = new OrderTable();
             orderTable.setNumberOfGuests(5);
             orderTable.setEmpty(false);
-            OrderTable savedOrderTable =  orderTableDao.save(orderTable);
+            OrderTable savedOrderTable = orderTableDao.save(orderTable);
             order.setOrderTableId(savedOrderTable.getId());
 
             Order savedOrder = orderService.create(order);

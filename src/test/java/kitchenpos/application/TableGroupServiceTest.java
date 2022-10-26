@@ -23,10 +23,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class TableGroupServiceTest extends ServiceTest {
+class TableGroupServiceTest {
 
     @Nested
-    class CreateTest {
+    class CreateTest extends ServiceTest {
 
         private TableGroup tableGroup;
 
@@ -89,7 +89,7 @@ class TableGroupServiceTest extends ServiceTest {
     }
 
     @Nested
-    class UngroupTest {
+    class UngroupTest extends ServiceTest {
 
         private TableGroup tableGroup;
         private Order order;
@@ -125,7 +125,7 @@ class TableGroupServiceTest extends ServiceTest {
                     .filter(it -> it.getOrderStatus().equals(MEAL.name()) || it.getOrderStatus().equals(COOKING.name()))
                     .collect(Collectors.toList());
 
-            for (Order order: orders) {
+            for (Order order : orders) {
                 order.setOrderStatus(COMPLETION.name());
                 orderDao.save(order);
             }

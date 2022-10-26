@@ -9,10 +9,10 @@ import kitchenpos.domain.Menu;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class MenuServiceTest extends ServiceTest {
+class MenuServiceTest {
 
     @Nested
-    class CreateMenuTest {
+    class CreateMenuTest extends ServiceTest {
 
         @Test
         void create_fail_when_price_is_null() {
@@ -73,7 +73,7 @@ class MenuServiceTest extends ServiceTest {
     }
 
     @Nested
-    class ListMenuTest {
+    class ListMenuTest extends ServiceTest {
 
         @Test
         void list_success() {

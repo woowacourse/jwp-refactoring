@@ -6,10 +6,10 @@ import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-public class MenuGroupServiceTest extends ServiceTest {
+public class MenuGroupServiceTest {
 
     @Nested
-    class CreateMenuGroupTest {
+    class CreateMenuGroupTest extends ServiceTest {
         @Test
         void create_success() {
             final MenuGroup menuGroup = new MenuGroup();
@@ -21,7 +21,7 @@ public class MenuGroupServiceTest extends ServiceTest {
     }
 
     @Nested
-    class ListMenuGroupTest {
+    class ListMenuGroupTest extends ServiceTest {
         @Test
         void list_success() {
             final MenuGroup menuGroup1 = new MenuGroup();
