@@ -27,20 +27,17 @@ class MenuGroupServiceTest {
     @Test
     @DisplayName("메뉴 그룹을 생성한다")
     void create() {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("메뉴그룹");
+        final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
         final MenuGroup createMenuGroup = menuGroupService.create(menuGroup);
 
         assertThat(createMenuGroup.getName())
-                .isEqualTo("메뉴그룹");
+                .isEqualTo("메뉴 그룹");
     }
 
     @Test
     @DisplayName("메뉴 그룹 전체를 조회한다")
     void list() {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("메뉴그룹");
+        final MenuGroup menuGroup = new MenuGroup(1L, "메뉴그룹");
         menuGroupDao.save(menuGroup);
 
         final List<MenuGroup> actual = menuGroupService.list();

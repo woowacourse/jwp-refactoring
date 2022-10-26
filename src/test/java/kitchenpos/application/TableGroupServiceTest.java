@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,27 +29,18 @@ class TableGroupServiceTest {
     @Autowired
     private TableService tableService;
 
+    @Autowired
+    private OrderTableDao orderTableDao;
+
     private OrderTable orderTable1;
     private OrderTable orderTable2;
     private OrderTable orderTable3;
-    private TableGroup tableGroup;
 
     @BeforeEach
     void setUp() {
-        orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
-        orderTable1 = tableService.create(orderTable1);
-
-        orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
-        orderTable2 = tableService.create(orderTable2);
-
-        orderTable3 = new OrderTable();
-        orderTable3.setEmpty(false);
-        orderTable3.setNumberOfGuests(4);
-        orderTable3 = tableService.create(orderTable3);
-
-        tableGroup = new TableGroup();
+        orderTable1 = tableService.create(0, true);
+        orderTable2 = tableService.create(0, true);
+        orderTable3 = tableService.create(4, false);
     }
 
     @Test
@@ -56,9 +49,8 @@ class TableGroupServiceTest {
         final List<OrderTable> orderTables = new ArrayList<>();
         orderTables.add(orderTable1);
         orderTables.add(orderTable2);
-        tableGroup.setOrderTables(orderTables);
 
-        final TableGroup createTableGroup = tableGroupService.create(tableGroup);
+        final TableGroup createTableGroup = tableGroupService.create(orderTables);
 
         assertThat(createTableGroup.getOrderTables())
                 .hasSize(2);
@@ -69,9 +61,8 @@ class TableGroupServiceTest {
     void create_oneTableException() {
         final List<OrderTable> orderTables = new ArrayList<>();
         orderTables.add(orderTable1);
-        tableGroup.setOrderTables(orderTables);
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(orderTables))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -81,9 +72,8 @@ class TableGroupServiceTest {
         final List<OrderTable> orderTables = new ArrayList<>();
         orderTables.add(orderTable1);
         orderTables.add(orderTable3);
-        tableGroup.setOrderTables(orderTables);
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(orderTables))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -93,7 +83,8 @@ class TableGroupServiceTest {
         final List<OrderTable> orderTables = new ArrayList<>();
         orderTables.add(orderTable1);
         orderTables.add(orderTable2);
-        tableGroup.setOrderTables(orderTables);
+
+        final TableGroup tableGroup = tableGroupService.create(orderTables);
 
         tableGroupService.ungroup(tableGroup.getId());
 

@@ -5,9 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,20 +21,10 @@ class TableServiceTest {
     @Autowired
     private TableService tableService;
 
-    private OrderTable orderTable;
-
-    @BeforeEach
-    void setUp() {
-        orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(5);
-    }
-
     @Test
     @DisplayName("테이블을 생성한다")
     void create() {
-        final OrderTable createOrderTable = tableService.create(orderTable);
+        final OrderTable createOrderTable = tableService.create(5, false);
 
         assertThat(createOrderTable.getNumberOfGuests())
                 .isEqualTo(5);
@@ -45,7 +33,7 @@ class TableServiceTest {
     @Test
     @DisplayName("테이블 전체를 조회한다")
     void list() {
-        tableService.create(orderTable);
+        tableService.create(3, false);
 
         final List<OrderTable> actual = tableService.list();
 
@@ -60,9 +48,9 @@ class TableServiceTest {
     @Test
     @DisplayName("테이블을 비운다")
     void changeEmpty() {
-        final OrderTable createOrderTable = tableService.create(orderTable);
+        final OrderTable createOrderTable = tableService.create(0, true);
 
-        final OrderTable emptyOrderTable = new OrderTable();
+        final OrderTable emptyOrderTable = new OrderTable(null, 0, true);
         emptyOrderTable.setEmpty(true);
 
         final OrderTable actual = tableService.changeEmpty(createOrderTable.getId(), emptyOrderTable);
@@ -74,11 +62,8 @@ class TableServiceTest {
     @Test
     @DisplayName("손님 수를 변경한다")
     void changeNumberOfGuests() {
-        final OrderTable createOrderTable = tableService.create(orderTable);
-
-        final OrderTable expected = new OrderTable();
-        expected.setEmpty(false);
-        expected.setNumberOfGuests(6);
+        final OrderTable createOrderTable = tableService.create(5, false);
+        final OrderTable expected = tableService.create(6, false);
 
         final OrderTable actual = tableService.changeNumberOfGuests(createOrderTable.getId(), expected);
 
@@ -89,9 +74,9 @@ class TableServiceTest {
     @Test
     @DisplayName("손님 수를 0 미만으로 변경하면 예외를 반환한다")
     void changeNumberOfGuests_negativeNumberException() {
-        final OrderTable createOrderTable = tableService.create(orderTable);
+        final OrderTable createOrderTable = tableService.create(0, true);
 
-        final OrderTable expected = new OrderTable();
+        final OrderTable expected = new OrderTable(null, 0, true);
         expected.setEmpty(false);
         expected.setNumberOfGuests(-1);
 

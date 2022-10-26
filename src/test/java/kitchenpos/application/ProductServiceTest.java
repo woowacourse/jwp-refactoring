@@ -30,16 +30,13 @@ class ProductServiceTest {
 
     @BeforeEach
     void setUp() {
-        product = new Product();
-        product.setId(1L);
-        product.setName("피자");
-        product.setPrice(BigDecimal.valueOf(20000L));
+        product = new Product(1L, "피자", BigDecimal.valueOf(20_000L));
     }
 
     @Test
     @DisplayName("상품을 생성한다")
     void create() {
-        final Product createProduct = productService.create(product);
+        final Product createProduct = productService.create("피자", BigDecimal.valueOf(20_000L));
 
         assertThat(createProduct.getName()).isEqualTo("피자");
     }

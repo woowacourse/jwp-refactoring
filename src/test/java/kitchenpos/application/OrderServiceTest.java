@@ -54,10 +54,8 @@ class OrderServiceTest {
     void setUp() {
         menuGroupDao.save(generateMenuGroup());
         menuDao.save(generateMenu());
-        orderTable = tableService.create(new OrderTable());
-        order = generateOrder(OrderStatus.COOKING.name(), new ArrayList<>());
+        orderTable = tableService.create(3, false);
     }
-
 
     @Test
     @DisplayName("주문을 생성한다")
@@ -65,8 +63,7 @@ class OrderServiceTest {
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         final OrderLineItem orderLineItem = generateOrderLineItem(1L, 1);
         orderLineItems.add(orderLineItem);
-        order.setOrderLineItems(orderLineItems);
-
+        order = generateOrder(OrderStatus.COOKING.name(), orderLineItems);
         final Order createOrder = orderService.create(order);
 
         assertThat(createOrder.getOrderTableId())
@@ -76,8 +73,7 @@ class OrderServiceTest {
     @Test
     @DisplayName("메뉴가 없는 주문을 생성하면 예외를 반환한다")
     void create_notHaveMenuException() {
-        final List<OrderLineItem> orderLineItems = new ArrayList<>();
-        order.setOrderLineItems(orderLineItems);
+        order = generateOrder(OrderStatus.COOKING.name(), new ArrayList<>());
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -89,7 +85,7 @@ class OrderServiceTest {
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         final OrderLineItem orderLineItem = generateOrderLineItem(999999999L, 1);
         orderLineItems.add(orderLineItem);
-        order.setOrderLineItems(orderLineItems);
+        order = generateOrder(OrderStatus.COOKING.name(), orderLineItems);
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -98,7 +94,11 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문 전체를 조회한다")
     void list() {
-        orderDao.save(order);
+        final List<OrderLineItem> orderLineItems = new ArrayList<>();
+        final OrderLineItem orderLineItem = generateOrderLineItem(1L, 1);
+        orderLineItems.add(orderLineItem);
+        order = generateOrder(OrderStatus.COOKING.name(), orderLineItems);
+        orderService.create(order);
 
         final List<Order> actual = orderService.list();
 
@@ -116,11 +116,9 @@ class OrderServiceTest {
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         final OrderLineItem orderLineItem = generateOrderLineItem(1L, 1);
         orderLineItems.add(orderLineItem);
-        order.setOrderLineItems(orderLineItems);
-        final Order createOrder = orderService.create(order);
+        final Order createOrder = orderService.create(generateOrder(OrderStatus.COOKING.name(), orderLineItems));
 
-        final Order order2 = new Order();
-        order2.setOrderStatus(OrderStatus.MEAL.name());
+        final Order order2 = new Order(1L, OrderStatus.MEAL.name(), LocalDateTime.now());
 
         final Order actual = orderService.changeOrderStatus(createOrder.getId(), order2);
 
@@ -134,49 +132,29 @@ class OrderServiceTest {
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         final OrderLineItem orderLineItem = generateOrderLineItem(1L, 2);
         orderLineItems.add(orderLineItem);
-        order.setOrderLineItems(orderLineItems);
-        orderService.create(order);
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
+        order = generateOrder(OrderStatus.COOKING.name(), orderLineItems);
 
-        final Order order2 = new Order();
-        order2.setOrderStatus(OrderStatus.MEAL.name());
+        final Order order2 = new Order(1L, OrderStatus.MEAL.name(), LocalDateTime.now());
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), order2))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     private Order generateOrder(final String orderStatus, final List<OrderLineItem> orderLineItems) {
-        order = new Order();
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderLineItems(orderLineItems);
-        return order;
+        return new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), orderLineItems);
     }
 
     private OrderLineItem generateOrderLineItem(final Long menuId, final int quantity) {
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setSeq(1L);
-        orderLineItem.setOrderId(order.getId());
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-        return orderLineItem;
+        return new OrderLineItem(1L, 1L, menuId, quantity);
     }
 
     private MenuGroup generateMenuGroup() {
-        menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("애기메뉴들");
+        menuGroup = new MenuGroup(1L, "애기메뉴들");
         return menuGroup;
     }
 
     private Menu generateMenu() {
-        menu = new Menu();
-        menu.setId(1L);
-        menu.setName("애기메뉴");
-        menu.setPrice(BigDecimal.valueOf(20_000L));
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setMenuProducts(new ArrayList<>());
+        menu = new Menu(1L, "애기메뉴", BigDecimal.valueOf(20_000L), 1L, new ArrayList<>());
         return menu;
     }
 }
