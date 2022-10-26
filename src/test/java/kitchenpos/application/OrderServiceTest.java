@@ -4,14 +4,12 @@ import static kitchenpos.application.DomainFixture.getEmptyTable;
 import static kitchenpos.application.DomainFixture.getMenu;
 import static kitchenpos.application.DomainFixture.getMenuGroup;
 import static kitchenpos.application.DomainFixture.getNotEmptyTable;
+import static kitchenpos.application.DomainFixture.getOrder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -20,49 +18,22 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
-class OrderServiceTest {
-
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private MenuDao menuDao;
-
-    @Autowired
-    private OrderTableDao orderTableDao;
+class OrderServiceTest extends ServiceTest {
 
     private Menu createMenu() {
-        final MenuGroup menuGroup = menuGroupDao.save(getMenuGroup());
-        return menuDao.save(getMenu(menuGroup.getId()));
-    }
-
-    private OrderTable createEmptyTable() {
-        return orderTableDao.save(getEmptyTable());
-    }
-
-    private OrderTable createNotEmptyOrderTable() {
-        return orderTableDao.save(getNotEmptyTable(5));
+        final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroup());
+        return 메뉴_등록(getMenu(menuGroup.getId(), createMenuProducts()));
     }
 
     @DisplayName("주문을 등록한다.")
     @Test
     void create() {
         final Menu menu = createMenu();
-        final OrderTable orderTable = createNotEmptyOrderTable();
-        final Order order = new Order();
-        order.setOrderLineItems(List.of(new OrderLineItem(null, null, menu.getId(), 1)));
-        order.setOrderTableId(orderTable.getId());
+        final OrderTable orderTable = 테이블_등록(getNotEmptyTable(5));
+        final Order order = getOrder(orderTable.getId(), menu.getId());
 
-        final Order savedOrder = orderService.create(order);
+        final Order savedOrder = 주문_등록(order);
 
         assertAll(
                 () -> assertThat(savedOrder.getId()).isNotNull(),
@@ -75,23 +46,23 @@ class OrderServiceTest {
     @DisplayName("주문을 등록한다. - 주문 항목이 존재하지 않는다면 예외를 반환한다.")
     @Test
     void create_exception_noOrderListItem() {
-        final OrderTable orderTable = createNotEmptyOrderTable();
+        final OrderTable orderTable = 테이블_등록(getNotEmptyTable(5));
         final Order order = new Order();
         order.setOrderTableId(orderTable.getId());
 
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> 주문_등록(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문을 등록한다. - 존재하지 않는 메뉴가 포함되어 있으면 예외를 반환한다.")
     @Test
     void create_exception_noSuchMenu() {
-        final OrderTable orderTable = createNotEmptyOrderTable();
+        final OrderTable orderTable = 테이블_등록(getNotEmptyTable(5));
         final Order order = new Order();
         order.setOrderLineItems(List.of(new OrderLineItem(null, null, null, 1)));
         order.setOrderTableId(orderTable.getId());
 
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> 주문_등록(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -102,7 +73,7 @@ class OrderServiceTest {
         final Order order = new Order();
         order.setOrderLineItems(List.of(new OrderLineItem(null, null, menu.getId(), 1)));
 
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> 주문_등록(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -110,12 +81,10 @@ class OrderServiceTest {
     @Test
     void create_exception_tableIsEmpty() {
         final Menu menu = createMenu();
-        final Order order = new Order();
-        order.setOrderLineItems(List.of(new OrderLineItem(null, null, menu.getId(), 1)));
-        final OrderTable orderTable = createEmptyTable();
-        order.setOrderTableId(orderTable.getId());
+        final OrderTable orderTable = 테이블_등록(getEmptyTable());
+        final Order order = getOrder(orderTable.getId(), menu.getId());
 
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> 주문_등록(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -123,11 +92,9 @@ class OrderServiceTest {
     @Test
     void list() {
         final Menu menu = createMenu();
-        final OrderTable orderTable = createNotEmptyOrderTable();
-        final Order order = new Order();
-        order.setOrderLineItems(List.of(new OrderLineItem(null, null, menu.getId(), 1)));
-        order.setOrderTableId(orderTable.getId());
-        orderService.create(order);
+        final OrderTable orderTable = 테이블_등록(getNotEmptyTable(5));
+        final Order order = getOrder(orderTable.getId(), menu.getId());
+        주문_등록(order);
 
         final List<Order> orders = orderService.list();
 
@@ -138,11 +105,9 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus() {
         final Menu menu = createMenu();
-        final OrderTable orderTable = createNotEmptyOrderTable();
-        final Order order = new Order();
-        order.setOrderLineItems(List.of(new OrderLineItem(null, null, menu.getId(), 1)));
-        order.setOrderTableId(orderTable.getId());
-        final Order savedOrder = orderService.create(order);
+        final OrderTable orderTable = 테이블_등록(getNotEmptyTable(5));
+        final Order order = getOrder(orderTable.getId(), menu.getId());
+        final Order savedOrder = 주문_등록(order);
 
         final Order changeOrder = new Order();
         changeOrder.setOrderStatus(OrderStatus.MEAL.name());
@@ -171,11 +136,9 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus_statusIsCompletion() {
         final Menu menu = createMenu();
-        final OrderTable orderTable = createNotEmptyOrderTable();
-        final Order order = new Order();
-        order.setOrderLineItems(List.of(new OrderLineItem(null, null, menu.getId(), 1)));
-        order.setOrderTableId(orderTable.getId());
-        final Order savedOrder = orderService.create(order);
+        final OrderTable orderTable = 테이블_등록(getNotEmptyTable(5));
+        final Order order = getOrder(orderTable.getId(), menu.getId());
+        final Order savedOrder = 주문_등록(order);
 
         final Order changeToComplete = new Order();
         changeToComplete.setOrderStatus(OrderStatus.COMPLETION.name());

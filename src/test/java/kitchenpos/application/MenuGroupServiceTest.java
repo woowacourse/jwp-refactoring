@@ -8,23 +8,15 @@ import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
-class MenuGroupServiceTest {
-
-    @Autowired
-    private MenuGroupService menuGroupService;
+class MenuGroupServiceTest extends ServiceTest {
 
     @DisplayName("메뉴 그룹을 등록한다.")
     @Test
     void create() {
         final MenuGroup menuGroup = getMenuGroup();
 
-        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroup savedMenuGroup = 메뉴_그룹_등록(menuGroup);
 
         assertAll(
                 () -> assertThat(savedMenuGroup.getId()).isNotNull(),
@@ -35,7 +27,7 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 목록을 조회한다.")
     @Test
     void list() {
-        menuGroupService.create(getMenuGroup());
+        메뉴_그룹_등록(getMenuGroup());
 
         final List<MenuGroup> menuGroups = menuGroupService.list();
 
