@@ -26,7 +26,7 @@ class MenuServiceTest extends ServiceTest {
         void create() {
             // given
             Product product = createAndSaveProduct();
-            MenuProduct menuProduct = createMenuProduct(product.getId(), 10L);
+            MenuProduct menuProduct = new MenuProduct(product.getId(), 10L);
             MenuGroup menuGroup = createAndSaveMenuGroup();
 
             Menu menu = createMenu(new BigDecimal(1000), menuGroup.getId(), menuProduct);
@@ -43,7 +43,7 @@ class MenuServiceTest extends ServiceTest {
         void nullPrice() {
             // given
             Product product = createAndSaveProduct();
-            MenuProduct menuProduct = createMenuProduct(product.getId(), 10L);
+            MenuProduct menuProduct = new MenuProduct(product.getId(), 10L);
             MenuGroup menuGroup = createAndSaveMenuGroup();
 
             Menu menu = createMenu(null, menuGroup.getId(), menuProduct);
@@ -58,7 +58,7 @@ class MenuServiceTest extends ServiceTest {
         void negativePrice() {
             // given
             Product product = createAndSaveProduct();
-            MenuProduct menuProduct = createMenuProduct(product.getId(), 10L);
+            MenuProduct menuProduct = new MenuProduct(product.getId(), 10L);
             MenuGroup menuGroup = createAndSaveMenuGroup();
 
             Menu menu = createMenu(new BigDecimal(-1), menuGroup.getId(), menuProduct);
@@ -73,7 +73,7 @@ class MenuServiceTest extends ServiceTest {
         void invalidMenuGroupId() {
             // given
             Product product = createAndSaveProduct();
-            MenuProduct menuProduct = createMenuProduct(product.getId(), 10L);
+            MenuProduct menuProduct = new MenuProduct(product.getId(), 10L);
 
             Menu menu = createMenu(new BigDecimal(1000), 0L, menuProduct);
 
@@ -86,7 +86,7 @@ class MenuServiceTest extends ServiceTest {
         @DisplayName("존재하지 않는 menu product id인 경우 예외가 발생한다.")
         void invalidMenuProductId() {
             // given
-            MenuProduct menuProduct = createMenuProduct(0L, 10L);
+            MenuProduct menuProduct = new MenuProduct(0L, 10L);
             MenuGroup menuGroup = createAndSaveMenuGroup();
 
             Menu menu = createMenu(new BigDecimal(1000), menuGroup.getId(), menuProduct);
@@ -101,7 +101,7 @@ class MenuServiceTest extends ServiceTest {
         void biggerThanProductPriceSum() {
             // given
             Product product = createAndSaveProduct();
-            MenuProduct menuProduct = createMenuProduct(product.getId(), 1L);
+            MenuProduct menuProduct = new MenuProduct(product.getId(), 1L);
             MenuGroup menuGroup = createAndSaveMenuGroup();
 
             Menu menu = createMenu(new BigDecimal(2000), menuGroup.getId(), menuProduct);
@@ -129,14 +129,6 @@ class MenuServiceTest extends ServiceTest {
     private Product createAndSaveProduct() {
         Product product = new Product("product", new BigDecimal(1000));
         return productDao.save(product);
-    }
-
-    private MenuProduct createMenuProduct(long productId, long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-
-        return menuProduct;
     }
 
     private MenuGroup createAndSaveMenuGroup() {
