@@ -166,11 +166,7 @@ class OrderServiceTest extends ServiceTest {
     private Menu createAndSaveMenu() {
         MenuGroup menuGroup = new MenuGroup("menuGroup");
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
-
-        Menu menu = new Menu();
-        menu.setName("menu");
-        menu.setPrice(new BigDecimal(1000));
-        menu.setMenuGroupId(savedMenuGroup.getId());
+        Menu menu = new Menu("menu", new BigDecimal(1000), savedMenuGroup.getId());
 
         return menuDao.save(menu);
     }
