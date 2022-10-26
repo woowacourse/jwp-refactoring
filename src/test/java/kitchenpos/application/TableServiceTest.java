@@ -84,13 +84,13 @@ class TableServiceTest {
     @Test
     void changeEmpty_exception_alreadyInTableGroup() {
         final OrderTable orderTable = tableService.create(getEmptyTable());
-        final OrderTable anotherTable = getEmptyTable();
+        final OrderTable anotherTable = tableService.create(getEmptyTable());
 
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(orderTable, tableService.create(anotherTable)));
         tableGroupService.create(tableGroup);
 
-        final OrderTable emptyTable = getEmptyTable();
+        final OrderTable emptyTable = tableService.create(getEmptyTable());
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), emptyTable))
                 .isInstanceOf(IllegalArgumentException.class);

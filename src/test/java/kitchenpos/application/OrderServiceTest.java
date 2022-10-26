@@ -18,7 +18,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,19 +40,24 @@ class OrderServiceTest {
     @Autowired
     private OrderTableDao orderTableDao;
 
-    private Menu menu;
-    private OrderTable orderTable;
-
-    @BeforeEach
-    void setUp() {
+    private Menu createMenu() {
         final MenuGroup menuGroup = menuGroupDao.save(getMenuGroup());
-        menu = menuDao.save(getMenu(menuGroup.getId()));
-        orderTable = orderTableDao.save(getNotEmptyTable(5));
+        return menuDao.save(getMenu(menuGroup.getId()));
+    }
+
+    private OrderTable createEmptyTable() {
+        return orderTableDao.save(getEmptyTable());
+    }
+
+    private OrderTable createNotEmptyOrderTable() {
+        return orderTableDao.save(getNotEmptyTable(5));
     }
 
     @DisplayName("주문을 등록한다.")
     @Test
     void create() {
+        final Menu menu = createMenu();
+        final OrderTable orderTable = createNotEmptyOrderTable();
         final Order order = new Order();
         order.setOrderLineItems(List.of(new OrderLineItem(null, null, menu.getId(), 1)));
         order.setOrderTableId(orderTable.getId());
@@ -71,6 +75,7 @@ class OrderServiceTest {
     @DisplayName("주문을 등록한다. - 주문 항목이 존재하지 않는다면 예외를 반환한다.")
     @Test
     void create_exception_noOrderListItem() {
+        final OrderTable orderTable = createNotEmptyOrderTable();
         final Order order = new Order();
         order.setOrderTableId(orderTable.getId());
 
@@ -81,6 +86,7 @@ class OrderServiceTest {
     @DisplayName("주문을 등록한다. - 존재하지 않는 메뉴가 포함되어 있으면 예외를 반환한다.")
     @Test
     void create_exception_noSuchMenu() {
+        final OrderTable orderTable = createNotEmptyOrderTable();
         final Order order = new Order();
         order.setOrderLineItems(List.of(new OrderLineItem(null, null, null, 1)));
         order.setOrderTableId(orderTable.getId());
@@ -92,6 +98,7 @@ class OrderServiceTest {
     @DisplayName("주문을 등록한다. - 주문 테이블이 존재하지 않는다면 예외를 반환한다.")
     @Test
     void create_exception_noSuchTable() {
+        final Menu menu = createMenu();
         final Order order = new Order();
         order.setOrderLineItems(List.of(new OrderLineItem(null, null, menu.getId(), 1)));
 
@@ -102,9 +109,10 @@ class OrderServiceTest {
     @DisplayName("주문을 등록한다. - 주문 테이블이 빈 테이블이면 예외를 반환한다.")
     @Test
     void create_exception_tableIsEmpty() {
+        final Menu menu = createMenu();
         final Order order = new Order();
         order.setOrderLineItems(List.of(new OrderLineItem(null, null, menu.getId(), 1)));
-        final OrderTable orderTable = orderTableDao.save(getEmptyTable());
+        final OrderTable orderTable = createEmptyTable();
         order.setOrderTableId(orderTable.getId());
 
         assertThatThrownBy(() -> orderService.create(order))
@@ -114,14 +122,23 @@ class OrderServiceTest {
     @DisplayName("주문 목록을 조회한다.")
     @Test
     void list() {
+        final Menu menu = createMenu();
+        final OrderTable orderTable = createNotEmptyOrderTable();
+        final Order order = new Order();
+        order.setOrderLineItems(List.of(new OrderLineItem(null, null, menu.getId(), 1)));
+        order.setOrderTableId(orderTable.getId());
+        orderService.create(order);
+
         final List<Order> orders = orderService.list();
 
-        assertThat(orders).hasSize(0);
+        assertThat(orders).hasSize(1);
     }
 
     @DisplayName("주문 상태를 변경한다.")
     @Test
     void changeOrderStatus() {
+        final Menu menu = createMenu();
+        final OrderTable orderTable = createNotEmptyOrderTable();
         final Order order = new Order();
         order.setOrderLineItems(List.of(new OrderLineItem(null, null, menu.getId(), 1)));
         order.setOrderTableId(orderTable.getId());
@@ -153,6 +170,8 @@ class OrderServiceTest {
     @DisplayName("주문 상태를 변경한다. - 현재 상태가 COMPLETION이면 예외를 반환한다.")
     @Test
     void changeOrderStatus_statusIsCompletion() {
+        final Menu menu = createMenu();
+        final OrderTable orderTable = createNotEmptyOrderTable();
         final Order order = new Order();
         order.setOrderLineItems(List.of(new OrderLineItem(null, null, menu.getId(), 1)));
         order.setOrderTableId(orderTable.getId());

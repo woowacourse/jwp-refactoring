@@ -15,7 +15,6 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,19 +34,20 @@ class MenuServiceTest {
     @Autowired
     private ProductDao productDao;
 
-    private MenuGroup menuGroup;
-    private List<MenuProduct> menuProducts;
+    private MenuGroup createMenuGroup() {
+        return menuGroupDao.save(getMenuGroup());
+    }
 
-    @BeforeEach
-    void setUp() {
-        menuGroup = menuGroupDao.save(getMenuGroup());
+    private List<MenuProduct> createMenuProducts() {
         final Product product = productDao.save(getProduct());
-        menuProducts = List.of(new MenuProduct(null, null, product.getId(), 1));
+        return List.of(new MenuProduct(null, null, product.getId(), 1));
     }
 
     @DisplayName("메뉴를 등록한다.")
     @Test
     void create() {
+        final MenuGroup menuGroup = createMenuGroup();
+        final List<MenuProduct> menuProducts = createMenuProducts();
         final Menu menu = getMenu(menuGroup.getId());
         menu.setMenuProducts(menuProducts);
 
@@ -65,6 +65,7 @@ class MenuServiceTest {
     @DisplayName("메뉴를 등록한다. - 메뉴 그룹이 존재하지 않으면 예외를 반환한다.")
     @Test
     void create_exception_noSuchMenuGroup() {
+        final List<MenuProduct> menuProducts = createMenuProducts();
         final Menu menu = getMenu(null);
         menu.setMenuProducts(menuProducts);
 
@@ -75,6 +76,7 @@ class MenuServiceTest {
     @DisplayName("메뉴를 등록한다. - 존재하지 않는 상품이 포함되어 있으면 예외를 반환한다.")
     @Test
     void create_exception_noSuchProduct() {
+        final MenuGroup menuGroup = createMenuGroup();
         final Menu menu = getMenu(menuGroup.getId());
         menu.setMenuProducts(List.of(new MenuProduct(null, null, null, 1)));
 
@@ -85,6 +87,8 @@ class MenuServiceTest {
     @DisplayName("메뉴를 등록한다. - 메뉴 금액이 각 상품 금액의 합보다 크면 예외를 반환한다.")
     @Test
     void create_exception_wrongTotalPrice() {
+        final MenuGroup menuGroup = createMenuGroup();
+        final List<MenuProduct> menuProducts = createMenuProducts();
         final Menu menu = new Menu( "마이쮸 포도맛", BigDecimal.valueOf(900), menuGroup.getId());
         menu.setMenuProducts(menuProducts);
 
