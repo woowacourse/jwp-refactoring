@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,15 +27,19 @@ public class Menu {
         this(null, name, price, menuGroupId, new ArrayList<>());
     }
 
+    private void validatePrice(final BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public void changePrice(final BigDecimal price) {
         validatePrice(price);
         this.price = price;
     }
 
-    private void validatePrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
+    public void addMenuProduct(final MenuProduct... menuProducts) {
+        this.menuProducts.addAll(Arrays.asList(menuProducts));
     }
 
     public Long getId() {

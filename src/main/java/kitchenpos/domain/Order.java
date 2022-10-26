@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Order {
@@ -27,6 +28,10 @@ public class Order {
 
     public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
         this(null, orderTableId, orderStatus, orderedTime, new ArrayList<>());
+    }
+
+    public void addOrderLineItem(final OrderLineItem... orderLineItems) {
+        this.orderLineItems.addAll(Arrays.asList(orderLineItems));
     }
 
     public Long getId() {

@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TableGroup {
@@ -17,6 +18,10 @@ public class TableGroup {
 
     public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this(null, createdDate, orderTables);
+    }
+
+    public void addOrderTable(final OrderTable... orderTables) {
+        this.orderTables.addAll(Arrays.asList(orderTables));
     }
 
     public Long getId() {
