@@ -7,9 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
-@JdbcTest
 @SuppressWarnings("NonAsciiCharacters")
 class ProductDaoTest extends JdbcDaoTest {
 
