@@ -27,13 +27,13 @@ class TableServiceTest extends ServiceTest {
     @Autowired
     private TableGroupService tableGroupService;
 
-    private OrderTable orderTable1;
-    private OrderTable orderTable2;
+    private OrderTable savedOrderTable1;
+    private OrderTable savedOrderTable2;
 
     @BeforeEach
     void setUp() {
-        this.orderTable1 = orderTableDao.save(createOrderTable(10, true));
-        this.orderTable2 = orderTableDao.save(createOrderTable(15, true));
+        savedOrderTable1 = orderTableDao.save(createOrderTable(10, true));
+        savedOrderTable2 = orderTableDao.save(createOrderTable(15, true));
     }
 
     @DisplayName("create 메소드는")
@@ -93,7 +93,7 @@ class TableServiceTest extends ServiceTest {
                     .build();
 
             // when
-            OrderTable actual = tableService.changeEmpty(orderTable1.getId(), request);
+            OrderTable actual = tableService.changeEmpty(savedOrderTable1.getId(), request);
 
             // then
             assertThat(actual.isEmpty()).isTrue();
@@ -108,7 +108,7 @@ class TableServiceTest extends ServiceTest {
                     .build();
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable2.getId() + 1, request))
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable2.getId() + 1, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -117,13 +117,13 @@ class TableServiceTest extends ServiceTest {
         void Should_ThrowIAE_When_OrderTableHasTableGroup() {
             // given
             tableGroupService.create(new TableGroupRequestBuilder()
-                    .addOrderTables(orderTable1, orderTable2)
+                    .addOrderTables(savedOrderTable1, savedOrderTable2)
                     .build());
 
             OrderTable request = new OrderTableRequestBuilder().build();
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), request))
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable1.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -158,7 +158,7 @@ class TableServiceTest extends ServiceTest {
                     .build();
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable1.getId(), request))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable1.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 

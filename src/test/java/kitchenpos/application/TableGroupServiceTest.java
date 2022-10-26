@@ -39,13 +39,13 @@ class TableGroupServiceTest extends ServiceTest {
     @Autowired
     private OrderDao orderDao;
 
-    private OrderTable orderTable1;
-    private OrderTable orderTable2;
+    private OrderTable savedOrderTable1;
+    private OrderTable savedOrderTable2;
 
     @BeforeEach
     void setUp() {
-        orderTable1 = saveOrderTable(10, true);
-        orderTable2 = saveOrderTable(10, true);
+        savedOrderTable1 = saveOrderTable(10, true);
+        savedOrderTable2 = saveOrderTable(10, true);
     }
 
     @DisplayName("create 메소드는")
@@ -57,7 +57,7 @@ class TableGroupServiceTest extends ServiceTest {
         void Should_CreateTableGroup() {
             // given
             TableGroup request = new TableGroupRequestBuilder()
-                    .addOrderTables(orderTable1, orderTable2)
+                    .addOrderTables(savedOrderTable1, savedOrderTable2)
                     .build();
 
             // when
@@ -87,7 +87,7 @@ class TableGroupServiceTest extends ServiceTest {
         void Should_ThrowIAE_When_OrderTablesSizeIsLessThan2() {
             // given
             TableGroup request = new TableGroupRequestBuilder()
-                    .addOrderTables(orderTable1)
+                    .addOrderTables(savedOrderTable1)
                     .build();
 
             // when & then
@@ -130,7 +130,7 @@ class TableGroupServiceTest extends ServiceTest {
         void Should_ThrowIAE_When_OrderTableHasTableGroup() {
             // given
             TableGroup request = new TableGroupRequestBuilder()
-                    .addOrderTables(orderTable1, orderTable2)
+                    .addOrderTables(savedOrderTable1, savedOrderTable2)
                     .build();
             tableGroupService.create(request);
 
@@ -149,7 +149,7 @@ class TableGroupServiceTest extends ServiceTest {
         void Should_Ungroup() {
             // given
             TableGroup request = new TableGroupRequestBuilder()
-                    .addOrderTables(orderTable1, orderTable2)
+                    .addOrderTables(savedOrderTable1, savedOrderTable2)
                     .build();
             TableGroup tableGroup = tableGroupService.create(request);
 

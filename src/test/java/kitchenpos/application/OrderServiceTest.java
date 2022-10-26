@@ -9,11 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -37,18 +33,6 @@ class OrderServiceTest extends ServiceTest {
 
     @Autowired
     private OrderDao orderDao;
-
-    @Autowired
-    private OrderTableDao orderTableDao;
-
-    @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private MenuDao menuDao;
 
     private OrderTable savedOrderTable;
     private MenuGroup savedMenuGroup;
