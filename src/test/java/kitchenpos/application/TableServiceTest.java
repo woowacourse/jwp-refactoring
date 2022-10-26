@@ -10,6 +10,10 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.application.dto.request.OrderTableChangeNumberOfGuestsRequest;
+import kitchenpos.application.dto.request.OrderTableChangeStatusRequest;
+import kitchenpos.application.dto.request.OrderTableCreateRequest;
+import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
@@ -39,10 +43,10 @@ class TableServiceTest {
         when(orderTableDao.save(any(OrderTable.class))).thenReturn(orderTable);
 
         // when
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTableResponse response = tableService.create(new OrderTableCreateRequest());
 
         // then
-        assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(3);
+        assertThat(response.getNumberOfGuests()).isEqualTo(3);
     }
 
     @Test
@@ -53,10 +57,10 @@ class TableServiceTest {
         when(orderTableDao.findAll()).thenReturn(Arrays.asList(orderTable1, orderTable2));
 
         // when
-        List<OrderTable> orderTables = tableService.list();
+        List<OrderTableResponse> responses = tableService.list();
 
         // then
-        assertThat(orderTables).hasSize(2);
+        assertThat(responses).hasSize(2);
     }
 
     @Test
@@ -65,7 +69,7 @@ class TableServiceTest {
         when(orderTableDao.findById(any(Long.class))).thenReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(1L, new OrderTable()))
+        assertThatThrownBy(() -> tableService.changeEmpty(1L, new OrderTableChangeStatusRequest()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -78,7 +82,7 @@ class TableServiceTest {
         when(orderTableDao.findById(any(Long.class))).thenReturn(Optional.of(foundOrderTable));
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(1L, new OrderTableChangeStatusRequest()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -92,7 +96,7 @@ class TableServiceTest {
                 true);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(1L, new OrderTableChangeStatusRequest()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -105,12 +109,12 @@ class TableServiceTest {
         when(orderTableDao.findById(any(Long.class))).thenReturn(Optional.of(foundOrderTable));
         when(orderDao.existsByOrderTableIdAndOrderStatusIn(1L, Arrays.asList(COOKING.name(), MEAL.name()))).thenReturn(
                 false);
-
+        when(orderTableDao.save(any(OrderTable.class))).thenReturn(foundOrderTable);
         // when
-        tableService.changeEmpty(1L, orderTable);
+        tableService.changeEmpty(1L, new OrderTableChangeStatusRequest(true));
 
         // then
-        assertThat(foundOrderTable.isEmptyOrderTable()).isTrue();
+        assertThat(foundOrderTable.isEmpty()).isTrue();
     }
 
     @Test
@@ -120,7 +124,7 @@ class TableServiceTest {
         orderTable.setNumberOfGuests(-1);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, new OrderTableChangeNumberOfGuestsRequest(-1)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -132,7 +136,7 @@ class TableServiceTest {
         when(orderTableDao.findById(1L)).thenReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, new OrderTableChangeNumberOfGuestsRequest(3)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -146,7 +150,7 @@ class TableServiceTest {
         when(orderTableDao.findById(1L)).thenReturn(Optional.of(foundOrderTable));
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, new OrderTableChangeNumberOfGuestsRequest(3)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -158,9 +162,9 @@ class TableServiceTest {
         OrderTable foundOrderTable = new OrderTable();
         foundOrderTable.setEmpty(false);
         when(orderTableDao.findById(1L)).thenReturn(Optional.of(foundOrderTable));
-
+        when(orderTableDao.save(any(OrderTable.class))).thenReturn(foundOrderTable);
         // when
-        tableService.changeNumberOfGuests(1L, orderTable);
+        tableService.changeNumberOfGuests(1L, new OrderTableChangeNumberOfGuestsRequest(3));
 
         // then
         assertThat(foundOrderTable.getNumberOfGuests()).isEqualTo(3);
