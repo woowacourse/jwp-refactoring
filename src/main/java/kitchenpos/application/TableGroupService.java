@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
@@ -20,12 +20,12 @@ import kitchenpos.dto.TableGroupResponse;
 @Transactional(readOnly = true)
 public class TableGroupService {
 
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(OrderDao orderDao, OrderTableRepository orderTableRepository, TableGroupDao tableGroupDao) {
-        this.orderDao = orderDao;
+    public TableGroupService(OrderRepository orderRepository, OrderTableRepository orderTableRepository, TableGroupDao tableGroupDao) {
+        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupDao = tableGroupDao;
     }
@@ -74,8 +74,8 @@ public class TableGroupService {
     }
 
     private boolean existNotCompletedOrder(List<Long> orderTableIds) {
-        return orderDao.existsByOrderTableIdInAndOrderStatusIn(
-            orderTableIds, List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
+        return orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+            orderTableIds, List.of(OrderStatus.COOKING, OrderStatus.MEAL)
         );
     }
 }

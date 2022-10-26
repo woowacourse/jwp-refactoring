@@ -13,9 +13,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.OrderTableResponse;
@@ -33,7 +34,7 @@ class TableServiceTest extends ServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @DisplayName("테이블을 등록한다.")
     @Test
@@ -105,7 +106,9 @@ class TableServiceTest extends ServiceTest {
         @Test
         void notCompletionOrder() {
             // given
-            orderDao.save(new Order(첫번째_테이블, "COOKING", LocalDateTime.now()));
+            OrderTable orderTable = orderTableRepository.findById(첫번째_테이블).orElseThrow();
+            orderTable.changeEmpty(false);
+            orderRepository.save(new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now()));
 
             // when then
             assertThatThrownBy(() -> tableService.changeEmpty(첫번째_테이블, false))

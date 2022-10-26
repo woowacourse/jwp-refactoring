@@ -33,8 +33,8 @@ public class OrderResponse {
             .collect(Collectors.toList());
         return new OrderResponse(
             order.getId(),
-            order.getOrderTableId(),
-            order.getOrderStatus(),
+            order.getOrderTable().getId(),
+            order.getOrderStatus().name(),
             order.getOrderedTime(),
             orderLineItemResponses
         );

@@ -4,36 +4,74 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "orders")
 public class Order {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private final Long orderTableId;
-    private String orderStatus;
-    private final LocalDateTime orderedTime;
-    private final List<OrderLineItem> orderLineItems;
 
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
-        this(orderTableId, orderStatus, orderedTime, new ArrayList<>());
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_table_id")
+    private OrderTable orderTable;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
+
+    @Column(nullable = false)
+    private LocalDateTime orderedTime;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+
+    protected Order() {
     }
 
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
-    }
-
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
-        this(id, orderTableId, orderStatus, orderedTime, new ArrayList<>());
-    }
-
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
-        this.id = id;
-        this.orderTableId = orderTableId;
+    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        validateTableEmpty(orderTable);
+        this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+    }
+
+    public static Order take(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        return new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    }
+
+    private Order(
+        OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems
+    ) {
+        validateTableEmpty(orderTable);
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        addOrderLineItems(orderLineItems);
+    }
+
+    private void validateTableEmpty(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("빈 테이블에선 주문을 생성할 수 없습니다.");
+        }
     }
 
     public void addOrderLineItems(List<OrderLineItem> orderLineItems) {
         validateItemSize(orderLineItems);
+        orderLineItems.forEach(item -> item.updateOrder(this));
         this.orderLineItems.addAll(orderLineItems);
     }
 
@@ -43,13 +81,13 @@ public class Order {
         }
     }
 
-    public void updateStatus(String orderStatus) {
+    public void updateStatus(OrderStatus orderStatus) {
         validateOrderStateComplete(this.orderStatus);
         this.orderStatus = orderStatus;
     }
 
-    private void validateOrderStateComplete(String orderStatus) {
-        if (OrderStatus.COMPLETION.name().equals(orderStatus)) {
+    private void validateOrderStateComplete(OrderStatus orderStatus) {
+        if (OrderStatus.COMPLETION.equals(orderStatus)) {
             throw new IllegalArgumentException("완료 주문은 상태를 변경할 수 없습니다.");
         }
     }
@@ -58,11 +96,11 @@ public class Order {
         return id;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 

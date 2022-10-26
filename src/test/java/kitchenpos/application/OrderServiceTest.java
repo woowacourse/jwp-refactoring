@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.dto.OrderLineItemRequest;
@@ -31,7 +31,7 @@ class OrderServiceTest extends ServiceTest {
     private TableService tableService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     private List<OrderLineItemRequest> orderLineItemRequests;
 
@@ -155,12 +155,12 @@ class OrderServiceTest extends ServiceTest {
             OrderResponse actual = orderService.changeOrderStatus(orderId, OrderStatus.MEAL);
 
             // then
-            Optional<Order> updatedOrder = orderDao.findById(orderId);
+            Optional<Order> updatedOrder = orderRepository.findById(orderId);
             assertAll(
                 () -> assertThat(updatedOrder)
                     .map(Order::getOrderStatus)
                     .get()
-                    .isEqualTo(OrderStatus.MEAL.name()),
+                    .isEqualTo(OrderStatus.MEAL),
                 () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name())
             );
         }
@@ -172,12 +172,12 @@ class OrderServiceTest extends ServiceTest {
             OrderResponse actual = orderService.changeOrderStatus(orderId, OrderStatus.COMPLETION);
 
             // then
-            Optional<Order> updatedOrder = orderDao.findById(orderId);
+            Optional<Order> updatedOrder = orderRepository.findById(orderId);
             assertAll(
                 () -> assertThat(updatedOrder)
                     .map(Order::getOrderStatus)
                     .get()
-                    .isEqualTo(OrderStatus.COMPLETION.name()),
+                    .isEqualTo(OrderStatus.COMPLETION),
                 () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name())
             );
         }

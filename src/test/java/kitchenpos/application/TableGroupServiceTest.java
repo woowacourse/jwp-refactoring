@@ -13,9 +13,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.dto.TableGroupResponse;
@@ -29,7 +30,7 @@ class TableGroupServiceTest extends ServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @DisplayName("테이블 그룹을")
     @Nested
@@ -129,6 +130,14 @@ class TableGroupServiceTest extends ServiceTest {
     class UngroupTest {
 
         private Long groupId;
+        private OrderTable firstTable;
+        private OrderTable secondTable;
+
+        @BeforeEach
+        void init() {
+            firstTable = orderTableRepository.findById(첫번째_테이블).orElseThrow();
+            secondTable = orderTableRepository.findById(두번째_테이블).orElseThrow();
+        }
 
         @BeforeEach
         void group() {
@@ -157,8 +166,8 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void ungroupCompleteOrder() {
             // given
-            orderDao.save(new Order(첫번째_테이블, "COMPLETION", LocalDateTime.now(), List.of()));
-            orderDao.save(new Order(두번째_테이블, "COMPLETION", LocalDateTime.now(), List.of()));
+            orderRepository.save(new Order(firstTable, OrderStatus.COMPLETION, LocalDateTime.now()));
+            orderRepository.save(new Order(secondTable, OrderStatus.COMPLETION, LocalDateTime.now()));
 
             // when
             tableGroupService.ungroup(groupId);
@@ -176,8 +185,8 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void orderStatus() {
             // given
-            Order order = new Order(첫번째_테이블, "COOKING", LocalDateTime.now(), List.of());
-            orderDao.save(order);
+            Order order = new Order(firstTable, OrderStatus.COOKING, LocalDateTime.now());
+            orderRepository.save(order);
 
             // when then
             assertThatThrownBy(() -> tableGroupService.ungroup(groupId))

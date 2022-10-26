@@ -87,10 +87,6 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
-
     public Long getTableGroupId() {
         if (Objects.nonNull(tableGroup)) {
             return tableGroup.getId();
