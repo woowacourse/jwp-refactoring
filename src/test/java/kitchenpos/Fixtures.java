@@ -49,7 +49,11 @@ public class Fixtures {
         return new OrderTable(1L, tableGroupId, 0, false);
     }
 
-    public static OrderTable 테이블_1_ofId(long id) {
+    public static OrderTable 테이블_ofId(long id) {
+        return new OrderTable(id, null, 0, false);
+    }
+
+    public static OrderTable 빈테이블_ofId(long id) {
         return new OrderTable(id, null, 0, false);
     }
 
@@ -105,6 +109,12 @@ public class Fixtures {
     @SafeVarargs
     public static <ELEMENT> void 검증_필드비교_값포함(ListAssert<ELEMENT> assertThat, ELEMENT... values) {
         assertThat.usingRecursiveFieldByFieldElementComparator()
+                .contains(values);
+    }
+
+    @SafeVarargs
+    public static <ELEMENT> void 검증_필드비교_값포함(List<ELEMENT> list, ELEMENT... values) {
+        assertThat(list).usingRecursiveFieldByFieldElementComparator()
                 .contains(values);
     }
 

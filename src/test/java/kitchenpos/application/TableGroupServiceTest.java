@@ -61,7 +61,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_noTable() {
         long 존재하지_않는_테이블_id = 100L;
-        TableGroup 테이블그룹 = 테이블그룹(List.of(테이블_1_ofId(존재하지_않는_테이블_id), 빈테이블_2));
+        TableGroup 테이블그룹 = 테이블그룹(List.of(테이블_ofId(존재하지_않는_테이블_id), 빈테이블_2));
 
         assertThatThrownBy(() -> tableGroupService.create(테이블그룹))
                 .isInstanceOf(IllegalArgumentException.class)

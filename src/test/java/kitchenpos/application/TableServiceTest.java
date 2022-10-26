@@ -15,11 +15,11 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블을 생성할 수 있다.")
     @Test
     void create() {
-        OrderTable 테이블_1 = tableService.create(테이블_1());
+        OrderTable 테이블_1 = tableService.create(빈테이블_ofId(1L));
 
-        assertThat(tableService.list())
-                .usingRecursiveFieldByFieldElementComparator()
-                .contains(테이블_1);
+        List<OrderTable> 테이블_목록 = tableService.list();
+
+        검증_필드비교_값포함(테이블_목록, 테이블_1);
     }
 
     @DisplayName("테이블의 빈 상태 여부를 변경할 수 있다.")
@@ -27,10 +27,9 @@ class TableServiceTest extends ServiceTest {
     void changeEmpty() {
         OrderTable 테이블_1 = tableService.create(테이블_1());
 
-        테이블_1.updateEmpty(false);
-        tableService.changeEmpty(테이블_1.getId(), 테이블_1);
+        OrderTable 테이블_빈_여부_변경 = 테이블_빈_여부_변경(테이블_1, false);
 
-        assertThat(orderTableDao.findById(테이블_1.getId()).orElseThrow().isEmpty())
+        assertThat(테이블_빈_여부_변경.isEmpty())
                 .isFalse();
     }
 
@@ -44,7 +43,7 @@ class TableServiceTest extends ServiceTest {
 
         assertThatThrownBy(() -> tableService.changeEmpty(테이블_1.getId(), 테이블_1))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("테이블은 차있어야 한다.");
+                .hasMessage("해당 아이디의 테이블은 존재하지 않는다.");
     }
 
     @DisplayName("테이블은 단체지정이 없어야 한다.")
@@ -103,8 +102,13 @@ class TableServiceTest extends ServiceTest {
                 .hasMessage("테이블 고객 수는 0 이상이어야 한다.");
     }
 
-    private OrderTable 테이블_손님수_변경(OrderTable 테이블_1, int numberOfGuests) {
-        테이블_1.updateNumberOfGuests(numberOfGuests);
-        return tableService.changeNumberOfGuests(테이블_1.getId(), 테이블_1);
+    private OrderTable 테이블_손님수_변경(OrderTable table, int numberOfGuests) {
+        table.updateNumberOfGuests(numberOfGuests);
+        return tableService.changeNumberOfGuests(table.getId(), table);
+    }
+
+    private OrderTable 테이블_빈_여부_변경(OrderTable table, boolean empty) {
+        table.updateEmpty(empty);
+        return tableService.changeEmpty(table.getId(), table);
     }
 }
