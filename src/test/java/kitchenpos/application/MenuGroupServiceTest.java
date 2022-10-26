@@ -6,6 +6,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.application.dto.request.MenuGroupCreateRequest;
+import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Assertions;
@@ -33,12 +35,12 @@ class MenuGroupServiceTest {
         when(menuGroupDao.save(any(MenuGroup.class))).thenReturn(savedMenuGroup);
 
         // when
-        MenuGroup actual = menuGroupService.create(new MenuGroup());
+        MenuGroupResponse response = menuGroupService.create(new MenuGroupCreateRequest());
 
         // then
         Assertions.assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getName()).isEqualTo("menu-group")
+                () -> assertThat(response.getId()).isNotNull(),
+                () -> assertThat(response.getName()).isEqualTo("menu-group")
         );
     }
 
@@ -51,10 +53,10 @@ class MenuGroupServiceTest {
         when(menuGroupDao.findAll()).thenReturn(Arrays.asList(menuGroup));
 
         // when
-        List<MenuGroup> actual = menuGroupService.list();
+        List<MenuGroupResponse> responses = menuGroupService.list();
 
         // then
-        assertThat(actual)
+        assertThat(responses)
                 .hasSize(1)
                 .usingRecursiveComparison()
                 .ignoringFields("id")

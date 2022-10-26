@@ -7,9 +7,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
+import java.util.List;
 import kitchenpos.ControllerTest;
 import kitchenpos.application.MenuGroupService;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.application.dto.request.MenuGroupCreateRequest;
+import kitchenpos.application.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -26,34 +28,29 @@ class MenuGroupRestControllerTest extends ControllerTest {
     @Test
     void 메뉴_그룹을_생성할_수_있다() throws Exception {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("menu-group");
-
-        given(menuGroupService.create(any(MenuGroup.class))).willReturn(menuGroup);
+        MenuGroupResponse menuGroupResponse = new MenuGroupResponse(1L, "set-menu");
+        given(menuGroupService.create(any(MenuGroupCreateRequest.class))).willReturn(menuGroupResponse);
 
         // when
-        ResultActions response = postRequestWithJson(defaultMenuGroupUrl, menuGroup);
+        ResultActions response = postRequestWithJson(defaultMenuGroupUrl, new MenuGroupCreateRequest());
 
         // then
         response.andExpect(status().isCreated())
-                .andExpect(content().string(objectMapper.writeValueAsString(menuGroup)));
+                .andExpect(content().string(objectMapper.writeValueAsString(menuGroupResponse)));
     }
 
     @Test
     void 메뉴_그룹_목록을_조회할_수_있다() throws Exception {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("menu-group");
-
-        when(menuGroupService.list()).thenReturn(Arrays.asList(menuGroup));
+        MenuGroupResponse menuGroupResponse = new MenuGroupResponse(1L, "set-menu");
+        List<MenuGroupResponse> menuGroupResponses = Arrays.asList(menuGroupResponse);
+        when(menuGroupService.list()).thenReturn(menuGroupResponses);
 
         // when
         ResultActions response = getRequest(defaultMenuGroupUrl);
 
         // then
         response.andExpect(status().isOk())
-                .andExpect(content().string(objectMapper.writeValueAsString(Arrays.asList(menuGroup))));
+                .andExpect(content().string(objectMapper.writeValueAsString(menuGroupResponses)));
     }
 }
