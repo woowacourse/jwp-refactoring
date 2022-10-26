@@ -145,9 +145,7 @@ class TableServiceTest {
     private ArrayList<OrderLineItem> generateOrderLineItemAsList(Long menuId, int quantity) {
         ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
+        OrderLineItem orderLineItem = new OrderLineItem(1L, menuId, quantity);
 
         orderLineItems.add(orderLineItem);
         return orderLineItems;

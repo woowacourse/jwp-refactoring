@@ -119,9 +119,7 @@ class TableGroupServiceTest {
         tableGroup.setOrderTables(generateTableList(orderTable1, orderTable2));
         Long savedTableGroupId = tableGroupService.create(tableGroup).getId();
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1);
+        OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1);
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         orderLineItems.add(orderLineItem);
 
