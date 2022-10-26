@@ -39,32 +39,32 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(Long orderTableId, Boolean empty) {
-        OrderTable orderTable = getById(orderTableId);
-        validateNotCompletedOrderExist(orderTableId);
+        OrderTable orderTable = getTableById(orderTableId);
+        validateNotCompletedOrderExist(orderTable);
         orderTable.changeEmpty(empty);
         return OrderTableResponse.from(orderTable);
     }
 
-    private void validateNotCompletedOrderExist(Long orderTableId) {
-        if (existNotCompletedOrder(orderTableId)) {
+    private void validateNotCompletedOrderExist(OrderTable orderTable) {
+        if (existNotCompletedOrder(orderTable)) {
             throw new IllegalArgumentException("주문이 완료되지 않아 상태를 변경할 수 없습니다.");
         }
     }
 
-    private boolean existNotCompletedOrder(Long orderTableId) {
-        return orderRepository.existsByOrderTableIdAndOrderStatusIn(
-            orderTableId, OrderStatus.listInProgress()
+    private boolean existNotCompletedOrder(OrderTable orderTable) {
+        return orderRepository.existsByOrderTableAndOrderStatusIn(
+            orderTable, OrderStatus.listInProgress()
         );
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(Long orderTableId, Integer numberOfGuests) {
-        OrderTable orderTable = getById(orderTableId);
+        OrderTable orderTable = getTableById(orderTableId);
         orderTable.updateNumberOfGuests(numberOfGuests);
         return OrderTableResponse.from(orderTable);
     }
 
-    private OrderTable getById(Long orderTableId) {
+    private OrderTable getTableById(Long orderTableId) {
         return orderTableRepository.findById(orderTableId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
     }

@@ -33,14 +33,17 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(TableGroupRequest tableGroupRequest) {
+        List<OrderTable> orderTables = getOrderTables(tableGroupRequest);
+        TableGroup tableGroup = TableGroup.group(orderTables, LocalDateTime.now());
+        tableGroupDao.save(tableGroup);
+        return TableGroupResponse.from(tableGroup);
+    }
+
+    private List<OrderTable> getOrderTables(TableGroupRequest tableGroupRequest) {
         List<Long> orderTableIds = tableGroupRequest.getOrderTableIds();
         List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         validateNotExistTables(orderTableIds, orderTables);
-
-        TableGroup tableGroup = tableGroupDao.save(
-            TableGroup.group(orderTables, LocalDateTime.now())
-        );
-        return TableGroupResponse.from(tableGroup);
+        return orderTables;
     }
 
     private void validateNotExistTables(List<Long> orderTableIds, List<OrderTable> savedOrderTables) {
@@ -53,7 +56,6 @@ public class TableGroupService {
     public void ungroup(Long tableGroupId) {
         TableGroup tableGroup = getGroupById(tableGroupId);
         validateNotCompletedOrderExist(tableGroup);
-
         tableGroup.ungroup();
     }
 
@@ -63,20 +65,15 @@ public class TableGroupService {
     }
 
     private void validateNotCompletedOrderExist(TableGroup tableGroup) {
-        if (existNotCompletedOrder(extractTableIds(tableGroup))) {
+        if (existNotCompletedOrder(tableGroup)) {
             throw new IllegalArgumentException("완료되지 않은 주문이 있어서 해제할 수 없습니다.");
         }
     }
 
-    private List<Long> extractTableIds(TableGroup tableGroup) {
-        return tableGroup.getOrderTables().stream()
-            .map(OrderTable::getId)
-            .collect(Collectors.toList());
-    }
-
-    private boolean existNotCompletedOrder(List<Long> orderTableIds) {
-        return orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-            orderTableIds, OrderStatus.listInProgress()
+    private boolean existNotCompletedOrder(TableGroup tableGroup) {
+        return orderRepository.existsByOrderTableInAndOrderStatusIn(
+            tableGroup.getOrderTables(),
+            OrderStatus.listInProgress()
         );
     }
 }
