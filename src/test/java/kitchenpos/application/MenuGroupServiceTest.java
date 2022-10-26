@@ -29,7 +29,7 @@ class MenuGroupServiceTest {
         MenuGroup saved = menuGroupService.create(menuGroup);
 
         //then
-        assertThat(saved.getId()).isEqualTo(5L);
+        assertThat(saved.getId()).isNotNull();
     }
 
     @Test

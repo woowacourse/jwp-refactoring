@@ -3,9 +3,10 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,36 +16,57 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
 
 @SpringBootTest
 @Transactional
 class MenuServiceTest {
 
+    private MenuGroup menuGroup;
+    private List<MenuProduct> menuProducts;
+
     @Autowired
     private MenuService menuService;
+
+    @Autowired
+    private MenuGroupService menuGroupService;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private ProductService productService;
+
+    @BeforeEach
+    void setUp() {
+        menuGroup = menuGroupService.create(new MenuGroup("test"));
+
+        Product product = productService.create(new Product("test", BigDecimal.valueOf(100)));
+        menuProducts = Arrays.asList(new MenuProduct(product, 10));
+    }
+
+    @Test
+    @DisplayName("Menu를 생성한다.")
+    void create() {
+        //given
+        Menu menu = new Menu("test", BigDecimal.valueOf(100), menuGroup, menuProducts);
+
+        //when
+        Menu savedMenu = menuService.create(menu);
+
+        //then
+        assertThat(savedMenu.getId()).isNotNull();
+    }
 
     @Test
     @DisplayName("존재하지 않는 MenuGroupId면 예외를 발생시킨다.")
     void createWithNotExistMenuGroupIdError() {
         //given, when
-        Menu menu = new Menu("test", BigDecimal.valueOf(100), 999L);
-
-        //then
-        assertThatThrownBy(() -> menuService.create(menu))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("메뉴중 존재하지 않는 product가 있다면 예외를 발생시킨다.")
-    void createWithNotExistProductError() {
-        //given, when
-        Menu menu = new Menu("test", BigDecimal.valueOf(100), 1L);
-
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        MenuProduct menuProduct = new MenuProduct(1L, 1L, 99L, 1);
-        menuProducts.add(menuProduct);
-        menu.setMenuProducts(menuProducts);
+        menuGroupRepository.delete(menuGroup);
+        Menu menu = new Menu("test", BigDecimal.valueOf(100), menuGroup, menuProducts);
 
         //then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -56,12 +78,7 @@ class MenuServiceTest {
     @DisplayName("개별 상품의 합이 menu 가격의 합보다 클 경우 예외를 발생시킨다.")
     void createWithCheaperPriceError(int price) {
         //when
-        Menu menu = new Menu("test", BigDecimal.valueOf(price), 1L);
-
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L, 1);
-        menuProducts.add(menuProduct);
-        menu.setMenuProducts(menuProducts);
+        Menu menu = new Menu("test", BigDecimal.valueOf(price), menuGroup, menuProducts);
 
         //then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -75,12 +92,7 @@ class MenuServiceTest {
         List<Menu> menus = menuService.list();
 
         //when
-        Menu menu = new Menu("test", BigDecimal.valueOf(10000), 1L);
-
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L, 1);
-        menuProducts.add(menuProduct);
-        menu.setMenuProducts(menuProducts);
+        Menu menu = new Menu("test", BigDecimal.valueOf(100), menuGroup, menuProducts);
 
         menuService.create(menu);
 
