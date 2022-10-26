@@ -47,7 +47,7 @@ class ProductServiceTest {
         );
     }
 
-    @DisplayName("상품의 가격이 null일 수 없다.")
+    @DisplayName("상품의 가격이 null이면 예외를 반환한다.")
     @Test
     void create_throwException_ifPriceIsNull() {
         // given
@@ -59,7 +59,7 @@ class ProductServiceTest {
                 .hasMessage("가격이 올바르지 않습니다.");
     }
 
-    @DisplayName("상품의 가격이 음수일 수 없다.")
+    @DisplayName("상품의 가격이 음수이면 예외를 반환한다.")
     @Test
     void create_throwException_ifPriceNotPositive() {
         // given

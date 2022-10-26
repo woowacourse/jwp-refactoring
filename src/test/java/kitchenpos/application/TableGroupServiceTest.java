@@ -67,7 +67,7 @@ class TableGroupServiceTest {
                 .isEqualTo(tableGroup);
     }
 
-    @DisplayName("2개 미만의 테이블은 단체 지정할 수 없다.")
+    @DisplayName("2개 미만의 테이블을 단체 지정하면 예외를 반환한다.")
     @Test
     void create_throwException_ifOrderTableSizeUnderTwo() {
         // given
@@ -79,7 +79,7 @@ class TableGroupServiceTest {
                 hasMessage("2개 이상의 테이블만 단체 지정이 가능합니다.");
     }
 
-    @DisplayName("존재하지 않는 테이블은 단체 지정할 수 없다.")
+    @DisplayName("존재하지 않는 테이블을 단체 지정하면 예외를 반환한다.")
     @Test
     void create_throwException_ifTableNotExist() {
         // given
@@ -93,7 +93,7 @@ class TableGroupServiceTest {
                 hasMessage("존재하지 않는 테이블은 단체 지정할 수 없습니다.");
     }
 
-    @DisplayName("이미 그룹화된 테이블은 단체 지정할 수 없다.")
+    @DisplayName("이미 단체 지정된 테이블을 단체 지정하면 예외를 반환한다.")
     @Test
     void create_throwException_ifTableAlreadyGroup() {
         // given
@@ -108,7 +108,7 @@ class TableGroupServiceTest {
                 hasMessage("이미 사용 중이거나 단체 지정된 테이블은 사용할 수 없습니다.");
     }
 
-    @DisplayName("이미 사용 중인 테이블은 단체 지정할 수 없다.")
+    @DisplayName("이미 사용 중인 테이블을 단체 지정하면 예외를 반환한다.")
     @Test
     void create_throwException_ifTableNotEmpty() {
         // given
@@ -133,7 +133,7 @@ class TableGroupServiceTest {
                 .doesNotThrowAnyException();
     }
 
-    @DisplayName("이미 주문이 진행 중인 상태에서 단체 지정을 제거할 수 없다.")
+    @DisplayName("이미 주문이 진행 중인 상태에서 단체 지정을 제거하면 예외를 반환한다.")
     @Test
     void ungroup_throwException_ifOrderAlreadyOngoing() {
         // given
