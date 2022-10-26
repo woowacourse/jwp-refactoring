@@ -89,7 +89,8 @@ class MenuServiceTest {
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("포함된 메뉴 그룹이 있어야 합니다.");
     }
 
     @DisplayName("구성 상품이 존재하지 않을 경우 예외를 반환한다.")
