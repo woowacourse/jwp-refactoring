@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ServiceTest
+@SuppressWarnings("NonAsciiCharacters")
 class MenuGroupServiceTest {
 
     @Autowired

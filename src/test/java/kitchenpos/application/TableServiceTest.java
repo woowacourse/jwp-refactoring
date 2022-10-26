@@ -20,6 +20,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ServiceTest
+@SuppressWarnings("NonAsciiCharacters")
 class TableServiceTest {
 
     @Autowired

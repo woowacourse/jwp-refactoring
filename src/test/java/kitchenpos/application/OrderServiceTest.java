@@ -29,6 +29,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ServiceTest
+@SuppressWarnings("NonAsciiCharacters")
 class OrderServiceTest {
 
     @Autowired
