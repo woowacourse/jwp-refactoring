@@ -13,6 +13,7 @@ import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,59 +29,59 @@ class ProductServiceTest {
     @InjectMocks
     private ProductService productService;
 
-    @Test
-    void 상품을_생성할_수_있다() {
-        // given
-        Product product = new Product();
-        product.setId(1L);
-        product.setPrice(BigDecimal.valueOf(13000));
-        product.setName("pasta");
-        when(productDao.save(any(Product.class))).thenReturn(product);
+    @Nested
+    class create는 {
 
-        // when
-        ProductResponse response = productService.create(new ProductCreateRequest(1L, "pasta", BigDecimal.valueOf(13000)));
+        private final Long id = 1L;
+        private final String name = "pasta";
+        private final BigDecimal price = BigDecimal.valueOf(13000);
+        @Test
+        void 상품을_생성할_수_있다() {
+            // given
+            ProductCreateRequest request = 상품_생성_dto를_만든다(id, name, price);
+            when(productDao.save(any(Product.class))).thenReturn(request.toProduct());
 
-        // then
-        Assertions.assertAll(
-                () -> assertThat(response.getId()).isEqualTo(1L),
-                () -> assertThat(response.getName()).isEqualTo("pasta")
-        );
+            // when
+            ProductResponse response = productService.create(request);
+
+            // then
+            Assertions.assertAll(
+                    () -> assertThat(response.getId()).isEqualTo(1L),
+                    () -> assertThat(response.getName()).isEqualTo("pasta")
+            );
+        }
+
+        @Test
+        void price가_null이면_예외를_반환한다() {
+            ProductCreateRequest request = 상품_생성_dto를_만든다(id, name, null);
+            assertThatThrownBy(() -> productService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void price가_0보다_작으면_예외를_반환한다() {
+            // given
+            BigDecimal negativePrice = BigDecimal.valueOf(-1000);
+            ProductCreateRequest request = 상품_생성_dto를_만든다(id, name, negativePrice);
+            assertThatThrownBy(() -> productService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        private ProductCreateRequest 상품_생성_dto를_만든다(final Long id, final String name, final BigDecimal price) {
+            return new ProductCreateRequest(id, name, price);
+        }
     }
 
-    @Test
-    void price가_null이면_예외를_반환한다() {
-        // given
-        Product product = new Product();
+    @Nested
+    class list는 {
 
-        // when & then
-        assertThatThrownBy(() -> productService.create(new ProductCreateRequest()))
-                .isInstanceOf(IllegalArgumentException.class);
     }
-
-    @Test
-    void price가_0보다_작으면_예외를_반환한다() {
-        // given
-        Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(-1000));
-
-        // when & then
-        assertThatThrownBy(() -> productService.create(new ProductCreateRequest()))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @Test
     void 상품_목록을_조회할_수_있다() {
-        // given
-        Product product = new Product();
-        product.setId(1L);
-        product.setPrice(BigDecimal.valueOf(13000));
-        product.setName("pasta");
+        Product product = new Product(1L, "pasta", BigDecimal.valueOf(13000));
         when(productDao.findAll()).thenReturn(Arrays.asList(product));
-
-        // when
         List<ProductResponse> responses = productService.list();
 
-        // then
         assertThat(responses).hasSize(1)
                 .usingRecursiveComparison()
                 .ignoringFields("price")
