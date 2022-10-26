@@ -5,6 +5,7 @@ import static kitchenpos.fixtures.domain.MenuGroupFixture.createMenuGroup;
 import static kitchenpos.fixtures.domain.MenuProductFixture.createMenuProduct;
 import static kitchenpos.fixtures.domain.OrderFixture.createOrder;
 import static kitchenpos.fixtures.domain.OrderLineItemFixture.createOrderLineItem;
+import static kitchenpos.fixtures.domain.OrderTableFixture.createOrderTable;
 import static kitchenpos.fixtures.domain.ProductFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -68,7 +69,7 @@ class OrderServiceTest extends ServiceTest {
 
         this.menu = menuDao.save(createMenu("세트1", new BigDecimal(10_000), menuGroup.getId(), List.of(menuProduct)));
         this.orderLineItem = createOrderLineItem(menu.getId(), 1L);
-        this.orderTable = orderTableDao.save(new OrderTable(1, false));
+        this.orderTable = orderTableDao.save(createOrderTable(1, false));
         this.order = orderDao.save(
                 createOrder(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), List.of(orderLineItem)));
     }
@@ -143,7 +144,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableIsEmpty() {
             // given
-            OrderTable emptyTable = orderTableDao.save(new OrderTable(1, true));
+            OrderTable emptyTable = orderTableDao.save(createOrderTable(1, true));
             Order order = new OrderRequestBuilder()
                     .orderTableId(emptyTable.getId())
                     .addOrderLineItem(orderLineItem)

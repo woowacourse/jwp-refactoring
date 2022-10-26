@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixtures.domain.OrderFixture.createOrder;
+import static kitchenpos.fixtures.domain.OrderTableFixture.createOrderTable;
 import static kitchenpos.fixtures.domain.TableGroupFixture.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -43,8 +44,8 @@ class TableGroupServiceTest extends ServiceTest {
     @BeforeEach
     void setUp() {
         this.orderTables = List.of(
-                orderTableDao.save(new OrderTable(10, true)),
-                orderTableDao.save(new OrderTable(10, true))
+                orderTableDao.save(createOrderTable(10, true)),
+                orderTableDao.save(createOrderTable(10, true))
         );
     }
 
@@ -98,8 +99,8 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_TableGroupHasNotExistingTable() {
             // given
-            OrderTable notSavedTable1 = new OrderTable(10, true);
-            OrderTable notSavedTable2 = new OrderTable(15, true);
+            OrderTable notSavedTable1 = createOrderTable(10, true);
+            OrderTable notSavedTable2 = createOrderTable(15, true);
             TableGroup tableGroup = new TableGroupRequestBuilder()
                     .addOrderTables(notSavedTable1, notSavedTable2)
                     .build();
@@ -113,8 +114,8 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_TableIsNotEmpty() {
             // given
-            OrderTable orderTable1 = orderTableDao.save(new OrderTable(10, true));
-            OrderTable orderTable2 = orderTableDao.save(new OrderTable(10, false));
+            OrderTable orderTable1 = orderTableDao.save(createOrderTable(10, true));
+            OrderTable orderTable2 = orderTableDao.save(createOrderTable(10, false));
             TableGroup tableGroup = new TableGroupRequestBuilder()
                     .addOrderTables(orderTable1, orderTable2)
                     .build();
@@ -128,8 +129,8 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableHasTableGroup() {
             // given
-            OrderTable orderTable1 = orderTableDao.save(new OrderTable(10, true));
-            OrderTable orderTable2 = orderTableDao.save(new OrderTable(10, true));
+            OrderTable orderTable1 = orderTableDao.save(createOrderTable(10, true));
+            OrderTable orderTable2 = orderTableDao.save(createOrderTable(10, true));
 
             TableGroup request = new TableGroupRequestBuilder()
                     .addOrderTables(orderTable1, orderTable2)
@@ -174,8 +175,8 @@ class TableGroupServiceTest extends ServiceTest {
         @ParameterizedTest
         void Should_ThrowIAE_When_AnyStatusOfOrderTablesIsCookingOrMeal(final OrderStatus orderStatus) {
             // given
-            OrderTable orderTable1 = orderTableDao.save(new OrderTable(3, true));
-            OrderTable orderTable2 = orderTableDao.save(new OrderTable(5, true));
+            OrderTable orderTable1 = orderTableDao.save(createOrderTable(10, true));
+            OrderTable orderTable2 = orderTableDao.save(createOrderTable(10, true));
 
             orderDao.save(createOrder(orderTable1.getId(), orderStatus, LocalDateTime.now(), List.of()));
             orderDao.save(createOrder(orderTable1.getId(), OrderStatus.COMPLETION, LocalDateTime.now(), List.of()));
