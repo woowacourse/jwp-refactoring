@@ -8,15 +8,15 @@ public class ProductResponse {
 
     private String name;
 
-    private BigDecimal bigDecimal;
+    private BigDecimal price;
 
     private ProductResponse() {
     }
 
-    public ProductResponse(final Long id, final String name, final BigDecimal bigDecimal) {
+    public ProductResponse(final Long id, final String name, final BigDecimal price) {
         this.id = id;
         this.name = name;
-        this.bigDecimal = bigDecimal;
+        this.price = price;
     }
 
     public Long getId() {
@@ -27,7 +27,7 @@ public class ProductResponse {
         return name;
     }
 
-    public BigDecimal getBigDecimal() {
-        return bigDecimal;
+    public BigDecimal getPrice() {
+        return price;
     }
 }

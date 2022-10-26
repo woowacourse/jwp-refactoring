@@ -4,6 +4,11 @@ import java.net.URI;
 import java.util.List;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.request.ProductCreateRequest;
+import kitchenpos.ui.dto.response.ProductCreateResponse;
+import kitchenpos.ui.dto.response.ProductResponse;
+import kitchenpos.ui.mapper.ProductDtoMapper;
+import kitchenpos.ui.mapper.ProductMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,21 +18,29 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ProductRestController {
 
+    private final ProductMapper productMapper;
+    private final ProductDtoMapper productDtoMapper;
     private final ProductService productService;
 
-    public ProductRestController(final ProductService productService) {
+    public ProductRestController(final ProductMapper productMapper, final ProductDtoMapper productDtoMapper,
+                                 final ProductService productService) {
+        this.productMapper = productMapper;
+        this.productDtoMapper = productDtoMapper;
         this.productService = productService;
     }
 
     @PostMapping("/api/products")
-    public ResponseEntity<Product> create(@RequestBody final Product product) {
-        final Product created = productService.create(product);
+    public ResponseEntity<ProductCreateResponse> create(@RequestBody final ProductCreateRequest productCreateRequest) {
+        Product product = productMapper.toProduct(productCreateRequest);
+        Product product1 = productService.create(product);
+        ProductCreateResponse created = productDtoMapper.toProductCreateResponse(product1);
         final URI uri = URI.create("/api/products/" + created.getId());
         return ResponseEntity.created(uri).body(created);
     }
 
     @GetMapping("/api/products")
-    public ResponseEntity<List<Product>> list() {
-        return ResponseEntity.ok().body(productService.list());
+    public ResponseEntity<List<ProductResponse>> list() {
+        List<Product> products = productService.list();
+        return ResponseEntity.ok().body(productDtoMapper.toProductResponses(products));
     }
 }
