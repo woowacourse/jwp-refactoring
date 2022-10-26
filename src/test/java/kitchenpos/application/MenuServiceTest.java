@@ -66,7 +66,7 @@ class MenuServiceTest extends ServiceTest {
     }
 
     @Test
-    void 메뉴제품의_총가격의_합이_메뉴가격과_작으면_예외를_발생한다() {
+    void 메뉴제품의_총가격의_합이_메뉴가격_보다_작으면_예외를_발생한다() {
         // given
         final Long productId = 제품을_저장한다(PRODUCT_PRICE_1000.생성()).getId();
         final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
