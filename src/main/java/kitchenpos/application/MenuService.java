@@ -9,6 +9,8 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.Quantity;
+import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.NotFoundException;
 import kitchenpos.ui.dto.MenuCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +37,7 @@ public class MenuService {
 
     private void validateExistMenuGroup(final MenuCreateRequest request) {
         if (!menuGroupDao.existsById(request.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+            throw new NotFoundException(CustomErrorCode.MENU_GROUP_NOT_FOUND_ERROR);
         }
     }
 
@@ -47,7 +49,8 @@ public class MenuService {
     }
 
     private Product findProductById(final Long id) {
-        return productDao.findById(id).orElseThrow(IllegalArgumentException::new);
+        return productDao.findById(id)
+                .orElseThrow(() -> new NotFoundException(CustomErrorCode.PRODUCT_NOT_FOUND_ERROR));
     }
 
     public List<Menu> list() {

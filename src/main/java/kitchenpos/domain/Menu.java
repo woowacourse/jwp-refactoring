@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import kitchenpos.exception.ApplicationException;
 import kitchenpos.exception.CustomErrorCode;
 import kitchenpos.exception.DomainLogicException;
 
@@ -60,7 +61,7 @@ public class Menu {
         return products.stream()
                 .map(MenuProduct::calculateTotalPrice)
                 .reduce(Price::sum)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new ApplicationException(CustomErrorCode.APPLICATION_ERROR));
     }
 
     public Long getId() {

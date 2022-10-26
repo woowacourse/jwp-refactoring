@@ -4,7 +4,7 @@ public class ApplicationException extends RuntimeException {
 
     private final CustomErrorCode errorCode;
 
-    public ApplicationException(CustomErrorCode errorCode) {
+    public ApplicationException(final CustomErrorCode errorCode) {
         this.errorCode = errorCode;
     }
 }
