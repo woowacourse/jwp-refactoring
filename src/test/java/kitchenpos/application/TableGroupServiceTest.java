@@ -65,27 +65,11 @@ class TableGroupServiceTest {
         }
 
         @Test
-        void 테이블_개수가_2개_미만인_경우_예외가_발생한다() {
-            Long emptyTableId = generateEmptyTable();
-            assertThatThrownBy(() -> tableGroupService.create(new CreateTableGroupDto(List.of(emptyTableId))))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         void 존재하지_않는_테이블이_포함된_경우_예외가_발생한다() {
             Long existingTableId = generateEmptyTable();
             Long nonExistingTableId = 999999999L;
-            CreateTableGroupDto createTableGroupDto = new CreateTableGroupDto(List.of(existingTableId, nonExistingTableId));
-
-            assertThatThrownBy(() -> tableGroupService.create(createTableGroupDto))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 주문_테이블이_포함된_경우_예외가_발생한다() {
-            Long emptyTableId = generateEmptyTable();
-            Long orderTableId = tableService.create(new CreateTableDto(0, false)).getId();
-            CreateTableGroupDto createTableGroupDto = new CreateTableGroupDto(List.of(emptyTableId, orderTableId));
+            CreateTableGroupDto createTableGroupDto = new CreateTableGroupDto(
+                    List.of(existingTableId, nonExistingTableId));
 
             assertThatThrownBy(() -> tableGroupService.create(createTableGroupDto))
                     .isInstanceOf(IllegalArgumentException.class);
