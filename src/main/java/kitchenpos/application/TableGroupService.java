@@ -33,6 +33,7 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
+        // todo : order tables -> constructor ? or add method ?
         final List<OrderTable> savedOrderTables = findOrderTables(request);
         TableGroup tableGroup = request.toTableGroup(savedOrderTables, LocalDateTime.now());
         return TableGroupResponse.from(tableGroupRepository.save(tableGroup));

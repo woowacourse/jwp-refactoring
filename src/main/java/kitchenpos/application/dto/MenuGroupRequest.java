@@ -3,9 +3,11 @@ package kitchenpos.application.dto;
 import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupRequest {
-    private String name;
 
-    public MenuGroupRequest() {
+    private final String name;
+
+    private MenuGroupRequest() {
+        this(null);
     }
 
     public MenuGroupRequest(String name) {

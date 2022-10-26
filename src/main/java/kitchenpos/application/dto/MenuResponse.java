@@ -7,17 +7,23 @@ import kitchenpos.domain.Menu;
 
 public class MenuResponse {
 
-    private Long id;
-    private String name;
-    private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProductResponse> menuProducts;
+    private final Long id;
+    private final String name;
+    private final BigDecimal price;
+    private final Long menuGroupId;
+    private final List<MenuProductResponse> menuProducts;
 
     private MenuResponse() {
+        this(null, null, null, null, null);
     }
 
-    public MenuResponse(Long id, String name, BigDecimal price, Long menuGroupId,
-                        List<MenuProductResponse> menuProducts) {
+    public MenuResponse(
+            Long id,
+            String name,
+            BigDecimal price,
+            Long menuGroupId,
+            List<MenuProductResponse> menuProducts
+    ) {
         this.id = id;
         this.name = name;
         this.price = price;

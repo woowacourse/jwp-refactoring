@@ -58,15 +58,15 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    private void validateNotEmpty() {
-        if (empty) {
-            throw new IllegalArgumentException("주문 테이블이 비어있기 때문에 손님의 수를 변경할 수 없습니다");
-        }
-    }
-
     private void validatePositiveNumber(int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException("손님의 수를 음수로 변경할 수 없습니다 : " + numberOfGuests);
+        }
+    }
+
+    private void validateNotEmpty() {
+        if (empty) {
+            throw new IllegalArgumentException("주문 테이블이 비어있기 때문에 손님의 수를 변경할 수 없습니다");
         }
     }
 

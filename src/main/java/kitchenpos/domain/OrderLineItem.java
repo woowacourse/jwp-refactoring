@@ -10,7 +10,6 @@ public class OrderLineItem {
     }
 
     public OrderLineItem(Long orderId, Long menuId, long quantity) {
-        this.seq = seq;
         this.orderId = orderId;
         this.menuId = menuId;
         this.quantity = quantity;
