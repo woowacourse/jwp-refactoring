@@ -2,11 +2,11 @@ package kitchenpos;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.application.dto.OrderChangeRequest;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderLineItemResponse;
 import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.application.dto.OrderResponse;
+import kitchenpos.application.dto.OrderStatusChangeRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -17,7 +17,11 @@ public class OrderFixtures {
     }
 
     public static Order createOrder() {
-        return new Order(1L, null, LocalDateTime.now(), List.of(new OrderLineItem(null, 1L, 2)));
+        return createOrder(OrderStatus.COOKING.name());
+    }
+
+    public static Order createOrder(String orderStatus) {
+        return new Order(1L, orderStatus, LocalDateTime.now(), List.of(new OrderLineItem(null, 1L, 2)));
     }
 
     public static OrderResponse createOrderResponse() {
@@ -58,7 +62,7 @@ public class OrderFixtures {
         return new OrderLineItemRequest(null, menuId, 2);
     }
 
-    public static OrderChangeRequest createOrderChangeRequest() {
-        return null;
+    public static OrderStatusChangeRequest createOrderChangeRequest() {
+        return new OrderStatusChangeRequest(OrderStatus.MEAL.name());
     }
 }

@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static kitchenpos.OrderFixtures.createOrder;
+import static kitchenpos.OrderFixtures.createOrderChangeRequest;
 import static kitchenpos.OrderFixtures.createOrderLineItemRequest;
 import static kitchenpos.OrderFixtures.createOrderRequest;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -12,6 +13,7 @@ import kitchenpos.OrderTableFixtures;
 import kitchenpos.TableGroupFixtures;
 import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.application.dto.OrderResponse;
+import kitchenpos.application.dto.OrderStatusChangeRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
@@ -122,56 +124,44 @@ class OrderServiceTest {
         assertThat(responses).isEmpty();
     }
 
-//    @Test
-//    void changeOrderStatus() {
-//        // given
-//        Order order = createOrder();
-//        Order createdOrder = orderDao.save(order);
-//        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), null));
-//        OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup, 3, false));
-//        Order createdOrder = orderService.create(
-//                new Order(1L, null, LocalDateTime.now(), List.of(new OrderLineItem(null, 1L, 2)))
-//        );
-//
-//        // when
-//        Order changedOrder = orderService.changeOrderStatus(createdOrder.getId(),
-//                new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), null)
-//        );
-//
-//        // then
-//        assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
-//    }
-//
-//    @Test
-//    void changeOrderStatusWithInvalidOrder() {
-//        // given
-//        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), null));
-//        OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup, 3, false));
-//        long invalidOrderId = 999L;
-//
-//        // when
-//        assertThatThrownBy(() -> orderService.changeOrderStatus(invalidOrderId,
-//                new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), null)
-//        )).isInstanceOf(IllegalArgumentException.class);
-//    }
-//
-//    @Test
-//    void changeOrderStatusWithAlreadyCompletedStatus() {
-//        // given
-//        String orderStatus = OrderStatus.COMPLETION.name();
-//
-//        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), null));
-//        OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup, 3, false));
-//        Order createdOrder = orderDao.save(new Order(
-//                orderTable.getId(),
-//                orderStatus,
-//                LocalDateTime.now(),
-//                List.of(new OrderLineItem(null, 1L, 2))
-//        ));
-//
-//        // when
-//        assertThatThrownBy(() -> orderService.changeOrderStatus(createdOrder.getId(),
-//                new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), null)
-//        )).isInstanceOf(IllegalArgumentException.class);
-//    }
+    @Test
+    void changeOrderStatus() {
+        // given
+        Order savedOrder = orderDao.save(createOrder());
+
+        // when
+        OrderStatusChangeRequest changeRequest = createOrderChangeRequest();
+        OrderResponse response = orderService.changeOrderStatus(
+                savedOrder.getId(),
+                changeRequest
+        );
+
+        // then
+        assertThat(response.getOrderStatus()).isEqualTo(changeRequest.getOrderStatus());
+    }
+
+    @Test
+    void changeOrderStatusWithInvalidOrder() {
+        // given
+        long invalidOrderId = 999L;
+
+        // when
+        assertThatThrownBy(() -> orderService.changeOrderStatus(
+                invalidOrderId,
+                createOrderChangeRequest()
+        )).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void changeOrderStatusWithAlreadyCompletedStatus() {
+        // given
+        String orderStatus = OrderStatus.COMPLETION.name();
+        Order savedOrder = orderDao.save(createOrder(orderStatus));
+
+        // when
+        assertThatThrownBy(() -> orderService.changeOrderStatus(
+                savedOrder.getId(),
+                createOrderChangeRequest()
+        )).isInstanceOf(IllegalArgumentException.class);
+    }
 }
