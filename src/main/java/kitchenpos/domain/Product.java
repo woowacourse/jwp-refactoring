@@ -12,8 +12,22 @@ public class Product {
     }
 
     public Product(final String name, final BigDecimal price) {
+        validateNotNull(price);
+        validateNotNegative(price);
         this.name = name;
         this.price = price;
+    }
+
+    private void validateNotNull(final BigDecimal bigDecimal) {
+        if (bigDecimal == null) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateNotNegative(final BigDecimal decimal) {
+        if (decimal.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
