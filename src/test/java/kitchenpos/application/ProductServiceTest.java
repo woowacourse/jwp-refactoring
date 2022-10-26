@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ class ProductServiceTest extends ServiceTest {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductDao productDao;
 
     @Test
     void 상품을_생성할_수_있다() {
@@ -40,8 +44,8 @@ class ProductServiceTest extends ServiceTest {
         Product product1 = new Product("제품1", new BigDecimal(10000));
         Product product2 = new Product("제품2", new BigDecimal(20000));
 
-        productService.create(product1);
-        productService.create(product2);
+        productDao.save(product1);
+        productDao.save(product2);
 
         List<Product> actual = productService.list();
 

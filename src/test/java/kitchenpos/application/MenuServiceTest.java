@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
@@ -21,6 +22,9 @@ class MenuServiceTest extends ServiceTest {
 
     @Autowired
     private MenuService menuService;
+
+    @Autowired
+    private MenuDao menuDao;
 
     @Autowired
     private ProductDao productDao;
@@ -99,11 +103,15 @@ class MenuServiceTest extends ServiceTest {
         Menu menu2 = new Menu("메뉴2", new BigDecimal(38000), menuGroup.getId(),
                 new ArrayList<>(Arrays.asList(menuProduct1, menuProduct2)));
 
-        menuService.create(menu1);
-        menuService.create(menu2);
+        menuDao.save(menu1);
+        menuDao.save(menu2);
 
         List<Menu> actual = menuService.list();
 
-        assertThat(actual).hasSize(2);
+        assertAll(() -> {
+            assertThat(actual).hasSize(2);
+            assertThat(actual).extracting("menuProducts")
+                    .hasSize(2);
+        });
     }
 }

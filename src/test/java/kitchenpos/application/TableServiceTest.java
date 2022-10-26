@@ -8,6 +8,7 @@ import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -20,6 +21,9 @@ class TableServiceTest extends ServiceTest {
 
     @Autowired
     private TableService tableService;
+
+    @Autowired
+    private OrderTableDao orderTableDao;
 
     @Autowired
     private OrderDao orderDao;
@@ -42,8 +46,8 @@ class TableServiceTest extends ServiceTest {
         OrderTable orderTable1 = new OrderTable(null, 3, false);
         OrderTable orderTable2 = new OrderTable(null, 5, false);
 
-        tableService.create(orderTable1);
-        tableService.create(orderTable2);
+        orderTableDao.save(orderTable1);
+        orderTableDao.save(orderTable2);
 
         List<OrderTable> actual = tableService.list();
 
@@ -52,7 +56,7 @@ class TableServiceTest extends ServiceTest {
 
     @Test
     void 기존_테이블의_빈_테이블_여부를_변경할_수_있다() {
-        OrderTable orderTable = tableService.create(new OrderTable(null, 5, false));
+        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 5, false));
         OrderTable newOrderTable = new OrderTable(null, 0, true);
 
         OrderTable actual = tableService.changeEmpty(orderTable.getId(), newOrderTable);
@@ -63,7 +67,7 @@ class TableServiceTest extends ServiceTest {
     @ParameterizedTest
     @EnumSource(mode = EXCLUDE, names = {"COMPLETION"})
     void 기존_테이블의_주문_상태가_완료_상태가_아니면_빈_테이블로_변경할_수_없다(OrderStatus orderStatus) {
-        OrderTable orderTable = tableService.create(new OrderTable(null, 5, false));
+        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 5, false));
         OrderTable newOrderTable = new OrderTable(null, 0, true);
 
         Order order = new Order(orderTable.getId(), orderStatus.name(), new ArrayList<>());
@@ -75,7 +79,7 @@ class TableServiceTest extends ServiceTest {
 
     @Test
     void 기존_테이블의_손님_수를_변경할_수_있다() {
-        OrderTable orderTable = tableService.create(new OrderTable(null, 0, false));
+        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 0, false));
         OrderTable newOrderTable = new OrderTable(null, 5, false);
 
         OrderTable actual = tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable);
@@ -85,7 +89,7 @@ class TableServiceTest extends ServiceTest {
 
     @Test
     void 손님_수가_음수인_경우_손님_수를_변경할_수_없다() {
-        OrderTable orderTable = tableService.create(new OrderTable(null, 0, false));
+        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 0, false));
         OrderTable newOrderTable = new OrderTable(null, -1, false);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable))
@@ -94,7 +98,7 @@ class TableServiceTest extends ServiceTest {
 
     @Test
     void 빈_테이블은_손님_수를_변경할_수_없다() {
-        OrderTable orderTable = tableService.create(new OrderTable(null, 0, true));
+        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 0, true));
         OrderTable newOrderTable = new OrderTable(null, 5, true);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable))

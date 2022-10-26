@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import kitchenpos.dao.OrderDao;
@@ -38,7 +39,8 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable orderTable1 = orderTableDao.save(new OrderTable(null, 1, true));
         OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, 2, true));
 
-        TableGroup tableGroup = new TableGroup(new ArrayList<>(Arrays.asList(orderTable1, orderTable2)));
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(),
+                new ArrayList<>(Arrays.asList(orderTable1, orderTable2)));
 
         TableGroup actual = tableGroupService.create(tableGroup);
 
@@ -52,7 +54,7 @@ class TableGroupServiceTest extends ServiceTest {
     void 단체로_지정할_테이블이_한_개_이하인_경우_지정할_수_없다() {
         OrderTable orderTable1 = orderTableDao.save(new OrderTable(null, 1, true));
 
-        TableGroup tableGroup = new TableGroup(new ArrayList<>(Arrays.asList(orderTable1)));
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), new ArrayList<>(Arrays.asList(orderTable1)));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -62,7 +64,8 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable orderTable1 = orderTableDao.save(new OrderTable(null, 1, false));
         OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, 2, true));
 
-        TableGroup tableGroup = new TableGroup(new ArrayList<>(Arrays.asList(orderTable1, orderTable2)));
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(),
+                new ArrayList<>(Arrays.asList(orderTable1, orderTable2)));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -72,13 +75,14 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable orderTable1 = orderTableDao.save(new OrderTable(null, 1, true));
         OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, 2, true));
 
-        TableGroup tableGroup1 = tableGroupService.create(
-                new TableGroup(new ArrayList<>(Arrays.asList(orderTable1, orderTable2))));
+        TableGroup tableGroup1 = tableGroupDao.save(
+                new TableGroup(LocalDateTime.now(), new ArrayList<>(Arrays.asList(orderTable1, orderTable2))));
 
         OrderTable orderTable3 = orderTableDao.save(new OrderTable(tableGroup1.getId(), 1, true));
         OrderTable orderTable4 = orderTableDao.save(new OrderTable(null, 1, true));
 
-        TableGroup tableGroup2 = new TableGroup(new ArrayList<>(Arrays.asList(orderTable3, orderTable4)));
+        TableGroup tableGroup2 = new TableGroup(LocalDateTime.now(),
+                new ArrayList<>(Arrays.asList(orderTable3, orderTable4)));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup2)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -88,8 +92,14 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable orderTable1 = orderTableDao.save(new OrderTable(null, 1, true));
         OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, 2, true));
 
-        TableGroup tableGroup = tableGroupService.create(
-                new TableGroup(new ArrayList<>(Arrays.asList(orderTable1, orderTable2))));
+        TableGroup tableGroup = tableGroupDao.save(
+                new TableGroup(LocalDateTime.now(), new ArrayList<>(Arrays.asList(orderTable1, orderTable2))));
+        orderTableDao.save(
+                new OrderTable(orderTable1.getId(), tableGroup.getId(), orderTable1.getNumberOfGuests(),
+                        orderTable1.isEmpty()));
+        orderTableDao.save(
+                new OrderTable(orderTable2.getId(), tableGroup.getId(), orderTable2.getNumberOfGuests(),
+                        orderTable2.isEmpty()));
 
         tableGroupService.ungroup(tableGroup.getId());
 
@@ -110,8 +120,14 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable orderTable1 = orderTableDao.save(new OrderTable(null, 1, true));
         OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, 2, true));
 
-        TableGroup tableGroup = tableGroupService.create(
-                new TableGroup(new ArrayList<>(Arrays.asList(orderTable1, orderTable2))));
+        TableGroup tableGroup = tableGroupDao.save(
+                new TableGroup(LocalDateTime.now(), new ArrayList<>(Arrays.asList(orderTable1, orderTable2))));
+        orderTableDao.save(
+                new OrderTable(orderTable1.getId(), tableGroup.getId(), orderTable1.getNumberOfGuests(),
+                        orderTable1.isEmpty()));
+        orderTableDao.save(
+                new OrderTable(orderTable2.getId(), tableGroup.getId(), orderTable2.getNumberOfGuests(),
+                        orderTable2.isEmpty()));
 
         orderDao.save(new Order(orderTable1.getId(), orderStatus.name(), new ArrayList<>()));
 
