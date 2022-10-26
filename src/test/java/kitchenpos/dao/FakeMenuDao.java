@@ -1,11 +1,12 @@
 package kitchenpos.dao;
 
+import static kitchenpos.application.fixture.MenuFixtures.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import kitchenpos.application.fixture.MenuFixtures;
 import kitchenpos.domain.Menu;
 
 public class FakeMenuDao implements MenuDao {
@@ -15,7 +16,7 @@ public class FakeMenuDao implements MenuDao {
 
     @Override
     public Menu save(final Menu entity) {
-        Menu menu = MenuFixtures.generateMenu(++id, entity);
+        Menu menu = generateMenu(++id, entity);
         STORES.put(id, menu);
         return menu;
     }

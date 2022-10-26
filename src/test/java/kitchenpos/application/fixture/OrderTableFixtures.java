@@ -11,6 +11,27 @@ public class OrderTableFixtures {
         return orderTable;
     }
 
+    public static final OrderTable generateOrderTable(final Long id, final OrderTable orderTable) {
+        return generateOrderTable(
+                id,
+                orderTable.getTableGroupId(),
+                orderTable.getNumberOfGuests(),
+                orderTable.isEmpty()
+        );
+    }
+
+    public static final OrderTable generateOrderTable(final Long id,
+                                                      final Long tableGroupId,
+                                                      final int numberOfGuests,
+                                                      final boolean empty) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setId(id);
+        orderTable.setTableGroupId(tableGroupId);
+        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setEmpty(empty);
+        return orderTable;
+    }
+
     public static final OrderTable 테이블_1번() {
         return generateOrderTable(0, true);
     }
