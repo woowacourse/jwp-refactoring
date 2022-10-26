@@ -1,7 +1,10 @@
 package kitchenpos.application;
 
 import static kitchenpos.Fixture.ORDER;
+import static kitchenpos.Fixture.ORDER_LINE_ITEM;
+import static kitchenpos.Fixture.ORDER_TABLE1;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -16,7 +19,6 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,20 +48,14 @@ class OrderServiceTest {
     @Test
     void create() {
         //given
-        Order order = new Order();
-        OrderLineItem orderLineItem = new OrderLineItem(1L, 1L);
-        OrderTable orderTable = new OrderTable(1L,  1, false);
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-
         given(menuDao.countByIdIn(anyList())).willReturn(1L);
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
-        given(orderDao.save(order)).willReturn(ORDER);
-        given(orderLineItemDao.save(orderLineItem)).willReturn(orderLineItem);
+        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(ORDER_TABLE1));
+        given(orderDao.save(any(Order.class))).willReturn(ORDER);
+        given(orderLineItemDao.save(any(OrderLineItem.class))).willReturn(ORDER_LINE_ITEM);
 
         //when
+        Order order = new Order(1L, OrderStatus.COOKING.name(),
+                LocalDateTime.now(), List.of(new OrderLineItem(1L, 1L)));
         Order savedOrder = orderService.create(order);
 
         //then

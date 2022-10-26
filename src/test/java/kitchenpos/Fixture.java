@@ -29,7 +29,7 @@ public class Fixture {
 
     public static final MenuGroup MENU_GROUP = new MenuGroup(1L, "추천메뉴");
 
-    public static final OrderTable ORDER_TABLE1 = new OrderTable(1L,  0, true);
+    public static final OrderTable ORDER_TABLE1 = new OrderTable(1L,  0, false);
     public static final OrderTable ORDER_TABLE2 = new OrderTable(2L, 1, true);
 
     public static final TableGroup TABLE_GROUP = new TableGroup(1L, LocalDateTime.now(), List.of(ORDER_TABLE1, ORDER_TABLE2));
