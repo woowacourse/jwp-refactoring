@@ -103,3 +103,33 @@
 | 단체 지정 | table group | 통합 계산을 위해 개별 주문 테이블을 그룹화하는 기능 |
 | 주문 항목 | order line item | 주문에 속하는 수량이 있는 메뉴 |
 | 매장 식사 | eat in | 포장하지 않고 매장에서 식사하는 것 |
+
+
+
+## 리팩터링 과정
+
+1. setter를 제거하고, 생성자를 추가한다.
+
+   - [x] Product
+
+   - [x] MenuProduct
+
+   - [x] MenuGroup
+
+   - [x] Menu
+
+   - [x] OrderTable 
+
+     -> setter를 지금 지우는게 맞나? 구조 개선이 필요해보인다.
+
+     - OrderTable은 초기 생성시 numberOfGuests, tableGroupId는 없다.
+
+   - [x] TableGroup
+
+     -> setter를 없애는게 과연 옳은 판단이었을까?
+
+     우선 생성자를 추가하고 필요한 setter는 유지한채 구현을 해보자
+
+   - [x] OrderLineItem
+
+   - [x] Order

@@ -20,7 +20,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.support.ClassConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -65,13 +64,13 @@ class OrderServiceTest extends ServiceTest {
 
             orderTable = new OrderTable(ORDER_TABLE_ID, null, 2, false);
 
-            order = ClassConstructor.order(null, ORDER_TABLE_ID, null, null,
+            order = new Order(null, ORDER_TABLE_ID, null, null,
                     Arrays.asList(orderLineItemA, orderLineItemB));
 
-            Order savedOrder = ClassConstructor.order(1L, ORDER_TABLE_ID, OrderStatus.COOKING.name(),
+            Order savedOrder = new Order(1L, ORDER_TABLE_ID, OrderStatus.COOKING.name(),
                     LocalDateTime.now(), Arrays.asList(orderLineItemA, orderLineItemB));
 
-            given(orderDao.save(order))
+            given(orderDao.save(any(Order.class)))
                     .willReturn(savedOrder);
             given(orderLineItemDao.save(any(OrderLineItem.class)))
                     .willReturn(orderLineItemA)
@@ -155,9 +154,9 @@ class OrderServiceTest extends ServiceTest {
             orderLineItemA = new OrderLineItem(null, ORDER_ID, MENU_A_ID, 1);
             orderLineItemB = new OrderLineItem(null, ORDER_ID, MENU_B_ID, 1);
 
-            savedOrder = ClassConstructor.order(ORDER_ID, ORDER_TABLE_ID, null, null,
+            savedOrder = new Order(ORDER_ID, ORDER_TABLE_ID, null, null,
                     Arrays.asList(orderLineItemA, orderLineItemB));
-            order = ClassConstructor.order(ORDER_ID, ORDER_TABLE_ID, OrderStatus.MEAL.name(), null,
+            order = new Order(ORDER_ID, ORDER_TABLE_ID, OrderStatus.MEAL.name(), null,
                     Arrays.asList(orderLineItemA, orderLineItemB));
 
             given(orderDao.findById(ORDER_ID))
