@@ -8,7 +8,6 @@ import java.util.List;
 import kitchenpos.application.dto.request.CreateOrderDto;
 import kitchenpos.application.dto.request.CreateOrderLineItemDto;
 import kitchenpos.application.dto.request.CreateTableDto;
-import kitchenpos.application.dto.request.CreateTableGroupDto;
 import kitchenpos.application.dto.request.EmptyTableDto;
 import kitchenpos.application.dto.response.TableDto;
 import kitchenpos.application.dto.request.UpdateGuestNumberDto;
@@ -26,9 +25,6 @@ class TableServiceTest {
 
     @Autowired
     private TableService tableService;
-
-    @Autowired
-    private TableGroupService tableGroupService;
 
     @Autowired
     private OrderService orderService;
@@ -92,16 +88,6 @@ class TableServiceTest {
         }
 
         @Test
-        void 단체로_지정된_테이블의_빈_테이블_여부를_수정하려는_경우_예외를_발생시킨다() {
-            Long orderTableId1 = saveEmptyTable();
-            Long orderTableId2 = saveEmptyTable();
-            tableGroupService.create(new CreateTableGroupDto(List.of(orderTableId1, orderTableId2)));
-
-            assertThatThrownBy(() -> tableService.changeEmpty(new EmptyTableDto(orderTableId1, false)))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         void 주문이_들어간_테이블의_빈_테이블_여부를_수정하려는_경우_예외를_발생시킨다() {
             Long orderTableId = saveOrderTable();
             List<CreateOrderLineItemDto> orderLineItems = List.of(new CreateOrderLineItemDto(1L, 1));
@@ -128,31 +114,10 @@ class TableServiceTest {
         }
 
         @Test
-        void 테이블의_고객_수를_음수로_수정하려는_경우_예외를_발생시킨다() {
-            Long savedOrderTableId = saveOrderTable();
-            UpdateGuestNumberDto updateGuestNumberDto = new UpdateGuestNumberDto(savedOrderTableId, -1);
-
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(updateGuestNumberDto))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         void 존재하지_않는_테이블의_고객_수를_수정하려는_경우_예외를_발생시킨다() {
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(new UpdateGuestNumberDto(999999L, 10)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
-
-        @Test
-        void 빈_테이블의_고객_수를_수정하려는_경우_예외를_발생시킨다() {
-            Long savedEmptyTableId = saveEmptyTable();
-            UpdateGuestNumberDto updateGuestNumberDto = new UpdateGuestNumberDto(savedEmptyTableId, 10);
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(updateGuestNumberDto))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-    }
-
-    private Long saveEmptyTable() {
-        return tableService.create(new CreateTableDto(0, true)).getId();
     }
 
     private Long saveOrderTable() {
