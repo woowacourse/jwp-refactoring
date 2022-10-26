@@ -6,6 +6,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderStatusUpdateRequest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +24,7 @@ public class OrderServiceTest {
 
     @Autowired
     private OrderService orderService;
-
+    @DisplayName("주문을 생성한다")
     @Test
     void create() {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(4L,
@@ -40,14 +41,14 @@ public class OrderServiceTest {
                                 new OrderLineItem(order.getId(), 2L, 3L)))
         );
     }
-
+    @DisplayName("주문내역이 없는 주문을 생성할 수 없다")
     @Test
     void create_orderLineItemEmpty() {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(4L, List.of());
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
-
+    @DisplayName("없는 메뉴를 주문내역으로 하는 주문을 생성할 수 없다")
     @Test
     void create_menuIdNotExist() {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(4L,
@@ -56,7 +57,7 @@ public class OrderServiceTest {
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
-
+    @DisplayName("주문테이블이 없는 주문을 생성할 수 없다")
     @Test
     void create_OrderTableEmpty() {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(1L,
@@ -65,14 +66,14 @@ public class OrderServiceTest {
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
-
+    @DisplayName("주문목록을 조회한다")
     @Test
     void list() {
         List<Order> orders = orderService.list();
 
         assertThat(orders.size()).isEqualTo(6);
     }
-
+    @DisplayName("주문상태를 바꾼다")
     @Test
     void changeOrderStatus() {
         OrderStatusUpdateRequest orderStatusUpdateRequest = new OrderStatusUpdateRequest("MEAL");
@@ -88,7 +89,7 @@ public class OrderServiceTest {
 
         );
     }
-
+    @DisplayName("없는 주문의 상태를 바꿀 수 없다")
     @Test
     void changeOrderStatus_orderNotExist() {
         OrderStatusUpdateRequest orderStatusUpdateRequest = new OrderStatusUpdateRequest("MEAL");
@@ -96,7 +97,7 @@ public class OrderServiceTest {
         assertThatThrownBy(() -> orderService.changeOrderStatus(100L, orderStatusUpdateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-
+    @DisplayName("완료된 주문의 상태를 바꿀 수 없다")
     @Test
     void changeOrderStatus_stateComplete() {
         OrderStatusUpdateRequest orderStatusUpdateRequest = new OrderStatusUpdateRequest("MEAL");

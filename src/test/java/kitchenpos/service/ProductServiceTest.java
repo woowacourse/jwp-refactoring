@@ -3,6 +3,7 @@ package kitchenpos.service;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductCreateRequest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,7 +21,7 @@ public class ProductServiceTest {
 
     @Autowired
     private ProductService productService;
-
+    @DisplayName("제품을 생성한다")
     @Test
     void create() {
         ProductCreateRequest productCreateRequest = new ProductCreateRequest("샐러드", 3000L);
@@ -32,7 +33,7 @@ public class ProductServiceTest {
                 () -> assertThat(product.getPrice()).isEqualTo(3000L)
         );
     }
-
+    @DisplayName("제품 가격이 null인 제품을 생성할 수 없다")
     @Test
     void create_priceNull() {
         ProductCreateRequest productCreateRequest = new ProductCreateRequest("샐러드", null);
@@ -40,7 +41,7 @@ public class ProductServiceTest {
         assertThatThrownBy(() -> productService.create(productCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-
+    @DisplayName("제품 가격이 음수인 제품을 생성할 수 없다")
     @Test
     void create_priceNegative() {
         ProductCreateRequest productCreateRequest = new ProductCreateRequest("샐러드", -1L);
@@ -48,7 +49,7 @@ public class ProductServiceTest {
         assertThatThrownBy(() -> productService.create(productCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-
+    @DisplayName("제품 목록을 조회한다")
     @Test
     void list() {
         List<Product> products = productService.list();
