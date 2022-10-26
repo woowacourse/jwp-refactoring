@@ -73,6 +73,18 @@ class MenuServiceTest {
         }
 
         @Test
+        void 요청에서_추가한_메뉴가_메뉴_그룹에_속해있지_않은경우_예외가_발생한다() {
+            // given
+            Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(0)));
+            Menu menu = new Menu("짜장면", BigDecimal.valueOf(1000), null);
+            menu.addMenuProducts(List.of(new MenuProduct(1L, menu.getId(), product.getId(), 1)));
+
+            // when & then
+            assertThatThrownBy(() -> menuService.create(menu))
+                .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
         void 요청에서_추가한_메뉴가격의_합이_상품가격의_합보다_높을경우_예외가_발생한다() {
             // given
             MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
