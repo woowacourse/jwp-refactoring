@@ -74,7 +74,7 @@ class TableGroupServiceTest {
         }
 
         @Nested
-        class 입력받은_OrderTable_중_TableGroup extends ServiceTest {
+        class 입력받은_OrderTable_중_TableGroup이_이미_존재하는_경우 extends ServiceTest {
 
             private OrderTable orderTable1;
             private OrderTable orderTable2;
