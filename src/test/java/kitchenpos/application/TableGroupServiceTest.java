@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.TableGroupFixtures.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -7,8 +8,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.TableGroupFixtures;
+import kitchenpos.application.dto.TableGroupCreateRequest;
+import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -22,12 +27,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 class TableGroupServiceTest {
 
     private TableGroupService tableGroupService;
+    private TableGroupRepository tableGroupRepository;
     private OrderTableRepository orderTableRepository;
     private OrderDao orderDao;
 
     @Autowired
-    public TableGroupServiceTest(TableGroupService tableGroupService, OrderTableRepository orderTableRepository, OrderDao orderDao) {
+    public TableGroupServiceTest(
+            TableGroupService tableGroupService,
+            TableGroupRepository tableGroupRepository,
+            OrderTableRepository orderTableRepository,
+            OrderDao orderDao
+    ) {
         this.tableGroupService = tableGroupService;
+        this.tableGroupRepository = tableGroupRepository;
         this.orderTableRepository = orderTableRepository;
         this.orderDao = orderDao;
     }
@@ -35,44 +47,33 @@ class TableGroupServiceTest {
     @Test
     void create() {
         // given
-        List<OrderTable> orderTables = List.of(new OrderTable(1L, 1L, 2, false), new OrderTable(2L, null, 0, true));
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
+        List<Long> orderTableIds = List.of(1L, 2L);
+        TableGroupCreateRequest request = new TableGroupCreateRequest(orderTableIds);
 
         // when
-        TableGroup createdTableGroup = tableGroupService.create(tableGroup);
+        TableGroupResponse response = tableGroupService.create(request);
 
         // then
-        List<OrderTable> createdOrderTables = createdTableGroup.getOrderTables();
-        Long[] expectedTableGroupIds = {createdTableGroup.getId(), createdTableGroup.getId()};
-        Boolean[] expectedEmpties = {false, false};
-
-        Assertions.assertAll(
-                () -> assertThat(createdTableGroup.getId()).isNotNull(),
-                () -> assertThat(createdOrderTables).extracting("tableGroupId").contains(expectedTableGroupIds),
-                () -> assertThat(createdOrderTables).extracting("empty").contains(expectedEmpties)
-        );
+        assertThat(response.getId()).isNotNull();
     }
 
     @Test
     void createWithEmptyOrderTable() {
         // given
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), new ArrayList<>());
+        TableGroupCreateRequest request = new TableGroupCreateRequest(new ArrayList<>());
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void createWithOneOrderTable() {
         // given
-        TableGroup tableGroup = new TableGroup(
-                LocalDateTime.now(),
-                List.of(new OrderTable(1L, null, 0, true))
-        );
+        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(1L));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -80,13 +81,10 @@ class TableGroupServiceTest {
     void createWithWrongOrderTable() {
         // given
         long wrongOrderTableId = 999L;
-        TableGroup tableGroup = new TableGroup(
-                LocalDateTime.now(),
-                List.of(new OrderTable(1L, null, 0, true), new OrderTable(wrongOrderTableId, null, 0, true))
-        );
+        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(1L, wrongOrderTableId));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -94,45 +92,35 @@ class TableGroupServiceTest {
     void createWithNotEmptyOrderTable() {
         // given
         OrderTable emptyOrderTable = orderTableRepository.save(new OrderTable(1L, null, 2, false));
-        TableGroup tableGroup = new TableGroup(
-                LocalDateTime.now(),
-                List.of(emptyOrderTable, new OrderTable(2L, null, 0, true))
-        );
+        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(emptyOrderTable.getId(), 2L));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void ungroup() {
         // given
-        TableGroup tableGroup = new TableGroup(
-                LocalDateTime.now(),
-                List.of(new OrderTable(1L, null, 0, true), new OrderTable(2L, null, 0, true))
-        );
-        TableGroup createdTableGroup = tableGroupService.create(tableGroup);
+        TableGroup savedTableGroup = tableGroupRepository.save(createTableGroup());
 
         // when & then
-        assertThatCode(() -> tableGroupService.ungroup(createdTableGroup.getId()))
+        assertThatCode(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                 .doesNotThrowAnyException();
     }
 
     @Test
     void ungroupWithCookingStatus() {
         // given
-        long orderTableId = 1L;
+        TableGroup savedTableGroup = tableGroupRepository.save(createTableGroup());
+        int any = 0;
+        Long orderTableId = savedTableGroup.getOrderTables().get(any).getId();
+
         Order order = new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), null);
         orderDao.save(order);
 
-        TableGroup tableGroup = new TableGroup(
-                LocalDateTime.now(),
-                List.of(new OrderTable(orderTableId, null, 0, true), new OrderTable(2L, null, 0, true))
-        );
-        TableGroup createdTableGroup = tableGroupService.create(tableGroup);
-
         // when & then
-        assertThatThrownBy(() -> tableGroupService.ungroup(createdTableGroup.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
