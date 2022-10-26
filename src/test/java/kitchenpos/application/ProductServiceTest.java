@@ -49,14 +49,6 @@ class ProductServiceTest {
         }
 
         @Test
-        void 가격이_음수인_경우_예외발생() {
-            CreateProductDto product = new CreateProductDto("강정치킨", BigDecimal.valueOf(-1));
-
-            assertThatThrownBy(() -> productService.create(product))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         void 상품명이_누락된_경우_예외발생() {
             CreateProductDto product = new CreateProductDto("", BigDecimal.valueOf(1000));
 

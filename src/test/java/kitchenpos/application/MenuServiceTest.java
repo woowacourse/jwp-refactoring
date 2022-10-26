@@ -54,15 +54,6 @@ class MenuServiceTest {
         }
 
         @Test
-        void 가격이_음수인_경우_예외발생() {
-            CreateMenuDto menu = new CreateMenuDto("후라이드+후라이드", BigDecimal.valueOf(-1), 1L,
-                    List.of(new CreateMenuProductDto(1L, 2)));
-
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         void 존재하지_않는_상품_id인_경우_예외발생() {
             CreateMenuDto menu = new CreateMenuDto("후라이드+후라이드", BigDecimal.valueOf(19000), 1L,
                     List.of(new CreateMenuProductDto(9999999L, 2)));
