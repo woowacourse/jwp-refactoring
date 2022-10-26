@@ -1,0 +1,14 @@
+[[OrderTable]]
+
+=== 주문 테이블 생성하기
+operation::order-table/create-order-table[snippets='http-request,http-response']
+
+=== 주문 테이블 항목 조회
+operation::order-table/get-order-tables[snippets='http-request,http-response']
+
+=== 주문 테이블 게스트 존재 여부를 변경
+operation::order-table/change-order-table-empty-status[snippets='http-request,http-response']
+
+=== 주문 테이블에 존재하는 게스트 수를 바꾼다
+operation::order-table/change-the-number-of-guests-in-order-table[snippets='http-request,http-response']
+

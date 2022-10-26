@@ -7,6 +7,8 @@ public class Product {
     private String name;
     private BigDecimal price;
 
+
+
     public Long getId() {
         return id;
     }

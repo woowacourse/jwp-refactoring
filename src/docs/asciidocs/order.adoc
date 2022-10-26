@@ -1,0 +1,10 @@
+[[Order]]
+
+=== 주문 생성하기
+operation::order/create[snippets='http-request,http-response']
+
+=== 주문 항목 조회하기
+operation::order/get-orders[snippets='http-request,http-response']
+
+=== 주문 상태 변경하기
+operation::order/change-order-status[snippets='http-request,http-response']

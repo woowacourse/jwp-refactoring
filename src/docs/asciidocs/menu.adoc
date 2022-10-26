@@ -1,0 +1,7 @@
+[[Menu]]
+
+=== 메뉴 생성하기
+operation::menu/create[snippets='http-request,http-response']
+
+=== 메뉴 항목 조회하기
+operation::menu/get-menus[snippets='http-request,http-response']

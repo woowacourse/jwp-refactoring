@@ -1,0 +1,7 @@
+[[MenuGroup]]
+
+=== 메뉴 그룹 생성하기
+operation::menu-group/create[snippets='http-request,http-response']
+
+=== 메뉴 그룹 목록 가져오기
+operation::menu-group/get-menu-groups[snippets='http-request,http-response']
