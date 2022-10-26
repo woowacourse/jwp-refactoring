@@ -5,6 +5,9 @@ public class MenuGroup {
     private Long id;
     private String name;
 
+    protected MenuGroup() {
+    }
+
     public MenuGroup(final String name) {
         this(null, name);
     }
