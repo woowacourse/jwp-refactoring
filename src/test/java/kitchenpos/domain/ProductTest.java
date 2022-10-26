@@ -13,7 +13,7 @@ class ProductTest {
 
     @ParameterizedTest
     @NullSource
-    @ValueSource(strings = "0")
+    @ValueSource(strings = "-1")
     void 상품의_가격이_null이거나_0보다_작은_경우_잘못된_가격임을_반환한다(BigDecimal price) {
         // given
         Product 치킨 = new Product(null, "치킨", price);
