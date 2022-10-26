@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import java.util.List;
+import kitchenpos.application.dto.MenuGroupCreateDto;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
@@ -30,8 +31,8 @@ class MenuGroupServiceTest {
                 .willReturn(MENU_GROUP);
 
         //when
-        MenuGroup menuGroup = new MenuGroup("추천메뉴");
-        MenuGroup savedManuGroup = menuGroupService.create(menuGroup);
+        MenuGroupCreateDto dto = new MenuGroupCreateDto("추천메뉴");
+        MenuGroup savedManuGroup = menuGroupService.create(dto);
 
         //then
         assertThat(savedManuGroup).isEqualTo(MENU_GROUP);
