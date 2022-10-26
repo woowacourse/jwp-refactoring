@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.fixture.ProductFixture.createPepperoni;
+import static kitchenpos.support.fixture.ProductFixture.createPineapple;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
@@ -22,7 +24,7 @@ class ProductServiceTest extends IntegrationTest {
     @DisplayName("상품을 등록 할 수 있다.")
     @Test
     void create() {
-        final Product product = new Product("pizza", BigDecimal.valueOf(1000));
+        final Product product = createPepperoni();
 
         final Product savedProduct = productService.create(product);
 
@@ -43,8 +45,13 @@ class ProductServiceTest extends IntegrationTest {
     @DisplayName("상품 리스트를 가져올 수 있다.")
     @Test
     void list() {
+        final int originSize = productDao.findAll().size();
+        productDao.save(createPepperoni());
+        productDao.save(createPineapple());
+
         final List<Product> products = productService.list();
 
-        assertThat(products).hasSize(6);
+        final int afterSize = products.size();
+        assertThat(afterSize - originSize).isEqualTo(2);
     }
 }
