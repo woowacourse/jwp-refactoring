@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import java.util.stream.Collectors;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.dto.MenuGroupCreationDto;
 import kitchenpos.application.dto.MenuGroupDto;
@@ -41,10 +42,22 @@ public class MenuGroupRestController {
         return ResponseEntity.created(uri).body(menuGroupResponse);
     }
 
+    @Deprecated
     @GetMapping("/api/menu-groups")
     public ResponseEntity<List<MenuGroup>> list() {
         return ResponseEntity.ok()
                 .body(menuGroupService.list())
                 ;
+    }
+
+    @Deprecated
+    @GetMapping("/api/v2/menu-groups")
+    public ResponseEntity<List<MenuGroupResponse>> getMenuGroups() {
+        final List<MenuGroupResponse> menuGroupResponses = menuGroupService.getMenuGroups()
+                .stream()
+                .map(MenuGroupResponse::from)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(menuGroupResponses);
     }
 }

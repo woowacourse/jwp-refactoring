@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.MenuGroupCreationDto;
 import kitchenpos.application.dto.MenuGroupDto;
 import kitchenpos.dao.MenuGroupDao;
@@ -28,7 +29,16 @@ public class MenuGroupService {
         return MenuGroupDto.from(menuGroup);
     }
 
+    @Deprecated
     public List<MenuGroup> list() {
         return menuGroupDao.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<MenuGroupDto> getMenuGroups() {
+        List<MenuGroup> menuGroups = menuGroupDao.findAll();
+        return menuGroups.stream()
+                .map(MenuGroupDto::from)
+                .collect(Collectors.toList());
     }
 }

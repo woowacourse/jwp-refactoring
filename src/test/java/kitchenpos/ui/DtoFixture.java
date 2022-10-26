@@ -3,7 +3,6 @@ package kitchenpos.ui;
 import java.math.BigDecimal;
 import kitchenpos.application.dto.MenuGroupDto;
 import kitchenpos.application.dto.ProductDto;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 
