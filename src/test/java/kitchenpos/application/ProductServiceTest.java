@@ -88,7 +88,8 @@ class ProductServiceTest extends ServiceTest {
         // then
         assertAll(
                 () -> assertThat(products.size()).isEqualTo(2),
-                () -> assertThat(products).extracting("id").containsExactly(1L, 2L),
+                () -> assertThat(products).extracting("id")
+                        .containsExactly(1L, 2L),
                 () -> assertThat(products).extracting("name")
                         .containsExactly(까르보치킨_생성요청.getName(), 짜장치킨_생성요청.getName()),
                 () -> assertThat(prices).containsExactly(까르보치킨_생성요청.getPrice(), 짜장치킨_생성요청.getPrice())

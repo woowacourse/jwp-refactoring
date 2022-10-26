@@ -60,11 +60,11 @@ class MenuServiceTest extends ServiceTest {
 
         // then
         assertAll(
-                () -> assertThat(menu.getId()).isEqualTo(1L),
-                () -> assertThat(menu.getName()).isEqualTo(name),
-                () -> assertThat(menu.getPrice()).isEqualTo(price),
-                () -> assertThat(menu.getMenuGroupId()).isEqualTo(menuGroupId),
-                () -> assertThat(menu.getMenuProducts()).extracting("menuId")
+                () -> assertThat(menu)
+                        .usingRecursiveComparison()
+                        .isEqualTo(new Menu(1L, name, price, menuGroupId, menu.getMenuProducts())),
+                () -> assertThat(menu.getMenuProducts())
+                        .extracting("menuId")
                         .containsExactly(menu.getId(), menu.getId())
         );
     }
