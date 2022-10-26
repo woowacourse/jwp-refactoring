@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static kitchenpos.support.OrderFixture.ORDER_COMPLETION_1;
-import static kitchenpos.support.OrderFixture.ORDER_COOKING_1;
 import static kitchenpos.support.OrderTableFixture.ORDER_TABLE_EMPTY_1;
 import static kitchenpos.support.OrderTableFixture.ORDER_TABLE_NOT_EMPTY_1;
 import static kitchenpos.support.TableGroupFixture.TABLE_GROUP_NOW;
@@ -9,11 +8,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @SuppressWarnings("NonAsciiCharacters")
 class TableGroupServiceTest extends ServiceTest {
@@ -46,9 +49,9 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void 테이블그룹을_생성할_때_묶을_그룹테이블이_존재하지_않으면_예외를_발생한다() {
         // given
-        final OrderTable firstSavedOrderTable = ORDER_TABLE_EMPTY_1.생성();
+        final OrderTable firstUnsavedOrderTable = ORDER_TABLE_EMPTY_1.생성();
         final OrderTable secondSavedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
-        final TableGroup tableGroup = TABLE_GROUP_NOW.생성(List.of(firstSavedOrderTable, secondSavedOrderTable));
+        final TableGroup tableGroup = TABLE_GROUP_NOW.생성(List.of(firstUnsavedOrderTable, secondSavedOrderTable));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -105,13 +108,14 @@ class TableGroupServiceTest extends ServiceTest {
         );
     }
 
-    @Test
-    void 테이블_그룹을_해제할_때_주문테이블의_주문상태가_제조중이거나_식사중이면_예외를_발생한다() {
+    @ParameterizedTest
+    @ValueSource(strings = {"COOKING", "MEAL"})
+    void 테이블_그룹을_해제할_때_주문테이블의_주문상태가_제조중이거나_식사중이면_예외를_발생한다(final String status) {
         // given
         final Long tableGroupId = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성()).getId();
         final OrderTable alreadySavedOrderTable1 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroupId));
         final OrderTable alreadySavedOrderTable2 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroupId));
-        주문을_저장한다(ORDER_COOKING_1.주문항목_없이_생성(alreadySavedOrderTable1.getId()));
+        주문을_저장한다(new Order(alreadySavedOrderTable1.getId(), status, LocalDateTime.now()));
         주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(alreadySavedOrderTable2.getId()));
 
         // when, then

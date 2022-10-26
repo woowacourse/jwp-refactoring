@@ -35,8 +35,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void 메뉴의_가격이_음수이면_예외를_발생한다() {
         // given
-        final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final Menu menu = new Menu("메뉴", new BigDecimal(-1), menuGroupId);
+        final Menu menu = new Menu("메뉴", new BigDecimal(-1), null);
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))

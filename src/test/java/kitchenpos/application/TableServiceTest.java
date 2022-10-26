@@ -1,15 +1,18 @@
 package kitchenpos.application;
 
 import static kitchenpos.support.OrderFixture.ORDER_COMPLETION_1;
-import static kitchenpos.support.OrderFixture.ORDER_COOKING_1;
 import static kitchenpos.support.OrderTableFixture.ORDER_TABLE_EMPTY_1;
 import static kitchenpos.support.OrderTableFixture.ORDER_TABLE_NOT_EMPTY_1;
 import static kitchenpos.support.TableGroupFixture.TABLE_GROUP_NOW;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @SuppressWarnings("NonAsciiCharacters")
 class TableServiceTest extends ServiceTest {
@@ -66,11 +69,12 @@ class TableServiceTest extends ServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @Test
-    void 주문상태가_조리중이거나_식사중_상태이면_테이블을_비어있음_상태로_변경할_수_없다() {
+    @ParameterizedTest
+    @ValueSource(strings = {"MEAL", "COOKING"})
+    void 주문상태가_조리중이거나_식사중_상태이면_테이블을_비어있음_상태로_변경할_수_없다(final String status) {
         // given
         final OrderTable savedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성());
-        주문을_저장한다(ORDER_COOKING_1.주문항목_없이_생성(savedOrderTable.getId()));
+        주문을_저장한다(new Order(savedOrderTable.getId(), status, LocalDateTime.now()));
 
         final OrderTable updateFor = new OrderTable(null, savedOrderTable.getNumberOfGuests(), true);
 
