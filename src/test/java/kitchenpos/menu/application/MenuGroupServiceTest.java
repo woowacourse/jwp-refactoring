@@ -5,8 +5,7 @@ import static kitchenpos.DomainFixture.인기_메뉴;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import kitchenpos.menu.repository.MenuGroupDao;
-import kitchenpos.menu.application.MenuGroupService;
+import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.ui.dto.MenuGroupCreateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +16,13 @@ import org.springframework.test.context.jdbc.Sql;
 @Sql(scripts = "classpath:truncate.sql")
 class MenuGroupServiceTest {
 
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
     private MenuGroupService menuGroupService;
 
     @Autowired
-    public MenuGroupServiceTest(final MenuGroupDao menuGroupDao) {
-        this.menuGroupDao = menuGroupDao;
-        this.menuGroupService = new MenuGroupService(menuGroupDao);
+    public MenuGroupServiceTest(final MenuGroupRepository menuGroupRepository) {
+        this.menuGroupRepository = menuGroupRepository;
+        this.menuGroupService = new MenuGroupService(menuGroupRepository);
     }
 
     @Test
@@ -44,8 +43,8 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴_그룹_목록을_조회한다() {
         // given
-        menuGroupDao.save(인기_메뉴);
-        menuGroupDao.save(세트_메뉴);
+        menuGroupRepository.save(인기_메뉴);
+        menuGroupRepository.save(세트_메뉴);
 
         // when
         final var found = menuGroupService.list();

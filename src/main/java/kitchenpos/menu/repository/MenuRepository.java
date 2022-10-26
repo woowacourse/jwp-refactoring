@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 
-public interface MenuDao extends Repository<Menu, Long> {
+public interface MenuRepository extends Repository<Menu, Long> {
 
     Menu save(Menu entity);
 

@@ -3,11 +3,11 @@ package kitchenpos;
 import static kitchenpos.DomainFixture.주문_생성;
 
 import java.time.LocalDateTime;
-import kitchenpos.menu.repository.MenuDao;
-import kitchenpos.menu.repository.MenuGroupDao;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.dao.OrderTableDao;
-import kitchenpos.menu.repository.ProductDao;
+import kitchenpos.menu.repository.ProductRepository;
 import kitchenpos.order.dao.TableGroupDao;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
@@ -25,13 +25,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class ServiceTest {
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
     private OrderTableDao orderTableDao;
@@ -43,15 +43,15 @@ public class ServiceTest {
     private OrderDao orderDao;
 
     protected Product 상품_저장(final Product product) {
-        return productDao.save(product);
+        return productRepository.save(product);
     }
 
     protected MenuGroup 메뉴_그룹_저장(final MenuGroup menuGroup) {
-        return menuGroupDao.save(menuGroup);
+        return menuGroupRepository.save(menuGroup);
     }
 
     protected Menu 메뉴_저장(final Menu menu) {
-        return menuDao.save(menu);
+        return menuRepository.save(menu);
     }
 
     protected OrderTable 테이블_생성_및_저장() {

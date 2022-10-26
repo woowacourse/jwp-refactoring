@@ -8,10 +8,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.menu.repository.MenuDao;
-import kitchenpos.menu.repository.MenuGroupDao;
-import kitchenpos.menu.repository.ProductDao;
-import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menu.repository.MenuGroupRepository;
+import kitchenpos.menu.repository.ProductRepository;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.Name;
@@ -32,9 +31,9 @@ import org.springframework.test.context.jdbc.Sql;
 @Sql(scripts = "classpath:truncate.sql")
 class MenuServiceTest {
 
-    private MenuDao menuDao;
-    private MenuGroupDao menuGroupDao;
-    private ProductDao productDao;
+    private MenuRepository menuRepository;
+    private MenuGroupRepository menuGroupRepository;
+    private ProductRepository productRepository;
     private MenuService menuService;
 
     private Product productA;
@@ -42,18 +41,18 @@ class MenuServiceTest {
     private Long menuGroupId;
 
     @Autowired
-    public MenuServiceTest(MenuDao menuDao, MenuGroupDao menuGroupDao, ProductDao productDao) {
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
-        this.productDao = productDao;
-        this.menuService = new MenuService(menuDao, menuGroupDao, productDao);
+    public MenuServiceTest(MenuRepository menuRepository, MenuGroupRepository menuGroupRepository, ProductRepository productRepository) {
+        this.menuRepository = menuRepository;
+        this.menuGroupRepository = menuGroupRepository;
+        this.productRepository = productRepository;
+        this.menuService = new MenuService(menuRepository, menuGroupRepository, productRepository);
     }
 
     @BeforeEach
     void setUp() {
-        productA = productDao.save(뿌링클);
-        productB = productDao.save(치즈볼);
-        menuGroupId = menuGroupDao.save(세트_메뉴).getId();
+        productA = productRepository.save(뿌링클);
+        productB = productRepository.save(치즈볼);
+        menuGroupId = menuGroupRepository.save(세트_메뉴).getId();
     }
 
     @Test
@@ -119,16 +118,16 @@ class MenuServiceTest {
     @Test
     void 메뉴_목록을_조회한다() {
         // given
-        final var productA = productDao.save(뿌링클);
-        final var productB = productDao.save(치즈볼);
-        final var menuGroupId = menuGroupDao.save(세트_메뉴).getId();
+        final var productA = productRepository.save(뿌링클);
+        final var productB = productRepository.save(치즈볼);
+        final var menuGroupId = menuGroupRepository.save(세트_메뉴).getId();
 
         Menu menuA = new Menu(new Name("뿌링클과 치즈볼"), Price.valueOf(23_000), menuGroupId,
                 List.of(new MenuProduct(productA, new Quantity(1)), new MenuProduct(productB, new Quantity(1))));
         Menu menuB = new Menu(new Name("뿌뿌링클"), Price.valueOf(35_000), menuGroupId,
                 List.of(new MenuProduct(productA, new Quantity(2))));
-        menuDao.save(menuA);
-        menuDao.save(menuB);
+        menuRepository.save(menuA);
+        menuRepository.save(menuB);
 
         // when
         List<Menu> foundMenus = menuService.list();

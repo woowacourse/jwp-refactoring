@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import kitchenpos.menu.repository.ProductDao;
+import kitchenpos.menu.repository.ProductRepository;
 import kitchenpos.menu.ui.dto.ProductCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,13 +19,13 @@ import org.springframework.test.context.jdbc.Sql;
 @Sql(scripts = "classpath:truncate.sql")
 class ProductServiceTest {
 
-    private ProductDao productDao;
+    private ProductRepository productRepository;
     private ProductService productService;
 
     @Autowired
-    public ProductServiceTest(final ProductDao productDao) {
-        this.productDao = productDao;
-        this.productService = new ProductService(productDao);
+    public ProductServiceTest(final ProductRepository productRepository) {
+        this.productRepository = productRepository;
+        this.productService = new ProductService(productRepository);
     }
 
     @DisplayName("상품 생성 테스트")
@@ -65,8 +65,8 @@ class ProductServiceTest {
     @Test
     void 상품_목록을_조회한다() {
         // given
-        productDao.save(뿌링클);
-        productDao.save(치즈볼);
+        productRepository.save(뿌링클);
+        productRepository.save(치즈볼);
 
         // when
         final var found = productService.list();

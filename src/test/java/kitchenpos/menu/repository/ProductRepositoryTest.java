@@ -12,15 +12,15 @@ import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
 @Sql("classpath:truncate.sql")
-class ProductDaoTest {
+class ProductRepositoryTest {
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Test
     void 상품을_저장한다() {
         // when
-        final var saved = productDao.save(뿌링클);
+        final var saved = productRepository.save(뿌링클);
 
         // then
         assertAll(
@@ -32,10 +32,10 @@ class ProductDaoTest {
     @Test
     void ID로_상품을_조회한다() {
         // given
-        final var saved = productDao.save(뿌링클);
+        final var saved = productRepository.save(뿌링클);
 
         // when
-        final var found = productDao.findById(saved.getId()).orElseThrow();
+        final var found = productRepository.findById(saved.getId()).orElseThrow();
 
         // then
         assertThat(saved.getId()).isEqualTo(found.getId());
@@ -44,11 +44,11 @@ class ProductDaoTest {
     @Test
     void 모든_상품을_조회한다() {
         // given
-        productDao.save(뿌링클);
-        productDao.save(치즈볼);
+        productRepository.save(뿌링클);
+        productRepository.save(치즈볼);
 
         // when
-        final var found = productDao.findAll();
+        final var found = productRepository.findAll();
 
         // then
         assertAll(
