@@ -6,9 +6,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
+import java.util.List;
 import kitchenpos.ControllerTest;
 import kitchenpos.application.ProductService;
-import kitchenpos.domain.Product;
+import kitchenpos.application.dto.request.ProductCreateRequest;
+import kitchenpos.application.dto.response.ProductResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,28 +27,29 @@ class ProductRestControllerTest extends ControllerTest {
     @Test
     void 상품을_생성할_수_있다() throws Exception {
         // given
-        Product product = new Product();
-        when(productService.create(any(Product.class))).thenReturn(product);
+        ProductResponse productResponse = new ProductResponse();
+        when(productService.create(any(ProductCreateRequest.class))).thenReturn(productResponse);
 
         // when
-        ResultActions response = postRequestWithJson(defaultProductUrl, product);
+        ResultActions response = postRequestWithJson(defaultProductUrl, productResponse);
 
         // then
         response.andExpect(status().isCreated())
-                .andExpect(content().string(objectMapper.writeValueAsString(product)));
+                .andExpect(content().string(objectMapper.writeValueAsString(productResponse)));
     }
 
     @Test
     void 상품_목록을_조회할_수_있다() throws Exception {
         // given
-        Product product = new Product();
-        when(productService.list()).thenReturn(Arrays.asList(product));
+        ProductResponse productResponse = new ProductResponse();
+        List<ProductResponse> productResponses = Arrays.asList(productResponse);
+        when(productService.list()).thenReturn(productResponses);
 
         // when
         ResultActions response = getRequest(defaultProductUrl);
 
         // then
         response.andExpect(status().isOk())
-                .andExpect(content().string(objectMapper.writeValueAsString(Arrays.asList(product))));
+                .andExpect(content().string(objectMapper.writeValueAsString(productResponses)));
     }
 }

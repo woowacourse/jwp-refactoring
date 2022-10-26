@@ -8,6 +8,8 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.application.dto.request.ProductCreateRequest;
+import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Assertions;
@@ -36,12 +38,12 @@ class ProductServiceTest {
         when(productDao.save(any(Product.class))).thenReturn(product);
 
         // when
-        Product savedProduct = productService.create(product);
+        ProductResponse response = productService.create(new ProductCreateRequest(1L, "pasta", BigDecimal.valueOf(13000)));
 
         // then
         Assertions.assertAll(
-                () -> assertThat(savedProduct.getId()).isEqualTo(1L),
-                () -> assertThat(savedProduct.getName()).isEqualTo("pasta")
+                () -> assertThat(response.getId()).isEqualTo(1L),
+                () -> assertThat(response.getName()).isEqualTo("pasta")
         );
     }
 
@@ -51,7 +53,7 @@ class ProductServiceTest {
         Product product = new Product();
 
         // when & then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(new ProductCreateRequest()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -62,7 +64,7 @@ class ProductServiceTest {
         product.setPrice(BigDecimal.valueOf(-1000));
 
         // when & then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(new ProductCreateRequest()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -76,10 +78,10 @@ class ProductServiceTest {
         when(productDao.findAll()).thenReturn(Arrays.asList(product));
 
         // when
-        List<Product> products = productService.list();
+        List<ProductResponse> responses = productService.list();
 
         // then
-        assertThat(products).hasSize(1)
+        assertThat(responses).hasSize(1)
                 .usingRecursiveComparison()
                 .ignoringFields("price")
                 .isEqualTo(Arrays.asList(product));
