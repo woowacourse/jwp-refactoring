@@ -7,9 +7,14 @@ public class Product {
     private String name;
     private Long price;
 
-    public Product(String name, Long price) {
+    public Product(Long id, String name, Long price) {
+        this.id = id;
         this.name = name;
         this.price = price;
+    }
+
+    public Product(String name, Long price) {
+        this(null, name, price);
     }
 
     public Product() {
