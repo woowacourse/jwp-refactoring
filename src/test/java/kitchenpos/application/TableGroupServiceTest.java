@@ -198,8 +198,4 @@ class TableGroupServiceTest {
             }
         }
     }
-
-    @Test
-    void ungroup() {
-    }
 }
