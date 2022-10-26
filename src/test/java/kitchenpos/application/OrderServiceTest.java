@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixtures.domain.MenuFixture.createMenu;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -55,7 +56,7 @@ class OrderServiceTest extends ServiceTest {
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("중식"));
         MenuProduct menuProduct = new MenuProduct(product.getId(), 1L);
 
-        this.menu = menuDao.save(new Menu("세트1", new BigDecimal(10_000), menuGroup.getId(), List.of(menuProduct)));
+        this.menu = menuDao.save(createMenu("세트1", new BigDecimal(10_000), menuGroup.getId(), List.of(menuProduct)));
         this.orderLineItem = new OrderLineItem(menu.getId(), 1L);
         this.orderTable = orderTableDao.save(new OrderTable(1, false));
         this.order = orderService.create(new Order(orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem)));

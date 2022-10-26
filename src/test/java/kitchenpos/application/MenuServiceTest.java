@@ -7,12 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.fixtures.domain.MenuFixture.MenuRequestBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -29,9 +29,6 @@ class MenuServiceTest extends ServiceTest {
 
     @Autowired
     private ProductDao productDao;
-
-    @Autowired
-    private MenuProductDao menuProductDao;
 
     private MenuGroup menuGroup;
     private Product product;
@@ -58,7 +55,12 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_CreateMenu() {
             // given
-            Menu menu = new Menu("세트1", new BigDecimal(20000), menuGroup.getId(), List.of(menuProduct));
+            Menu menu = new MenuRequestBuilder()
+                    .name("세트1")
+                    .price(20_000)
+                    .menuGroupId(menuGroup.getId())
+                    .menuProducts(menuProduct)
+                    .build();
 
             // when
             Menu actual = menuService.create(menu);
@@ -74,7 +76,11 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_PriceOfMenuIsNull() {
             // given
-            Menu menu = new Menu("세트1", null, menuGroup.getId(), List.of(menuProduct));
+            Menu menu = new MenuRequestBuilder()
+                    .price(null)
+                    .menuGroupId(menuGroup.getId())
+                    .menuProducts(menuProduct)
+                    .build();
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -85,7 +91,10 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_MenuGroupDoesNotExist() {
             // given
-            Menu menu = new Menu("세트1", new BigDecimal(10000), menuGroup.getId() + 1, List.of(menuProduct));
+            Menu menu = new MenuRequestBuilder()
+                    .menuGroupId(menuGroup.getId() + 1)
+                    .menuProducts(menuProduct)
+                    .build();
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -96,8 +105,11 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_ProductDoesNotExistInMenuProductList() {
             // given
-            MenuProduct menuProduct = new MenuProduct(product.getId() + 1, 1L);
-            Menu menu = new Menu("세트1", new BigDecimal(10000), menuGroup.getId(), List.of(menuProduct));
+            MenuProduct notSavedMenuProduct = new MenuProduct(product.getId() + 1, 1L);
+            Menu menu = new MenuRequestBuilder()
+                    .menuGroupId(menuGroup.getId())
+                    .menuProducts(notSavedMenuProduct)
+                    .build();
 
             // when
             assertThatThrownBy(() -> menuService.create(menu))
@@ -108,7 +120,11 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_MenuPriceIsBiggerThanSumOfProductOfProductPriceAndQuantity() {
             // given
-            Menu menu = new Menu("세트1", new BigDecimal(1_000_000), menuGroup.getId(), List.of(menuProduct));
+            Menu menu = new MenuRequestBuilder()
+                    .price(1_000_000)
+                    .menuGroupId(menuGroup.getId())
+                    .menuProducts(menuProduct)
+                    .build();
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -124,22 +140,23 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ReturnAllMenuList() {
             // given
-            Menu menu1 = new Menu("세트1", new BigDecimal(1_000), menuGroup.getId(), List.of(menuProduct));
-            Menu menu2 = new Menu("세트2", new BigDecimal(2_000), menuGroup.getId(), List.of(menuProduct));
-            Menu menu3 = new Menu("세트3", new BigDecimal(3_000), menuGroup.getId(), List.of(menuProduct));
-            Menu menu4 = new Menu("세트4", new BigDecimal(4_000), menuGroup.getId(), List.of(menuProduct));
+            int expected = 4;
+            for (int i = 0; i < expected; i++) {
+                Menu menu = new MenuRequestBuilder()
+                        .name("menu " + i)
+                        .menuGroupId(menuGroup.getId())
+                        .menuProducts(menuProduct)
+                        .build();
 
-            menuService.create(menu1);
-            menuService.create(menu2);
-            menuService.create(menu3);
-            menuService.create(menu4);
+                menuService.create(menu);
+            }
 
             // when
             List<Menu> actual = menuService.list();
 
             // then
             assertAll(() -> {
-                assertThat(actual).hasSize(4);
+                assertThat(actual).hasSize(expected);
             });
         }
     }
