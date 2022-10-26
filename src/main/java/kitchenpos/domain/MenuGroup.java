@@ -4,6 +4,18 @@ public class MenuGroup {
     private Long id;
     private String name;
 
+    public MenuGroup() {
+    }
+
+    public MenuGroup(final Long id, final String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public MenuGroup(final String name) {
+        this(null, name);
+    }
+
     public Long getId() {
         return id;
     }
@@ -18,5 +30,13 @@ public class MenuGroup {
 
     public void setName(final String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "MenuGroup{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

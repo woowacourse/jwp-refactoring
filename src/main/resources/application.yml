@@ -1,0 +1,13 @@
+spring:
+  jpa:
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+  flyway:
+    enabled: false
+
+logging:
+  level:
+    web: debug
+
