@@ -107,18 +107,6 @@ class OrderServiceTest {
             assertThatThrownBy(() -> orderService.changeOrderStatus(updateOrderStatusDto))
                     .isInstanceOf(IllegalArgumentException.class);
         }
-
-        @Test
-        void COMPLETION_상태인_주문의_상태롤_변경하려는_경우_예외를_발생시킨다() {
-            Long orderTableId = saveOrderTable();
-            List<CreateOrderLineItemDto> orderLineItems = List.of(new CreateOrderLineItemDto(1L, 1));
-            Long orderId = orderService.create(new CreateOrderDto(orderTableId, orderLineItems)).getId();
-
-            UpdateOrderStatusDto updateOrderStatusDto = new UpdateOrderStatusDto(orderId, OrderStatus.COMPLETION);
-            orderService.changeOrderStatus(updateOrderStatusDto);
-            assertThatThrownBy(() -> orderService.changeOrderStatus(updateOrderStatusDto))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
     }
 
     private Long saveOrderTable() {

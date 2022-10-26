@@ -8,6 +8,8 @@ import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 @SuppressWarnings("NonAsciiCharacters")
 class OrderTest {
@@ -34,5 +36,14 @@ class OrderTest {
             assertThatThrownBy(() -> Order.of(emptyTable))
                     .isInstanceOf(IllegalArgumentException.class);
         }
+    }
+
+    @DisplayName(" changeOrderStatus 메서드는 COMPLETION 상태인 주문에 대해 호출되면 예외발생")
+    @ParameterizedTest
+    @EnumSource(names = {"COOKING", "MEAL", "COMPLETION"}, value = OrderStatus.class)
+    void changeOrderStatus(OrderStatus orderStatus) {
+        Order order = new Order(null, 1L, OrderStatus.COMPLETION, LocalDateTime.now());
+        assertThatThrownBy(() -> order.changeOrderStatus(orderStatus))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
