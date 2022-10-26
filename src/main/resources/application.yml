@@ -4,6 +4,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+    hibernate:
+      ddl-auto: validate
 
   h2:
     console:
