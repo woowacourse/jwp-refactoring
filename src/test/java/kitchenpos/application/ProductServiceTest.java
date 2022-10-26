@@ -1,7 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.Fixtures.검증_필드비교_값포함;
-import static kitchenpos.Fixtures.상품_후라이드;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;

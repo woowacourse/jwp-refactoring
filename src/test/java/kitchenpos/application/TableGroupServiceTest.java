@@ -1,12 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.Fixtures.검증_필드비교_동일_목록;
-import static kitchenpos.Fixtures.빈테이블_1;
-import static kitchenpos.Fixtures.빈테이블_2;
-import static kitchenpos.Fixtures.주문_테이블1;
-import static kitchenpos.Fixtures.테이블_1;
-import static kitchenpos.Fixtures.테이블그룹;
-import static kitchenpos.Fixtures.테이블그룹2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
