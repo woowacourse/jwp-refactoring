@@ -62,6 +62,11 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
+        FakeMenuGroupDao.deleteAll();
+        FakeProductDao.deleteAll();
+        FakeMenuDao.deleteAll();
+        FakeOrderDao.deleteAll();
+        FakeOrderLineItemDao.deleteAll();
         FakeOrderTableDao.deleteAll();
     }
 
