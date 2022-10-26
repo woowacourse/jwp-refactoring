@@ -40,9 +40,7 @@ class ProductServiceTest {
     @ValueSource(ints = {-1, -1000})
     void 상품_등록_시_상품_가격이_0_이하라면_예외를_던진다(int price) {
         // given
-        Product product = new Product();
-        product.setName("강정치킨");
-        product.setPrice(BigDecimal.valueOf(price));
+        Product product = new Product(null, "강정치킨", BigDecimal.valueOf(price));
 
         // when & then
         assertThatThrownBy(() -> productService.create(product))
@@ -52,9 +50,7 @@ class ProductServiceTest {
     @Test
     void 상품_등록_시_상품_가격이_null이라면_예외를_던진다() {
         // given
-        Product product = new Product();
-        product.setName("강정치킨");
-        product.setPrice(null);
+        Product product = new Product(null, "강정치킨", null);
 
         // when & then
         assertThatThrownBy(() -> productService.create(product))
@@ -64,8 +60,7 @@ class ProductServiceTest {
     @Test
     void 상품_목록들을_조회한다() {
         // given
-        Product product = 강정치킨();
-        productService.create(product);
+        productService.create(강정치킨());
 
         // when
         List<Product> actual = productService.list();
@@ -75,10 +70,6 @@ class ProductServiceTest {
     }
 
     public Product 강정치킨() {
-        Product product = new Product();
-        product.setName("강정치킨");
-        product.setPrice(BigDecimal.valueOf(17000));
-
-        return product;
+        return new Product(null, "강정치킨", BigDecimal.valueOf(17000));
     }
 }

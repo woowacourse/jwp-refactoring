@@ -257,9 +257,6 @@ class OrderServiceTest {
 
 
     public Product 후라이드() {
-        Product product = new Product();
-        product.setName("후라이드");
-        product.setPrice(BigDecimal.valueOf(10000));
-        return productDao.save(product);
+        return productDao.save(new Product(null, "후라이드", BigDecimal.valueOf(10000)));
     }
 }
