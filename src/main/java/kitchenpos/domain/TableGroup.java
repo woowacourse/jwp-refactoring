@@ -13,6 +13,10 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
+    public TableGroup(List<OrderTable> orderTables) {
+        this(null, orderTables);
+    }
+
     public TableGroup() {
     }
 

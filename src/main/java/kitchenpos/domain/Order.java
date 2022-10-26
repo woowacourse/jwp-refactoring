@@ -11,9 +11,15 @@ public class Order {
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
-    public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
+    public Order(String orderStatus, Long orderTableId, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+        this.orderStatus = orderStatus;
         this.orderTableId = orderTableId;
+        this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+    }
+
+    public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, null, orderLineItems);
     }
 
     public Order() {

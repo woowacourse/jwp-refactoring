@@ -1,50 +1,30 @@
 package kitchenpos.application;
 
+import static kitchenpos.Fixture.테이블집합;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
 @ApplicationTest
-class TableGroupServiceTest {
+class TableGroupServiceTest extends ServiceTest {
 
-    private final ProductDao productDao;
-    private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
-    private final TableGroupService tableGroupService;
-    private final TableService tableService;
-    private final OrderService orderService;
-
-    TableGroupServiceTest(ProductDao productDao, MenuDao menuDao, MenuGroupDao menuGroupDao,
-                          TableGroupService tableGroupService, TableService tableService,
-                          OrderService orderService) {
-        this.productDao = productDao;
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
-        this.tableGroupService = tableGroupService;
-        this.tableService = tableService;
-        this.orderService = orderService;
-    }
+    @Autowired
+    private TableGroupService tableGroupService;
+    @Autowired
+    private TableService tableService;
+    @Autowired
+    private OrderService orderService;
 
     @Test
     void 테이블그룹을_생성한다() {
-        TableGroup tableGroup = new TableGroup(null, List.of(빈테이블을_생성한다(), 빈테이블을_생성한다()));
+        TableGroup tableGroup = 테이블집합(빈테이블을_생성(), 빈테이블을_생성());
 
         TableGroup actual = tableGroupService.create(tableGroup);
         assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
@@ -52,7 +32,7 @@ class TableGroupServiceTest {
 
     @Test
     void 테이블그룹을_생성할때_테이블이_없는_경우_예외를_발생시킨다() {
-        TableGroup tableGroup = new TableGroup(null, null);
+        TableGroup tableGroup = new TableGroup(null);
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
@@ -60,7 +40,7 @@ class TableGroupServiceTest {
 
     @Test
     void 테이블그룹을_생성할때_테이블이_2개보다_적은_경우_예외를_발생시킨다() {
-        TableGroup tableGroup = new TableGroup(null, List.of(빈테이블을_생성한다()));
+        TableGroup tableGroup = 테이블집합(빈테이블을_생성());
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
@@ -68,7 +48,7 @@ class TableGroupServiceTest {
 
     @Test
     void 테이블그룹을_생성할때_테이블이_저장된_정보와_다를_경우_예외를_발생시킨다() {
-        TableGroup tableGroup = new TableGroup(null, List.of(new OrderTable(-1L, null, 0, true), 빈테이블을_생성한다()));
+        TableGroup tableGroup = 테이블집합(new OrderTable(-1L, null, 0, true), 빈테이블을_생성());
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
@@ -76,10 +56,10 @@ class TableGroupServiceTest {
 
     @Test
     void 테이블그룹을_생성할때_테이블이_비어있지_않은_경우_예외를_발생시킨다() {
-        OrderTable orderTable = 빈테이블을_생성한다();
+        OrderTable orderTable = 빈테이블을_생성();
         orderTable.setEmpty(false);
         tableService.changeEmpty(orderTable.getId(), orderTable);
-        TableGroup tableGroup = new TableGroup(null, List.of(orderTable, 빈테이블을_생성한다()));
+        TableGroup tableGroup = 테이블집합(orderTable, 빈테이블을_생성());
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
@@ -87,19 +67,17 @@ class TableGroupServiceTest {
 
     @Test
     void 테이블그룹을_해제한다() {
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(빈테이블을_생성한다(), 빈테이블을_생성한다()));
-        TableGroup savedGroup = tableGroupService.create(tableGroup);
+        TableGroup savedGroup = 테이블집합_생성();
 
         assertDoesNotThrow(() -> tableGroupService.ungroup(savedGroup.getId()));
     }
 
     @Test
     void 테이블그룹을_해제할때_조리중인_주문이_있는_경우_예외를_발생시킨다() {
-        OrderTable orderTable = 빈테이블을_생성한다();
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable, 빈테이블을_생성한다()));
+        OrderTable orderTable = 빈테이블을_생성();
+        TableGroup tableGroup = 테이블집합(orderTable, 빈테이블을_생성());
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
-        Order order = new Order(orderTable.getId(), List.of(new OrderLineItem(1L, 메뉴를_저장한다().getId(), 1)));
-        orderService.create(order);
+        주문_생성(orderTable.getId());
 
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
@@ -107,11 +85,10 @@ class TableGroupServiceTest {
 
     @Test
     void 테이블그룹을_해제할때_식사중인_주문이_있는_경우_예외를_발생시킨다() {
-        OrderTable orderTable = 빈테이블을_생성한다();
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable, 빈테이블을_생성한다()));
+        OrderTable orderTable = 빈테이블을_생성();
+        TableGroup tableGroup = 테이블집합(orderTable, 빈테이블을_생성());
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
-        Order order = new Order(orderTable.getId(), List.of(new OrderLineItem(1L, 메뉴를_저장한다().getId(), 1)));
-        Order savedOrder = orderService.create(order);
+        Order savedOrder = 주문_생성(orderTable.getId());
         savedOrder.setOrderStatus("MEAL");
         orderService.changeOrderStatus(savedOrder.getId(), savedOrder);
 
@@ -119,19 +96,7 @@ class TableGroupServiceTest {
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
-    OrderTable 빈테이블을_생성한다() {
-        OrderTable orderTable = new OrderTable(null, 0, true);
-        return tableService.create(orderTable);
-    }
-
-    Menu 메뉴를_저장한다() {
-        Product jwt_후라이드 = productDao.save(new Product("JWT 후라이드", new BigDecimal(100_000)));
-        Product jwt_양념 = productDao.save(new Product("JWT 양념", new BigDecimal(100_000)));
-        MenuProduct 후라이드 = new MenuProduct(1L, jwt_후라이드.getId(), 1);
-        MenuProduct 양념 = new MenuProduct(2L, jwt_양념.getId(), 1);
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("추천메뉴"));
-        Menu menu = new Menu("반반치킨", new BigDecimal(200_000), menuGroup.getId(), List.of(후라이드, 양념));
-
-        return menuDao.save(menu);
+    OrderTable 빈테이블을_생성() {
+        return 테이블_생성(true);
     }
 }
