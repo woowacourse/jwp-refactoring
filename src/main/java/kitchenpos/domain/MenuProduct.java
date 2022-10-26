@@ -2,20 +2,20 @@ package kitchenpos.domain;
 
 public class MenuProduct {
 
-    private Long id;
+    private Long seq;
     private Long menuId;
     private Long productId;
     private long quantity;
 
-    public MenuProduct(final Long id, final Long menuId, final Long productId, final long quantity) {
-        this.id = id;
+    public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity) {
+        this.seq = seq;
         this.menuId = menuId;
         this.productId = productId;
         this.quantity = quantity;
     }
 
-    public Long getId() {
-        return id;
+    public Long getSeq() {
+        return seq;
     }
 
 

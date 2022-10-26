@@ -18,7 +18,7 @@ import java.util.Optional;
 @Repository
 public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
     private static final String TABLE_NAME = "order_line_item";
-    private static final String KEY_COLUMN_NAME = "id";
+    private static final String KEY_COLUMN_NAME = "seq";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -49,22 +49,22 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
 
     @Override
     public List<OrderLineItem> findAll() {
-        final String sql = "SELECT id, order_id, menu_id, quantity FROM order_line_item";
+        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     @Override
     public List<OrderLineItem> findAllByOrderId(final Long orderId) {
-        final String sql = "SELECT id, order_id, menu_id, quantity FROM order_line_item WHERE order_id = (:orderId)";
+        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE order_id = (:orderId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("orderId", orderId);
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private OrderLineItem select(final Long id) {
-        final String sql = "SELECT id, order_id, menu_id, quantity FROM order_line_item WHERE id = (:id)";
+    private OrderLineItem select(final Long seq) {
+        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE seq = (:seq)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("id", id);
+                .addValue("seq", seq);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
