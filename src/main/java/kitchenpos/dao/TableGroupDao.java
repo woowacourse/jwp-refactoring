@@ -5,10 +5,7 @@ import kitchenpos.domain.TableGroup;
 import java.util.List;
 import java.util.Optional;
 
-public interface TableGroupDao {
-    TableGroup save(TableGroup entity);
+import org.springframework.data.jpa.repository.JpaRepository;
 
-    Optional<TableGroup> findById(Long id);
-
-    List<TableGroup> findAll();
+public interface TableGroupDao extends JpaRepository<TableGroup, Long> {
 }

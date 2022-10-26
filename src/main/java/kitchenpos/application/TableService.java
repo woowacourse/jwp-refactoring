@@ -39,27 +39,28 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(Long orderTableId, Boolean empty) {
-        OrderTable savedOrderTable = getById(orderTableId);
+        OrderTable orderTable = getById(orderTableId);
         validateNotCompletedOrderExist(orderTableId);
-        savedOrderTable.changeEmpty(empty);
-        OrderTable orderTable = orderTableRepository.save(savedOrderTable);
+        orderTable.changeEmpty(empty);
         return OrderTableResponse.from(orderTable);
     }
 
     private void validateNotCompletedOrderExist(Long orderTableId) {
-        boolean existNotCompletedOrder = orderDao.existsByOrderTableIdAndOrderStatusIn(
-            orderTableId, List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
-        );
-        if (existNotCompletedOrder) {
+        if (existNotCompletedOrder(orderTableId)) {
             throw new IllegalArgumentException("주문이 완료되지 않아 상태를 변경할 수 없습니다.");
         }
     }
 
+    private boolean existNotCompletedOrder(Long orderTableId) {
+        return orderDao.existsByOrderTableIdAndOrderStatusIn(
+            orderTableId, List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
+        );
+    }
+
     @Transactional
     public OrderTableResponse changeNumberOfGuests(Long orderTableId, Integer numberOfGuests) {
-        OrderTable savedOrderTable = getById(orderTableId);
-        savedOrderTable.updateNumberOfGuests(numberOfGuests);
-        OrderTable orderTable = orderTableRepository.save(savedOrderTable);
+        OrderTable orderTable = getById(orderTableId);
+        orderTable.updateNumberOfGuests(numberOfGuests);
         return OrderTableResponse.from(orderTable);
     }
 

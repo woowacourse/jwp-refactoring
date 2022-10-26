@@ -37,49 +37,45 @@ public class TableGroupService {
         List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         validateNotExistTables(orderTableIds, savedOrderTables);
 
-        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), savedOrderTables));
-        group(savedOrderTables, tableGroup);
+        TableGroup tableGroup = TableGroup.group(savedOrderTables, LocalDateTime.now());
+        tableGroupDao.save(tableGroup);
         return TableGroupResponse.from(tableGroup);
     }
 
     private void validateNotExistTables(List<Long> orderTableIds, List<OrderTable> savedOrderTables) {
         if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException("존재하지 않는 테이블로 지정할 수 업습니다.");
+            throw new IllegalArgumentException("존재하지 않는 테이블로 지정할 수 없습니다.");
         }
-    }
-
-    private void group(List<OrderTable> savedOrderTables, TableGroup tableGroup) {
-        tableGroup.addOrderTables(savedOrderTables);
-        orderTableRepository.saveAll(savedOrderTables);
     }
 
     @Transactional
     public void ungroup(Long tableGroupId) {
-        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-        List<Long> orderTableIds = extractTableIds(orderTables);
-        validateNotCompletedOrderExist(orderTableIds);
-        ungroup(orderTables);
+        TableGroup tableGroup = getGroupById(tableGroupId);
+        validateNotCompletedOrderExist(tableGroup);
+
+        tableGroup.ungroup();
     }
 
-    private List<Long> extractTableIds(List<OrderTable> orderTables) {
-        return orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
+    private TableGroup getGroupById(Long tableGroupId) {
+        return tableGroupDao.findById(tableGroupId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블 그룹입니다."));
     }
 
-    private void validateNotCompletedOrderExist(List<Long> orderTableIds) {
-        boolean existNotCompletedOrder = orderDao.existsByOrderTableIdInAndOrderStatusIn(
-            orderTableIds, List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
-        );
-        if (existNotCompletedOrder) {
+    private void validateNotCompletedOrderExist(TableGroup tableGroup) {
+        if (existNotCompletedOrder(extractTableIds(tableGroup))) {
             throw new IllegalArgumentException("완료되지 않은 주문이 있어서 해제할 수 없습니다.");
         }
     }
 
-    private void ungroup(List<OrderTable> orderTables) {
-        for (OrderTable orderTable : orderTables) {
-            orderTable.ungroup();
-            orderTableRepository.save(orderTable);
-        }
+    private List<Long> extractTableIds(TableGroup tableGroup) {
+        return tableGroup.getOrderTables().stream()
+            .map(OrderTable::getId)
+            .collect(Collectors.toList());
+    }
+
+    private boolean existNotCompletedOrder(List<Long> orderTableIds) {
+        return orderDao.existsByOrderTableIdInAndOrderStatusIn(
+            orderTableIds, List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
+        );
     }
 }

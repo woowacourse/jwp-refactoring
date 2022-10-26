@@ -17,7 +17,6 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.dto.TableGroupResponse;
 
@@ -49,7 +48,7 @@ class TableGroupServiceTest extends ServiceTest {
 
             // then
             Long groupId = actual.getId();
-            List<OrderTableResponse> orderTables = actual.getOrderTables();
+            List<OrderTable> orderTables = orderTableRepository.findAllByTableGroup(actual.getId());
             assertAll(
                 () -> assertThat(groupId).isNotNull(),
                 () -> assertThat(orderTables)
@@ -86,7 +85,7 @@ class TableGroupServiceTest extends ServiceTest {
             // when then
             assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("존재하지 않는 테이블로 지정할 수 업습니다.");
+                .hasMessage("존재하지 않는 테이블로 지정할 수 없습니다.");
         }
 
         @DisplayName("비어 있지 않는 테이블로 지정할 수 없다.")
