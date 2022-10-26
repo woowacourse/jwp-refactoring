@@ -1,8 +1,11 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixtures.domain.MenuGroupFixture.createMenuGroup;
+import static kitchenpos.fixtures.domain.MenuGroupFixture.createMenuGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -14,6 +17,9 @@ class MenuGroupServiceTest extends ServiceTest {
     @Autowired
     private MenuGroupService menuGroupService;
 
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
     @DisplayName("create 메소드는")
     @Nested
     class CreateMethod {
@@ -21,7 +27,7 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void Should_CreateMenuGroup() {
             // given
-            MenuGroup menuGroup = new MenuGroup("분식");
+            MenuGroup menuGroup = createMenuGroupRequest();
 
             // when
             MenuGroup actual = menuGroupService.create(menuGroup);
@@ -38,13 +44,13 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void Should_ReturnMenuGroupList() {
             // given
-            MenuGroup menuGroup1 = new MenuGroup("분식");
-            MenuGroup menuGroup2 = new MenuGroup("한식");
-            MenuGroup menuGroup3 = new MenuGroup("중식");
+            MenuGroup menuGroup1 = createMenuGroup("분식");
+            MenuGroup menuGroup2 = createMenuGroup("한식");
+            MenuGroup menuGroup3 = createMenuGroup("중식");
 
-            menuGroupService.create(menuGroup1);
-            menuGroupService.create(menuGroup2);
-            menuGroupService.create(menuGroup3);
+            menuGroupDao.save(menuGroup1);
+            menuGroupDao.save(menuGroup2);
+            menuGroupDao.save(menuGroup3);
 
             // when
             List<MenuGroup> actual = menuGroupService.list();
@@ -53,6 +59,4 @@ class MenuGroupServiceTest extends ServiceTest {
             assertThat(actual).hasSize(3);
         }
     }
-
-
 }

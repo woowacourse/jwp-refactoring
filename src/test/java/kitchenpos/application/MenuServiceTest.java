@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixtures.domain.MenuGroupFixture.createMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -36,9 +37,7 @@ class MenuServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        this.menuGroup = menuGroupDao.save(
-                new MenuGroup("세트 메뉴")
-        );
+        this.menuGroup = menuGroupDao.save(createMenuGroup("세트 메뉴"));
 
         this.product = productDao.save(
                 new Product("짜장면", new BigDecimal(30_000))
