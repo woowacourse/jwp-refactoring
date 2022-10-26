@@ -33,7 +33,7 @@ public class TableGroupService {
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException("2개 이상의 테이블만 그룹화가 가능합니다.");
+            throw new IllegalArgumentException("2개 이상의 테이블만 단체 지정이 가능합니다.");
         }
 
         final List<Long> orderTableIds = orderTables.stream()
@@ -43,12 +43,12 @@ public class TableGroupService {
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
         if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException("존재하지 않는 테이블은 그룹화할 수 없습니다.");
+            throw new IllegalArgumentException("존재하지 않는 테이블은 단체 지정할 수 없습니다.");
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException("이미 사용 중이거나 그룹화된 테이블은 사용할 수 없습니다.");
+                throw new IllegalArgumentException("이미 사용 중이거나 단체 지정된 테이블은 사용할 수 없습니다.");
             }
         }
 

@@ -93,7 +93,7 @@ class MenuServiceTest {
                 .hasMessage("포함된 메뉴 그룹이 있어야 합니다.");
     }
 
-    @DisplayName("구성 상품이 존재하지 않을 경우 예외를 반환한다.")
+    @DisplayName("메뉴 상품이 존재하지 않을 경우 예외를 반환한다.")
     @Test
     void create_throwException_ifProductNotExist() {
         // given
@@ -106,7 +106,7 @@ class MenuServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("메뉴의 가격이 구성 상품 총액보다 크면 예외를 반환한다.")
+    @DisplayName("메뉴의 가격이 메뉴 상품 총액보다 크면 예외를 반환한다.")
     @Test
     void create_throwException_ifPriceMoreExpensiveThanTotalMenuProduct() {
         // given
@@ -116,7 +116,7 @@ class MenuServiceTest {
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("메뉴의 가격은 상품들의 총액보다 비쌀 수 없습니다.");
+                .hasMessage("메뉴의 가격은 메뉴 상품들의 총액보다 비쌀 수 없습니다.");
     }
 
     @DisplayName("메뉴 전체를 조회한다.")

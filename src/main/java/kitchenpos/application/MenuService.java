@@ -55,7 +55,7 @@ public class MenuService {
         }
 
         if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException("메뉴의 가격은 상품들의 총액보다 비쌀 수 없습니다.");
+            throw new IllegalArgumentException("메뉴의 가격은 메뉴 상품들의 총액보다 비쌀 수 없습니다.");
         }
 
         final Menu savedMenu = menuDao.save(menu);

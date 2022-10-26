@@ -67,7 +67,7 @@ class OrderServiceTest {
         );
     }
 
-    @DisplayName("주문 저장 시에 주문 목록이 없다면 예외를 반환한다.")
+    @DisplayName("주문 저장 시에 주문 항목이 없다면 예외를 반환한다.")
     @Test
     void create_throwException_ifOrderLineItemsEmpty() {
         // given
@@ -76,7 +76,7 @@ class OrderServiceTest {
         // when, then
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 목록이 없습니다.");
+                .hasMessage("주문 항목이 없습니다.");
     }
 
     @DisplayName("없는 메뉴를 주문 시 예외를 반환한다.")

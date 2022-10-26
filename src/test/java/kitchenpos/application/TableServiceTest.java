@@ -94,7 +94,7 @@ class TableServiceTest {
                 .hasMessage("존재하지 않는 테이블입니다.");
     }
 
-    @DisplayName("테이블이 그룹핑되어 있으면 사용여부를 변경할 수 없다.")
+    @DisplayName("테이블이 단체 지정되어 있으면 사용여부를 변경할 수 없다.")
     @Test
     void changeEmpty_throwException_ifTableGrouping() {
         // given
@@ -125,7 +125,7 @@ class TableServiceTest {
                 .hasMessage("이미 주문이 들어간 테이블입니다.");
     }
 
-    @DisplayName("테이블 인원 수를 변경한다.")
+    @DisplayName("방문한 손님 수를 변경한다.")
     @Test
     void changeNumberOfGuests() {
         // given
@@ -147,7 +147,7 @@ class TableServiceTest {
         );
     }
 
-    @DisplayName("테이블 인원 수는 음수로 변경할 수 없다.")
+    @DisplayName("방문한 손님 수는 음수로 변경할 수 없다.")
     @Test
     void changeNumberOfGuests_throwException_ifNumberOfGuestsIsNegative() {
         // given
@@ -162,7 +162,7 @@ class TableServiceTest {
                 .hasMessage("손님의 인원은 음수가 될 수 없습니다.");
     }
 
-    @DisplayName("테이블이 존재하지 않을 경우 테이블 인원 변경은 불가하다.")
+    @DisplayName("테이블이 존재하지 않을 경우 방문한 손님 수 변경은 불가하다.")
     @Test
     void changeNumberOfGuests_throwException_ifTableNotExist() {
         // given
@@ -176,7 +176,7 @@ class TableServiceTest {
                 .hasMessage("테이블이 존재하지 않습니다.");
     }
 
-    @DisplayName("사용 중이지 않은 테이블의 인원 수를 변경할 수 없다.")
+    @DisplayName("사용 중이지 않은 테이블의 방문한 손님 수를 변경할 수 없다.")
     @Test
     void changeNumberOfGuests_throwException_ifTableEmpty() {
         // given
@@ -188,6 +188,6 @@ class TableServiceTest {
         assertThatThrownBy(() -> tableService
                 .changeNumberOfGuests(savedOrderTable.getId(), orderTableForUpdate))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("사용 중이지 않은 테이블의 인원 수를 변경할 수 없습니다.");
+                .hasMessage("사용 중이지 않은 테이블의 방문한 손님 수를 변경할 수 없습니다.");
     }
 }

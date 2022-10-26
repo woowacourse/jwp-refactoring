@@ -63,7 +63,7 @@ public class TableService {
                 .orElseThrow(() -> new IllegalArgumentException("테이블이 존재하지 않습니다."));
 
         if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException("사용 중이지 않은 테이블의 인원 수를 변경할 수 없습니다.");
+            throw new IllegalArgumentException("사용 중이지 않은 테이블의 방문한 손님 수를 변경할 수 없습니다.");
         }
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);
