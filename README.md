@@ -8,6 +8,7 @@
     - [API] `POST api/products`
     - [Status code] `201 created`
     - [Request] 이름, 가격 정보
+    - [예외] 상품의 이름은 빈값일 수 없다.
     - [예외] 상품의 가격은 빈값일 수 없으며, 0 이상이다.
     - [Response] 생성된 상품의 id, 이름, 가격 정보
 - 전체 상품 목록을 조회할 수 있다.
@@ -21,6 +22,7 @@
     - [API] `POST api/menu-groups`
     - [Status code] `201 created`
     - [Request] 이름 정보
+    - [예외] 메뉴 그룹의 이름인 빈값일 수 없다.
     - [Response] 생성된 메뉴 그룹의 id, 이름 정보
 - 전체 메뉴 그룹 목록을 조회할 수 있다.
     - [API] `GET /api/menu-groups`

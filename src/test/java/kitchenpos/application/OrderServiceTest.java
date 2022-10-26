@@ -164,8 +164,7 @@ class OrderServiceTest extends ServiceTest {
     }
 
     private Menu createAndSaveMenu() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("menuGroup");
+        MenuGroup menuGroup = new MenuGroup("menuGroup");
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
         Menu menu = new Menu();

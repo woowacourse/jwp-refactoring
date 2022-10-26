@@ -140,8 +140,7 @@ class MenuServiceTest extends ServiceTest {
     }
 
     private MenuGroup createAndSaveMenuGroup() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("menuGroup");
+        MenuGroup menuGroup = new MenuGroup("menuGroup");
 
         return menuGroupDao.save(menuGroup);
     }
