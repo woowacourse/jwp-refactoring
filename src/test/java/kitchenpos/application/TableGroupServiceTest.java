@@ -82,8 +82,7 @@ class TableGroupServiceTest {
     @DisplayName("존재하지 않는 테이블이 포함된 경우 예외를 발생시킨다.")
     void createNotExistTableError() {
         //given
-        OrderTable tableNotExist = new OrderTable();
-        tableNotExist.setId(999999999L);
+        OrderTable tableNotExist =new OrderTable(99L, 1, false);
         tableGroup.setOrderTables(generateTableList(orderTable1, tableNotExist));
 
         //when, then
@@ -131,8 +130,7 @@ class TableGroupServiceTest {
     }
 
     private OrderTable generateEmptyTable() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
+        OrderTable orderTable = new OrderTable(1L, 1, true);
         return tableService.create(orderTable);
     }
 

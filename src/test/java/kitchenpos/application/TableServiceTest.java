@@ -25,7 +25,7 @@ import kitchenpos.domain.TableGroup;
 @Transactional
 class TableServiceTest {
 
-    private final OrderTable orderTable = new OrderTable();
+    private final OrderTable orderTable = new OrderTable(1L, 1, false);
 
     @Autowired
     private TableService tableService;
@@ -51,17 +51,15 @@ class TableServiceTest {
     void changeEmptyWithGroupTableError() {
         //given
         TableGroup tableGroup = new TableGroup();
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
+        OrderTable orderTable1 = new OrderTable(1L, 1L, 1, false);
+        OrderTable orderTable2 = new OrderTable(2L, 1L, 1, false);
 
         tableGroup.setOrderTables(convertToList(orderTable1, orderTable2));
 
         tableGroupService.create(tableGroup);
 
         //then
-        assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable2))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -69,7 +67,7 @@ class TableServiceTest {
     @DisplayName("테이블의 상태가 COOKING 또는 MEAL일 때 빈 테이블로 변경하려고 할 경우 예외를 발생시킨다.")
     void changeEmptyInvalidStatusError() {
         //given
-        OrderTable newOrderTable = new OrderTable();
+        OrderTable newOrderTable =         new OrderTable(1L, 1, false);
         Long notEmptyOrderTableId = tableService.create(newOrderTable).getId();
 
         //when

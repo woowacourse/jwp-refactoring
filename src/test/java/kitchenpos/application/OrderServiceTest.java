@@ -32,8 +32,8 @@ class OrderServiceTest {
     private Long orderTableId;
 
     @BeforeEach
-    void init(){
-        orderTableId = tableService.create(new OrderTable()).getId();
+    void init() {
+        orderTableId = tableService.create(new OrderTable(1L, 1, false)).getId();
     }
 
     @Test
@@ -64,8 +64,7 @@ class OrderServiceTest {
     @DisplayName("orderTable이 비어있을 경우 예외를 발생시킨다.")
     void createWithEmptyOrderTableError() {
         //given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
+        OrderTable orderTable = new OrderTable(1L, 1, true);
         long emptyOrderTableId = tableService.create(orderTable).getId();
 
         //when
