@@ -1,10 +1,10 @@
-package kitchenpos.dto;
+package kitchenpos.dto.request;
 
 public class MenuGroupCreateRequest {
 
     private String name;
 
-    public MenuGroupCreateRequest() {
+    private MenuGroupCreateRequest() {
     }
 
     public MenuGroupCreateRequest(final String name) {

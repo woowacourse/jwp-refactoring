@@ -4,12 +4,12 @@ import static kitchenpos.common.constants.Constants.루나세트_이름;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.util.List;
 import kitchenpos.common.builder.MenuGroupBuilder;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.MenuGroupCreateRequest;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.dto.response.MenuGroupsResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -55,9 +55,9 @@ class MenuGroupServiceTest extends ServiceTest {
         menuGroupDao.save(루나세트);
 
         // when
-        List<MenuGroup> 메뉴그룹들 = menuGroupService.list();
+        MenuGroupsResponse 메뉴그룹들 = menuGroupService.list();
 
         // then
-        assertThat(메뉴그룹들).hasSize(1);
+        assertThat(메뉴그룹들.getMenuGroupResponses()).hasSize(1);
     }
 }
