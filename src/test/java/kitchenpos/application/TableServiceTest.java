@@ -30,7 +30,7 @@ class TableServiceTest extends ServiceTest {
     void 테이블을_비어있음_상태로_변경한다() {
         // given
         final OrderTable savedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성());
-        주문을_저장한다(ORDER_COMPLETION_1.생성(savedOrderTable.getId()));
+        주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(savedOrderTable.getId()));
 
         final OrderTable updateFor = new OrderTable(null, savedOrderTable.getNumberOfGuests(), true);
 
@@ -58,7 +58,7 @@ class TableServiceTest extends ServiceTest {
         // given
         final Long tableGroupId = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성()).getId();
         final OrderTable savedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성(tableGroupId));
-        주문을_저장한다(ORDER_COMPLETION_1.생성(savedOrderTable.getId()));
+        주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(savedOrderTable.getId()));
 
         final OrderTable updateFor = new OrderTable(null, savedOrderTable.getNumberOfGuests(), true);
 
@@ -70,7 +70,7 @@ class TableServiceTest extends ServiceTest {
     void 주문상태가_조리중이거나_식사중_상태이면_테이블을_비어있음_상태로_변경할_수_없다() {
         // given
         final OrderTable savedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성());
-        주문을_저장한다(ORDER_COOKING_1.생성(savedOrderTable.getId()));
+        주문을_저장한다(ORDER_COOKING_1.주문항목_없이_생성(savedOrderTable.getId()));
 
         final OrderTable updateFor = new OrderTable(null, savedOrderTable.getNumberOfGuests(), true);
 

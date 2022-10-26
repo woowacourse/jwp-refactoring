@@ -87,6 +87,6 @@ class OrderLineItemDaoTest extends JdbcDaoTest {
     private Long 주문_저장() {
         final Long tableGroupId = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성()).getId();
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성(tableGroupId)).getId();
-        return 주문을_저장한다(ORDER_COOKING_1.생성(orderTableId)).getId();
+        return 주문을_저장한다(ORDER_COOKING_1.주문항목_없이_생성(orderTableId)).getId();
     }
 }

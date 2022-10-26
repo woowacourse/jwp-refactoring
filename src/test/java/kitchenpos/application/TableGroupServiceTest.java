@@ -87,8 +87,8 @@ class TableGroupServiceTest extends ServiceTest {
         final Long tableGroupId = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성()).getId();
         final OrderTable alreadySavedOrderTable1 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroupId));
         final OrderTable alreadySavedOrderTable2 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroupId));
-        주문을_저장한다(ORDER_COMPLETION_1.생성(alreadySavedOrderTable1.getId()));
-        주문을_저장한다(ORDER_COMPLETION_1.생성(alreadySavedOrderTable2.getId()));
+        주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(alreadySavedOrderTable1.getId()));
+        주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(alreadySavedOrderTable2.getId()));
 
         // when
         tableGroupService.ungroup(tableGroupId);
@@ -111,8 +111,8 @@ class TableGroupServiceTest extends ServiceTest {
         final Long tableGroupId = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성()).getId();
         final OrderTable alreadySavedOrderTable1 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroupId));
         final OrderTable alreadySavedOrderTable2 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroupId));
-        주문을_저장한다(ORDER_COOKING_1.생성(alreadySavedOrderTable1.getId()));
-        주문을_저장한다(ORDER_COMPLETION_1.생성(alreadySavedOrderTable2.getId()));
+        주문을_저장한다(ORDER_COOKING_1.주문항목_없이_생성(alreadySavedOrderTable1.getId()));
+        주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(alreadySavedOrderTable2.getId()));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))

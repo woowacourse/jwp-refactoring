@@ -43,7 +43,7 @@ class OrderServiceTest extends ServiceTest {
     void 주문을_저장할_때_주문할_메뉴가_1개_이상이_아니면_예외를_반환한다() {
         // given
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성()).getId();
-        final Order order = ORDER_COOKING_1.생성(orderTableId);
+        final Order order = ORDER_COOKING_1.주문항목_없이_생성(orderTableId);
 
         // when, then
         assertThatThrownBy(() -> orderService.create(order))
@@ -102,7 +102,7 @@ class OrderServiceTest extends ServiceTest {
                 .getId();
 
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성()).getId();
-        final Order savedOrder = 주문을_저장한다(ORDER_COOKING_1.생성(orderTableId));
+        final Order savedOrder = 주문을_저장한다(ORDER_COOKING_1.주문항목_없이_생성(orderTableId));
         final OrderLineItem savedOrderLineItem = 주문항목을_저장한다(ORDER_LINE_ITEM_1.생성(savedOrder.getId(), menuId));
 
         // when
@@ -122,7 +122,7 @@ class OrderServiceTest extends ServiceTest {
     void 주문의_상태를_변경할_수_있다() {
         // given
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성()).getId();
-        final Order savedOrder = 주문을_저장한다(ORDER_COOKING_1.생성(orderTableId));
+        final Order savedOrder = 주문을_저장한다(ORDER_COOKING_1.주문항목_없이_생성(orderTableId));
 
         final Order updateFor = new Order(savedOrder.getOrderTableId(), COMPLETION.name(), savedOrder.getOrderedTime());
 
@@ -149,7 +149,7 @@ class OrderServiceTest extends ServiceTest {
     void 주문의_상태를_변경할_때_이미_완료된_주문이면_예외를_반환한다() {
         // given
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성()).getId();
-        final Order savedOrder = 주문을_저장한다(ORDER_COMPLETION_1.생성(orderTableId));
+        final Order savedOrder = 주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(orderTableId));
 
         final Order updateFor = new Order(savedOrder.getOrderTableId(), MEAL.name(), savedOrder.getOrderedTime());
 

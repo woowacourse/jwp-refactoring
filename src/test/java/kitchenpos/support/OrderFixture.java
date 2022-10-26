@@ -22,15 +22,15 @@ public enum OrderFixture {
         this.orderedTime = orderedTime;
     }
 
-    public Order 생성(final long orderTableId) {
-        return new Order(orderTableId, this.orderStatus, this.orderedTime);
-    }
-
     public Order 생성(final long orderTableId, final List<OrderLineItem> orderLineItems) {
         return new Order(orderTableId, this.orderStatus, this.orderedTime, orderLineItems);
     }
 
-    public Order 생성(final long orderTableId, final LocalDateTime localDateTime) {
+    public Order 주문항목_없이_생성(final long orderTableId) {
+        return new Order(orderTableId, this.orderStatus, this.orderedTime);
+    }
+
+    public Order 주문항목_없이_생성(final long orderTableId, final LocalDateTime localDateTime) {
         return new Order(orderTableId, this.orderStatus, localDateTime);
     }
 }
