@@ -10,9 +10,6 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.exception.InvalidMenuPriceException;
-import kitchenpos.exception.InvalidMenuTotalPriceException;
-import kitchenpos.exception.NotFoundProductException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +43,7 @@ class MenuServiceTest {
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(InvalidMenuPriceException.class);
+                .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -59,7 +56,7 @@ class MenuServiceTest {
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(InvalidMenuPriceException.class);
+                .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -72,7 +69,7 @@ class MenuServiceTest {
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(NotFoundProductException.class);
+                .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -85,7 +82,7 @@ class MenuServiceTest {
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(InvalidMenuTotalPriceException.class);
+                .isInstanceOf(IllegalArgumentException.class);
         }
     }
 

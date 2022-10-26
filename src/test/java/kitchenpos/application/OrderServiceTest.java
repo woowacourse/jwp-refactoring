@@ -14,8 +14,6 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.exception.InvalidOrderLineItemNonRegisteredException;
-import kitchenpos.exception.NotFoundOrderTableException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -66,7 +64,7 @@ class OrderServiceTest extends IntegrationTest {
             assertThatThrownBy(
                 () -> orderService.create(new Order(orderTable.getId(), LocalDateTime.now(),
                     List.of(new OrderLineItem(notRegisterMenuId, 1)))))
-                .isInstanceOf(InvalidOrderLineItemNonRegisteredException.class);
+                .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -82,7 +80,7 @@ class OrderServiceTest extends IntegrationTest {
             // when & then
             assertThatThrownBy(() -> orderService.create(new Order(notRegisterOrderTableId, LocalDateTime.now(),
                 List.of(new OrderLineItem(saveMenu.getId(), 1)))))
-                .isInstanceOf(NotFoundOrderTableException.class);
+                .isInstanceOf(IllegalArgumentException.class);
         }
     }
 

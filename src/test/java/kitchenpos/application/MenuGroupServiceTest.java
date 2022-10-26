@@ -28,11 +28,15 @@ class MenuGroupServiceTest {
     class 메뉴_리스트_조회 extends IntegrationTest {
         @Test
         void 요청을_할_수_있다() {
+            // given
+            MenuGroup menuGroup = new MenuGroup("두마리메뉴");
+            menuGroupService.create(menuGroup);
+
             // when
             List<MenuGroup> extract = menuGroupService.list();
 
             // then
-            assertThat(extract).hasSize(4);
+            assertThat(extract).hasSize(1);
         }
     }
 }

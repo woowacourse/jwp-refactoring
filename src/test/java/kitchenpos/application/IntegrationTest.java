@@ -5,13 +5,11 @@ import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.support.extension.DataCleanerExtension;
-import kitchenpos.support.extension.DataDefaultAddExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @ExtendWith(DataCleanerExtension.class)
-@ExtendWith(DataDefaultAddExtension.class)
 @SpringBootTest
 public abstract class IntegrationTest {
 

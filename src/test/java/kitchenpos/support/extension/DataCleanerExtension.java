@@ -32,9 +32,9 @@ public class DataCleanerExtension implements BeforeEachCallback {
         jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY FALSE");
         while (rs.next()) {
             String tableName = rs.getString("TABLE_NAME");
-            if (tableName.equals("flyway_schema_history")) {
-                continue;
-            }
+//            if (tableName.equals("flyway_schema_history")) {
+//                continue;
+//            }
 
             jdbcTemplate.execute(createTruncateTable(tableName));
             jdbcTemplate.execute(createResetAutoIncrement(tableName));

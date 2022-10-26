@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
-import kitchenpos.exception.InvalidProductPriceException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +32,7 @@ class ProductServiceTest {
 
             // when & then
             assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(InvalidProductPriceException.class);
+                .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -43,7 +42,7 @@ class ProductServiceTest {
 
             // when & then
             assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(InvalidProductPriceException.class);
+                .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -51,11 +50,15 @@ class ProductServiceTest {
     class 상품_리스트_조회 extends IntegrationTest {
         @Test
         void 요청을_할_수_있다() {
+            // given
+            Product product = new Product("짜장면", BigDecimal.valueOf(1000));
+            productService.create(product);
+
             // when
             List<Product> extract = productService.list();
 
             // then
-            assertThat(extract).hasSize(6);
+            assertThat(extract).hasSize(1);
         }
     }
 }

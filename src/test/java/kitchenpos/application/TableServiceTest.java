@@ -14,9 +14,6 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.exception.InvalidOrderStatusException;
-import kitchenpos.exception.InvalidOrderTableIsEmptyOfNumberOfGuestsException;
-import kitchenpos.exception.InvalidOrderTableNumberOfGuestsException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -43,11 +40,15 @@ class TableServiceTest {
     class 테이블_목록 extends IntegrationTest {
         @Test
         void 요청을_할_수_있다() {
+            // given
+            OrderTable orderTable = new OrderTable(null, 0, true);
+            tableService.create(orderTable);
+
             // when
             List<OrderTable> extract = tableService.list();
 
             // then
-            assertThat(extract).hasSize(8);
+            assertThat(extract).hasSize(1);
         }
     }
 
@@ -69,7 +70,7 @@ class TableServiceTest {
             // when & then
             assertThatThrownBy(
                 () -> tableService.changeEmpty(orderTable.getId(), new OrderTable(orderTable.getId(), 2, false)))
-                .isInstanceOf(InvalidOrderStatusException.class);
+                .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -91,7 +92,7 @@ class TableServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), new OrderTable(null, -1, false)))
-                .isInstanceOf(InvalidOrderTableNumberOfGuestsException.class);
+                .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -101,7 +102,7 @@ class TableServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(extract.getId(), new OrderTable(null, 1, true)))
-                .isInstanceOf(InvalidOrderTableIsEmptyOfNumberOfGuestsException.class);
+                .isInstanceOf(IllegalArgumentException.class);
         }
     }
 }

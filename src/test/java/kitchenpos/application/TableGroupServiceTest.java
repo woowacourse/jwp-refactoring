@@ -15,9 +15,6 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.exception.InvalidTableGroupExistException;
-import kitchenpos.exception.InvalidTableGroupMinimumException;
-import kitchenpos.exception.InvalidTableGroupNonUngroupIsOrderStatusException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -48,7 +45,7 @@ class TableGroupServiceTest extends IntegrationTest {
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2))))
-                .isInstanceOf(InvalidTableGroupExistException.class);
+                .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -58,7 +55,7 @@ class TableGroupServiceTest extends IntegrationTest {
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(new TableGroup(LocalDateTime.now(), List.of(orderTable1))))
-                .isInstanceOf(InvalidTableGroupMinimumException.class);
+                .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -71,7 +68,7 @@ class TableGroupServiceTest extends IntegrationTest {
             // when
             OrderTable orderTable3 = tableService.create(new OrderTable(null, 3, true));
             assertThatThrownBy(() -> tableGroupService.create(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable3))))
-                .isInstanceOf(InvalidTableGroupExistException.class);
+                .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -103,7 +100,7 @@ class TableGroupServiceTest extends IntegrationTest {
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
-                .isInstanceOf(InvalidTableGroupNonUngroupIsOrderStatusException.class);
+                .isInstanceOf(IllegalArgumentException.class);
         }
     }
 }
