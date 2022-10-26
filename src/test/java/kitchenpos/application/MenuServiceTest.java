@@ -51,6 +51,28 @@ class MenuServiceTest {
         }
 
         @Nested
+        class 메뉴_가격이_상품들의_합보다_크다면 extends ServiceTest {
+
+            MenuGroup menuGroup;
+
+            @BeforeEach
+            void setUp() {
+                menuGroup = menuGroupDao.save(메뉴_그룹_생성("한마리메뉴"));
+                productDao.save(상품_생성("치킨", BigDecimal.valueOf(1_000L)));
+            }
+
+            final MenuProduct menuProduct = 메뉴_상품_생성(1L, 1L, 1);
+            final Menu menu = 메뉴_생성("후라이드", BigDecimal.valueOf(2_000L), 1L,
+                    List.of(menuProduct));
+
+            @Test
+            void 예외가_발생한다() {
+                assertThatThrownBy(() -> menuService.create(menu))
+                        .isInstanceOf(IllegalArgumentException.class);
+            }
+        }
+
+        @Nested
         class 가격이_null인_메뉴가_입력되면 extends ServiceTest {
 
             private final Menu menu = new Menu("후라이드치킨", null, 1L, null);
