@@ -4,10 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.fixtures.domain.TableGroupFixture.TableGroupRequestBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -98,8 +98,11 @@ class TableServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableHasTableGroup() {
             // given
-            TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
-            tableGroupService.create(tableGroup);
+            TableGroup request = new TableGroupRequestBuilder()
+                    .addOrderTables(orderTable1, orderTable2)
+                    .build();
+
+            tableGroupService.create(request);
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), new OrderTable(true)))
