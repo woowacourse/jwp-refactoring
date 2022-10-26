@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.common.constants.Constants.데시멀_야채곱창_가격;
 import static kitchenpos.common.constants.Constants.야채곱창_가격;
 import static kitchenpos.common.constants.Constants.야채곱창_이름;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -11,6 +12,8 @@ import java.util.List;
 import kitchenpos.common.builder.ProductBuilder;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductCreateRequest;
+import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,15 +32,15 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void 상품을_등록한다() {
         // given
-        Product 야채곱창 = 상품_생성(야채곱창_이름, 야채곱창_가격);
+        ProductCreateRequest productCreateRequest = new ProductCreateRequest(야채곱창_이름, 데시멀_야채곱창_가격);
 
         // when
-        Product actaul = productService.create(야채곱창);
+        ProductResponse actual = productService.create(productCreateRequest);
 
         // then
         assertAll(
-                () -> assertThat(actaul.getId()).isNotNull(),
-                () -> assertThat(actaul.getName()).isEqualTo(야채곱창_이름)
+                () -> assertThat(actual.getId()).isNotNull(),
+                () -> assertThat(actual.getName()).isEqualTo(야채곱창_이름)
         );
     }
 
@@ -46,10 +49,10 @@ class ProductServiceTest extends ServiceTest {
     @ValueSource(ints = {-1, -2, -100})
     void 상품을_등록할_때_가격이_0원_보다_작으면_예외가_발생한다(int 잘못된_가격) {
         // given
-        Product 야채곱창 = 상품_생성(야채곱창_이름, 잘못된_가격);
+        ProductCreateRequest productCreateRequest = new ProductCreateRequest(야채곱창_이름, BigDecimal.valueOf(잘못된_가격));
 
         // when & then
-        assertThatThrownBy(() -> productService.create(야채곱창))
+        assertThatThrownBy(() -> productService.create(productCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -57,13 +60,10 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void 상품을_등록할_때_가격이_null_이면_예외가_발생한다() {
         // given
-        Product 야채곱창 = new ProductBuilder()
-                .name(야채곱창_이름)
-                .price(null)
-                .build();
+        ProductCreateRequest productCreateRequest = new ProductCreateRequest(야채곱창_이름, null);
 
         // when & then
-        assertThatThrownBy(() -> productService.create(야채곱창))
+        assertThatThrownBy(() -> productService.create(productCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
