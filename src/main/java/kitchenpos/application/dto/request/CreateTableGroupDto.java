@@ -8,7 +8,7 @@ public class CreateTableGroupDto {
     private final List<Long> orderTableIds;
 
     public CreateTableGroupDto(List<Long> orderTableIds) {
-        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
+        if (CollectionUtils.isEmpty(orderTableIds)) {
             throw new IllegalArgumentException();
         }
         this.orderTableIds = orderTableIds;

@@ -13,6 +13,9 @@ public class OrderTables {
     }
 
     private static void validate(List<OrderTable> orderTables) {
+        if (orderTables.size() < 2) {
+            throw new IllegalArgumentException();
+        }
         boolean isOrderTableOrGrouped = orderTables.stream()
                 .anyMatch(it -> !it.isEmpty() || Objects.nonNull(it.getTableGroupId()));
         if (isOrderTableOrGrouped) {
