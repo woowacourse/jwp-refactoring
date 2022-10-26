@@ -18,14 +18,11 @@ public class MenuProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "menu_id", nullable = false)
     private Menu menu;
-
     @Column(name = "product_id", nullable = false)
     private Long productId;
-
     @Column(name = "quantity", nullable = false)
     private long quantity;
 

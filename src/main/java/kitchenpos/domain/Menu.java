@@ -20,16 +20,12 @@ public class Menu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(name = "name", nullable = false)
     private String name;
-
     @Embedded
     private Price price;
-
     @Column(name = "menu_group_id", nullable = false)
     private Long menuGroupId;
-
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<MenuProduct> menuProducts;
 
