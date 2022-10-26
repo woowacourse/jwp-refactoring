@@ -122,9 +122,10 @@ class OrderServiceTest {
         List<MenuProduct> menuProducts = List.of(generateMenuProduct(후라이드.getId(), 1));
         Menu menu = menuDao.save(generateMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(), menuProducts));
 
+        OrderTable orderTable = orderTableDao.save(generateOrderTable(0, true));
         OrderLineItem orderLineItem = generateOrderLineItem(menu.getId(), 1);
 
-        assertThatThrownBy(() -> orderService.create(generateOrder(0L, List.of(orderLineItem))))
+        assertThatThrownBy(() -> orderService.create(generateOrder(orderTable.getId(), List.of(orderLineItem))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
