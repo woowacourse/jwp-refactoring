@@ -11,6 +11,8 @@ import java.util.List;
 import kitchenpos.common.builder.OrderTableBuilder;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +29,10 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문_테이블을_등록한다() {
         // given
-        OrderTable 야채곱창_주문_테이블 = 주문_테이블_생성(테이블_손님_수, 사용중인_테이블);
+        OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(테이블_손님_수, 사용가능_테이블);
 
         // when
-        OrderTable actual = tableService.create(야채곱창_주문_테이블);
+        OrderTableResponse actual = tableService.create(orderTableCreateRequest);
 
         // then
         assertAll(
