@@ -62,7 +62,6 @@ class TableGroupServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-
     @DisplayName("단체 지정을 생성할 때 주문테이블의 개수가 하나라면 예외를 반환한다.")
     @Test
     void create_fail_if_orderTable_is_one() {
@@ -72,6 +71,47 @@ class TableGroupServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("단체 지정을 생성할 때 개별 주문테이블이 존재하지 않으면 예외를 반환한다.")
+    @Test
+    void create_fail_if_orderTable_not_exist() {
+        // given
+        OrderTable orderTable = createOrderTable(4, true);
+        TableGroup tableGroup = createTableGroup(Collections.singletonList(orderTable));
+
+        // when, then
+        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("단체 지정을 생성할 때 개별 주문테이블이 비어있지 않으면 예외를 반환한다.")
+    @Test
+    void create_fail_if_orderTable_not_empty() {
+        // given
+        OrderTable orderTable = orderTableDao.save(createOrderTable(4, false));
+        TableGroup tableGroup = createTableGroup(Collections.singletonList(orderTable));
+
+        // when, then
+        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("단체 지정을 생성할 때 개별 주문테이블이 이미 단체지정이 되어있다면 예외를 반환한다.")
+    @Test
+    void create_fail_if_orderTable_has_orderTableGroup() {
+        // given
+        OrderTable orderTable1 = orderTableDao.save(createOrderTable(4, true));
+        OrderTable orderTable2 = orderTableDao.save(createOrderTable(4, true));
+        TableGroup tableGroup = createTableGroup(Arrays.asList(orderTable1, orderTable2));
+        tableGroupService.create(tableGroup);
+
+        OrderTable orderTable3 = orderTableDao.save(createOrderTable(4, true));
+        TableGroup newTableGroup = createTableGroup(Arrays.asList(orderTable1, orderTable3));
+
+        // when, then
+        assertThatThrownBy(() -> tableGroupService.create(newTableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

@@ -28,4 +28,12 @@ public class OrderTableFixture {
         orderTable.setEmpty(empty);
         return orderTable;
     }
+
+    public static OrderTable createOrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setTableGroupId(tableGroupId);
+        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setEmpty(empty);
+        return orderTable;
+    }
 }

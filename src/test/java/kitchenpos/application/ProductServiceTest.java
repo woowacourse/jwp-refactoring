@@ -51,7 +51,7 @@ class ProductServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("상품을 생성할 때 가격이 음수이면 반환한다.")
+    @DisplayName("상품을 생성할 때 가격이 음수이면 예외를 반환한다.")
     @Test
     void create_fail_if_price_is_negative() {
         // given

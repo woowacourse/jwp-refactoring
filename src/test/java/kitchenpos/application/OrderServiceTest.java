@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,7 +68,7 @@ class OrderServiceTest {
         assertThat(dbOrder.getOrderTableId()).isEqualTo(order.getOrderTableId());
     }
 
-    @DisplayName("주문을 생성할 때 주문항목이 빈 리스트이면 예외를 반환한다.")
+    @DisplayName("주문을 생성할 때 주문항목이 비어있다면 예외를 반환한다.")
     @Test
     void create_fail_if_orderLineItems_is_empty() {
         // given
@@ -105,6 +106,38 @@ class OrderServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @DisplayName("주문을 생성할 때 주문항목 내 메뉴ID가 중복되어있다면 예외를 반환한다.")
+    @Test
+    void create_fail_if_menu_id_duplicate() {
+        // given
+        OrderTable orderTable = tableDao.save(new OrderTable());
+        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
+        Menu menu = menuDao.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
+                Collections.singletonList(createMenuProduct(1L, 2))));
+        Order order = createOrder(orderTable.getId(),
+                Arrays.asList(createOrderLineItem(menu.getId(), 1), createOrderLineItem(menu.getId(), 1)));
+
+        // when, then
+        assertThatThrownBy(() -> orderService.create(order))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문을 생성할 때 주문테이블이 비어있다면 예외를 반환한다.")
+    @Test
+    void create_fail_if_orderTable_is_empty() {
+        // given
+        OrderTable orderTable = tableDao.save(createOrderTable(false));
+        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
+        Menu menu = menuDao.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
+                Collections.singletonList(createMenuProduct(1L, 2))));
+        Order order = createOrder(orderTable.getId(),
+                Arrays.asList(createOrderLineItem(menu.getId(), 1), createOrderLineItem(menu.getId(), 1)));
+
+        // when, then
+        assertThatThrownBy(() -> orderService.create(order))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
     @DisplayName("모든 메뉴를 조회한다.")
     @Test
     void list_success() {
@@ -124,5 +157,44 @@ class OrderServiceTest {
                 .map(Order::getOrderTableId)
                 .collect(Collectors.toList());
         assertThat(orderTableIds).contains(order.getOrderTableId());
+    }
+
+    @DisplayName("주문 상태를 수정한다.")
+    @Test
+    void changeOrderStatus_success() {
+        // given
+        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
+        Menu menu = menuDao.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
+                Collections.singletonList(createMenuProduct(1L, 2))));
+        OrderTable orderTable = tableDao.save(createOrderTable());
+        Order order = createOrder(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
+                Collections.singletonList(createOrderLineItem(menu.getId(), 1)));
+        Order savedOrder = orderDao.save(order);
+
+        // when
+        String changedOrderStatus = OrderStatus.MEAL.name();
+        orderService.changeOrderStatus(savedOrder.getId(), createOrder(changedOrderStatus));
+
+        // then
+        Order dbOrder = orderDao.findById(savedOrder.getId())
+                .orElseThrow(RuntimeException::new);
+        assertThat(dbOrder.getOrderStatus()).isEqualTo(changedOrderStatus);
+    }
+
+    @DisplayName("기존 주문 상태가 COMPLETION인 주문을 수정하려고하면 예외를 발생한다.")
+    @Test
+    void changeOrderStatus_fail_if_exist_orderStatus_is_COMPLETION() {
+        // given
+        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
+        Menu menu = menuDao.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
+                Collections.singletonList(createMenuProduct(1L, 2))));
+        OrderTable orderTable = tableDao.save(createOrderTable());
+        Order order = createOrder(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(),
+                Collections.singletonList(createOrderLineItem(menu.getId(), 1)));
+        Order savedOrder = orderDao.save(order);
+
+        // when, then
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), createOrder(OrderStatus.COOKING.name())))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -93,6 +93,18 @@ class MenuServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @DisplayName("메뉴를 생성할 때 금액의 총합이 음수이면 예외를 반환한다.")
+    @Test
+    void create_fail_if_amount_is_negative() {
+        // given
+        Menu menu = createMenu("후라이드+후라이드", 19_000L, 9999999L,
+                Collections.singletonList(createMenuProduct(1L, -1)));
+
+        // when, then
+        assertThatThrownBy(() -> menuService.create(menu))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
     @DisplayName("모든 메뉴를 조회한다.")
     @Test
     void list_success() {

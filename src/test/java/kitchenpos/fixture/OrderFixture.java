@@ -12,6 +12,13 @@ public class OrderFixture {
         order.setId(id);
         return order;
     }
+
+    public static Order createOrder(String orderStatus) {
+        Order order = new Order();
+        order.setOrderStatus(orderStatus);
+        return order;
+    }
+
     public static Order createOrder(Long orderTableId, List<OrderLineItem> orderLineItems) {
         Order order = new Order();
         order.setOrderTableId(orderTableId);
