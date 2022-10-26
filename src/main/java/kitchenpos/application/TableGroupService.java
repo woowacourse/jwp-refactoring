@@ -38,11 +38,10 @@ public class TableGroupService {
                 .map(OrderTableRequest::getId)
                 .collect(Collectors.toUnmodifiableList());
 
-        List<OrderTable> orderTables = new ArrayList<>();
-        for (Long orderTablesId : orderTablesIds) {
-            orderTables.add(orderTableDao.findById(orderTablesId)
-                    .orElseThrow(IllegalArgumentException::new));
-        }
+        List<OrderTable> orderTables = orderTablesIds.stream()
+                .map(orderTableDao::findById)
+                .map(orderTable -> orderTable.orElseThrow(IllegalArgumentException::new))
+                .collect(Collectors.toUnmodifiableList());
 
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
