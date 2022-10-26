@@ -19,6 +19,8 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.assertj.core.data.TemporalUnitWithinOffset;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ServiceTest
@@ -150,28 +152,12 @@ class TableGroupServiceTest {
         );
     }
 
-    @Test
-    void 테이블_그룹에_속한_테이블이_조리중인_상태라면_삭제할_수_없다() {
+    @ParameterizedTest
+    @ValueSource(strings = {"COOKING", "MEAL"})
+    void 테이블_그룹에_속한_테이블이_조리중이거나_식사중인_상태라면_테이블_그룹을_삭제할_수_없다(String orderStatus) {
         // given
         List<OrderTable> orderTables = Arrays.asList(
-                getOrderedOrderTable(OrderStatus.COOKING.name()),
-                getOrderedOrderTable(OrderStatus.COMPLETION.name())
-        );
-
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
-
-        // when & then
-        assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 테이블_그룹에_속한_테이블이_식사중인_상태라면_삭제할_수_없다() {
-        // given
-        List<OrderTable> orderTables = Arrays.asList(
-                getOrderedOrderTable(OrderStatus.MEAL.name()),
+                getOrderedOrderTable(orderStatus),
                 getOrderedOrderTable(OrderStatus.COMPLETION.name())
         );
 
