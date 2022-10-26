@@ -8,11 +8,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.ProductFixtures;
 import kitchenpos.application.ProductService;
-import kitchenpos.application.dto.ProductRequest;
-import kitchenpos.domain.Product;
+import kitchenpos.application.dto.ProductResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -31,35 +30,31 @@ class ProductRestControllerTest extends ControllerTest {
     @Test
     void createProduct() throws Exception {
         // given
-        long id = 1L;
-        String name = "치킨";
-        BigDecimal price = BigDecimal.valueOf(10000);
-        given(productService.create(any())).willReturn(new Product(id, name, price));
+        ProductResponse response = ProductFixtures.createProductResponse();
+        given(productService.create(any())).willReturn(response);
 
         // when
         ResultActions actions = mockMvc.perform(post("/api/products")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(new ProductRequest(name, price)))
+                .content(objectMapper.writeValueAsString(ProductFixtures.createProductRequest()))
         );
 
         // then
         actions.andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/api/products/" + id));
+                .andExpect(header().string("Location", "/api/products/" + response.getId()));
     }
 
     @Test
     void findProducts() throws Exception {
         // given
-        Product productA = new Product("치킨", BigDecimal.valueOf(10000));
-        Product productB = new Product("피자", BigDecimal.valueOf(8000));
-
-        given(productService.list()).willReturn(List.of(productA, productB));
+        ProductResponse response = ProductFixtures.createProductResponse();
+        given(productService.list()).willReturn(List.of(response));
 
         // when
         ResultActions actions = mockMvc.perform(get("/api/products"));
 
         // then
         actions.andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(List.of(productA, productB))));
+                .andExpect(content().json(objectMapper.writeValueAsString(List.of(response))));
     }
 }

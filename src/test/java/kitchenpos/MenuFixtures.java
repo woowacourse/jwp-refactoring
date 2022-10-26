@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dto.MenuCreateRequest;
 import kitchenpos.application.dto.MenuProductCreateRequest;
+import kitchenpos.application.dto.MenuProductResponse;
+import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
@@ -64,7 +66,8 @@ public class MenuFixtures {
     }
 
     public static MenuCreateRequest createMenuCreateRequest(long menuGroupId) {
-        return createMenuCreateRequest(BigDecimal.valueOf(PRICE), menuGroupId, List.of(createMenuProductCreateRequest()));
+        return createMenuCreateRequest(BigDecimal.valueOf(PRICE), menuGroupId,
+                List.of(createMenuProductCreateRequest()));
     }
 
     public static MenuCreateRequest createMenuCreateRequest(List<MenuProductCreateRequest> productRequests) {
@@ -86,4 +89,20 @@ public class MenuFixtures {
     public static MenuProductCreateRequest createMenuProductCreateRequest(Long menuId, Long productId, int quantity) {
         return new MenuProductCreateRequest(menuId, productId, quantity);
     }
+
+    public static MenuResponse createMenuResponse() {
+        return new MenuResponse(
+                1L,
+                "메뉴",
+                BigDecimal.valueOf(1000),
+                1L,
+                List.of(createMenuProductResponse())
+        );
+    }
+
+    private static MenuProductResponse createMenuProductResponse() {
+        return new MenuProductResponse(1L, 1L, 1L, 2);
+    }
+
+
 }

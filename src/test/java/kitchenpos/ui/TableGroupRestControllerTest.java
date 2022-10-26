@@ -8,12 +8,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.TableGroupFixtures;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.dto.TableGroupCreateRequest;
-import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

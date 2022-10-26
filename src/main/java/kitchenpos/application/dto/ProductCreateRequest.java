@@ -3,15 +3,15 @@ package kitchenpos.application.dto;
 import java.math.BigDecimal;
 import kitchenpos.domain.Product;
 
-public class ProductRequest {
+public class ProductCreateRequest {
 
     private String name;
     private BigDecimal price;
 
-    public ProductRequest() {
+    public ProductCreateRequest() {
     }
 
-    public ProductRequest(String name, BigDecimal price) {
+    public ProductCreateRequest(String name, BigDecimal price) {
         this.name = name;
         this.price = price;
     }

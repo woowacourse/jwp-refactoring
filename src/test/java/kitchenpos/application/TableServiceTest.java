@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.TableGroupFixtures;
 import kitchenpos.application.dto.OrderTableCreateRequest;
+import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
@@ -44,7 +45,7 @@ class TableServiceTest {
         // given
         OrderTableCreateRequest request = new OrderTableCreateRequest(3, true);
         // when
-        OrderTable createdOrderTable = tableService.create(request);
+        OrderTableResponse createdOrderTable = tableService.create(request);
         // then
         assertThat(createdOrderTable.getId()).isNotNull();
     }
@@ -52,7 +53,7 @@ class TableServiceTest {
     @Test
     void list() {
         // given & when
-        List<OrderTable> orderTables = tableService.list();
+        List<OrderTableResponse> orderTables = tableService.list();
         // then
         int defaultSize = 8;
         assertThat(orderTables).hasSize(defaultSize);
@@ -61,10 +62,10 @@ class TableServiceTest {
     @Test
     void changeEmpty() {
         // given
-        OrderTable orderTable = tableService.create(new OrderTableCreateRequest(0, true));
+        OrderTableResponse orderTable = tableService.create(new OrderTableCreateRequest(0, true));
 
         // when
-        OrderTable changedOrderTable = tableService.changeEmpty(orderTable.getId(), false);
+        OrderTableResponse changedOrderTable = tableService.changeEmpty(orderTable.getId(), false);
 
         // then
         assertThat(changedOrderTable.isEmpty()).isFalse();
@@ -95,10 +96,10 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuests() {
         // given
-        OrderTable orderTable = tableService.create(new OrderTableCreateRequest(2, false));
+        OrderTableResponse orderTable = tableService.create(new OrderTableCreateRequest(2, false));
 
         // when
-        OrderTable changedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(), 4);
+        OrderTableResponse changedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(), 4);
 
         // then
         assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(4);
@@ -107,7 +108,7 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuestsWithNegativeNumber() {
         // given
-        OrderTable orderTable = tableService.create(new OrderTableCreateRequest(2, false));
+        OrderTableResponse orderTable = tableService.create(new OrderTableCreateRequest(2, false));
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), -1))
@@ -117,7 +118,7 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuestsWithEmpty() {
         // given
-        OrderTable orderTable = tableService.create(new OrderTableCreateRequest(0, true));
+        OrderTableResponse orderTable = tableService.create(new OrderTableCreateRequest(0, true));
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), 2))

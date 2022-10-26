@@ -8,13 +8,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import kitchenpos.MenuFixtures;
 import kitchenpos.application.MenuService;
-import kitchenpos.domain.Menu;
+import kitchenpos.application.dto.MenuResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -29,31 +26,31 @@ class MenuRestControllerTest extends ControllerTest {
     @Test
     void create() throws Exception {
         // given
-        Menu menu = MenuFixtures.createMenu();
-        given(menuService.create(any())).willReturn(menu);
+        MenuResponse response = MenuFixtures.createMenuResponse();
+        given(menuService.create(any())).willReturn(response);
 
         // when
         ResultActions actions = mockMvc.perform(post("/api/menus")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(menu))
+                .content(objectMapper.writeValueAsString(MenuFixtures.createMenuCreateRequest()))
         );
 
         // then
         actions.andExpect(status().isCreated())
-                .andExpect(header().exists("Location"));
+                .andExpect(header().string("Location", "/api/menus/" + response.getId()));
     }
 
     @Test
     void list() throws Exception {
         // given
-        Menu menu = MenuFixtures.createMenu();
-        given(menuService.list()).willReturn(List.of(menu));
+        MenuResponse response = MenuFixtures.createMenuResponse();
+        given(menuService.list()).willReturn(List.of(response));
 
         // when
         ResultActions actions = mockMvc.perform(get("/api/menus"));
 
         // then
         actions.andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(List.of(menu))));
+                .andExpect(content().json(objectMapper.writeValueAsString(List.of(response))));
     }
 }

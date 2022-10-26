@@ -46,9 +46,9 @@ public class MenuCreateRequest {
     ) {
         return menuProductCreateRequest.toMenuProduct(
                 products.stream()
-                .filter(product -> product.getId().equals(menuProductCreateRequest.getProductId()))
-                .findAny()
-                .orElseThrow()
+                        .filter(product -> product.getId().equals(menuProductCreateRequest.getProductId()))
+                        .findAny()
+                        .orElseThrow()
         );
     }
 

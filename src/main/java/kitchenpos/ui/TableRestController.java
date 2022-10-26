@@ -1,13 +1,18 @@
 package kitchenpos.ui;
 
-import kitchenpos.application.TableService;
-import kitchenpos.application.dto.OrderTableCreateRequest;
-import kitchenpos.domain.OrderTable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.net.URI;
 import java.util.List;
+import kitchenpos.application.TableService;
+import kitchenpos.application.dto.OrderTableCreateRequest;
+import kitchenpos.application.dto.OrderTableResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TableRestController {
@@ -18,19 +23,19 @@ public class TableRestController {
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<OrderTable> create(@RequestBody final OrderTableCreateRequest request) {
-        final OrderTable created = tableService.create(request);
-        final URI uri = URI.create("/api/tables/" + created.getId());
-        return ResponseEntity.created(uri).body(created);
+    public ResponseEntity<OrderTableResponse> create(@RequestBody final OrderTableCreateRequest request) {
+        final OrderTableResponse response = tableService.create(request);
+        final URI uri = URI.create("/api/tables/" + response.getId());
+        return ResponseEntity.created(uri).body(response);
     }
 
     @GetMapping("/api/tables")
-    public ResponseEntity<List<OrderTable>> list() {
+    public ResponseEntity<List<OrderTableResponse>> list() {
         return ResponseEntity.ok().body(tableService.list());
     }
 
     @PatchMapping(value = "/api/tables/{orderTableId}", params = "empty")
-    public ResponseEntity<OrderTable> changeEmpty(
+    public ResponseEntity<OrderTableResponse> changeEmpty(
             @PathVariable final Long orderTableId,
             @RequestParam final boolean empty
     ) {
@@ -38,7 +43,7 @@ public class TableRestController {
     }
 
     @PatchMapping(value = "/api/tables/{orderTableId}", params = "numberOfGuests")
-    public ResponseEntity<OrderTable> changeNumberOfGuests(
+    public ResponseEntity<OrderTableResponse> changeNumberOfGuests(
             @PathVariable final Long orderTableId,
             @RequestParam final int numberOfGuests
     ) {

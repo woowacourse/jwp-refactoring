@@ -54,13 +54,9 @@ public class MenuProduct {
         this.menuId = menuId;
     }
 
-//    public Long getProductId() {
-//        return productId;
-//    }
-//
-//    public void setProductId(final Long productId) {
-//        this.productId = productId;
-//    }
+    public Product getProduct() {
+        return product;
+    }
 
     public long getQuantity() {
         return quantity;

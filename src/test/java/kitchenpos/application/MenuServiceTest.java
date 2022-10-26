@@ -7,8 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.MenuFixtures;
 import kitchenpos.application.dto.MenuCreateRequest;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +27,9 @@ class MenuServiceTest {
         // given
         MenuCreateRequest request = MenuFixtures.createMenuCreateRequest();
         // when
-        Menu createdMenu = menuService.create(request);
+        MenuResponse response = menuService.create(request);
         // then
-        assertThat(createdMenu.getId()).isNotNull();
+        assertThat(response.getId()).isNotNull();
     }
 
     @Test
@@ -91,16 +90,9 @@ class MenuServiceTest {
     @Test
     void list() {
         // given & when
-        List<Menu> menus = menuService.list();
-        for (Menu menu : menus) {
-            List<MenuProduct> menuProducts = menu.getMenuProducts();
-            for (MenuProduct menuProduct : menuProducts) {
-                BigDecimal bigDecimal = menuProduct.calculatePrice();
-                System.out.println("bigDecimal = " + bigDecimal);
-            }
-        }
+        List<MenuResponse> responses = menuService.list();
         // then
         int defaultSize = 6;
-        assertThat(menus).hasSize(defaultSize);
+        assertThat(responses).hasSize(defaultSize);
     }
 }

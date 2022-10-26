@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.ProductRequest;
-import kitchenpos.domain.Product;
+import kitchenpos.application.dto.ProductCreateRequest;
+import kitchenpos.application.dto.ProductResponse;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +24,10 @@ class ProductServiceTest {
     @Test
     void createProduct() {
         // given
-        ProductRequest product = new ProductRequest("상품", BigDecimal.valueOf(1000));
+        ProductCreateRequest request = new ProductCreateRequest("상품", BigDecimal.valueOf(1000));
 
         // when
-        Product savedProduct = productService.create(product);
+        ProductResponse savedProduct = productService.create(request);
 
         // then
         assertThat(savedProduct).isNotNull();
@@ -36,42 +36,42 @@ class ProductServiceTest {
     @Test
     void createProductWithNullPrice() {
         // given
-        ProductRequest product = new ProductRequest("상품", null);
+        ProductCreateRequest request = new ProductCreateRequest("상품", null);
 
         // when & then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void createProductWithZeroPrice() {
         // given
-        ProductRequest product = new ProductRequest("상품", BigDecimal.valueOf(0));
+        ProductCreateRequest request = new ProductCreateRequest("상품", BigDecimal.valueOf(0));
 
         // when
-        Product savedProduct = productService.create(product);
+        ProductResponse response = productService.create(request);
 
         // then
-        assertThat(savedProduct).isNotNull();
+        assertThat(response).isNotNull();
     }
 
     @Test
     void createProductWithNegativePrice() {
         // given
-        ProductRequest product = new ProductRequest("상품", BigDecimal.valueOf(-1));
+        ProductCreateRequest request = new ProductCreateRequest("상품", BigDecimal.valueOf(-1));
 
         // when & then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void findProducts() {
         // given & when
-        List<Product> products = productService.list();
+        List<ProductResponse> responses = productService.list();
 
         // then
         int defaultSize = 6;
-        assertThat(products).hasSize(defaultSize);
+        assertThat(responses).hasSize(defaultSize);
     }
 }

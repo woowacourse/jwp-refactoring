@@ -4,9 +4,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.MenuCreateRequest;
 import kitchenpos.application.dto.MenuProductCreateRequest;
-import kitchenpos.dao.MenuRepository;
+import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuProductRepository;
+import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Product;
@@ -33,13 +34,13 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuCreateRequest request) {
+    public MenuResponse create(final MenuCreateRequest request) {
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
 
         Menu menu = request.toMenu(findAllProducts(request));
-        return menuRepository.save(menu);
+        return MenuResponse.from(menuRepository.save(menu));
     }
 
     private List<Product> findAllProducts(MenuCreateRequest request) {
@@ -58,7 +59,9 @@ public class MenuService {
                 .collect(Collectors.toList());
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<MenuResponse> list() {
+        return menuRepository.findAll().stream()
+                .map(MenuResponse::from)
+                .collect(Collectors.toList());
     }
 }

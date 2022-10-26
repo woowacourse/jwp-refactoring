@@ -8,7 +8,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.TableGroupFixtures;
 import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
@@ -19,7 +18,6 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.support.ServiceTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

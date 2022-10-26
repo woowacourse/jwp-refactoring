@@ -15,8 +15,7 @@ import java.util.List;
 import kitchenpos.OrderTableFixtures;
 import kitchenpos.application.TableService;
 import kitchenpos.application.dto.OrderTableCreateRequest;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.application.dto.OrderTableResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -35,43 +34,40 @@ class TableRestControllerTest extends ControllerTest {
     @Test
     void create() throws Exception {
         // given
-        long id = 1L;
-        boolean empty = true;
-        int numberOfGuests = 0;
-        OrderTable orderTable = new OrderTable(id, null, numberOfGuests, empty);
-
-        given(tableService.create(any())).willReturn(orderTable);
+        OrderTableResponse response = OrderTableFixtures.createOrderTableResponse();
+        given(tableService.create(any())).willReturn(response);
 
         // when
+        OrderTableCreateRequest request = new OrderTableCreateRequest(response.getNumberOfGuests(), response.isEmpty());
         ResultActions actions = mockMvc.perform(post("/api/tables")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(new OrderTableCreateRequest(numberOfGuests, empty)))
+                .content(objectMapper.writeValueAsString(request))
         );
 
         // then
         actions.andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/api/tables/" + id));
+                .andExpect(header().string("Location", "/api/tables/" + response.getId()));
     }
 
     @Test
     void list() throws Exception {
         // given
-        OrderTable orderTable = OrderTableFixtures.createOrderTable();
-        given(tableService.list()).willReturn(List.of(orderTable));
+        OrderTableResponse response = OrderTableFixtures.createOrderTableResponse();
+        given(tableService.list()).willReturn(List.of(response));
 
         // when
         ResultActions actions = mockMvc.perform(get("/api/tables"));
 
         // then
         actions.andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(List.of(orderTable))));
+                .andExpect(content().json(objectMapper.writeValueAsString(List.of(response))));
     }
 
     @Test
     void changeEmpty() throws Exception {
         // given
-        OrderTable orderTable = OrderTableFixtures.createOrderTable();
-        given(tableService.changeEmpty(any(), anyBoolean())).willReturn(orderTable);
+        OrderTableResponse response = OrderTableFixtures.createOrderTableResponse();
+        given(tableService.changeEmpty(any(), anyBoolean())).willReturn(response);
 
         // when
         ResultActions actions = mockMvc.perform(patch("/api/tables/{orderTableId}", 1L)
@@ -80,14 +76,14 @@ class TableRestControllerTest extends ControllerTest {
 
         // then
         actions.andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(orderTable)));
+                .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
 
     @Test
     void changeNumberOfGuests() throws Exception {
         // given
-        OrderTable orderTable = OrderTableFixtures.createOrderTable();
-        given(tableService.changeNumberOfGuests(any(), anyInt())).willReturn(orderTable);
+        OrderTableResponse response = OrderTableFixtures.createOrderTableResponse();
+        given(tableService.changeNumberOfGuests(any(), anyInt())).willReturn(response);
 
         // when
         ResultActions actions = mockMvc.perform(patch("/api/tables/{orderTableId}", 1L)
@@ -96,6 +92,6 @@ class TableRestControllerTest extends ControllerTest {
 
         // then
         actions.andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(orderTable)));
+                .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
 }
