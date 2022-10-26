@@ -7,6 +7,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.fixtures.MenuGroupFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,7 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 생성한다")
     void create() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("메뉴 그룹");
+        final MenuGroup menuGroup = MenuGroupFixtures.TWO_CHICKEN_GROUP.create();
 
         // when
         final MenuGroup actual = menuGroupService.create(menuGroup);
@@ -35,7 +35,7 @@ class MenuGroupServiceTest {
         // then
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getName()).isEqualTo("메뉴 그룹")
+                () -> assertThat(actual.getName()).isEqualTo("두마리 치킨 메뉴")
         );
     }
 
@@ -43,8 +43,7 @@ class MenuGroupServiceTest {
     @DisplayName("모든 메뉴 그룹을 조회한다")
     void list() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("메뉴 그룹");
+        final MenuGroup menuGroup = MenuGroupFixtures.TWO_CHICKEN_GROUP.create();
         final Long savedId = menuGroupDao.save(menuGroup)
                 .getId();
 

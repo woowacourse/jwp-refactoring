@@ -14,8 +14,6 @@ public class MenuGroupCreateRequest {
     }
 
     public MenuGroup toMenuGroup() {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        return menuGroup;
+        return new MenuGroup(null, name);
     }
 }

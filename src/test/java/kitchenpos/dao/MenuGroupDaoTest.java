@@ -26,8 +26,7 @@ class MenuGroupDaoTest {
     @DisplayName("메뉴 그룹을 저장한다")
     void save() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("듀오 치킨 세트");
+        final MenuGroup menuGroup = new MenuGroup(null, "듀오 치킨 세트");
 
         // when
         final MenuGroup saved = menuGroupDao.save(menuGroup);
@@ -43,8 +42,7 @@ class MenuGroupDaoTest {
     @DisplayName("id로 메뉴 그룹을 조회한다")
     void findById() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("듀오 치킨 세트");
+        final MenuGroup menuGroup = new MenuGroup(null, "듀오 치킨 세트");
         final MenuGroup saved = menuGroupDao.save(menuGroup);
 
         // when
@@ -70,8 +68,7 @@ class MenuGroupDaoTest {
     @DisplayName("모든 메뉴 그룹을 조회한다")
     void findAll() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("듀오 치킨 세트");
+        final MenuGroup menuGroup = new MenuGroup(null, "듀오 치킨 세트");
         final MenuGroup saved = menuGroupDao.save(menuGroup);
 
         // when
@@ -89,8 +86,7 @@ class MenuGroupDaoTest {
     @DisplayName("id로 해당 메뉴 그룹이 존재하는지 확인한다")
     void existsById() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("듀오 치킨 세트");
+        final MenuGroup menuGroup = new MenuGroup(null, "듀오 치킨 세트");
         final MenuGroup saved = menuGroupDao.save(menuGroup);
 
         // when
