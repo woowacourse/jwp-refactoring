@@ -27,8 +27,7 @@ class TableGroupDaoTest {
     @DisplayName("테이블 단체를 저장한다")
     void save() {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        final TableGroup tableGroup = new TableGroup(null, LocalDateTime.now());
 
         // when
         final TableGroup saved = tableGroupDao.save(tableGroup);
@@ -44,8 +43,7 @@ class TableGroupDaoTest {
     @DisplayName("id로 테이블 단체를 조회한다")
     void findById() {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        final TableGroup tableGroup = new TableGroup(null, LocalDateTime.now());
         final TableGroup saved = tableGroupDao.save(tableGroup);
 
         // when
@@ -71,8 +69,7 @@ class TableGroupDaoTest {
     @DisplayName("모든 테이블 단체를 조회한다")
     void findAll() {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        final TableGroup tableGroup = new TableGroup(null, LocalDateTime.now());
         final TableGroup saved = tableGroupDao.save(tableGroup);
 
         // when

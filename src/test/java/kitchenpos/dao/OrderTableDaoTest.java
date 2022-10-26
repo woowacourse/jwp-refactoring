@@ -3,13 +3,13 @@ package kitchenpos.dao;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.fixtures.TableGroupFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,8 +121,7 @@ class OrderTableDaoTest {
     @DisplayName("테이블 단체 id에 해당 하는 모든 주문 테이블을 조회한다")
     void findAllByTableGroupId() {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        final TableGroup tableGroup = TableGroupFixtures.create();
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         final OrderTable orderTable = new OrderTable();

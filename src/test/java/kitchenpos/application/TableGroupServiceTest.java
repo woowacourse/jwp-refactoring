@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import javax.transaction.Transactional;
 import kitchenpos.dao.OrderDao;
@@ -16,6 +15,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.fixtures.OrderFixtures;
+import kitchenpos.fixtures.TableGroupFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -51,8 +51,7 @@ class TableGroupServiceTest {
         orderTable2.setEmpty(true);
         final OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
 
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(savedOrderTable1, savedOrderTable2));
+        final TableGroup tableGroup = TableGroupFixtures.createWithOrderTables(savedOrderTable1, savedOrderTable2);
 
         // when
         final TableGroup saved = tableGroupService.create(tableGroup);
@@ -75,7 +74,7 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블이 비어있을 때 단체를 지정하려고 하면 예외가 발생한다")
     void createWithEmptyOrderTable() {
         // given
-        final TableGroup tableGroup = new TableGroup();
+        final TableGroup tableGroup = TableGroupFixtures.create();
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -86,8 +85,7 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블이 1개 이하일 때 단체를 지정하려고 하면 예외가 발생한다")
     void createWithFewOrderTable() {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Collections.singletonList(new OrderTable()));
+        final TableGroup tableGroup = TableGroupFixtures.createWithOrderTables(new OrderTable());
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -98,9 +96,7 @@ class TableGroupServiceTest {
     @DisplayName("존재하지 않은 주문 테이블에 대해서 단체를 지정하려고 하면 예외가 발생한다")
     void createWithNotExistOrderTables() {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        final List<OrderTable> orderTables = Arrays.asList(new OrderTable(), new OrderTable());
-        tableGroup.setOrderTables(orderTables);
+        final TableGroup tableGroup = TableGroupFixtures.createWithOrderTables(new OrderTable(), new OrderTable());
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -116,9 +112,7 @@ class TableGroupServiceTest {
         final OrderTable NotEmptyOrderTable = orderTableDao.save(orderTable);
         final OrderTable emptyOrderTable = orderTableDao.save(new OrderTable());
 
-        final TableGroup tableGroup = new TableGroup();
-        final List<OrderTable> orderTables = Arrays.asList(NotEmptyOrderTable, emptyOrderTable);
-        tableGroup.setOrderTables(orderTables);
+        final TableGroup tableGroup = TableGroupFixtures.createWithOrderTables(NotEmptyOrderTable, emptyOrderTable);
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -129,8 +123,7 @@ class TableGroupServiceTest {
     @DisplayName("이미 단체로 지정된 주문 테이블에 대해서 단체를 지정하려고 하면 예외가 발생한다")
     void createWithAlreadyGroupedOrderTables() {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        final TableGroup tableGroup = TableGroupFixtures.create();
         final TableGroup alreadyGroupedTable = tableGroupDao.save(tableGroup);
 
         final OrderTable orderTable1 = new OrderTable();
@@ -147,8 +140,8 @@ class TableGroupServiceTest {
         orderTable3.setEmpty(true);
         final OrderTable orderTable = orderTableDao.save(orderTable3);
 
-        final TableGroup newTableGroup = new TableGroup();
-        newTableGroup.setOrderTables(Arrays.asList(orderTable, alreadyGroupedOrderTable1));
+        final TableGroup newTableGroup = TableGroupFixtures.createWithOrderTables(orderTable,
+                alreadyGroupedOrderTable1);
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(newTableGroup))
@@ -159,8 +152,7 @@ class TableGroupServiceTest {
     @DisplayName("테이블 단체를 해제한다")
     void ungroup() {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        final TableGroup tableGroup = TableGroupFixtures.create();
         final TableGroup alreadyGroupedTable = tableGroupDao.save(tableGroup);
 
         final OrderTable orderTable1 = new OrderTable();
@@ -197,8 +189,7 @@ class TableGroupServiceTest {
     @DisplayName("주문의 상태가 COOKING, MEAL인 경우 테이블 단체를 해제하면 예외가 발생한다")
     void ungroupExceptionNotCompletionOrder(final OrderFixtures orderFixtures) {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        final TableGroup tableGroup = TableGroupFixtures.create();
         final TableGroup alreadyGroupedTable = tableGroupDao.save(tableGroup);
 
         final OrderTable orderTable1 = new OrderTable();

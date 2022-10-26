@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import javax.transaction.Transactional;
 import kitchenpos.dao.OrderDao;
@@ -14,6 +13,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.fixtures.OrderFixtures;
+import kitchenpos.fixtures.TableGroupFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -115,8 +115,7 @@ class TableServiceTest {
     @DisplayName("주문 테이블이 단체로 지정되어 있디면 주문 테이블의 주문 가능 여부를 변경할 때 예외가 발생한다")
     void changeEmptyExceptionGroupedOrderTable() {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        final TableGroup tableGroup = TableGroupFixtures.create();
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         final OrderTable orderTable = new OrderTable();

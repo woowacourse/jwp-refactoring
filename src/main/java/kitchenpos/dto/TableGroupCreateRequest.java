@@ -2,6 +2,7 @@ package kitchenpos.dto;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 public class TableGroupCreateRequest {
@@ -12,13 +13,11 @@ public class TableGroupCreateRequest {
     }
 
     public TableGroup toTableGroup() {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(
-                orderTables.stream()
-                        .map(OrderTableRequest::toOrderTable)
-                        .collect(Collectors.toList())
-        );
-        return tableGroup;
+        final List<OrderTable> orderTables = this.orderTables.stream()
+                .map(OrderTableRequest::toOrderTable)
+                .collect(Collectors.toList());
+
+        return new TableGroup(null, null, orderTables);
     }
 
     public List<OrderTableRequest> getOrderTables() {
