@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 class MenuGroupServiceTest extends IntegrationServiceTest {
 
-
     @Nested
     class create_메서드는 {
 
@@ -29,7 +28,7 @@ class MenuGroupServiceTest extends IntegrationServiceTest {
     class list_메서드는 {
 
         @Test
-        void 메뉴그룹목록_반환한다 () {
+        void 메뉴그룹목록_반환한다() {
 
             final List<MenuGroup> menuGroups = menuGroupService.list();
 

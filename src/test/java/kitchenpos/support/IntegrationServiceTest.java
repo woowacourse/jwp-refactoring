@@ -65,9 +65,4 @@ abstract public class IntegrationServiceTest {
     // Support's
     @Autowired
     protected DbTableCleaner dbTableCleaner;
-
-    @AfterEach
-    void tearDown() {
-//        dbTableCleaner.clear();
-    }
 }
