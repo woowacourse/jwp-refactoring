@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
+ * 현재는 사용되고 있지 않습니다.
  * 모든 DB Table을 Truncate하고 자동 증가한 Sequnece를 초기화하는 역할을 합니다.
  */
 @Component
@@ -35,22 +36,9 @@ public class DbTableCleaner implements InitializingBean {
         }
     }
 
-    private void extractTableNames(Connection conn) throws SQLException {
-
-        List<String> tableNames = new ArrayList<>();
-
-        try (ResultSet tables = conn
-                .getMetaData()
-                .getTables(conn.getCatalog(), null, "%", new String[]{"TABLE"})
-        ) {
-            while (tables.next()) {
-                tableNames.add(tables.getString("table_name"));
-            }
-
-            this.tableNames = tableNames;
-        }
-    }
-
+    /**
+     * 모든 테이블의 내용을 지웁니다.
+     */
     public void clear() {
         try (Connection connection = dataSource.getConnection()) {
             cleanUpDatabase(connection);
@@ -68,6 +56,22 @@ public class DbTableCleaner implements InitializingBean {
             removeRecordByPkInternal(connection, tableName, pk);
         } catch (SQLException e) {
             throw new IllegalStateException(e);
+        }
+    }
+
+    private void extractTableNames(Connection conn) throws SQLException {
+
+        List<String> tableNames = new ArrayList<>();
+
+        try (ResultSet tables = conn
+                .getMetaData()
+                .getTables(conn.getCatalog(), null, "%", new String[]{"TABLE"})
+        ) {
+            while (tables.next()) {
+                tableNames.add(tables.getString("table_name"));
+            }
+
+            this.tableNames = tableNames;
         }
     }
 
