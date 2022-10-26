@@ -1,0 +1,31 @@
+package kitchenpos.dao;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.math.BigDecimal;
+import kitchenpos.domain.Product;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@DisplayName("ProductDao 는 ")
+@SpringBootTest
+class ProductDaoTest {
+
+    @Autowired
+    ProductDao productDao;
+
+    @DisplayName("상품을 저장한다.")
+    @Test
+    void saveProduct() {
+        final Product product = productDao.save(new Product("productName", BigDecimal.valueOf(1000L)));
+
+        assertAll(
+                () -> assertThat(product.getId()).isGreaterThanOrEqualTo(1L),
+                () -> assertThat(product.getName()).isEqualTo("productName"),
+                () -> assertThat(product.getPrice().longValue()).isEqualTo(1000L)
+        );
+    }
+}

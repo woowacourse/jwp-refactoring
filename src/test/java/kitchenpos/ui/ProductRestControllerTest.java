@@ -14,10 +14,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import kitchenpos.application.dto.ProductCreationDto;
 import kitchenpos.common.fixture.RequestBody;
 import kitchenpos.application.ProductService;
 import kitchenpos.common.ControllerTest;
-import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -35,9 +35,9 @@ class ProductRestControllerTest extends ControllerTest {
     @DisplayName("제품을 생성한다.")
     @Test
     void createProduct() throws Exception {
-        when(productService.create(any(Product.class))).thenReturn(DomainFixture.getProduct());
+        when(productService.create(any(ProductCreationDto.class))).thenReturn(DtoFixture.getProduct());
 
-        final ResultActions resultActions = mockMvc.perform(post("/api/products")
+        final ResultActions resultActions = mockMvc.perform(post("/api/v2/products")
                         .content(objectMapper.writeValueAsString(RequestBody.PRODUCT))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
