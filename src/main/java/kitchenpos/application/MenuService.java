@@ -36,6 +36,7 @@ public class MenuService {
 
     @Transactional
     public Menu create(final Menu menu) {
+        //TODO: 검증 로직 도메인에서 하도록 수정
         final BigDecimal price = menu.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
@@ -55,10 +56,12 @@ public class MenuService {
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
+        //TODO: 왜 이렇게 설계했을까?
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
 
+        //TODO: menuProducts를 먼저 save하기
         final Menu savedMenu = menuDao.save(menu);
 
         final Long menuId = savedMenu.getId();

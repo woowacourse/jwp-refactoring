@@ -19,6 +19,7 @@ public class ProductService {
 
     @Transactional
     public Product create(final Product product) {
+        //TODO: 도메인에서 검증하기
         final BigDecimal price = product.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
