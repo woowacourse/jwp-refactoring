@@ -2,17 +2,22 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
+@Sql("/schema.sql")
 class TableServiceTest {
 
     @Autowired
@@ -23,8 +28,9 @@ class TableServiceTest {
     @BeforeEach
     void setUp() {
         orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(5);
+        orderTable.setId(1L);
         orderTable.setEmpty(false);
+        orderTable.setNumberOfGuests(5);
     }
 
     @Test
@@ -39,8 +45,16 @@ class TableServiceTest {
     @Test
     @DisplayName("테이블 전체를 조회한다")
     void list() {
-        assertThat(tableService.list())
-                .hasSizeGreaterThan(1);
+        tableService.create(orderTable);
+
+        final List<OrderTable> actual = tableService.list();
+
+        assertAll(
+                () -> assertThat(actual).hasSize(1),
+                () -> assertThat(actual)
+                        .extracting("id")
+                        .containsExactly(1L)
+        );
     }
 
     @Test

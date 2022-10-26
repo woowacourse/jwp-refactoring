@@ -2,25 +2,42 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
+@Sql("/schema.sql")
 class MenuServiceTest {
 
     @Autowired
     private MenuService menuService;
+
+    @Autowired
+    private MenuDao menuDao;
+
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private ProductDao productDao;
 
     private List<MenuProduct> menuProducts;
     private MenuProduct menuProduct;
@@ -28,6 +45,12 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
+        final Product product = new Product();
+        product.setId(1L);
+        product.setName("피자");
+        product.setPrice(BigDecimal.valueOf(20_000L));
+        productDao.save(product);
+
         menuProducts = new ArrayList<>();
         menuProduct = new MenuProduct();
         menuProduct.setProductId(1L);
@@ -40,12 +63,17 @@ class MenuServiceTest {
         menu.setId(1L);
         menu.setName("애기메뉴");
         menu.setMenuGroupId(1L);
+        menu.setPrice(BigDecimal.valueOf(20_000L));
+
+        final MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setId(1L);
+        menuGroup.setName("애기메뉴들");
+        menuGroupDao.save(menuGroup);
     }
 
     @Test
     @DisplayName("메뉴를 생성한다")
     void create() {
-        menu.setPrice(BigDecimal.valueOf(20000L));
         menuProducts.add(menuProduct);
         menu.setMenuProducts(menuProducts);
         final Menu createMenu = menuService.create(menu);
@@ -91,7 +119,15 @@ class MenuServiceTest {
     @Test
     @DisplayName("메뉴 전체를 조회한다")
     void list() {
-        assertThat(menuService.list())
-                .hasSizeGreaterThan(1);
+        menuDao.save(menu);
+
+        final List<Menu> actual = menuService.list();
+
+        assertAll(
+                () -> assertThat(actual).hasSize(1),
+                () -> assertThat(actual)
+                        .extracting("id")
+                        .containsExactly(1L)
+        );
     }
 }
