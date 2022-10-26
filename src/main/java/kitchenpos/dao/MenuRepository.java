@@ -5,12 +5,9 @@ import kitchenpos.domain.Menu;
 import java.util.List;
 import java.util.Optional;
 
-public interface MenuDao {
-    Menu save(Menu entity);
+import org.springframework.data.jpa.repository.JpaRepository;
 
-    Optional<Menu> findById(Long id);
-
-    List<Menu> findAll();
+public interface MenuRepository extends JpaRepository<Menu, Long> {
 
     long countByIdIn(List<Long> ids);
 }

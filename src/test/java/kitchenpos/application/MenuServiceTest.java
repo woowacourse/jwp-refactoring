@@ -57,6 +57,9 @@ class MenuServiceTest extends ServiceTest {
                 () -> assertThat(actual.getName()).isEqualTo(MENU_NAME),
                 () -> assertThat(actual.getPrice()).isEqualByComparingTo(price),
                 () -> assertThat(menuProducts)
+                    .extracting("seq")
+                    .isNotNull(),
+                () -> assertThat(menuProducts)
                     .extracting("menuId")
                     .containsOnly(menuId),
                 () -> assertThat(menuProducts)

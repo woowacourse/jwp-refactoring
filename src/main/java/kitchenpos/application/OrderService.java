@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableRepository;
@@ -23,18 +23,18 @@ import kitchenpos.dto.OrderResponse;
 @Service
 @Transactional(readOnly = true)
 public class OrderService {
-    private final MenuDao menuDao;
+    private final MenuRepository menuRepository;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
-        MenuDao menuDao,
+        MenuRepository menuRepository,
         OrderDao orderDao,
         OrderLineItemDao orderLineItemDao,
         OrderTableRepository orderTableRepository
     ) {
-        this.menuDao = menuDao;
+        this.menuRepository = menuRepository;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
         this.orderTableRepository = orderTableRepository;
@@ -89,7 +89,7 @@ public class OrderService {
     }
 
     private void validateMenuExist(List<OrderLineItemRequest> orderLineItemRequests, List<Long> menuIds) {
-        if (orderLineItemRequests.size() != menuDao.countByIdIn(menuIds)) {
+        if (orderLineItemRequests.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("존재하지 않는 메뉴가 포함되어 있습니다.");
         }
     }
