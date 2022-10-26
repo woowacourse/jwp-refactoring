@@ -8,6 +8,7 @@ import java.util.List;
 import kitchenpos.common.builder.MenuGroupBuilder;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,8 +34,11 @@ class MenuGroupServiceTest extends ServiceTest {
     @DisplayName("메뉴 그룹을 등록한다.")
     @Test
     void 메뉴_그룹을_등록한다() {
+        // given
+        MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest(루나세트_이름);
+
         // when
-        MenuGroup actual = menuGroupService.create(루나세트);
+        MenuGroup actual = menuGroupService.create(menuGroupCreateRequest);
 
         // then
         assertAll(
