@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.ProductCreateRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,18 +27,18 @@ class ProductServiceTest extends ServiceTest {
         private static final String PRODUCT_NAME = "productA";
         private static final long PRODUCT_PRICE = 1000L;
 
-        private Product product;
+        private ProductCreateRequest request;
 
         @BeforeEach
         void setUp() {
-            product = new Product(PRODUCT_ID, PRODUCT_NAME, BigDecimal.valueOf(PRODUCT_PRICE));
+            request = new ProductCreateRequest(PRODUCT_NAME, BigDecimal.valueOf(PRODUCT_PRICE));
         }
 
         @Test
         @DisplayName("상품의 이름과 가격을 받으면, 상품을 저장하고 내용을 반환한다.")
         void success() {
             //when
-            Product actual = productService.create(product);
+            Product actual = productService.create(request);
 
             //then
             assertAll(
@@ -52,10 +53,10 @@ class ProductServiceTest extends ServiceTest {
         @DisplayName("상품의 가격이 없으면, 예외를 던진다.")
         void fail_noPrice() {
             //given
-            product = new Product(PRODUCT_ID, PRODUCT_NAME, null);
+            request = new ProductCreateRequest(PRODUCT_NAME, null);
 
             //when & then
-            Assertions.assertThatThrownBy(() -> productService.create(product))
+            Assertions.assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -63,10 +64,10 @@ class ProductServiceTest extends ServiceTest {
         @DisplayName("상품의 가격이 0보다 작으면, 예외를 던진다.")
         void fail_zeroOrNegativePrice() {
             //given
-            product = new Product(PRODUCT_ID, PRODUCT_NAME, BigDecimal.valueOf(-1));
+            request = new ProductCreateRequest(PRODUCT_NAME, BigDecimal.valueOf(-1));
 
             //when & then
-            Assertions.assertThatThrownBy(() -> productService.create(product))
+            Assertions.assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

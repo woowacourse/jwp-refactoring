@@ -141,4 +141,5 @@ Controller에서 받아온 객체를 그대로 save하거나, 해당 객체의 �
 
 
 2. Controller에서 요청받을 때 사용할 RequestDto를 만든다
-   - [ ] TableGroupCreateRequest
+   - [x] TableGroupCreateRequest
+   - [x] ProductCreateRequest
