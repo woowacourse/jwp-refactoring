@@ -2,7 +2,7 @@ package kitchenpos.domain.product;
 
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-import kitchenpos.application.Price;
+import kitchenpos.domain.menu.Price;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
