@@ -12,9 +12,9 @@ import org.mapstruct.Mapping;
 public interface MenuGroupMapper {
 
     @Mapping(target = "id", ignore = true)
-    MenuGroup menuGroupCreateRequestToMenuGroup(MenuGroupCreateRequest menuGroupCreateRequest);
+    MenuGroup createRequestToMenuGroup(MenuGroupCreateRequest menuGroupCreateRequest);
 
-    MenuGroupCreateResponse menuGroupToMenuGroupCreateResponse(MenuGroup menuGroup);
-    
-    List<MenuGroupResponse> menuGroupsToMenuGroupResponses(List<MenuGroup> menuGroups);
+    MenuGroupCreateResponse menuGroupToCreateResponse(MenuGroup menuGroup);
+
+    List<MenuGroupResponse> menuGroupsToResponses(List<MenuGroup> menuGroups);
 }

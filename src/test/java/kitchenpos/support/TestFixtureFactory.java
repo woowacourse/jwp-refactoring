@@ -30,20 +30,11 @@ public class TestFixtureFactory {
 
     public static Menu 메뉴를_생성한다(final String name, final BigDecimal price, final Long menuGroupId,
                                 final List<MenuProduct> menuProducts) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-        return menu;
+        return new Menu(null, name, price, menuGroupId, menuProducts);
     }
 
     public static MenuProduct 메뉴_상품을_생성한다(final Menu menu, final Long productId, final long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenu(menu);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+        return new MenuProduct(null, menu, productId, quantity);
     }
 
     public static Order 주문을_생성한다(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,

@@ -33,6 +33,25 @@ public class Menu {
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<MenuProduct> menuProducts;
 
+    protected Menu() {
+    }
+
+    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.menuGroupId = menuGroupId;
+        this.menuProducts = menuProducts;
+        mapMenu(menuProducts);
+    }
+
+    private void mapMenu(final List<MenuProduct> menuProducts) {
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.setMenu(this);
+        }
+    }
+
     public Long getId() {
         return id;
     }

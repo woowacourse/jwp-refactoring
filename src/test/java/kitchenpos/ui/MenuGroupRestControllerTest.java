@@ -27,7 +27,7 @@ class MenuGroupRestControllerTest extends RestControllerTest {
     @Test
     void 메뉴_그룹_생성에_성공한다() throws Exception {
         MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest("메뉴 그룹");
-        when(menuGroupService.create(menuGroupMapper.menuGroupCreateRequestToMenuGroup(menuGroupCreateRequest)))
+        when(menuGroupService.create(menuGroupMapper.createRequestToMenuGroup(menuGroupCreateRequest)))
                 .thenReturn(new MenuGroup(1L, "메뉴 그룹"));
 
         mockMvc.perform(post("/api/menu-groups")

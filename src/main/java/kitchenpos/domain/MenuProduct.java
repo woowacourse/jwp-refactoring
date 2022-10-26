@@ -29,12 +29,28 @@ public class MenuProduct {
     @Column(name = "quantity", nullable = false)
     private long quantity;
 
-    public Long getSeq() {
-        return seq;
+    protected MenuProduct() {
     }
 
-    public void setSeq(final Long seq) {
+    public MenuProduct(final Long seq, final Menu menu, final Long productId, final long quantity) {
         this.seq = seq;
+        this.productId = productId;
+        this.quantity = quantity;
+        mapMenu(menu);
+    }
+
+    private void mapMenu(final Menu menu) {
+        if (this.menu != null) {
+            this.menu.getMenuProducts()
+                    .remove(this);
+        }
+        this.menu = menu;
+        menu.getMenuProducts()
+                .add(this);
+    }
+
+    public Long getSeq() {
+        return seq;
     }
 
     public Menu getMenu() {
@@ -49,16 +65,8 @@ public class MenuProduct {
         return productId;
     }
 
-    public void setProductId(final Long productId) {
-        this.productId = productId;
-    }
-
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 
     @Override

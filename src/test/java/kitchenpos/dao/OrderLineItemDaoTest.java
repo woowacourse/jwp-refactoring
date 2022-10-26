@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.TransactionalTest;
@@ -40,11 +41,11 @@ class OrderLineItemDaoTest {
     void 주문_항목을_저장하면_id가_채워진다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, null))
+        Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, new ArrayList<>()))
                 .getId();
         Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, true))
                 .getId();
-        Long orderId = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null))
+        Long orderId = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), new ArrayList<>()))
                 .getId();
         OrderLineItem orderLineItem = 주문_항목을_생성한다(orderId, menuId, 1);
 
@@ -62,11 +63,11 @@ class OrderLineItemDaoTest {
     void id로_주문_항목을_조회할_수_있다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, null))
+        Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, new ArrayList<>()))
                 .getId();
         Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, true))
                 .getId();
-        Long orderId = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null))
+        Long orderId = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), new ArrayList<>()))
                 .getId();
         OrderLineItem orderLineItem = orderLineItemDao.save(주문_항목을_생성한다(orderId, menuId, 1));
 
@@ -88,11 +89,11 @@ class OrderLineItemDaoTest {
     void 모든_주문_항목을_조회할_수_있다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, null))
+        Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, new ArrayList<>()))
                 .getId();
         Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, true))
                 .getId();
-        Long orderId = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null))
+        Long orderId = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), new ArrayList<>()))
                 .getId();
         OrderLineItem orderLineItem1 = orderLineItemDao.save(주문_항목을_생성한다(orderId, menuId, 1));
         OrderLineItem orderLineItem2 = orderLineItemDao.save(주문_항목을_생성한다(orderId, menuId, 2));
@@ -108,13 +109,13 @@ class OrderLineItemDaoTest {
     void 주문에_포함된_주문_항목을_조회할_수_있다() {
         Long menuGroupId = menuGroupDao.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
-        Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, null))
+        Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, new ArrayList<>()))
                 .getId();
         Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, true))
                 .getId();
-        Long orderId1 = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null))
+        Long orderId1 = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), new ArrayList<>()))
                 .getId();
-        Long orderId2 = orderDao.save(주문을_생성한다(orderTableId, MEAL.name(), LocalDateTime.now(), null))
+        Long orderId2 = orderDao.save(주문을_생성한다(orderTableId, MEAL.name(), LocalDateTime.now(), new ArrayList<>()))
                 .getId();
         OrderLineItem orderLineItem = orderLineItemDao.save(주문_항목을_생성한다(orderId1, menuId, 1));
         orderLineItemDao.save(주문_항목을_생성한다(orderId2, menuId, 1));
