@@ -64,8 +64,5 @@ public abstract class ServiceTest extends Fixtures {
     @BeforeEach
     void setup() {
         databaseCleanner.clear();
-        menuGroupDao.save(메뉴그룹_한마리메뉴());
-        productDao.save(상품_후라이드());
-        menuDao.save(메뉴_후라이드치킨());
     }
 }
