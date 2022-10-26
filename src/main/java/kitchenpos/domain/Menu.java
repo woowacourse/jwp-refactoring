@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Menu {
 
@@ -21,6 +22,7 @@ public class Menu {
     }
 
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        validatePrice(price);
         this.id = id;
         this.name = name;
         this.price = price;
@@ -28,12 +30,18 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public Long getId() {
-        return id;
+    private void validatePrice(BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("0원 미만으로 메뉴를 등록할 수 없습니다.");
+        }
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public void addMenuProducts(List<MenuProduct> menuProducts) {
+        this.menuProducts.addAll(menuProducts);
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
@@ -50,9 +58,5 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public void addMenuProducts(List<MenuProduct> menuProducts) {
-        this.menuProducts.addAll(menuProducts);
     }
 }

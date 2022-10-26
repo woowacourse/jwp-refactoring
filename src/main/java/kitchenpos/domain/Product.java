@@ -26,6 +26,10 @@ public class Product {
         }
     }
 
+    public BigDecimal multiplyPrice(long num) {
+        return price.multiply(BigDecimal.valueOf(num));
+    }
+
     public Long getId() {
         return id;
     }
