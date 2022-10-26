@@ -1,6 +1,7 @@
 package kitchenpos;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderLineItemResponse;
@@ -35,7 +36,7 @@ public class OrderFixtures {
     }
 
     private static OrderLineItemResponse createOrderLineItemResponse() {
-        return new OrderLineItemResponse(1L, 1L, 1L, 2);
+        return new OrderLineItemResponse(1L, 1L, 2);
     }
 
     public static OrderRequest createOrderRequest() {

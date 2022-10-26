@@ -12,13 +12,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RepositoryTest
-class OrderDaoTest {
+class OrderRepositoryTest {
 
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    public OrderDaoTest(OrderDao orderDao) {
-        this.orderDao = orderDao;
+    public OrderRepositoryTest(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
     }
 
     @Test
@@ -26,7 +26,7 @@ class OrderDaoTest {
         // given
         Order order = new Order(1L, "COOKING", LocalDateTime.now(), List.of(new OrderLineItem(null, 1L, 2)));
         // when
-        Order savedOrder = orderDao.save(order);
+        Order savedOrder = orderRepository.save(order);
         // then
         assertThat(savedOrder.getId()).isNotNull();
     }
@@ -35,10 +35,10 @@ class OrderDaoTest {
     void findById() {
         // given
         Order order = new Order(1L, "COOKING", LocalDateTime.now(), List.of(new OrderLineItem(null, 1L, 2)));
-        Order savedOrder = orderDao.save(order);
+        Order savedOrder = orderRepository.save(order);
 
         // when
-        Optional<Order> foundOrder = orderDao.findById(savedOrder.getId());
+        Optional<Order> foundOrder = orderRepository.findById(savedOrder.getId());
 
         // then
         assertThat(foundOrder).isPresent();
@@ -48,10 +48,10 @@ class OrderDaoTest {
     void findAll() {
         // given
         Order order = new Order(1L, "COOKING", LocalDateTime.now(), List.of(new OrderLineItem(null, 1L, 2)));
-        orderDao.save(order);
+        orderRepository.save(order);
 
         // when
-        List<Order> orders = orderDao.findAll();
+        List<Order> orders = orderRepository.findAll();
 
         // then
         assertThat(orders).hasSize(1);
@@ -65,10 +65,10 @@ class OrderDaoTest {
 
         Order order = new Order(orderTableId, orderStatus, LocalDateTime.now(),
                 List.of(new OrderLineItem(null, 1L, 2)));
-        orderDao.save(order);
+        orderRepository.save(order);
 
         // when
-        boolean exists = orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(orderStatus));
+        boolean exists = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(orderStatus));
 
         // then
         assertThat(exists).isTrue();
@@ -86,11 +86,11 @@ class OrderDaoTest {
                 List.of(new OrderLineItem(null, 1L, 2)));
         Order orderB = new Order(orderTableIdB, orderStatusB, LocalDateTime.now(),
                 List.of(new OrderLineItem(null, 1L, 2)));
-        orderDao.save(orderA);
-        orderDao.save(orderB);
+        orderRepository.save(orderA);
+        orderRepository.save(orderB);
 
         // when
-        boolean exists = orderDao.existsByOrderTableIdInAndOrderStatusIn(
+        boolean exists = orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 List.of(orderTableIdA, orderTableIdB), List.of(orderStatusA)
         );
 

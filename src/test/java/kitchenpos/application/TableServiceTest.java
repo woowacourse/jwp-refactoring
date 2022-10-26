@@ -8,7 +8,7 @@ import java.util.List;
 import kitchenpos.TableGroupFixtures;
 import kitchenpos.application.dto.OrderTableCreateRequest;
 import kitchenpos.application.dto.OrderTableResponse;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
@@ -23,19 +23,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 class TableServiceTest {
 
     private TableService tableService;
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
     private OrderTableRepository orderTableRepository;
     private TableGroupRepository tableGroupRepository;
 
     @Autowired
     public TableServiceTest(
             TableService tableService,
-            OrderDao orderDao,
+            OrderRepository orderRepository,
             OrderTableRepository orderTableRepository,
             TableGroupRepository tableGroupRepository
     ) {
         this.tableService = tableService;
-        this.orderDao = orderDao;
+        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
@@ -87,7 +87,7 @@ class TableServiceTest {
         // given
         long orderTableId = 1L;
         Order order = new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), null);
-        orderDao.save(order);
+        orderRepository.save(order);
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, false))
                 .isInstanceOf(IllegalArgumentException.class);

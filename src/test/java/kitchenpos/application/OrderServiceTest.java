@@ -7,18 +7,16 @@ import static kitchenpos.OrderFixtures.createOrderRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.OrderTableFixtures;
 import kitchenpos.TableGroupFixtures;
 import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.application.dto.OrderResponse;
 import kitchenpos.application.dto.OrderStatusChangeRequest;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -33,19 +31,19 @@ class OrderServiceTest {
     private OrderService orderService;
     private TableGroupRepository tableGroupRepository;
     private OrderTableRepository orderTableRepository;
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     public OrderServiceTest(
             OrderService orderService,
             TableGroupRepository tableGroupRepository,
             OrderTableRepository orderTableRepository,
-            OrderDao orderDao
+            OrderRepository orderRepository
     ) {
         this.orderService = orderService;
         this.tableGroupRepository = tableGroupRepository;
         this.orderTableRepository = orderTableRepository;
-        this.orderDao = orderDao;
+        this.orderRepository = orderRepository;
     }
 
     private TableGroup tableGroup;
@@ -127,7 +125,7 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus() {
         // given
-        Order savedOrder = orderDao.save(createOrder());
+        Order savedOrder = orderRepository.save(createOrder());
 
         // when
         OrderStatusChangeRequest changeRequest = createOrderChangeRequest();
@@ -156,7 +154,7 @@ class OrderServiceTest {
     void changeOrderStatusWithAlreadyCompletedStatus() {
         // given
         String orderStatus = OrderStatus.COMPLETION.name();
-        Order savedOrder = orderDao.save(createOrder(orderStatus));
+        Order savedOrder = orderRepository.save(createOrder(orderStatus));
 
         // when
         assertThatThrownBy(() -> orderService.changeOrderStatus(

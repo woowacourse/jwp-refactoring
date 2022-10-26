@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.application.dto.TableGroupResponse;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
@@ -27,19 +27,19 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
     private TableGroupRepository tableGroupRepository;
     private OrderTableRepository orderTableRepository;
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     public TableGroupServiceTest(
             TableGroupService tableGroupService,
             TableGroupRepository tableGroupRepository,
             OrderTableRepository orderTableRepository,
-            OrderDao orderDao
+            OrderRepository orderRepository
     ) {
         this.tableGroupService = tableGroupService;
         this.tableGroupRepository = tableGroupRepository;
         this.orderTableRepository = orderTableRepository;
-        this.orderDao = orderDao;
+        this.orderRepository = orderRepository;
     }
 
     @Test
@@ -115,7 +115,7 @@ class TableGroupServiceTest {
         Long orderTableId = savedTableGroup.getOrderTables().get(any).getId();
 
         Order order = new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), null);
-        orderDao.save(order);
+        orderRepository.save(order);
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))

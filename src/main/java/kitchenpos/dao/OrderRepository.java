@@ -4,8 +4,9 @@ import kitchenpos.domain.Order;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.repository.Repository;
 
-public interface OrderDao {
+public interface OrderRepository extends Repository<Order, Long> {
     Order save(Order entity);
 
     Optional<Order> findById(Long id);
