@@ -52,7 +52,6 @@ class MenuServiceTest {
         assertAll(
                 () -> assertThat(actual.getMenuProducts())
                         .usingElementComparatorIgnoringFields("seq")
-                        .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                         .containsExactlyElementsOf(menu.getMenuProducts()),
                 () -> assertThat(actual).usingRecursiveComparison()
                         .ignoringFields("id", "menuProducts")
@@ -82,8 +81,9 @@ class MenuServiceTest {
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
+
     @Test
-    @DisplayName("메뉴의 가격이 Null이거나 음수 일 수 없다.")
+    @DisplayName("등록하려는 메뉴의 메뉴 그룹이 등록되어 있어야 한다.")
     void create_exceptionWhenMenuGroupNotExists() {
         // given
         final Product product1 = ProductFixture.createWithPrice(1000L);
@@ -154,8 +154,7 @@ class MenuServiceTest {
 
         // then
         assertThat(actual)
-                .usingElementComparatorIgnoringFields("id", "menuProducts")
-                .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
-                .contains(savedMenu);
+                .usingElementComparatorIgnoringFields("menuProducts")
+                .containsExactly(savedMenu);
     }
 }

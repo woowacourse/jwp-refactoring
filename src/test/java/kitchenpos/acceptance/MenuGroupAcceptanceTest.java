@@ -39,7 +39,6 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
         final MenuGroup menuGroup = MenuGroupFixture.createDefaultWithoutId();
         testRestTemplate.postForEntity(
                 "http://localhost:" + localServerPort + "/api/menu-groups", menuGroup, MenuGroup.class);
-
         // when
         final ResponseEntity<List> response = testRestTemplate.getForEntity(
                 "http://localhost:" + localServerPort + "/api/menu-groups", List.class);

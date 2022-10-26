@@ -56,11 +56,12 @@ class TableServiceTest {
 
         // then
         assertAll(
-                () -> assertThat(actual).usingRecursiveComparison()
-                        .ignoringFields("id")
-                        .isEqualTo(orderTable),
                 () -> assertThat(actual).extracting("id")
-                        .isNotNull()
+                        .isNotNull(),
+                () -> assertThat(actual)
+                        .usingRecursiveComparison()
+                        .ignoringFields("id")
+                        .isEqualTo(orderTable)
         );
     }
 
@@ -77,7 +78,7 @@ class TableServiceTest {
         // then
         assertThat(actual).usingRecursiveFieldByFieldElementComparator()
                 .usingElementComparatorIgnoringFields("id")
-                .contains(saved);
+                .containsExactly(saved);
     }
 
     @Test

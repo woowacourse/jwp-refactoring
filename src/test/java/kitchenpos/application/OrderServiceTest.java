@@ -67,6 +67,8 @@ class OrderServiceTest {
 
         // then
         assertAll(
+                () -> assertThat(actual.getId())
+                        .isPositive(),
                 () -> assertThat(actual)
                         .usingRecursiveComparison()
                         .ignoringFields("id", "orderLineItems")

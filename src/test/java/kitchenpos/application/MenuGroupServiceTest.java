@@ -36,15 +36,14 @@ class MenuGroupServiceTest {
         // given
         final MenuGroup menuGroup1 = MenuGroupFixture.createDefaultWithoutId();
         final MenuGroup menuGroup2 = MenuGroupFixture.createDefaultWithoutId();
-        menuGroupService.create(menuGroup1);
-        menuGroupService.create(menuGroup2);
+        final MenuGroup savedGroup1 = menuGroupService.create(menuGroup1);
+        final MenuGroup savedGroup2 = menuGroupService.create(menuGroup2);
 
         // when
         final List<MenuGroup> actual = menuGroupService.list();
 
         // then
         assertThat(actual).usingRecursiveFieldByFieldElementComparator()
-                .usingElementComparatorIgnoringFields("id")
-                .containsExactly(menuGroup1, menuGroup2);
+                .containsExactly(savedGroup1, savedGroup2);
     }
 }
