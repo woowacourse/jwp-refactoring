@@ -61,19 +61,19 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private OrderLineItem select(final Long id) {
+    private OrderLineItem select(final Long seq) {
         final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE seq = (:seq)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("seq", id);
+                .addValue("seq", seq);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     private OrderLineItem toEntity(final ResultSet resultSet) throws SQLException {
-        final OrderLineItem entity = new OrderLineItem();
-        entity.setSeq(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setOrderId(resultSet.getLong("order_id"));
-        entity.setMenuId(resultSet.getLong("menu_id"));
-        entity.setQuantity(resultSet.getLong("quantity"));
-        return entity;
+        return new OrderLineItem(
+            resultSet.getLong(KEY_COLUMN_NAME),
+            resultSet.getLong("order_id"),
+            resultSet.getLong("menu_id"),
+            resultSet.getLong("quantity")
+        );
     }
 }
