@@ -9,6 +9,7 @@ import kitchenpos.common.builder.MenuGroupBuilder;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuGroupCreateRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ class MenuGroupServiceTest extends ServiceTest {
         MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest(루나세트_이름);
 
         // when
-        MenuGroup actual = menuGroupService.create(menuGroupCreateRequest);
+        MenuGroupResponse actual = menuGroupService.create(menuGroupCreateRequest);
 
         // then
         assertAll(
