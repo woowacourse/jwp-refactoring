@@ -8,6 +8,7 @@ public class OrderLineItem {
 
     public OrderLineItem() {
     }
+
     public OrderLineItem(final Long menuId, final Long quantity) {
         this.menuId = menuId;
         this.quantity = quantity;
