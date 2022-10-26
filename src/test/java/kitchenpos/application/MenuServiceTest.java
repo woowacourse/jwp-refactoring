@@ -75,7 +75,8 @@ class MenuServiceTest {
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격은 음수일 수 없습니다.");
     }
 
     @DisplayName("메뉴 그룹이 존재하지 않을 경우 예외를 반환한다. ")

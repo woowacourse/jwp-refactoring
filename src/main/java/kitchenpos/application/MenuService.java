@@ -39,7 +39,7 @@ public class MenuService {
         final BigDecimal price = menu.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("가격은 음수일 수 없습니다.");
         }
 
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
