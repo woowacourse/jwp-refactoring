@@ -2,8 +2,8 @@ package kitchenpos.domain.menu;
 
 public class MenuGroup {
 
-    private Long id;
-    private String name;
+    private final Long id;
+    private final String name;
 
     public MenuGroup(Long id, String name) {
         if (name == null || name.isBlank()) {
