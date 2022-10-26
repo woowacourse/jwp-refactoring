@@ -21,6 +21,11 @@ public class Product {
         this.price = price;
     }
 
+    public BigDecimal calculatePriceByQuantity(long quantity) {
+        BigDecimal toBigDecimal = BigDecimal.valueOf(quantity);
+        return price.multiply(toBigDecimal);
+    }
+
     public Long getId() {
         return id;
     }
