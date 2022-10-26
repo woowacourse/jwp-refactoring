@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixtures.domain.MenuGroupFixture.createMenuGroup;
+import static kitchenpos.fixtures.domain.MenuProductFixture.createMenuProduct;
 import static kitchenpos.fixtures.domain.ProductFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -40,7 +41,7 @@ class MenuServiceTest extends ServiceTest {
     void setUp() {
         this.menuGroup = menuGroupDao.save(createMenuGroup("세트 메뉴"));
         this.product = productDao.save(createProduct("짜장면", new BigDecimal(30_000)));
-        this.menuProduct = new MenuProduct(product.getId(), 10L);
+        this.menuProduct = createMenuProduct(product.getId(), 10L);
     }
 
     @DisplayName("create 메소드는 ")
@@ -101,7 +102,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_ProductDoesNotExistInMenuProductList() {
             // given
-            MenuProduct notSavedMenuProduct = new MenuProduct(product.getId() + 1, 1L);
+            MenuProduct notSavedMenuProduct = createMenuProduct(product.getId() + 1, 1L);
             Menu menu = new MenuRequestBuilder()
                     .menuGroupId(menuGroup.getId())
                     .menuProducts(notSavedMenuProduct)
