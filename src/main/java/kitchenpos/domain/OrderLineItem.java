@@ -48,17 +48,4 @@ public class OrderLineItem {
     public void setQuantity(final long quantity) {
         this.quantity = quantity;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        OrderLineItem that = (OrderLineItem) o;
-        return quantity == that.quantity && Objects.equals(orderId, that.orderId) && Objects.equals(menuId, that.menuId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(orderId, menuId, quantity);
-    }
 }

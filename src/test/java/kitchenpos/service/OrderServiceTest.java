@@ -36,9 +36,7 @@ public class OrderServiceTest {
         assertAll(
                 () -> assertThat(order.getOrderStatus()).isEqualTo("COOKING"),
                 () -> assertThat(order.getOrderTableId()).isEqualTo(4L),
-                () -> assertThat(order.getOrderLineItems()).isEqualTo(
-                        List.of(new OrderLineItem(order.getId(), 1L, 2L),
-                                new OrderLineItem(order.getId(), 2L, 3L)))
+                () -> assertThat(order.getOrderLineItems().size()).isEqualTo(2)
         );
     }
     @DisplayName("주문내역이 없는 주문을 생성할 수 없다")
@@ -83,10 +81,7 @@ public class OrderServiceTest {
         assertAll(
                 () -> assertThat(order.getOrderStatus()).isEqualTo("MEAL"),
                 () -> assertThat(order.getOrderTableId()).isEqualTo(2L),
-                () -> assertThat(order.getOrderLineItems()).isEqualTo(
-                        List.of(new OrderLineItem(order.getId(), 1L, 1L),
-                                new OrderLineItem(order.getId(), 2L, 1L)))
-
+                () -> assertThat(order.getOrderLineItems().size()).isEqualTo(2)
         );
     }
     @DisplayName("없는 주문의 상태를 바꿀 수 없다")

@@ -36,8 +36,7 @@ public class MenuServiceTest {
                 () -> assertThat(menu.getMenuGroupId()).isEqualTo(3L),
                 () -> assertThat(menu.getName()).isEqualTo("2인육회"),
                 () -> assertThat(menu.getPrice()).isEqualTo(24000L),
-                () -> assertThat(menu.getMenuProducts()).isEqualTo(
-                        List.of(new MenuProduct(menu.getId(), 5L, 2L)))
+                () -> assertThat(menu.getMenuProducts().size()).isEqualTo(1)
         );
     }
     @DisplayName("가격이 null인 메뉴를 생성할 수 없다")
