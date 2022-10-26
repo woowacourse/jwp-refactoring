@@ -61,6 +61,7 @@ class ProductServiceTest {
 
         // then
         assertThat(savedProduct).isNotNull();
+        assertThat(savedProduct.getId()).isNotNull();
     }
 
     @Test

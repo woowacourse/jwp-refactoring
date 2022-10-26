@@ -33,6 +33,7 @@ class MenuGroupServiceTest {
 
         // then
         assertThat(actual).isNotNull();
+        assertThat(actual.getId()).isNotNull();
     }
 
     @Test

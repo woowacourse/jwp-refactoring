@@ -32,7 +32,7 @@ class OrderServiceTest {
 
     @Test
     @DisplayName("주문 항목이 없으면 주문을 생성할 수 없다")
-    void throwException_WhenNoOrderLineItems() {
+    void throwExceptionWhenNoOrderLineItems() {
         // given
         Order order = new Order();
         order.setOrderTableId(1L);
@@ -44,7 +44,7 @@ class OrderServiceTest {
 
     @Test
     @DisplayName("주문 항목에 포함된 메뉴는 중복될 수 없다")
-    void throwException_WhenDuplicateMenu() {
+    void throwExceptionWhenDuplicateMenu() {
         // given
         OrderLineItem orderLineItem1 = new OrderLineItem();
         orderLineItem1.setMenuId(1L);
@@ -67,7 +67,7 @@ class OrderServiceTest {
 
     @Test
     @DisplayName("주문 테이블이 존재하지 않으면 주문을 생성할 수 없다")
-    void throwException_WhenOrderTable_DoesNotExist() {
+    void throwExceptionWhenOrderTableDoesNotExist() {
         // given
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(1L);
@@ -86,7 +86,7 @@ class OrderServiceTest {
 
     @Test
     @DisplayName("주문 테이블이 비어있으면 주문을 생성할 수 없다.")
-    void throwException_WhenOrderTable_IsEmpty() {
+    void throwExceptionWhenOrderTableIsEmpty() {
         // given
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(0);
@@ -134,6 +134,7 @@ class OrderServiceTest {
         assertThat(savedOrder.getOrderTableId()).isEqualTo(orderTableId);
         assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
         assertThat(savedOrder.getOrderedTime()).isBeforeOrEqualTo(LocalDateTime.now());
+        assertThat(savedOrder.getOrderLineItems()).hasSize(1);
         assertThatOrderIdIsSet(savedOrder.getOrderLineItems(), savedOrder.getId());
     }
 
@@ -152,7 +153,7 @@ class OrderServiceTest {
 
     @Test
     @DisplayName("입력받은 Id에 해당하는 주문이 존재하지 않으면 주문 상태를 변경할 수 없다")
-    void throwException_WhenOrder_DoesNotExist() {
+    void throwExceptionWhenOrderDoesNotExist() {
         // given
         Order order = new Order();
         order.setOrderStatus(OrderStatus.MEAL.name());
@@ -164,7 +165,7 @@ class OrderServiceTest {
 
     @Test
     @DisplayName("주문 상태가 이미 완료 상태인 주문은 상태를 변경할 수 없다")
-    void throwException_WhenTryToChange_CompletedOrder() {
+    void throwExceptionWhenTryToChangeCompletedOrder() {
         // given
         Order savedOrder = createValidOrder();
 
@@ -223,5 +224,4 @@ class OrderServiceTest {
 
         return sut.create(order);
     }
-
 }
