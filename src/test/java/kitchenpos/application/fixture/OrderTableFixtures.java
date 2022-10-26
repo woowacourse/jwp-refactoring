@@ -11,6 +11,12 @@ public class OrderTableFixtures {
         return orderTable;
     }
 
+    public static final OrderTable generateOrderTable(final Long tableGroupId,
+                                                      final int numberOfGuests,
+                                                      final boolean empty) {
+        return generateOrderTable(null, tableGroupId, numberOfGuests, empty);
+    }
+
     public static final OrderTable generateOrderTable(final Long id, final OrderTable orderTable) {
         return generateOrderTable(
                 id,

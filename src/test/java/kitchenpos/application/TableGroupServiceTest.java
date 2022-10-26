@@ -1,58 +1,57 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.fixture.MenuFixtures.후라이드치킨;
-import static kitchenpos.application.fixture.MenuGroupFixtures.한마리메뉴;
-import static kitchenpos.application.fixture.MenuProductFixtures.generateMenuProduct;
 import static kitchenpos.application.fixture.OrderFixtures.generateOrder;
-import static kitchenpos.application.fixture.OrderLineItemFixtures.generateOrderLineItem;
 import static kitchenpos.application.fixture.OrderTableFixtures.*;
-import static kitchenpos.application.fixture.ProductFixtures.후라이드;
 import static kitchenpos.application.fixture.TableGroupFixtures.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.fake.FakeOrderDao;
+import kitchenpos.dao.fake.FakeOrderTableDao;
+import kitchenpos.dao.fake.FakeTableGroupDao;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
-@SpringBootTest
-@Sql("/truncate.sql")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class TableGroupServiceTest {
 
-    private final TableService tableService;
+
+    private final OrderDao orderDao;
+    private final OrderTableDao orderTableDao;
+    private final TableGroupDao tableGroupDao;
     private final TableGroupService tableGroupService;
-    private final MenuGroupService menuGroupService;
-    private final ProductService productService;
-    private final MenuService menuService;
-    private final OrderService orderService;
 
     @Autowired
-    public TableGroupServiceTest(final TableService tableService, final TableGroupService tableGroupService,
-                                 final MenuGroupService menuGroupService, final ProductService productService,
-                                 final MenuService menuService, final OrderService orderService) {
-        this.tableService = tableService;
-        this.tableGroupService = tableGroupService;
-        this.menuGroupService = menuGroupService;
-        this.productService = productService;
-        this.menuService = menuService;
-        this.orderService = orderService;
+    public TableGroupServiceTest() {
+        this.orderDao = new FakeOrderDao();
+        this.orderTableDao = new FakeOrderTableDao();
+        this.tableGroupDao = new FakeTableGroupDao();
+        this.tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
+    }
+
+    @BeforeEach
+    void setUp() {
+        FakeOrderDao.deleteAll();
+        FakeOrderTableDao.deleteAll();
+        FakeTableGroupDao.deleteAll();
     }
 
     @Test
     void tableGroup을_생성한다() {
-        OrderTable 테이블_1번 = tableService.create(테이블_1번());
-        OrderTable 테이블_2번 = tableService.create(테이블_2번());
+        OrderTable 테이블_1번 = orderTableDao.save(generateOrderTable(0, true));
+        OrderTable 테이블_2번 = orderTableDao.save(generateOrderTable(0, true));
 
         TableGroup actual = tableGroupService.create(generateTableGroup(List.of(테이블_1번, 테이블_2번)));
 
@@ -69,17 +68,17 @@ class TableGroupServiceTest {
 
     @Test
     void orderTables의_사이즈가_2미만인_경우_예외를_던진다() {
-        OrderTable 테이블_1번 = tableService.create(테이블_1번());
+        OrderTable orderTable = orderTableDao.save(generateOrderTable(0, true));
 
-        assertThatThrownBy(() -> tableGroupService.create(generateTableGroup(List.of(테이블_1번))))
+        assertThatThrownBy(() -> tableGroupService.create(generateTableGroup(List.of(orderTable))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void orderGroup이_가진_orderTables의_사이즈와_저장된_orderTables의_사이즈가_다른_경우_예외를_던진다() {
-        OrderTable 테이블_1번 = tableService.create(테이블_1번());
-        OrderTable 테이블_2번 = tableService.create(테이블_2번());
-        OrderTable 테이블_3번 = 테이블_3번();
+        OrderTable 테이블_1번 = orderTableDao.save(generateOrderTable(0, true));
+        OrderTable 테이블_2번 = orderTableDao.save(generateOrderTable(0, true));
+        OrderTable 테이블_3번 = generateOrderTable(0, true);
 
         assertThatThrownBy(() -> tableGroupService.create(generateTableGroup(List.of(테이블_1번, 테이블_2번, 테이블_3번))))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -87,9 +86,9 @@ class TableGroupServiceTest {
 
     @Test
     void 저장된_orderTables_중_비어있지_않은_table이_존재하는_경우_예외를_던진다() {
-        OrderTable 테이블_1번 = tableService.create(테이블_1번());
-        OrderTable 테이블_2번 = tableService.create(테이블_2번());
-        OrderTable 비어있지_않은_테이블 = tableService.create(generateOrderTable(0, false));
+        OrderTable 테이블_1번 = orderTableDao.save(generateOrderTable(0, true));
+        OrderTable 테이블_2번 = orderTableDao.save(generateOrderTable(0, true));
+        OrderTable 비어있지_않은_테이블 = orderTableDao.save(generateOrderTable(0, false));
 
         assertThatThrownBy(() -> tableGroupService.create(generateTableGroup(List.of(테이블_1번, 테이블_2번, 비어있지_않은_테이블))))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -97,12 +96,12 @@ class TableGroupServiceTest {
 
     @Test
     void 저장된_orderTables_중_tableGroupId가_null이_아닌_경우_예외를_던진다() {
-        OrderTable 테이블_1번 = tableService.create(테이블_1번());
-        OrderTable 테이블_2번 = tableService.create(테이블_2번());
+        OrderTable 테이블_1번 = orderTableDao.save(generateOrderTable(0, true));
+        OrderTable 테이블_2번 = orderTableDao.save(generateOrderTable(0, true));
 
         tableGroupService.create(generateTableGroup(List.of(테이블_1번, 테이블_2번)));
 
-        OrderTable 테이블_3번 = tableService.create(테이블_3번());
+        OrderTable 테이블_3번 = orderTableDao.save(generateOrderTable(0, true));
 
         assertThatThrownBy(() -> tableGroupService.create(generateTableGroup(List.of(테이블_1번, 테이블_2번, 테이블_3번))))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -110,15 +109,14 @@ class TableGroupServiceTest {
 
     @Test
     void tableGroup을_해제한다() {
-        OrderTable 테이블_1번 = tableService.create(테이블_1번());
-        OrderTable 테이블_2번 = tableService.create(테이블_2번());
-        TableGroup tableGroup = tableGroupService.create(generateTableGroup(List.of(테이블_1번, 테이블_2번)));
+        TableGroup tableGroup = tableGroupDao.save(generateTableGroup(List.of()));
+        orderTableDao.save(generateOrderTable(tableGroup.getId(), 0, true));
+        orderTableDao.save(generateOrderTable(tableGroup.getId(), 0, true));
 
         tableGroupService.ungroup(tableGroup.getId());
 
-        List<OrderTable> actual = tableService.list();
-
         assertAll(() -> {
+            List<OrderTable> actual = orderTableDao.findAll();
             assertThat(actual.get(0).getTableGroupId()).isNull();
             assertThat(actual.get(0).isEmpty()).isFalse();
             assertThat(actual.get(1).getTableGroupId()).isNull();
@@ -126,20 +124,14 @@ class TableGroupServiceTest {
         });
     }
 
-    @Test
-    void orderTables의_orderStatus가_COOKING_MEAL인_경우_예외를_던진다() {
-        OrderTable 테이블_1번 = tableService.create(테이블_1번());
-        OrderTable 테이블_2번 = tableService.create(테이블_2번());
-        TableGroup tableGroup = tableGroupService.create(generateTableGroup(List.of(테이블_1번, 테이블_2번)));
+    @ParameterizedTest(name = "orderTables의 orderStatus가 {0} 인 경우 예외를 던진다.")
+    @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
+    void orderTables의_orderStatus가_COOKING_MEAL인_경우_예외를_던진다(final OrderStatus orderStatus) {
+        TableGroup tableGroup = tableGroupDao.save(generateTableGroup(List.of()));
+        OrderTable 테이블_1번 = orderTableDao.save(generateOrderTable(tableGroup.getId(), 0, true));
+        OrderTable 테이블_2번 = orderTableDao.save(generateOrderTable(tableGroup.getId(), 0, true));
 
-        MenuGroup menuGroup = menuGroupService.create(한마리메뉴());
-        Menu menu = 후라이드치킨(menuGroup.getId());
-        Product product = productService.create(후라이드());
-        menu.setMenuProducts(List.of(generateMenuProduct(product.getId(), 1)));
-        menu = menuService.create(menu);
-
-        OrderLineItem orderLineItem = generateOrderLineItem(menu.getId(), 1);
-        orderService.create(generateOrder(테이블_1번.getId(), List.of(orderLineItem)));
+        orderDao.save(generateOrder(테이블_1번.getId(), orderStatus, List.of()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
