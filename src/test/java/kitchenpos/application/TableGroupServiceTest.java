@@ -39,7 +39,6 @@ class TableGroupServiceTest {
     @Autowired
     private final TableGroupService tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
 
-
     private OrderTable table1;
     private OrderTable table2;
 
