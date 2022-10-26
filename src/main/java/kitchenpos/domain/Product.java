@@ -7,6 +7,10 @@ public class Product {
     private String name;
     private BigDecimal price;
 
+    public BigDecimal calculateTotalPrice(final long quantity) {
+        return price.multiply(BigDecimal.valueOf(quantity));
+    }
+
     public Long getId() {
         return id;
     }
