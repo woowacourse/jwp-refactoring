@@ -33,7 +33,8 @@ class JdbcTemplateOrderLineItemDaoTest {
 
     @BeforeEach
     void setup() {
-        this.orderId = orderDao.save(new Order(null, 1L, COOKING.name(), LocalDateTime.now(), new ArrayList<>())).getId();
+        this.orderId = orderDao.save(new Order(null, 1L, COOKING.name(), LocalDateTime.now(), new ArrayList<>()))
+                .getId();
     }
 
     @Test

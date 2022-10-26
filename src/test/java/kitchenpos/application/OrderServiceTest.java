@@ -7,9 +7,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.application.dto.request.OrderChangeRequest;
+import kitchenpos.application.dto.request.OrderCreateRequest;
+import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -44,11 +48,7 @@ class OrderServiceTest {
 
     @Test
     void order_line_itmes가_비어있으면_예외를_반환한다() {
-        // given
-        Order order = new Order();
-
-        // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -65,7 +65,8 @@ class OrderServiceTest {
         when(menuDao.countByIdIn(any())).thenReturn(3L);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(order.getId(), order.getOrderTableId(),
+                order.getOrderStatus(), LocalDateTime.now(), order.getOrderLineItems())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -84,7 +85,8 @@ class OrderServiceTest {
         when(orderTableDao.findById(101L)).thenReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(order.getId(), order.getOrderTableId(),
+                order.getOrderStatus(), LocalDateTime.now(), order.getOrderLineItems())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -106,7 +108,8 @@ class OrderServiceTest {
         when(orderTableDao.findById(101L)).thenReturn(Optional.of(orderTable));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(order.getId(), order.getOrderTableId(),
+                order.getOrderStatus(), LocalDateTime.now(), order.getOrderLineItems())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -120,6 +123,8 @@ class OrderServiceTest {
         orderLineItem1.setMenuId(2L);
         order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
         order.setOrderTableId(101L);
+        order.setOrderStatus(COOKING.name());
+        order.setOrderedTime(LocalDateTime.now());
 
         when(menuDao.countByIdIn(any())).thenReturn(2L);
 
@@ -130,12 +135,13 @@ class OrderServiceTest {
         when(orderDao.save(any(Order.class))).thenReturn(order);
 
         // when
-        Order savedOrder = orderService.create(order);
+        OrderResponse response = orderService.create(new OrderCreateRequest(order.getId(), order.getOrderTableId(),
+                order.getOrderStatus(), LocalDateTime.now(), order.getOrderLineItems()));
 
         // then
         Assertions.assertAll(
-                () -> assertThat(savedOrder.getOrderStatus()).isNotNull(),
-                () -> assertThat(savedOrder.getOrderedTime()).isNotNull()
+                () -> assertThat(response.getOrderStatus()).isNotNull(),
+                () -> assertThat(response.getOrderedTime()).isNotNull()
         );
     }
 
@@ -147,10 +153,10 @@ class OrderServiceTest {
         when(orderDao.findAll()).thenReturn(Arrays.asList(order1, order2));
 
         // when
-        List<Order> orders = orderService.list();
+        List<OrderResponse> responses = orderService.list();
 
         // then
-        assertThat(orders).hasSize(2);
+        assertThat(responses).hasSize(2);
     }
 
     @Test
@@ -160,7 +166,7 @@ class OrderServiceTest {
         when(orderDao.findById(101L)).thenReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(101L, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(101L, new OrderChangeRequest()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -173,7 +179,7 @@ class OrderServiceTest {
         Order order = new Order();
 
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, new OrderChangeRequest()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -187,9 +193,9 @@ class OrderServiceTest {
         order.setOrderStatus(COMPLETION.name());
 
         // when
-        Order updatedOrder = orderService.changeOrderStatus(1L, order);
+        OrderResponse response = orderService.changeOrderStatus(1L, new OrderChangeRequest(order.getOrderStatus()));
 
         // then
-        assertThat(updatedOrder.getOrderStatus()).isEqualTo(COMPLETION.name());
+        assertThat(response.getOrderStatus()).isEqualTo(COMPLETION.name());
     }
 }
