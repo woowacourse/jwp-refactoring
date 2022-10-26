@@ -1,18 +1,18 @@
 package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.common.annotation.SpringTestWithData;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 @DisplayName("ProductDao 는 ")
-@SpringBootTest
+@SpringTestWithData
 class ProductDaoTest {
 
     @Autowired

@@ -12,5 +12,5 @@ import org.springframework.boot.test.context.SpringBootTest;
 @Retention(RetentionPolicy.RUNTIME)
 @SpringBootTest
 @ExtendWith(DataClearExtension.class)
-public @interface ApplicationTest {
+public @interface SpringTestWithData {
 }
