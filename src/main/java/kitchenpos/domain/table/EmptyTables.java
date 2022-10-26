@@ -3,22 +3,24 @@ package kitchenpos.domain.table;
 import java.util.List;
 import java.util.Objects;
 
-public class OrderTables {
+public class EmptyTables {
+
+    private static final int MINIMUM_TABLE_COUNT = 2;
 
     private final List<OrderTable> orderTables;
 
-    public OrderTables(List<OrderTable> orderTables) {
+    public EmptyTables(List<OrderTable> orderTables) {
         validate(orderTables);
         this.orderTables = orderTables;
     }
 
     private static void validate(List<OrderTable> orderTables) {
-        if (orderTables.size() < 2) {
+        if (orderTables.size() < MINIMUM_TABLE_COUNT) {
             throw new IllegalArgumentException();
         }
-        boolean isOrderTableOrGrouped = orderTables.stream()
+        boolean includesGroupedOrOrderTable = orderTables.stream()
                 .anyMatch(it -> !it.isEmpty() || Objects.nonNull(it.getTableGroupId()));
-        if (isOrderTableOrGrouped) {
+        if (includesGroupedOrOrderTable) {
             throw new IllegalArgumentException();
         }
     }

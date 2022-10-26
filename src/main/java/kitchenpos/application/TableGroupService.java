@@ -7,7 +7,7 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.OrderTables;
+import kitchenpos.domain.table.EmptyTables;
 import kitchenpos.domain.table.TableGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,22 +30,22 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupDto create(CreateTableGroupDto createTableGroupDto) {
-        List<Long> tableIds = createTableGroupDto.getOrderTableIds();
-        OrderTables orderTables = findValidOrderTables(tableIds);
+        final List<Long> tableIds = createTableGroupDto.getOrderTableIds();
+        final EmptyTables emptyTables = findValidEmptyTables(tableIds);
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup());
-        orderTables.group(tableGroup.getId());
-        for (final OrderTable savedOrderTable : orderTables.getValue()) {
+        emptyTables.group(tableGroup.getId());
+        for (final OrderTable savedOrderTable : emptyTables.getValue()) {
             orderTableDao.save(savedOrderTable);
         }
-        return TableGroupDto.of(tableGroup, orderTables.getValue());
+        return TableGroupDto.of(tableGroup, emptyTables.getValue());
     }
 
-    private OrderTables findValidOrderTables(List<Long> tableIds) {
+    private EmptyTables findValidEmptyTables(List<Long> tableIds) {
         final List<OrderTable> orderTables = orderTableDao.findAllByIdIn(tableIds);
         if (tableIds.size() != orderTables.size()) {
             throw new IllegalArgumentException();
         }
-        return new OrderTables(orderTables);
+        return new EmptyTables(orderTables);
     }
 
     @Transactional
