@@ -73,7 +73,7 @@ class MenuServiceTest {
         }
 
         @Test
-        void 요청에서_메뉴를_추가할때_추가한_각_상품별_총_가격의_합이_0원이_이하일경우_예외가_발생한다() {
+        void 요청에서_추가한_메뉴가격의_합이_상품가격의_합보다_높을경우_예외가_발생한다() {
             // given
             MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
             Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(0)));
