@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.dto.ProductCreationDto;
 import kitchenpos.domain.Product;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ProductRestController {
+
     private final ProductService productService;
 
     public ProductRestController(final ProductService productService) {
@@ -45,5 +47,15 @@ public class ProductRestController {
         return ResponseEntity.ok()
                 .body(productService.list())
                 ;
+    }
+
+    @GetMapping("/api/v2/products")
+    public ResponseEntity<List<ProductResponse>> getProducts() {
+        List<ProductResponse> productResponses = productService.getProducts()
+                .stream()
+                .map(ProductResponse::from)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(productResponses);
     }
 }

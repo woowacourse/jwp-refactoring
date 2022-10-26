@@ -61,9 +61,9 @@ class ProductRestControllerTest extends ControllerTest {
     @DisplayName("제품들을 조회한다.")
     @Test
     void getProducts() throws Exception {
-        when(productService.list()).thenReturn(List.of(DomainFixture.getProduct()));
+        when(productService.getProducts()).thenReturn(List.of(DtoFixture.getProduct()));
 
-        final ResultActions resultActions = mockMvc.perform(get("/api/products")
+        final ResultActions resultActions = mockMvc.perform(get("/api/v2/products")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());

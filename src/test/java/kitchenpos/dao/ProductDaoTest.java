@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,19 @@ class ProductDaoTest {
                 () -> assertThat(product.getId()).isGreaterThanOrEqualTo(1L),
                 () -> assertThat(product.getName()).isEqualTo("productName"),
                 () -> assertThat(product.getPrice().longValue()).isEqualTo(1000L)
+        );
+    }
+
+    @DisplayName("상품 목록을 조회한다")
+    @Test
+    void getProducts() {
+        final Product product = productDao.save(new Product("productName", BigDecimal.valueOf(1000L)));
+
+        final List<Product> products = productDao.findAll();
+
+        assertAll(
+                () -> assertThat(products.size()).isEqualTo(1),
+                () -> assertThat(products.get(0).getId()).isEqualTo(product.getId())
         );
     }
 }

@@ -12,7 +12,7 @@ public class ProductHttpCommunication {
 
     public static HttpCommunication getProducts() {
         return HttpCommunication.request()
-                .get("/api/products")
+                .get("/api/v2/products")
                 .build();
     }
 }

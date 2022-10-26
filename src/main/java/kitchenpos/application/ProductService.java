@@ -1,10 +1,12 @@
 package kitchenpos.application;
 
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.ProductCreationDto;
 import kitchenpos.application.dto.ProductDto;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.request.ProductCreationRequest;
+import kitchenpos.ui.dto.response.ProductResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +40,16 @@ public class ProductService {
         return ProductDto.from(productDao.save(product));
     }
 
+    @Deprecated
     public List<Product> list() {
         return productDao.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductDto> getProducts() {
+        return productDao.findAll()
+                .stream()
+                .map(ProductDto::from)
+                .collect(Collectors.toList());
     }
 }
