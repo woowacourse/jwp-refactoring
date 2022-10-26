@@ -25,7 +25,7 @@ class OrderDaoTest extends JdbcDaoTest {
         final Order savedOrder = orderDao.save(order);
 
         // then
-        assertThat(savedOrder.getId()).isNotNull();
+        assertThat(savedOrder.getId()).isEqualTo(1L);
     }
 
     @Test
@@ -49,8 +49,6 @@ class OrderDaoTest extends JdbcDaoTest {
     @Test
     void 모든_주문을_조회한다() {
         // given
-        final int alreadyExistCount = orderDao.findAll()
-                .size();
         final Long tableGroupId = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성()).getId();
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성(tableGroupId)).getId();
         final Order savedOrder = 주문을_저장한다(ORDER_COOKING_1.주문항목_없이_생성(orderTableId, LocalDateTime.of(2022, 10, 24, 10, 10)));
@@ -60,8 +58,7 @@ class OrderDaoTest extends JdbcDaoTest {
 
         // then
         assertThat(orders).usingRecursiveFieldByFieldElementComparator()
-                .hasSize(alreadyExistCount + 1)
-                .contains(savedOrder);
+                .containsOnly(savedOrder);
     }
 
     @Test

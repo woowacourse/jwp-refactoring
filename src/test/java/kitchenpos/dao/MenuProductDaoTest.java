@@ -28,7 +28,7 @@ class MenuProductDaoTest extends JdbcDaoTest {
         final MenuProduct savedMenuProduct = menuProductDao.save(menuProduct);
 
         // then
-        assertThat(savedMenuProduct.getSeq()).isNotNull();
+        assertThat(savedMenuProduct.getSeq()).isEqualTo(1L);
     }
 
     @Test
@@ -50,8 +50,6 @@ class MenuProductDaoTest extends JdbcDaoTest {
     @Test
     void 모든_메뉴상품을_조회한다() {
         // given
-        final int alreadyExistCount = menuProductDao.findAll()
-                .size();
         final Product savedProduct = 제품을_저장한다(PRODUCT_PRICE_10000.생성());
         final MenuGroup savedMenuGroup = 메뉴그룹을_저장한다(MENU_GROUP_1.생성());
         final Menu savedMenu = 메뉴를_저장한다(MENU_PRICE_10000.생성(savedMenuGroup.getId()));
@@ -62,8 +60,7 @@ class MenuProductDaoTest extends JdbcDaoTest {
 
         // then
         assertThat(menuProducts).usingFieldByFieldElementComparator()
-                .hasSize(alreadyExistCount + 1)
-                .contains(savedMenuProduct);
+                .containsOnly(savedMenuProduct);
     }
 
     @Test

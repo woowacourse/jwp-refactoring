@@ -20,7 +20,7 @@ class TableGroupDaoTest extends JdbcDaoTest {
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         // then
-        assertThat(savedTableGroup.getId()).isNotNull();
+        assertThat(savedTableGroup.getId()).isEqualTo(1L);
     }
 
     @Test
@@ -40,8 +40,6 @@ class TableGroupDaoTest extends JdbcDaoTest {
     @Test
     void 모든_테이블그룹을_조회한다() {
         // given
-        final int alreadyExistCount = tableGroupDao.findAll()
-                .size();
         final TableGroup savedTableGroup = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성());
 
         // when
@@ -49,7 +47,6 @@ class TableGroupDaoTest extends JdbcDaoTest {
 
         // then
         assertThat(tableGroups).usingFieldByFieldElementComparator()
-                .hasSize(alreadyExistCount + 1)
-                .contains(savedTableGroup);
+                .containsOnly(savedTableGroup);
     }
 }

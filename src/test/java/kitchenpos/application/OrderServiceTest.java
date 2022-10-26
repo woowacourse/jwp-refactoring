@@ -11,10 +11,10 @@ import static kitchenpos.support.OrderTableFixture.ORDER_TABLE_EMPTY_1;
 import static kitchenpos.support.OrderTableFixture.ORDER_TABLE_NOT_EMPTY_1;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ class OrderServiceTest extends ServiceTest {
         final Order savedOrder = orderService.create(order);
 
         //then
-        assertThat(savedOrder.getId()).isNotNull();
+        assertThat(savedOrder.getId()).isEqualTo(1L);
     }
 
     @Test
@@ -109,13 +109,13 @@ class OrderServiceTest extends ServiceTest {
         final List<Order> orders = orderService.list();
 
         // then
-        final Optional<Order> foundOrder = orders.stream()
-                .filter(order -> order.getId().equals(savedOrder.getId()))
-                .findFirst();
-
-        assertThat(foundOrder).isPresent();
-        assertThat(foundOrder.get().getOrderLineItems()).usingRecursiveFieldByFieldElementComparator()
-                .containsOnly(savedOrderLineItem);
+        assertAll(
+                () -> assertThat(orders).usingRecursiveFieldByFieldElementComparator()
+                        .usingElementComparatorIgnoringFields("orderLineItems")
+                        .containsOnly(savedOrder),
+                () -> assertThat(orders.get(0).getOrderLineItems()).usingRecursiveFieldByFieldElementComparator()
+                        .containsOnly(savedOrderLineItem)
+        );
     }
 
     @Test

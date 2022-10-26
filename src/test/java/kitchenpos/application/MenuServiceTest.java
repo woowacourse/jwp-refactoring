@@ -7,10 +7,10 @@ import static kitchenpos.support.ProductFixture.PRODUCT_PRICE_1000;
 import static kitchenpos.support.ProductFixture.PRODUCT_PRICE_10000;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ class MenuServiceTest extends ServiceTest {
         final Menu savedMenu = menuService.create(menu);
 
         // then
-        assertThat(savedMenu.getId()).isNotNull();
+        assertThat(savedMenu.getId()).isEqualTo(1L);
     }
 
     @Test
@@ -88,11 +88,12 @@ class MenuServiceTest extends ServiceTest {
         final List<Menu> menus = menuService.list();
 
         // then
-        final Optional<Menu> foundMenu = menus.stream()
-                .filter(menu -> menu.getId().equals(savedMenu.getId()))
-                .findFirst();
-        assertThat(foundMenu).isPresent();
-        assertThat(foundMenu.get().getMenuProducts()).usingElementComparatorIgnoringFields("seq")
-                .containsOnly(savedMenuProduct);
+        assertAll(
+                () ->  assertThat(menus).usingRecursiveFieldByFieldElementComparator()
+                        .usingElementComparatorIgnoringFields("menuProducts")
+                        .containsOnly(savedMenu),
+                () -> assertThat(menus.get(0).getMenuProducts()).usingRecursiveFieldByFieldElementComparator()
+                        .containsOnly(savedMenuProduct)
+        );
     }
 }

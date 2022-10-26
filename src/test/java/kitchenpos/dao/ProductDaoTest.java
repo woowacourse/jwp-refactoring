@@ -20,7 +20,7 @@ class ProductDaoTest extends JdbcDaoTest {
         final Product savedProduct = productDao.save(product);
 
         // then
-        assertThat(savedProduct.getId()).isNotNull();
+        assertThat(savedProduct.getId()).isEqualTo(1L);
     }
 
     @Test
@@ -42,8 +42,6 @@ class ProductDaoTest extends JdbcDaoTest {
     @Test
     void 제품을_모두_조회할_수_있다() {
         // given
-        final int alreadyExistCount = productDao.findAll()
-                .size();
         final Product savedProduct = 제품을_저장한다(PRODUCT_PRICE_10000.생성());
 
         // when
@@ -51,7 +49,6 @@ class ProductDaoTest extends JdbcDaoTest {
 
         // then
         assertThat(products).usingFieldByFieldElementComparator()
-                .hasSize(alreadyExistCount + 1)
-                .contains(savedProduct);
+                .containsOnly(savedProduct);
     }
 }

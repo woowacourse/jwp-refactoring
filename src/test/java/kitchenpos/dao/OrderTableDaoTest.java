@@ -22,7 +22,7 @@ class OrderTableDaoTest extends JdbcDaoTest {
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         // then
-        assertThat(savedOrderTable.getId()).isNotNull();
+        assertThat(savedOrderTable.getId()).isEqualTo(1L);
     }
 
     @Test
@@ -55,7 +55,6 @@ class OrderTableDaoTest extends JdbcDaoTest {
 
         // then
         assertThat(orderTables).usingFieldByFieldElementComparator()
-                .hasSize(1)
                 .containsOnly(savedOrderTable);
     }
     
@@ -70,7 +69,6 @@ class OrderTableDaoTest extends JdbcDaoTest {
 
         // then
         assertThat(orderTables).usingFieldByFieldElementComparator()
-                .hasSize(1)
                 .containsOnly(savedOrderTable);
     }
 }

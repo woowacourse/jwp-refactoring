@@ -20,7 +20,7 @@ class ProductServiceTest extends ServiceTest {
         final Product savedProduct = productService.create(product);
 
         // then
-        assertThat(savedProduct.getId()).isNotNull();
+        assertThat(savedProduct.getId()).isEqualTo(1L);
     }
 
     @Test

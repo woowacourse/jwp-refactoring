@@ -27,7 +27,7 @@ class OrderLineItemDaoTest extends JdbcDaoTest {
         final OrderLineItem savedOrderLineItem = orderLineItemDao.save(orderLineItem);
 
         // then
-        assertThat(savedOrderLineItem.getSeq()).isNotNull();
+        assertThat(savedOrderLineItem.getSeq()).isEqualTo(1L);
     }
 
     @Test
@@ -48,8 +48,6 @@ class OrderLineItemDaoTest extends JdbcDaoTest {
     @Test
     void 모든_주문항목을_조회한다() {
         // given
-        final int alreadyExistCount = orderLineItemDao.findAll()
-                .size();
         final Long menuId = 메뉴_저장();
         final Long orderId = 주문_저장();
         final OrderLineItem savedOrderLineItem = 주문항목을_저장한다(ORDER_LINE_ITEM_1.생성(orderId, menuId));
@@ -59,8 +57,7 @@ class OrderLineItemDaoTest extends JdbcDaoTest {
 
         // then
         assertThat(orderLineItems).usingRecursiveFieldByFieldElementComparator()
-                .hasSize(alreadyExistCount + 1)
-                .contains(savedOrderLineItem);
+                .containsOnly(savedOrderLineItem);
     }
 
     @Test
@@ -75,7 +72,6 @@ class OrderLineItemDaoTest extends JdbcDaoTest {
 
         // then
         assertThat(orderLineItems).usingRecursiveFieldByFieldElementComparator()
-                .hasSize(1)
                 .containsOnly(savedOrderLineItem);
     }
 

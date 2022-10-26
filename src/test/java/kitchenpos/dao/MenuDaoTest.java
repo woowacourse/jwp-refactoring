@@ -22,7 +22,7 @@ class MenuDaoTest extends JdbcDaoTest {
         final Menu savedMenu = menuDao.save(menu);
 
         // then
-        assertThat(savedMenu.getId()).isNotNull();
+        assertThat(savedMenu.getId()).isEqualTo(1L);
     }
 
     @Test
@@ -39,15 +39,13 @@ class MenuDaoTest extends JdbcDaoTest {
         assertAll(
                 () -> assertThat(foundMenu.getName()).isEqualTo("메뉴1"),
                 () -> assertThat(foundMenu.getPrice().intValue()).isEqualTo(10000),
-                () -> assertThat(foundMenu.getMenuGroupId()).isEqualTo(menuGroupId)
+                () -> assertThat(foundMenu.getMenuGroupId()).isEqualTo(1L)
         );
     }
 
     @Test
     void 모든_메뉴를_조회할_수_있다() {
         // given
-        final int alreadyExistCount = menuDao.findAll()
-                .size();
         final long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
         final Menu savedMenu = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId));
 
@@ -56,8 +54,7 @@ class MenuDaoTest extends JdbcDaoTest {
 
         // then
         assertThat(menus).usingFieldByFieldElementComparator()
-                .hasSize(alreadyExistCount + 1)
-                .contains(savedMenu);
+                .containsOnly(savedMenu);
     }
 
     @Test

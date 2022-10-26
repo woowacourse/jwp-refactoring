@@ -6,11 +6,9 @@ import static kitchenpos.support.OrderTableFixture.ORDER_TABLE_NOT_EMPTY_1;
 import static kitchenpos.support.TableGroupFixture.TABLE_GROUP_NOW;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -32,7 +30,7 @@ class TableGroupServiceTest extends ServiceTest {
         final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         // then
-        assertThat(savedTableGroup.getId()).isNotNull();
+        assertThat(savedTableGroup.getId()).isEqualTo(1L);
     }
 
     @Test
@@ -97,15 +95,10 @@ class TableGroupServiceTest extends ServiceTest {
         tableGroupService.ungroup(tableGroupId);
 
         // then
-        final Optional<OrderTable> foundOrderTable1 = tableService.list()
-                .stream()
-                .filter(orderTable -> orderTable.getId().equals(alreadySavedOrderTable1.getId()))
-                .findFirst();
-
-        assertAll(
-                () -> assertThat(foundOrderTable1).isPresent(),
-                () -> assertThat(foundOrderTable1.get().getTableGroupId()).isNull()
-        );
+        final List<OrderTable> orderTables = tableService.list();
+        assertThat(orderTables)
+                .extracting("tableGroupId")
+                .containsExactly(null, null);
     }
 
     @ParameterizedTest

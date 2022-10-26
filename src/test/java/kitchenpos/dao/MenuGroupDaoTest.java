@@ -16,7 +16,7 @@ class MenuGroupDaoTest extends JdbcDaoTest {
         final MenuGroup savedMenuGroup = menuGroupDao.save(MENU_GROUP_1.생성());
 
         // then
-        assertThat(savedMenuGroup.getId()).isNotNull();
+        assertThat(savedMenuGroup.getId()).isEqualTo(1L);
     }
 
     @Test
@@ -35,8 +35,6 @@ class MenuGroupDaoTest extends JdbcDaoTest {
     @Test
     void 모든_메뉴그룹을_조회할_수_있다() {
         // given
-        final int alreadyExistCount = menuGroupDao.findAll()
-                .size();
         final MenuGroup savedMenuGroup = 메뉴그룹을_저장한다(MENU_GROUP_1.생성());
 
         // when
@@ -44,8 +42,7 @@ class MenuGroupDaoTest extends JdbcDaoTest {
 
         // then
         assertThat(menuGroups).usingFieldByFieldElementComparator()
-                .hasSize(alreadyExistCount + 1)
-                .contains(savedMenuGroup);
+                .containsOnly(savedMenuGroup);
     }
 
     @Test
