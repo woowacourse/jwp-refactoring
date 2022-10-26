@@ -10,12 +10,15 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
 @Sql("/init_schema.sql")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public abstract class ServiceTest {
 
     @Autowired
