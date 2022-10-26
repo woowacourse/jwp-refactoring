@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import kitchenpos.domain.Product;
-import kitchenpos.support.ClassConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +30,7 @@ class ProductServiceTest extends ServiceTest {
 
         @BeforeEach
         void setUp() {
-            product = ClassConstructor.product(PRODUCT_ID, PRODUCT_NAME, BigDecimal.valueOf(PRODUCT_PRICE));
+            product = new Product(PRODUCT_ID, PRODUCT_NAME, BigDecimal.valueOf(PRODUCT_PRICE));
         }
 
         @Test
@@ -53,7 +52,7 @@ class ProductServiceTest extends ServiceTest {
         @DisplayName("상품의 가격이 없으면, 예외를 던진다.")
         void fail_noPrice() {
             //given
-            product.setPrice(null);
+            product = new Product(PRODUCT_ID, PRODUCT_NAME, null);
 
             //when & then
             Assertions.assertThatThrownBy(() -> productService.create(product))
@@ -64,7 +63,7 @@ class ProductServiceTest extends ServiceTest {
         @DisplayName("상품의 가격이 0보다 작으면, 예외를 던진다.")
         void fail_zeroOrNegativePrice() {
             //given
-            product.setPrice(BigDecimal.valueOf(-1));
+            product = new Product(PRODUCT_ID, PRODUCT_NAME, BigDecimal.valueOf(-1));
 
             //when & then
             Assertions.assertThatThrownBy(() -> productService.create(product))

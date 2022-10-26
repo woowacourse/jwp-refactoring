@@ -8,18 +8,9 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 
 public class ClassConstructor {
-
-    public static Product product(long id, String name, BigDecimal price) {
-        Product product = new Product();
-        product.setId(id);
-        product.setName(name);
-        product.setPrice(price);
-        return product;
-    }
 
     public static MenuProduct menuProduct(Long seq, Long menuId, Long productId, long quantity) {
         MenuProduct menuProduct = new MenuProduct();

@@ -54,8 +54,8 @@ public class MenuServiceTest extends ServiceTest {
 
         @BeforeEach
         void setUp() {
-            productA = ClassConstructor.product(PRODUCT_A_ID, "상품A", BigDecimal.valueOf(PRODUCT_PRICE));
-            productB = ClassConstructor.product(PRODUCT_B_ID, "상품B", BigDecimal.valueOf(PRODUCT_PRICE));
+            productA = new Product(PRODUCT_A_ID, "상품A", BigDecimal.valueOf(PRODUCT_PRICE));
+            productB = new Product(PRODUCT_B_ID, "상품B", BigDecimal.valueOf(PRODUCT_PRICE));
 
             menuProductA = ClassConstructor.menuProduct(null, MENU_ID, PRODUCT_A_ID, 2);
             menuProductB = ClassConstructor.menuProduct(null, MENU_ID, PRODUCT_B_ID, 2);
@@ -135,10 +135,15 @@ public class MenuServiceTest extends ServiceTest {
         @DisplayName("메뉴의 가격보다 포함된 상품들의 총합이 싸면, 예외를 던진다.")
         void fail_sumIsCheaperThenPrice() {
             //given
-            productA.setPrice(BigDecimal.valueOf(100));
+            productA = new Product(PRODUCT_A_ID, "상품A", BigDecimal.valueOf(100));
             menuProductA.setQuantity(1);
-            productB.setPrice(BigDecimal.valueOf(100));
+            productB = new Product(PRODUCT_B_ID, "상품B", BigDecimal.valueOf(100));
             menuProductB.setQuantity(1);
+
+            given(productDao.findById(PRODUCT_A_ID))
+                    .willReturn(Optional.of(productA));
+            given(productDao.findById(PRODUCT_B_ID))
+                    .willReturn(Optional.of(productB));
 
             menu.setPrice(BigDecimal.valueOf(201));
 
@@ -176,10 +181,7 @@ public class MenuServiceTest extends ServiceTest {
 
             //when
             List<Menu> actual = menuService.list();
-            Menu actualMenu = actual.stream()
-                    .filter(it -> it.getId().equals(1L))
-                    .findFirst()
-                    .orElseThrow(IllegalArgumentException::new);
+            Menu actualMenu = actual.iterator().next();
 
             //then
             assertThat(actualMenu.getMenuProducts()).hasSize(2);
