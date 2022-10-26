@@ -8,16 +8,16 @@ public class OrderTables {
     private final List<OrderTable> orderTables;
 
     public OrderTables(List<OrderTable> orderTables) {
+        validate(orderTables);
         this.orderTables = orderTables;
     }
 
-    public static OrderTables ofNotGroupedOrderTables(List<OrderTable> orderTables) {
+    private static void validate(List<OrderTable> orderTables) {
         boolean isOrderTableOrGrouped = orderTables.stream()
                 .anyMatch(it -> !it.isEmpty() || Objects.nonNull(it.getTableGroupId()));
         if (isOrderTableOrGrouped) {
             throw new IllegalArgumentException();
         }
-        return new OrderTables(orderTables);
     }
 
     public void group(Long tableGroupId) {

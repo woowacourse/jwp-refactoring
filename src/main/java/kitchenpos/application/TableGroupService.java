@@ -45,7 +45,7 @@ public class TableGroupService {
         if (tableIds.size() != orderTables.size()) {
             throw new IllegalArgumentException();
         }
-        return OrderTables.ofNotGroupedOrderTables(orderTables);
+        return new OrderTables(orderTables);
     }
 
     @Transactional
