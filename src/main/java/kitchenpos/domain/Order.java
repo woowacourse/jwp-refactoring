@@ -32,12 +32,30 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public Long getId() {
-        return id;
+    public void addOrderLineItems(List<OrderLineItem> orderLineItems) {
+        validateItemSize(orderLineItems);
+        this.orderLineItems.addAll(orderLineItems);
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    private void validateItemSize(List<OrderLineItem> orderLineItems) {
+        if (orderLineItems.isEmpty()) {
+            throw new IllegalArgumentException("메뉴 상품이 1개 이상 있어야 합니다.");
+        }
+    }
+
+    public void updateStatus(String orderStatus) {
+        validateOrderStateComplete(this.orderStatus);
+        this.orderStatus = orderStatus;
+    }
+
+    private void validateOrderStateComplete(String orderStatus) {
+        if (OrderStatus.COMPLETION.name().equals(orderStatus)) {
+            throw new IllegalArgumentException("완료 주문은 상태를 변경할 수 없습니다.");
+        }
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public Long getOrderTableId() {
@@ -54,13 +72,5 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void addOrderLineItems(List<OrderLineItem> orderLineItems) {
-        this.orderLineItems.addAll(orderLineItems);
-    }
-
-    public void updateStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
     }
 }

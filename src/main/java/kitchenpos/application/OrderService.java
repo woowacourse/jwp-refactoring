@@ -3,12 +3,10 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -46,37 +44,54 @@ public class OrderService {
     public OrderResponse create(OrderRequest orderRequest) {
         List<OrderLineItemRequest> orderLineItemRequests = orderRequest.getOrderLineItems();
 
-        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
-            throw new IllegalArgumentException("메뉴 상품이 1개 이상 있어야 합니다.");
-        }
+        List<Long> menuIds = extractMenuIds(orderLineItemRequests);
+        validateMenuExist(orderLineItemRequests, menuIds);
 
-        final List<Long> menuIds = orderLineItemRequests.stream()
-            .map(OrderLineItemRequest::getMenuId)
-            .collect(Collectors.toList());
+        OrderTable orderTable = getOrderTableById(orderRequest.getOrderTableId());
+        validateTableEmpty(orderTable);
 
-        if (orderLineItemRequests.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException("존재하지 않는 메뉴가 포함되어 있습니다.");
-        }
+        Order savedOrder = createOrder(orderTable);
+        addItems(orderLineItemRequests, savedOrder, savedOrder.getId());
+        return OrderResponse.from(savedOrder);
+    }
 
-        OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId())
+    private OrderTable getOrderTableById(Long tableId) {
+        return orderTableDao.findById(tableId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
+    }
 
+    private void validateTableEmpty(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("빈 테이블에선 주문을 생성할 수 없습니다.");
         }
+    }
 
-        Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
+    private Order createOrder(OrderTable orderTable) {
+        return orderDao.save(new Order(
+            orderTable.getId(),
+            OrderStatus.COOKING.name(),
+            LocalDateTime.now())
+        );
+    }
 
-        Order savedOrder = orderDao.save(order);
+    private List<Long> extractMenuIds(List<OrderLineItemRequest> orderLineItemRequests) {
+        return orderLineItemRequests.stream()
+            .map(OrderLineItemRequest::getMenuId)
+            .collect(Collectors.toList());
+    }
 
-        Long orderId = savedOrder.getId();
+    private void addItems(List<OrderLineItemRequest> orderLineItemRequests, Order savedOrder, Long orderId) {
         List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
             savedOrderLineItems.add(orderLineItemDao.save(orderLineItemRequest.toEntity(orderId)));
         }
         savedOrder.addOrderLineItems(savedOrderLineItems);
+    }
 
-        return OrderResponse.from(savedOrder);
+    private void validateMenuExist(List<OrderLineItemRequest> orderLineItemRequests, List<Long> menuIds) {
+        if (orderLineItemRequests.size() != menuDao.countByIdIn(menuIds)) {
+            throw new IllegalArgumentException("존재하지 않는 메뉴가 포함되어 있습니다.");
+        }
     }
 
     public List<OrderResponse> list() {
@@ -93,19 +108,16 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(Long orderId, OrderStatus orderStatus) {
-        Order savedOrder = orderDao.findById(orderId)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
-
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException("완료 주문은 상태를 변경할 수 없습니다.");
-        }
+        Order savedOrder = getOrderById(orderId);
 
         savedOrder.updateStatus(orderStatus.name());
-
         orderDao.save(savedOrder);
-
         savedOrder.addOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
-
         return OrderResponse.from(savedOrder);
+    }
+
+    private Order getOrderById(Long orderId) {
+        return orderDao.findById(orderId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
     }
 }
