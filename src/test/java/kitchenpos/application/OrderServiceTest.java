@@ -98,7 +98,7 @@ class OrderServiceTest {
                 () -> orderService.create(generateOrder(orderTable.getId(), List.of(orderLineItem, orderLineItem))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-    
+
     @Test
     void orderTable이_비어있는_경우_예외를_던진다() {
         MenuGroup menuGroup = menuGroupService.create(한마리메뉴());

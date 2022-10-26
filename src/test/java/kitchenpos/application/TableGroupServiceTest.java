@@ -107,7 +107,7 @@ class TableGroupServiceTest {
         assertThatThrownBy(() -> tableGroupService.create(generateTableGroup(List.of(테이블_1번, 테이블_2번, 테이블_3번))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-    
+
     @Test
     void tableGroup을_해제한다() {
         OrderTable 테이블_1번 = tableService.create(테이블_1번());

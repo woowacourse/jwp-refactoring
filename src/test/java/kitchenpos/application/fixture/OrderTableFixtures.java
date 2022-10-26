@@ -20,7 +20,7 @@ public class OrderTableFixtures {
     }
 
     public static final OrderTable 테이블_3번() {
-        return generateOrderTable( 0, true);
+        return generateOrderTable(0, true);
     }
 
     public static final OrderTable 테이블_4번() {
