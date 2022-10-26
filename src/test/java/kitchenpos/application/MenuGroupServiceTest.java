@@ -14,10 +14,10 @@ class MenuGroupServiceTest {
         @Test
         void 요청을_할_수_있다() {
             // given
-            MenuGroup menuGroup = new MenuGroup("세트 1번");
+            final MenuGroup menuGroup = new MenuGroup("세트 1번");
 
             // when
-            MenuGroup extract = menuGroupService.create(menuGroup);
+            final MenuGroup extract = menuGroupService.create(menuGroup);
 
             // then
             assertThat(extract).isNotNull();
@@ -29,11 +29,11 @@ class MenuGroupServiceTest {
         @Test
         void 요청을_할_수_있다() {
             // given
-            MenuGroup menuGroup = new MenuGroup("두마리메뉴");
+            final MenuGroup menuGroup = new MenuGroup("두마리메뉴");
             menuGroupService.create(menuGroup);
 
             // when
-            List<MenuGroup> extract = menuGroupService.list();
+            final List<MenuGroup> extract = menuGroupService.list();
 
             // then
             assertThat(extract).hasSize(1);

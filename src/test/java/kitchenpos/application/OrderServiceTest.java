@@ -24,15 +24,15 @@ class OrderServiceTest extends IntegrationTest {
         @Test
         void 요청을_할_수_있다() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-            Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
-            Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
+            final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
+            final Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            final Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
             createMenu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
-            Menu saveMenu = menuService.create(createMenu);
-            OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+            final Menu saveMenu = menuService.create(createMenu);
+            final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
 
             // when
-            Order extract = orderService.create(new Order(orderTable.getId(), LocalDateTime.now(),
+            final Order extract = orderService.create(new Order(orderTable.getId(), LocalDateTime.now(),
                 List.of(new OrderLineItem(saveMenu.getId(), 1))));
 
             // then
@@ -42,11 +42,11 @@ class OrderServiceTest extends IntegrationTest {
         @Test
         void 요청시_주문할_주문_아이템을_입력하지_않으면_예외가_발생한다() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-            Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
-            Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
+            final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
+            final Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            final Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
             createMenu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
-            OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+            final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
 
             // when & then
             assertThatThrownBy(() -> orderService.create(new Order(orderTable.getId(), LocalDateTime.now(), null)));
@@ -57,8 +57,8 @@ class OrderServiceTest extends IntegrationTest {
             // given
             menuGroupService.create(new MenuGroup("1인 메뉴"));
             productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
-            Long notRegisterMenuId = 100L;
-            OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+            final Long notRegisterMenuId = 100L;
+            final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
 
             // when & then
             assertThatThrownBy(
@@ -70,12 +70,12 @@ class OrderServiceTest extends IntegrationTest {
         @Test
         void 요청시_존재하지_않는_주문_테이블로_요청하는_경우_예외가_발생한다() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-            Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
-            Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
+            final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
+            final Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            final Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
             createMenu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
-            Menu saveMenu = menuService.create(createMenu);
-            Long notRegisterOrderTableId = 100L;
+            final Menu saveMenu = menuService.create(createMenu);
+            final Long notRegisterOrderTableId = 100L;
 
             // when & then
             assertThatThrownBy(() -> orderService.create(new Order(notRegisterOrderTableId, LocalDateTime.now(),
@@ -89,16 +89,16 @@ class OrderServiceTest extends IntegrationTest {
         @Test
         void 요청을_할_수_있다() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-            Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
-            Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
+            final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
+            final Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            final Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
             createMenu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
-            Menu saveMenu = menuService.create(createMenu);
-            OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
-            Order order = orderService.create(new Order(orderTable.getId(), LocalDateTime.now(), List.of(new OrderLineItem(saveMenu.getId(), 1))));
+            final Menu saveMenu = menuService.create(createMenu);
+            final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+            final Order order = orderService.create(new Order(orderTable.getId(), LocalDateTime.now(), List.of(new OrderLineItem(saveMenu.getId(), 1))));
 
             // when
-            List<Order> extract = orderService.list();
+            final List<Order> extract = orderService.list();
 
             // then
             assertThat(extract).hasSize(1);
@@ -110,16 +110,16 @@ class OrderServiceTest extends IntegrationTest {
         @Test
         void 요청을_할_수_있다() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-            Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
-            Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
+            final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
+            final Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            final Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
             createMenu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
-            Menu saveMenu = menuService.create(createMenu);
-            OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
-            Order order = orderService.create(new Order(orderTable.getId(), LocalDateTime.now(), List.of(new OrderLineItem(saveMenu.getId(), 1))));
+            final Menu saveMenu = menuService.create(createMenu);
+            final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+            final Order order = orderService.create(new Order(orderTable.getId(), LocalDateTime.now(), List.of(new OrderLineItem(saveMenu.getId(), 1))));
 
             // when
-            Order extract = orderService.changeOrderStatus(order.getId(),
+            final Order extract = orderService.changeOrderStatus(order.getId(),
                 new Order(orderTable.getId(), OrderStatus.MEAL.name()));
 
             // then
@@ -129,13 +129,13 @@ class OrderServiceTest extends IntegrationTest {
         @Test
         void 요청시_주문이_완료_상태이면_예외가_발생한다() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-            Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
-            Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
+            final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
+            final Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            final Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
             createMenu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
-            Menu saveMenu = menuService.create(createMenu);
-            OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
-            Order order = orderService.create(new Order(orderTable.getId(), LocalDateTime.now(), List.of(new OrderLineItem(saveMenu.getId(), 1))));
+            final Menu saveMenu = menuService.create(createMenu);
+            final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+            final Order order = orderService.create(new Order(orderTable.getId(), LocalDateTime.now(), List.of(new OrderLineItem(saveMenu.getId(), 1))));
             orderService.changeOrderStatus(order.getId(), new Order(orderTable.getId(), OrderStatus.COMPLETION.name()));
 
             // when & then
@@ -146,13 +146,13 @@ class OrderServiceTest extends IntegrationTest {
         @Test
         void 요청시_존재하지_않는_주문_상태로_변경_요청하는_경우_예외가_발생한다() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-            Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
-            Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
+            final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
+            final Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            final Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
             createMenu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
-            Menu saveMenu = menuService.create(createMenu);
-            OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
-            Order order = orderService.create(new Order(orderTable.getId(), LocalDateTime.now(), List.of(new OrderLineItem(saveMenu.getId(), 1))));
+            final Menu saveMenu = menuService.create(createMenu);
+            final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+            final Order order = orderService.create(new Order(orderTable.getId(), LocalDateTime.now(), List.of(new OrderLineItem(saveMenu.getId(), 1))));
 
             // when & then
             assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), new Order(orderTable.getId(), "Not Registered OrderStatus")))

@@ -26,10 +26,10 @@ class TableServiceTest {
         @Test
         void 요청을_할_수_있다() {
             // given
-            OrderTable orderTable = new OrderTable(null, 0, true);
+            final OrderTable orderTable = new OrderTable(null, 0, true);
 
             // when
-            OrderTable extract = tableService.create(orderTable);
+            final OrderTable extract = tableService.create(orderTable);
 
             // then
             assertThat(extract).isNotNull();
@@ -41,11 +41,11 @@ class TableServiceTest {
         @Test
         void 요청을_할_수_있다() {
             // given
-            OrderTable orderTable = new OrderTable(null, 0, true);
+            final OrderTable orderTable = new OrderTable(null, 0, true);
             tableService.create(orderTable);
 
             // when
-            List<OrderTable> extract = tableService.list();
+            final List<OrderTable> extract = tableService.list();
 
             // then
             assertThat(extract).hasSize(1);
@@ -58,13 +58,13 @@ class TableServiceTest {
         @CsvSource(value = {"COOKING", "MEAL"})
         void 요청에서_테이블이_비어있는_상태로_변경할때_주문의_상태가_완료상태가_아니면_예외가_발생한다(final OrderStatus orderStatus) {
             // given
-            MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-            Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
-            Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
+            final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
+            final Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            final Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
             createMenu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
-            Menu saveMenu = menuService.create(createMenu);
-            OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
-            Order order = orderService.create(new Order(orderTable.getId(), orderStatus.name(),
+            final Menu saveMenu = menuService.create(createMenu);
+            final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+            final Order order = orderService.create(new Order(orderTable.getId(), orderStatus.name(),
                 LocalDateTime.now(), List.of(new OrderLineItem(saveMenu.getId(), 1))));
 
             // when & then
@@ -76,10 +76,10 @@ class TableServiceTest {
         @Test
         void 요청에서_테이블의_손님의_수를_변경할_수_있다() {
             // given
-            OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+            final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
 
             // when
-            OrderTable extract = tableService.changeNumberOfGuests(orderTable.getId(), new OrderTable(null, 3, false));
+            final OrderTable extract = tableService.changeNumberOfGuests(orderTable.getId(), new OrderTable(null, 3, false));
 
             // then
             assertThat(extract.getNumberOfGuests()).isEqualTo(3);
@@ -88,7 +88,7 @@ class TableServiceTest {
         @Test
         void 요청에서_테이블의_손님의_수를_0원_미만으로_변경하면_예외가_발생한다() {
             // given
-            OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+            final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), new OrderTable(null, -1, false)))
@@ -98,7 +98,7 @@ class TableServiceTest {
         @Test
         void 요청에서_비어있는_테이블에_손님의_수를_변경할_경우_예외가_발생한다() {
             // given
-            OrderTable extract = tableService.create(new OrderTable(null, 0, true));
+            final OrderTable extract = tableService.create(new OrderTable(null, 0, true));
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(extract.getId(), new OrderTable(null, 1, true)))

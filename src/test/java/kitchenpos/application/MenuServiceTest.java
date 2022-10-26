@@ -21,13 +21,13 @@ class MenuServiceTest {
         @Test
         void 요청을_할_수_있다() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-            Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
-            Menu menu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
+            final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
+            final Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            final Menu menu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
             menu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
 
             // when
-            Menu extract = menuService.create(menu);
+            final Menu extract = menuService.create(menu);
 
             // then
             assertThat(extract).isNotNull();
@@ -36,9 +36,9 @@ class MenuServiceTest {
         @Test
         void 요청에서_메뉴_금액이_0원_미만인_경우_예외가_발생한다() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-            Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
-            Menu menu = new Menu("짜장면", BigDecimal.valueOf(-1), menuGroup.getId());
+            final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
+            final Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            final Menu menu = new Menu("짜장면", BigDecimal.valueOf(-1), menuGroup.getId());
             menu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
 
             // when & then
@@ -49,9 +49,9 @@ class MenuServiceTest {
         @Test
         void 요청에서_메뉴_금액이_NULL_일_경우_예외가_발생한다() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-            Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
-            Menu menu = new Menu("짜장면", null, menuGroup.getId());
+            final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
+            final Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            final Menu menu = new Menu("짜장면", null, menuGroup.getId());
             menu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
 
             // when & then
@@ -62,9 +62,9 @@ class MenuServiceTest {
         @Test
         void 요청에서_메뉴를_추가할때_메뉴의_상품_번호가_존재하지_않는_번호일_경우_예외가_발생한다() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-            Menu menu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
-            Long notRegisterProductId = 100L;
+            final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
+            final Menu menu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
+            final Long notRegisterProductId = 100L;
             menu.addMenuProducts(List.of(new MenuProduct(1L, null, notRegisterProductId, 1)));
 
             // when & then
@@ -75,8 +75,8 @@ class MenuServiceTest {
         @Test
         void 요청에서_추가한_메뉴가_메뉴_그룹에_속해있지_않은경우_예외가_발생한다() {
             // given
-            Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(0)));
-            Menu menu = new Menu("짜장면", BigDecimal.valueOf(1000), null);
+            final Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(0)));
+            final Menu menu = new Menu("짜장면", BigDecimal.valueOf(1000), null);
             menu.addMenuProducts(List.of(new MenuProduct(1L, menu.getId(), product.getId(), 1)));
 
             // when & then
@@ -87,9 +87,9 @@ class MenuServiceTest {
         @Test
         void 요청에서_추가한_메뉴가격의_합이_상품가격의_합보다_높을경우_예외가_발생한다() {
             // given
-            MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-            Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(0)));
-            Menu menu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
+            final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
+            final Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(0)));
+            final Menu menu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
             menu.addMenuProducts(List.of(new MenuProduct(1L, menu.getId(), product.getId(), 1)));
 
             // when & then

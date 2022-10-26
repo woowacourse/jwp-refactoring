@@ -16,10 +16,10 @@ class ProductServiceTest {
         @Test
         void 요청을_할_수_있다() {
             // given
-            Product product = new Product("치킨", BigDecimal.valueOf(1000));
+            final Product product = new Product("치킨", BigDecimal.valueOf(1000));
 
             // when
-            Product extract = productService.create(product);
+            final Product extract = productService.create(product);
 
             // then
             assertThat(extract).isNotNull();
@@ -28,7 +28,7 @@ class ProductServiceTest {
         @Test
         void 요청에서_가격이_음수일_경우_예외가_발생한다() {
             // given
-            Product product = new Product("짜장면", BigDecimal.valueOf(-1));
+            final Product product = new Product("짜장면", BigDecimal.valueOf(-1));
 
             // when & then
             assertThatThrownBy(() -> productService.create(product))
@@ -38,7 +38,7 @@ class ProductServiceTest {
         @Test
         void 요청에서_가격이_NULL_일_경우_예외가_발생한다() {
             // given
-            Product product = new Product("짜장면", null);
+            final Product product = new Product("짜장면", null);
 
             // when & then
             assertThatThrownBy(() -> productService.create(product))
@@ -51,11 +51,11 @@ class ProductServiceTest {
         @Test
         void 요청을_할_수_있다() {
             // given
-            Product product = new Product("짜장면", BigDecimal.valueOf(1000));
+            final Product product = new Product("짜장면", BigDecimal.valueOf(1000));
             productService.create(product);
 
             // when
-            List<Product> extract = productService.list();
+            final List<Product> extract = productService.list();
 
             // then
             assertThat(extract).hasSize(1);
