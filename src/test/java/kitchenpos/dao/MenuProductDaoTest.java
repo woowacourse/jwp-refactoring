@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
@@ -12,6 +11,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.fixtures.MenuFixtures;
+import kitchenpos.fixtures.ProductFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +39,7 @@ class MenuProductDaoTest {
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuDao.save(menu);
 
-        final Product product = new Product();
-        product.setName("듀오 치킨");
-        product.setPrice(new BigDecimal(3000));
+        final Product product = ProductFixtures.CHICKEN.create();
         final Product savedProduct = productDao.save(product);
 
         final MenuProduct menuProduct = new MenuProduct();
@@ -65,9 +63,7 @@ class MenuProductDaoTest {
     @DisplayName("존재하지 않는 메뉴로 메뉴 상품을 저장하려면 예외가 발생한다")
     void saveExceptionNotExistMenu() {
         // given
-        final Product product = new Product();
-        product.setName("듀오 치킨");
-        product.setPrice(new BigDecimal(3000));
+        final Product product = ProductFixtures.CHICKEN.create();
         final Product savedProduct = productDao.save(product);
 
         final MenuProduct menuProduct = new MenuProduct();
@@ -104,9 +100,7 @@ class MenuProductDaoTest {
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuDao.save(menu);
 
-        final Product product = new Product();
-        product.setName("듀오 치킨");
-        product.setPrice(new BigDecimal(3000));
+        final Product product = ProductFixtures.CHICKEN.create();
         final Product savedProduct = productDao.save(product);
 
         final MenuProduct menuProduct = new MenuProduct();
@@ -142,9 +136,7 @@ class MenuProductDaoTest {
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuDao.save(menu);
 
-        final Product product = new Product();
-        product.setName("듀오 치킨");
-        product.setPrice(new BigDecimal(3000));
+        final Product product = ProductFixtures.CHICKEN.create();
         final Product savedProduct = productDao.save(product);
 
         final MenuProduct menuProduct = new MenuProduct();

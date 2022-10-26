@@ -12,10 +12,7 @@ public class ProductCreateRequest {
     }
 
     public Product toProduct() {
-        final Product product = new Product();
-        product.setName(name);
-        product.setPrice(new BigDecimal(price));
-        return product;
+        return new Product(null, name, new BigDecimal(price));
     }
 
     public String getName() {

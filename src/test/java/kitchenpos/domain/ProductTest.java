@@ -11,10 +11,8 @@ class ProductTest {
     @Test
     @DisplayName("수량에 따른 전체 가격을 구한다")
     void calculateTotalPrice() {
-        final Product product = new Product();
-        product.setName("치킨");
-        product.setPrice(new BigDecimal(10_000));
-
+        final Product product = new Product(null, "치킨", new BigDecimal(10_000));
+        
         final BigDecimal totalPrice = product.calculateTotalPrice(2);
 
         assertThat(totalPrice).isEqualByComparingTo(new BigDecimal(20_000));

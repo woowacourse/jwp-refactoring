@@ -27,9 +27,7 @@ class ProductDaoTest {
     @DisplayName("상품을 저장한다")
     void save() {
         // given
-        final Product product = new Product();
-        product.setName("듀오 치킨");
-        product.setPrice(new BigDecimal(3000));
+        final Product product = new Product(null, "듀오 치킨", new BigDecimal(3000));
 
         // when
         final Product savedProduct = productDao.save(product);
@@ -46,9 +44,7 @@ class ProductDaoTest {
     @DisplayName("id로 상품을 조회한다")
     void findById() {
         // given
-        final Product product = new Product();
-        product.setName("듀오 치킨");
-        product.setPrice(new BigDecimal(3000));
+        final Product product = new Product(null, "듀오 치킨", new BigDecimal(3000));
         final Product savedProduct = productDao.save(product);
 
         // when
@@ -74,9 +70,7 @@ class ProductDaoTest {
     @DisplayName("모든 상품을 조회한다")
     void findAll() {
         // given
-        final Product product = new Product();
-        product.setName("듀오 치킨");
-        product.setPrice(new BigDecimal(3000));
+        final Product product = new Product(null, "듀오 치킨", new BigDecimal(3000));
         final Product savedProduct = productDao.save(product);
 
         // when
