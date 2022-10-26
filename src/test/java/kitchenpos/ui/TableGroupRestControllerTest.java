@@ -1,5 +1,7 @@
 package kitchenpos.ui;
 
+import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
+import static kitchenpos.fixture.TableGroupFixture.createTableGroup;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -7,10 +9,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Arrays;
 import kitchenpos.application.TableGroupService;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,9 +29,8 @@ public class TableGroupRestControllerTest extends ControllerTest {
     @Test
     public void create() throws Exception {
         // given
-        TableGroup tableGroup = new TableGroup(List.of(new OrderTable(1L), new OrderTable(2L)));
-        given(tableGroupService.create(any()))
-                .willReturn(new TableGroup(1L, LocalDateTime.now(), List.of(new OrderTable(1L), new OrderTable(2L))));
+        TableGroup tableGroup = createTableGroup(Arrays.asList(createOrderTable(1L), createOrderTable(2L)));
+        given(tableGroupService.create(any())).willReturn(createTableGroup(1L));
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/table-groups")

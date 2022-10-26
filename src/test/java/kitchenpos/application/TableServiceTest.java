@@ -1,9 +1,11 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
@@ -27,14 +29,14 @@ class TableServiceTest {
     @Test
     void create_success() {
         // given
-        OrderTable orderTable = new OrderTable(4, true);
+        OrderTable orderTable = createOrderTable(4, true);
 
         // when
         OrderTable savedOrderTable = tableService.create(orderTable);
 
         // then
         OrderTable dbOrderTable = tableDao.findById(savedOrderTable.getId())
-                .orElseThrow();
+                .orElseThrow(NoSuchElementException::new);
         assertThat(dbOrderTable.getId()).isEqualTo(savedOrderTable.getId());
     }
 
@@ -42,8 +44,7 @@ class TableServiceTest {
     @Test
     void list_success() {
         // given
-        OrderTable orderTable = new OrderTable(4, true);
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTable savedOrderTable = tableDao.save(createOrderTable(4, true));
 
         // when
         List<OrderTable> tables = tableService.list();
@@ -59,15 +60,14 @@ class TableServiceTest {
     @Test
     void changeEmpty_success() {
         // given
-        OrderTable orderTable = new OrderTable(4, false);
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTable savedOrderTable = tableDao.save(createOrderTable(4, false));
 
         // when
-        tableService.changeEmpty(savedOrderTable.getId(), new OrderTable(true));
+        tableService.changeEmpty(savedOrderTable.getId(), createOrderTable(true));
 
         // then
         OrderTable changedTable = tableDao.findById(savedOrderTable.getId())
-                .orElseThrow();
+                .orElseThrow(NoSuchElementException::new);
         assertThat(changedTable.isEmpty()).isTrue();
     }
 
@@ -75,16 +75,15 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuests_success() {
         // given
-        OrderTable orderTable = new OrderTable(4, false);
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTable savedOrderTable = tableDao.save(createOrderTable(4, false));
 
         // when
         int numberOfGuests = 3;
-        tableService.changeNumberOfGuests(savedOrderTable.getId(), new OrderTable(numberOfGuests));
+        tableService.changeNumberOfGuests(savedOrderTable.getId(), createOrderTable(numberOfGuests));
 
         // then
         OrderTable changedTable = tableDao.findById(savedOrderTable.getId())
-                .orElseThrow();
+                .orElseThrow(NoSuchElementException::new);
         assertThat(changedTable.getNumberOfGuests()).isEqualTo(numberOfGuests);
     }
 
@@ -92,11 +91,10 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuests_fail() {
         // given
-        OrderTable orderTable = new OrderTable(4, false);
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTable savedOrderTable = tableDao.save(createOrderTable(4, false));
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), new OrderTable(-1)))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), createOrderTable(-1)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

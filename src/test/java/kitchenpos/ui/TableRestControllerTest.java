@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -27,9 +28,8 @@ public class TableRestControllerTest extends ControllerTest {
     @Test
     public void create() throws Exception {
         // given
-        OrderTable orderTable = new OrderTable(0, true);
-        given(tableService.create(any()))
-                .willReturn(new OrderTable(1L));
+        OrderTable orderTable = createOrderTable(0, true);
+        given(tableService.create(any())).willReturn(createOrderTable(1L));
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/tables")
@@ -59,7 +59,7 @@ public class TableRestControllerTest extends ControllerTest {
     @Test
     public void changeEmpty() throws Exception {
         // given
-        OrderTable orderTable = new OrderTable(true);
+        OrderTable orderTable = createOrderTable(true);
 
         // when
         ResultActions perform = mockMvc.perform(put("/api/tables/1/empty")
@@ -76,7 +76,7 @@ public class TableRestControllerTest extends ControllerTest {
     @Test
     public void changeNumberOfGuests() throws Exception {
         // given
-        OrderTable orderTable = new OrderTable(4);
+        OrderTable orderTable = createOrderTable(4);
 
         // when
         ResultActions perform = mockMvc.perform(put("/api/tables/1/number-of-guests")

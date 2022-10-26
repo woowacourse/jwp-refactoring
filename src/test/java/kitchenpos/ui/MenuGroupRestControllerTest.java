@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -26,8 +27,8 @@ public class MenuGroupRestControllerTest extends ControllerTest {
     @Test
     public void create() throws Exception {
         // given
-        MenuGroup requestBody = new MenuGroup("추천메뉴");
-        given(menuGroupService.create(any())).willReturn(new MenuGroup(1L, "추천메뉴"));
+        MenuGroup requestBody = createMenuGroup("추천메뉴");
+        given(menuGroupService.create(any())).willReturn(createMenuGroup(1L, "추천메뉴"));
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/menu-groups")

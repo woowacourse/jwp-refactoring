@@ -1,5 +1,7 @@
 package kitchenpos.ui;
 
+import static kitchenpos.fixture.MenuFixture.createMenu;
+import static kitchenpos.fixture.MenuProductFixture.createMenuProduct;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -7,11 +9,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.math.BigDecimal;
-import java.util.List;
+import java.util.Collections;
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -29,16 +29,9 @@ public class MenuRestControllerTest extends ControllerTest {
     @Test
     public void create() throws Exception {
         // given
-        Menu menu = new Menu("후라이드+후라이드",
-                new BigDecimal("19000"),
-                1L,
-                List.of(new MenuProduct(1L, 2)));
-        given(menuService.create(any()))
-                .willReturn(new Menu(1L,
-                        "후라이드+후라이드",
-                        new BigDecimal(19000),
-                        1L,
-                        List.of(new MenuProduct(1L, 2))));
+        Menu menu = createMenu("후라이드+후라이드", 19_000L, 1L,
+                Collections.singletonList(createMenuProduct(1L, 2)));
+        given(menuService.create(any())).willReturn(createMenu(1L));
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/menus")

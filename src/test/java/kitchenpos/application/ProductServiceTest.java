@@ -1,10 +1,11 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.ProductFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
@@ -28,14 +29,14 @@ class ProductServiceTest {
     @Test
     void create_success() {
         // given
-        Product product = new Product("강정치킨", new BigDecimal("17000"));
+        Product product = createProduct("강정치킨", 17_000L);
 
         // when
         Product savedProduct = productService.create(product);
 
         // then
         Product dbProduct = productDao.findById(savedProduct.getId())
-                .orElseThrow();
+                .orElseThrow(NoSuchElementException::new);
         assertThat(dbProduct.getName()).isEqualTo(product.getName());
     }
 
@@ -43,7 +44,7 @@ class ProductServiceTest {
     @Test
     void create_fail_if_price_is_null() {
         // given
-        Product product = new Product("강정치킨", null);
+        Product product = createProduct("강정치킨");
 
         // when, then
         assertThatThrownBy(() -> productService.create(product))
@@ -54,7 +55,7 @@ class ProductServiceTest {
     @Test
     void create_fail_if_price_is_negative() {
         // given
-        Product product = new Product("강정치킨", new BigDecimal("-1"));
+        Product product = createProduct("강정치킨", -1L);
 
         // when, then
         assertThatThrownBy(() -> productService.create(product))
@@ -65,8 +66,7 @@ class ProductServiceTest {
     @Test
     void list_success() {
         // given
-        Product product = new Product("강정치킨", new BigDecimal("17000"));
-        productService.create(product);
+        Product product = productDao.save(createProduct("강정치킨", 17_000L));
 
         // when
         List<Product> products = productService.list();

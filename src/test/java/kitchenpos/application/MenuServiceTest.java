@@ -1,16 +1,20 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuFixture.createMenu;
+import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
+import static kitchenpos.fixture.MenuProductFixture.createMenuProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,27 +29,25 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private MenuGroupService menuGroupService;
+    private MenuDao menuDao;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuGroupDao menuGroupDao;
 
     @DisplayName("메뉴를 생성한다.")
     @Test
     void create_success() {
         // given
-        MenuGroup newMenuGroup = menuGroupService.create(new MenuGroup("추천메뉴"));
-        Menu menu = new Menu("후라이드+후라이드",
-                new BigDecimal("19000"),
-                newMenuGroup.getId(),
-                List.of(new MenuProduct(1L, 2)));
+        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
+        Menu menu = createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
+                Collections.singletonList(createMenuProduct(1L, 2)));
 
         // when
         Menu savedMenu = menuService.create(menu);
 
         // then
         Menu dbMenu = menuDao.findById(savedMenu.getId())
-                .orElseThrow();
+                .orElseThrow(NoSuchElementException::new);
         assertAll(
                 () -> assertThat(dbMenu.getName()).isEqualTo(menu.getName()),
                 () -> assertThat(dbMenu.getPrice().compareTo(menu.getPrice())).isZero(),
@@ -57,11 +59,9 @@ class MenuServiceTest {
     @Test
     void create_fail_if_price_is_null() {
         // given
-        MenuGroup newMenuGroup = menuGroupService.create(new MenuGroup("추천메뉴"));
-        Menu menu = new Menu("후라이드+후라이드",
-                null,
-                newMenuGroup.getId(),
-                List.of(new MenuProduct(1L, 2)));
+        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
+        Menu menu = createMenu("후라이드+후라이드", newMenuGroup.getId(),
+                Collections.singletonList(createMenuProduct(1L, 2)));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -72,11 +72,9 @@ class MenuServiceTest {
     @Test
     void create_fail_if_price_is_negative() {
         // given
-        MenuGroup newMenuGroup = menuGroupService.create(new MenuGroup("추천메뉴"));
-        Menu menu = new Menu("후라이드+후라이드",
-                BigDecimal.valueOf(-0.01),
-                newMenuGroup.getId(),
-                List.of(new MenuProduct(1L, 2)));
+        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
+        Menu menu = createMenu("후라이드+후라이드", -1L, newMenuGroup.getId(),
+                Collections.singletonList(createMenuProduct(1L, 2)));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -87,11 +85,8 @@ class MenuServiceTest {
     @Test
     void create_fail_if_menuGroupId_is_null() {
         // given
-        MenuGroup newMenuGroup = menuGroupService.create(new MenuGroup("추천메뉴"));
-        Menu menu = new Menu("후라이드+후라이드",
-                new BigDecimal("19000"),
-                newMenuGroup.getId() + 1L,
-                List.of(new MenuProduct(1L, 2)));
+        Menu menu = createMenu("후라이드+후라이드", 19_000L, 9999999L,
+                Collections.singletonList(createMenuProduct(1L, 2)));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -102,12 +97,9 @@ class MenuServiceTest {
     @Test
     void list_success() {
         // given
-        MenuGroup newMenuGroup = menuGroupService.create(new MenuGroup("추천메뉴"));
-        Menu menu = new Menu("후라이드+후라이드",
-                new BigDecimal("19000"),
-                newMenuGroup.getId(),
-                List.of(new MenuProduct(1L, 2)));
-        menuService.create(menu);
+        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
+        Menu menu = menuDao.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
+                Collections.singletonList(createMenuProduct(1L, 2))));
 
         // when
         List<Menu> menus = menuService.list();

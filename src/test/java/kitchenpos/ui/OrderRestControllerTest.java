@@ -1,5 +1,7 @@
 package kitchenpos.ui;
 
+import static kitchenpos.fixture.OrderFixture.createOrder;
+import static kitchenpos.fixture.OrderLineItemFixture.createOrderLineItem;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -9,10 +11,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -30,9 +32,9 @@ public class OrderRestControllerTest extends ControllerTest {
     @Test
     public void create() throws Exception {
         // given
-        Order order = new Order(1L, List.of(new OrderLineItem(1L, 1)));
-        given(orderService.create(any()))
-                .willReturn(new Order(1L, 1L, "MEAL", LocalDateTime.now(), List.of()));
+        Order order = createOrder(1L, "MEAL", LocalDateTime.now(),
+                Collections.singletonList(createOrderLineItem(1L, 1)));
+        given(orderService.create(any())).willReturn(createOrder(1L));
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/orders")
@@ -62,7 +64,7 @@ public class OrderRestControllerTest extends ControllerTest {
     @Test
     public void changeOrderStatus() throws Exception {
         // given
-        Order order = new Order(1L, 1L, "MEAL", LocalDateTime.now(), List.of());
+        Order order = createOrder(1L, "MEAL", LocalDateTime.now(), new ArrayList<>());
 
         // when
         ResultActions perform = mockMvc.perform(put("/api/orders/1/order-status")

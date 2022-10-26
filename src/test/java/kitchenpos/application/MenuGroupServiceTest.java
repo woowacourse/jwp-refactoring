@@ -1,8 +1,11 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -25,28 +28,30 @@ class MenuGroupServiceTest {
     @Test
     void create_success() {
         // given
-        MenuGroup menuGroup = new MenuGroup("추천메뉴");
+        MenuGroup menuGroup = createMenuGroup("추천메뉴");
 
         // when
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
         // then
         MenuGroup dbMenuGroup = menuGroupDao.findById(savedMenuGroup.getId())
-                        .orElseThrow();
-        assertThat(dbMenuGroup).isEqualTo(menuGroup);
+                .orElseThrow(NoSuchElementException::new);
+        assertThat(dbMenuGroup.getName()).isEqualTo(menuGroup.getName());
     }
 
     @DisplayName("모든 메뉴를 조회한다.")
     @Test
     void list_success() {
         // given
-        MenuGroup menuGroup = new MenuGroup("추천메뉴");
-        menuGroupService.create(menuGroup);
+        MenuGroup menuGroup = menuGroupService.create(createMenuGroup("추천메뉴"));
 
         // when
         List<MenuGroup> menuGroups = menuGroupService.list();
 
         // then
-        assertThat(menuGroups).contains(menuGroup);
+        List<String> menuGroupNames = menuGroups.stream()
+                .map(MenuGroup::getName)
+                .collect(Collectors.toList());
+        assertThat(menuGroupNames).contains(menuGroup.getName());
     }
 }

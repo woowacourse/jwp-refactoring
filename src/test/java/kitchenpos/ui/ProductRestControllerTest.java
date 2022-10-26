@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import static kitchenpos.fixture.ProductFixture.createProduct;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -7,7 +8,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.math.BigDecimal;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -27,9 +27,8 @@ public class ProductRestControllerTest extends ControllerTest {
     @Test
     public void create() throws Exception {
         // given
-        Product product = new Product("강정치킨", new BigDecimal("17000"));
-        given(productService.create(any()))
-                .willReturn(new Product(1L, "강정치킨", new BigDecimal("17000")));
+        Product product = createProduct("강정치킨", 17_000L);
+        given(productService.create(any())).willReturn(createProduct(1L));
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/products")
