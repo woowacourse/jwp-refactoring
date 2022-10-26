@@ -111,9 +111,4 @@ public class Fixtures {
                     .isEqualTo(values.get(i));
         }
     }
-
-//    public static <ELEMENT> ListAssert<ELEMENT> 검증_필드비교_값포함(ListAssert<ELEMENT> assertThat, ELEMENT... values) {
-//        return assertThat.usingRecursiveFieldByFieldElementComparator()
-//                .contains(values);
-//    }
 }
