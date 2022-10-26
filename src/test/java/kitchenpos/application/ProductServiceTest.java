@@ -15,8 +15,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@ServiceTest
-class ProductServiceTest {
+class ProductServiceTest extends ServiceTestEnvironment {
 
     @Autowired
     private ProductService productService;
@@ -57,8 +56,8 @@ class ProductServiceTest {
         final Product product1 = ProductFixture.createDefaultWithoutId();
         final Product product2 = ProductFixture.createDefaultWithoutId();
 
-        productService.create(product1);
-        productService.create(product2);
+        serviceDependencies.save(product1);
+        serviceDependencies.save(product2);
 
         // when
         final List<Product> actual = productService.list();

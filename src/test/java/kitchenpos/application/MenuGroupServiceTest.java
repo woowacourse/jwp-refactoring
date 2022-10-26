@@ -9,8 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@ServiceTest
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends ServiceTestEnvironment {
 
     @Autowired
     private MenuGroupService menuGroupService;
@@ -36,8 +35,8 @@ class MenuGroupServiceTest {
         // given
         final MenuGroup menuGroup1 = MenuGroupFixture.createDefaultWithoutId();
         final MenuGroup menuGroup2 = MenuGroupFixture.createDefaultWithoutId();
-        final MenuGroup savedGroup1 = menuGroupService.create(menuGroup1);
-        final MenuGroup savedGroup2 = menuGroupService.create(menuGroup2);
+        final MenuGroup savedGroup1 = serviceDependencies.save(menuGroup1);
+        final MenuGroup savedGroup2 = serviceDependencies.save(menuGroup2);
 
         // when
         final List<MenuGroup> actual = menuGroupService.list();

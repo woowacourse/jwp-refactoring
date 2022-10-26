@@ -13,4 +13,12 @@ public class MenuProductFixture {
         menuProduct.setMenuId(menu.getId());
         return menuProduct;
     }
+
+    public static MenuProduct createDefaultWithoutId(final Long productId, final Long menuId) {
+        final MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setQuantity(1);
+        menuProduct.setProductId(productId);
+        menuProduct.setMenuId(menuId);
+        return menuProduct;
+    }
 }

@@ -22,28 +22,15 @@ import kitchenpos.fixture.ProductFixture;
 import kitchenpos.fixture.TableGroupFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@ServiceTest
-class TableServiceTest {
+
+class TableServiceTest extends ServiceTestEnvironment {
 
     @Autowired
     private TableService tableService;
-
-    @Autowired
-    private TableGroupService tableGroupService;
-
-    @Autowired
-    private MenuService menuService;
-
-    @Autowired
-    private MenuGroupService menuGroupService;
-
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private ProductService productService;
 
     @Test
     @DisplayName("주문 테이블을 추가할 수 있다.")
@@ -70,7 +57,7 @@ class TableServiceTest {
     void list() {
         // given
         final OrderTable orderTable = OrderTableFixture.createDefaultWithoutId();
-        final OrderTable saved = tableService.create(orderTable);
+        final OrderTable saved = serviceDependencies.save(orderTable);
 
         // when
         final List<OrderTable> actual = tableService.list();
@@ -86,7 +73,7 @@ class TableServiceTest {
     void changeEmpty() {
         // given
         final OrderTable orderTable = OrderTableFixture.create(false, 10);
-        final OrderTable savedTable = tableService.create(orderTable);
+        final OrderTable savedTable = serviceDependencies.save(orderTable);
 
         // when
         final OrderTable actual = tableService.changeEmpty(savedTable.getId(), OrderTableFixture.create(true, 10));
@@ -112,38 +99,41 @@ class TableServiceTest {
         // given
         final OrderTable orderTable1 = OrderTableFixture.create(true, 1);
         final OrderTable orderTable2 = OrderTableFixture.create(true, 1);
-        final OrderTable savedTable1 = tableService.create(orderTable1);
-        final OrderTable savedTable2 = tableService.create(orderTable2);
+        final OrderTable savedTable1 = serviceDependencies.save(orderTable1);
+        final OrderTable savedTable2 = serviceDependencies.save(orderTable2);
 
         final TableGroup tableGroup = TableGroupFixture.create(savedTable1, savedTable2);
-        tableGroupService.create(tableGroup);
+        final TableGroup savedTableGroup = serviceDependencies.save(tableGroup);
+        savedTable1.setTableGroupId(savedTableGroup.getId());
+        serviceDependencies.save(savedTable1);
 
         // when, then
         assertThatThrownBy(() ->tableService.changeEmpty(savedTable1.getId(), OrderTableFixture.create(true, 10)))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     @DisplayName("주문 테이블의 주문 상태가 조리나 식사 상태면 안된다.")
-    void changeEmpty_exceptionOrderStatusNotCompleted() {
+    void changeEmpty_exceptionOrderStatusNotCompleted(final OrderStatus orderStatus) {
         // given
         final OrderTable orderTable1 = OrderTableFixture.create(false, 1);
-        final OrderTable savedTable = tableService.create(orderTable1);
+        final OrderTable savedTable =  serviceDependencies.save(orderTable1);
 
         final MenuGroup menuGroup1 = MenuGroupFixture.createDefaultWithoutId();
-        final MenuGroup savedMenuGroup1 = menuGroupService.create(menuGroup1);
+        final MenuGroup savedMenuGroup1 = serviceDependencies.save(menuGroup1);
 
         final Product product1 = ProductFixture.createWithPrice(1000L);
         final Product product2 = ProductFixture.createWithPrice(1000L);
-        final Product savedProduct1 = productService.create(product1);
-        final Product savedProduct2 = productService.create(product2);
+        final Product savedProduct1 = serviceDependencies.save(product1);
+        final Product savedProduct2 = serviceDependencies.save(product2);
 
         final Menu menu = MenuFixture.createWithPrice(savedMenuGroup1, 2000L, savedProduct1, savedProduct2);
-        final Menu savedMenu = menuService.create(menu);
+        final Menu savedMenu = serviceDependencies.save(menu);
 
         final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu);
-        final Order order = OrderFixture.create(savedTable, OrderStatus.COMPLETION, orderLineItem);
-        orderService.create(order);
+        final Order order = OrderFixture.create(savedTable, orderStatus, orderLineItem);
+        serviceDependencies.save(order);
 
         // when, then
         assertThatThrownBy(() ->tableService.changeEmpty(savedTable.getId(), OrderTableFixture.create(true, 10)))
@@ -155,7 +145,7 @@ class TableServiceTest {
     void changeNumberOfGuests() {
         // given
         final OrderTable orderTable = OrderTableFixture.create(false, 1);
-        final OrderTable saved = tableService.create(orderTable);
+        final OrderTable saved = serviceDependencies.save(orderTable);
 
         // when
         final OrderTable actual = tableService.changeNumberOfGuests(saved.getId(),
@@ -183,7 +173,7 @@ class TableServiceTest {
     void changeNumberOfGuests_exceptionWhenGuestCountNegative() {
         // given
         final OrderTable orderTable = OrderTableFixture.create(false, 1);
-        final OrderTable saved = tableService.create(orderTable);
+        final OrderTable saved = serviceDependencies.save(orderTable);
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(saved.getId(),
@@ -196,7 +186,7 @@ class TableServiceTest {
     void changeNumberOfGuests_exceptionWhenOrderTableIsEmpty() {
         // given
         final OrderTable orderTable = OrderTableFixture.create(true, 1);
-        final OrderTable saved = tableService.create(orderTable);
+        final OrderTable saved = serviceDependencies.save(orderTable);
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(saved.getId(),

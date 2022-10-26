@@ -19,8 +19,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@ServiceTest
-class MenuServiceTest {
+class MenuServiceTest extends ServiceTestEnvironment {
 
     @Autowired
     private MenuService menuService;
@@ -37,11 +36,11 @@ class MenuServiceTest {
         // given
         final Product product1 = ProductFixture.createWithPrice(1000L);
         final Product product2 = ProductFixture.createWithPrice(1000L);
-        final Product savedProduct1 = productService.create(product1);
-        final Product savedProduct2 = productService.create(product2);
+        final Product savedProduct1 =serviceDependencies.save(product1);
+        final Product savedProduct2 =serviceDependencies.save(product2);
 
         final MenuGroup menuGroup = MenuGroupFixture.createDefaultWithoutId();
-        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroup savedMenuGroup = serviceDependencies.save(menuGroup);
 
         final Menu menu = MenuFixture.createWithPrice(savedMenuGroup, 2000L, savedProduct1, savedProduct2);
 
@@ -68,11 +67,11 @@ class MenuServiceTest {
         // given
         final Product product1 = ProductFixture.createWithPrice(1000L);
         final Product product2 = ProductFixture.createWithPrice(1000L);
-        final Product savedProduct1 = productService.create(product1);
-        final Product savedProduct2 = productService.create(product2);
+        final Product savedProduct1 =serviceDependencies.save(product1);
+        final Product savedProduct2 =serviceDependencies.save(product2);
 
         final MenuGroup menuGroup = MenuGroupFixture.createDefaultWithoutId();
-        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroup savedMenuGroup = serviceDependencies.save(menuGroup);
 
         final Menu menu = MenuFixture.createWithPrice(savedMenuGroup, price, savedProduct1, savedProduct2);
 
@@ -88,12 +87,12 @@ class MenuServiceTest {
         // given
         final Product product1 = ProductFixture.createWithPrice(1000L);
         final Product product2 = ProductFixture.createWithPrice(1000L);
-        final Product savedProduct1 = productService.create(product1);
-        final Product savedProduct2 = productService.create(product2);
+        final Product savedProduct1 =serviceDependencies.save(product1);
+        final Product savedProduct2 =serviceDependencies.save(product2);
 
-        final MenuGroup menuGroup = MenuGroupFixture.createDefaultWithoutId();
+        final MenuGroup notSavedMenuGroup = MenuGroupFixture.createDefaultWithoutId();
 
-        final Menu menu = MenuFixture.createWithPrice(menuGroup, 1000L, savedProduct1, savedProduct2);
+        final Menu menu = MenuFixture.createWithPrice(notSavedMenuGroup, 1000L, savedProduct1, savedProduct2);
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))

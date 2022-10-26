@@ -4,41 +4,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.fixture.MenuFixture;
-import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderFixture;
-import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
-import kitchenpos.fixture.ProductFixture;
 import kitchenpos.fixture.TableGroupFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@ServiceTest
-class TableGroupServiceTest {
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private MenuService menuService;
-
-    @Autowired
-    private MenuGroupService menuGroupService;
-
-    @Autowired
-    private TableService tableService;
-
-    @Autowired
-    private ProductService productService;
+class TableGroupServiceTest extends ServiceTestEnvironment {
 
     @Autowired
     private TableGroupService tableGroupService;
@@ -50,9 +29,9 @@ class TableGroupServiceTest {
         final OrderTable orderTable1 = OrderTableFixture.create(true, 1);
         final OrderTable orderTable2 = OrderTableFixture.create(true, 1);
         final OrderTable orderTable3 = OrderTableFixture.create(true, 1);
-        final OrderTable savedTable1 = tableService.create(orderTable1);
-        final OrderTable savedTable2 = tableService.create(orderTable2);
-        final OrderTable savedTable3 = tableService.create(orderTable3);
+        final OrderTable savedTable1 = serviceDependencies.save(orderTable1);
+        final OrderTable savedTable2 = serviceDependencies.save(orderTable2);
+        final OrderTable savedTable3 = serviceDependencies.save(orderTable3);
 
         final TableGroup tableGroup = TableGroupFixture.create(savedTable1, savedTable2, savedTable3);
 
@@ -70,7 +49,7 @@ class TableGroupServiceTest {
     void create_ExceptionOrderTablesLowerThanTwo() {
         // given
         final OrderTable orderTable1 = OrderTableFixture.create(true, 1);
-        final OrderTable savedTable1 = tableService.create(orderTable1);
+        final OrderTable savedTable1 = serviceDependencies.save(orderTable1);
 
         final TableGroup tableGroup = TableGroupFixture.create(savedTable1);
 
@@ -86,8 +65,8 @@ class TableGroupServiceTest {
         final OrderTable orderTable1 = OrderTableFixture.create(true, 1);
         final OrderTable orderTable2 = OrderTableFixture.create(true, 1);
         final OrderTable orderTable3 = OrderTableFixture.create(true, 1);
-        final OrderTable savedTable1 = tableService.create(orderTable1);
-        final OrderTable savedTable2 = tableService.create(orderTable2);
+        final OrderTable savedTable1 = serviceDependencies.save(orderTable1);
+        final OrderTable savedTable2 = serviceDependencies.save(orderTable2);
 
         final TableGroup tableGroup = TableGroupFixture.create(savedTable1, savedTable2, orderTable3);
 
@@ -103,9 +82,9 @@ class TableGroupServiceTest {
         final OrderTable orderTable1 = OrderTableFixture.create(false, 1);
         final OrderTable orderTable2 = OrderTableFixture.create(true, 1);
         final OrderTable orderTable3 = OrderTableFixture.create(true, 1);
-        final OrderTable savedTable1 = tableService.create(orderTable1);
-        final OrderTable savedTable2 = tableService.create(orderTable2);
-        final OrderTable savedTable3 = tableService.create(orderTable3);
+        final OrderTable savedTable1 = serviceDependencies.save(orderTable1);
+        final OrderTable savedTable2 = serviceDependencies.save(orderTable2);
+        final OrderTable savedTable3 = serviceDependencies.save(orderTable3);
 
         final TableGroup tableGroup = TableGroupFixture.create(savedTable1, savedTable2, savedTable3);
 
@@ -121,14 +100,16 @@ class TableGroupServiceTest {
         final OrderTable orderTable1 = OrderTableFixture.create(true, 1);
         final OrderTable orderTable2 = OrderTableFixture.create(true, 1);
         final OrderTable orderTable3 = OrderTableFixture.create(true, 1);
-        final OrderTable savedTable1 = tableService.create(orderTable1);
-        final OrderTable savedTable2 = tableService.create(orderTable2);
-        final OrderTable savedTable3 = tableService.create(orderTable3);
+        final OrderTable savedTable1 = serviceDependencies.save(orderTable1);
+        final OrderTable savedTable2 = serviceDependencies.save(orderTable2);
+        final OrderTable savedTable3 = serviceDependencies.save(orderTable3);
 
         final TableGroup tableGroup1 = TableGroupFixture.create(savedTable1, savedTable2, savedTable3);
-        final TableGroup tableGroup2 = TableGroupFixture.create(savedTable1, savedTable2, savedTable3);
+        final TableGroup savedTableGroup1 = serviceDependencies.save(tableGroup1);
+        savedTable1.setTableGroupId(savedTableGroup1.getId());
+        serviceDependencies.save(savedTable1);
 
-        tableGroupService.create(tableGroup1);
+        final TableGroup tableGroup2 = TableGroupFixture.create(savedTable1, savedTable2, savedTable3);
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup2))
@@ -142,45 +123,37 @@ class TableGroupServiceTest {
         final OrderTable orderTable1 = OrderTableFixture.create(true, 1);
         final OrderTable orderTable2 = OrderTableFixture.create(true, 1);
         final OrderTable orderTable3 = OrderTableFixture.create(true, 1);
-        final OrderTable savedTable1 = tableService.create(orderTable1);
-        final OrderTable savedTable2 = tableService.create(orderTable2);
-        final OrderTable savedTable3 = tableService.create(orderTable3);
+        final OrderTable savedTable1 = serviceDependencies.save(orderTable1);
+        final OrderTable savedTable2 = serviceDependencies.save(orderTable2);
+        final OrderTable savedTable3 = serviceDependencies.save(orderTable3);
 
         final TableGroup tableGroup = TableGroupFixture.create(savedTable1, savedTable2, savedTable3);
-        final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        final TableGroup savedTableGroup = serviceDependencies.save(tableGroup);
 
         // when, then
         assertThatCode(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                 .doesNotThrowAnyException();
     }
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     @DisplayName("해제하려는 그룹에 속한 주문 테이블이 조리나 식사 상태면 안된다.")
-    void ungroup_exeptionOrderTableCookingOrMeal() {
+    void ungroup_exeptionOrderTableCookingOrMeal(final OrderStatus orderStatus) {
         // given
         final OrderTable orderTable1 = OrderTableFixture.create(true, 1);
         final OrderTable orderTable2 = OrderTableFixture.create(true, 1);
         final OrderTable orderTable3 = OrderTableFixture.create(true, 1);
-        final OrderTable savedTable1 = tableService.create(orderTable1);
-        final OrderTable savedTable2 = tableService.create(orderTable2);
-        final OrderTable savedTable3 = tableService.create(orderTable3);
+        final OrderTable savedTable1 = serviceDependencies.save(orderTable1);
+        final OrderTable savedTable2 = serviceDependencies.save(orderTable2);
+        final OrderTable savedTable3 = serviceDependencies.save(orderTable3);
 
         final TableGroup tableGroup = TableGroupFixture.create(savedTable1, savedTable2, savedTable3);
-        final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        final TableGroup savedTableGroup = serviceDependencies.save(tableGroup);
 
-        final Product product1 = ProductFixture.createWithPrice(1000L);
-        final Product product2 = ProductFixture.createWithPrice(1000L);
-        final Product savedProduct1 = productService.create(product1);
-        final Product savedProduct2 = productService.create(product2);
-
-        final MenuGroup menuGroup = MenuGroupFixture.createDefaultWithoutId();
-        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
-        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup, 2000L, savedProduct1, savedProduct2);
-        final Menu savedMenu = menuService.create(menu);
-
-        final OrderLineItem orderLineItem1 = OrderLineItemFixture.create(savedMenu);
-        final Order order = OrderFixture.create(savedTable1, OrderStatus.COMPLETION, orderLineItem1);
-         orderService.create(order);
+        final Order order = OrderFixture.create(savedTable1, orderStatus);
+        serviceDependencies.save(order);
+        savedTable1.setTableGroupId(savedTableGroup.getId());
+        serviceDependencies.save(savedTable1);
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
