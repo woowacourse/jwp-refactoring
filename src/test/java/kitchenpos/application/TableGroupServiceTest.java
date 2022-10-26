@@ -5,29 +5,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
 class TableGroupServiceTest extends ServiceTest {
-
-    @Autowired
-    TableGroupService tableGroupService;
-
-    @Autowired
-    OrderTableDao orderTableDao;
-
-    @Autowired
-    OrderDao orderDao;
-
-    @Autowired
-    OrderService orderService;
 
     OrderTable 빈테이블_1;
     OrderTable 빈테이블_2;

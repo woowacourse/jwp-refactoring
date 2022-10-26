@@ -6,10 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -17,25 +13,9 @@ import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
 class OrderServiceTest extends ServiceTest {
-
-    @Autowired
-    OrderService orderService;
-
-    @Autowired
-    ProductDao productDao;
-
-    @Autowired
-    MenuProductDao menuProductDao;
-
-    @Autowired
-    TableGroupDao tableGroupDao;
-
-    @Autowired
-    OrderTableDao orderTableDao;
 
     @BeforeEach
     void setup() {

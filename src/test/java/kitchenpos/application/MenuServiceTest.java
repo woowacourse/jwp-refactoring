@@ -5,26 +5,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
 class MenuServiceTest extends ServiceTest {
-
-    @Autowired
-    MenuService menuService;
-
-    @Autowired
-    ProductDao productDao;
-
-    @Autowired
-    MenuProductDao menuProductDao;
 
     @BeforeEach
     void setup() {

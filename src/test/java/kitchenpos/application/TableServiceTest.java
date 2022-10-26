@@ -4,36 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
 class TableServiceTest extends ServiceTest {
-
-    @Autowired
-    TableService tableService;
-
-    @Autowired
-    OrderService orderService;
-
-    @Autowired
-    TableGroupDao tableGroupDao;
-
-    @Autowired
-    OrderTableDao orderTableDao;
-
-    @Autowired
-    OrderLineItemDao orderLineItemDao;
-
-    @Autowired
-    OrderDao orderDao;
 
     @DisplayName("테이블을 생성할 수 있다.")
     @Test
