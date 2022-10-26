@@ -35,19 +35,6 @@ class ProductServiceTest {
         );
     }
 
-    @Test
-    void 상품_목록들을_조회한다() {
-        Product product = 강정치킨();
-
-        // when
-        productService.create(product);
-
-        List<Product> actual = productService.list();
-
-        // then
-        assertThat(actual).hasSizeGreaterThanOrEqualTo(1);
-    }
-
     @ParameterizedTest
     @ValueSource(ints = {-1, -1000})
     void 상품_등록_시_상품_가격이_0_이하라면_예외를_던진다(int price) {
@@ -71,6 +58,19 @@ class ProductServiceTest {
         // when & then
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 상품_목록들을_조회한다() {
+        // given
+        Product product = 강정치킨();
+        productService.create(product);
+
+        // when
+        List<Product> actual = productService.list();
+
+        // then
+        assertThat(actual).hasSizeGreaterThanOrEqualTo(1);
     }
 
     public Product 강정치킨() {
