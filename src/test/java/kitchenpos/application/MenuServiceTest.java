@@ -115,7 +115,8 @@ class MenuServiceTest {
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴의 가격은 상품들의 총액보다 비쌀 수 없습니다.");
     }
 
     @DisplayName("메뉴 전체를 조회한다.")
