@@ -5,6 +5,9 @@ import kitchenpos.application.dto.response.MenuGroupResponse;
 
 public class MenuGroupFixtures {
 
+    private MenuGroupFixtures() {
+    }
+
     public static MenuGroupResponse createMenuGroupResponse() {
         return new MenuGroupResponse(1L, "메뉴그룹");
     }

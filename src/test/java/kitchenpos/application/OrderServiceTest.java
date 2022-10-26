@@ -160,6 +160,6 @@ class OrderServiceTest {
         assertThatThrownBy(() -> orderService.changeOrderStatus(
                 savedOrder.getId(),
                 createOrderChangeRequest()
-        )).isInstanceOf(IllegalArgumentException.class);
+        )).isInstanceOf(IllegalStateException.class);
     }
 }

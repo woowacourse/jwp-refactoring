@@ -7,15 +7,21 @@ import kitchenpos.domain.Product;
 
 public class ProductFixtures {
 
+    private static final BigDecimal PRICE = BigDecimal.valueOf(1000);
+    private static final String NAME = "상품";
+
+    private ProductFixtures() {
+    }
+
     public static Product createProduct() {
-        return new Product(1L, "상품A", BigDecimal.valueOf(600));
+        return new Product(1L, NAME, PRICE);
     }
 
     public static ProductResponse createProductResponse() {
-        return new ProductResponse(1L, "상품", BigDecimal.valueOf(1000));
+        return new ProductResponse(1L, NAME, PRICE);
     }
 
     public static ProductCreateRequest createProductRequest() {
-        return new ProductCreateRequest("상품", BigDecimal.valueOf(1000));
+        return new ProductCreateRequest(NAME, PRICE);
     }
 }
