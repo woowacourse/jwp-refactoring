@@ -68,14 +68,6 @@ class OrderServiceTest {
             assertThatThrownBy(() -> orderService.create(new CreateOrderDto(99999999L, orderLineItems)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
-
-        @Test
-        void 빈_테이블에서_주문한_경우_예외가_발생한다() {
-            Long orderTableId = tableService.create(new CreateTableDto(0, true)).getId();
-            List<CreateOrderLineItemDto> orderLineItems = List.of(new CreateOrderLineItemDto(1L, 1));
-            assertThatThrownBy(() -> orderService.create(new CreateOrderDto(orderTableId, orderLineItems)))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
     }
 
     @Test
