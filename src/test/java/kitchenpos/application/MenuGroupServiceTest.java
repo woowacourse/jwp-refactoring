@@ -27,8 +27,13 @@ class MenuGroupServiceTest extends IntegrationTest {
     @DisplayName("메뉴그룹 목록을 조회할 수 있다.")
     @Test
     void list() {
-        final List<MenuGroup> menuGroups = menuGroupService.list();
+        final int originSize = menuGroupDao.findAll().size();
+        menuGroupDao.save(new MenuGroup("할인메뉴"));
+        menuGroupDao.save(new MenuGroup("맛있는메뉴"));
 
-        assertThat(menuGroups).hasSize(4);
+        final List<MenuGroup> menuGroups = menuGroupService.list();
+        final int afterSize = menuGroups.size();
+
+        assertThat(afterSize - originSize).isEqualTo(2);
     }
 }

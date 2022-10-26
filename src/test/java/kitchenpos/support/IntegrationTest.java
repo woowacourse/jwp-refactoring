@@ -1,6 +1,8 @@
 package kitchenpos.support;
 
+import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
@@ -27,4 +29,10 @@ public class IntegrationTest {
 
     @Autowired
     protected TableGroupDao tableGroupDao;
+
+    @Autowired
+    protected MenuDao menuDao;
+
+    @Autowired
+    protected MenuProductDao menuProductDao;
 }
