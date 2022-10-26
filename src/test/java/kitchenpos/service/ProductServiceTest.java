@@ -49,10 +49,16 @@ public class ProductServiceTest {
     @DisplayName("제품 목록을 조회한다")
     @Test
     void list() {
-        productDao.save(new Product("test1", 1L));
-        productDao.save(new Product("test2", 1L));
+        preprocessWhenList(2);
+
         List<Product> products = productService.list();
 
         assertThat(products.size()).isEqualTo(2);
+    }
+
+    private void preprocessWhenList(int count) {
+        for (int i = 0; i < count; i++) {
+            productDao.save(new Product("test", 1L));
+        }
     }
 }

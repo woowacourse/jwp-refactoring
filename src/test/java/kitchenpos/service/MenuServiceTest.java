@@ -38,10 +38,12 @@ public class MenuServiceTest {
     @DisplayName("메뉴를 생성한다")
     @Test
     void create() {
+        preprocessWhenCreate(new MenuGroup(3L, "메뉴그룹"),
+                List.of(new Product(5L, "육회", 12000L)),
+                List.of(new MenuProduct(5L, 2L)));
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
                 "2인육회", 24000L, 3L,
                 List.of(new MenuProductsRequest(5L, 2L)));
-        preprocessWhenCreate(menuCreateRequest, 12000L);
 
         Menu menu = menuService.create(menuCreateRequest);
 
@@ -55,6 +57,9 @@ public class MenuServiceTest {
     @DisplayName("가격이 null인 메뉴를 생성할 수 없다")
     @Test
     void create_priceNull() {
+        preprocessWhenCreate(new MenuGroup(3L, "메뉴그룹"),
+                List.of(new Product(5L, "육회", 12000L)),
+                List.of(new MenuProduct(5L, 2L)));
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
                 "2인육회", null, 3L, List.of(new MenuProductsRequest(5L, 2L)));
 
@@ -63,6 +68,9 @@ public class MenuServiceTest {
     @DisplayName("가격이 음수인 메뉴를 생성할 수 없다")
     @Test
     void create_priceNegative() {
+        preprocessWhenCreate(new MenuGroup(3L, "메뉴그룹"),
+                List.of(new Product(5L, "육회", 12000L)),
+                List.of(new MenuProduct(5L, 2L)));
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
                 "2인육회", -1L, 3L, List.of(new MenuProductsRequest(5L, 2L)));
 
@@ -71,6 +79,9 @@ public class MenuServiceTest {
     @DisplayName("메뉴 그룹이 없는 메뉴를 생성할 수 없다")
     @Test
     void create_notExistMenuGroup() {
+        preprocessWhenCreate(new MenuGroup(3L, "메뉴그룹"),
+                List.of(new Product(5L, "육회", 12000L)),
+                List.of(new MenuProduct(5L, 2L)));
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
                 "2인육회", 24000L, 4L, List.of(new MenuProductsRequest(5L, 2L)));
 
@@ -79,6 +90,9 @@ public class MenuServiceTest {
     @DisplayName("제품이 없는 메뉴를 생성할 수 없다")
     @Test
     void create_notExistProduct() {
+        preprocessWhenCreate(new MenuGroup(3L, "메뉴그룹"),
+                List.of(new Product(5L, "육회", 12000L)),
+                List.of(new MenuProduct(5L, 2L)));
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
                 "2인육회", 24000L, 3L, List.of(new MenuProductsRequest(10L, 2L)));
 
@@ -87,30 +101,33 @@ public class MenuServiceTest {
     @DisplayName("메뉴 가격이 전체 제품의 가격보다 큰 메뉴를 생성할 수 없다")
     @Test
     void create_menuPriceOverTotalProductPrices() {
+        preprocessWhenCreate(new MenuGroup(3L, "메뉴그룹"),
+                List.of(new Product(5L, "육회", 12000L)),
+                List.of(new MenuProduct(5L, 2L)));
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
                 "2인육회", 24001L, 3L, List.of(new MenuProductsRequest(5L, 2L)));
-        preprocessWhenCreate(menuCreateRequest, 12000L);
 
         assertThatThrownBy(() -> menuService.create(menuCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
     @DisplayName("메뉴 목록을 조회한다")
     @Test
     void list() {
-        menuDao.save(new Menu("2인육회", 24000L, 1L));
-        menuDao.save(new Menu("모듬초밥", 30000L, 2L));
+        preprocessWhenList(2);
+
         List<Menu> menus = menuService.list();
 
         assertThat(menus.size()).isEqualTo(2);
     }
 
-    private void preprocessWhenCreate(MenuCreateRequest menuCreateRequest, Long productPrice) {
-        menuGroupDao.save(new MenuGroup(menuCreateRequest.getMenuGroupId(), "test"));
-        List<Long> productIds = menuCreateRequest.getMenuProducts()
-                .stream()
-                .map(MenuProductsRequest::getProductId)
-                .collect(Collectors.toUnmodifiableList());
-        productIds.forEach(each -> productDao.save(new Product(each, "test", productPrice)));
-        menuCreateRequest.getMenuProducts()
-                .forEach(each -> menuProductDao.save(new MenuProduct(each.getProductId(), each.getQuantity())));
+    private void preprocessWhenCreate(MenuGroup menuGroup, List<Product> products, List<MenuProduct> menuProducts) {
+        menuGroupDao.save(menuGroup);
+        products.forEach(productDao::save);
+        menuProducts.forEach(menuProductDao::save);
+    }
+
+    private void preprocessWhenList(int count) {
+        for (int i = 0; i < count; i++) {
+            menuDao.save(new Menu("test", 1L, 1L));
+        }
     }
 }

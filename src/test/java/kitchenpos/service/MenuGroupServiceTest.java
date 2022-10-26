@@ -38,10 +38,16 @@ public class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹의 리스트를 조회한다")
     @Test
     void list() {
-        menuGroupDao.save(new MenuGroup("test1"));
-        menuGroupDao.save(new MenuGroup("test2"));
+        preprocessWhenList(2);
+
         List<MenuGroup> menuGroups = menuGroupService.list();
 
         assertThat(menuGroups.size()).isEqualTo(2);
+    }
+
+    private void preprocessWhenList(int count) {
+        for (int i = 0; i < count; i++) {
+            menuGroupDao.save(new MenuGroup("test"));
+        }
     }
 }
