@@ -44,7 +44,7 @@ class TableServiceTest {
 
     @Test
     void orderTable을_생성한다() {
-        OrderTable 테이블_1번 = 테이블_1번();
+        OrderTable 테이블_1번 = generateOrderTable(0, true);
 
         OrderTable actual = tableService.create(테이블_1번);
 

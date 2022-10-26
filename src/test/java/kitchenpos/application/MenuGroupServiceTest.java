@@ -34,12 +34,12 @@ class MenuGroupServiceTest {
 
     @Test
     void menuGroup을_생성한다() {
-        MenuGroup 신메뉴 = 신메뉴();
+        MenuGroup 한마리메뉴 = generateMenuGroup("한마리메뉴");
 
-        MenuGroup actual = menuGroupService.create(신메뉴);
+        MenuGroup actual = menuGroupService.create(한마리메뉴);
 
         assertThat(actual.getName())
-                .isEqualTo(신메뉴.getName());
+                .isEqualTo(한마리메뉴.getName());
     }
 
     @Test

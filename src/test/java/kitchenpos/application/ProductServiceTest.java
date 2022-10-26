@@ -36,7 +36,7 @@ class ProductServiceTest {
 
     @Test
     void product를_생성한다() {
-        Product 후라이드 = 후라이드();
+        Product 후라이드 = generateProduct("후라이드", BigDecimal.valueOf(16000));
 
         Product actual = productService.create(후라이드);
 
