@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.fixture.OrderTableFixture.createEmptyStatusTable;
+import static kitchenpos.support.fixture.OrderTableFixture.createNonEmptyStatusTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -32,9 +34,9 @@ class TableGroupServiceTest extends IntegrationTest {
     class CreateTest {
 
         @BeforeEach
-        void setup() {
-            orderTable1 = orderTableDao.save(new OrderTable(null, 0, true));
-            orderTable2 = orderTableDao.save(new OrderTable(null, 0, true));
+        void setupFixture() {
+            orderTable1 = orderTableDao.save(createEmptyStatusTable());
+            orderTable2 = orderTableDao.save(createEmptyStatusTable());
         }
 
         @DisplayName("정상 작동")
@@ -59,7 +61,7 @@ class TableGroupServiceTest extends IntegrationTest {
         @DisplayName("묶기를 요청한 테이블중 하나라도 실제로 존재하지 않는다면 예외가 발생한다.")
         @Test
         void create_Exception_NotExistOrderTable() {
-            final OrderTable notSavedOrderTable = new OrderTable(null, 0, true);
+            final OrderTable notSavedOrderTable = createEmptyStatusTable();
             final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1, notSavedOrderTable));
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -69,7 +71,7 @@ class TableGroupServiceTest extends IntegrationTest {
         @DisplayName("테이블이 empty 상태가 아니면 예외가 발생한다.")
         @Test
         void create_Exception_NotEmptyStatus() {
-            final OrderTable notEmptyOrderTable = orderTableDao.save(new OrderTable(null, 0, false));
+            final OrderTable notEmptyOrderTable = orderTableDao.save(createNonEmptyStatusTable());
             final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1, notEmptyOrderTable));
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -94,9 +96,9 @@ class TableGroupServiceTest extends IntegrationTest {
         private TableGroup savedTableGroup;
 
         @BeforeEach
-        void setup() {
-            orderTable1 = orderTableDao.save(new OrderTable(null, 0, true));
-            orderTable2 = orderTableDao.save(new OrderTable(null, 0, true));
+        void setupFixture() {
+            orderTable1 = orderTableDao.save(createEmptyStatusTable());
+            orderTable2 = orderTableDao.save(createEmptyStatusTable());
             savedTableGroup = tableGroupService
                     .create(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
         }
