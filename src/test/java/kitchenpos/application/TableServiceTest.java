@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableRequest;
@@ -27,7 +27,7 @@ class TableServiceTest extends ServiceTest {
     private TableService tableService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private TableGroupService tableGroupService;
@@ -74,7 +74,7 @@ class TableServiceTest extends ServiceTest {
             tableService.changeEmpty(첫번째_테이블, false);
 
             // then
-            assertThat(orderTableDao.findById(첫번째_테이블))
+            assertThat(orderTableRepository.findById(첫번째_테이블))
                 .map(OrderTable::isEmpty)
                 .get()
                 .isEqualTo(false);
@@ -130,7 +130,7 @@ class TableServiceTest extends ServiceTest {
             tableService.changeNumberOfGuests(첫번째_테이블, 5);
 
             // then
-            assertThat(orderTableDao.findById(첫번째_테이블))
+            assertThat(orderTableRepository.findById(첫번째_테이블))
                 .map(OrderTable::getNumberOfGuests)
                 .get()
                 .isEqualTo(5);

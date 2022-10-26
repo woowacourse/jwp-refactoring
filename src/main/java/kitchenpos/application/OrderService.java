@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -26,18 +26,18 @@ public class OrderService {
     private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
     public OrderService(
         MenuDao menuDao,
         OrderDao orderDao,
         OrderLineItemDao orderLineItemDao,
-        OrderTableDao orderTableDao
+        OrderTableRepository orderTableRepository
     ) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
@@ -56,7 +56,7 @@ public class OrderService {
     }
 
     private OrderTable getOrderTableById(Long tableId) {
-        return orderTableDao.findById(tableId)
+        return orderTableRepository.findById(tableId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
     }
 

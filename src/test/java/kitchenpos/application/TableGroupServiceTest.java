@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableResponse;
@@ -27,7 +27,7 @@ class TableGroupServiceTest extends ServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private OrderDao orderDao;
@@ -93,9 +93,9 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void notEmptyTable() {
             // given
-            OrderTable orderTable = orderTableDao.findById(첫번째_테이블).orElseThrow();
+            OrderTable orderTable = orderTableRepository.findById(첫번째_테이블).orElseThrow();
             orderTable.changeEmpty(false);
-            orderTableDao.save(orderTable);
+            orderTableRepository.save(orderTable);
             TableGroupRequest tableGroupRequest = new TableGroupRequest(
                 List.of(첫번째_테이블, 두번째_테이블)
             );
@@ -146,7 +146,7 @@ class TableGroupServiceTest extends ServiceTest {
             tableGroupService.ungroup(groupId);
 
             // then
-            List<OrderTable> tables = orderTableDao.findAllByIdIn(List.of(첫번째_테이블, 두번째_테이블));
+            List<OrderTable> tables = orderTableRepository.findAllByIdIn(List.of(첫번째_테이블, 두번째_테이블));
             assertAll(
                 () -> assertThat(tables)
                     .extracting("tableGroupId")
@@ -165,7 +165,7 @@ class TableGroupServiceTest extends ServiceTest {
             tableGroupService.ungroup(groupId);
 
             // then
-            List<OrderTable> tables = orderTableDao.findAllByIdIn(List.of(첫번째_테이블, 두번째_테이블));
+            List<OrderTable> tables = orderTableRepository.findAllByIdIn(List.of(첫번째_테이블, 두번째_테이블));
             assertAll(
                 () -> assertThat(tables)
                     .extracting("tableGroupId")

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -21,12 +21,12 @@ import kitchenpos.dto.TableGroupResponse;
 public class TableGroupService {
 
     private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
     private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(OrderDao orderDao, OrderTableDao orderTableDao, TableGroupDao tableGroupDao) {
+    public TableGroupService(OrderDao orderDao, OrderTableRepository orderTableRepository, TableGroupDao tableGroupDao) {
         this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
         this.tableGroupDao = tableGroupDao;
     }
 
@@ -34,7 +34,7 @@ public class TableGroupService {
     public TableGroupResponse create(TableGroupRequest tableGroupRequest) {
         List<Long> orderTableIds = tableGroupRequest.getOrderTableIds();
 
-        List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
+        List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         validateNotExistTables(orderTableIds, savedOrderTables);
 
         TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), savedOrderTables));
@@ -50,14 +50,12 @@ public class TableGroupService {
 
     private void group(List<OrderTable> savedOrderTables, TableGroup tableGroup) {
         tableGroup.addOrderTables(savedOrderTables);
-        for (OrderTable savedOrderTable : savedOrderTables) {
-            orderTableDao.save(savedOrderTable);
-        }
+        orderTableRepository.saveAll(savedOrderTables);
     }
 
     @Transactional
     public void ungroup(Long tableGroupId) {
-        List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
+        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
         List<Long> orderTableIds = extractTableIds(orderTables);
         validateNotCompletedOrderExist(orderTableIds);
         ungroup(orderTables);
@@ -81,7 +79,7 @@ public class TableGroupService {
     private void ungroup(List<OrderTable> orderTables) {
         for (OrderTable orderTable : orderTables) {
             orderTable.ungroup();
-            orderTableDao.save(orderTable);
+            orderTableRepository.save(orderTable);
         }
     }
 }
