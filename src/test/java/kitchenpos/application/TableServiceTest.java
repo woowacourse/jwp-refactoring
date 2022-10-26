@@ -97,7 +97,7 @@ class TableServiceTest {
         }
 
         @Nested
-        class 단체_지정이_null이면 extends ServiceTest {
+        class 단체_지정이_null이_아니면 extends ServiceTest {
 
             private final TableGroup tableGroup = 단체_지정_생성(LocalDateTime.now(), null);
             private final OrderTable orderTable = 주문_테이블_생성(1L, 5, false);

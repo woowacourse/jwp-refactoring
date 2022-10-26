@@ -65,7 +65,7 @@ class TableGroupServiceTest {
         }
 
         @Nested
-        class 주문_테이블이_2개_이하라면 extends ServiceTest {
+        class 주문_테이블이_2개_미만이면 extends ServiceTest {
 
             private final OrderTable orderTable = 주문_테이블_생성(null, 5, true);
             private final TableGroup tableGroup = 단체_지정_생성(null, List.of(orderTable));
