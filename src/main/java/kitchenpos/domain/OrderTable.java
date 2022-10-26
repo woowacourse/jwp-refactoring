@@ -7,11 +7,11 @@ public class OrderTable {
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTable(int numberOfGuests, boolean empty) {
+    public OrderTable(final int numberOfGuests, final boolean empty) {
         this(null, null, numberOfGuests, empty);
     }
 
-    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;

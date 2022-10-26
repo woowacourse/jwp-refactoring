@@ -12,11 +12,11 @@ public class Menu {
     private final Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
-    public Menu(String name, BigDecimal price, Long menuGroupId) {
+    public Menu(final String name, final BigDecimal price, final Long menuGroupId) {
         this(null, name, price, menuGroupId);
     }
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
+    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
         validatePrice(price);
         this.id = id;
         this.name = name;
@@ -24,7 +24,7 @@ public class Menu {
         this.menuGroupId = menuGroupId;
     }
 
-    private void validatePrice(BigDecimal price) {
+    private void validatePrice(final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }

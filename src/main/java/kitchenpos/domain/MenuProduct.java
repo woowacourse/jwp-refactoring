@@ -7,7 +7,7 @@ public class MenuProduct {
     private final Long productId;
     private final long quantity;
 
-    public MenuProduct(Long seq, Long menuId, Long productId, long quantity) {
+    public MenuProduct(final Long seq,final Long menuId,final Long productId,final long quantity) {
         this.seq = seq;
         this.menuId = menuId;
         this.productId = productId;
