@@ -22,9 +22,7 @@ public class Product {
     }
 
     private void validatePrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
+        new Price(price);
     }
 
     public Long getId() {

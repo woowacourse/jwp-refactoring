@@ -30,7 +30,9 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuGroupCreateRequest;
+import kitchenpos.dto.MenuProductCreateRequest;
 import kitchenpos.dto.ProductCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -174,19 +176,31 @@ public class ServiceTest {
         return orderDao.save(order);
     }
 
-    protected Menu createMenuRequest(final BigDecimal price) {
-        final Product product = saveAndGetProduct();
-        final MenuProduct menuProduct = createMenuProduct(null, null, product.getId(), 1);
-        final List<MenuProduct> menuProducts = List.of(menuProduct);
-
-        return createMenu(null, "후라이드", price, saveAndGetMenuGroup().getId(), menuProducts);
-    }
-
     protected ProductCreateRequest createProductCreateRequest(final BigDecimal price) {
         return new ProductCreateRequest("후라이드", price);
     }
 
     public static MenuGroupCreateRequest createMenuGroupCreateRequest(final String name) {
         return new MenuGroupCreateRequest(name);
+    }
+
+    public static MenuProductCreateRequest createMenuProductCreateRequest(final Long productId,
+        final long quantity) {
+        return new MenuProductCreateRequest(productId, quantity);
+    }
+
+    protected MenuCreateRequest createMenuCreateRequest(final BigDecimal price) {
+        final Product product = saveAndGetProduct();
+        final MenuProductCreateRequest menuProductRequest =
+            createMenuProductCreateRequest(product.getId(), 1);
+        final List<MenuProductCreateRequest> menuProducts = List.of(menuProductRequest);
+
+        return createMenuCreateRequest(
+            "후라이드", price, saveAndGetMenuGroup().getId(), menuProducts);
+    }
+
+    public static MenuCreateRequest createMenuCreateRequest(final String name, final BigDecimal price,
+        final Long menuGroupId, final List<MenuProductCreateRequest> menuProducts) {
+        return new MenuCreateRequest(name, price, menuGroupId, menuProducts);
     }
 }

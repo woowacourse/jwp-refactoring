@@ -11,20 +11,12 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.MenuGroupCreateRequest;
 
 public class DomainCreator {
 
-    public static Menu createMenu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
-        final List<MenuProduct> menuProducts) {
-        final Menu menu = new Menu();
-        menu.setId(id);
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-
-        return menu;
+    public static Menu createMenu(final Long id, final String name, final BigDecimal price,
+        final Long menuGroupId, final List<MenuProduct> menuProducts) {
+        return new Menu(id, name, price, menuGroupId, menuProducts);
     }
 
     public static MenuGroup createMenuGroup(final Long id, final String name) {
@@ -35,18 +27,13 @@ public class DomainCreator {
         return new Product(id, name, price);
     }
 
-    public static MenuProduct createMenuProduct(final Long id, final Long menuId, final Long productId,
-        final int quantity) {
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setSeq(id);
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-
-        return menuProduct;
+    public static MenuProduct createMenuProduct(final Long seq, final Long menuId,
+        final Long productId, final int quantity) {
+        return new MenuProduct(seq, menuId, productId, quantity);
     }
 
-    public static OrderTable createOrderTable(final Long id, final Long tableGroupId, final int numberOfGuests,
+    public static OrderTable createOrderTable(final Long id, final Long tableGroupId,
+        final int numberOfGuests,
         final boolean empty) {
         final OrderTable orderTable = new OrderTable();
         orderTable.setId(id);
@@ -66,7 +53,8 @@ public class DomainCreator {
         return tableGroup;
     }
 
-    public static Order createOrder(final Long id, final Long orderTableId, final String orderStatus,
+    public static Order createOrder(final Long id, final Long orderTableId,
+        final String orderStatus,
         final LocalDateTime orderedTime,
         final List<OrderLineItem> orderLineItems) {
         final Order order = new Order();
@@ -82,7 +70,8 @@ public class DomainCreator {
         return order;
     }
 
-    public static OrderLineItem createOrderLineItem(final Long seq, final Long orderId, final Long menuId,
+    public static OrderLineItem createOrderLineItem(final Long seq, final Long orderId,
+        final Long menuId,
         final int quantity) {
         final OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setSeq(seq);
