@@ -1,0 +1,14 @@
+[[Orders]]
+== 주문
+
+=== 주문 생성
+
+operation::orders/create[snippets='request-fields,http-request,response-fields,http-response']
+
+=== 주문 전체 조회
+
+operation::orders/list[snippets='http-request,response-fields,http-response']
+
+=== 주문 상태 수정
+
+operation::orders/changeOrderStatus[snippets='path-parameters,http-request,response-fields,http-response']

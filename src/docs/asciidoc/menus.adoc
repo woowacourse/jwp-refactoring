@@ -1,0 +1,10 @@
+[[Menus]]
+== 메뉴
+
+=== 메뉴 생성
+
+operation::menus/create[snippets='request-fields,http-request,response-fields,http-response']
+
+=== 메뉴 전체 조회
+
+operation::menus/list[snippets='http-request,response-fields,http-response']
