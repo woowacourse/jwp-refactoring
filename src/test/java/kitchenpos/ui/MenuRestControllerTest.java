@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.ResultActions;
 class MenuRestControllerTest extends ControllerTest {
 
     private final String defaultMenuUrl = "/api/menus";
+    private final MenuResponse menuResponse = new MenuResponse(1L, "pasta", BigDecimal.valueOf(13000), 1L, new ArrayList<>());
 
     @MockBean
     private MenuService menuService;
@@ -29,12 +30,10 @@ class MenuRestControllerTest extends ControllerTest {
     @Test
     void 메뉴를_생성할_수_있다() throws Exception {
         // given
-        BigDecimal price = BigDecimal.valueOf(13000);
-        MenuResponse menuResponse = new MenuResponse(1L, "pasta", price, 1L, new ArrayList<>());
         when(menuService.create(any(MenuCreateRequest.class))).thenReturn(menuResponse);
 
         // when
-        ResultActions response = postRequestWithJson(defaultMenuUrl, menuResponse);
+        ResultActions response = postRequestWithJson(defaultMenuUrl, new MenuCreateRequest());
 
         // then
         response.andExpect(status().isCreated())
@@ -44,8 +43,6 @@ class MenuRestControllerTest extends ControllerTest {
     @Test
     void 메뉴_목록을_조회할_수_있다() throws Exception {
         // given
-        BigDecimal price = BigDecimal.valueOf(13000);
-        MenuResponse menuResponse = new MenuResponse(1L, "pasta", price, 1L, new ArrayList<>());
         List<MenuResponse> menuResponses = Arrays.asList(menuResponse);
         when(menuService.list()).thenReturn(menuResponses);
 

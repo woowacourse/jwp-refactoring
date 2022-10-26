@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.ControllerTest;
@@ -20,6 +21,7 @@ import org.springframework.test.web.servlet.ResultActions;
 class ProductRestControllerTest extends ControllerTest {
 
     private final String defaultProductUrl = "/api/products";
+    private final ProductResponse productResponse = new ProductResponse(1L, "pasta", BigDecimal.valueOf(13000));
 
     @MockBean
     private ProductService productService;
@@ -27,11 +29,10 @@ class ProductRestControllerTest extends ControllerTest {
     @Test
     void 상품을_생성할_수_있다() throws Exception {
         // given
-        ProductResponse productResponse = new ProductResponse();
         when(productService.create(any(ProductCreateRequest.class))).thenReturn(productResponse);
 
         // when
-        ResultActions response = postRequestWithJson(defaultProductUrl, productResponse);
+        ResultActions response = postRequestWithJson(defaultProductUrl, new ProductCreateRequest());
 
         // then
         response.andExpect(status().isCreated())
@@ -41,7 +42,6 @@ class ProductRestControllerTest extends ControllerTest {
     @Test
     void 상품_목록을_조회할_수_있다() throws Exception {
         // given
-        ProductResponse productResponse = new ProductResponse();
         List<ProductResponse> productResponses = Arrays.asList(productResponse);
         when(productService.list()).thenReturn(productResponses);
 

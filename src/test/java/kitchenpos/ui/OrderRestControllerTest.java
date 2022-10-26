@@ -5,6 +5,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.ControllerTest;
@@ -21,13 +23,14 @@ import org.springframework.test.web.servlet.ResultActions;
 class OrderRestControllerTest extends ControllerTest {
 
     private final String defaultOrderUrl = "/api/orders";
+    private final OrderResponse orderResponse = new OrderResponse(1L, 11L, "COOKING", LocalDateTime.now(), new ArrayList<>());
+
     @MockBean
     private OrderService orderService;
 
     @Test
     void 주문을_생성할_수_있다() throws Exception {
         // given
-        OrderResponse orderResponse = new OrderResponse();
         when(orderService.create(any(OrderCreateRequest.class))).thenReturn(orderResponse);
 
         // when
@@ -41,7 +44,6 @@ class OrderRestControllerTest extends ControllerTest {
     @Test
     void 주문_목록을_조회할_수_있다() throws Exception {
         // given
-        OrderResponse orderResponse = new OrderResponse();
         List<OrderResponse> orderResponses = Arrays.asList(orderResponse);
         when(orderService.list()).thenReturn(orderResponses);
 
@@ -56,7 +58,6 @@ class OrderRestControllerTest extends ControllerTest {
     @Test
     void 주문_상태를_변경할_수_있다() throws Exception {
         // given
-        OrderResponse orderResponse = new OrderResponse();
         when(orderService.changeOrderStatus(any(Long.class), any(OrderChangeRequest.class))).thenReturn(orderResponse);
 
         // when

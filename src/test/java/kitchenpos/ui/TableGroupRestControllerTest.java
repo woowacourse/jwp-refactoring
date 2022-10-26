@@ -6,6 +6,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import kitchenpos.ControllerTest;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.dto.request.TableGroupCreateRequest;
@@ -19,18 +21,17 @@ import org.springframework.test.web.servlet.ResultActions;
 class TableGroupRestControllerTest extends ControllerTest {
 
     private final String defaultTableGroupUrl = "/api/table-groups";
-
+private final TableGroupResponse tableGroupResponse = new TableGroupResponse(1L, LocalDateTime.now(), new ArrayList<>());
     @MockBean
     private TableGroupService tableGroupService;
 
     @Test
     void table_group을_생성할_수_있다() throws Exception {
         // given
-        TableGroupResponse tableGroupResponse = new TableGroupResponse(1L, null, null);
         when(tableGroupService.create(any(TableGroupCreateRequest.class))).thenReturn(tableGroupResponse);
 
         // when
-        ResultActions response = postRequestWithJson(defaultTableGroupUrl, tableGroupResponse);
+        ResultActions response = postRequestWithJson(defaultTableGroupUrl, new TableGroupCreateRequest());
 
         // then
         response.andExpect(status().isCreated())

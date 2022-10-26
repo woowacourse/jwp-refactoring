@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.ResultActions;
 class MenuGroupRestControllerTest extends ControllerTest {
 
     private final String defaultMenuGroupUrl = "/api/menu-groups";
+    private final MenuGroupResponse menuGroupResponse = new MenuGroupResponse(1L, "set-menu");
 
     @MockBean
     private MenuGroupService menuGroupService;
@@ -28,7 +29,6 @@ class MenuGroupRestControllerTest extends ControllerTest {
     @Test
     void 메뉴_그룹을_생성할_수_있다() throws Exception {
         // given
-        MenuGroupResponse menuGroupResponse = new MenuGroupResponse(1L, "set-menu");
         given(menuGroupService.create(any(MenuGroupCreateRequest.class))).willReturn(menuGroupResponse);
 
         // when

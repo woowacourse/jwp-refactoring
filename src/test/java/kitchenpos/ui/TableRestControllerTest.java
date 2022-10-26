@@ -23,7 +23,6 @@ import org.springframework.test.web.servlet.ResultActions;
 class TableRestControllerTest extends ControllerTest {
 
     private final String defaultTableUrl = "/api/tables";
-
     private final OrderTableResponse orderTableResponse = new OrderTableResponse(1L, 1L, 3, true);
 
     @MockBean
@@ -35,7 +34,7 @@ class TableRestControllerTest extends ControllerTest {
         when(tableService.create(any(OrderTableCreateRequest.class))).thenReturn(orderTableResponse);
 
         // when
-        ResultActions response = postRequestWithJson(defaultTableUrl, orderTableResponse);
+        ResultActions response = postRequestWithJson(defaultTableUrl, new OrderTableCreateRequest());
 
         // then
         response.andExpect(status().isCreated())
@@ -60,12 +59,12 @@ class TableRestControllerTest extends ControllerTest {
     @Test
     void table을_비울_수_있다() throws Exception {
         // given
-        String url = "/api/tables/1/empty";
+        String url = defaultTableUrl + "/1/empty";
         when(tableService.changeEmpty(any(Long.class), any(OrderTableChangeStatusRequest.class))).thenReturn(
                 orderTableResponse);
 
         // when
-        ResultActions response = putRequestWithJson(url, orderTableResponse);
+        ResultActions response = putRequestWithJson(url, new OrderTableChangeStatusRequest());
 
         // then
         response.andExpect(status().isOk())
@@ -75,7 +74,7 @@ class TableRestControllerTest extends ControllerTest {
     @Test
     void table_손님의_수를_변경할_수_있다() throws Exception {
         // given
-        String url = "/api/tables/1/number-of-guests";
+        String url = defaultTableUrl + "/1/number-of-guests";
         when(tableService.changeNumberOfGuests(any(Long.class),
                 any(OrderTableChangeNumberOfGuestsRequest.class))).thenReturn(orderTableResponse);
 
