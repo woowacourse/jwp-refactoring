@@ -108,7 +108,7 @@ public class TableServiceTest {
         }
     }
 
-    @DisplayName("주문 테이블의 손님들의 수를 수정한다.")
+    @DisplayName("주문 테이블의 손님수를 수정할 때")
     @Nested
     class ChangeNumberOfGuests {
 
@@ -146,6 +146,18 @@ public class TableServiceTest {
 
             // then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, updateOrderTable))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @DisplayName("테이블이 empty 상태면 예외를 발생시킨다.")
+        @Test
+        void emptyIsTrue_exception() {
+            // given
+            OrderTable orderTable = orderTableDao.save(new OrderTable(null, 2, true));
+            OrderTable updateOrderTable = new OrderTable(null, 3, false);
+
+            // then
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), updateOrderTable))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
