@@ -24,7 +24,7 @@ public class Menu {
         this.menuGroupId = menuGroupId;
     }
 
-    private static void validatePrice(BigDecimal price) {
+    private void validatePrice(BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
