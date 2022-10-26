@@ -10,7 +10,7 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -35,7 +35,7 @@ class OrderServiceTest extends ServiceTest {
     private OrderDao orderDao;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuGroupDao menuGroupDao;
@@ -48,7 +48,7 @@ class OrderServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        Product product = productDao.save(new Product("상품1", new BigDecimal(2500)));
+        Product product = productRepository.save(Product.of("상품1", 2500.0));
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹1"));
         Menu menu1 = menuDao.save(new Menu("메뉴1", new BigDecimal(5000), menuGroup.getId(),
                 List.of(new MenuProduct(product.getId(), 1L))));

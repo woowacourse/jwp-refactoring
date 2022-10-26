@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -25,7 +25,7 @@ class MenuServiceTest extends ServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuGroupDao menuGroupDao;
@@ -34,7 +34,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void create() {
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹1"));
-        Product product = productDao.save(new Product("상품1", new BigDecimal(5000)));
+        Product product = productRepository.save(Product.of("상품1", 5000.0));
         MenuProduct menuProduct = new MenuProduct(product.getId(), 2L);
         Menu menu = new Menu("메뉴1", new BigDecimal(10000), menuGroup.getId(), List.of(menuProduct));
 
@@ -54,7 +54,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void create_Exception_NotFoundMenuGroup() {
         Long notFoundMenuGroupId = 100L;
-        Product product = productDao.save(new Product("상품1", new BigDecimal(5000)));
+        Product product = productRepository.save(Product.of("상품1", 5000.0));
         MenuProduct menuProduct = new MenuProduct(product.getId(), 2L);
         Menu menu = new Menu(
                 "메뉴1", new BigDecimal(10000), notFoundMenuGroupId, List.of(menuProduct));
@@ -69,8 +69,8 @@ class MenuServiceTest extends ServiceTest {
     @CsvSource({"-1, 메뉴 가격은 0원 이상입니다.", "16001, 메뉴 가격은 상품의 합보다 작거나 같아야 합니다."})
     void create_Exception_InvalidPrice(int price, String expectedMessage) {
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹1"));
-        Product product1 = productDao.save(new Product("상품1", new BigDecimal(5000)));
-        Product product2 = productDao.save(new Product("상품2", new BigDecimal(6000)));
+        Product product1 = productRepository.save(Product.of("상품1", 5000.0));
+        Product product2 = productRepository.save(Product.of("상품2", 6000.0));
         MenuProduct menuProduct1 = new MenuProduct(product1.getId(), 2L);
         MenuProduct menuProduct2 = new MenuProduct(product2.getId(), 1L);
         Menu menu = new Menu("메뉴1", new BigDecimal(price), menuGroup.getId(), List.of(menuProduct1, menuProduct2));

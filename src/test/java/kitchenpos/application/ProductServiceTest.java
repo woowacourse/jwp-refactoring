@@ -4,10 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.Price;
+import kitchenpos.dto.ProductDto;
+import kitchenpos.exception.EmptyDataException;
+import kitchenpos.exception.InvalidPriceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class ProductServiceTest extends ServiceTest {
 
     private static final String PRODUCE_NAME = "빅맥";
-    private static final BigDecimal PRICE = new BigDecimal(5000);
+    private static final Double PRICE = 5000.0;
 
     @Autowired
     private ProductService productService;
@@ -23,13 +25,13 @@ class ProductServiceTest extends ServiceTest {
     @DisplayName("상품을 생성할 수 있다.")
     @Test
     void create() {
-        Product product = new Product(PRODUCE_NAME, PRICE);
+        ProductDto product = new ProductDto(PRODUCE_NAME, PRICE);
 
         productService.create(product);
 
-        List<Product> products = productService.list();
+        List<ProductDto> products = productService.list();
         List<String> productNames = products.stream()
-                .map(Product::getName)
+                .map(ProductDto::getName)
                 .collect(Collectors.toUnmodifiableList());
         assertAll(
                 () -> assertThat(products).hasSize(1),
@@ -40,19 +42,21 @@ class ProductServiceTest extends ServiceTest {
     @DisplayName("상품 가격이 존재하지 않으면 예외를 발생시킨다.")
     @Test
     void create_NullPrice() {
-        Product product = new Product(PRODUCE_NAME, null);
+        ProductDto product = new ProductDto(PRODUCE_NAME, null);
 
         assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(EmptyDataException.class)
+                .hasMessageContaining(Price.class.getSimpleName())
+                .hasMessageContaining("입력되지 않았습니다.");
     }
 
     @DisplayName("상품 가격이 0보다 작으면 예외를 발생시킨다.")
     @Test
     void create_InvalidPrice() {
-        BigDecimal invalidPrice = new BigDecimal(-1);
-        Product product = new Product(PRODUCE_NAME, invalidPrice);
+        Double invalidPrice = -0.1;
+        ProductDto product = new ProductDto(PRODUCE_NAME, invalidPrice);
 
         assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidPriceException.class);
     }
 }
