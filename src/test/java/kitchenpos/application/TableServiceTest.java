@@ -54,7 +54,7 @@ class TableServiceTest {
 
     @Nested
     class 테이블_상태_변경 extends IntegrationTest {
-        @ParameterizedTest
+        @ParameterizedTest(name = "[{index}] 주문의 상태가 {0} 인 경")
         @CsvSource(value = {"COOKING", "MEAL"})
         void 요청에서_테이블이_비어있는_상태로_변경할때_주문의_상태가_완료상태가_아니면_예외가_발생한다(final OrderStatus orderStatus) {
             // given
