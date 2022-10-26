@@ -89,6 +89,15 @@ class OrderServiceTest extends ServiceTest {
         검증_필드비교_값포함(assertThat(주문_목록), 변경된_주문);
     }
 
+    @DisplayName("존재하는 주문의 상태만 수정할 수 있다.")
+    @Test
+    void changeOrderStatus_noOrder() {
+        long 존재하지않는_주문_ID = 100L;
+        assertThatThrownBy(() -> orderService.changeOrderStatus(존재하지않는_주문_ID, 주문_테이블1()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("해당 아이디의 주문은 존재하지 않는다.");
+    }
+
     @DisplayName("주문 상태가 COMPLETION일 시 주문 상태를 변경할 수 없다.")
     @Test
     void changeOrderStatus_noComplete() {

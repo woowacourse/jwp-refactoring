@@ -49,6 +49,10 @@ public class Fixtures {
         return new OrderTable(1L, tableGroupId, 0, false);
     }
 
+    public static OrderTable 테이블_1_ofId(long id) {
+        return new OrderTable(id, null, 0, false);
+    }
+
     public static OrderTable 테이블_1() {
         return new OrderTable(1L, null, 0, false);
     }

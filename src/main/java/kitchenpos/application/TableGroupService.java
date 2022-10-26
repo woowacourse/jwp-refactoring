@@ -43,7 +43,7 @@ public class TableGroupService {
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
         if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("등록되는 모든 테이블들은 존재해야 한다.");
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {

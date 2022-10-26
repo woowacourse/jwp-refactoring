@@ -34,6 +34,19 @@ class TableServiceTest extends ServiceTest {
                 .isFalse();
     }
 
+    @DisplayName("테이블은 존재해야 한다.")
+    @Test
+    void changeEmpty_noTable() {
+        long 없는_테이블_ID = 100L;
+        OrderTable 테이블_1 = new OrderTable(없는_테이블_ID, null, 0, true);
+
+        테이블_1.updateEmpty(false);
+
+        assertThatThrownBy(() -> tableService.changeEmpty(테이블_1.getId(), 테이블_1))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("테이블은 차있어야 한다.");
+    }
+
     @DisplayName("테이블은 단체지정이 없어야 한다.")
     @Test
     void changeEmpty_noTableGroup() {

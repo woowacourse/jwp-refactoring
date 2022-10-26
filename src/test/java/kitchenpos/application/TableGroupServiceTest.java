@@ -57,6 +57,17 @@ class TableGroupServiceTest extends ServiceTest {
                 .hasMessage("등록되는 모든 테이블들은 비어있어야 한다.");
     }
 
+    @DisplayName("등록되는 모든 테이블들은 존재해야 한다.")
+    @Test
+    void create_noTable() {
+        long 존재하지_않는_테이블_id = 100L;
+        TableGroup 테이블그룹 = 테이블그룹(List.of(테이블_1_ofId(존재하지_않는_테이블_id), 빈테이블_2));
+
+        assertThatThrownBy(() -> tableGroupService.create(테이블그룹))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("등록되는 모든 테이블들은 존재해야 한다.");
+    }
+
     @DisplayName("등록되는 모든 테이블들은 기존 단체 지정이 없어야 한다.")
     @Test
     void create_alreadyInGroup() {
