@@ -8,29 +8,31 @@ import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@ServiceTest
-class MenuGroupServiceTest {
+@SuppressWarnings("NonAsciiCharacters")
+class MenuGroupServiceTest extends ServiceTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
 
     @Test
     void 테이블_그룹을_생성한다() {
-        // given, when, then
+        // given, when
         final MenuGroup actual = menuGroupService.create(메뉴_그룹_생성("테스트-메뉴-그룹"));
+
+        // then
         assertThat(actual.getName()).isEqualTo("테스트-메뉴-그룹");
     }
 
     @Test
     void 테이블_그룹_전체를_조회한다() {
         // given
-        final MenuGroup menuGroup = menuGroupService.create(메뉴_그룹_생성("테스트-메뉴-그룹"));
+        final MenuGroup expected = menuGroupDao.save(메뉴_그룹_생성("테스트-메뉴-그룹"));
 
         // when
-        final List<MenuGroup> menuGroups = menuGroupService.list();
+        final List<MenuGroup> actual = menuGroupService.list();
 
         //then
-        assertThat(menuGroups).usingElementComparatorOnFields("name")
-                .containsExactly(menuGroup);
+        assertThat(actual).usingElementComparatorOnFields("name")
+                .containsExactly(expected);
     }
 }

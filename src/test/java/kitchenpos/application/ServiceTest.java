@@ -1,16 +1,34 @@
 package kitchenpos.application;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import javax.transaction.Transactional;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.TableGroupDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
 @SpringBootTest
 @Transactional
-@SuppressWarnings("NonAsciiCharacters")
-public @interface ServiceTest {
+public class ServiceTest {
+
+    @Autowired
+    OrderTableDao orderTableDao;
+
+    @Autowired
+    ProductDao productDao;
+
+    @Autowired
+    OrderDao orderDao;
+
+    @Autowired
+    MenuDao menuDao;
+
+    @Autowired
+    MenuGroupDao menuGroupDao;
+
+    @Autowired
+    TableGroupDao tableGroupDao;
 }

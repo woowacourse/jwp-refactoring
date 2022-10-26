@@ -26,49 +26,38 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@ServiceTest
-class OrderServiceTest {
-
-    @Autowired
-    private TableService tableService;
+@SuppressWarnings("NonAsciiCharacters")
+class OrderServiceTest extends ServiceTest {
 
     @Autowired
     private OrderService orderService;
 
-    @Autowired
-    private MenuService menuService;
-
-    @Autowired
-    private MenuGroupService menuGroupService;
-
-    @Autowired
-    private ProductService productService;
-
     @Test
     void 주문을_생성한다() {
         // given
-        final OrderTable orderTable = tableService.create(주문_테이블_생성(1, false));
-        final Product product = productService.create(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
+        final OrderTable expectedOrderTable = orderTableDao.save(주문_테이블_생성(1, false));
+        final Product product = productDao.save(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
         final MenuProduct menuProduct = 메뉴_상품_생성(product.getId(), 1L);
-        final MenuGroup menuGroup = menuGroupService.create(메뉴_그룹_생성("테스트-메뉴-그룹"));
-        final Menu menu = menuService.create(
-                메뉴_생성("테스트-메뉴-1", BigDecimal.valueOf(99999), menuGroup.getId(), List.of(menuProduct)));
-        final OrderLineItem orderLineItem = 주문_상품_생성(menu.getId());
+        final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("테스트-메뉴-그룹"));
+        final Menu expectedMenu = menuDao.save(
+                메뉴_생성("테스트-메뉴-1", BigDecimal.valueOf(99999), menuGroup.getId(), List.of(menuProduct))
+        );
+        final OrderLineItem orderLineItem = 주문_상품_생성(expectedMenu.getId());
 
         // when
-        final Order order = orderService.create(주문_생성(List.of(orderLineItem), orderTable.getId()));
+        final Order actual = orderService.create(주문_생성(List.of(orderLineItem), expectedOrderTable.getId()));
 
         // then
         assertAll(
-                () -> assertThat(order.getOrderTableId()).isEqualTo(orderTable.getId()),
-                () -> assertThat(order.getOrderLineItems().get(0).getMenuId()).isEqualTo(menu.getId())
+                () -> assertThat(actual.getOrderTableId()).isEqualTo(expectedOrderTable.getId()),
+                () -> assertThat(actual.getOrderLineItems().get(0).getMenuId()).isEqualTo(expectedMenu.getId())
         );
     }
 
     @Test
     void 주문_생성시_주문_항목이_비어있을_경우_예외가_발생한다() {
         // given
-        final OrderTable orderTable = tableService.create(주문_테이블_생성(1, false));
+        final OrderTable orderTable = orderTableDao.save(주문_테이블_생성(1, false));
 
         // when, then
         assertThatThrownBy(() -> orderService.create(주문_생성(List.of(), orderTable.getId())))
@@ -78,7 +67,7 @@ class OrderServiceTest {
     @Test
     void 주문_생성시_메뉴에_등록된_상품이_아니라면_예외가_발생한다() {
         // given
-        final OrderTable orderTable = tableService.create(주문_테이블_생성(1, false));
+        final OrderTable orderTable = orderTableDao.save(주문_테이블_생성(1, false));
         final OrderLineItem orderLineItem = 주문_상품_생성(1L);
 
         // when, then
@@ -89,11 +78,12 @@ class OrderServiceTest {
     @Test
     void 주문_생성시_주문_테이블에_등록되지_않았다면_예외가_발생한다() {
         // given
-        final Product product = productService.create(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
+        final Product product = productDao.save(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
         final MenuProduct menuProduct = 메뉴_상품_생성(product.getId(), 1L);
-        final MenuGroup menuGroup = menuGroupService.create(메뉴_그룹_생성("테스트-메뉴-그룹"));
-        final Menu menu = menuService.create(
-                메뉴_생성("테스트-메뉴-1", BigDecimal.valueOf(99999), menuGroup.getId(), List.of(menuProduct)));
+        final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("테스트-메뉴-그룹"));
+        final Menu menu = menuDao.save(
+                메뉴_생성("테스트-메뉴-1", BigDecimal.valueOf(99999), menuGroup.getId(), List.of(menuProduct))
+        );
         final OrderLineItem orderLineItem = 주문_상품_생성(menu.getId());
 
         // when, then
@@ -104,22 +94,22 @@ class OrderServiceTest {
     @Test
     void 주문_전체_조회를_한다() {
         // given
-        final OrderTable orderTable = tableService.create(주문_테이블_생성(1, false));
-        final Product product = productService.create(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
+        final OrderTable orderTable = orderTableDao.save(주문_테이블_생성(1, false));
+        final Product product = productDao.save(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
         final MenuProduct menuProduct = 메뉴_상품_생성(product.getId(), 1L);
-        final MenuGroup menuGroup = menuGroupService.create(메뉴_그룹_생성("테스트-메뉴-그룹"));
-        final Menu menu = menuService.create(
+        final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("테스트-메뉴-그룹"));
+        final Menu menu = menuDao.save(
                 메뉴_생성("테스트-메뉴-1", BigDecimal.valueOf(99999), menuGroup.getId(), List.of(menuProduct)));
         final OrderLineItem orderLineItem = 주문_상품_생성(menu.getId());
-        final Order order = orderService.create(주문_생성(List.of(orderLineItem), orderTable.getId()));
+        final Order expected = orderDao.save(주문_생성(List.of(orderLineItem), orderTable.getId(), OrderStatus.COOKING));
 
         // when
-        final List<Order> orders = orderService.list();
+        final List<Order> actual = orderService.list();
 
         // then
         assertAll(
-                () -> assertThat(orders.size()).isOne(),
-                () -> assertThat(orders.get(0).getId()).isEqualTo(order.getId())
+                () -> assertThat(actual.size()).isOne(),
+                () -> assertThat(actual.get(0).getId()).isEqualTo(expected.getId())
         );
     }
 
@@ -127,20 +117,21 @@ class OrderServiceTest {
     @EnumSource(names = {"MEAL", "COMPLETION"})
     void 주문_상태를_변경한다(final OrderStatus orderStatus) {
         // given
-        final OrderTable orderTable = tableService.create(주문_테이블_생성(1, false));
-        final Product product = productService.create(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
+        final OrderTable orderTable = orderTableDao.save(주문_테이블_생성(1, false));
+        final Product product = productDao.save(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
         final MenuProduct menuProduct = 메뉴_상품_생성(product.getId(), 1L);
-        final MenuGroup menuGroup = menuGroupService.create(메뉴_그룹_생성("테스트-메뉴-그룹"));
-        final Menu menu = menuService.create(
+        final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("테스트-메뉴-그룹"));
+        final Menu menu = menuDao.save(
                 메뉴_생성("테스트-메뉴-1", BigDecimal.valueOf(99999), menuGroup.getId(), List.of(menuProduct)));
         final OrderLineItem orderLineItem = 주문_상품_생성(menu.getId());
-        final Long orderId = orderService.create(주문_생성(List.of(orderLineItem), orderTable.getId())).getId();
+        final Long orderId = orderDao.save(주문_생성(List.of(orderLineItem), orderTable.getId(), OrderStatus.COOKING))
+                .getId();
 
         // when
-        final Order order = orderService.changeOrderStatus(orderId, 주문_생성(orderStatus));
+        final Order actual = orderService.changeOrderStatus(orderId, 주문_생성(orderStatus));
 
         // then
-        assertThat(order.getOrderStatus()).isEqualTo(orderStatus.name());
+        assertThat(actual.getOrderStatus()).isEqualTo(orderStatus.name());
     }
 
     @Test
@@ -153,15 +144,14 @@ class OrderServiceTest {
     @Test
     void 주문_상태_변경시_현재_주문_상태가_COMPLETION인_경우_예외가_발생한다() {
         // given
-        final OrderTable orderTable = tableService.create(주문_테이블_생성(1, false));
-        final Product product = productService.create(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
+        final OrderTable orderTable = orderTableDao.save(주문_테이블_생성(1, false));
+        final Product product = productDao.save(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
         final MenuProduct menuProduct = 메뉴_상품_생성(product.getId(), 1L);
-        final MenuGroup menuGroup = menuGroupService.create(메뉴_그룹_생성("테스트-메뉴-그룹"));
-        final Menu menu = menuService.create(
+        final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("테스트-메뉴-그룹"));
+        final Menu menu = menuDao.save(
                 메뉴_생성("테스트-메뉴-1", BigDecimal.valueOf(99999), menuGroup.getId(), List.of(menuProduct)));
         final OrderLineItem orderLineItem = 주문_상품_생성(menu.getId());
-        final Long orderId = orderService.create(주문_생성(List.of(orderLineItem), orderTable.getId())).getId();
-        final Order order = orderService.changeOrderStatus(orderId, 주문_생성(OrderStatus.COMPLETION));
+        final Order order = orderDao.save(주문_생성(List.of(orderLineItem), orderTable.getId(), OrderStatus.COMPLETION));
 
         //when, then
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), 주문_생성(OrderStatus.COMPLETION)))

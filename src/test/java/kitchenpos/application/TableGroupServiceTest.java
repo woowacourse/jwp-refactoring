@@ -17,7 +17,6 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -26,47 +25,32 @@ import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@ServiceTest
-class TableGroupServiceTest {
+@SuppressWarnings("NonAsciiCharacters")
+class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
     private TableGroupService tableGroupService;
 
-    @Autowired
-    private TableService tableService;
-
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private MenuService menuService;
-
-    @Autowired
-    private MenuGroupService menuGroupService;
-
-    @Autowired
-    private ProductService productService;
-
     @Test
     void 테이블_그룹을_생성한다() {
         // given
-        final OrderTable orderTable1 = tableService.create(주문_테이블_생성(1, true));
-        final OrderTable orderTable2 = tableService.create(주문_테이블_생성(1, true));
+        final OrderTable expectedOrderTable1 = orderTableDao.save(주문_테이블_생성(1, true));
+        final OrderTable expectedOrderTable2 = orderTableDao.save(주문_테이블_생성(1, true));
 
         // when
-        final TableGroup tableGroup = tableGroupService.create(
-                테이블_그룹_생성(List.of(orderTable1, orderTable2))
+        final TableGroup actual = tableGroupService.create(
+                테이블_그룹_생성(List.of(expectedOrderTable1, expectedOrderTable2))
         );
 
         // then
-        assertThat(tableGroup.getOrderTables()).usingElementComparatorOnFields("id")
-                .containsExactly(orderTable1, orderTable2);
+        assertThat(actual.getOrderTables()).usingElementComparatorOnFields("id")
+                .containsExactly(expectedOrderTable1, expectedOrderTable2);
     }
 
     @Test
     void 테이블_그룹_생성시_주문_테이블이_3개_미만_인_경우_예외가_발생한다() {
         // given
-        final OrderTable orderTable = tableService.create(주문_테이블_생성(1, true));
+        final OrderTable orderTable = orderTableDao.save(주문_테이블_생성(1, true));
         final TableGroup tableGroup = 테이블_그룹_생성(List.of(orderTable));
 
         // when, then
@@ -78,7 +62,7 @@ class TableGroupServiceTest {
     void 테이블_그룹_생성시_주문_테이블이_등록되지_않은_경우_예외가_발생한다() {
         // given
         final OrderTable orderTable1 = 주문_테이블_생성(1, true);
-        final OrderTable orderTable2 = tableService.create(주문_테이블_생성(1, true));
+        final OrderTable orderTable2 = orderTableDao.save(주문_테이블_생성(1, true));
         final TableGroup tableGroup = 테이블_그룹_생성(List.of(orderTable1, orderTable2));
 
         // when, then
@@ -89,8 +73,8 @@ class TableGroupServiceTest {
     @Test
     void 테이블_그룹_생성시_주문_테이블이_비어있지_않은_경우_예외가_발생한다() {
         // given
-        final OrderTable orderTable1 = 주문_테이블_생성(1, false);
-        final OrderTable orderTable2 = tableService.create(주문_테이블_생성(1, true));
+        final OrderTable orderTable1 = orderTableDao.save(주문_테이블_생성(1, false));
+        final OrderTable orderTable2 = orderTableDao.save(주문_테이블_생성(1, true));
         final TableGroup tableGroup = 테이블_그룹_생성(List.of(orderTable1, orderTable2));
 
         // when, then
@@ -101,9 +85,11 @@ class TableGroupServiceTest {
     @Test
     void 테이블_그룹_생성시_주문_테이블이_이미_테이블_그룹을_가진_경우_예외가_발생한다() {
         // given
-        final OrderTable orderTable1 = TestFixture.주문_테이블_생성(1L, 1, true);
-        final OrderTable orderTable2 = tableService.create(주문_테이블_생성(1, true));
-        final TableGroup tableGroup = 테이블_그룹_생성(List.of(orderTable1, orderTable2));
+        final TableGroup tableGroupWithoutOrderTables = tableGroupDao.save(테이블_그룹_생성());
+        final OrderTable orderTable1 = orderTableDao.save(주문_테이블_생성(tableGroupWithoutOrderTables.getId(), true));
+        final OrderTable orderTable2 = orderTableDao.save(주문_테이블_생성(1, true));
+        final TableGroup tableGroup = 테이블_그룹_생성(tableGroupWithoutOrderTables.getId(),
+                List.of(orderTable1, orderTable2));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -113,39 +99,35 @@ class TableGroupServiceTest {
     @Test
     void 테이블_그룹을_해제한다() {
         // given
-        final OrderTable orderTable1 = tableService.create(주문_테이블_생성(1, true));
-        final OrderTable orderTable2 = tableService.create(주문_테이블_생성(1, true));
-        final TableGroup tableGroup = tableGroupService.create(
-                테이블_그룹_생성(List.of(orderTable1, orderTable2))
-        );
+        final OrderTable orderTable1 = orderTableDao.save(주문_테이블_생성(1, true));
+        final OrderTable orderTable2 = orderTableDao.save(주문_테이블_생성(1, true));
+        final TableGroup tableGroup = tableGroupDao.save(테이블_그룹_생성(List.of(orderTable1, orderTable2)));
 
         // when
         tableGroupService.ungroup(tableGroup.getId());
 
         // then
-        final List<OrderTable> orderTables = tableService.list();
+        final List<OrderTable> actual = orderTableDao.findAll();
         assertAll(
-                () -> assertThat(orderTables.get(0).getTableGroupId()).isNull(),
-                () -> assertThat(orderTables.get(1).getTableGroupId()).isNull()
+                () -> assertThat(actual.get(0).getTableGroupId()).isNull(),
+                () -> assertThat(actual.get(1).getTableGroupId()).isNull()
         );
     }
 
     @Test
     void 테이블_그룹_해제시_주문_테이블에_등록되어_있고_주문_상태가_COOKING_인_경우_예외가_발생한다() {
         // given
-        final OrderTable orderTable1 = tableService.create(주문_테이블_생성(1, true));
-        final OrderTable orderTable2 = tableService.create(주문_테이블_생성(1, true));
-        final TableGroup tableGroup = tableGroupService.create(
-                테이블_그룹_생성(List.of(orderTable1, orderTable2))
-        );
-        final Product product = productService.create(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
+        final TableGroup tableGroup = tableGroupDao.save(테이블_그룹_생성());
+        final OrderTable orderTable1 = orderTableDao.save(주문_테이블_생성(tableGroup.getId(), true));
+        final OrderTable orderTable2 = orderTableDao.save(주문_테이블_생성(tableGroup.getId(), true));
+        final Product product = productDao.save(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
         final MenuProduct menuProduct = 메뉴_상품_생성(product.getId(), 1L);
-        final MenuGroup menuGroup = menuGroupService.create(메뉴_그룹_생성("테스트-메뉴-그룹"));
-        final Menu menu = menuService.create(
+        final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("테스트-메뉴-그룹"));
+        final Menu menu = menuDao.save(
                 메뉴_생성("테스트-메뉴-1", BigDecimal.valueOf(99999), menuGroup.getId(), List.of(menuProduct)));
         final OrderLineItem orderLineItem = 주문_상품_생성(menu.getId());
-        orderService.create(주문_생성(List.of(orderLineItem), orderTable1.getId()));
-        orderService.create(주문_생성(List.of(orderLineItem), orderTable2.getId()));
+        orderDao.save(주문_생성(List.of(orderLineItem), orderTable1.getId(), OrderStatus.COOKING));
+        orderDao.save(주문_생성(List.of(orderLineItem), orderTable2.getId(), OrderStatus.COOKING));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
@@ -155,22 +137,17 @@ class TableGroupServiceTest {
     @Test
     void 테이블_그룹_해제시_주문_테이블에_등록되어_있고_주문_상태가_MEAL_인_경우_예외가_발생한다() {
         // given
-        final OrderTable orderTable1 = tableService.create(주문_테이블_생성(1, true));
-        final OrderTable orderTable2 = tableService.create(주문_테이블_생성(1, true));
-        final TableGroup tableGroup = tableGroupService.create(
-                테이블_그룹_생성(List.of(orderTable1, orderTable2))
-        );
-        final Product product = productService.create(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
+        final TableGroup tableGroup = tableGroupDao.save(테이블_그룹_생성());
+        final OrderTable orderTable1 = orderTableDao.save(주문_테이블_생성(tableGroup.getId(), true));
+        final OrderTable orderTable2 = orderTableDao.save(주문_테이블_생성(tableGroup.getId(), true));
+        final Product product = productDao.save(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
         final MenuProduct menuProduct = 메뉴_상품_생성(product.getId(), 1L);
-        final MenuGroup menuGroup = menuGroupService.create(메뉴_그룹_생성("테스트-메뉴-그룹"));
-        final Menu menu = menuService.create(
+        final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("테스트-메뉴-그룹"));
+        final Menu menu = menuDao.save(
                 메뉴_생성("테스트-메뉴-1", BigDecimal.valueOf(99999), menuGroup.getId(), List.of(menuProduct)));
         final OrderLineItem orderLineItem = 주문_상품_생성(menu.getId());
-        final Order order1 = orderService.create(주문_생성(List.of(orderLineItem), orderTable1.getId()));
-        final Order order2 = orderService.create(주문_생성(List.of(orderLineItem), orderTable2.getId()));
-
-        orderService.changeOrderStatus(order1.getId(), 주문_생성(OrderStatus.MEAL));
-        orderService.changeOrderStatus(order2.getId(), 주문_생성(OrderStatus.MEAL));
+        orderDao.save(주문_생성(List.of(orderLineItem), orderTable1.getId(), OrderStatus.MEAL));
+        orderDao.save(주문_생성(List.of(orderLineItem), orderTable2.getId(), OrderStatus.MEAL));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

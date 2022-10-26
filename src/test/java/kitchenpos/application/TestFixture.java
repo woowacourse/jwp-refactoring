@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -12,6 +13,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class TestFixture {
 
     private TestFixture() {
@@ -62,9 +64,31 @@ public class TestFixture {
         return orderTable;
     }
 
+    public static OrderTable 주문_테이블_생성(final long tableGroupId, final boolean empty) {
+        final OrderTable orderTable = new OrderTable();
+        orderTable.setTableGroupId(tableGroupId);
+        orderTable.setEmpty(empty);
+        return orderTable;
+    }
+
     public static TableGroup 테이블_그룹_생성(final List<OrderTable> orderTables) {
         final TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now());
         tableGroup.setOrderTables(orderTables);
+        return tableGroup;
+    }
+
+    public static <E> TableGroup 테이블_그룹_생성(final Long id, final List<OrderTable> orderTables) {
+        final TableGroup tableGroup = new TableGroup();
+        tableGroup.setId(id);
+        tableGroup.setCreatedDate(LocalDateTime.now());
+        tableGroup.setOrderTables(orderTables);
+        return tableGroup;
+    }
+
+    public static TableGroup 테이블_그룹_생성() {
+        final TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now());
         return tableGroup;
     }
 
@@ -78,6 +102,16 @@ public class TestFixture {
         final Order order = new Order();
         order.setOrderTableId(orderTableId);
         order.setOrderLineItems(orderLineItems);
+        return order;
+    }
+
+    public static Order 주문_생성(final List<OrderLineItem> orderLineItems, final Long orderTableId,
+                              final OrderStatus orderStatus) {
+        final Order order = new Order();
+        order.setOrderedTime(LocalDateTime.now());
+        order.setOrderTableId(orderTableId);
+        order.setOrderLineItems(orderLineItems);
+        order.setOrderStatus(orderStatus.name());
         return order;
     }
 
