@@ -25,9 +25,7 @@ class ProductServiceTest {
     @DisplayName("상품을 생성한다.")
     void create() {
         //given
-        Product product = new Product();
-        product.setName("test");
-        product.setPrice(BigDecimal.valueOf(100));
+        Product product = new Product("test", BigDecimal.valueOf(100));
 
         //when, then
         assertDoesNotThrow(() -> productService.create(product));
@@ -37,8 +35,7 @@ class ProductServiceTest {
     @DisplayName("가격이 null이라면 예외를 발생시킨다.")
     void createwithNullPriceError() {
         //given
-        Product product = new Product();
-        product.setName("test");
+        Product product = new Product("test", null);
 
         //when, then
         assertThatThrownBy(() -> productService.create(product))
@@ -49,9 +46,7 @@ class ProductServiceTest {
     @DisplayName("가격이 음수라면 예외를 발생시킨다.")
     void createwithNeagativePriceError() {
         //given
-        Product product = new Product();
-        product.setName("test");
-        product.setPrice(BigDecimal.valueOf(-1));
+        Product product = new Product("test", BigDecimal.valueOf(-1));
 
         //when, then
         assertThatThrownBy(() -> productService.create(product))
@@ -65,9 +60,7 @@ class ProductServiceTest {
         List<Product> products = productService.list();
 
         //when
-        Product product = new Product();
-        product.setName("test");
-        product.setPrice(BigDecimal.valueOf(1000));
+        Product product = new Product("test", BigDecimal.valueOf(1000));
         productService.create(product);
 
         //then
