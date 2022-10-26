@@ -60,8 +60,8 @@ class OrderServiceTest extends ServiceTest {
 
         @BeforeEach
         void setUp() {
-            orderLineItemA = ClassConstructor.orderLineItem(null, ORDER_ID, MENU_A_ID, 1);
-            orderLineItemB = ClassConstructor.orderLineItem(null, ORDER_ID, MENU_B_ID, 1);
+            orderLineItemA = new OrderLineItem(null, ORDER_ID, MENU_A_ID, 1);
+            orderLineItemB = new OrderLineItem(null, ORDER_ID, MENU_B_ID, 1);
 
             orderTable = new OrderTable(ORDER_TABLE_ID, null, 2, false);
 
@@ -152,8 +152,8 @@ class OrderServiceTest extends ServiceTest {
 
         @BeforeEach
         void setUp() {
-            orderLineItemA = ClassConstructor.orderLineItem(null, ORDER_ID, MENU_A_ID, 1);
-            orderLineItemB = ClassConstructor.orderLineItem(null, ORDER_ID, MENU_B_ID, 1);
+            orderLineItemA = new OrderLineItem(null, ORDER_ID, MENU_A_ID, 1);
+            orderLineItemB = new OrderLineItem(null, ORDER_ID, MENU_B_ID, 1);
 
             savedOrder = ClassConstructor.order(ORDER_ID, ORDER_TABLE_ID, null, null,
                     Arrays.asList(orderLineItemA, orderLineItemB));
