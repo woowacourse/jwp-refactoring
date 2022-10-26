@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static kitchenpos.common.constants.Constants.데시멀_야채곱창_가격;
-import static kitchenpos.common.constants.Constants.야채곱창_가격;
 import static kitchenpos.common.constants.Constants.야채곱창_이름;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -71,7 +70,7 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void 상품_목록을_조회한다() {
         // given
-        Product 야채곱창 = 상품_생성(야채곱창_이름, 야채곱창_가격);
+        Product 야채곱창 = 상품_생성(야채곱창_이름, 데시멀_야채곱창_가격);
         productDao.save(야채곱창);
 
         // when
@@ -81,10 +80,10 @@ class ProductServiceTest extends ServiceTest {
         assertThat(상품들.getProductResponses()).hasSize(1);
     }
 
-    private Product 상품_생성(final String name, final int price) {
+    private Product 상품_생성(final String name, final BigDecimal price) {
         return new ProductBuilder()
                 .name(name)
-                .price(BigDecimal.valueOf(price))
+                .price(price)
                 .build();
     }
 }
