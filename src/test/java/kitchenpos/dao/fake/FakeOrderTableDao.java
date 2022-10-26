@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.dao.fake;
 
 import static java.util.stream.Collectors.*;
 import static kitchenpos.application.fixture.OrderTableFixtures.*;
@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 
 public class FakeOrderTableDao implements OrderTableDao {
@@ -24,7 +25,7 @@ public class FakeOrderTableDao implements OrderTableDao {
 
     @Override
     public Optional<OrderTable> findById(final Long id) {
-        return Optional.of(stores.get(id));
+        return Optional.ofNullable(stores.get(id));
     }
 
     @Override
@@ -46,5 +47,9 @@ public class FakeOrderTableDao implements OrderTableDao {
                 .stream()
                 .filter(orderTable -> orderTable.getTableGroupId() == tableGroupId)
                 .collect(toList());
+    }
+
+    public static void deleteAll() {
+        stores.clear();
     }
 }

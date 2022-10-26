@@ -9,10 +9,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.FakeMenuDao;
-import kitchenpos.dao.FakeMenuGroupDao;
-import kitchenpos.dao.FakeMenuProductDao;
-import kitchenpos.dao.FakeProductDao;
+import kitchenpos.dao.fake.FakeMenuDao;
+import kitchenpos.dao.fake.FakeMenuGroupDao;
+import kitchenpos.dao.fake.FakeMenuProductDao;
+import kitchenpos.dao.fake.FakeProductDao;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;

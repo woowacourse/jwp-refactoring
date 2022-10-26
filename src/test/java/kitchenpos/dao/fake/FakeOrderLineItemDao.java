@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.dao.fake;
 
 import static java.util.stream.Collectors.*;
 import static kitchenpos.application.fixture.OrderLineItemFixtures.generateOrderLineItem;
@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.domain.OrderLineItem;
 
 public class FakeOrderLineItemDao implements OrderLineItemDao {
@@ -38,5 +39,9 @@ public class FakeOrderLineItemDao implements OrderLineItemDao {
                 .stream()
                 .filter(orderLineItem -> orderLineItem.getOrderId() == orderId)
                 .collect(toList());
+    }
+
+    public static void deleteAll() {
+        stores.clear();
     }
 }

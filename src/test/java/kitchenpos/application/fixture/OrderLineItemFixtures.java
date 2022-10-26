@@ -5,10 +5,7 @@ import kitchenpos.domain.OrderLineItem;
 public class OrderLineItemFixtures {
 
     public static final OrderLineItem generateOrderLineItem(final Long menuId, final long quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-        return orderLineItem;
+        return generateOrderLineItem(null, null, menuId, quantity);
     }
 
     public static final OrderLineItem generateOrderLineItem(final Long seq, final OrderLineItem orderLineItem) {
