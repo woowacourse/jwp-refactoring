@@ -5,6 +5,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.dto.response.ProductsResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +25,8 @@ public class ProductService {
         return ProductResponse.of(savedProduct);
     }
 
-    public List<Product> list() {
-        return productDao.findAll();
+    public ProductsResponse list() {
+        List<Product> products = productDao.findAll();
+        return ProductsResponse.of(products);
     }
 }

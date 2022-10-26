@@ -8,12 +8,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import java.util.List;
 import kitchenpos.common.builder.ProductBuilder;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.dto.response.ProductsResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -75,10 +75,10 @@ class ProductServiceTest extends ServiceTest {
         productDao.save(야채곱창);
 
         // when
-        List<Product> 상품들 = productService.list();
+        ProductsResponse 상품들 = productService.list();
 
         // then
-        assertThat(상품들).hasSize(1);
+        assertThat(상품들.getProductResponses()).hasSize(1);
     }
 
     private Product 상품_생성(final String name, final int price) {
