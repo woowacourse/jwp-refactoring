@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,9 +28,11 @@ class MenuGroupServiceTest {
         final MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("추천 메뉴");
 
-        // when, then
-        assertThatCode(() -> menuGroupService.create(menuGroup))
-                .doesNotThrowAnyException();
+        // when
+        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+
+        // then
+        assertThat(savedMenuGroup.getId()).isNotNull();
     }
 
     @DisplayName("메뉴 그룹의 전체 목록을 조회할 수 있다.")

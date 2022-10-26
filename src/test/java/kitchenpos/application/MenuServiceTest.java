@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.math.BigDecimal;
@@ -52,9 +51,11 @@ class MenuServiceTest {
         menu.setMenuGroupId(savedMenuGroup.getId());
         menu.setMenuProducts(menuProducts);
 
-        // when, then
-        assertThatCode(() -> menuService.create(menu))
-                .doesNotThrowAnyException();
+        // when
+        final Menu savedMenu = menuService.create(menu);
+
+        // then
+        assertThat(savedMenu.getId()).isNotNull();
     }
 
     @DisplayName("메뉴를 등록할 때 상품이 존재하지 않으면 예외가 발생한다.")

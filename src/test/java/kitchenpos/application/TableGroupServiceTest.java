@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.Arrays;
@@ -34,9 +34,11 @@ class TableGroupServiceTest {
         final List<OrderTable> orderTables = Arrays.asList(savedOrderTable1, savedOrderTable2);
         tableGroup.setOrderTables(orderTables);
 
-        // when, then
-        assertThatCode(() -> tableGroupService.create(tableGroup))
-                .doesNotThrowAnyException();
+        // when
+        final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+
+        // then
+        assertThat(savedTableGroup.getId()).isNotNull();
     }
 
     @DisplayName("존재하지 않는 테이블을 그룹으로 지정하면 예외가 발생한다.")
@@ -105,12 +107,16 @@ class TableGroupServiceTest {
     void ungroup() {
         // given
         final TableGroup savedTableGroup = dataSupport.saveTableGroup();
-        dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0, false);
-        dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0, false);
+        final Long tableGroupId = savedTableGroup.getId();
+        dataSupport.saveOrderTableWithGroup(tableGroupId, 0, false);
+        dataSupport.saveOrderTableWithGroup(tableGroupId, 0, false);
 
-        // when, then
-        assertThatCode(() -> tableGroupService.ungroup(savedTableGroup.getId()))
-                .doesNotThrowAnyException();
+        // when
+        tableGroupService.ungroup(tableGroupId);
+        final List<OrderTable> groupedTablesAfterUngroup = dataSupport.findTableByTableGroupId(tableGroupId);
+
+        // then
+        assertThat(groupedTablesAfterUngroup).isEmpty();
     }
 
     @DisplayName("조리중인 테이블이 있는 단체를 해제하면 예외가 발생한다.")

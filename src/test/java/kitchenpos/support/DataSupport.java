@@ -127,4 +127,8 @@ public class DataSupport {
         return orderDao.findById(id)
                 .get();
     }
+
+    public List<OrderTable> findTableByTableGroupId(final Long tableGroupId) {
+        return orderTableDao.findAllByTableGroupId(tableGroupId);
+    }
 }

@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -48,7 +49,6 @@ class OrderServiceTest {
         orderLineItem.setMenuId(savedMenu.getId());
         orderLineItem.setQuantity(1);
         orderLineItems = Arrays.asList(orderLineItem);
-
     }
 
     @DisplayName("테이블에 대해 메뉴를 주문하고 주문 상태를 조리로 변경한다.")
@@ -63,7 +63,10 @@ class OrderServiceTest {
         final Order savedOrder = orderService.create(order);
 
         // then
-        assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        assertAll(
+                () -> assertThat(savedOrder.getId()).isNotNull(),
+                () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name())
+        );
     }
 
     @DisplayName("주문 항목 없이 주문하면 예외가 발생한다.")

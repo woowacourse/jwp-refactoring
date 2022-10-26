@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.math.BigDecimal;
@@ -32,9 +31,11 @@ class ProductServiceTest {
         product.setName("치킨마요");
         product.setPrice(new BigDecimal(3500));
 
-        // when, then
-        assertThatCode(() -> productService.create(product))
-                .doesNotThrowAnyException();
+        // when
+        final Product savedProduct = productService.create(product);
+
+        // then
+        assertThat(savedProduct.getId()).isNotNull();
     }
 
     @DisplayName("상품을 등록할 때 상품 가격을 입력하지 않으면 예외가 발생한다.")

@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.Arrays;
@@ -33,9 +32,11 @@ class TableServiceTest {
         orderTable.setNumberOfGuests(0);
         orderTable.setEmpty(true);
 
-        // when, then
-        assertThatCode(() -> tableService.create(orderTable))
-                .doesNotThrowAnyException();
+        // when
+        final OrderTable savedTable = tableService.create(orderTable);
+
+        // then
+        assertThat(savedTable.getId()).isNotNull();
     }
 
     @DisplayName("테이블의 전체 목록을 조회할 수 있다.")
