@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
@@ -14,20 +14,20 @@ import kitchenpos.dto.ProductResponse;
 @Service
 public class ProductService {
 
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
-    public ProductService(ProductDao productDao) {
-        this.productDao = productDao;
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Transactional
     public ProductResponse create(ProductRequest productRequest) {
-        Product product = productDao.save(productRequest.toEntity());
+        Product product = productRepository.save(productRequest.toEntity());
         return ProductResponse.from(product);
     }
 
     public List<ProductResponse> list() {
-        return productDao.findAll()
+        return productRepository.findAll()
             .stream()
             .map(ProductResponse::from)
             .collect(Collectors.toList());
