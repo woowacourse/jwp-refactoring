@@ -33,7 +33,7 @@ class MenuServiceTest {
     @Test
     void 메뉴를_생성할_수_있다() {
         // given
-        Menu menu = 후라이드후라이드(BigDecimal.valueOf(19000));
+        Menu menu = 후라이드_세트_메뉴(BigDecimal.valueOf(19000));
 
         // when
         Menu actual = menuService.create(menu);
@@ -53,7 +53,7 @@ class MenuServiceTest {
     @Test
     void 메뉴_가격이_null인_경우_메뉴를_생성할_수_없다() {
         // given
-        Menu menu = 후라이드후라이드(null);
+        Menu menu = 후라이드_세트_메뉴(null);
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -63,7 +63,7 @@ class MenuServiceTest {
     @Test
     void 메뉴_가격이_0보다_작은_경우_메뉴를_생성할_수_없다() {
         // given
-        Menu menu = 후라이드후라이드(BigDecimal.valueOf(-1));
+        Menu menu = 후라이드_세트_메뉴(BigDecimal.valueOf(-1));
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -73,7 +73,7 @@ class MenuServiceTest {
     @Test
     void 메뉴_그룹이_존재하지_않는_경우_메뉴를_생성할_수_없다() {
         // given
-        Menu menu = 후라이드후라이드(BigDecimal.valueOf(19000));
+        Menu menu = 후라이드_세트_메뉴(BigDecimal.valueOf(19000));
         menu.setMenuGroupId(-1L);
 
         // when & then
@@ -84,7 +84,7 @@ class MenuServiceTest {
     @Test
     void 메뉴의_가격이_상품_개별_가격의_총합보다_크다면_메뉴를_생성할_수_없다() {
         // given
-        Menu menu = 후라이드후라이드(BigDecimal.valueOf(20001));
+        Menu menu = 후라이드_세트_메뉴(BigDecimal.valueOf(20001));
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -94,7 +94,7 @@ class MenuServiceTest {
     @Test
     void 메뉴_목록을_조회한다() {
         // given
-        Menu menu = 후라이드후라이드(BigDecimal.valueOf(19000));
+        Menu menu = 후라이드_세트_메뉴(BigDecimal.valueOf(19000));
         menuService.create(menu);
 
         // when
@@ -104,12 +104,12 @@ class MenuServiceTest {
         assertThat(actual).hasSizeGreaterThanOrEqualTo(1);
     }
 
-    public Menu 후라이드후라이드(BigDecimal price) {
+    public Menu 후라이드_세트_메뉴(BigDecimal price) {
         Menu menu = new Menu();
         menu.setName("후라이드+후라이드");
         menu.setPrice(price);
         menu.setMenuGroupId(추천메뉴().getId());
-        menu.setMenuProducts(Collections.singletonList(후라이드후라이드_메뉴_상품()));
+        menu.setMenuProducts(Collections.singletonList(후라이드_세트_메뉴_상품()));
 
         return menu;
     }
@@ -120,15 +120,14 @@ class MenuServiceTest {
         return menuGroupDao.save(menuGroup);
     }
 
-    public MenuProduct 후라이드후라이드_메뉴_상품() {
+    public MenuProduct 후라이드_세트_메뉴_상품() {
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(후라이드().getId());
         menuProduct.setQuantity(2);
 
         return menuProduct;
     }
-
-
+    
     public Product 후라이드() {
         Product product = new Product();
         product.setName("후라이드");

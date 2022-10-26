@@ -102,7 +102,7 @@ class OrderServiceTest {
     @Test
     void 같은_메뉴가_다른_주문항목에_존재하면_주문을_생성할_수_없다() {
         // given
-        Menu menu = 후라이드후라이드();
+        Menu menu = 후라이드_세트_메뉴();
 
         OrderLineItem duplicatedOrderItem1 = new OrderLineItem();
         duplicatedOrderItem1.setMenuId(menu.getId());
@@ -123,7 +123,7 @@ class OrderServiceTest {
         // given
         OrderTable invalidOrderTable = new OrderTable();
         invalidOrderTable.setId(-1L);
-        Order order = 주문(invalidOrderTable, 후라이드후라이드_주문_항목());
+        Order order = 주문(invalidOrderTable, 후라이드_세트_메뉴_주문_항목());
 
         // when & then
         assertThatThrownBy(() -> orderService.create(order))
@@ -133,7 +133,7 @@ class OrderServiceTest {
     @Test
     void 주문_테이블이_빈_상태라면_주문을_생성할_수_없다() {
         // given
-        Order order = 주문(빈_상태의_주문_테이블(), 후라이드후라이드_주문_항목());
+        Order order = 주문(빈_상태의_주문_테이블(), 후라이드_세트_메뉴_주문_항목());
 
         // when & then
         assertThatThrownBy(() -> orderService.create(order))
@@ -209,7 +209,7 @@ class OrderServiceTest {
     }
 
     private Order 후라이드_후라이드_주문() {
-        return 주문(주문_테이블(), 후라이드후라이드_주문_항목());
+        return 주문(주문_테이블(), 후라이드_세트_메뉴_주문_항목());
     }
 
     private Order 주문(List<OrderLineItem> orderLineItems) {
@@ -223,19 +223,19 @@ class OrderServiceTest {
         return order;
     }
 
-    private List<OrderLineItem> 후라이드후라이드_주문_항목() {
+    private List<OrderLineItem> 후라이드_세트_메뉴_주문_항목() {
         OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(후라이드후라이드().getId());
+        orderLineItem.setMenuId(후라이드_세트_메뉴().getId());
         orderLineItem.setQuantity(1);
         return Collections.singletonList(orderLineItem);
     }
 
-    public Menu 후라이드후라이드() {
+    public Menu 후라이드_세트_메뉴() {
         Menu menu = new Menu();
         menu.setName("후라이드+후라이드");
         menu.setPrice(BigDecimal.valueOf(19000));
         menu.setMenuGroupId(추천메뉴().getId());
-        menu.setMenuProducts(Collections.singletonList(후라이드후라이드_메뉴_상품()));
+        menu.setMenuProducts(Collections.singletonList(후라이드_세트_메뉴_상품()));
 
         return menuDao.save(menu);
     }
@@ -246,7 +246,7 @@ class OrderServiceTest {
         return menuGroupDao.save(menuGroup);
     }
 
-    public MenuProduct 후라이드후라이드_메뉴_상품() {
+    public MenuProduct 후라이드_세트_메뉴_상품() {
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(후라이드().getId());
         menuProduct.setQuantity(2);
