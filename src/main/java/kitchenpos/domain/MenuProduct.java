@@ -8,14 +8,15 @@ public class MenuProduct {
     private Long productId;
     private long quantity;
 
-    public MenuProduct(Long menuId, Long productId, long quantity) {
+    public MenuProduct(Long seq, Long menuId, Long productId, long quantity) {
+        this.seq = seq;
         this.menuId = menuId;
         this.productId = productId;
         this.quantity = quantity;
     }
 
     public MenuProduct(Long productId, long quantity) {
-        this(null, productId, quantity);
+        this(null, null, productId, quantity);
     }
 
     public MenuProduct() {

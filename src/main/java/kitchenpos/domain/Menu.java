@@ -10,10 +10,16 @@ public class Menu {
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
-    public Menu(String name, Long price, Long menuGroupId) {
+    public Menu(Long id, String name, Long price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
+        this.menuProducts = menuProducts;
+    }
+
+    public Menu(String name, Long price, Long menuGroupId) {
+        this(null, name, price, menuGroupId, null);
     }
 
     public Menu() {
