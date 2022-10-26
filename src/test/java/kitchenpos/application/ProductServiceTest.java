@@ -36,8 +36,10 @@ class ProductServiceTest {
     @DisplayName("상품 목록을 조회한다.")
     @Test
     void list() {
+        productService.create(getProduct());
+
         final List<Product> products = productService.list();
 
-        assertThat(products).hasSize(6);
+        assertThat(products).hasSize(1);
     }
 }

@@ -52,9 +52,11 @@ class TableServiceTest {
     @DisplayName("테이블 목록을 조회한다.")
     @Test
     void list() {
+        tableService.create(getEmptyTable());
+
         final List<OrderTable> orderTables = tableService.list();
 
-        assertThat(orderTables).hasSize(8);
+        assertThat(orderTables).hasSize(1);
     }
 
     @DisplayName("빈 테이블로 변경한다.")

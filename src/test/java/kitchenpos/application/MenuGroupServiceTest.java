@@ -35,8 +35,10 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 목록을 조회한다.")
     @Test
     void list() {
+        menuGroupService.create(getMenuGroup());
+
         final List<MenuGroup> menuGroups = menuGroupService.list();
 
-        assertThat(menuGroups).hasSize(4);
+        assertThat(menuGroups).hasSize(1);
     }
 }

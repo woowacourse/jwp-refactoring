@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.DomainFixture.getMenu;
 import static kitchenpos.application.DomainFixture.getMenuGroup;
 import static kitchenpos.application.DomainFixture.getProduct;
-import static kitchenpos.application.DomainFixture.getMenu;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -89,7 +89,7 @@ class MenuServiceTest {
     void create_exception_wrongTotalPrice() {
         final MenuGroup menuGroup = createMenuGroup();
         final List<MenuProduct> menuProducts = createMenuProducts();
-        final Menu menu = new Menu( "마이쮸 포도맛", BigDecimal.valueOf(900), menuGroup.getId());
+        final Menu menu = new Menu("마이쮸 포도맛", BigDecimal.valueOf(900), menuGroup.getId());
         menu.setMenuProducts(menuProducts);
 
         assertThatThrownBy(() -> menuService.create(menu))
@@ -99,8 +99,12 @@ class MenuServiceTest {
     @DisplayName("메뉴 목록을 조회한다.")
     @Test
     void list() {
+        final Menu menu = getMenu(createMenuGroup().getId());
+        menu.setMenuProducts(createMenuProducts());
+        menuService.create(menu);
+
         final List<Menu> menus = menuService.list();
 
-        assertThat(menus).hasSize(6);
+        assertThat(menus).hasSize(1);
     }
 }
