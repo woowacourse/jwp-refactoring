@@ -99,7 +99,7 @@ class MenuServiceTest {
         // given
         final Long noExistProductId = 900L;
         final MenuProduct menuProduct = new MenuProduct(noExistProductId, 3);
-        final Menu menu = new Menu("후라후라후라", new BigDecimal(19000), validMenuGroupId, List.of(menuProduct));
+        final Menu menu = new Menu("후라후라", new BigDecimal(19000), validMenuGroupId, List.of(menuProduct));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
