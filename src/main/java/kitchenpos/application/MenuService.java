@@ -44,8 +44,9 @@ public class MenuService {
         final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
+            final MenuProduct newMenuProduct = new MenuProduct(menuProduct.getSeq(), menuId, menuProduct.getProductId(),
+                    menuProduct.getQuantity());
+            savedMenuProducts.add(menuProductDao.save(newMenuProduct));
         }
         return new Menu(savedMenu.getId(), savedMenu.getName(), savedMenu.getPrice(), savedMenu.getMenuGroupId(),
                 savedMenuProducts);

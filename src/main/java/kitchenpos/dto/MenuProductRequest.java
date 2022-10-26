@@ -16,10 +16,7 @@ public class MenuProductRequest {
     }
 
     public MenuProduct toMenuProduct() {
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+        return new MenuProduct(null, null, productId, quantity);
     }
 
     public Long getProductId() {

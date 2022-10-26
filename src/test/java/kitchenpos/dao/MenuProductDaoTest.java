@@ -42,10 +42,7 @@ class MenuProductDaoTest {
         final Product product = ProductFixtures.CHICKEN.create();
         final Product savedProduct = productDao.save(product);
 
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(savedMenu.getId());
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(2);
+        final MenuProduct menuProduct = new MenuProduct(null, savedMenu.getId(), savedProduct.getId(), 2);
 
         // when
         final MenuProduct saved = menuProductDao.save(menuProduct);
@@ -66,10 +63,7 @@ class MenuProductDaoTest {
         final Product product = ProductFixtures.CHICKEN.create();
         final Product savedProduct = productDao.save(product);
 
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(-1L);
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(2);
+        final MenuProduct menuProduct = new MenuProduct(null, -1L, savedProduct.getId(), 2);
 
         // when, then
         assertThatThrownBy(() -> menuProductDao.save(menuProduct))
@@ -83,10 +77,7 @@ class MenuProductDaoTest {
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuDao.save(menu);
 
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(savedMenu.getId());
-        menuProduct.setProductId(-1L);
-        menuProduct.setQuantity(2);
+        final MenuProduct menuProduct = new MenuProduct(null, savedMenu.getId(), -1L, 2);
 
         // when, then
         assertThatThrownBy(() -> menuProductDao.save(menuProduct))
@@ -103,11 +94,7 @@ class MenuProductDaoTest {
         final Product product = ProductFixtures.CHICKEN.create();
         final Product savedProduct = productDao.save(product);
 
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(savedMenu.getId());
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(2);
-
+        final MenuProduct menuProduct = new MenuProduct(null, savedMenu.getId(), savedProduct.getId(), 2);
         final MenuProduct saved = menuProductDao.save(menuProduct);
 
         // when
@@ -139,11 +126,7 @@ class MenuProductDaoTest {
         final Product product = ProductFixtures.CHICKEN.create();
         final Product savedProduct = productDao.save(product);
 
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(savedMenu.getId());
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(2);
-
+        final MenuProduct menuProduct = new MenuProduct(null, savedMenu.getId(), savedProduct.getId(), 2);
         final MenuProduct savedMenuProduct = menuProductDao.save(menuProduct);
 
         // when

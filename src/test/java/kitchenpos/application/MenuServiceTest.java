@@ -12,6 +12,7 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.fixtures.MenuFixtures;
+import kitchenpos.fixtures.MenuProductFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +35,7 @@ class MenuServiceTest {
     @DisplayName("메뉴를 생성한다")
     void create() {
         // given
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(2);
+        final MenuProduct menuProduct = MenuProductFixtures.create(null, 1L, 2);
 
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.createWithMenuProducts(menuProduct);
 
@@ -44,7 +43,7 @@ class MenuServiceTest {
         final Menu saved = menuService.create(menu);
 
         // then
-        menuProduct.setMenuId(saved.getId());
+        final MenuProduct actual = MenuProductFixtures.create(saved.getId(), 1L, 2);
 
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
@@ -54,7 +53,7 @@ class MenuServiceTest {
                 () -> assertThat(saved.getMenuProducts()).usingElementComparatorOnFields(
                                 "menuId", "productId", "quantity")
                         .hasSize(1)
-                        .containsExactly(menuProduct)
+                        .containsExactly(actual)
         );
     }
 
@@ -98,8 +97,7 @@ class MenuServiceTest {
     @DisplayName("존재하지 않는 상품으로 메뉴를 생성하면 예외가 발생한다")
     void createExceptionWrongMenuProducts() {
         // given
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(-1L);
+        final MenuProduct menuProduct = MenuProductFixtures.create(1L, -1L, 2);
 
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO
                 .createWithMenuProducts(menuProduct);
@@ -113,9 +111,7 @@ class MenuServiceTest {
     @DisplayName("메뉴 가격이 메뉴 상품들의 가격합보다 크거나 같게 생성하면 예외가 발생한다")
     void createExceptionWrongPriceWithMenuProductsPriceSum() {
         // given
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(2);
+        final MenuProduct menuProduct = MenuProductFixtures.create(1L, 1L, 2);
 
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO
                 .createWithPriceAndMenuProducts(new BigDecimal(50000), menuProduct);
