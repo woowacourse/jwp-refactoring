@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixtures.domain.OrderFixture.createOrder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -9,7 +10,6 @@ import java.util.List;
 import java.util.Objects;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -17,6 +17,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class TableGroupServiceTest extends ServiceTest {
@@ -145,14 +147,15 @@ class TableGroupServiceTest extends ServiceTest {
         }
 
         @DisplayName("주문 테이블 중 조리 혹은 식사 상태인 테이블이 있다면 IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_AnyStatusOfOrderTablesIsCookingOrMeal() {
+        @ValueSource(strings = {"COOKING", "MEAL"})
+        @ParameterizedTest
+        void Should_ThrowIAE_When_AnyStatusOfOrderTablesIsCookingOrMeal(final OrderStatus orderStatus) {
             // given
             OrderTable orderTable1 = orderTableDao.save(new OrderTable(3, true));
             OrderTable orderTable2 = orderTableDao.save(new OrderTable(5, true));
 
-            orderDao.save(new Order(orderTable1.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), List.of()));
-            orderDao.save(new Order(orderTable1.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), List.of()));
+            orderDao.save(createOrder(orderTable1.getId(), orderStatus, LocalDateTime.now(), List.of()));
+            orderDao.save(createOrder(orderTable1.getId(), OrderStatus.COMPLETION, LocalDateTime.now(), List.of()));
 
             TableGroup tableGroup = tableGroupService.create(
                     new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));

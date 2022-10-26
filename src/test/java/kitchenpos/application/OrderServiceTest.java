@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static kitchenpos.fixtures.domain.MenuFixture.createMenu;
 import static kitchenpos.fixtures.domain.MenuGroupFixture.createMenuGroup;
+import static kitchenpos.fixtures.domain.OrderFixture.createOrder;
 import static kitchenpos.fixtures.domain.ProductFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
@@ -22,6 +24,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.fixtures.domain.OrderFixture.OrderRequestBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -34,6 +37,9 @@ class OrderServiceTest extends ServiceTest {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private OrderDao orderDao;
 
     @Autowired
     private OrderTableDao orderTableDao;
@@ -61,7 +67,8 @@ class OrderServiceTest extends ServiceTest {
         this.menu = menuDao.save(createMenu("세트1", new BigDecimal(10_000), menuGroup.getId(), List.of(menuProduct)));
         this.orderLineItem = new OrderLineItem(menu.getId(), 1L);
         this.orderTable = orderTableDao.save(new OrderTable(1, false));
-        this.order = orderService.create(new Order(orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem)));
+        this.order = orderDao.save(
+                createOrder(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), List.of(orderLineItem)));
     }
 
     @DisplayName("create 메소드는")
@@ -72,7 +79,10 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_CreateOrder() {
             // given
-            Order order = new Order(orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
+            Order order = new OrderRequestBuilder()
+                    .orderTableId(orderTable.getId())
+                    .addOrderLineItem(orderLineItem)
+                    .build();
 
             // when
             Order actual = orderService.create(order);
@@ -88,7 +98,9 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderLineItemsIsEmpty() {
             // given
-            Order order = new Order(orderTable.getId(), LocalDateTime.now(), List.of());
+            Order order = new OrderRequestBuilder()
+                    .orderTableId(orderTable.getId())
+                    .build();
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))
@@ -99,8 +111,11 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_MenuDoesNotExist() {
             // given
-            OrderLineItem orderLineItem = new OrderLineItem(menu.getId() + 1, 1L);
-            Order order = new Order(orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
+            OrderLineItem orderLineItemHasNotSavedMenu = new OrderLineItem(menu.getId() + 1, 1L);
+            Order order = new OrderRequestBuilder()
+                    .orderTableId(orderTable.getId())
+                    .addOrderLineItem(orderLineItemHasNotSavedMenu)
+                    .build();
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))
@@ -111,7 +126,11 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableDoesNotExist() {
             // given
-            Order order = new Order(orderTable.getId() + 1, LocalDateTime.now(), List.of(orderLineItem));
+            long notSavedOrderTableId = orderTable.getId() + 1;
+            Order order = new OrderRequestBuilder()
+                    .orderTableId(notSavedOrderTableId)
+                    .addOrderLineItem(orderLineItem)
+                    .build();
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))
@@ -123,7 +142,10 @@ class OrderServiceTest extends ServiceTest {
         void Should_ThrowIAE_When_OrderTableIsEmpty() {
             // given
             OrderTable emptyTable = orderTableDao.save(new OrderTable(1, true));
-            Order order = new Order(emptyTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
+            Order order = new OrderRequestBuilder()
+                    .orderTableId(emptyTable.getId())
+                    .addOrderLineItem(orderLineItem)
+                    .build();
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))
@@ -139,19 +161,18 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ReturnAllOrderList() {
             // given
-            Order order1 = new Order(orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
-            Order order2 = new Order(orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
-            Order order3 = new Order(orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
-
-            orderService.create(order1);
-            orderService.create(order2);
-            orderService.create(order3);
+            int expected = 3;
+            for (int i = 0; i < expected; i++) {
+                Order order = createOrder(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
+                        List.of(orderLineItem));
+                orderDao.save(order);
+            }
 
             // when
             List<Order> actual = orderService.list();
 
             // then
-            assertThat(actual).hasSize(4);
+            assertThat(actual).hasSize(expected + 1); // TODO: @BeforeEach에 영향받는 assertion
         }
     }
 
@@ -164,13 +185,16 @@ class OrderServiceTest extends ServiceTest {
         @ParameterizedTest
         void Should_ChangeOrderStatus(final String after) {
             // given
-            Order oldOrder = new Order(orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
-            orderService.create(oldOrder);
+            Order oldOrder = createOrder(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
+                    List.of(orderLineItem));
+            orderDao.save(oldOrder);
 
-            Order newOrder = new Order(after);
+            Order orderRequest = new OrderRequestBuilder()
+                    .orderStatus(after)
+                    .build();
 
             // when
-            Order actual = orderService.changeOrderStatus(order.getId(), newOrder);
+            Order actual = orderService.changeOrderStatus(order.getId(), orderRequest);
 
             // then
             assertThat(actual.getOrderStatus()).isEqualTo(after);
@@ -180,10 +204,10 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderDoesNotExist() {
             // given
-            Order newOrder = new Order(orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
+            Order orderRequest = new OrderRequestBuilder().build();
 
             // when & then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId() + 1, newOrder))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId() + 1, orderRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -191,15 +215,15 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderStatusIsCompletion() {
             // given
-            Order order = orderService.create(
-                    new Order(orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem))
-            );
-            orderService.changeOrderStatus(order.getId(), new Order(OrderStatus.COMPLETION.name()));
+            Order order = orderDao.save(createOrder(orderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
+                    List.of(orderLineItem)));
 
-            Order newOrder = new Order(OrderStatus.COOKING.name());
+            Order request = new OrderRequestBuilder()
+                    .orderStatus(OrderStatus.COOKING)
+                    .build();
 
             // when & then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), newOrder))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
