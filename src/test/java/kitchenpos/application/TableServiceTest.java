@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.DomainCreator.createOrderTable;
 import static kitchenpos.fixture.TableFixture.createRequestEmpty;
 import static kitchenpos.fixture.TableFixture.createRequestNumberOfGuests;
 import static kitchenpos.fixture.TableFixture.빈_테이블_1번;
@@ -11,6 +10,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.OrderTableUpdateEmptyRequest;
+import kitchenpos.dto.OrderTableUpdateNumberOfGuestsRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -20,10 +22,10 @@ class TableServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        OrderTable orderTable = createOrderTable(null, null, 3, true);
+        final OrderTableCreateRequest request = createOrderTableCreateRequest(3, true);
 
         // when
-        OrderTable actual = tableService.create(orderTable);
+        final OrderTable actual = tableService.create(request);
 
         // then
         assertThat(actual).isNotNull();
@@ -36,7 +38,7 @@ class TableServiceTest extends ServiceTest {
         saveAndGetOrderTable();
 
         // when
-        List<OrderTable> actual = tableService.list();
+        final List<OrderTable> actual = tableService.list();
 
         // then
         assertThat(actual).hasSize(1);
@@ -46,11 +48,11 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeEmpty() {
         // given
-        OrderTable table = orderTableDao.save(빈_테이블_1번);
-        OrderTable request = createRequestEmpty(false);
+        final OrderTable table = orderTableDao.save(빈_테이블_1번);
+        final OrderTableUpdateEmptyRequest request = createRequestEmpty(false);
 
         // when
-        OrderTable actual = tableService.changeEmpty(table.getId(), request);
+        final OrderTable actual = tableService.changeEmpty(table.getId(), request);
 
         // then
         assertThat(actual.getId()).isEqualTo(table.getId());
@@ -61,28 +63,28 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeEmpty_tableGroupId_null_throwException() {
         // given
-        OrderTable table = orderTableDao.save(빈_테이블_1번);
+        final OrderTable table = orderTableDao.save(빈_테이블_1번);
 
-        TableGroup tableGroup = saveAndGetTableGroup();
+        final TableGroup tableGroup = saveAndGetTableGroup();
         table.setTableGroupId(tableGroup.getId());
         orderTableDao.save(table);
 
-        OrderTable request = createRequestEmpty(false);
+        final OrderTableUpdateEmptyRequest request = createRequestEmpty(false);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), request))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 테이블의 방문 손님 수를 변경한다.")
     @Test
     void changeNumberOfGuests() {
         // given
-        OrderTable table = orderTableDao.save(사용중인_테이블_1번);
-        OrderTable request = createRequestNumberOfGuests(100);
+        final OrderTable table = orderTableDao.save(사용중인_테이블_1번);
+        final OrderTableUpdateNumberOfGuestsRequest request = createRequestNumberOfGuests(100);
 
         // when
-        OrderTable actual = tableService.changeNumberOfGuests(table.getId(), request);
+        final OrderTable actual = tableService.changeNumberOfGuests(table.getId(), request);
 
         // then
         assertThat(actual.getNumberOfGuests()).isEqualTo(100);

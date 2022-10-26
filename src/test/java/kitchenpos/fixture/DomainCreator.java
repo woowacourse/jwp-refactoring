@@ -33,15 +33,8 @@ public class DomainCreator {
     }
 
     public static OrderTable createOrderTable(final Long id, final Long tableGroupId,
-        final int numberOfGuests,
-        final boolean empty) {
-        final OrderTable orderTable = new OrderTable(id, tableGroupId, numberOfGuests, empty);
-        orderTable.setId(id);
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-
-        return orderTable;
+        final int numberOfGuests, final boolean empty) {
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 
     public static TableGroup createTableGroup(final Long id, final List<OrderTable> orderTables) {

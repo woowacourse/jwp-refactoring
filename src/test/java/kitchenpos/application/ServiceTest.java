@@ -33,6 +33,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuGroupCreateRequest;
 import kitchenpos.dto.MenuProductCreateRequest;
+import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableIdRequest;
 import kitchenpos.dto.ProductCreateRequest;
 import kitchenpos.dto.TableGroupCreateRequest;
@@ -182,11 +183,11 @@ public class ServiceTest {
         return new ProductCreateRequest("후라이드", price);
     }
 
-    public static MenuGroupCreateRequest createMenuGroupCreateRequest(final String name) {
+    protected static MenuGroupCreateRequest createMenuGroupCreateRequest(final String name) {
         return new MenuGroupCreateRequest(name);
     }
 
-    public static MenuProductCreateRequest createMenuProductCreateRequest(final Long productId,
+    protected static MenuProductCreateRequest createMenuProductCreateRequest(final Long productId,
         final long quantity) {
         return new MenuProductCreateRequest(productId, quantity);
     }
@@ -201,14 +202,19 @@ public class ServiceTest {
             "후라이드", price, saveAndGetMenuGroup().getId(), menuProducts);
     }
 
-    public static MenuCreateRequest createMenuCreateRequest(final String name,
-        final BigDecimal price,
-        final Long menuGroupId, final List<MenuProductCreateRequest> menuProducts) {
+    protected static MenuCreateRequest createMenuCreateRequest(final String name,
+        final BigDecimal price, final Long menuGroupId,
+        final List<MenuProductCreateRequest> menuProducts) {
         return new MenuCreateRequest(name, price, menuGroupId, menuProducts);
     }
 
-    public TableGroupCreateRequest createTableGroupCreateRequest(
+    protected TableGroupCreateRequest createTableGroupCreateRequest(
         final List<OrderTableIdRequest> orderTableIdRequest) {
         return new TableGroupCreateRequest(orderTableIdRequest);
+    }
+
+    protected OrderTableCreateRequest createOrderTableCreateRequest(
+        final int numberOfGuests, final boolean empty) {
+        return new OrderTableCreateRequest(numberOfGuests, empty);
     }
 }
