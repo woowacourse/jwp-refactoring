@@ -146,8 +146,6 @@ class TableServiceTest {
 
         @Test
         void changeNumberOfGuests_fail_when_orderTable_not_exist() {
-            orderTable.setNumberOfGuests(-1);
-
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(1000L, orderTable))
                     .isInstanceOf(IllegalArgumentException.class);
         }
