@@ -25,7 +25,7 @@ import kitchenpos.domain.Product;
 import org.assertj.core.data.TemporalUnitWithinOffset;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ServiceTest
@@ -155,7 +155,7 @@ class OrderServiceTest {
     }
 
     @ParameterizedTest
-    @CsvSource(value = {"MEAL", "COOKING"})
+    @ValueSource(strings = {"MEAL", "COOKING"})
     void 주문_상태를_변경한다(String orderStatus) {
         // given
         Order order = orderService.create(후라이드_후라이드_주문());

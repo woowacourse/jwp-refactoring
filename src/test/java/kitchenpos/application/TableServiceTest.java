@@ -15,7 +15,6 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -72,7 +71,7 @@ class TableServiceTest {
     }
 
     @ParameterizedTest
-    @CsvSource(value = {"true", "false"})
+    @ValueSource(booleans = {true, false})
     void 주문_테이블을_빈_상태로_변경한다(boolean status) {
         // given
         OrderTable savedOrderTable = tableService.create(new OrderTable());
@@ -97,7 +96,6 @@ class TableServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    //
     @Test
     void 이미_테이블_그룹에_속한_주문_테이블의_상태를_변경할_수_없다() {
         // given
