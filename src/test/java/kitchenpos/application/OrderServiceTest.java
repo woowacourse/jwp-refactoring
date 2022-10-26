@@ -4,6 +4,7 @@ import static kitchenpos.fixtures.domain.MenuFixture.createMenu;
 import static kitchenpos.fixtures.domain.MenuGroupFixture.createMenuGroup;
 import static kitchenpos.fixtures.domain.MenuProductFixture.createMenuProduct;
 import static kitchenpos.fixtures.domain.OrderFixture.createOrder;
+import static kitchenpos.fixtures.domain.OrderLineItemFixture.createOrderLineItem;
 import static kitchenpos.fixtures.domain.ProductFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -66,7 +67,7 @@ class OrderServiceTest extends ServiceTest {
         MenuProduct menuProduct = createMenuProduct(product.getId(), 1L);
 
         this.menu = menuDao.save(createMenu("세트1", new BigDecimal(10_000), menuGroup.getId(), List.of(menuProduct)));
-        this.orderLineItem = new OrderLineItem(menu.getId(), 1L);
+        this.orderLineItem = createOrderLineItem(menu.getId(), 1L);
         this.orderTable = orderTableDao.save(new OrderTable(1, false));
         this.order = orderDao.save(
                 createOrder(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), List.of(orderLineItem)));
@@ -112,7 +113,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_MenuDoesNotExist() {
             // given
-            OrderLineItem orderLineItemHasNotSavedMenu = new OrderLineItem(menu.getId() + 1, 1L);
+            OrderLineItem orderLineItemHasNotSavedMenu = createOrderLineItem(menu.getId() + 1, 1L);
             Order order = new OrderRequestBuilder()
                     .orderTableId(orderTable.getId())
                     .addOrderLineItem(orderLineItemHasNotSavedMenu)
