@@ -29,15 +29,6 @@ public class ClassConstructor {
         return order;
     }
 
-    public static OrderTable orderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
-    }
-
     public static TableGroup tableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setId(id);

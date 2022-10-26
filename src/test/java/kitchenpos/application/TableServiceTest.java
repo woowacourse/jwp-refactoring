@@ -10,7 +10,6 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.support.ClassConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -41,8 +40,8 @@ class TableServiceTest extends ServiceTest {
 
         @BeforeEach
         void setUp() {
-            savedOrderTable = ClassConstructor.orderTable(ORDER_TABLE_ID, null, 2, false);
-            orderTable = ClassConstructor.orderTable(ORDER_TABLE_ID, null, 0, true);
+            savedOrderTable = new OrderTable(ORDER_TABLE_ID, null, 2, false);
+            orderTable = new OrderTable(ORDER_TABLE_ID, null, 0, true);
 
             given(orderTableDao.findById(ORDER_TABLE_ID))
                     .willReturn(Optional.of(savedOrderTable));
@@ -80,7 +79,9 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("주문 테이블이 그룹에 속해있으면, 예외를 던진다.")
         void fail_existTableGroup() {
             //given
-            savedOrderTable.setTableGroupId(TABLE_GROUP_ID);
+            savedOrderTable = new OrderTable(ORDER_TABLE_ID, TABLE_GROUP_ID, 2, false);
+            given(orderTableDao.findById(ORDER_TABLE_ID))
+                    .willReturn(Optional.of(savedOrderTable));
 
             //when & then
             assertThatThrownBy(() -> tableService.changeEmpty(ORDER_TABLE_ID, orderTable))
@@ -111,14 +112,13 @@ class TableServiceTest extends ServiceTest {
 
         @BeforeEach
         void setUp() {
-            savedOrderTable = ClassConstructor.orderTable(ORDER_TABLE_ID, null, 2, false);
-            orderTable = ClassConstructor.orderTable(ORDER_TABLE_ID, null, 3, false);
+            savedOrderTable = new OrderTable(ORDER_TABLE_ID, null, 2, false);
+            orderTable = new OrderTable(ORDER_TABLE_ID, null, 3, false);
 
             given(orderTableDao.findById(ORDER_TABLE_ID))
                     .willReturn(Optional.of(savedOrderTable));
             given(orderTableDao.save(savedOrderTable))
                     .willReturn(savedOrderTable);
-
         }
 
         @Test
@@ -135,7 +135,7 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("변경할 인원이 0보다 작으면, 예외를 던진다.")
         void fail_negativeNumber() {
             //given
-            orderTable.setNumberOfGuests(-1);
+            orderTable.updateNumberOfGuests(-1);
 
             //when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(ORDER_TABLE_ID, orderTable))

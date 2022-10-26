@@ -49,8 +49,8 @@ class TableGroupServiceTest extends ServiceTest {
 
         @BeforeEach
         void setUp() {
-            orderTableA = ClassConstructor.orderTable(ORDER_TABLE_A_ID, null, 0, true);
-            orderTableB = ClassConstructor.orderTable(ORDER_TABLE_B_ID, null, 0, true);
+            orderTableA = new OrderTable(ORDER_TABLE_A_ID, null, 0, true);
+            orderTableB = new OrderTable(ORDER_TABLE_B_ID, null, 0, true);
 
             tableGroup = ClassConstructor.tableGroup(null, null, Arrays.asList(orderTableA, orderTableB));
             savedTableGroup = ClassConstructor.tableGroup(TABLE_GROUP_ID, LocalDateTime.now(),
@@ -136,8 +136,8 @@ class TableGroupServiceTest extends ServiceTest {
 
         @BeforeEach
         void setUp() {
-            orderTableA = ClassConstructor.orderTable(ORDER_TABLE_A_ID, null, 0, true);
-            orderTableB = ClassConstructor.orderTable(ORDER_TABLE_B_ID, null, 0, true);
+            orderTableA = new OrderTable(ORDER_TABLE_A_ID, null, 0, true);
+            orderTableB = new OrderTable(ORDER_TABLE_B_ID, null, 0, true);
 
             given(orderTableDao.findAllByTableGroupId(TABLE_GROUP_ID))
                     .willReturn(Arrays.asList(orderTableA, orderTableB));

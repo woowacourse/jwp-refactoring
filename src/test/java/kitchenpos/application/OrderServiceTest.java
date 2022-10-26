@@ -63,7 +63,7 @@ class OrderServiceTest extends ServiceTest {
             orderLineItemA = ClassConstructor.orderLineItem(null, ORDER_ID, MENU_A_ID, 1);
             orderLineItemB = ClassConstructor.orderLineItem(null, ORDER_ID, MENU_B_ID, 1);
 
-            orderTable = ClassConstructor.orderTable(ORDER_TABLE_ID, null, 2, false);
+            orderTable = new OrderTable(ORDER_TABLE_ID, null, 2, false);
 
             order = ClassConstructor.order(null, ORDER_TABLE_ID, null, null,
                     Arrays.asList(orderLineItemA, orderLineItemB));
