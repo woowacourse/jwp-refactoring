@@ -1,4 +1,4 @@
-package kitchenpos.application.dto;
+package kitchenpos.application.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 
 public class OrderResponse {
+
     private final Long id;
     private final Long orderTableId;
     private final String orderStatus;

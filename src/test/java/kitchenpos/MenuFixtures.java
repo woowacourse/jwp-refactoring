@@ -2,10 +2,10 @@ package kitchenpos;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.MenuCreateRequest;
-import kitchenpos.application.dto.MenuProductCreateRequest;
-import kitchenpos.application.dto.MenuProductResponse;
-import kitchenpos.application.dto.MenuResponse;
+import kitchenpos.application.dto.request.MenuCreateRequest;
+import kitchenpos.application.dto.request.MenuProductCreateRequest;
+import kitchenpos.application.dto.response.MenuProductResponse;
+import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;

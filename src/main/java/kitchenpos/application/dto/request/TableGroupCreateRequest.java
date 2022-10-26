@@ -1,4 +1,4 @@
-package kitchenpos.application.dto;
+package kitchenpos.application.dto.request;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -7,9 +7,10 @@ import kitchenpos.domain.TableGroup;
 
 public class TableGroupCreateRequest {
 
-    private List<Long> orderTableIds;
+    private final List<Long> orderTableIds;
 
     private TableGroupCreateRequest() {
+        this(null);
     }
 
     public TableGroupCreateRequest(List<Long> orderTableIds) {

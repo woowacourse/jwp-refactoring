@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 import kitchenpos.ProductFixtures;
 import kitchenpos.application.ProductService;
-import kitchenpos.application.dto.ProductResponse;
+import kitchenpos.application.dto.response.ProductResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

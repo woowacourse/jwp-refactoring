@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 import kitchenpos.OrderFixtures;
 import kitchenpos.application.OrderService;
-import kitchenpos.application.dto.OrderResponse;
+import kitchenpos.application.dto.response.OrderResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

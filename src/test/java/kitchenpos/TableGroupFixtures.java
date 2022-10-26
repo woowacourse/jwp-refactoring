@@ -4,7 +4,7 @@ import static kitchenpos.OrderTableFixtures.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.application.dto.TableGroupResponse;
+import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 

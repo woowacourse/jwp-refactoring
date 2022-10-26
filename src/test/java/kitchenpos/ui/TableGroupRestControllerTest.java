@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 import kitchenpos.TableGroupFixtures;
 import kitchenpos.application.TableGroupService;
-import kitchenpos.application.dto.TableGroupCreateRequest;
+import kitchenpos.application.dto.request.TableGroupCreateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

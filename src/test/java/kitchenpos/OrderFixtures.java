@@ -1,13 +1,12 @@
 package kitchenpos;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
-import kitchenpos.application.dto.OrderLineItemRequest;
-import kitchenpos.application.dto.OrderLineItemResponse;
-import kitchenpos.application.dto.OrderRequest;
-import kitchenpos.application.dto.OrderResponse;
-import kitchenpos.application.dto.OrderStatusChangeRequest;
+import kitchenpos.application.dto.request.OrderLineItemRequest;
+import kitchenpos.application.dto.response.OrderLineItemResponse;
+import kitchenpos.application.dto.request.OrderRequest;
+import kitchenpos.application.dto.response.OrderResponse;
+import kitchenpos.application.dto.request.OrderStatusChangeRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
