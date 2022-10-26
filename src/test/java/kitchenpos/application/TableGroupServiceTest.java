@@ -19,8 +19,8 @@ class TableGroupServiceTest extends ServiceTest {
 
     @BeforeEach
     void init() {
-        빈테이블_1 = orderTableDao.save(빈테이블_1());
-        빈테이블_2 = orderTableDao.save(빈테이블_2());
+        빈테이블_1 = tableService.create(빈테이블_1());
+        빈테이블_2 = tableService.create(빈테이블_2());
     }
 
     @DisplayName("단체 지정을 추가하면 특정 테이블이 단체에 속한다.")
