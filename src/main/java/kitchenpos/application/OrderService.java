@@ -18,6 +18,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
@@ -43,6 +44,9 @@ public class OrderService {
         Order order = request.toOrder(OrderStatus.COOKING.name(), LocalDateTime.now());
 
         List<OrderLineItemRequest> itemRequests = request.getOrderLineItemRequests();
+        if (CollectionUtils.isEmpty(itemRequests)) {
+            throw new IllegalArgumentException();
+        }
         final List<Long> menuIds = toMenuIds(itemRequests);
         if (itemRequests.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();

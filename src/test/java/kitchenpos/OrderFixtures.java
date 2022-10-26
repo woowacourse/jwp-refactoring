@@ -3,6 +3,7 @@ package kitchenpos;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.dto.OrderChangeRequest;
+import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderLineItemResponse;
 import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.application.dto.OrderResponse;
@@ -34,7 +35,27 @@ public class OrderFixtures {
     }
 
     public static OrderRequest createOrderRequest() {
-        return new OrderRequest(null, null);
+        return createOrderRequest(List.of(createOrderLineItemRequest(1L), createOrderLineItemRequest(2L)));
+    }
+
+    public static OrderRequest createOrderRequest(Long orderTableId) {
+        return new OrderRequest(orderTableId, List.of(createOrderLineItemRequest(1L), createOrderLineItemRequest(2L)));
+    }
+
+    public static OrderRequest createOrderRequest(List<OrderLineItemRequest> itemRequests) {
+        return new OrderRequest(1L, itemRequests);
+    }
+
+    public static OrderRequest createOrderRequest(Long orderTableId, List<OrderLineItemRequest> itemRequests) {
+        return new OrderRequest(orderTableId, itemRequests);
+    }
+
+    public static OrderLineItemRequest createOrderLineItemRequest() {
+        return createOrderLineItemRequest(1L);
+    }
+
+    public static OrderLineItemRequest createOrderLineItemRequest(Long menuId) {
+        return new OrderLineItemRequest(null, menuId, 2);
     }
 
     public static OrderChangeRequest createOrderChangeRequest() {

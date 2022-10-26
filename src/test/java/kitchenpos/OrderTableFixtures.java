@@ -18,7 +18,11 @@ public class OrderTableFixtures {
     }
 
     public static OrderTable createOrderTable(TableGroup tableGroup) {
-        return new OrderTable(ID, tableGroup, NUMBER_OF_GUESTS, EMPTY);
+        return createOrderTable(ID, tableGroup, NUMBER_OF_GUESTS, EMPTY);
+    }
+
+    public static OrderTable createOrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
+        return createOrderTable(ID, tableGroup, numberOfGuests, empty);
     }
 
     public static OrderTable createOrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
