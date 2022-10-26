@@ -12,10 +12,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.TransactionalTest;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class MenuServiceTest {
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productDao;
     @Autowired
     private MenuGroupRepository menuGroupRepository;
     @Autowired

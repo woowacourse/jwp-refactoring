@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.TransactionalTest;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.Assertions;
@@ -27,7 +26,7 @@ class MenuProductRepositoryTest {
     @Autowired
     private MenuRepository menuRepository;
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productDao;
     @Autowired
     private MenuProductRepository menuProductDao;
 

@@ -27,15 +27,15 @@ class ProductServiceTest {
         assertAll(
                 () -> assertThat(savedProduct.getId()).isNotNull(),
                 () -> assertThat(savedProduct.getName()).isEqualTo(product.getName()),
-                () -> assertThat(savedProduct.getPrice().compareTo(product.getPrice())).isZero()
+                () -> assertThat(savedProduct.getPrice()).isEqualTo(product.getPrice())
         );
     }
 
     @Test
     void 상품_가격이_0원_미만이면_예외를_반환한다() {
-        Product product = 상품을_생성한다("상품", BigDecimal.valueOf(-1));
-
-        assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(
+                () -> productService.create(상품을_생성한다("상품", BigDecimal.valueOf(-1)))
+        ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

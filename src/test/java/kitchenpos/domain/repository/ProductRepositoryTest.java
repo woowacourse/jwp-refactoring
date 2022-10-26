@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.domain.repository;
 
 import static kitchenpos.support.TestFixtureFactory.상품을_생성한다;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,10 +14,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @TransactionalTest
-class ProductDaoTest {
+class ProductRepositoryTest {
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productDao;
 
     @Test
     void 상품을_저장하면_id값이_채워진다() {
@@ -28,7 +28,7 @@ class ProductDaoTest {
         assertAll(
                 () -> assertThat(savedProduct.getId()).isNotNull(),
                 () -> assertThat(savedProduct.getName()).isEqualTo(product.getName()),
-                () -> assertThat(savedProduct.getPrice().compareTo(product.getPrice())).isZero()
+                () -> assertThat(savedProduct.getPrice()).isEqualTo(product.getPrice())
         );
     }
 

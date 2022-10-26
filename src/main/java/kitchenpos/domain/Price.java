@@ -25,6 +25,14 @@ public class Price {
         }
     }
 
+    public Price add(final Price price) {
+        return new Price(value.add(price.getValue()));
+    }
+
+    public Price multiply(final long times) {
+        return new Price(value.multiply(BigDecimal.valueOf(times)));
+    }
+
     public BigDecimal getValue() {
         return value;
     }

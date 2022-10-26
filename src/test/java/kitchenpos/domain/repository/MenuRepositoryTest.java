@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.domain.repository;
 
 import static kitchenpos.support.TestFixtureFactory.메뉴_그룹을_생성한다;
 import static kitchenpos.support.TestFixtureFactory.메뉴를_생성한다;
@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.TransactionalTest;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.domain.repository.MenuRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
