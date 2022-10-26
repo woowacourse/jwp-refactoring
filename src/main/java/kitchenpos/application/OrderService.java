@@ -3,8 +3,8 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
+import kitchenpos.application.dto.OrderChangeRequestDto;
 import kitchenpos.application.dto.OrderCreateRequestDto;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -12,7 +12,6 @@ import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +45,7 @@ public class OrderService {
 
         final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(orderLineItems, order.getId());
 
-        //TODO: 뷰에 의존적, Response 만들 때 setter 제거
+        //TODO: 뷰에 의존적, Response 만들 때 setter 제거, jpa 사용?
         savedOrder.setOrderLineItems(savedOrderLineItems);
 
         return savedOrder;
@@ -89,21 +88,14 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public Order changeOrderStatus(final Long orderId, final OrderChangeRequestDto dto) {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
-
+        savedOrder.changeStatus(dto.getOrderStatus());
         orderDao.save(savedOrder);
 
+        //TODO: 뷰에 의존적, Response 만들 때 setter 제거, jpa 사용?
         savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
-
         return savedOrder;
     }
 }
