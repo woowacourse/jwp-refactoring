@@ -8,7 +8,7 @@ public class MenuGroupFixture {
         return new MenuGroup("할인메뉴");
     }
 
-    public static MenuGroup createSuggestionMenu() {
+    public static MenuGroup createSuggestionMenuGroup() {
         return new MenuGroup("추천메뉴");
     }
 }

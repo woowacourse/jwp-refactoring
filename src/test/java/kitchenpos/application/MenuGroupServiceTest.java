@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.fixture.MenuGroupFixture.createSaleMenuGroup;
+import static kitchenpos.support.fixture.MenuGroupFixture.createSuggestionMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -17,7 +19,7 @@ class MenuGroupServiceTest extends IntegrationTest {
     @DisplayName("메뉴그룹을 등록할 수 있다.")
     @Test
     void create() {
-        final MenuGroup menuGroup = new MenuGroup("추천메뉴");
+        final MenuGroup menuGroup = createSaleMenuGroup();
 
         final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
@@ -28,8 +30,8 @@ class MenuGroupServiceTest extends IntegrationTest {
     @Test
     void list() {
         final int originSize = menuGroupDao.findAll().size();
-        menuGroupDao.save(new MenuGroup("할인메뉴"));
-        menuGroupDao.save(new MenuGroup("맛있는메뉴"));
+        menuGroupDao.save(createSaleMenuGroup());
+        menuGroupDao.save(createSuggestionMenuGroup());
 
         final List<MenuGroup> menuGroups = menuGroupService.list();
         final int afterSize = menuGroups.size();
