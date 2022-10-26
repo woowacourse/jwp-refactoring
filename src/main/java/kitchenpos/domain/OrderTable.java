@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 public class OrderTable {
     private Long id;
     private Long tableGroupId;
@@ -21,6 +23,14 @@ public class OrderTable {
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
         this(null, null, numberOfGuests, empty);
+    }
+
+    public OrderTable(final Long id, final boolean empty) {
+        this(id, null, 0, empty);
+    }
+
+    public boolean isGroupTable() {
+        return Objects.nonNull(tableGroupId);
     }
 
     public Long getId() {
