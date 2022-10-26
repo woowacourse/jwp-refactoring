@@ -34,7 +34,7 @@ class MenuRepositoryTest {
 
         assertAll(
                 () -> assertThat(savedMenu.getId()).isNotNull(),
-                () -> assertThat(savedMenu.getPrice().compareTo(menu.getPrice())).isZero(),
+                () -> assertThat(savedMenu.getPrice()).isEqualTo(menu.getPrice()),
                 () -> assertThat(savedMenu).usingRecursiveComparison()
                         .ignoringFields("id", "price")
                         .isEqualTo(menu)
@@ -50,7 +50,7 @@ class MenuRepositoryTest {
                 .orElseGet(Assertions::fail);
 
         assertAll(
-                () -> assertThat(actual.getPrice().compareTo(menu.getPrice())).isZero(),
+                () -> assertThat(actual.getPrice()).isEqualTo(menu.getPrice()),
                 () -> assertThat(actual).usingRecursiveComparison()
                         .ignoringFields("price")
                         .isEqualTo(menu)

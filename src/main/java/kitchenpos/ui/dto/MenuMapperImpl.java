@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
 import kitchenpos.ui.dto.request.MenuProductCreateRequest;
 import kitchenpos.ui.dto.response.MenuCreateResponse;
@@ -25,7 +26,7 @@ public class MenuMapperImpl implements MenuMapper {
         Menu menu = new Menu(
                 null,
                 menuCreateRequest.getName(),
-                menuCreateRequest.getPrice(),
+                new Price(menuCreateRequest.getPrice()),
                 menuCreateRequest.getMenuGroupId(),
                 new ArrayList<>()
         );
@@ -50,7 +51,7 @@ public class MenuMapperImpl implements MenuMapper {
         return new MenuCreateResponse(
                 menu.getId(),
                 menu.getName(),
-                menu.getPrice(),
+                menu.getPrice().getValue(),
                 menu.getMenuGroupId(),
                 menu.getMenuProducts()
                         .stream()
@@ -78,7 +79,7 @@ public class MenuMapperImpl implements MenuMapper {
         return new MenuResponse(
                 menu.getId(),
                 menu.getName(),
-                menu.getPrice(),
+                menu.getPrice().getValue(),
                 menu.getMenuGroupId(),
                 menu.getMenuProducts()
                         .stream()

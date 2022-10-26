@@ -9,6 +9,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 
@@ -30,7 +31,7 @@ public class TestFixtureFactory {
 
     public static Menu 메뉴를_생성한다(final String name, final BigDecimal price, final Long menuGroupId,
                                 final List<MenuProduct> menuProducts) {
-        return new Menu(null, name, price, menuGroupId, menuProducts);
+        return new Menu(null, name, new Price(price), menuGroupId, menuProducts);
     }
 
     public static MenuProduct 메뉴_상품을_생성한다(final Menu menu, final Long productId, final long quantity) {

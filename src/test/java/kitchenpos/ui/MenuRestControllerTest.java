@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.ui.dto.MenuMapper;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
 import kitchenpos.ui.dto.request.MenuProductCreateRequest;
@@ -33,7 +34,7 @@ class MenuRestControllerTest extends RestControllerTest {
         MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(1L, 1);
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest("메뉴", BigDecimal.valueOf(1_000), 1L,
                 List.of(menuProductCreateRequest));
-        Menu expectedMenu = new Menu(1L, "메뉴", BigDecimal.valueOf(1_000), 1L, new ArrayList<>());
+        Menu expectedMenu = new Menu(1L, "메뉴", new Price(BigDecimal.valueOf(1_000)), 1L, new ArrayList<>());
         new MenuProduct(1L, expectedMenu, 1L, 1);
 
         when(menuService.create(menuMapper.createRequestToMenu(menuCreateRequest)))
@@ -49,7 +50,7 @@ class MenuRestControllerTest extends RestControllerTest {
 
     @Test
     void 메뉴_목록_조회에_성공한다() throws Exception {
-        Menu expectedMenu = new Menu(1L, "메뉴", BigDecimal.valueOf(1_000), 1L, new ArrayList<>());
+        Menu expectedMenu = new Menu(1L, "메뉴", new Price(BigDecimal.valueOf(1_000)), 1L, new ArrayList<>());
         new MenuProduct(1L, expectedMenu, 1L, 1);
 
         when(menuService.list()).thenReturn(List.of(expectedMenu));

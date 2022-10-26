@@ -43,7 +43,7 @@ class MenuServiceTest {
 
         assertAll(
                 () -> assertThat(savedMenu.getId()).isNotNull(),
-                () -> assertThat(savedMenu.getPrice().compareTo(menu.getPrice())).isZero(),
+                () -> assertThat(savedMenu.getPrice()).isEqualTo(menu.getPrice()),
                 () -> assertThat(savedMenu).usingRecursiveComparison()
                         .ignoringFields("id", "price", "menuProducts")
                         .isEqualTo(savedMenu),
@@ -55,9 +55,9 @@ class MenuServiceTest {
 
     @Test
     void 메뉴_가격이_0원_미만이면_예외를_반환한다() {
-        Menu menu = 메뉴를_생성한다("메뉴", BigDecimal.valueOf(-1), 1L, new ArrayList<>());
-
-        assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(
+                () -> menuService.create(메뉴를_생성한다("메뉴", BigDecimal.valueOf(-1), 1L, new ArrayList<>()))
+        ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
