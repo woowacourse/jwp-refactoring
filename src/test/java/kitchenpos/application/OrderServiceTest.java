@@ -15,6 +15,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.fixtures.OrderFixtures;
+import kitchenpos.fixtures.OrderLineItemFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +41,7 @@ class OrderServiceTest {
     @DisplayName("주문을 생성한다")
     void create() {
         // given
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
 
         final OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);
@@ -79,9 +79,7 @@ class OrderServiceTest {
     @DisplayName("주문 항목의 메뉴들이 실제 존재하지 않은 메뉴로 주문을 생성하면 예외가 발생한다")
     void createExceptionWrongOrderLineItems() {
         // given
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(-1L);
-
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, -1L, 2);
         final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(1L, orderLineItem);
 
         // when, then
@@ -93,9 +91,7 @@ class OrderServiceTest {
     @DisplayName("주문 테이블이 존재하지 않은 테이블이면 주문을 생성할 때 예외가 발생한다")
     void createExceptionNotExistOrderTable() {
         // given
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
         final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(-1L, orderLineItem);
 
         // when, then
@@ -107,9 +103,7 @@ class OrderServiceTest {
     @DisplayName("주문 테이블이 주문을 등록할 수 없는 상태로 주문을 생성할 때 예외가 발생한다")
     void createExceptionNotEmptyOrderTable() {
         // given
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
         final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(1L, orderLineItem);
 
         // when, then
@@ -128,10 +122,7 @@ class OrderServiceTest {
         final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableId(notEmptyOrderTable.getId());
         final Order savedOrder = orderDao.save(order);
 
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setOrderId(savedOrder.getId());
-        orderLineItem.setQuantity(2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(savedOrder.getId(), 1L, 2);
         orderLineItemDao.save(orderLineItem);
 
         // when

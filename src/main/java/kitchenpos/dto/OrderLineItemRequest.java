@@ -11,10 +11,7 @@ public class OrderLineItemRequest {
     }
 
     public OrderLineItem toOrderLineItem() {
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-        return orderLineItem;
+        return new OrderLineItem(null, null, menuId, quantity);
     }
 
     public Long getMenuId() {

@@ -50,10 +50,7 @@ class OrderLineItemDaoTest {
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuDao.save(menu);
 
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(savedOrder.getId());
-        orderLineItem.setMenuId(savedMenu.getId());
-        orderLineItem.setQuantity(2);
+        final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder.getId(), savedMenu.getId(), 2);
 
         // when
         final OrderLineItem saved = orderLineItemDao.save(orderLineItem);
@@ -79,10 +76,7 @@ class OrderLineItemDaoTest {
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuDao.save(menu);
 
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(-1L);
-        orderLineItem.setMenuId(savedMenu.getId());
-        orderLineItem.setQuantity(2);
+        final OrderLineItem orderLineItem = new OrderLineItem(null, -1L, savedMenu.getId(), 2);
 
         // when, then
         assertThatThrownBy(() -> orderLineItemDao.save(orderLineItem))
@@ -101,10 +95,7 @@ class OrderLineItemDaoTest {
         final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
         final Order savedOrder = orderDao.save(order);
 
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(savedOrder.getId());
-        orderLineItem.setMenuId(-1L);
-        orderLineItem.setQuantity(2);
+        final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder.getId(), -1L, 2);
 
         // when, then
         assertThatThrownBy(() -> orderLineItemDao.save(orderLineItem))
@@ -126,11 +117,7 @@ class OrderLineItemDaoTest {
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuDao.save(menu);
 
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(savedOrder.getId());
-        orderLineItem.setMenuId(savedMenu.getId());
-        orderLineItem.setQuantity(2);
-
+        final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder.getId(), savedMenu.getId(), 2);
         final OrderLineItem saved = orderLineItemDao.save(orderLineItem);
 
         // when
@@ -167,11 +154,7 @@ class OrderLineItemDaoTest {
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuDao.save(menu);
 
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(savedOrder.getId());
-        orderLineItem.setMenuId(savedMenu.getId());
-        orderLineItem.setQuantity(2);
-
+        final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder.getId(), savedMenu.getId(), 2);
         final OrderLineItem saved = orderLineItemDao.save(orderLineItem);
 
         // when
@@ -200,11 +183,7 @@ class OrderLineItemDaoTest {
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuDao.save(menu);
 
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(savedOrder.getId());
-        orderLineItem.setMenuId(savedMenu.getId());
-        orderLineItem.setQuantity(2);
-
+        final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder.getId(), savedMenu.getId(), 2);
         final OrderLineItem saved = orderLineItemDao.save(orderLineItem);
 
         // when
