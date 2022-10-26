@@ -31,6 +31,7 @@ class MenuServiceTest {
         class 정상적인_메뉴가_입력되면 extends ServiceTest {
 
             MenuGroup menuGroup;
+
             @BeforeEach
             void setUp() {
                 menuGroup = menuGroupDao.save(메뉴_그룹_생성("한마리메뉴"));

@@ -7,7 +7,6 @@ import static kitchenpos.fixtures.TestFixtures.주문_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -114,7 +113,8 @@ class TableGroupServiceTest {
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> tableGroupService.create(단체_지정_생성(null, List.of(savedOrderTable1, savedOrderTable2))))
+                assertThatThrownBy(
+                        () -> tableGroupService.create(단체_지정_생성(null, List.of(savedOrderTable1, savedOrderTable2))))
                         .isInstanceOf(IllegalArgumentException.class);
             }
         }
@@ -138,7 +138,8 @@ class TableGroupServiceTest {
                 final TableGroup tableGroup = 단체_지정_생성(null, List.of(savedOrderTable1, savedOrderTable2));
                 tableGroupService.create(tableGroup);
 
-                assertThatThrownBy(() -> tableGroupService.create(단체_지정_생성(null, List.of(savedOrderTable1, savedOrderTable2))))
+                assertThatThrownBy(
+                        () -> tableGroupService.create(단체_지정_생성(null, List.of(savedOrderTable1, savedOrderTable2))))
                         .isInstanceOf(IllegalArgumentException.class);
             }
         }
@@ -197,6 +198,7 @@ class TableGroupServiceTest {
             }
         }
     }
+
     @Test
     void ungroup() {
     }
