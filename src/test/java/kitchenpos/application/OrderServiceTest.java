@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
-import static kitchenpos.DomainFixture.뿌링클_생성;
+import static kitchenpos.DomainFixture.뿌링클;
 import static kitchenpos.DomainFixture.뿌링클_치즈볼_메뉴_생성;
 import static kitchenpos.DomainFixture.세트_메뉴;
 import static kitchenpos.DomainFixture.주문_생성;
-import static kitchenpos.DomainFixture.치즈볼_생성;
+import static kitchenpos.DomainFixture.치즈볼;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -30,10 +30,10 @@ class OrderServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        final var productA = 상품_저장(뿌링클_생성());
-        final var productB = 상품_저장(치즈볼_생성());
+        final var productA = 상품_저장(뿌링클);
+        final var productB = 상품_저장(치즈볼);
         final var menuGroup = 메뉴_그룹_저장(세트_메뉴);
-        menu = 메뉴_세팅_및_저장(뿌링클_치즈볼_메뉴_생성(), menuGroup.getId(), productA.getId(), productB.getId());
+        menu = 메뉴_저장(뿌링클_치즈볼_메뉴_생성(menuGroup.getId(), productA, productB));
         table = 테이블_생성_및_저장();
     }
 

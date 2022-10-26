@@ -1,40 +1,39 @@
 package kitchenpos.domain;
 
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+
+@Entity
 public class MenuProduct {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    private Long menuId;
-    private Long productId;
-    private long quantity;
 
-    public Long getSeq() {
-        return seq;
+    @OneToOne
+    private Product product;
+
+    @Embedded
+    private Quantity quantity;
+
+    protected MenuProduct() {
     }
 
-    public void setSeq(final Long seq) {
+    public MenuProduct(final Product product, final Quantity quantity) {
+        this(null, product, quantity);
+    }
+
+    public MenuProduct(final Long seq, final Product product, final Quantity quantity) {
         this.seq = seq;
-    }
-
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(final Long productId) {
-        this.productId = productId;
-    }
-
-    public long getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
+        this.product = product;
         this.quantity = quantity;
+    }
+
+    public Price calculateTotalPrice() {
+        return this.product.calculateTotalPrice(quantity);
     }
 }

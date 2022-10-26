@@ -1,15 +1,13 @@
-package kitchenpos.newdomain;
+package kitchenpos.domain;
 
-import static kitchenpos.newdomain.DomainFixture.뿌링클;
-import static kitchenpos.newdomain.DomainFixture.치즈볼;
-import static kitchenpos.newdomain.DomainFixture.한개;
+import static kitchenpos.DomainFixture.뿌링클;
+import static kitchenpos.DomainFixture.치즈볼;
+import static kitchenpos.DomainFixture.한개;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import kitchenpos.exception.CustomErrorCode;
 import kitchenpos.exception.DomainLogicException;
-import kitchenpos.newdomain.vo.Name;
-import kitchenpos.newdomain.vo.Price;
 import org.junit.jupiter.api.Test;
 
 class MenuTest {

@@ -1,12 +1,19 @@
-package kitchenpos.newdomain.vo;
+package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import kitchenpos.exception.CustomErrorCode;
 import kitchenpos.exception.DomainLogicException;
 
+@Embeddable
 public class Price {
 
+    @Column(name = "price", nullable = false)
     private BigDecimal value;
+
+    protected Price() {
+    }
 
     public Price(final BigDecimal value) {
         validatePositive(value);

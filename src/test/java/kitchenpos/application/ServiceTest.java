@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.DomainFixture.메뉴_세팅;
 import static kitchenpos.DomainFixture.주문_생성;
 
 import java.time.LocalDateTime;
@@ -51,8 +50,8 @@ public class ServiceTest {
         return menuGroupDao.save(menuGroup);
     }
 
-    protected Menu 메뉴_세팅_및_저장(final Menu menu, final long menuGroupId, final long... productIds) {
-        return menuDao.save(메뉴_세팅(menu, menuGroupId, productIds));
+    protected Menu 메뉴_저장(final Menu menu) {
+        return menuDao.save(menu);
     }
 
     protected OrderTable 테이블_생성_및_저장() {

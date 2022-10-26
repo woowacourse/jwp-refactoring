@@ -1,13 +1,20 @@
-package kitchenpos.newdomain.vo;
+package kitchenpos.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import kitchenpos.exception.CustomErrorCode;
 import kitchenpos.exception.DomainLogicException;
 
+@Embeddable
 public class Quantity {
 
+    @Column(name = "quantity", nullable = false)
     private long value;
 
-    public Quantity(long value) {
+    protected Quantity() {
+    }
+
+    public Quantity(final long value) {
         validatePositive(value);
         this.value = value;
     }
