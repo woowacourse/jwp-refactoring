@@ -15,11 +15,22 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블을 생성할 수 있다.")
     @Test
     void create() {
-        OrderTable 테이블_1 = tableService.create(빈테이블_ofId(1L));
+        OrderTable 테이블_3 = tableService.create(빈테이블_ofId(3L));
 
         List<OrderTable> 테이블_목록 = tableService.list();
 
-        검증_필드비교_값포함(테이블_목록, 테이블_1);
+        검증_필드비교_값포함(테이블_목록, 테이블_3);
+    }
+
+    @DisplayName("테이블 목록을 조회할 수 있다")
+    @Test
+    void list() {
+        OrderTable 테이블_1 = tableService.create(빈테이블_ofId(1L));
+        OrderTable 테이블_2 = tableService.create(빈테이블_ofId(2L));
+
+        List<OrderTable> 테이블_목록 = tableService.list();
+
+        검증_필드비교_동일_목록(테이블_목록, List.of(테이블_1, 테이블_2));
     }
 
     @DisplayName("테이블의 빈 상태 여부를 변경할 수 있다.")
@@ -49,7 +60,9 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블은 단체지정이 없어야 한다.")
     @Test
     void changeEmpty_noTableGroup() {
-        TableGroup 테이블그룹_1 = tableGroupDao.save(테이블그룹(List.of(빈테이블_1(), 빈테이블_2())));
+        OrderTable 빈테이블_1 = tableService.create(빈테이블_1());
+        OrderTable 빈테이블_2 = tableService.create(빈테이블_2());
+        TableGroup 테이블그룹_1 = tableGroupDao.save(테이블그룹(List.of(빈테이블_1, 빈테이블_2)));
         OrderTable 단체지정_테이블_1 = orderTableDao.save(테이블_1(테이블그룹_1.getId()));
 
         assertThatThrownBy(() -> tableService.changeEmpty(단체지정_테이블_1.getId(), 단체지정_테이블_1))
@@ -60,8 +73,8 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블의 주문이 있다면 COMPLETION 상태여야 한다.")
     @Test
     void changeEmpty_noOrderComplete() {
-        OrderTable 테이블_1 = orderTableDao.save(테이블_1());
-        orderService.create(주문_테이블1());
+        OrderTable 테이블_1 = tableService.create(테이블_1());
+        orderService.create(주문(테이블_1.getId()));
 
         assertThatThrownBy(() -> tableService.changeEmpty(테이블_1.getId(), 테이블_1))
                 .isInstanceOf(IllegalArgumentException.class)

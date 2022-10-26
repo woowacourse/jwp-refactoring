@@ -223,7 +223,7 @@ Content-Type: application/json
 
 #### 1단계 피드백
 
-- [ ] 예외메세지를 보다 범용성있게 수정
+- [x] 예외메세지를 보다 범용성있게 수정
 - [ ] update 메소드 네이밍 고민
 
 #### 개인
@@ -243,7 +243,7 @@ Content-Type: application/json
 
 #### 개인
 
-- [ ] DirtiesContext 제거 및 DatabaseCleaner 로 변경
+- [x] DirtiesContext 제거 및 DatabaseCleaner 로 변경
 - [x] 컨트롤러 테스트가 테스트 픽스처를 상속하도록 변경
 - [x] 테스트 픽스처 추가 분리
 - [x] 테스트 픽스처 생성 방식 변경(Fixtures. 제거)

@@ -92,6 +92,13 @@ public class Fixtures {
                 List.of(주문아이템_후라이드()));
     }
 
+    public static Order 주문(long tableId) {
+        return new Order(1L, tableId,
+                OrderStatus.COOKING.name(),
+                LocalDateTime.now(),
+                List.of(주문아이템_후라이드()));
+    }
+
     public static Order 주문_테이블1(List<OrderLineItem> items) {
         return new Order(1L, 테이블_1().getId(),
                 OrderStatus.COOKING.name(),
