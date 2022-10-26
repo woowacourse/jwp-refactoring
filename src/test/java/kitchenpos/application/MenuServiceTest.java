@@ -63,6 +63,18 @@ class MenuServiceTest {
         }
 
         @Test
+        @DisplayName("가격이 null이면 예외를 발생시킨다.")
+        void create_nullPrice() {
+            final Menu menu = new Menu(
+                    "test menu name",
+                    null,
+                    1L,
+                    createDummyMenuProducts());
+            assertThatThrownBy(() -> menuService.create(menu))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
         @DisplayName("존재하지 않는 menuGroup 이라면 예외를 발생시킨다.")
         void create_noMenuGroup() {
             final Menu menu = new Menu(
