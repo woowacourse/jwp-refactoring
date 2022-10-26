@@ -53,6 +53,7 @@ class MenuServiceTest extends ServiceTest {
 
             // then
             assertAll(() -> {
+                assertThat(actual.getId()).isNotNull();
                 assertThat(actual.getName()).isEqualTo(menu.getName());
                 assertThat(actual.getPrice().doubleValue()).isEqualTo(menu.getPrice().doubleValue());
             });

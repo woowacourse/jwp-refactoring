@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static kitchenpos.fixtures.domain.MenuGroupFixture.createMenuGroup;
 import static kitchenpos.fixtures.domain.MenuGroupFixture.createMenuGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
@@ -33,7 +34,10 @@ class MenuGroupServiceTest extends ServiceTest {
             MenuGroup actual = menuGroupService.create(menuGroup);
 
             // then
-            assertThat(actual.getName()).isEqualTo(menuGroup.getName());
+            assertAll(() -> {
+                assertThat(actual.getId()).isNotNull();
+                assertThat(actual.getName()).isEqualTo(menuGroup.getName());
+            });
         }
     }
 

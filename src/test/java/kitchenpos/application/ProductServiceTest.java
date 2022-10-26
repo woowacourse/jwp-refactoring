@@ -38,6 +38,7 @@ class ProductServiceTest extends ServiceTest {
 
             // then
             assertAll(() -> {
+                assertThat(actual.getId()).isNotNull();
                 assertThat(actual.getName()).isEqualTo(product.getName());
                 assertThat(actual.getPrice().doubleValue()).isEqualTo(product.getPrice().doubleValue());
             });

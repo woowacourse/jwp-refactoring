@@ -87,6 +87,7 @@ class OrderServiceTest extends ServiceTest {
 
             // then
             assertAll(() -> {
+                assertThat(actual.getId()).isNotNull();
                 assertThat(actual.getOrderStatus()).isEqualTo(order.getOrderStatus());
                 assertThat(actual.getOrderedTime()).isEqualTo(order.getOrderedTime());
             });

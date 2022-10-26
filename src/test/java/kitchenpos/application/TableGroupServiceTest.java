@@ -65,6 +65,7 @@ class TableGroupServiceTest extends ServiceTest {
 
             // then
             assertAll(() -> {
+                assertThat(actual.getId()).isNotNull();
                 assertThat(request.getCreatedDate()).isEqualTo(actual.getCreatedDate());
                 assertThat(request.getOrderTables()).hasSize(actual.getOrderTables().size());
             });

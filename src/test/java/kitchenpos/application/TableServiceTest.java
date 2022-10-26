@@ -51,6 +51,7 @@ class TableServiceTest extends ServiceTest {
 
             // then
             assertAll(() -> {
+                assertThat(actual.getId()).isNotNull();
                 assertThat(actual.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
                 assertThat(actual.isEmpty()).isEqualTo(orderTable.isEmpty());
             });
