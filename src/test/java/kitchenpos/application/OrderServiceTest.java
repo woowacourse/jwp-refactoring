@@ -24,7 +24,7 @@ class OrderServiceTest extends IntegrationServiceTest {
     private static final List<OrderLineItem> ORDER_LINE_ITEMS = singletonList(ORDER_LINE_ITEM);
 
     @Test
-    void create() {
+    void create_메서드는() {
 
         @Nested
         class 주문항목이_비어있는_경우 {

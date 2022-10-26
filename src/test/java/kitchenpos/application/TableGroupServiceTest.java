@@ -77,16 +77,19 @@ class TableGroupServiceTest extends IntegrationServiceTest {
         @Nested
         class 주문테이블이_이미_그룹화가_되어_있을_경우 extends IntegrationServiceTest {
 
-            private TableGroup 그룹화된_주문테이블_내포 = new TableGroup(now(), asList(
-                    new OrderTable(1L, null, 4, true),
-                    new OrderTable(2L, null, 4, true)));
+            private TableGroup 그룹화된_주문테이블_내포;
 
             @BeforeEach
             void setUp() {
 
                 final Long savedTableGroupId = tableGroupDao.save(그룹화된_주문테이블_내포).getId();
+                final OrderTable 그룹화된_주문테이블 = new OrderTable(1L, savedTableGroupId, 4, true);
+                this.그룹화된_주문테이블_내포 = new TableGroup(now(), asList(
+                        new OrderTable(1L, null, 4, true),
+                        그룹화된_주문테이블)
+                );
 
-                orderTableDao.save(new OrderTable(1L, savedTableGroupId, 4, true));
+                orderTableDao.save(그룹화된_주문테이블);
             }
 
             @Test
