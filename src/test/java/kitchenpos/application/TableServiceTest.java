@@ -7,12 +7,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.util.List;
 import kitchenpos.common.builder.OrderTableBuilder;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderTableCreateRequest;
 import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.dto.response.OrderTablesResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,10 +49,10 @@ class TableServiceTest extends ServiceTest {
         orderTableDao.save(야채곱창_주문_테이블);
 
         // when
-        List<OrderTable> 주문_테이블들 = tableService.list();
+        OrderTablesResponse 주문_테이블들 = tableService.list();
 
         // then
-        assertThat(주문_테이블들).hasSize(1);
+        assertThat(주문_테이블들.getOrderTableResponses()).hasSize(1);
     }
 
     @DisplayName("주문 테이블을 빈 테이블로 변경한다.")
