@@ -24,6 +24,10 @@ public class OrderTable {
         return empty;
     }
 
+    public boolean isGroupedOrNotEmpty() {
+        return !isEmpty() || Objects.nonNull(tableGroupId);
+    }
+
     public Long getId() {
         return id;
     }

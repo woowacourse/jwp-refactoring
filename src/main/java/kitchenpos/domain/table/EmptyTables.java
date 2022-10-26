@@ -1,7 +1,6 @@
 package kitchenpos.domain.table;
 
 import java.util.List;
-import java.util.Objects;
 
 public class EmptyTables {
 
@@ -19,7 +18,7 @@ public class EmptyTables {
             throw new IllegalArgumentException();
         }
         boolean includesGroupedOrOrderTable = orderTables.stream()
-                .anyMatch(it -> !it.isEmpty() || Objects.nonNull(it.getTableGroupId()));
+                .anyMatch(OrderTable::isGroupedOrNotEmpty);
         if (includesGroupedOrOrderTable) {
             throw new IllegalArgumentException();
         }
