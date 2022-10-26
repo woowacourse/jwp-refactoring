@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductCreateRequest;
 
 class ProductServiceTest extends ServiceTest {
 
@@ -21,7 +22,7 @@ class ProductServiceTest extends ServiceTest {
         @DisplayName("예외사항이 존재하지 않는 경우 새로운 상품을 생성한다.")
         void create() {
             // given
-            Product product = createProduct("이름", new BigDecimal(1000));
+            ProductCreateRequest product = new ProductCreateRequest("이름", new BigDecimal(1000));
 
             // when
             Product savedProduct = productService.create(product);
@@ -34,7 +35,7 @@ class ProductServiceTest extends ServiceTest {
         @DisplayName("가격이 빈값일 경우 예외가 발생한다.")
         void nullPrice() {
             // given
-            Product product = createProduct("이름", null);
+            ProductCreateRequest product = new ProductCreateRequest("이름", null);
 
             // when, then
             assertThatThrownBy(() -> productService.create(product))
@@ -45,7 +46,7 @@ class ProductServiceTest extends ServiceTest {
         @DisplayName("가격이 0 미만인 경우 예외가 발생한다.")
         void negativePrice() {
             // given
-            Product product = createProduct("이름", BigDecimal.valueOf(-1));
+            ProductCreateRequest product = new ProductCreateRequest("이름", BigDecimal.valueOf(-1));
 
             // when, then
             assertThatThrownBy(() -> productService.create(product))
@@ -65,14 +66,6 @@ class ProductServiceTest extends ServiceTest {
             assertThat(products).isNotNull();
         }
 
-    }
-
-    private Product createProduct(String name, BigDecimal price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-
-        return product;
     }
 
 }

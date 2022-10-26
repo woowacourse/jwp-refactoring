@@ -127,10 +127,7 @@ class MenuServiceTest extends ServiceTest {
     }
 
     private Product createAndSaveProduct() {
-        Product product = new Product();
-        product.setName("product");
-        product.setPrice(new BigDecimal(1000));
-
+        Product product = new Product("product", new BigDecimal(1000));
         return productDao.save(product);
     }
 
