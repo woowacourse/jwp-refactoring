@@ -54,13 +54,13 @@ class OrderServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUpOrder() {
-        productA = productService.create(new ProductCreateRequest("순살 까르보치킨", new BigDecimal(20000)));
-        productB = productService.create(new ProductCreateRequest("순살 짜장치킨", new BigDecimal(18000)));
+        productA = productService.create(new ProductCreateRequest("순살 까르보치킨", new BigDecimal("20000.00")));
+        productB = productService.create(new ProductCreateRequest("순살 짜장치킨", new BigDecimal("18000.00")));
 
         menuGroup = menuGroupService.create(new MenuGroupCreateRequest("순살 두 마리"));
 
         name = "순살 까르보 한 마리 + 순살 짜장 한 마리";
-        price = new BigDecimal(35000);
+        price = new BigDecimal("35000.00");
         menuGroupId = menuGroup.getId();
         menuProductA = new MenuProductRequest(productA.getId(), 1L);
         menuProductB = new MenuProductRequest(productB.getId(), 1L);

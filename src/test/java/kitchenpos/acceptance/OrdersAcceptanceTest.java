@@ -45,7 +45,7 @@ public class OrdersAcceptanceTest extends AcceptanceTest {
     public Map<String, Object> 메뉴생성요청_데이터() {
         return Map.of(
                 "name", "까르보 두 마리 + 짜장 한 마리",
-                "price", new BigDecimal(40000),
+                "price", new BigDecimal("40000.00"),
                 "menuGroupId", 메뉴그룹_생성응답.getId(),
                 "menuProducts", List.of(
                         Map.of("productId", 생성된_까르보치킨.getId(), "quantity", 2),

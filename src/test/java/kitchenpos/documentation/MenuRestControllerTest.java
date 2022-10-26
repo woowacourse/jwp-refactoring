@@ -26,7 +26,7 @@ class MenuRestControllerTest extends DocumentationTest {
     @Test
     void create() {
         final var name = "까르보 한 마리 + 짜장 한 마리";
-        final var price = new BigDecimal(38000);
+        final var price = new BigDecimal("38000.00");
         final var menuGroupId = 1L;
         given(menuService.create(any()))
                 .willReturn(new Menu(1L, name, price, menuGroupId,
@@ -76,12 +76,12 @@ class MenuRestControllerTest extends DocumentationTest {
     void list() {
         given(menuService.list())
                 .willReturn(List.of(
-                                new Menu(1L, "까르보 한 마리", new BigDecimal(18000), 1L,
+                                new Menu(1L, "까르보 한 마리", new BigDecimal("18000.00"), 1L,
                                         List.of(
                                                 new MenuProduct(1L, 1L, 1L, 1L)
                                         )
                                 ),
-                                new Menu(2L, "까르보 두 마리", new BigDecimal(35000), 2L,
+                                new Menu(2L, "까르보 두 마리", new BigDecimal("35000.00"), 2L,
                                         List.of(
                                                 new MenuProduct(2L, 2L, 1L, 2L)
                                         )

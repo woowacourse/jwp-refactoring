@@ -34,7 +34,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
     void 신규_메뉴를_생성할_수_있다() {
         // given
         final var 메뉴명 = "까르보 한 마리 + 짜장 한 마리";
-        final var 메뉴가격 = new BigDecimal(30000);
+        final var 메뉴가격 = new BigDecimal("30000.00");
         final var 메뉴_생성요청_데이터 = Map.of(
                 "name", 메뉴명,
                 "price", 메뉴가격,
@@ -55,7 +55,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
                 응답일치(메뉴_생성응답, HttpStatus.CREATED),
                 단일_데이터_검증(생성된_메뉴.getId(), 1L),
                 단일_데이터_검증(생성된_메뉴.getName(), 메뉴명),
-                단일_데이터_검증(생성된_메뉴.getPrice().doubleValue(), 메뉴가격.doubleValue()),
+                단일_데이터_검증(생성된_메뉴.getPrice(), 메뉴가격),
                 단일_데이터_검증(생성된_메뉴.getMenuGroupId(), 두_마리_메뉴.getId()),
                 리스트_데이터_검증(메뉴_내_상품들, "menuId", 1L, 1L),
                 리스트_데이터_검증(메뉴_내_상품들, "productId", 생성된_까르보치킨.getId(), 생성된_짜장치킨.getId()),
@@ -67,7 +67,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
     void 전체_메뉴를_조회할_수_있다() {
         // given
         final var 메뉴명 = "까르보 한 마리 + 짜장 한 마리";
-        final var 메뉴가격 = new BigDecimal(30000);
+        final var 메뉴가격 = new BigDecimal("30000.00");
         final var 메뉴_생성요청_데이터 = Map.of(
                 "name", 메뉴명,
                 "price", 메뉴가격,
@@ -79,7 +79,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         );
 
         final var 메뉴명2 = "까르보 두 마리";
-        final var 메뉴가격2 = new BigDecimal(31000);
+        final var 메뉴가격2 = new BigDecimal("31000.00");
         final var 메뉴_생성요청_데이터2 = Map.of(
                 "name", 메뉴명2,
                 "price", 메뉴가격2,

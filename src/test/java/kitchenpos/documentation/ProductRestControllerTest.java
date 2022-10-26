@@ -24,7 +24,7 @@ class ProductRestControllerTest extends DocumentationTest {
     @Test
     void create() {
         final var name = "까르보치킨";
-        final var price = new BigDecimal(18000);
+        final var price = new BigDecimal("18000.00");
         given(productService.create(any()))
                 .willReturn(new Product(1L, name, price));
 
@@ -52,8 +52,8 @@ class ProductRestControllerTest extends DocumentationTest {
     void list() {
         given(productService.list())
                 .willReturn(List.of(
-                        new Product(1L, "까르보치킨", new BigDecimal(20000)),
-                        new Product(2L, "짜장치킨", new BigDecimal(18000)))
+                        new Product(1L, "까르보치킨", new BigDecimal("20000.00")),
+                        new Product(2L, "짜장치킨", new BigDecimal("18000.00")))
                 );
 
         docsGiven

@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.request.ProductCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,7 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        final var productRequest = new ProductCreateRequest("까르보치킨", new BigDecimal(20000));
+        final var productRequest = new ProductCreateRequest("까르보치킨", new BigDecimal("20000.00"));
 
         // when
         final var actual = productService.create(productRequest);
@@ -34,7 +35,7 @@ class ProductServiceTest extends ServiceTest {
         assertAll(
                 () -> assertThat(actual.getId()).isEqualTo(1L),
                 () -> assertThat(actual.getName()).isEqualTo(productRequest.getName()),
-                () -> assertThat(actual.getPrice().doubleValue()).isEqualTo(productRequest.getPrice().doubleValue())
+                () -> assertThat(actual.getPrice()).isEqualTo(productRequest.getPrice())
         );
     }
 
@@ -51,11 +52,11 @@ class ProductServiceTest extends ServiceTest {
 
     private static Stream<Arguments> createProductFailCases() {
         return Stream.of(
-                Arguments.of("Product 생성 시, name이 null이면 예외가 발생한다", null, new BigDecimal(20000)),
-                Arguments.of("Product 생성 시, name이 비어있으면 예외가 발생한다", " ", new BigDecimal(20000)),
-                Arguments.of("Product 생성 시, name이 비어있으면 예외가 발생한다", "", new BigDecimal(20000)),
+                Arguments.of("Product 생성 시, name이 null이면 예외가 발생한다", null, new BigDecimal("20000.00")),
+                Arguments.of("Product 생성 시, name이 비어있으면 예외가 발생한다", " ", new BigDecimal("20000.00")),
+                Arguments.of("Product 생성 시, name이 비어있으면 예외가 발생한다", "", new BigDecimal("20000.00")),
                 Arguments.of("Product 생성 시, price가 null이면 예외가 발생한다", "상품명", null),
-                Arguments.of("Product 생성 시, price가 0 보다 작으면 예외가 발생한다", "상품명", new BigDecimal(-10000))
+                Arguments.of("Product 생성 시, price가 0 보다 작으면 예외가 발생한다", "상품명", new BigDecimal("-10000.00"))
         );
     }
 
@@ -63,7 +64,7 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void should_fail_when_name_is_duplicate() {
         // given
-        final var productRequest = new ProductCreateRequest("까르보치킨", new BigDecimal(20000));
+        final var productRequest = new ProductCreateRequest("까르보치킨", new BigDecimal("20000.00"));
         productService.create(productRequest);
 
         // when & then
@@ -81,7 +82,7 @@ class ProductServiceTest extends ServiceTest {
         // when
         final var products = productService.list();
         final var prices = products.stream()
-                .map(product -> product.getPrice().doubleValue())
+                .map(Product::getPrice)
                 .collect(Collectors.toList());
 
         // then
@@ -90,8 +91,7 @@ class ProductServiceTest extends ServiceTest {
                 () -> assertThat(products).extracting("id").containsExactly(1L, 2L),
                 () -> assertThat(products).extracting("name")
                         .containsExactly(까르보치킨_생성요청.getName(), 짜장치킨_생성요청.getName()),
-                () -> assertThat(prices).containsExactly(까르보치킨_생성요청.getPrice().doubleValue(),
-                        짜장치킨_생성요청.getPrice().doubleValue())
+                () -> assertThat(prices).containsExactly(까르보치킨_생성요청.getPrice(), 짜장치킨_생성요청.getPrice())
         );
     }
 }

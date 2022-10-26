@@ -40,10 +40,10 @@ class MenuServiceTest extends ServiceTest {
     @BeforeEach
     void setUpForMenu() {
         menuGroup = menuGroupRepository.save(new MenuGroup("순살 두 마리"));
-        productA = productRepository.save(new Product("순살 까르보치킨", new BigDecimal(20000)));
-        productB = productRepository.save(new Product("순살 짜장치킨", new BigDecimal(19000)));
+        productA = productRepository.save(new Product("순살 까르보치킨", new BigDecimal("20000.00")));
+        productB = productRepository.save(new Product("순살 짜장치킨", new BigDecimal("19000.00")));
         name = "순살 까르보 한 마리 + 순살 짜장 한 마리";
-        price = new BigDecimal(35000);
+        price = new BigDecimal("35000.00");
         menuGroupId = menuGroup.getId();
         menuProductA = new MenuProductRequest(productA.getId(), 1L);
         menuProductB = new MenuProductRequest(productB.getId(), 1L);
@@ -57,13 +57,12 @@ class MenuServiceTest extends ServiceTest {
 
         // when
         final var menu = menuService.create(menuRequest);
-        ;
 
         // then
         assertAll(
                 () -> assertThat(menu.getId()).isEqualTo(1L),
                 () -> assertThat(menu.getName()).isEqualTo(name),
-                () -> assertThat(menu.getPrice().doubleValue()).isEqualTo(price.doubleValue()),
+                () -> assertThat(menu.getPrice()).isEqualTo(price),
                 () -> assertThat(menu.getMenuGroupId()).isEqualTo(menuGroupId),
                 () -> assertThat(menu.getMenuProducts()).extracting("menuId")
                         .containsExactly(menu.getId(), menu.getId())
@@ -88,7 +87,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void should_fail_when_price_is_less_than_zero() {
             // given
-            final var menuRequest = new MenuCreateRequest(name, new BigDecimal(-30000), menuGroupId,
+            final var menuRequest = new MenuCreateRequest(name, new BigDecimal("-30000.00"), menuGroupId,
                     List.of(menuProductA, menuProductB));
 
             // when & then
@@ -133,7 +132,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void should_fail_when_price_is_greater_than_sum_of_menuProducts_price() {
             // given
-            final var menuRequest = new MenuCreateRequest(name, new BigDecimal(40000), menuGroupId,
+            final var menuRequest = new MenuCreateRequest(name, new BigDecimal("40000.00"), menuGroupId,
                     List.of(menuProductA, menuProductB));
 
             // when & then
@@ -148,7 +147,7 @@ class MenuServiceTest extends ServiceTest {
         // given
         final var menuRequest = new MenuCreateRequest(name, price, menuGroupId, List.of(menuProductA, menuProductB));
         final var secondName = name + "2";
-        final var secondPrice = new BigDecimal(25000);
+        final var secondPrice = new BigDecimal("25000.00");
         final var menuRequest2 = new MenuCreateRequest(secondName, secondPrice, menuGroupId,
                 List.of(menuProductA, menuProductB));
         menuService.create(menuRequest);
@@ -158,7 +157,6 @@ class MenuServiceTest extends ServiceTest {
         final var actual = menuService.list();
         final var prices = actual.stream()
                 .map(Menu::getPrice)
-                .map(BigDecimal::doubleValue)
                 .collect(Collectors.toList());
         final var menuProducts = actual.stream()
                 .flatMap(menu -> menu.getMenuProducts().stream())
@@ -168,7 +166,7 @@ class MenuServiceTest extends ServiceTest {
         assertAll(
                 () -> assertThat(actual).extracting("id").containsExactly(1L, 2L),
                 () -> assertThat(actual).extracting("name").containsExactly(name, secondName),
-                () -> assertThat(prices).containsExactly(price.doubleValue(), secondPrice.doubleValue()),
+                () -> assertThat(prices).containsExactly(price, secondPrice),
                 () -> assertThat(actual).extracting("menuGroupId").containsExactly(menuGroupId, menuGroupId),
                 () -> assertThat(menuProducts).extracting("productId").containsExactly(1L, 2L, 1L, 2L),
                 () -> assertThat(menuProducts).extracting("quantity").containsExactly(1L, 1L, 1L, 1L)

@@ -22,7 +22,7 @@ public class ProductAcceptanceTest extends AcceptanceTest {
                 응답일치(프로덕트_생성응답, HttpStatus.CREATED),
                 단일_데이터_검증(생성된_프로덕트.getId(), 1L),
                 단일_데이터_검증(생성된_프로덕트.getName(), 까르보치킨_생성요청.getName()),
-                단일_데이터_검증(생성된_프로덕트.getPrice().doubleValue(), 까르보치킨_생성요청.getPrice().doubleValue())
+                단일_데이터_검증(생성된_프로덕트.getPrice(), 까르보치킨_생성요청.getPrice())
         );
     }
 
