@@ -3,7 +3,7 @@ package acceptance;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +17,7 @@ public class ProductAcceptanceTest extends AcceptanceTest {
         상품을_생성한다("돼지국밥", 19000);
         상품을_생성한다("피자", 19000);
 
-        List<Product> products = 상품을_조회한다();
+        List<ProductDto> products = 상품을_조회한다();
 
         assertThat(products).hasSize(3);
     }

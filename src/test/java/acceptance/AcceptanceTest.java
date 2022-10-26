@@ -16,7 +16,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductDto;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,7 +41,7 @@ public class AcceptanceTest {
     }
 
     protected long 상품을_생성한다(final String name, final int price) {
-        Product product = new Product();
+        ProductDto product = new ProductDto();
         product.setName(name);
         product.setPrice(BigDecimal.valueOf(price));
 
@@ -55,13 +55,13 @@ public class AcceptanceTest {
                 .extract().jsonPath().getLong("id");
     }
 
-    protected List<Product> 상품을_조회한다() {
+    protected List<ProductDto> 상품을_조회한다() {
         return RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/products")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .extract().body().jsonPath().getList(".", Product.class);
+                .extract().body().jsonPath().getList(".", ProductDto.class);
     }
 
     protected long 메뉴_그룹을_생성한다(String name) {

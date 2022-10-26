@@ -10,7 +10,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductDto;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -194,7 +194,7 @@ class TableRestControllerTest extends ControllerTest {
 
     private OrderLineItem getOrderLineItem() {
         MenuGroup menuGroup = createMenuGroup("추천 메뉴");
-        Product product = createProduct("강정치킨", 18000);
+        ProductDto product = createProduct("강정치킨", 18000);
 
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(product.getId());

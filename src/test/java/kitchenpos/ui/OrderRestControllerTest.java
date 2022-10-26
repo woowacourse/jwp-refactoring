@@ -11,7 +11,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -166,7 +166,7 @@ class OrderRestControllerTest extends ControllerTest {
 
     private OrderLineItem getOrderLineItem() {
         MenuGroup menuGroup = createMenuGroup("추천 메뉴");
-        Product product = createProduct("강정치킨", 18000);
+        ProductDto product = createProduct("강정치킨", 18000);
 
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(product.getId());
@@ -180,7 +180,7 @@ class OrderRestControllerTest extends ControllerTest {
         return orderLineItem;
     }
 
-    private MenuProduct createMenuProduct(Product product) {
+    private MenuProduct createMenuProduct(ProductDto product) {
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(product.getId());
         menuProduct.setQuantity(2);

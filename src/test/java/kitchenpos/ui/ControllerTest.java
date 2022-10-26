@@ -9,7 +9,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductDto;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +24,11 @@ public class ControllerTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    public Product createProduct(String name, int price) {
-        Product product = new Product();
+    public ProductDto createProduct(String name, int price) {
+        ProductDto product = new ProductDto();
         product.setName(name);
         product.setPrice(BigDecimal.valueOf(price));
-        return restTemplate.postForEntity("/api/products", product, Product.class).getBody();
+        return restTemplate.postForEntity("/api/products", product, ProductDto.class).getBody();
     }
 
     public MenuGroup createMenuGroup(String name) {

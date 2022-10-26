@@ -8,7 +8,7 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -62,7 +62,7 @@ class MenuRestControllerTest extends ControllerTest {
             @Test
             @DisplayName("메뉴 그룹이 존재하지 않으면 예외가 발생한다.")
             void createMenuNotFoundMenuGroup() {
-                Product product = createProduct("강정치킨", 18000);
+                ProductDto product = createProduct("강정치킨", 18000);
 
                 MenuProduct menuProduct = new MenuProduct();
                 menuProduct.setProductId(product.getId());
@@ -100,7 +100,7 @@ class MenuRestControllerTest extends ControllerTest {
             @Test
             @DisplayName("메뉴의 가격이 상품의 가격보다 높으면 예외가 발생한다.")
             void createMenuComparePrice() {
-                Product product = createProduct("강정치킨", 18000);
+                ProductDto product = createProduct("강정치킨", 18000);
                 MenuGroup menuGroup = createMenuGroup("추천 메뉴");
 
                 MenuProduct menuProduct = new MenuProduct();
@@ -133,7 +133,7 @@ class MenuRestControllerTest extends ControllerTest {
 
     private void createMenu(String name, int price) {
         MenuGroup menuGroup = createMenuGroup("추천 메뉴");
-        Product product = createProduct("강정치킨", 18000);
+        ProductDto product = createProduct("강정치킨", 18000);
 
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(product.getId());
@@ -142,7 +142,7 @@ class MenuRestControllerTest extends ControllerTest {
         createMenu(name, price, menuGroup.getId(), List.of(menuProduct));
     }
 
-    private MenuProduct createMenuProduct(Product product) {
+    private MenuProduct createMenuProduct(ProductDto product) {
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(product.getId());
         menuProduct.setQuantity(2);
