@@ -25,7 +25,7 @@ public class MenuCreateRequestDto {
 
     private void validatePrice(BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("가격은 0이거나 음수일 수 없습니다.");
+            throw new IllegalArgumentException("가격은 음수일 수 없습니다.");
         }
     }
 

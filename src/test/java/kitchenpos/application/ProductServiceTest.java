@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.dto.ProductCreateDto;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -33,8 +34,8 @@ class ProductServiceTest {
                 .willReturn(PRODUCT);
 
         //when
-        Product product = new Product("강정치킨", BigDecimal.valueOf(17000));
-        Product savedProduct = productService.create(product);
+        ProductCreateDto dto = new ProductCreateDto("강정치킨", BigDecimal.valueOf(17000));
+        Product savedProduct = productService.create(dto);
 
         //then
         assertThat(savedProduct).isEqualTo(PRODUCT);

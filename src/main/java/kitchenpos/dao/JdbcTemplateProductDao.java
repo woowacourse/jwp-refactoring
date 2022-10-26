@@ -1,7 +1,9 @@
 package kitchenpos.dao;
 
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -19,6 +21,13 @@ import java.util.Optional;
 public class JdbcTemplateProductDao implements ProductDao {
     private static final String TABLE_NAME = "product";
     private static final String KEY_COLUMN_NAME = "id";
+
+    private static final RowMapper<Product> PRODUCT_MAPPER = (rs, rowNum) ->
+            new Product(
+                    rs.getLong("id"),
+                    rs.getString("name"),
+                    rs.getBigDecimal("price")
+            );
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -50,21 +59,13 @@ public class JdbcTemplateProductDao implements ProductDao {
     @Override
     public List<Product> findAll() {
         final String sql = "SELECT id, name, price FROM product";
-        return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
+        return jdbcTemplate.query(sql, PRODUCT_MAPPER);
     }
 
     private Product select(final Long id) {
         final String sql = "SELECT id, name, price FROM product WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
-        return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
-    }
-
-    private Product toEntity(final ResultSet resultSet) throws SQLException {
-        final Product entity = new Product();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setName(resultSet.getString("name"));
-        entity.setPrice(resultSet.getBigDecimal("price"));
-        return entity;
+        return jdbcTemplate.queryForObject(sql, parameters, PRODUCT_MAPPER);
     }
 }
