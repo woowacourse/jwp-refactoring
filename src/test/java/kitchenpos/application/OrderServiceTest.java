@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.fixture.OrderTableFixture.createEmptyStatusTable;
+import static kitchenpos.support.fixture.OrderTableFixture.createNonEmptyStatusTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -9,7 +11,6 @@ import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.support.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,10 +24,12 @@ class OrderServiceTest extends IntegrationTest {
     private OrderService orderService;
 
     private Long nonEmptyOrderTableId;
+    private OrderLineItem orderLineItem;
 
     @BeforeEach
-    void setup() {
-        nonEmptyOrderTableId = orderTableDao.save(new OrderTable(null, 1, false)).getId();
+    void setupFixture() {
+        nonEmptyOrderTableId = orderTableDao.save(createNonEmptyStatusTable()).getId();
+        orderLineItem = new OrderLineItem(null, menu.getId(), 1L);
     }
 
     @DisplayName("주문 생성 기능")
@@ -36,7 +39,6 @@ class OrderServiceTest extends IntegrationTest {
         @DisplayName("정상 작동")
         @Test
         void create() {
-            final OrderLineItem orderLineItem = new OrderLineItem(null, 1L, 1L);
             final Order order = new Order(nonEmptyOrderTableId, null, null, List.of(orderLineItem));
 
             final Order savedOrder = orderService.create(order);
@@ -57,7 +59,7 @@ class OrderServiceTest extends IntegrationTest {
         @DisplayName("주문받은 메뉴가 실제 저장되어 있는 메뉴에 속하지 않는다면 예외가 발생한다.")
         @Test
         void create_Exception_NotExistMenu() {
-            final OrderLineItem orderLineItem = new OrderLineItem(null, 1000L, 1L);
+            final OrderLineItem orderLineItem = new OrderLineItem(null, Long.MAX_VALUE, 1L);
             final Order order = new Order(nonEmptyOrderTableId, null, null, List.of(orderLineItem));
 
             assertThatThrownBy(() -> orderService.create(order))
@@ -68,8 +70,7 @@ class OrderServiceTest extends IntegrationTest {
         @DisplayName("주문테이블이 존재하지 않으면 예외가 발생한다.")
         @Test
         void create_Exception_NonExistsOrderTable() {
-            final OrderLineItem orderLineItem = new OrderLineItem(null, 1L, 1L);
-            final Order order = new Order(1000L, null, null, List.of(orderLineItem));
+            final Order order = new Order(Long.MAX_VALUE, null, null, List.of(orderLineItem));
 
             assertThatThrownBy(() -> orderService.create(order))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -79,8 +80,7 @@ class OrderServiceTest extends IntegrationTest {
         @DisplayName("주문테이블이 empty 상태면 예외가 발생한다.")
         @Test
         void create_Exception_EmptyOrderTable() {
-            final Long emptyOrderTableId = orderTableDao.save(new OrderTable(null, 1, true)).getId();
-            final OrderLineItem orderLineItem = new OrderLineItem(null, 1L, 1L);
+            final Long emptyOrderTableId = orderTableDao.save(createEmptyStatusTable()).getId();
             final Order order = new Order(emptyOrderTableId, null, null, List.of(orderLineItem));
 
             assertThatThrownBy(() -> orderService.create(order))
@@ -96,7 +96,6 @@ class OrderServiceTest extends IntegrationTest {
         @DisplayName("저장된 주문상태가 계산완료이면 예외가 발생한다.")
         @Test
         void changeOrderStatus_Exception_CompletionStatus() {
-            final OrderLineItem orderLineItem = new OrderLineItem(null, 1L, 1L);
             final Long savedOrderId = orderDao.save(
                     new Order(nonEmptyOrderTableId, OrderStatus.COMPLETION.name(), LocalDateTime.now(), List.of(orderLineItem))).getId();
             final Order order = new Order(null, OrderStatus.MEAL.name(), null, null);

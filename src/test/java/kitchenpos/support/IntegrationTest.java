@@ -1,5 +1,13 @@
 package kitchenpos.support;
 
+import static kitchenpos.support.fixture.MenuFixture.createPepperoniMenu;
+import static kitchenpos.support.fixture.MenuGroupFixture.createSaleMenuGroup;
+import static kitchenpos.support.fixture.MenuProductFixture.createMenuProduct;
+import static kitchenpos.support.fixture.ProductFixture.createPepperoni;
+import static kitchenpos.support.fixture.ProductFixture.createPineapple;
+
+import java.util.ArrayList;
+import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -7,6 +15,11 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,4 +48,20 @@ public class IntegrationTest {
 
     @Autowired
     protected MenuProductDao menuProductDao;
+
+    protected MenuGroup menuGroup;
+    protected Menu menu;
+    protected Product product1;
+    protected Product product2;
+    protected List<MenuProduct> menuProducts = new ArrayList<>();
+
+    @BeforeEach
+    void setup() {
+        menuGroup = menuGroupDao.save(createSaleMenuGroup());
+        menu = menuDao.save(createPepperoniMenu(menuGroup.getId(), menuProducts));
+        product1 = productDao.save(createPepperoni());
+        product2 = productDao.save(createPineapple());
+        menuProducts.add(menuProductDao.save(createMenuProduct(menu.getId(), product1.getId())));
+        menuProducts.add(menuProductDao.save(createMenuProduct(menu.getId(), product2.getId())));
+    }
 }

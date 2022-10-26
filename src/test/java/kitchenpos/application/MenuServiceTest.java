@@ -1,24 +1,17 @@
 package kitchenpos.application;
 
 import static kitchenpos.support.fixture.MenuFixture.createPepperoniMenu;
-import static kitchenpos.support.fixture.MenuGroupFixture.createSaleMenuGroup;
 import static kitchenpos.support.fixture.MenuProductFixture.createMenuProduct;
-import static kitchenpos.support.fixture.ProductFixture.createPepperoni;
-import static kitchenpos.support.fixture.ProductFixture.createPineapple;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
 import kitchenpos.support.IntegrationTest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -31,22 +24,6 @@ public class MenuServiceTest extends IntegrationTest {
 
     @Autowired
     private MenuService menuService;
-
-    private MenuGroup menuGroup;
-    private Menu menu;
-    private Product product1;
-    private Product product2;
-    private List<MenuProduct> menuProducts = new ArrayList<>();
-
-    @BeforeEach
-    void setup() {
-        menuGroup = menuGroupDao.save(createSaleMenuGroup());
-        menu = menuDao.save(createPepperoniMenu(menuGroup.getId(), menuProducts));
-        product1 = productDao.save(createPepperoni());
-        product2 = productDao.save(createPineapple());
-        menuProducts.add(menuProductDao.save(createMenuProduct(menu.getId(), product1.getId())));
-        menuProducts.add(menuProductDao.save(createMenuProduct(menu.getId(), product2.getId())));
-    }
 
     @DisplayName("메뉴 등록 기능")
     @Nested
