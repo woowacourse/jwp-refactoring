@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto;
+package kitchenpos.ui.mapper;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.ui.dto.request.MenuCreateRequest;

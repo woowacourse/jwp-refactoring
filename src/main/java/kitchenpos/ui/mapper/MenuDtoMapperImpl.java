@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto;
+package kitchenpos.ui.mapper;
 
 import java.util.List;
 import java.util.stream.Collectors;

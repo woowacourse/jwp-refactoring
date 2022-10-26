@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto;
+package kitchenpos.ui.mapper;
 
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.ui.dto.request.MenuGroupCreateRequest;

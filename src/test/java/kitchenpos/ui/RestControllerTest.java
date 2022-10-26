@@ -11,7 +11,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(controllers = {MenuGroupRestController.class, MenuRestController.class},
-        includeFilters = @Filter(type = FilterType.REGEX, pattern = "kitchenpos.ui.dto.*"))
+        includeFilters = @Filter(type = FilterType.REGEX, pattern = "kitchenpos.ui.mapper.*"))
 public class RestControllerTest {
 
     @Autowired
