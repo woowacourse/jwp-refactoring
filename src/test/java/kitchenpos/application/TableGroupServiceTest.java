@@ -59,6 +59,12 @@ class TableGroupServiceTest {
         }
 
         @Test
+        void 테이블_정보가_누락된_경우_예외가_발생한다() {
+            assertThatThrownBy(() -> tableGroupService.create(new CreateTableGroupDto(null)))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
         void 테이블_개수가_2개_미만인_경우_예외가_발생한다() {
             Long emptyTableId = generateEmptyTable();
             assertThatThrownBy(() -> tableGroupService.create(new CreateTableGroupDto(List.of(emptyTableId))))
