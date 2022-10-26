@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -25,9 +26,7 @@ public class MenuServiceTest extends ServiceTest {
         Menu savedMenu = menuService.create(menu);
 
         // then
-        assertThat(savedMenu).usingRecursiveComparison()
-            .ignoringFields("id", "price")
-            .isEqualTo(menu);
+        assertEqualToMenu(menu, savedMenu);
     }
 
     @Test
@@ -68,5 +67,13 @@ public class MenuServiceTest extends ServiceTest {
 
         return new Menu("후라이드+후라이드+후라이드", new BigDecimal(priceValue), menuGroupId,
             List.of(new MenuProduct(productId, 3)));
+    }
+
+    private void assertEqualToMenu(final Menu menu, final Menu savedMenu) {
+        assertThat(savedMenu).usingRecursiveComparison()
+            .ignoringFields("id", "price", "menuProducts")
+            .isEqualTo(menu);
+        assertThat(savedMenu.getPrice()).isCloseTo(menu.getPrice(), Percentage.withPercentage(0.0001));
+        assertThat(savedMenu.getMenuProducts()).isNotNull();
     }
 }
