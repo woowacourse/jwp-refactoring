@@ -13,15 +13,14 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.support.DatabaseCleanUp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-@Transactional
 class MenuServiceTest {
 
     @Autowired
@@ -36,11 +35,15 @@ class MenuServiceTest {
     @Autowired
     private ProductDao productDao;
 
+    @Autowired
+    private DatabaseCleanUp databaseCleanUp;
+
     private Long validMenuGroupId;
     private Long validProductId;
 
     @BeforeEach
     void setUp() {
+        databaseCleanUp.clear();
         final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("추천메뉴"));
         validMenuGroupId = menuGroup.getId();
         final Product product = productDao.save(new Product("후라이드", new BigDecimal(16000)));

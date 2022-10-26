@@ -5,14 +5,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.support.DatabaseCleanUp;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-@Transactional
 class MenuGroupServiceTest {
 
     @Autowired
@@ -20,6 +20,14 @@ class MenuGroupServiceTest {
 
     @Autowired
     private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private DatabaseCleanUp databaseCleanUp;
+
+    @BeforeEach
+    void setUp() {
+        databaseCleanUp.clear();
+    }
 
     @DisplayName("메뉴 그룹을 저장한다.")
     @Test

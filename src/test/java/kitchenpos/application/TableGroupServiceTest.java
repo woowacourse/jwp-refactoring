@@ -13,16 +13,15 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.support.DatabaseCleanUp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-@Transactional
 class TableGroupServiceTest {
 
     @Autowired
@@ -34,6 +33,9 @@ class TableGroupServiceTest {
     @Autowired
     private TableGroupDao tableGroupDao;
 
+    @Autowired
+    private DatabaseCleanUp databaseCleanUp;
+
     @MockBean
     private OrderDao orderDao;
 
@@ -42,6 +44,7 @@ class TableGroupServiceTest {
 
     @BeforeEach
     void setUp() {
+        databaseCleanUp.clear();
         final OrderTable orderTable1 = orderTableDao.save(new OrderTable(0, true));
         final OrderTable orderTable2 = orderTableDao.save(new OrderTable(0, true));
         emptyOrderTableId1 = orderTable1.getId();

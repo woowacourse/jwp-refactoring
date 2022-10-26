@@ -7,14 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.support.DatabaseCleanUp;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-@Transactional
 class ProductServiceTest {
 
     @Autowired
@@ -22,6 +22,14 @@ class ProductServiceTest {
 
     @Autowired
     private ProductDao productDao;
+
+    @Autowired
+    private DatabaseCleanUp databaseCleanUp;
+
+    @BeforeEach
+    void setUp() {
+        databaseCleanUp.clear();
+    }
 
     @DisplayName("상품을 저장한다.")
     @Test

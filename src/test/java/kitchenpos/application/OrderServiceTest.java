@@ -15,15 +15,14 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.support.DatabaseCleanUp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-@Transactional
 class OrderServiceTest {
 
     @Autowired
@@ -38,11 +37,15 @@ class OrderServiceTest {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private DatabaseCleanUp databaseCleanUp;
+
     private Long validOrderTableId;
     private Long validMenuId;
 
     @BeforeEach
     void setUp() {
+        databaseCleanUp.clear();
         final OrderTable orderTable = orderTableDao.save(new OrderTable(1, false));
         validOrderTableId = orderTable.getId();
         final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("추가메뉴"));

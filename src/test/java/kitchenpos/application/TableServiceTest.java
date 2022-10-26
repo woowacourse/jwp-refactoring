@@ -13,15 +13,15 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.support.DatabaseCleanUp;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-@Transactional
 class TableServiceTest {
 
     @Autowired
@@ -33,8 +33,16 @@ class TableServiceTest {
     @Autowired
     private TableGroupDao tableGroupDao;
 
+    @Autowired
+    private DatabaseCleanUp databaseCleanUp;
+
     @MockBean
     private OrderDao orderDao;
+
+    @BeforeEach
+    void setUp() {
+        databaseCleanUp.clear();
+    }
 
     @DisplayName("테이블을 저장한다.")
     @Test
