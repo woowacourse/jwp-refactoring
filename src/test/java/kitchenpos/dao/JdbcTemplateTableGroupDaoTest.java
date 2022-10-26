@@ -3,7 +3,7 @@ package kitchenpos.dao;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.table.domain.TableGroup;
 import kitchenpos.support.fixture.domain.TableGroupFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

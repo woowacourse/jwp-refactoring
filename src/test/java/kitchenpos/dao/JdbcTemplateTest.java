@@ -3,6 +3,8 @@ package kitchenpos.dao;
 import javax.sql.DataSource;
 import kitchenpos.product.domain.dao.JdbcTemplateProductDao;
 import kitchenpos.support.tool.DataBaseCleaner;
+import kitchenpos.table.domain.dao.JdbcTemplateOrderTableDao;
+import kitchenpos.table.domain.dao.JdbcTemplateTableGroupDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;

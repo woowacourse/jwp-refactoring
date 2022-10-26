@@ -5,9 +5,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import kitchenpos.NestedApplicationTest;
-import kitchenpos.dao.JdbcTemplateOrderTableDao;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.table.domain.dao.JdbcTemplateOrderTableDao;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.support.fixture.domain.OrderTableFixture;
+import kitchenpos.table.application.TableService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
