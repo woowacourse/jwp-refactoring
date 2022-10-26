@@ -6,13 +6,9 @@ import java.util.List;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
 class ProductServiceTest extends ServiceTest {
-
-    @Autowired
-    ProductService productService;
 
     @DisplayName("특정 메뉴 상품을 추가할 시 메뉴 상품 목록에 추가된다.")
     @Test
