@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupDto;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -193,7 +193,7 @@ class TableRestControllerTest extends ControllerTest {
     }
 
     private OrderLineItem getOrderLineItem() {
-        MenuGroup menuGroup = createMenuGroup("추천 메뉴");
+        MenuGroupDto menuGroup = createMenuGroup("추천 메뉴");
         ProductDto product = createProduct("강정치킨", 18000);
 
         MenuProduct menuProduct = new MenuProduct();

@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import kitchenpos.Application;
 import kitchenpos.common.DataClearExtension;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupDto;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -76,13 +76,13 @@ public class AcceptanceTest {
     }
 
 
-    protected List<MenuGroup> 메뉴_그룹을_조회한다() {
+    protected List<MenuGroupDto> 메뉴_그룹을_조회한다() {
         return RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/menu-groups")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .extract().body().jsonPath().getList(".", MenuGroup.class);
+                .extract().body().jsonPath().getList(".", MenuGroupDto.class);
     }
 
     protected long 메뉴를_생성한다(String name, int price, long menuGroup, List<Long> products, int quantity) {

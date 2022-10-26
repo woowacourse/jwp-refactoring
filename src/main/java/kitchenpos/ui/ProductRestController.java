@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.dto.response.ProductResponse;
+import kitchenpos.ui.dto.request.ProductRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ProductRestController {
+
     private final ProductService productService;
 
     public ProductRestController(ProductService productService) {

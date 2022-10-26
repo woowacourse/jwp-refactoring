@@ -1,14 +1,14 @@
-package kitchenpos.ui;
+package kitchenpos.application.dto.request;
 
 import java.math.BigDecimal;
-import kitchenpos.application.dto.ProductCommand;
+import kitchenpos.domain.Product;
 
-public class ProductRequest {
+public class ProductCommand {
 
     private final String name;
     private final BigDecimal price;
 
-    public ProductRequest(String name, BigDecimal price) {
+    public ProductCommand(String name, BigDecimal price) {
         this.name = name;
         this.price = price;
     }
@@ -21,7 +21,7 @@ public class ProductRequest {
         return price;
     }
 
-    public ProductCommand newProductCommand() {
-        return new ProductCommand(name, price);
+    public Product newProduct() {
+        return new Product(name, price);
     }
 }

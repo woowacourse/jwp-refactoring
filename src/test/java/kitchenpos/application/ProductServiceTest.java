@@ -5,13 +5,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.ProductCommand;
+import kitchenpos.application.dto.request.ProductCommand;
 import kitchenpos.application.dto.response.ProductResponse;
+import kitchenpos.common.DataClearExtension;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 @DisplayName("제품 관련 기능에서")
+@ExtendWith(DataClearExtension.class)
 public class ProductServiceTest {
 
     @Autowired

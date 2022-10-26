@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.common.DataClearExtension;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupDto;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -31,10 +31,10 @@ public class ControllerTest {
         return restTemplate.postForEntity("/api/products", product, ProductDto.class).getBody();
     }
 
-    public MenuGroup createMenuGroup(String name) {
-        MenuGroup menuGroup = new MenuGroup();
+    public MenuGroupDto createMenuGroup(String name) {
+        MenuGroupDto menuGroup = new MenuGroupDto();
         menuGroup.setName(name);
-        return restTemplate.postForEntity("/api/menu-groups", menuGroup, MenuGroup.class).getBody();
+        return restTemplate.postForEntity("/api/menu-groups", menuGroup, MenuGroupDto.class).getBody();
     }
 
     public Menu createMenu(String name, int price, long menuGroupId, List<MenuProduct> menuProducts) {
