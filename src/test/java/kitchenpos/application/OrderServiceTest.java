@@ -16,6 +16,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.fixtures.OrderFixtures;
 import kitchenpos.fixtures.OrderLineItemFixtures;
+import kitchenpos.fixtures.OrderTableFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +44,7 @@ class OrderServiceTest {
         // given
         final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
 
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable notEmptyOrderTable = orderTableDao.save(orderTable);
 
         final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(
@@ -115,8 +115,7 @@ class OrderServiceTest {
     @DisplayName("모든 주문을 조회한다")
     void list() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable notEmptyOrderTable = orderTableDao.save(orderTable);
 
         final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableId(notEmptyOrderTable.getId());

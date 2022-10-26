@@ -13,6 +13,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.fixtures.OrderFixtures;
+import kitchenpos.fixtures.OrderTableFixtures;
 import kitchenpos.fixtures.TableGroupFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,8 +42,8 @@ class TableServiceTest {
     @DisplayName("주문 테이블을 생성한다")
     void create() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
+
         // when
         final OrderTable saved = tableService.create(orderTable);
 
@@ -58,8 +59,7 @@ class TableServiceTest {
     @DisplayName("모든 주문 테이블을 조회한다")
     void list() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable saved = tableService.create(orderTable);
 
         // when
@@ -76,13 +76,10 @@ class TableServiceTest {
     @DisplayName("주문 테이블의 주문 가능 여부를 변경한다")
     void changeEmpty() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final OrderTable notEmptyOrderTable = new OrderTable();
-        notEmptyOrderTable.setEmpty(false);
+        final OrderTable notEmptyOrderTable = OrderTableFixtures.createWithGuests(null, 2);
 
         final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableId(savedOrderTable.getId());
         orderDao.save(order);
@@ -103,8 +100,7 @@ class TableServiceTest {
     @DisplayName("주문 테이블이 존재하지 않으면 주문 테이블의 주문 가능 여부를 변경할 때 예외가 발생한다")
     void changeEmptyExceptionNotExistOrderTable() {
         // given
-        final OrderTable notEmptyOrderTable = new OrderTable();
-        notEmptyOrderTable.setEmpty(false);
+        final OrderTable notEmptyOrderTable = OrderTableFixtures.createWithGuests(null, 2);
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(-1L, notEmptyOrderTable))
@@ -118,14 +114,10 @@ class TableServiceTest {
         final TableGroup tableGroup = TableGroupFixtures.create();
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(savedTableGroup.getId());
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = OrderTableFixtures.createEmptyTable(savedTableGroup.getId());
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final OrderTable notEmptyOrderTable = new OrderTable();
-        notEmptyOrderTable.setEmpty(false);
+        final OrderTable notEmptyOrderTable = OrderTableFixtures.createWithGuests(null, 2);
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), notEmptyOrderTable))
@@ -137,13 +129,10 @@ class TableServiceTest {
     @DisplayName("주문이 상태가 COOKING, MEAL인 경우 주문 테이블의 주문 가능 여부를 변경할 때 예외가 발생한다")
     void changeEmptyExceptionNotCompletionOrder(final OrderFixtures orderFixtures) {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final OrderTable notEmptyOrderTable = new OrderTable();
-        notEmptyOrderTable.setEmpty(false);
+        final OrderTable notEmptyOrderTable = OrderTableFixtures.createWithGuests(null, 2);
 
         final Order order = orderFixtures.createWithOrderTableId(savedOrderTable.getId());
         orderDao.save(order);
@@ -157,13 +146,10 @@ class TableServiceTest {
     @DisplayName("주문 테이블의 손님 숫자를 변경한다")
     void changeNumberOfGuests() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final OrderTable threeGuestsOrderTable = new OrderTable();
-        threeGuestsOrderTable.setNumberOfGuests(3);
+        final OrderTable threeGuestsOrderTable = OrderTableFixtures.createWithGuests(null, 3);
 
         // when
         final OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(),
@@ -182,13 +168,10 @@ class TableServiceTest {
     @DisplayName("변경하려는 손님 숫자가 음수이면 주문 테이블의 손님 숫자를 변경할 때 예외가 발생한다")
     void changeNumberOfGuestsExceptionNegativeNumberOfGuests() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final OrderTable threeGuestsOrderTable = new OrderTable();
-        threeGuestsOrderTable.setNumberOfGuests(-1);
+        final OrderTable threeGuestsOrderTable = OrderTableFixtures.createWithGuests(null, -1);
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), threeGuestsOrderTable))
@@ -199,8 +182,7 @@ class TableServiceTest {
     @DisplayName("변경하려는 주문 테이블이 존재하지 않으면 주문 테이블의 손님 숫자를 변경할 때 예외가 발생한다")
     void changeNumberOfGuestsExceptionNotExistOrderTable() {
         // given
-        final OrderTable threeGuestsOrderTable = new OrderTable();
-        threeGuestsOrderTable.setNumberOfGuests(1);
+        final OrderTable threeGuestsOrderTable = OrderTableFixtures.createEmptyTable(null);
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(-1L, threeGuestsOrderTable))
@@ -211,13 +193,10 @@ class TableServiceTest {
     @DisplayName("변경하려는 주문 테이블이 주문을 동록할 수 없다면 주문 테이블의 손님 숫자를 변경할 때 예외가 발생한다")
     void changeNumberOfGuestsExceptionNotEmptyOrderTable() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final OrderTable threeGuestsOrderTable = new OrderTable();
-        threeGuestsOrderTable.setNumberOfGuests(1);
+        final OrderTable threeGuestsOrderTable = OrderTableFixtures.createWithGuests(null, 1);
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), threeGuestsOrderTable))

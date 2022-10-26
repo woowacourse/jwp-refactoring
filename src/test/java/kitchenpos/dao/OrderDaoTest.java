@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.fixtures.OrderTableFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +35,7 @@ class OrderDaoTest {
     @DisplayName("주문을 저장한다")
     void save() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
@@ -68,9 +67,7 @@ class OrderDaoTest {
     @DisplayName("id로 주문을 조회한다")
     void findById() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
@@ -99,9 +96,7 @@ class OrderDaoTest {
     @DisplayName("모든 주문을 조회한다")
     void findAll() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
@@ -122,9 +117,7 @@ class OrderDaoTest {
     @DisplayName("주문 테이블 id와 주문 상태가 모두 일치하는 주문이 존재하는지 확인한다")
     void existsByOrderTableIdAndOrderStatusIn() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
@@ -152,9 +145,7 @@ class OrderDaoTest {
     @DisplayName("주어진 주문 테이블 id들 중에서 주문 상태가 일치하는 주문이 존재하는지 확인한다")
     void existsByOrderTableIdInAndOrderStatusIn() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());

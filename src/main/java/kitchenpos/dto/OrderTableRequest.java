@@ -10,9 +10,7 @@ public class OrderTableRequest {
     }
 
     public OrderTable toOrderTable() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        return orderTable;
+        return new OrderTable(id, null, 0, false);
     }
 
     public Long getId() {

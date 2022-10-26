@@ -15,6 +15,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.fixtures.OrderFixtures;
+import kitchenpos.fixtures.OrderTableFixtures;
 import kitchenpos.fixtures.TableGroupFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,12 +44,10 @@ class TableGroupServiceTest {
     @DisplayName("테이블 단체를 지정한다")
     void create() {
         // given
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
+        final OrderTable orderTable1 = OrderTableFixtures.createEmptyTable(null);
         final OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
 
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
+        final OrderTable orderTable2 = OrderTableFixtures.createEmptyTable(null);
         final OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
 
         final TableGroup tableGroup = TableGroupFixtures.createWithOrderTables(savedOrderTable1, savedOrderTable2);
@@ -85,7 +84,8 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블이 1개 이하일 때 단체를 지정하려고 하면 예외가 발생한다")
     void createWithFewOrderTable() {
         // given
-        final TableGroup tableGroup = TableGroupFixtures.createWithOrderTables(new OrderTable());
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
+        final TableGroup tableGroup = TableGroupFixtures.createWithOrderTables(orderTable);
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -96,7 +96,9 @@ class TableGroupServiceTest {
     @DisplayName("존재하지 않은 주문 테이블에 대해서 단체를 지정하려고 하면 예외가 발생한다")
     void createWithNotExistOrderTables() {
         // given
-        final TableGroup tableGroup = TableGroupFixtures.createWithOrderTables(new OrderTable(), new OrderTable());
+        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(null, 2);
+        final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(null, 2);
+        final TableGroup tableGroup = TableGroupFixtures.createWithOrderTables(orderTable1, orderTable2);
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -107,10 +109,10 @@ class TableGroupServiceTest {
     @DisplayName("주문을 등록할 수 없는 주문 테이블에 대해서 단체를 지정하려고 하면 예외가 발생한다")
     void createWithNotEmptyOrderTables() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        final OrderTable NotEmptyOrderTable = orderTableDao.save(orderTable);
-        final OrderTable emptyOrderTable = orderTableDao.save(new OrderTable());
+        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(null, 2);
+        final OrderTable NotEmptyOrderTable = orderTableDao.save(orderTable1);
+        final OrderTable orderTable2 = OrderTableFixtures.createEmptyTable(null);
+        final OrderTable emptyOrderTable = orderTableDao.save(orderTable2);
 
         final TableGroup tableGroup = TableGroupFixtures.createWithOrderTables(NotEmptyOrderTable, emptyOrderTable);
 
@@ -126,18 +128,13 @@ class TableGroupServiceTest {
         final TableGroup tableGroup = TableGroupFixtures.create();
         final TableGroup alreadyGroupedTable = tableGroupDao.save(tableGroup);
 
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
-        orderTable1.setTableGroupId(alreadyGroupedTable.getId());
+        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(alreadyGroupedTable.getId(), 2);
         final OrderTable alreadyGroupedOrderTable1 = orderTableDao.save(orderTable1);
 
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
-        orderTable2.setTableGroupId(alreadyGroupedTable.getId());
+        final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable.getId(), 2);
         orderTableDao.save(orderTable2);
 
-        final OrderTable orderTable3 = new OrderTable();
-        orderTable3.setEmpty(true);
+        final OrderTable orderTable3 = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable orderTable = orderTableDao.save(orderTable3);
 
         final TableGroup newTableGroup = TableGroupFixtures.createWithOrderTables(orderTable,
@@ -155,14 +152,10 @@ class TableGroupServiceTest {
         final TableGroup tableGroup = TableGroupFixtures.create();
         final TableGroup alreadyGroupedTable = tableGroupDao.save(tableGroup);
 
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
-        orderTable1.setTableGroupId(alreadyGroupedTable.getId());
+        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(alreadyGroupedTable.getId(), 2);
         final OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
 
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
-        orderTable2.setTableGroupId(alreadyGroupedTable.getId());
+        final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable.getId(), 2);
         final OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
 
         final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableId(savedOrderTable1.getId());
@@ -192,14 +185,10 @@ class TableGroupServiceTest {
         final TableGroup tableGroup = TableGroupFixtures.create();
         final TableGroup alreadyGroupedTable = tableGroupDao.save(tableGroup);
 
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
-        orderTable1.setTableGroupId(alreadyGroupedTable.getId());
+        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(alreadyGroupedTable.getId(), 2);
         final OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
 
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
-        orderTable2.setTableGroupId(alreadyGroupedTable.getId());
+        final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable.getId(), 2);
         orderTableDao.save(orderTable2);
 
         final Order order = orderFixtures.createWithOrderTableId(savedOrderTable1.getId());

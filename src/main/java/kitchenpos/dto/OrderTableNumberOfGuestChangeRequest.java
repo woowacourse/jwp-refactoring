@@ -10,9 +10,7 @@ public class OrderTableNumberOfGuestChangeRequest {
     }
 
     public OrderTable toOrderTable() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        return orderTable;
+        return new OrderTable(null, null, numberOfGuests, false);
     }
 
     public int getNumberOfGuests() {

@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -56,13 +57,14 @@ public class TableGroupService {
         final TableGroup savedTableGroup = tableGroupDao.save(newTableGroup);
 
         final Long tableGroupId = savedTableGroup.getId();
+        final List<OrderTable> newOrderTables = new ArrayList<>();
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
-            savedOrderTable.setEmpty(false);
-            orderTableDao.save(savedOrderTable);
+            final OrderTable newOrderTable = new OrderTable(savedOrderTable.getId(), tableGroupId,
+                    savedOrderTable.getNumberOfGuests(), false);
+            newOrderTables.add(orderTableDao.save(newOrderTable));
         }
 
-        return new TableGroup(tableGroupId, savedTableGroup.getCreatedDate(), savedOrderTables);
+        return new TableGroup(tableGroupId, savedTableGroup.getCreatedDate(), newOrderTables);
     }
 
     @Transactional
@@ -79,9 +81,9 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
-            orderTableDao.save(orderTable);
+            final OrderTable newOrderTable = new OrderTable(orderTable.getId(), null,
+                    orderTable.getNumberOfGuests(), false);
+            orderTableDao.save(newOrderTable);
         }
     }
 }

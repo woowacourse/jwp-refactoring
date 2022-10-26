@@ -10,9 +10,7 @@ public class OrderTableEmptyChangeRequest {
     }
 
     public OrderTable toOrderTable() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(empty);
-        return orderTable;
+        return new OrderTable(null, null, 0, empty);
     }
 
     public boolean isEmpty() {

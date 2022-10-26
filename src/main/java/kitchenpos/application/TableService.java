@@ -1,15 +1,14 @@
 package kitchenpos.application;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TableService {
@@ -23,10 +22,8 @@ public class TableService {
 
     @Transactional
     public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-
-        return orderTableDao.save(orderTable);
+        final OrderTable newOrder = new OrderTable(null, null, orderTable.getNumberOfGuests(), orderTable.isEmpty());
+        return orderTableDao.save(newOrder);
     }
 
     public List<OrderTable> list() {
@@ -47,9 +44,9 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(orderTable.isEmpty());
-
-        return orderTableDao.save(savedOrderTable);
+        final OrderTable newOrder = new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
+                savedOrderTable.getNumberOfGuests(), orderTable.isEmpty());
+        return orderTableDao.save(newOrder);
     }
 
     @Transactional
@@ -66,9 +63,9 @@ public class TableService {
         if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
-        return orderTableDao.save(savedOrderTable);
+        
+        final OrderTable newOrder = new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
+                numberOfGuests, savedOrderTable.isEmpty());
+        return orderTableDao.save(newOrder);
     }
 }

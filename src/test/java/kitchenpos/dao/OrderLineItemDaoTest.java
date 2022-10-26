@@ -13,6 +13,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.fixtures.MenuFixtures;
 import kitchenpos.fixtures.OrderFixtures;
+import kitchenpos.fixtures.OrderTableFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +40,7 @@ class OrderLineItemDaoTest {
     @DisplayName("주문 항목을 저장한다")
     void save() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
@@ -68,9 +67,7 @@ class OrderLineItemDaoTest {
     @DisplayName("존재하지 않은 주문으로 주문 항목을 저장하면 예외가 발생한다")
     void saveExceptionNotExistOrder() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         orderTableDao.save(orderTable);
 
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
@@ -87,9 +84,7 @@ class OrderLineItemDaoTest {
     @DisplayName("존재하지 않은 메뉴로 주문 항목을 저장하면 예외가 발생한다")
     void saveExceptionNotExistMenu() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
@@ -106,9 +101,7 @@ class OrderLineItemDaoTest {
     @DisplayName("id로 주문 항목을 조회한다")
     void findById() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
@@ -143,9 +136,7 @@ class OrderLineItemDaoTest {
     @DisplayName("모든 주문 항목을 조회한다")
     void findByAll() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
@@ -172,9 +163,7 @@ class OrderLineItemDaoTest {
     @DisplayName("주문 id로 모든 주문 항목을 조회한다")
     void findByAllByOrderId() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());

@@ -11,10 +11,7 @@ public class OrderTableCreateRequest {
     }
 
     public OrderTable toOrderTable() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+        return new OrderTable(null, null, numberOfGuests, empty);
     }
 
     public int getNumberOfGuests() {

@@ -31,9 +31,7 @@ class OrderTableDaoTest {
     @DisplayName("주문 테이블을 저장한다")
     void save() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = new OrderTable(null, null, 2, false);
 
         // when
         final OrderTable saved = orderTableDao.save(orderTable);
@@ -51,9 +49,7 @@ class OrderTableDaoTest {
     @DisplayName("id로 주문 테이블을 조회한다")
     void findById() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = new OrderTable(null, null, 2, false);
         final OrderTable saved = orderTableDao.save(orderTable);
 
         // when
@@ -79,9 +75,7 @@ class OrderTableDaoTest {
     @DisplayName("모든 주문 테이블을 조회한다")
     void findAll() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = new OrderTable(null, null, 2, false);
         final OrderTable saved = orderTableDao.save(orderTable);
 
         // when
@@ -99,9 +93,7 @@ class OrderTableDaoTest {
     @DisplayName("id에 해당 하는 모든 주문 테이블을 조회한다")
     void findAllByIdIn() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = new OrderTable(null, null, 2, false);
         final OrderTable saved = orderTableDao.save(orderTable);
 
         // when
@@ -124,10 +116,7 @@ class OrderTableDaoTest {
         final TableGroup tableGroup = TableGroupFixtures.create();
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
-        orderTable.setTableGroupId(savedTableGroup.getId());
+        final OrderTable orderTable = new OrderTable(null, savedTableGroup.getId(), 2, false);
         final OrderTable saved = orderTableDao.save(orderTable);
 
         // when
