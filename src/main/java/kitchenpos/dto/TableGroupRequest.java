@@ -1,10 +1,7 @@
 package kitchenpos.dto;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import kitchenpos.domain.TableGroup;
 
 public class TableGroupRequest {
 
@@ -27,10 +24,6 @@ public class TableGroupRequest {
         return orderTableIds.stream()
             .map(OrderTableId::getId)
             .collect(Collectors.toList());
-    }
-
-    public TableGroup toEntity(LocalDateTime createdDate) {
-        return new TableGroup(createdDate);
     }
 
     public static class OrderTableId {

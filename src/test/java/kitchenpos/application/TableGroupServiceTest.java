@@ -93,6 +93,23 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void notEmptyTable() {
             // given
+            OrderTable orderTable = orderTableDao.findById(첫번째_테이블).orElseThrow();
+            orderTable.changeEmpty(false);
+            orderTableDao.save(orderTable);
+            TableGroupRequest tableGroupRequest = new TableGroupRequest(
+                List.of(첫번째_테이블, 두번째_테이블)
+            );
+
+            // when then
+            assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("단체 지정이 불가능한 테이블입니다.");
+        }
+
+        @DisplayName("이미 그룹인 테이블로 지정할 수 없다.")
+        @Test
+        void alreadyGroupedTable() {
+            // given
             tableGroupService.create(new TableGroupRequest(
                 List.of(첫번째_테이블, 두번째_테이블)
             ));
@@ -104,7 +121,7 @@ class TableGroupServiceTest extends ServiceTest {
             // when then
             assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("비어 있는 테이블로만 단체를 지정할 수 있습니다.");
+                .hasMessage("단체 지정이 불가능한 테이블입니다.");
         }
     }
 

@@ -51,8 +51,20 @@ public class OrderTable {
     }
 
     public void groupedBy(Long tableGroupId) {
+        validateInvalidGrouping();
         this.empty = false;
         this.tableGroupId = tableGroupId;
+    }
+
+    private void validateInvalidGrouping() {
+        if (!isEmpty() || Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException("단체 지정이 불가능한 테이블입니다.");
+        }
+    }
+
+    public void ungroup() {
+        this.tableGroupId = null;
+        changeEmpty(false);
     }
 
     public Long getId() {
