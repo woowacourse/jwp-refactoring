@@ -1,12 +1,15 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixtures.domain.ProductFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.fixtures.domain.ProductFixture.ProductRequestBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,6 +20,9 @@ class ProductServiceTest extends ServiceTest {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private ProductDao productDao;
+
     @DisplayName("create 메소드는 ")
     @Nested
     class CreateMethod {
@@ -25,7 +31,8 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void Should_CreateProduct() {
             // given
-            Product product = new Product("떡볶이", new BigDecimal(5000));
+            Product product = new ProductRequestBuilder()
+                    .build();
 
             // when
             Product actual = productService.create(product);
@@ -41,7 +48,9 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_PriceOfProductIsNull() {
             // given
-            Product product = new Product("떡볶이", null);
+            Product product = new ProductRequestBuilder()
+                    .price(null)
+                    .build();
 
             // when & then
             assertThatThrownBy(() -> productService.create(product))
@@ -52,7 +61,9 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_PriceLessThan0() {
             // given
-            Product product = new Product("떡볶이", new BigDecimal(-10000));
+            Product product = new ProductRequestBuilder()
+                    .price(-10_000)
+                    .build();
 
             // when & then
             assertThatThrownBy(() -> productService.create(product))
@@ -68,20 +79,18 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void Should_ReturnAllProductList() {
             // given
-            Product product1 = new Product("떡볶이", new BigDecimal(10000));
-            Product product2 = new Product("라면", new BigDecimal(10000));
-            Product product3 = new Product("김밥", new BigDecimal(10000));
-
-            productService.create(product1);
-            productService.create(product2);
-            productService.create(product3);
+            int expected = 3;
+            for (int i = 0; i < expected; i++) {
+                Product product = createProduct("product " + i, new BigDecimal(10_000));
+                productDao.save(product);
+            }
 
             // when
             List<Product> actual = productService.list();
 
             // then
             assertAll(() -> {
-                assertThat(actual).hasSize(3);
+                assertThat(actual).hasSize(expected);
             });
         }
     }

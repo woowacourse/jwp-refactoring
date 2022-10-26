@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static kitchenpos.fixtures.domain.MenuFixture.createMenu;
 import static kitchenpos.fixtures.domain.MenuGroupFixture.createMenuGroup;
+import static kitchenpos.fixtures.domain.ProductFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -53,7 +54,7 @@ class OrderServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        Product product = productDao.save(new Product("짜장면", new BigDecimal(15_000)));
+        Product product = productDao.save(createProduct("짜장면", new BigDecimal(15_000)));
         MenuGroup menuGroup = menuGroupDao.save(createMenuGroup("중식"));
         MenuProduct menuProduct = new MenuProduct(product.getId(), 1L);
 
