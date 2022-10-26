@@ -99,14 +99,17 @@ class TableGroupServiceTest extends IntegrationServiceTest {
         @Nested
         class 정상적인_경우 extends IntegrationServiceTest {
 
-            final TableGroup 정상_주문테이블그룹;
+            private OrderTable orderTable1 = new OrderTable(1L, null, 4, true);
+            private OrderTable orderTable2 = new OrderTable(2L, null, 4, true);
+            private TableGroup 정상_주문테이블그룹 = new TableGroup(now(), asList(orderTable1, orderTable2));
 
-            public 정상적인_경우() {
-                final List<OrderTable> 정상적인_주문테이블 =
-                        asList(new OrderTable(1L, null, 4, false),
-                                new OrderTable(2L, null, 4, false));
+            @BeforeEach
+            void setUp() {
+                final List<OrderTable> 정상적인_주문테이블 = asList(orderTable1, orderTable2);
+                this.정상_주문테이블그룹 = new TableGroup(now(), 정상적인_주문테이블);
 
-                this.정상_주문테이블그룹= new TableGroup(now(), 정상적인_주문테이블);
+                orderTableDao.save(orderTable1);
+                orderTableDao.save(orderTable2);
             }
 
             @Test
