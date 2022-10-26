@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.util.Lists.emptyList;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
@@ -82,14 +83,15 @@ class TableGroupServiceTest extends IntegrationServiceTest {
             @BeforeEach
             void setUp() {
 
-                final Long savedTableGroupId = tableGroupDao.save(그룹화된_주문테이블_내포).getId();
-                final OrderTable 그룹화된_주문테이블 = new OrderTable(1L, savedTableGroupId, 4, true);
-                this.그룹화된_주문테이블_내포 = new TableGroup(now(), asList(
-                        new OrderTable(1L, null, 4, true),
-                        그룹화된_주문테이블)
-                );
+                final OrderTable orderTable1 = new OrderTable(1L, null, 0, true);
+                final OrderTable orderTable2 = new OrderTable(2L, null, 0, true);
+                final TableGroup tableGroup = new TableGroup(now(), Arrays.asList(orderTable1, orderTable2));
 
-                orderTableDao.save(그룹화된_주문테이블);
+                final Long savedTableGroupId = tableGroupDao.save(tableGroup).getId();
+                final OrderTable 그룹화된_주문테이블 = orderTableDao.save(new OrderTable(1L, savedTableGroupId, 4, true));
+
+                this.그룹화된_주문테이블_내포 = new TableGroup(now(), asList(그룹화된_주문테이블, orderTable2));
+
             }
 
             @Test
