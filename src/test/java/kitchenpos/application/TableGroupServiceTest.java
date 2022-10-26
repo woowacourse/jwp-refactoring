@@ -7,8 +7,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import kitchenpos.application.dto.request.TableGroupCreateRequest;
+import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -43,7 +46,7 @@ class TableGroupServiceTest {
         tableGroup.setOrderTables(new ArrayList<>());
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -55,7 +58,7 @@ class TableGroupServiceTest {
         tableGroup.setOrderTables(Arrays.asList(orderTable));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -71,7 +74,7 @@ class TableGroupServiceTest {
         when(orderTableDao.findAllByIdIn(any())).thenReturn(Arrays.asList(orderTable1));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest(null , LocalDateTime.now(), Arrays.asList(orderTable1, orderTable2))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -88,7 +91,7 @@ class TableGroupServiceTest {
         when(orderTableDao.findAllByIdIn(any())).thenReturn(Arrays.asList(orderTable1, orderTable2));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest(null , LocalDateTime.now(), Arrays.asList(orderTable1, orderTable2))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -107,7 +110,7 @@ class TableGroupServiceTest {
         when(orderTableDao.findAllByIdIn(any())).thenReturn(Arrays.asList(orderTable1, orderTable2));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest(null , LocalDateTime.now(), Arrays.asList(orderTable1, orderTable2))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -123,18 +126,21 @@ class TableGroupServiceTest {
         orderTable2.setId(2L);
         orderTable2.setEmpty(true);
         tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2));
+        tableGroup.setCreatedDate(LocalDateTime.now());
+
         when(orderTableDao.findAllByIdIn(any())).thenReturn(Arrays.asList(orderTable1, orderTable2));
 
         when(tableGroupDao.save(any(TableGroup.class))).thenReturn(tableGroup);
 
         // when
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupResponse response = tableGroupService.create(
+                new TableGroupCreateRequest(null, LocalDateTime.now(), Arrays.asList(orderTable1, orderTable2)));
 
         // then
         Assertions.assertAll(
-                () -> assertThat(savedTableGroup.getCreatedDate()).isNotNull(),
-                () -> assertThat(savedTableGroup.getOrderTables().get(0)).extracting("empty").isEqualTo(false),
-                () -> assertThat(savedTableGroup.getOrderTables().get(0)).extracting("tableGroupId").isEqualTo(1L)
+                () -> assertThat(response.getCreatedDate()).isNotNull(),
+                () -> assertThat(response.getOrderTables().get(0)).extracting("empty").isEqualTo(false),
+                () -> assertThat(response.getOrderTables().get(0)).extracting("tableGroupId").isEqualTo(1L)
         );
     }
 
@@ -177,7 +183,7 @@ class TableGroupServiceTest {
         // then
         Assertions.assertAll(
                 () -> assertThat(orderTable1.getTableGroupId()).isNull(),
-                () -> assertThat(orderTable1.isEmptyOrderTable()).isFalse()
+                () -> assertThat(orderTable1.isEmpty()).isFalse()
         );
     }
 }

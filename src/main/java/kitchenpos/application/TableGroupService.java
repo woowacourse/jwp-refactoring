@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.request.TableGroupCreateRequest;
+import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -29,8 +31,8 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+    public TableGroupResponse create(final TableGroupCreateRequest request) {
+        final List<OrderTable> orderTables = request.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
@@ -47,14 +49,12 @@ public class TableGroupService {
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmptyOrderTable() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
+            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
                 throw new IllegalArgumentException();
             }
         }
 
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        final TableGroup savedTableGroup = tableGroupDao.save(request.toTableGroup(LocalDateTime.now()));
 
         final Long tableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
@@ -64,7 +64,7 @@ public class TableGroupService {
         }
         savedTableGroup.setOrderTables(savedOrderTables);
 
-        return savedTableGroup;
+        return TableGroupResponse.from(savedTableGroup);
     }
 
     @Transactional

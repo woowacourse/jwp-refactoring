@@ -8,7 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import kitchenpos.ControllerTest;
 import kitchenpos.application.TableGroupService;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.application.dto.request.TableGroupCreateRequest;
+import kitchenpos.application.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,17 +26,16 @@ class TableGroupRestControllerTest extends ControllerTest {
     @Test
     void table_group을_생성할_수_있다() throws Exception {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(1L);
-        when(tableGroupService.create(any(TableGroup.class))).thenReturn(tableGroup);
+        TableGroupResponse tableGroupResponse = new TableGroupResponse(1L, null, null);
+        when(tableGroupService.create(any(TableGroupCreateRequest.class))).thenReturn(tableGroupResponse);
 
         // when
-        ResultActions response = postRequestWithJson(defaultTableGroupUrl, tableGroup);
+        ResultActions response = postRequestWithJson(defaultTableGroupUrl, tableGroupResponse);
 
         // then
         response.andExpect(status().isCreated())
-                .andExpect(header().string("location", defaultTableGroupUrl + "/" + tableGroup.getId()))
-                .andExpect(content().string(objectMapper.writeValueAsString(tableGroup)));
+                .andExpect(header().string("location", defaultTableGroupUrl + "/" + tableGroupResponse.getId()))
+                .andExpect(content().string(objectMapper.writeValueAsString(tableGroupResponse)));
     }
 
     @Test
