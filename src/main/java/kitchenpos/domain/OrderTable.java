@@ -6,6 +6,12 @@ public class OrderTable {
     private int numberOfGuests;
     private boolean empty;
 
+    public void validateOrderable() {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Long getId() {
         return id;
     }

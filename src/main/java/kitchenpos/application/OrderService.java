@@ -3,7 +3,6 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -15,7 +14,6 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
@@ -38,26 +36,14 @@ public class OrderService {
 
     @Transactional
     public Order create(final Order order) {
+        order.validateNotEmptyOrderLineItems();
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderMenu(order, orderLineItems);
 
         final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        orderTable.validateOrderable();
 
         final Order newOrder = new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
         final Order savedOrder = orderDao.save(newOrder);
@@ -76,6 +62,13 @@ public class OrderService {
                 savedOrderLineItems);
     }
 
+    private void validateOrderMenu(final Order order, final List<OrderLineItem> orderLineItems) {
+        final List<Long> menuIds = orderLineItems.stream()
+                .map(OrderLineItem::getMenuId)
+                .collect(Collectors.toList());
+        order.validateExistMenu(menuDao.countByIdIn(menuIds));
+    }
+
     public List<Order> list() {
         final List<Order> orders = new ArrayList<>();
         for (final Order order : orderDao.findAll()) {
@@ -89,10 +82,7 @@ public class OrderService {
     public Order changeOrderStatus(final Long orderId, final Order order) {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
+        order.validateOrderNotCompletion();
 
         final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
         final Order newOrder = new Order(
