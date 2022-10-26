@@ -3,10 +3,13 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -21,6 +24,11 @@ public class Menu {
     private Long menuGroupId;
 
     @OneToMany(mappedBy = "menuId")
+    /*
+    todo : apply this instead, and remove menuId in MenuProduct
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "menu_id")
+    */
     private List<MenuProduct> menuProducts;
 
     protected Menu() {

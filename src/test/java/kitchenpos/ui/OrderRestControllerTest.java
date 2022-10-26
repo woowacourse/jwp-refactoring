@@ -34,7 +34,7 @@ class OrderRestControllerTest extends ControllerTest {
         // when
         ResultActions actions = mockMvc.perform(post("/api/orders")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(OrderFixtures.createOrderCreateRequest()))
+                .content(objectMapper.writeValueAsString(OrderFixtures.createOrderRequest()))
         );
 
         // then

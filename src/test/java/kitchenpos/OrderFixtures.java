@@ -4,9 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.dto.OrderChangeRequest;
 import kitchenpos.application.dto.OrderLineItemResponse;
-import kitchenpos.application.dto.OrderCreateRequest;
+import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.application.dto.OrderResponse;
-import kitchenpos.application.dto.OrderTableCreateRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -34,9 +33,8 @@ public class OrderFixtures {
         return new OrderLineItemResponse(1L, 1L, 1L, 2);
     }
 
-    public static OrderCreateRequest createOrderCreateRequest() {
-        return null;
-//        return new OrderCreateRequest();
+    public static OrderRequest createOrderRequest() {
+        return new OrderRequest(null, null);
     }
 
     public static OrderChangeRequest createOrderChangeRequest() {

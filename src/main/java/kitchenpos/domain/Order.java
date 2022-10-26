@@ -20,6 +20,13 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
+    public void changeTable(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        this.orderTableId = orderTable.getId();
+    }
+
     public Long getId() {
         return id;
     }
