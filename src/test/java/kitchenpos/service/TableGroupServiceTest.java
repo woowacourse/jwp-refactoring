@@ -64,7 +64,7 @@ public class TableGroupServiceTest extends ServiceTest {
         TableGroup foundTableGroup = tableGroupDao.findById(tableGroupId).orElseThrow();
 
         // then
-        assertThat(foundTableGroup.getOrderTables()).isNull();
+        assertThat(foundTableGroup.getOrderTables()).isEmpty();
     }
 
     private TableGroup createTableGroup() {
