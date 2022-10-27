@@ -8,6 +8,7 @@ import java.util.List;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.support.DataSupport;
 import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +30,7 @@ class TableServiceTest {
     @Test
     void create() {
         // given, when
-        final OrderTable request = RequestBuilder.ofEmptyTable();
+        final OrderTableRequest request = RequestBuilder.ofEmptyTable();
         final OrderTable savedTable = tableService.create(request);
 
         // then
@@ -61,7 +62,7 @@ class TableServiceTest {
         final Long orderTableId = savedOrderTable.getId();
 
         // when
-        final OrderTable request = RequestBuilder.ofFullTable();
+        final OrderTableRequest request = RequestBuilder.ofFullTable();
         tableService.changeEmpty(orderTableId, request);
 
         // then
@@ -72,7 +73,7 @@ class TableServiceTest {
     @DisplayName("존재하지 않는 테이블의 상태를 변경하면 예외가 발생한다.")
     @Test
     void changeEmpty_throwsException_whenTableNotFound() {
-        final OrderTable request = RequestBuilder.ofFullTable();
+        final OrderTableRequest request = RequestBuilder.ofFullTable();
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> tableService.changeEmpty(0L, request));
     }
@@ -86,7 +87,7 @@ class TableServiceTest {
         final Long orderTableId = savedOrderTable.getId();
 
         // when, then
-        final OrderTable request = RequestBuilder.ofFullTable();
+        final OrderTableRequest request = RequestBuilder.ofFullTable();
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> tableService.changeEmpty(orderTableId, request));
     }
@@ -100,7 +101,7 @@ class TableServiceTest {
         dataSupport.saveOrder(orderTableId, OrderStatus.COOKING.name());
 
         // when, then
-        final OrderTable request = RequestBuilder.ofFullTable();
+        final OrderTableRequest request = RequestBuilder.ofFullTable();
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> tableService.changeEmpty(orderTableId, request));
     }
@@ -114,7 +115,7 @@ class TableServiceTest {
         dataSupport.saveOrder(orderTableId, OrderStatus.MEAL.name());
 
         // when, then
-        final OrderTable request = RequestBuilder.ofFullTable();
+        final OrderTableRequest request = RequestBuilder.ofFullTable();
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> tableService.changeEmpty(orderTableId, request));
     }
@@ -127,7 +128,7 @@ class TableServiceTest {
         final int numberOfGuests = 2;
 
         // when
-        final OrderTable request = RequestBuilder.ofTableWithGuests(numberOfGuests);
+        final OrderTableRequest request = RequestBuilder.ofTableWithGuests(numberOfGuests);
         tableService.changeNumberOfGuests(orderTableId, request);
 
         // then
@@ -138,7 +139,7 @@ class TableServiceTest {
     @DisplayName("존재하지 않는 테이블의 고객 수를 변경하면 예외가 발생한다.")
     @Test
     void changeNumberOfGuests_throwsException_ifTableNotFound() {
-        final OrderTable request = RequestBuilder.ofTableWithGuests(2);
+        final OrderTableRequest request = RequestBuilder.ofTableWithGuests(2);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> tableService.changeNumberOfGuests(0L, request));
     }
@@ -151,7 +152,7 @@ class TableServiceTest {
         final Long orderTableId = savedOrderTable.getId();
 
         // when, then
-        final OrderTable request = RequestBuilder.ofTableWithGuests(-1);
+        final OrderTableRequest request = RequestBuilder.ofTableWithGuests(-1);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, request));
     }
@@ -164,7 +165,7 @@ class TableServiceTest {
         final Long orderTableId = savedOrderTable.getId();
 
         // when, then
-        final OrderTable request = RequestBuilder.ofTableWithGuests(2);
+        final OrderTableRequest request = RequestBuilder.ofTableWithGuests(2);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, request));
     }

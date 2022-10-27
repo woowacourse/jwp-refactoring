@@ -2,6 +2,7 @@ package kitchenpos.acceptance;
 
 import io.restassured.response.ValidatableResponse;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.support.RequestBuilder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +16,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
     @Test
     void create() {
         // given, when
-        final OrderTable request = RequestBuilder.ofEmptyTable();
+        final OrderTableRequest request = RequestBuilder.ofEmptyTable();
         final ValidatableResponse response = post("/api/tables", request);
 
         // then
@@ -40,7 +41,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
         final OrderTable savedTable = dataSupport.saveOrderTable(0, false);
 
         // when
-        final OrderTable request = RequestBuilder.ofEmptyTable();
+        final OrderTableRequest request = RequestBuilder.ofEmptyTable();
         final ValidatableResponse response = put("/api/tables/" + savedTable.getId() + "/empty", request);
 
         // then
@@ -56,7 +57,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
         final int numberOfGuests = 2;
 
         // when
-        final OrderTable request = RequestBuilder.ofTableWithGuests(numberOfGuests);
+        final OrderTableRequest request = RequestBuilder.ofTableWithGuests(numberOfGuests);
         final ValidatableResponse response = put("/api/tables/" + savedTable.getId() + "/number-of-guests", request);
 
         // then

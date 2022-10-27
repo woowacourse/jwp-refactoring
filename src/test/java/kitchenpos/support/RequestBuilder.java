@@ -15,6 +15,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.MenuGroupRequest;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.request.ProductRequest;
 
 public class RequestBuilder {
@@ -52,16 +53,16 @@ public class RequestBuilder {
         return new MenuRequest(DEFAULT_MENU_NAME, price, menuGroup.getId(), menuProducts);
     }
 
-    public static OrderTable ofEmptyTable() {
-        return ofTable(0, true);
+    public static OrderTableRequest ofEmptyTable() {
+        return new OrderTableRequest(0, true);
     }
 
-    public static OrderTable ofFullTable() {
+    public static OrderTableRequest ofFullTable() {
         return ofTableWithGuests(2);
     }
 
-    public static OrderTable ofTableWithGuests(final int numberOfGuests) {
-        return ofTable(numberOfGuests, false);
+    public static OrderTableRequest ofTableWithGuests(final int numberOfGuests) {
+        return new OrderTableRequest(numberOfGuests, false);
     }
 
     public static TableGroup ofTableGroup(final OrderTable... orderTables) {
@@ -84,13 +85,6 @@ public class RequestBuilder {
 
     public static Order ofOrderWithoutMenu(final OrderTable orderTable) {
         return ofOrder(null, orderTable.getId());
-    }
-
-    private static OrderTable ofTable(final int numberOfGuests, final boolean empty) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
     }
 
     private static Order ofOrder(final Long menuId, final Long tableId) {
