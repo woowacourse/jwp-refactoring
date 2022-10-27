@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static kitchenpos.fixture.MenuFactory.MENU_QUANTITY;
 import static kitchenpos.fixture.MenuFactory.menu;
+import static kitchenpos.fixture.MenuGroupFactory.menuGroup;
 import static kitchenpos.fixture.ProductFactory.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -44,7 +45,7 @@ class MenuServiceTest {
         private final Product pizza = productDao.save(product("피자", 10_000));
         private final Product coke = productDao.save(product("콜라", 1_000));
 
-        private final MenuGroup italian = menuGroupDao.save(new MenuGroup("양식"));
+        private final MenuGroup italian = menuGroupDao.save(menuGroup("양식"));
 
         @DisplayName("메뉴를 등록하고, 등록된 메뉴를 반환한다")
         @Test
@@ -141,7 +142,7 @@ class MenuServiceTest {
         private final Product pasta = productDao.save(product("파스타", 9_000));
         private final Product coke = productDao.save(product("콜라", 1_000));
 
-        private final MenuGroup italian = menuGroupDao.save(new MenuGroup("양식"));
+        private final MenuGroup italian = menuGroupDao.save(menuGroup("양식"));
 
         @DisplayName("등록된 모든 메뉴를 조회한다")
         @Test
