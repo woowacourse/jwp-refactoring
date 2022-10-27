@@ -1,9 +1,11 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import org.springframework.data.annotation.Id;
 
 public class Product {
 
+    @Id
     private Long id;
     private String name;
     private BigDecimal price;

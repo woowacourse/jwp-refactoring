@@ -1,7 +1,10 @@
 package kitchenpos.domain;
 
+import org.springframework.data.annotation.Id;
+
 public class OrderTable {
 
+    @Id
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;

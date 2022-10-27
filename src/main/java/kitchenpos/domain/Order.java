@@ -3,9 +3,11 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.data.annotation.Id;
 
 public class Order {
 
+    @Id
     private Long id;
     private Long orderTableId;
     private String orderStatus;

@@ -1,33 +1,28 @@
 package kitchenpos.domain;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
+
 public class MenuProduct {
 
-    private Long seq;
-    private Long menuId;
-    private Long productId;
-    private long quantity;
+    @Id
+    private final Long seq;
+    private final Long productId;
+    private final long quantity;
 
     public MenuProduct(final Long productId, final long quantity) {
-        this(null, null, productId, quantity);
+        this(null, productId, quantity);
     }
 
-    public MenuProduct(final Long menuId, final Long productId, final long quantity) {
-        this(null, menuId, productId, quantity);
-    }
-
-    public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity) {
+    @PersistenceCreator
+    public MenuProduct(final Long seq, final Long productId, final long quantity) {
         this.seq = seq;
-        this.menuId = menuId;
         this.productId = productId;
         this.quantity = quantity;
     }
 
     public Long getSeq() {
         return seq;
-    }
-
-    public Long getMenuId() {
-        return menuId;
     }
 
     public Long getProductId() {

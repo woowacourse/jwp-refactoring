@@ -1,7 +1,10 @@
 package kitchenpos.domain;
 
+import org.springframework.data.annotation.Id;
+
 public class OrderLineItem {
 
+    @Id
     private Long seq;
     private Long orderId;
     private Long menuId;

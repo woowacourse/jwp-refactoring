@@ -3,18 +3,20 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
+import org.springframework.data.relational.core.mapping.MappedCollection;
 
 public class Menu {
 
-    private Long id;
-    private String name;
-    private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+    @Id
+    private final Long id;
+    private final String name;
+    private final BigDecimal price;
+    private final Long menuGroupId;
 
-    public Menu(final String name, final BigDecimal price, final Long menuGroupId) {
-        this(null, name, price, menuGroupId, new ArrayList<>());
-    }
+    @MappedCollection(idColumn = "MENU_ID", keyColumn = "SEQ")
+    private final List<MenuProduct> menuProducts;
 
     public Menu(final String name, final BigDecimal price, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
@@ -25,6 +27,7 @@ public class Menu {
         this(id, name, price, menuGroupId, new ArrayList<>());
     }
 
+    @PersistenceCreator
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
         this.id = id;
@@ -48,5 +51,9 @@ public class Menu {
 
     public Long getMenuGroupId() {
         return menuGroupId;
+    }
+
+    public List<MenuProduct> getMenuProducts() {
+        return menuProducts;
     }
 }

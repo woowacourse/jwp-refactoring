@@ -5,13 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
 import kitchenpos.ui.dto.request.MenuProductRequest;
 import kitchenpos.ui.dto.response.MenuResponse;
@@ -23,18 +22,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class MenuService {
 
-    private final MenuDao menuDao;
+    private final MenuRepository menuRepository;
     private final MenuGroupDao menuGroupDao;
-    private final MenuProductDao menuProductDao;
     private final ProductDao productDao;
 
-    public MenuService(final MenuDao menuDao,
+    public MenuService(final MenuRepository menuRepository,
                        final MenuGroupDao menuGroupDao,
-                       final MenuProductDao menuProductDao,
                        final ProductDao productDao) {
-        this.menuDao = menuDao;
+        this.menuRepository = menuRepository;
         this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
         this.productDao = productDao;
     }
 
@@ -50,10 +46,8 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final List<MenuProductRequest> menuProducts = request.getMenuProducts();
-
         BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProductRequest menuProduct : menuProducts) {
+        for (final MenuProductRequest menuProduct : request.getMenuProducts()) {
             final Product product = productDao.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
@@ -63,13 +57,16 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId());
-        final Menu savedMenu = menuDao.save(menu);
+        final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
+                .map(it -> new MenuProduct(it.getProductId(), it.getQuantity()))
+                .collect(Collectors.toList());
 
-        final List<MenuProductResponse> menuProductResponses = menuProducts.stream()
-                .map(it -> new MenuProduct(savedMenu.getId(), it.getProductId(), it.getQuantity()))
-                .map(menuProductDao::save)
-                .map(it -> new MenuProductResponse(it.getSeq(), it.getMenuId(), it.getProductId(), it.getQuantity()))
+        final Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), menuProducts);
+        final Menu savedMenu = menuRepository.save(menu);
+
+        final List<MenuProductResponse> menuProductResponses = savedMenu.getMenuProducts()
+                .stream()
+                .map(it -> new MenuProductResponse(it.getSeq(), savedMenu.getId(), it.getProductId(), it.getQuantity()))
                 .collect(Collectors.toList());
 
         return new MenuResponse(
@@ -82,13 +79,13 @@ public class MenuService {
     }
 
     public List<MenuResponse> list() {
-        final List<Menu> menus = menuDao.findAll();
+        final Iterable<Menu> menus = menuRepository.findAll();
 
         final List<MenuResponse> menuResponses = new ArrayList<>();
         for (final Menu menu : menus) {
-            final List<MenuProductResponse> menuProductResponses = menuProductDao.findAllByMenuId(menu.getId())
+            final List<MenuProductResponse> menuProductResponses = menu.getMenuProducts()
                     .stream()
-                    .map(it -> new MenuProductResponse(it.getSeq(), it.getMenuId(), it.getProductId(),
+                    .map(it -> new MenuProductResponse(it.getSeq(), menu.getId(), it.getProductId(),
                             it.getQuantity()))
                     .collect(Collectors.toList());
             final MenuResponse menuResponse = new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(),

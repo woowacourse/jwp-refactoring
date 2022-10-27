@@ -2,9 +2,11 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.data.annotation.Id;
 
 public class TableGroup {
 
+    @Id
     private Long id;
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
