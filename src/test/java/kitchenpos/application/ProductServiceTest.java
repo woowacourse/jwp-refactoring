@@ -74,7 +74,7 @@ class ProductServiceTest extends ServiceTest {
     private Product createProductRequest(final String name, final Long price) {
         final Product productRequest = new Product();
         productRequest.setName(name);
-        
+
         if (price != null) {
             productRequest.setPrice(new BigDecimal(price));
         }

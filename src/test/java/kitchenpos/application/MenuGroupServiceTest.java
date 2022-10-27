@@ -28,7 +28,7 @@ class MenuGroupServiceTest extends ServiceTest {
         // when, then
         assertThat(menuGroupService.create(menuGroupRequest)).usingRecursiveComparison()
                 .ignoringFields("id")
-                .isEqualTo(new MenuGroup("추천메뉴"));
+                .isEqualTo(createMenuGroup("추천메뉴"));
     }
 
     @DisplayName("메뉴 그룸의 이름이 null인 경우 예외를 반환한다.")

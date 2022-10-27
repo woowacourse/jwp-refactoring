@@ -147,8 +147,8 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeNumberOfGuests_throwException_ifNumberOfGuestsIsNegative() {
         // given
-        final OrderTable orderTable = new OrderTable(4, false);
-        final OrderTable savedOrderTable = tableService.create(orderTable);
+        final OrderTable orderTableRequest = createOrderTableRequest(4, false);
+        final OrderTable savedOrderTable = tableService.create(orderTableRequest);
 
         // when, then
         final OrderTable orderTableForUpdate = createChangeNumberOfGuestsRequest(-1);

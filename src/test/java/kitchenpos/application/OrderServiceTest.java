@@ -96,7 +96,7 @@ class OrderServiceTest extends ServiceTest {
     void create_throwException_ifTableNotEmpty() {
         // given
         final OrderTable emptyOrderTable = orderTableDao.save(createOrderTable(0, true));
-        final OrderLineItem orderLineItemRequest = new OrderLineItem(validMenuId, 2);
+        final OrderLineItem orderLineItemRequest = createOrderLineItemRequest(validMenuId, 2);
         final Order order = createOrderRequest(emptyOrderTable.getId(), List.of(orderLineItemRequest));
 
         // when, then

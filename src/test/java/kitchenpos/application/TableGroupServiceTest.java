@@ -46,7 +46,7 @@ class TableGroupServiceTest extends ServiceTest {
     void create() {
         // given
         final TableGroup tableGroupRequest = createTableGroupRequest(
-                List.of(new OrderTable(emptyOrderTableId1), new OrderTable(emptyOrderTableId2)));
+                List.of(createOrderTableRequest(emptyOrderTableId1), createOrderTableRequest(emptyOrderTableId2)));
 
         // when
         final TableGroup savedTableGroup = tableGroupService.create(tableGroupRequest);
@@ -61,7 +61,8 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_throwException_ifOrderTableSizeUnderTwo() {
         // given
-        final TableGroup tableGroupRequest = createTableGroupRequest(List.of(new OrderTable(emptyOrderTableId1)));
+        final TableGroup tableGroupRequest = createTableGroupRequest(
+                List.of(createOrderTableRequest(emptyOrderTableId1)));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
@@ -89,7 +90,7 @@ class TableGroupServiceTest extends ServiceTest {
         // given
         final TableGroup savedTableGroup = tableGroupDao.save(createTableGroup(LocalDateTime.now()));
         final OrderTable orderTable = orderTableDao.save(createOrderTable(savedTableGroup.getId(), 0, true));
-        final TableGroup tableGroupRequest = new TableGroup(
+        final TableGroup tableGroupRequest = createTableGroupRequest(
                 List.of(createOrderTableRequest(orderTable.getId()), createOrderTableRequest(emptyOrderTableId1)));
 
         // when, then
