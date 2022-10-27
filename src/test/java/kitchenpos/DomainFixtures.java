@@ -3,6 +3,7 @@ package kitchenpos;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import kitchenpos.application.dto.MenuRequest;
+import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderTable;
@@ -24,19 +25,19 @@ public class DomainFixtures {
         return new MenuGroup("면");
     }
 
-    public static OrderTable 빈_주문_테이블_3인() {
-        return new OrderTable(null, 3, true);
+    public static OrderTableRequest 빈_주문_테이블_3인() {
+        return new OrderTableRequest( 3, true);
     }
 
-    public static OrderTable 빈_주문_테이블_4인() {
-        return new OrderTable(null, 4, true);
+    public static OrderTableRequest 빈_주문_테이블_4인() {
+        return new OrderTableRequest( 4, true);
     }
 
-    public static OrderTable 주문_테이블_3인() {
-        return new OrderTable(null, 3, false);
+    public static OrderTableRequest 주문_테이블_3인() {
+        return new OrderTableRequest(3, false);
     }
 
-    public static OrderTable 주문_테이블_4인() {
-        return new OrderTable(null, 4, false);
+    public static OrderTableRequest 주문_테이블_4인() {
+        return new OrderTableRequest(4, false);
     }
 }

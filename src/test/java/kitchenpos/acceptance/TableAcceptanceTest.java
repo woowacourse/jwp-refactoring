@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 주문_테이블을_추가한다() {
-        OrderTable 테이블_3인 = 빈_주문_테이블_3인();
+        OrderTableRequest 테이블_3인 = 빈_주문_테이블_3인();
         OrderTable 테이블 = testRestTemplate.postForObject("http://localhost:" + port + "/api/tables", 테이블_3인,
                 OrderTable.class);
 
@@ -23,11 +24,11 @@ public class TableAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 주문_테이블을_조회한다() {
-        OrderTable 테이블_3인 = 빈_주문_테이블_3인();
+        OrderTableRequest 테이블_3인 = 빈_주문_테이블_3인();
         testRestTemplate.postForObject("http://localhost:" + port + "/api/tables", 테이블_3인,
                 OrderTable.class);
 
-        OrderTable 테이블_4인 = 빈_주문_테이블_4인();
+        OrderTableRequest 테이블_4인 = 빈_주문_테이블_4인();
         testRestTemplate.postForObject("http://localhost:" + port + "/api/tables", 테이블_4인,
                 OrderTable.class);
 
@@ -39,7 +40,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 빈_주문_테이블로_수정한다() {
-        OrderTable 테이블_3인 = 주문_테이블_3인();
+        OrderTableRequest 테이블_3인 = 주문_테이블_3인();
         OrderTable 테이블 = testRestTemplate.postForObject("http://localhost:" + port + "/api/tables", 테이블_3인,
                 OrderTable.class);
 
@@ -55,7 +56,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 주문_테이블의_인원_수를_수정한다() {
-        OrderTable 테이블_3인 = 주문_테이블_3인();
+        OrderTableRequest 테이블_3인 = 주문_테이블_3인();
         OrderTable 테이블 = testRestTemplate.postForObject("http://localhost:" + port + "/api/tables", 테이블_3인,
                 OrderTable.class);
 

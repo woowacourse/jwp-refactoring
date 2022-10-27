@@ -1,15 +1,31 @@
 package kitchenpos.domain;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
 public class OrderTable {
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
+
     private Long tableGroupId;
+
     private int numberOfGuests;
+
     private boolean empty;
 
     public OrderTable() {
     }
 
     public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;

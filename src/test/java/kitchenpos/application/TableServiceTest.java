@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -117,7 +118,7 @@ class TableServiceTest extends ServiceTest {
 
         assertThatThrownBy(
                 () -> tableService.changeNumberOfGuests(orderTable.getId(),
-                        new OrderTable(null, -1, false))
+                        new OrderTableRequest( -1, false))
         ).isInstanceOf(IllegalArgumentException.class);
     }
 

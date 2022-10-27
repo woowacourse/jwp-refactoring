@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.dto.MenuRequest;
+import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -51,8 +52,8 @@ public class ServiceTest {
     }
 
     protected List<OrderTable> 주문_테이블들(boolean firstTableEmpty, boolean secondTableEmpty) {
-        OrderTable 주문_테이블1 = tableService.create(new OrderTable(null, 3, firstTableEmpty));
-        OrderTable 주문_테이블2 = tableService.create(new OrderTable(null, 4, secondTableEmpty));
+        OrderTable 주문_테이블1 = tableService.create(new OrderTableRequest(3, firstTableEmpty));
+        OrderTable 주문_테이블2 = tableService.create(new OrderTableRequest( 4, secondTableEmpty));
 
         return Arrays.asList(주문_테이블1, 주문_테이블2);
     }

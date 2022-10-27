@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
@@ -16,11 +17,11 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 단체_테이블을_지정할_수_있다() {
-        OrderTable 테이블_3인 = 빈_주문_테이블_3인();
+        OrderTableRequest 테이블_3인 = 빈_주문_테이블_3인();
         OrderTable 테이블1 = testRestTemplate.postForObject("http://localhost:" + port + "/api/tables", 테이블_3인,
                 OrderTable.class);
 
-        OrderTable 테이블_4인 = 빈_주문_테이블_4인();
+        OrderTableRequest 테이블_4인 = 빈_주문_테이블_4인();
         OrderTable 테이블2 = testRestTemplate.postForObject("http://localhost:" + port + "/api/tables", 테이블_4인,
                 OrderTable.class);
 
@@ -38,11 +39,11 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 단체_테이블을_해제_할_수_있다() {
-        OrderTable 테이블_3인 = 빈_주문_테이블_3인();
+        OrderTableRequest 테이블_3인 = 빈_주문_테이블_3인();
         OrderTable 테이블1 = testRestTemplate.postForObject("http://localhost:" + port + "/api/tables", 테이블_3인,
                 OrderTable.class);
 
-        OrderTable 테이블_4인 = 빈_주문_테이블_4인();
+        OrderTableRequest 테이블_4인 = 빈_주문_테이블_4인();
         OrderTable 테이블2 = testRestTemplate.postForObject("http://localhost:" + port + "/api/tables", 테이블_4인,
                 OrderTable.class);
 

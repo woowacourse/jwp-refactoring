@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.dto.MenuRequest;
+import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -48,8 +49,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         메뉴1 = testRestTemplate.postForObject("http://localhost:" + port + "/api/menus", 라면_메뉴, Menu.class);
         메뉴2 = testRestTemplate.postForObject("http://localhost:" + port + "/api/menus", 라면_메뉴, Menu.class);
 
-        OrderTable 테이블_3인 = 빈_주문_테이블_3인();
-        테이블_3인.setEmpty(false);
+        OrderTableRequest 테이블_3인 = new OrderTableRequest( 3, false);
         테이블 = testRestTemplate.postForObject("http://localhost:" + port + "/api/tables", 테이블_3인,
                 OrderTable.class);
     }

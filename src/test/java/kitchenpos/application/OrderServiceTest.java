@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -33,7 +34,7 @@ class OrderServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        주문_테이블 = tableService.create(new OrderTable(null, 3, false));
+        주문_테이블 = tableService.create(new OrderTableRequest( 3, false));
         요리중_주문 = new Order(주문_테이블.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
     }
 
@@ -71,7 +72,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문에_적혀있는_주문_테이블이_존재하지_않으면_예외가_발생한다() {
-        요리중_주문.setOrderTableId(null);
+        요리중_주문.setOrderTableId(0L);
         주문_항목을_추가한다(요리중_주문);
 
         assertThatThrownBy(
@@ -81,7 +82,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문을_생성할_때_테이블이_비어있으면_예외가_발생한다() {
-        주문_테이블 = tableService.create(new OrderTable(null, 3, true));
+        주문_테이블 = tableService.create(new OrderTableRequest( 3, true));
         요리중_주문.setOrderTableId(주문_테이블.getId());
         주문_항목을_추가한다(요리중_주문);
 
