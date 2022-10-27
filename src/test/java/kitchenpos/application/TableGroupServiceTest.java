@@ -9,32 +9,22 @@ import static org.mockito.BDDMockito.given;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.support.DatabaseCleanUp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-@SpringBootTest
-class TableGroupServiceTest {
+class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
-
-    @Autowired
     private TableGroupDao tableGroupDao;
-
-    @Autowired
-    private DatabaseCleanUp databaseCleanUp;
 
     @MockBean
     private OrderDao orderDao;
@@ -45,8 +35,8 @@ class TableGroupServiceTest {
     @BeforeEach
     void setUp() {
         databaseCleanUp.clear();
-        final OrderTable orderTable1 = orderTableDao.save(new OrderTable(0, true));
-        final OrderTable orderTable2 = orderTableDao.save(new OrderTable(0, true));
+        final OrderTable orderTable1 = this.orderTableDao.save(createOrderTable(0, true));
+        final OrderTable orderTable2 = this.orderTableDao.save(createOrderTable(0, true));
         emptyOrderTableId1 = orderTable1.getId();
         emptyOrderTableId2 = orderTable2.getId();
     }
@@ -55,26 +45,26 @@ class TableGroupServiceTest {
     @Test
     void create() {
         // given
-        final TableGroup tableGroup = new TableGroup(
+        final TableGroup tableGroupRequest = createTableGroupRequest(
                 List.of(new OrderTable(emptyOrderTableId1), new OrderTable(emptyOrderTableId2)));
 
         // when
-        final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        final TableGroup savedTableGroup = tableGroupService.create(tableGroupRequest);
 
         // then
         assertThat(savedTableGroup).usingRecursiveComparison()
                 .ignoringFields("id", "orderTables")
-                .isEqualTo(tableGroup);
+                .isEqualTo(tableGroupRequest);
     }
 
     @DisplayName("2개 미만의 테이블을 단체 지정하면 예외를 반환한다.")
     @Test
     void create_throwException_ifOrderTableSizeUnderTwo() {
         // given
-        final TableGroup tableGroup = new TableGroup(List.of(new OrderTable(emptyOrderTableId1)));
+        final TableGroup tableGroupRequest = createTableGroupRequest(List.of(new OrderTable(emptyOrderTableId1)));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class).
                 hasMessage("2개 이상의 테이블만 단체 지정이 가능합니다.");
     }
@@ -84,11 +74,11 @@ class TableGroupServiceTest {
     void create_throwException_ifTableNotExist() {
         // given
         final Long invalidTableId = 999L;
-        final TableGroup tableGroup = new TableGroup(
-                List.of(new OrderTable(emptyOrderTableId1), new OrderTable(invalidTableId)));
+        final TableGroup tableGroupRequest = createTableGroupRequest(
+                List.of(createOrderTableRequest(emptyOrderTableId1), createOrderTableRequest(invalidTableId)));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class).
                 hasMessage("존재하지 않는 테이블은 단체 지정할 수 없습니다.");
     }
@@ -97,13 +87,13 @@ class TableGroupServiceTest {
     @Test
     void create_throwException_ifTableAlreadyGroup() {
         // given
-        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
-        final OrderTable orderTable = orderTableDao.save(new OrderTable(savedTableGroup.getId(), 0, true));
-        final TableGroup tableGroup = new TableGroup(
-                List.of(new OrderTable(orderTable.getId()), new OrderTable(emptyOrderTableId1)));
+        final TableGroup savedTableGroup = tableGroupDao.save(createTableGroup(LocalDateTime.now()));
+        final OrderTable orderTable = orderTableDao.save(createOrderTable(savedTableGroup.getId(), 0, true));
+        final TableGroup tableGroupRequest = new TableGroup(
+                List.of(createOrderTableRequest(orderTable.getId()), createOrderTableRequest(emptyOrderTableId1)));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class).
                 hasMessage("이미 사용 중이거나 단체 지정된 테이블은 사용할 수 없습니다.");
     }
@@ -112,12 +102,12 @@ class TableGroupServiceTest {
     @Test
     void create_throwException_ifTableNotEmpty() {
         // given
-        final OrderTable orderTable = orderTableDao.save(new OrderTable(4, false));
-        final TableGroup tableGroup = new TableGroup(
-                List.of(new OrderTable(orderTable.getId()), new OrderTable(emptyOrderTableId1)));
+        final OrderTable orderTable = orderTableDao.save(createOrderTable(4, false));
+        final TableGroup tableGroupRequest = createTableGroupRequest(
+                List.of(createOrderTableRequest(orderTable.getId()), createOrderTableRequest(emptyOrderTableId1)));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class).
                 hasMessage("이미 사용 중이거나 단체 지정된 테이블은 사용할 수 없습니다.");
     }
@@ -126,7 +116,7 @@ class TableGroupServiceTest {
     @Test
     void ungroup() {
         // given
-        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
+        final TableGroup savedTableGroup = tableGroupDao.save(createTableGroup(LocalDateTime.now()));
 
         // when, then
         assertThatCode(() -> tableGroupService.ungroup(savedTableGroup.getId()))
@@ -139,11 +129,23 @@ class TableGroupServiceTest {
         // given
         given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
                 .willReturn(true);
-        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
+        final TableGroup savedTableGroup = tableGroupDao.save(createTableGroup(LocalDateTime.now()));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("이미 주문이 진행 중입니다.");
+    }
+
+    private TableGroup createTableGroupRequest(final List<OrderTable> orderTableRequests) {
+        final TableGroup tableGroupRequest = new TableGroup();
+        tableGroupRequest.setOrderTables(orderTableRequests);
+        return tableGroupRequest;
+    }
+
+    private OrderTable createOrderTableRequest(final Long id) {
+        final OrderTable orderTableRequest = new OrderTable();
+        orderTableRequest.setId(id);
+        return orderTableRequest;
     }
 }
