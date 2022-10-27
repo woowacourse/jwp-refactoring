@@ -1,13 +1,29 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 public class OrderTable {
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
+    public OrderTable() {
+    }
+
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this.id = id;
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
     public Long getId() {
         return id;
+    }
+
+    public boolean isNotEmpty() {
+        return !empty || Objects.nonNull(tableGroupId);
     }
 
     public void setId(final Long id) {
