@@ -1,9 +1,7 @@
 package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -12,77 +10,42 @@ import org.junit.jupiter.api.Test;
 public class OrderTest {
 
     @Test
-    @DisplayName("아이디를 설정한다")
-    void setId(){
+    @DisplayName("주문 테이블이 비어있을 수 없다")
+    void emptyTable() {
         // given
-        Order order = new Order();
-        Long id = 999L;
+        OrderTable orderTable = new OrderTable(100, true);
 
-        // when
-        order.setId(id);
-
-        // then
-        assertThat(order.getId()).isEqualTo(id);
+        // when, then
+        assertThatThrownBy(() -> new Order(orderTable, List.of()))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    @DisplayName("주문 테이블 아이디를 설정한다")
-    void setOrderTableId(){
+    @DisplayName("주문 상태를 변경한다")
+    void updateStatus() {
         // given
-        Order order = new Order();
-        Long orderTableId = 999L;
+        OrderTable orderTable = new OrderTable(100, false);
+        Order order = new Order(orderTable, List.of());
 
         // when
-        order.setOrderTableId(orderTableId);
+        order.updateStatus(OrderStatus.MEAL);
 
-        // then
-        assertThat(order.getOrderTableId()).isEqualTo(orderTableId);
+        // when, then
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
     }
 
     @Test
-    @DisplayName("주문 상태를 설정한다")
-    void setOrderStatus(){
+    @DisplayName("완료된 주문의 상태를 변경할 수 없다")
+    void setOrderTableId() {
         // given
-        Order order = new Order();
-        String orderStatus = "status";
+        OrderTable orderTable = new OrderTable(100, false);
+        Order order = new Order(orderTable, List.of());
 
         // when
-        order.setOrderStatus(orderStatus);
+        order.updateStatus(OrderStatus.COMPLETION);
 
         // then
-        assertThat(order.getOrderStatus()).isEqualTo(orderStatus);
-    }
-
-    @Test
-    @DisplayName("주문 시간을 설정한다")
-    void setOrderedTime(){
-        // given
-        Order order = new Order();
-        LocalDateTime orderedTime = LocalDateTime.now();
-
-        // when
-        order.setOrderedTime(orderedTime);
-
-        // then
-        assertThat(order.getOrderedTime()).isEqualTo(orderedTime);
-    }
-
-    @Test
-    @DisplayName("주문 항목들을 설정한다")
-    void seOrderLineItems(){
-        // given
-        Order order = new Order();
-        OrderLineItem orderLineItem1 = new OrderLineItem();
-        OrderLineItem orderLineItem2 = new OrderLineItem();
-        List<OrderLineItem> orderLineItems = List.of(orderLineItem1, orderLineItem2);
-
-        // when
-        order.setOrderLineItems(orderLineItems);
-
-        // then
-        assertAll(
-            () -> assertThat(order.getOrderLineItems()).hasSize(2),
-            () -> assertThat(order.getOrderLineItems()).containsExactly(orderLineItem1, orderLineItem2)
-        );
+        assertThatThrownBy(() -> order.updateStatus(OrderStatus.MEAL))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 }

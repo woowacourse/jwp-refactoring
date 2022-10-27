@@ -10,26 +10,25 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductCreateRequest;
+import kitchenpos.repository.ProductRepository;
 
 public class ProductServiceTest extends ServiceTest {
 
     @Autowired
     protected ProductService productService;
     @Autowired
-    protected ProductDao productDao;
+    protected ProductRepository productRepository;
 
     @Test
     @DisplayName("상품을 저장한다")
     void create() {
         // given
-        Product product = new Product();
-        product.setName("test");
-        product.setPrice(BigDecimal.ONE);
+        ProductCreateRequest createRequest = new ProductCreateRequest("test", BigDecimal.ONE);
 
         // when
-        Product createdProduct = productService.create(product);
+        Product createdProduct = productService.create(createRequest);
 
         // then
         assertAll(
@@ -42,11 +41,10 @@ public class ProductServiceTest extends ServiceTest {
     @DisplayName("상품 가격은 함께 등록되어야 한다")
     void nullPrice() {
         // given
-        Product product = new Product();
-        product.setName("test");
+        ProductCreateRequest createRequest = new ProductCreateRequest("test", null);
 
         // when, then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(createRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -54,12 +52,10 @@ public class ProductServiceTest extends ServiceTest {
     @DisplayName("상품 가격은 음수일 수 없다")
     void minusPrice() {
         // given
-        Product product = new Product();
-        product.setName("test");
-        product.setPrice(BigDecimal.valueOf(-100));
+        ProductCreateRequest createRequest = new ProductCreateRequest("test", BigDecimal.valueOf(-1));
 
         // when, then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(createRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -73,7 +69,7 @@ public class ProductServiceTest extends ServiceTest {
 
         // then
         assertAll(
-            () -> assertThat(products).hasSameSizeAs(productDao.findAll())
+            () -> assertThat(products).hasSameSizeAs(productRepository.findAll())
         );
     }
 }

@@ -12,77 +12,32 @@ import org.junit.jupiter.api.Test;
 public class MenuTest {
 
     @Test
-    @DisplayName("아이디를 설정한다")
-    void setId(){
+    @DisplayName("가격은 비어있을 수 없다")
+    void nullPrice(){
         // given
-        Menu menu = new Menu();
-        Long id = 999L;
 
-        // when
-        menu.setId(id);
-
-        // then
-        assertThat(menu.getId()).isEqualTo(id);
+        // when, then
+        assertThatThrownBy(() -> new Menu("test", null, null, List.of()))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    @DisplayName("이름을 설정한다")
-    void setName(){
+    @DisplayName("가격은 비어있을 수 없다")
+    void minusPrice(){
         // given
-        Menu menu = new Menu();
-        String name = "test";
 
-        // when
-        menu.setName(name);
-
-        // then
-        assertThat(menu.getName()).isEqualTo(name);
+        // when, then
+        assertThatThrownBy(() -> new Menu("test", BigDecimal.valueOf(-100), null, List.of()))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    @DisplayName("가격을 설정한다")
-    void setPrice(){
+    @DisplayName("가격은 구성 상품 가격의 총합을 초과할 수 없다")
+    void priceOverProductSum(){
         // given
-        Menu menu = new Menu();
-        BigDecimal price = BigDecimal.ONE;
 
-        // when
-        menu.setPrice(price);
-
-        // then
-        assertThat(menu.getPrice()).isEqualTo(price);
-    }
-
-    @Test
-    @DisplayName("MenuGroup 아이디를 설정한다")
-    void setMenuGroupId(){
-        // given
-        Menu menu = new Menu();
-        Long menuGroupId = 999L;
-
-        // when
-        menu.setMenuGroupId(menuGroupId);
-
-        // then
-        assertThat(menu.getMenuGroupId()).isEqualTo(menuGroupId);
-    }
-
-    @Test
-    @DisplayName("메뉴에 속하는 상품을 설정한다")
-    void setMenuProducts(){
-        // given
-        Menu menu = new Menu();
-        MenuProduct menuProduct1 = new MenuProduct();
-        MenuProduct menuProduct2 = new MenuProduct();
-        List<MenuProduct> menuProducts = List.of(menuProduct1, menuProduct2);
-
-        // when
-        menu.setMenuProducts(menuProducts);
-
-        // then
-        assertAll(
-            () -> assertThat(menu.getMenuProducts()).hasSize(2),
-            () -> assertThat(menu.getMenuProducts()).containsExactly(menuProduct1, menuProduct2)
-        );
+        // when, then
+        assertThatThrownBy(() -> new Menu("test", BigDecimal.ONE, null, List.of()))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 }

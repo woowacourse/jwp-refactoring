@@ -9,25 +9,25 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
+import kitchenpos.repository.MenuGroupRepository;
 
 class MenuGroupServiceTest extends ServiceTest{
 
     @Autowired
     protected MenuGroupService menuGroupService;
     @Autowired
-    protected MenuGroupDao menuGroupDao;
+    protected MenuGroupRepository menuGroupRepository;
 
     @Test
     @DisplayName("메뉴 그룹을 저장한다")
     void create() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("test");
+        MenuGroupCreateRequest createRequest = new MenuGroupCreateRequest("test");
 
         // when
-        MenuGroup createdMenuGroup = menuGroupService.create(menuGroup);
+        MenuGroup createdMenuGroup = menuGroupService.create(createRequest);
 
         // then
         assertAll(
@@ -46,7 +46,7 @@ class MenuGroupServiceTest extends ServiceTest{
 
         // then
         assertAll(
-            () -> assertThat(menuGroups).hasSameSizeAs(menuGroupDao.findAll())
+            () -> assertThat(menuGroups).hasSameSizeAs(menuGroupRepository.findAll())
         );
     }
 }

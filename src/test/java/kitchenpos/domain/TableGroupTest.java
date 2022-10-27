@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -12,49 +13,32 @@ import org.junit.jupiter.api.Test;
 public class TableGroupTest {
 
     @Test
-    @DisplayName("아이디를 설정한다")
+    @DisplayName("이미 단체 지정된 테이블을 포함해서 단체 지정할 수 없다")
     void setId() {
         // given
+        OrderTable orderTable = new OrderTable(99, false);
         TableGroup tableGroup = new TableGroup();
-        Long id = 999L;
+        orderTable.setTableGroup(tableGroup);
 
-        // when
-        tableGroup.setId(id);
-
-        // then
-        assertThat(tableGroup.getId()).isEqualTo(id);
+        // when, then
+        assertThatThrownBy(() -> new TableGroup(List.of(orderTable)))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    @DisplayName("생성 시간을 설정한다")
-    void setCreatedDate() {
+    @DisplayName("단체 지정을 해제한다")
+    void ungroup() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        LocalDateTime createdDate = LocalDateTime.now();
+        OrderTable orderTable = new OrderTable(99, false);
+        TableGroup tableGroup = new TableGroup(new ArrayList<>(List.of(orderTable)));
 
         // when
-        tableGroup.setCreatedDate(createdDate);
-
-        // then
-        assertThat(tableGroup.getCreatedDate()).isEqualTo(createdDate);
-    }
-
-    @Test
-    @DisplayName("주문 테이블 목록을 설정한다")
-    void setOrderTables() {
-        // given
-        TableGroup tableGroup = new TableGroup();
-        OrderTable orderTable1 = new OrderTable();
-        OrderTable orderTable2 = new OrderTable();
-        List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
-
-        // when
-        tableGroup.setOrderTables(orderTables);
+        tableGroup.ungroup();
 
         // then
         assertAll(
-            () -> assertThat(tableGroup.getOrderTables()).hasSize(2),
-            () -> assertThat(tableGroup.getOrderTables()).containsExactly(orderTable1, orderTable2)
+            () -> assertThat(tableGroup.getOrderTables()).isEmpty(),
+            () -> assertThat(orderTable.getTableGroup()).isNull()
         );
     }
 }

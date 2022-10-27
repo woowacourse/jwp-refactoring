@@ -10,44 +10,23 @@ import org.junit.jupiter.api.Test;
 public class ProductTest {
 
     @Test
-    @DisplayName("아이디를 설정한다")
-    void setId(){
+    @DisplayName("가격은 비어있을 수 없다")
+    void nullPrice(){
         // given
-        Product product = new Product();
-        Long id = 999L;
 
-        // when
-        product.setId(id);
-
-        // then
-        assertThat(product.getId()).isEqualTo(id);
+        // when, then
+        assertThatThrownBy(() -> new Product("test", null))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    @DisplayName("이름을 설정한다")
-    void setName(){
+    @DisplayName("가격은 음수일 수 없다")
+    void minusPrice(){
         // given
-        Product product = new Product();
-        String name = "test";
 
-        // when
-        product.setName(name);
-
-        // then
-        assertThat(product.getName()).isEqualTo(name);
+        // when, then
+        assertThatThrownBy(() -> new Product("test", BigDecimal.valueOf(-100)))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @Test
-    @DisplayName("가격을 설정한다")
-    void setPrice(){
-        // given
-        Product product = new Product();
-        BigDecimal price = BigDecimal.ONE;
-
-        // when
-        product.setPrice(price);
-
-        // then
-        assertThat(product.getPrice()).isEqualTo(price);
-    }
 }

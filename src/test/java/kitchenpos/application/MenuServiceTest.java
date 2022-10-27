@@ -10,25 +10,23 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 
 class MenuServiceTest extends ServiceTest {
 
     @Autowired
-    protected MenuDao menuDao;
+    protected MenuRepository menuRepository;
     @Autowired
-    protected MenuGroupDao menuGroupDao;
+    protected MenuGroupRepository menuGroupRepository;
     @Autowired
-    protected MenuProductDao menuProductDao;
-    @Autowired
-    protected ProductDao productDao;
+    protected ProductRepository productRepository;
     @Autowired
     protected MenuService menuService;
 
@@ -38,16 +36,11 @@ class MenuServiceTest extends ServiceTest {
         // given
         MenuGroup createdMenuGroup = createMenuGroup();
         Product createdProduct = createProduct();
-        MenuProduct menuProduct = createMenuProduct(createdProduct);
 
-        Menu menu = new Menu();
-        menu.setName("test");
-        menu.setPrice(BigDecimal.ONE);
-        menu.setMenuGroupId(createdMenuGroup.getId());
-        menu.setMenuProducts(List.of(menuProduct));
-
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("test", BigDecimal.ONE, createdMenuGroup.getId(),
+            List.of(new MenuProductCreateRequest(createdProduct.getId(), 10)));
         // when
-        Menu createdMenu = menuService.create(menu);
+        Menu createdMenu = menuService.create(menuCreateRequest);
 
         // then
         assertAll(
@@ -62,15 +55,12 @@ class MenuServiceTest extends ServiceTest {
         // given
         MenuGroup createdMenuGroup = createMenuGroup();
         Product createdProduct = createProduct();
-        MenuProduct menuProduct = createMenuProduct(createdProduct);
 
-        Menu menu = new Menu();
-        menu.setName("test");
-        menu.setMenuGroupId(createdMenuGroup.getId());
-        menu.setMenuProducts(List.of(menuProduct));
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("test", null, createdMenuGroup.getId(),
+            List.of(new MenuProductCreateRequest(createdProduct.getId(), 10)));
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -80,16 +70,13 @@ class MenuServiceTest extends ServiceTest {
         // given
         MenuGroup createdMenuGroup = createMenuGroup();
         Product createdProduct = createProduct();
-        MenuProduct menuProduct = createMenuProduct(createdProduct);
 
-        Menu menu = new Menu();
-        menu.setName("test");
-        menu.setPrice(BigDecimal.valueOf(-100));
-        menu.setMenuGroupId(createdMenuGroup.getId());
-        menu.setMenuProducts(List.of(menuProduct));
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("test", BigDecimal.valueOf(-100),
+            createdMenuGroup.getId(),
+            List.of(new MenuProductCreateRequest(createdProduct.getId(), 10)));
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -98,15 +85,12 @@ class MenuServiceTest extends ServiceTest {
     void withoutMenuGroup() {
         // given
         Product createdProduct = createProduct();
-        MenuProduct menuProduct = createMenuProduct(createdProduct);
 
-        Menu menu = new Menu();
-        menu.setName("test");
-        menu.setPrice(BigDecimal.valueOf(-100));
-        menu.setMenuProducts(List.of(menuProduct));
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("test", BigDecimal.valueOf(-100), null,
+            List.of(new MenuProductCreateRequest(createdProduct.getId(), 10)));
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -116,21 +100,18 @@ class MenuServiceTest extends ServiceTest {
         // given
         MenuGroup createdMenuGroup = createMenuGroup();
         Product createdProduct = createProduct();
-        MenuProduct menuProduct = createMenuProduct(createdProduct);
 
-        Menu menu = new Menu();
-        menu.setName("test");
-        menu.setPrice(BigDecimal.valueOf(101));
-        menu.setMenuGroupId(createdMenuGroup.getId());
-        menu.setMenuProducts(List.of(menuProduct));
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("test", BigDecimal.valueOf(101),
+            createdMenuGroup.getId(),
+            List.of(new MenuProductCreateRequest(createdProduct.getId(), 10)));
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    @DisplayName("메뉴 목록 조회한다")
+    @DisplayName("메뉴 목록을 조회한다")
     void list() {
         // given
 
@@ -139,28 +120,17 @@ class MenuServiceTest extends ServiceTest {
 
         // then
         assertAll(
-            () -> assertThat(menus).hasSameSizeAs(menuDao.findAll())
+            () -> assertThat(menus).hasSameSizeAs(menuRepository.findAll())
         );
     }
 
     private MenuGroup createMenuGroup() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("testGroup");
-        return menuGroupDao.save(menuGroup);
+        MenuGroup menuGroup = new MenuGroup("testGroup");
+        return menuGroupRepository.save(menuGroup);
     }
 
     private Product createProduct() {
-        Product product = new Product();
-        product.setPrice(BigDecimal.TEN);
-        product.setName("testProduct");
-        return productDao.save(product);
-    }
-
-    private MenuProduct createMenuProduct(Product product) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setProductId(product.getId());
-        menuProduct.setQuantity(10L);
-        return menuProduct;
+        Product product = new Product("testProduct", BigDecimal.TEN);
+        return productRepository.save(product);
     }
 }
