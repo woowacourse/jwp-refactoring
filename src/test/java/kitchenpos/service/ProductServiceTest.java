@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import kitchenpos.application.ProductCreateRequest;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
 
@@ -22,35 +23,23 @@ public class ProductServiceTest extends ServiceTest {
     @DisplayName("상품을 등록한다.")
     void create() {
         // given
-        Product product = new Product("후라이드", BigDecimal.valueOf(16000));
+        ProductCreateRequest request = new ProductCreateRequest("후라이드", BigDecimal.valueOf(16000));
 
         // when
-        Product savedProduct = productService.create(product);
+        Product savedProduct = productService.create(request);
 
         // then
-        assertThat(savedProduct.getPrice()).isCloseTo(product.getPrice(), withPercentage(0.0001));
-        assertThat(savedProduct).usingRecursiveComparison()
-            .ignoringFields("id", "price")
-            .isEqualTo(product);
-    }
-
-    @Test
-    @DisplayName("가격이 음수면 예외를 반환한다.")
-    void create_price_negative() {
-        // given
-        Product product = new Product("후라이드", BigDecimal.valueOf(-1));
-
-        // when, then
-        assertThatThrownBy(() -> productService.create(product))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThat(savedProduct.getId()).isNotNull();
+        assertThat(savedProduct.getName()).isEqualTo(request.getName());
+        assertThat(savedProduct.getPrice()).isCloseTo(request.getPrice(), withPercentage(0.0001));
     }
 
     @Test
     @DisplayName("전체 상품을 조회한다.")
     void list() {
         // given
-        Product product = new Product("후라이드", BigDecimal.valueOf(16000));
-        Product savedProduct = productService.create(product);
+        ProductCreateRequest request = new ProductCreateRequest("후라이드", BigDecimal.valueOf(16000));
+        Product savedProduct = productService.create(request);
 
         // when
         List<Product> result = productService.list();

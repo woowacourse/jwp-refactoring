@@ -9,6 +9,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
+import kitchenpos.application.ProductCreateRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -75,8 +76,8 @@ public class AcceptanceTest {
             .getLong("id");
     }
 
-    protected long _상품등록_Id반환(final Product product) {
-        return post("/api/products", product).assertThat()
+    protected long _상품등록_Id반환(final ProductCreateRequest request) {
+        return post("/api/products", request).assertThat()
             .statusCode(HttpStatus.CREATED.value())
             .extract()
             .body()

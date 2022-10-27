@@ -9,6 +9,7 @@ import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import kitchenpos.application.ProductCreateRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -62,7 +63,7 @@ public class MenuServiceTest extends ServiceTest {
         MenuGroup menuGroup = new MenuGroup("세마리메뉴");
         Long menuGroupId = menuGroupService.create(menuGroup).getId();
 
-        Product product = new Product("후라이드", BigDecimal.valueOf(16000));
+        ProductCreateRequest product = new ProductCreateRequest("후라이드", BigDecimal.valueOf(16000));
         Long productId = productService.create(product).getId();
 
         return new Menu("후라이드+후라이드+후라이드", new BigDecimal(priceValue), menuGroupId,
