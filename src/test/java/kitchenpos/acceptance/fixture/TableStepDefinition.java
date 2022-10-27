@@ -11,10 +11,9 @@ import org.springframework.http.HttpStatus;
 public class TableStepDefinition {
 
     public static long 테이블을_생성한다(
-       final long tableGroupId,
        final int numberOfGuests
     ) {
-        OrderTable orderTable = new OrderTable(tableGroupId, numberOfGuests, false);
+        OrderTable orderTable = new OrderTable(null, numberOfGuests, false);
 
         return RestAssured.given().log().all()
             .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -39,7 +38,7 @@ public class TableStepDefinition {
         final long orderTableId
         ) {
 
-        OrderTable orderTable = new OrderTable(orderTableId, 0, true);
+        OrderTable orderTable = new OrderTable(null, 0, true);
 
         RestAssured.given().log().all()
             .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -54,7 +53,7 @@ public class TableStepDefinition {
         final long orderTableId,
         final int numberOfGuests) {
 
-        OrderTable orderTable = new OrderTable(orderTableId, numberOfGuests, false);
+        OrderTable orderTable = new OrderTable(null, numberOfGuests, false);
 
         RestAssured.given().log().all()
             .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
