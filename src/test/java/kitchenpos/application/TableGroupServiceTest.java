@@ -66,8 +66,8 @@ public class TableGroupServiceTest {
             final OrderTable emptyTable2 = orderTableDao.save(테이블_생성(빈_테이블2.getNumberOfGuests(), 빈_테이블2.isEmpty()));
 
             final TableGroup tableGroup = new TableGroup();
-            tableGroup.setCreatedDate(LocalDateTime.now());
-            tableGroup.setOrderTables(List.of(emptyTable1, emptyTable2));
+            tableGroup.addCreatedDate(LocalDateTime.now());
+            tableGroup.addOrderTables(List.of(emptyTable1, emptyTable2));
 
             final TableGroup actual = sut.create(tableGroup);
 

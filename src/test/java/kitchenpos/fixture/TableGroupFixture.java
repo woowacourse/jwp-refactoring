@@ -9,8 +9,8 @@ public class TableGroupFixture {
 
     public static TableGroup 단체_지정_생성(final List<OrderTable> orderTables) {
         final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        tableGroup.setOrderTables(orderTables);
+        tableGroup.addCreatedDate(LocalDateTime.now());
+        tableGroup.addOrderTables(orderTables);
         return tableGroup;
     }
 }
