@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.DomainFixture.givenEmptyTable;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
@@ -19,8 +18,8 @@ class TableGroupServiceTest extends ApplicationTest {
     @DisplayName("테이블의 그룹을 해제한다.")
     @Test
     void ungroup() {
-        OrderTable table1 = 주문테이블_생성(givenEmptyTable());
-        OrderTable table2 = 주문테이블_생성(givenEmptyTable());
+        OrderTable table1 = 주문테이블_생성(new OrderTable(null, 5, true));
+        OrderTable table2 = 주문테이블_생성(new OrderTable(null, 5, true));
         TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(table1, table2));
 
         tableGroupService.ungroup(tableGroup.getId());

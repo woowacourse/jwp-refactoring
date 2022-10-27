@@ -1,24 +1,20 @@
-package kitchenpos.domain;
+package kitchenpos.ui.dto;
 
-public class OrderLineItem {
+public class OrderLineItemResponse {
 
     private Long seq;
     private Long orderId;
     private Long menuId;
     private long quantity;
 
-    public OrderLineItem() {
+    public OrderLineItemResponse() {
     }
 
-    public OrderLineItem(Long seq, Long orderId, Long menuId, long quantity) {
+    public OrderLineItemResponse(Long seq, Long orderId, Long menuId, long quantity) {
         this.seq = seq;
         this.orderId = orderId;
         this.menuId = menuId;
         this.quantity = quantity;
-    }
-
-    public OrderLineItem(Long orderId, Long menuId, long quantity) {
-        this(null, orderId, menuId, quantity);
     }
 
     public Long getSeq() {

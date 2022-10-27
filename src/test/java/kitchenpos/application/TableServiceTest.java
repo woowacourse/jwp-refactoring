@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.DomainFixture.givenEmptyTable;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -19,8 +18,8 @@ class TableServiceTest extends ApplicationTest {
     @DisplayName("테이블을 조회한다.")
     @Test
     void list() {
-        OrderTable table1 = 주문테이블_생성(new OrderTable(null, 0, true));
-        OrderTable table2 = 주문테이블_생성(new OrderTable(null, 0, true));
+        주문테이블_생성(new OrderTable(null, 0, true));
+        주문테이블_생성(new OrderTable(null, 0, true));
 
         List<OrderTable> tables = tableService.list();
 
@@ -31,7 +30,7 @@ class TableServiceTest extends ApplicationTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void changeEmpty(boolean empty) {
-        OrderTable table = 주문테이블_생성(givenEmptyTable());
+        OrderTable table = 주문테이블_생성(new OrderTable(null, 5, true));
         OrderTable updateTable = new OrderTable(table.getId(), table.getNumberOfGuests(), empty);
 
         OrderTable updatedTable = tableService.changeEmpty(table.getId(), updateTable);
