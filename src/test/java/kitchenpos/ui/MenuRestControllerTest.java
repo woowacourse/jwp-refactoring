@@ -69,9 +69,9 @@ class MenuRestControllerTest extends ControllerTest {
     @DisplayName("메뉴 항목을 조회한다.")
     @Test
     void getMenus() throws Exception {
-        when(menuService.list()).thenReturn(List.of(DomainFixture.getMenu()));
+        when(menuService.getMenus()).thenReturn(List.of(DtoFixture.getMenuDto()));
 
-        final ResultActions resultActions = mockMvc.perform(get("/api/menus")
+        final ResultActions resultActions = mockMvc.perform(get("/api/v2/menus")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());

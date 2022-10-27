@@ -42,10 +42,16 @@ public class MenuRestController {
     }
 
 
+    @Deprecated
     @GetMapping("/api/menus")
     public ResponseEntity<List<Menu>> list() {
         return ResponseEntity.ok()
                 .body(menuService.list())
                 ;
+    }
+
+    @GetMapping("/api/v2/menus")
+    public ResponseEntity<List<MenuDto>> getMenus() {
+        return ResponseEntity.ok().body(menuService.getMenus());
     }
 }

@@ -12,7 +12,7 @@ public class MenuHttpCommunication {
 
     public static HttpCommunication getMenus() {
         return HttpCommunication.request()
-                .get("/api/menus")
+                .get("/api/v2/menus")
                 .build();
     }
 }

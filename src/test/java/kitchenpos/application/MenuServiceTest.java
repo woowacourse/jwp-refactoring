@@ -47,4 +47,23 @@ class MenuServiceTest {
                 () -> assertThat(menuDto.getMenuProducts()).hasSize(1)
         );
     }
+
+    @DisplayName("메뉴 목록을 조회한다.")
+    @Test
+    void getMenus() {
+        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("menuGroup"));
+        final Product product = productDao.save(new Product("productName", BigDecimal.valueOf(1000L)));
+        final List<MenuProductRequest> menuProductsRequest = List.of(new MenuProductRequest(product.getId(), 2));
+        final MenuCreationRequest menuCreationRequest = new MenuCreationRequest("menuName", BigDecimal.valueOf(1500L),
+                menuGroup.getId(),
+                menuProductsRequest);
+        final MenuDto menuDto = menuService.create(MenuCreationDto.from(menuCreationRequest));
+
+        final List<MenuDto> menuDtos = menuService.getMenus();
+
+        assertAll(
+                () -> assertThat(menuDtos.size()).isEqualTo(1),
+                () -> assertThat(menuDtos.get(0).getId()).isEqualTo(menuDto.getId())
+        );
+    }
 }

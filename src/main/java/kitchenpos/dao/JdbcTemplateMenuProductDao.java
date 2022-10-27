@@ -57,7 +57,11 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
 
     @Override
     public List<MenuProduct> findAllByMenuId(final Long menuId) {
-        final String sql = "SELECT id, menu_id, product_id, quantity FROM menu_product WHERE menu_id = (:menuId)";
+        final String sql = "SELECT mp.id, mp.menu_id, mp.product_id, mp.quantity, p.name, p.price "
+                + "FROM menu_product mp "
+                + "JOIN product p "
+                + "ON mp.product_id=p.id "
+                + "WHERE mp.menu_id = (:menuId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("menuId", menuId);
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));

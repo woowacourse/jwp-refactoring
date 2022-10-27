@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.persistence.DiscriminatorColumn;
 import kitchenpos.application.dto.MenuCreationDto;
 import kitchenpos.application.dto.MenuDto;
 import kitchenpos.application.dto.MenuProductCreationDto;
@@ -113,6 +114,7 @@ public class MenuService {
                 .collect(Collectors.toList());
     }
 
+    @Deprecated
     public List<Menu> list() {
         final List<Menu> menus = menuDao.findAll();
 
@@ -121,5 +123,17 @@ public class MenuService {
         }
 
         return menus;
+    }
+
+    public List<MenuDto> getMenus() {
+        final List<Menu> menus = menuDao.findAll();
+
+        return menus.stream()
+                .map(menu -> {
+                    final List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(menu.getId());
+                    return new Menu(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProducts);
+                })
+                .map(MenuDto::from)
+                .collect(Collectors.toList());
     }
 }
