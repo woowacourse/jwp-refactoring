@@ -23,10 +23,8 @@ class MenuGroupServiceTest {
     @Test
     void create() {
         final String name = "신제품";
-        //when
         MenuGroup menuGroup = menuGroupService.create(new MenuGroup(name));
 
-        //then
         assertAll(
                 () -> assertThat(menuGroup.getId()).isNotNull(),
                 () -> assertThat(menuGroup.getName()).isEqualTo(name)
@@ -36,11 +34,8 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 조회한다.")
     @Test
     void list() {
-        //given
         menuGroupService.create(new MenuGroup("신제품"));
 
-        //when
-        //then
         assertThat(menuGroupService.list()).hasSize(1);
     }
 }

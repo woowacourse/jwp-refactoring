@@ -22,8 +22,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @ServiceTest
 class OrderServiceTest {
@@ -68,21 +66,17 @@ class OrderServiceTest {
     @DisplayName("주문을 생성한다.")
     @Test
     void create() {
-        //when
         Order order = orderService.create(orderRequest);
 
-        //then
         assertThat(order.getId()).isNotNull();
     }
 
     @DisplayName("주문 항목이 없으면 예외가 발생한다.")
     @Test
     void createFailureWhenNotExistsOrderLineItems() {
-        //given
         OrderTable orderTable = orderTableDao.save(new OrderTable(null, 1, false));
         final List<OrderLineItem> emptyOrderLineItem = Collections.emptyList();
-        //when
-        //then
+
         assertThatThrownBy(() -> orderService.create(
                 new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), emptyOrderLineItem)));
     }
@@ -90,11 +84,8 @@ class OrderServiceTest {
     @DisplayName("주문 항목의 메뉴가 디비안에 없으면 예외가 발생한다")
     @Test
     void createFailureWhenNotExistsMenu() {
-        //given
         Order order = createOrderRequest(null, OrderStatus.COOKING);
 
-        //when
-        //then
         assertThatThrownBy(() -> orderService.create(order))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
@@ -102,15 +93,12 @@ class OrderServiceTest {
     @DisplayName("주문 테이블이 비어있으면 예외가 발생한다")
     @Test
     void createFailureWhenNotOrderTableIsEmpty() {
-        //given
         Menu menu = createMenu();
         final Long emptyOrderTableId = null;
 
         Order order = new Order(emptyOrderTableId, OrderStatus.MEAL.name(), LocalDateTime.now(),
                 List.of(new OrderLineItem(null, menu.getId(), 1)));
 
-        //when
-        //then
         assertThatThrownBy(() -> orderService.create(order))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
@@ -118,32 +106,26 @@ class OrderServiceTest {
     @DisplayName("주문의 목록들을 반환한다.")
     @Test
     void list() {
-        //when
-        //then
         assertThat(orderService.list()).hasSize(1);
     }
 
     @DisplayName("주문의 상태를 바꾼다.")
     @Test
     void changeOrderStatus() {
-        //given
         Order order = new Order(1L, OrderStatus.COOKING.name(), LocalDateTime.now());
 
-        //when
         orderService.changeOrderStatus(savedOrder.getId(), order);
         Order findOrder = orderDao.findById(savedOrder.getId()).get();
 
-        //then
         assertThat(findOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
     }
 
     @DisplayName("기존의 주문 상태가 COMPLETION일 때, 주문 상태를 바꾸려고 하면 예외가 발생한다")
     @Test
     void changeOrderStatusFailureWhenOrderStatusIsCOMPLETION() {
-        //given
         Menu menu = createMenu();
         Order order = createOrderRequest(menu.getId(), OrderStatus.COMPLETION);
-        //when
+
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), new Order()))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }

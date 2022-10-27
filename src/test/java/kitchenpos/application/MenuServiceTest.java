@@ -38,13 +38,10 @@ class MenuServiceTest {
     @DisplayName("메뉴를 생성한다")
     @Test
     void create() {
-        //given
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("A"));
 
-        //when
         Menu savedMenu = menuService.create(new Menu("신메뉴", BigDecimal.ZERO, menuGroup.getId(), List.of()));
 
-        //then
         assertAll(
                 () -> assertThat(savedMenu.getMenuGroupId()).isEqualTo(menuGroup.getId()),
                 () -> assertThat(savedMenu.getId()).isNotNull(),
@@ -58,11 +55,8 @@ class MenuServiceTest {
     @MethodSource
     @NullSource
     void createFailureWhenPriceIsNegative(BigDecimal price) {
-        //given
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("A"));
 
-        //when
-        //then
         assertThatThrownBy(
                 () -> menuService.create(new Menu("신메뉴", price, menuGroup.getId(), List.of())))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
@@ -77,8 +71,6 @@ class MenuServiceTest {
     void createFailureWhenNotExistsMenuGroupId() {
         final Long noMenuGroupId = null;
 
-        //when
-        //then
         assertThatThrownBy(
                 () -> menuService.create(new Menu("신메뉴", BigDecimal.ZERO, noMenuGroupId, List.of())))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
@@ -87,12 +79,9 @@ class MenuServiceTest {
     @DisplayName("메뉴의 가격이 메뉴에 포함된 (제품 가격*수량)보다 크면 예외가 발생한다.")
     @Test
     void createFailureWhenMenuPriceLessThanMenuProductPrice() {
-        //given
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("A"));
         Product product = productDao.save(new Product("제육볶음", BigDecimal.ONE));
 
-        //when
-        //then
         assertThatThrownBy(() -> menuService.create(
                 new Menu("신메뉴", BigDecimal.TEN, menuGroup.getId(), List.of(new MenuProduct(product.getId(), 3)))))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
@@ -101,12 +90,9 @@ class MenuServiceTest {
     @DisplayName("메뉴 목록을 조회한다.")
     @Test
     void list() {
-        //given
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("A"));
         menuService.create(new Menu("신메뉴", BigDecimal.ZERO, menuGroup.getId(), List.of()));
 
-        //when
-        //then
         assertThat(menuService.list()).hasSize(1);
     }
 }

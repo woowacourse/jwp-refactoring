@@ -30,7 +30,7 @@ class ProductServiceTest {
         assertThat(product.getId()).isNotNull();
     }
 
-    @DisplayName("상품의 가격이 0이거나 없으면 예외가 발새한다")
+    @DisplayName("상품의 가격이 0이거나 없으면 예외가 발생한다")
     @MethodSource
     @NullSource
     @ParameterizedTest

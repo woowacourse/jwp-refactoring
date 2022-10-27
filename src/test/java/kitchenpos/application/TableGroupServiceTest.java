@@ -71,10 +71,8 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블이 없으면 예외가 발생한다.")
     @Test
     void createFailureWhenTableIsEmpty() {
-        //given
         final List<OrderTable> emptyOrderTable = Collections.emptyList();
 
-        //then
         assertThatThrownBy(
                 () -> tableGroupService.create(new TableGroup(LocalDateTime.now(), emptyOrderTable))
         ).isExactlyInstanceOf(IllegalArgumentException.class);
@@ -83,10 +81,8 @@ class TableGroupServiceTest {
     @DisplayName("저장된 주문 테이블이 비어있지 않으면(empty is false) 예외가 발생한다.")
     @Test
     void createFailureWhenSavedOrderTableExists() {
-        //given
         OrderTable orderTable1 = orderTableDao.save(new OrderTable(1, false));
 
-        //then
         assertThatThrownBy(
                 () -> tableGroupService.create(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)))
         ).isExactlyInstanceOf(IllegalArgumentException.class);
@@ -95,12 +91,9 @@ class TableGroupServiceTest {
     @DisplayName("저장된 주문 테이블의 테이블 그룹 아이디가 있으면 예외가 발생한다.")
     @Test
     void createFailureWhenGroupIdExists() {
-        //given
         TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
-        //when
         OrderTable orderTable1 = orderTableDao.save(new OrderTable(tableGroup.getId(), 1, true));
 
-        //then
         assertThatThrownBy(
                 () -> tableGroupService.create(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)))
         ).isExactlyInstanceOf(IllegalArgumentException.class);
