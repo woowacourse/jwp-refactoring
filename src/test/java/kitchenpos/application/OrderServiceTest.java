@@ -20,6 +20,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.OrderUpdateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -147,7 +148,7 @@ class OrderServiceTest extends ServiceTest {
         private OrderLineItem orderLineItemA;
         private OrderLineItem orderLineItemB;
         private Order savedOrder;
-        private Order order;
+        private OrderUpdateRequest request;
 
         @BeforeEach
         void setUp() {
@@ -156,8 +157,7 @@ class OrderServiceTest extends ServiceTest {
 
             savedOrder = new Order(ORDER_ID, ORDER_TABLE_ID, null, null,
                     Arrays.asList(orderLineItemA, orderLineItemB));
-            order = new Order(ORDER_ID, ORDER_TABLE_ID, OrderStatus.MEAL.name(), null,
-                    Arrays.asList(orderLineItemA, orderLineItemB));
+            request = new OrderUpdateRequest(OrderStatus.MEAL.name());
 
             given(orderDao.findById(ORDER_ID))
                     .willReturn(Optional.of(savedOrder));
@@ -167,7 +167,7 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("주문의 상태를 변경할 수 있다.")
         void success() {
             //when
-            Order actual = orderService.changeOrderStatus(ORDER_ID, order);
+            Order actual = orderService.changeOrderStatus(ORDER_ID, request);
 
             //then
             assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
@@ -181,7 +181,7 @@ class OrderServiceTest extends ServiceTest {
                     .willReturn(Optional.empty());
 
             //when & then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(ORDER_ID, order))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(ORDER_ID, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -192,7 +192,7 @@ class OrderServiceTest extends ServiceTest {
             savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
 
             //when & then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(ORDER_ID, order))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(ORDER_ID, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
