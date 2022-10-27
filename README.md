@@ -170,18 +170,13 @@ Controller에서 받아온 객체를 그대로 save하거나, 해당 객체의 �
 
        결론 : 양방향 매핑을 삭제한다. 
 
-     JPA에 시간을 너무 많이써서 포기하고 다시 2번으로 돌아감.
+     JPA에 시간을 너무 많이써서 롤백하고 다시 2번으로 돌아감.
 
 
 
 2. Controller에서 요청받을 때 사용할 RequestDto를 만든다
-
    - [x] OrderUpdateRequest
-
    - [x] OrderCreateRequest
-
    - [x] MenuGroupCreateRequest
-
      - 지금 당장은 필요없지만, 컨트롤러와 도메인의 경계를 명확히 하고자 가져감.
-
-     
+   - [x] OrderTableCreateRequest
