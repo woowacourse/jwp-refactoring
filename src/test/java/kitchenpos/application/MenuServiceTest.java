@@ -68,7 +68,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     @DisplayName("메뉴를 등록할 때 메뉴에 포함되는 메뉴상품은 모두 상품목록에 존재해야한다.")
     void createWithNotExistProduct() {
-        final Product emptyProduct = new Product();
+        final Product emptyProduct = Product.of("없는상품", 1000L);
 
         assertThatThrownBy(() -> 메뉴_등록("런치세트", 15000L, 세트, emptyProduct))
                 .isInstanceOf(IllegalArgumentException.class);

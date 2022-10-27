@@ -86,17 +86,8 @@ public abstract class ServiceTest {
     }
 
     public Product 상품_등록(final String name, final Long price) {
-        final Product product = new Product();
-        product.setName(name);
-        product.setPrice(createBigDecimal(price));
+        final Product product = Product.of(name, price);
         return productService.create(product);
-    }
-
-    private BigDecimal createBigDecimal(final Long price) {
-        if (price == null) {
-            return null;
-        }
-        return BigDecimal.valueOf(price);
     }
 
     public List<Product> 상품_전체_조회() {
