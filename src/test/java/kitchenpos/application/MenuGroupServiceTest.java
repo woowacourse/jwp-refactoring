@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import javax.transaction.Transactional;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.fixtures.MenuGroupFixtures;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +21,7 @@ class MenuGroupServiceTest {
     private MenuGroupService menuGroupService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Test
     @DisplayName("메뉴 그룹을 생성한다")
@@ -44,7 +44,7 @@ class MenuGroupServiceTest {
     void list() {
         // given
         final MenuGroup menuGroup = MenuGroupFixtures.TWO_CHICKEN_GROUP.create();
-        final Long savedId = menuGroupDao.save(menuGroup)
+        final Long savedId = menuGroupRepository.save(menuGroup)
                 .getId();
 
         // when

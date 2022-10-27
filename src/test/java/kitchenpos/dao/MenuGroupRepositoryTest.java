@@ -5,22 +5,17 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.Optional;
-import javax.sql.DataSource;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@JdbcTest
-class MenuGroupDaoTest {
-
-    private final MenuGroupDao menuGroupDao;
+@DataJpaTest
+class MenuGroupRepositoryTest {
 
     @Autowired
-    private MenuGroupDaoTest(final DataSource dataSource) {
-        this.menuGroupDao = new JdbcTemplateMenuGroupDao(dataSource);
-    }
+    private MenuGroupRepository menuGroupRepository;
 
     @Test
     @DisplayName("메뉴 그룹을 저장한다")
@@ -29,7 +24,7 @@ class MenuGroupDaoTest {
         final MenuGroup menuGroup = new MenuGroup(null, "듀오 치킨 세트");
 
         // when
-        final MenuGroup saved = menuGroupDao.save(menuGroup);
+        final MenuGroup saved = menuGroupRepository.save(menuGroup);
 
         // then
         assertAll(
@@ -43,10 +38,10 @@ class MenuGroupDaoTest {
     void findById() {
         // given
         final MenuGroup menuGroup = new MenuGroup(null, "듀오 치킨 세트");
-        final MenuGroup saved = menuGroupDao.save(menuGroup);
+        final MenuGroup saved = menuGroupRepository.save(menuGroup);
 
         // when
-        final MenuGroup foundMenuGroup = menuGroupDao.findById(saved.getId())
+        final MenuGroup foundMenuGroup = menuGroupRepository.findById(saved.getId())
                 .get();
 
         // then
@@ -58,7 +53,7 @@ class MenuGroupDaoTest {
     @DisplayName("id로 메뉴 그룹을 조회할 때 결과가 없다면 Optional.empty를 반환한다")
     void findByIdNotExist() {
         // when
-        final Optional<MenuGroup> menuGroup = menuGroupDao.findById(-1L);
+        final Optional<MenuGroup> menuGroup = menuGroupRepository.findById(-1L);
 
         // then
         assertThat(menuGroup).isEmpty();
@@ -69,10 +64,10 @@ class MenuGroupDaoTest {
     void findAll() {
         // given
         final MenuGroup menuGroup = new MenuGroup(null, "듀오 치킨 세트");
-        final MenuGroup saved = menuGroupDao.save(menuGroup);
+        final MenuGroup saved = menuGroupRepository.save(menuGroup);
 
         // when
-        final List<MenuGroup> menuGroups = menuGroupDao.findAll();
+        final List<MenuGroup> menuGroups = menuGroupRepository.findAll();
 
         // then
         assertAll(
@@ -87,11 +82,11 @@ class MenuGroupDaoTest {
     void existsById() {
         // given
         final MenuGroup menuGroup = new MenuGroup(null, "듀오 치킨 세트");
-        final MenuGroup saved = menuGroupDao.save(menuGroup);
+        final MenuGroup saved = menuGroupRepository.save(menuGroup);
 
         // when
-        final boolean exists = menuGroupDao.existsById(saved.getId());
-        final boolean notExists = menuGroupDao.existsById(-1L);
+        final boolean exists = menuGroupRepository.existsById(saved.getId());
+        final boolean notExists = menuGroupRepository.existsById(-1L);
 
         // then
         assertAll(
