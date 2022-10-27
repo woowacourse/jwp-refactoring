@@ -24,12 +24,6 @@ class MenuServiceTest extends ServiceTestEnvironment {
     @Autowired
     private MenuService menuService;
 
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private MenuGroupService menuGroupService;
-
     @Test
     @DisplayName("메뉴를 등록할 수 있다.")
     void create() {
@@ -121,11 +115,11 @@ class MenuServiceTest extends ServiceTestEnvironment {
         // given
         final Product product1 = ProductFixture.createWithPrice(1000L);
         final Product product2 = ProductFixture.createWithPrice(1000L);
-        final Product savedProduct1 = productService.create(product1);
-        final Product savedProduct2 = productService.create(product2);
+        final Product savedProduct1 = serviceDependencies.save(product1);
+        final Product savedProduct2 = serviceDependencies.save(product2);
 
         final MenuGroup menuGroup = MenuGroupFixture.createDefaultWithoutId();
-        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroup savedMenuGroup = serviceDependencies.save(menuGroup);
 
         final Menu menu = MenuFixture.createWithPrice(savedMenuGroup, 2001L, savedProduct1, savedProduct2);
 
@@ -139,14 +133,14 @@ class MenuServiceTest extends ServiceTestEnvironment {
         // given
         final Product product1 = ProductFixture.createWithPrice(1000L);
         final Product product2 = ProductFixture.createWithPrice(1000L);
-        final Product savedProduct1 = productService.create(product1);
-        final Product savedProduct2 = productService.create(product2);
+        final Product savedProduct1 = serviceDependencies.save(product1);
+        final Product savedProduct2 = serviceDependencies.save(product2);
 
         final MenuGroup menuGroup = MenuGroupFixture.createDefaultWithoutId();
-        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroup savedMenuGroup = serviceDependencies.save(menuGroup);
 
         final Menu menu = MenuFixture.createWithPrice(savedMenuGroup, 2000L, savedProduct1, savedProduct2);
-        final Menu savedMenu = menuService.create(menu);
+        final Menu savedMenu = serviceDependencies.save(menu);
 
         // when
         final List<Menu> actual = menuService.list();

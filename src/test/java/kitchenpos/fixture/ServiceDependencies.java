@@ -6,7 +6,6 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -14,12 +13,13 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import kitchenpos.domain.TableGroup;
 import org.springframework.boot.test.context.TestComponent;
 
 @TestComponent
 public class ServiceDependencies {
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
     private final MenuGroupDao menuGroupDao;
     private final MenuDao menuDao;
     private final MenuProductDao menuProductDao;
@@ -28,11 +28,11 @@ public class ServiceDependencies {
     private final OrderLineItemDao orderLineItemDao;
     private final OrderDao orderDao;
 
-    public ServiceDependencies(final ProductDao productDao, final MenuGroupDao menuGroupDao, final MenuDao menuDao,
+    public ServiceDependencies(final ProductRepository productRepository, final MenuGroupDao menuGroupDao, final MenuDao menuDao,
                                final MenuProductDao menuProductDao, final OrderTableDao orderTableDao,
                                final TableGroupDao tableGroupDao, final OrderLineItemDao orderLineItemDao,
                                final OrderDao orderDao) {
-        this.productDao = productDao;
+        this.productRepository = productRepository;
         this.menuGroupDao = menuGroupDao;
         this.menuDao = menuDao;
         this.menuProductDao = menuProductDao;
@@ -47,7 +47,7 @@ public class ServiceDependencies {
     }
 
     public Product save(final Product product) {
-        return productDao.save(product);
+        return productRepository.save(product);
     }
 
     public OrderTable save(final OrderTable orderTable) {
