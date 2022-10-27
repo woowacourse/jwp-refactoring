@@ -141,7 +141,6 @@ class TableGroupServiceTest extends ServiceTest {
         @ValueSource(strings = {"COOKING", "MEAL"})
         @DisplayName("테이블 상태가 COOKING이거나 MEAL일 경우 예외를 발생시킨다.")
         void ungroup_CookingOrMeal(final String orderStatus) {
-
             final OrderTable orderTable = tableGroup.getOrderTables().get(0);
             final BigDecimal lessThanSingleProductPrice = BigDecimal.valueOf(9000);
             final Product savedProduct = 상품_등록(상품);
