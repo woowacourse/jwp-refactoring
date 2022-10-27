@@ -20,6 +20,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.OrderCreateRequest;
 import kitchenpos.ui.dto.OrderUpdateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -56,7 +57,7 @@ class OrderServiceTest extends ServiceTest {
         private OrderLineItem orderLineItemA;
         private OrderLineItem orderLineItemB;
         private OrderTable orderTable;
-        private Order order;
+        private OrderCreateRequest request;
 
         @BeforeEach
         void setUp() {
@@ -65,8 +66,7 @@ class OrderServiceTest extends ServiceTest {
 
             orderTable = new OrderTable(ORDER_TABLE_ID, null, 2, false);
 
-            order = new Order(null, ORDER_TABLE_ID, null, null,
-                    Arrays.asList(orderLineItemA, orderLineItemB));
+            request = new OrderCreateRequest(ORDER_TABLE_ID, Arrays.asList(orderLineItemA, orderLineItemB));
 
             Order savedOrder = new Order(1L, ORDER_TABLE_ID, OrderStatus.COOKING.name(),
                     LocalDateTime.now(), Arrays.asList(orderLineItemA, orderLineItemB));
@@ -77,8 +77,8 @@ class OrderServiceTest extends ServiceTest {
                     .willReturn(orderLineItemA)
                     .willReturn(orderLineItemB);
             given(menuDao.countByIdIn(any()))
-                    .willReturn((long) order.getOrderLineItems().size());
-            given(orderTableDao.findById(order.getOrderTableId()))
+                    .willReturn((long) request.getOrderLineItems().size());
+            given(orderTableDao.findById(request.getOrderTableId()))
                     .willReturn(Optional.of(orderTable));
         }
 
@@ -86,7 +86,7 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("등록할 수 있는 주문을 받으면, 저장하고 내용을 반환한다.")
         void success() {
             //when
-            Order actual = orderService.create(order);
+            Order actual = orderService.create(request);
 
             //then
             assertAll(
@@ -101,10 +101,10 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("주문 아이템이 비어있으면, 예외를 던진다.")
         void fail_noOrderLineItem(List<OrderLineItem> orderLineItems) {
             //given
-            order.setOrderLineItems(orderLineItems);
+            request = new OrderCreateRequest(ORDER_TABLE_ID, null);
 
             //when & then
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -112,8 +112,8 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("동일한 주문 아이템을 입력하면, 예외를 던진다.")
         void fail_sameOrderLineItem() {
             //given
-            order.setOrderLineItems(Arrays.asList(orderLineItemA, orderLineItemA));
-            Set<Long> distinctMenus = order.getOrderLineItems().stream()
+            request = new OrderCreateRequest(ORDER_TABLE_ID, Arrays.asList(orderLineItemA, orderLineItemA));
+            Set<Long> distinctMenus = request.getOrderLineItems().stream()
                     .map(OrderLineItem::getMenuId)
                     .collect(Collectors.toSet());
 
@@ -121,7 +121,7 @@ class OrderServiceTest extends ServiceTest {
                     .willReturn((long) distinctMenus.size());
 
             //when & then
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -132,7 +132,7 @@ class OrderServiceTest extends ServiceTest {
             orderTable.setEmpty(true);
 
             //when & then
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

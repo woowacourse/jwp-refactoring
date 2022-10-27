@@ -20,6 +20,10 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
+    public static Order createFrom(Long orderTableId) {
+        return new Order(null, orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), null);
+    }
+
     public Long getId() {
         return id;
     }

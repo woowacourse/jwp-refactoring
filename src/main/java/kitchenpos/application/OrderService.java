@@ -1,9 +1,6 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -13,6 +10,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.OrderCreateRequest;
 import kitchenpos.ui.dto.OrderUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,8 +36,8 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order orderRequest) {
-        final List<OrderLineItem> orderLineItems = orderRequest.getOrderLineItems();
+    public Order create(final OrderCreateRequest request) {
+        final List<OrderLineItem> orderLineItems = request.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
@@ -53,25 +51,18 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId())
+        final OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        orderTable.checkEmpty();
 
-        Order order = new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), null);
+        final Order savedOrder = orderDao.save(Order.createFrom(orderTable.getId()));
 
-        final Order savedOrder = orderDao.save(order);
+        List<OrderLineItem> savedOrderLineItems = orderLineItems.stream()
+                .peek(orderLineItem -> orderLineItem.setOrderId(savedOrder.getId()))
+                .collect(Collectors.toList());
 
-        final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(orderId);
-            savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
-        }
         savedOrder.setOrderLineItems(savedOrderLineItems);
-
         return savedOrder;
     }
 

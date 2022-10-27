@@ -142,4 +142,42 @@ Controller에서 받아온 객체를 그대로 save하거나, 해당 객체의 �
 
 2. Controller에서 요청받을 때 사용할 RequestDto를 만든다
    - [x] TableGroupCreateRequest
+   
    - [x] ProductCreateRequest
+   
+   - [x] MenuCreateRequest
+   
+     - 메뉴 관련 DTO를 분리하다 JPA를 도입.
+   
+       원인1. ProductDao에서 하나씩 조회해서 가격을 더한 값과 price를 비교하는 로직
+   
+       원인2. menuProductDao에서 하나씩 매핑해주는 로직을 처리하기 귀찮음
+
+
+
+3. JPA 엔티티로의 전환
+
+   - [x] Product
+
+   - [ ] Menu
+
+   - [ ] MenuProduct
+
+     - MenuProduct를 직접 참조하면서 문제가 많이 발생했다.
+
+       1. 양방향이 걸려있어서 List.of() 를 쓰면 NPE가 터진다.
+       2. Menu findAll() 테스트 시, MenuProduct에 oneToMany로 LazyLoading이 걸려 LazyIninitialization 에러가 발생한다.
+
+       결론 : 양방향 매핑을 삭제한다. 
+
+     JPA에 시간을 너무 많이써서 포기하고 다시 2번으로 돌아감.
+
+
+
+2. Controller에서 요청받을 때 사용할 RequestDto를 만든다
+
+   - [x] OrderUpdateRequest
+
+   - [x] OrderCreateRequest
+
+     

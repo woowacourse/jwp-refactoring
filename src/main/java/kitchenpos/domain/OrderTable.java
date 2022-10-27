@@ -48,4 +48,10 @@ public class OrderTable {
             throw new IllegalArgumentException();
         }
     }
+
+    public void checkEmpty() {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
+    }
 }
