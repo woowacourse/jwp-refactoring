@@ -6,6 +6,26 @@ public class OrderTable {
     private int numberOfGuests;
     private boolean empty;
 
+    public OrderTable() {
+    }
+
+    public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
+        validateNumberOfGuestsNegative(numberOfGuests);
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
+    public OrderTable(int numberOfGuests, boolean empty) {
+        this(null, numberOfGuests, empty);
+    }
+
+    private void validateNumberOfGuestsNegative(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("손님의 인원은 음수가 될 수 없습니다.");
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -27,6 +47,9 @@ public class OrderTable {
     }
 
     public void setNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("손님의 인원은 음수가 될 수 없습니다.");
+        }
         this.numberOfGuests = numberOfGuests;
     }
 
