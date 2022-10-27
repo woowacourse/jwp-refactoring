@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.FakeOrderDao;
 import kitchenpos.dao.FakeOrderTableDao;
@@ -91,7 +92,7 @@ public class TableServiceTest {
 
         OrderTable savedOrderTable = orderTableDao.save(emptyOrderTable);
 
-        Order order = generateOrder(LocalDateTime.now(), savedOrderTable.getId(), OrderStatus.COOKING.name());
+        Order order = generateOrder(LocalDateTime.now(), savedOrderTable.getId(), OrderStatus.COOKING.name(), new ArrayList<>());
         orderDao.save(order);
         // when
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), nonEmptyOrderTable)).isInstanceOf(

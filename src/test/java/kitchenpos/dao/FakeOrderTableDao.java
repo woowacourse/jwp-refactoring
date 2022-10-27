@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
 
 public class FakeOrderTableDao implements OrderTableDao {
-
+    private static Long id = 1L;
     private final List<OrderTable> IN_MEMORY_ORDER_TABLE;
 
     public FakeOrderTableDao() {
@@ -17,9 +17,8 @@ public class FakeOrderTableDao implements OrderTableDao {
     @Override
     public OrderTable save(OrderTable entity) {
         if (entity.getId() == null) {
+            entity.setId(id++);
             IN_MEMORY_ORDER_TABLE.add(entity);
-            Long id = (long) IN_MEMORY_ORDER_TABLE.size();
-            entity.setId(id);
             return entity;
         }
         Long id = entity.getId();
