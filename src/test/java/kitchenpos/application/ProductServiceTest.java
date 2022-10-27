@@ -20,7 +20,7 @@ class ProductServiceTest {
 
     @BeforeEach
     void setUp() {
-        productDao = ProductFixture.setUp().getInMemoryProductDao();
+        productDao = ProductFixture.setUp().getProductDao();
         productService = new ProductService(productDao);
     }
 

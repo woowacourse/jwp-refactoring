@@ -11,11 +11,11 @@ public class MenuGroupFixture {
     public static final Long 한마리메뉴 = 1L;
     public static final Long 두마리메뉴 = 2L;
 
-    private final InMemoryMenuGroupDao inMemoryMenuGroupDao;
+    private final MenuGroupDao menuGroupDao;
     private List<MenuGroup> fixtures;
 
-    public MenuGroupFixture(final InMemoryMenuGroupDao inMemoryMenuGroupDao) {
-        this.inMemoryMenuGroupDao = inMemoryMenuGroupDao;
+    public MenuGroupFixture(final MenuGroupDao menuGroupDao) {
+        this.menuGroupDao = menuGroupDao;
     }
 
     public static MenuGroupFixture setUp() {
@@ -27,7 +27,7 @@ public class MenuGroupFixture {
     public static MenuGroup createMenuGroup(final String menuGroupName) {
         final MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(menuGroupName);
-        return inMemoryMenuGroupDao.save(menuGroup);
+        return menuGroup;
     }
 
     private List<MenuGroup> createMenuGroups() {
@@ -40,10 +40,14 @@ public class MenuGroupFixture {
     private MenuGroup saveMenuGroup(final String menuGroupName) {
         final MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(menuGroupName);
-        return inMemoryMenuGroupDao.save(menuGroup);
+        return menuGroupDao.save(menuGroup);
     }
 
-    public MenuGroupDao getInMemoryMenuGroupDao() {
-        return inMemoryMenuGroupDao;
+    public MenuGroupDao getMenuGroupDao() {
+        return menuGroupDao;
+    }
+
+    public List<MenuGroup> getFixtures() {
+        return fixtures;
     }
 }

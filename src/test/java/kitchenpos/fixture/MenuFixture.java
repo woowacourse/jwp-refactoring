@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.InMemoryMenuDao;
+import kitchenpos.dao.MenuDao;
 import kitchenpos.domain.Menu;
 
 public class MenuFixture {
@@ -13,11 +14,11 @@ public class MenuFixture {
     public static final Long 맵슐랭 = 1L;
     public static final Long 허니콤보 = 2L;
 
-    private final InMemoryMenuDao inMemoryMenuDao;
+    private final MenuDao menuDao;
     private List<Menu> fixtures;
 
-    public MenuFixture(final InMemoryMenuDao inMemoryMenuDao) {
-        this.inMemoryMenuDao = inMemoryMenuDao;
+    public MenuFixture(final MenuDao menuDao) {
+        this.menuDao = menuDao;
     }
 
     public static MenuFixture setUp() {
@@ -31,6 +32,14 @@ public class MenuFixture {
         menu.setName("맵슐랭순살");
         menu.setPrice(new BigDecimal(20_000));
         menu.setMenuGroupId(한마리메뉴);
+        return menu;
+    }
+
+    public static Menu createMenu(final String menuName, final BigDecimal price, final Long menuGroupId) {
+        final Menu menu = new Menu();
+        menu.setName(menuName);
+        menu.setPrice(price);
+        menu.setMenuGroupId(menuGroupId);
         return menu;
     }
 
@@ -62,11 +71,11 @@ public class MenuFixture {
         menu.setMenuGroupId(menuGroupId);
         menu.setName(menuName);
         menu.setPrice(price);
-        return inMemoryMenuDao.save(menu);
+        return menuDao.save(menu);
     }
 
-    public InMemoryMenuDao getInMemoryMenuDao() {
-        return inMemoryMenuDao;
+    public MenuDao getMenuDao() {
+        return menuDao;
     }
 
     public List<Menu> getFixtures() {

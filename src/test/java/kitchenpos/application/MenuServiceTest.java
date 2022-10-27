@@ -32,21 +32,18 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        menuDao = MenuFixture.setUp().getInMemoryMenuDao();
-        menuGroupDao = MenuGroupFixture.setUp().getInMemoryMenuGroupDao();
-        menuProductDao = MenuProductFixture.setUp().getInMemoryMenuProductDao();
-        productDao = ProductFixture.setUp().getInMemoryProductDao();
+        menuDao = MenuFixture.setUp().getMenuDao();
+        menuGroupDao = MenuGroupFixture.setUp().getMenuGroupDao();
+        menuProductDao = MenuProductFixture.setUp().getMenuProductDao();
+        productDao = ProductFixture.setUp().getProductDao();
         menuService = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
     }
 
     @Test
     @DisplayName("메뉴를 생성한다.")
     void createMenu() {
-        Menu menu = new Menu();
-        menu.setName("맵슐랭순살");
         final BigDecimal menuPrice = new BigDecimal(20_000);
-        menu.setPrice(menuPrice);
-        menu.setMenuGroupId(한마리메뉴);
+        Menu menu = MenuFixture.createMenu("맵슐랭순살", menuPrice, 한마리메뉴);
         final MenuProduct maebsyullaeng = menuProductDao.findById(MenuProductFixture.맵슐랭)
                 .orElseThrow();
         menu.setMenuProducts(Collections.singletonList(maebsyullaeng));
@@ -103,7 +100,8 @@ class MenuServiceTest {
         long invalidProductId = 99999L;
         final Menu menu = MenuFixture.createMenu();
 
-        menu.setMenuProducts(Collections.singletonList(new MenuProduct(null, invalidProductId, 2)));
+        final MenuProduct menuProduct = MenuProductFixture.createMenuProduct(invalidProductId);
+        menu.setMenuProducts(Collections.singletonList(menuProduct));
 
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);

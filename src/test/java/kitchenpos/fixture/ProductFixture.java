@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.InMemoryProductDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 
 public class ProductFixture {
@@ -11,11 +12,11 @@ public class ProductFixture {
     public static final Long 맵슐랭 = 1L;
     public static final Long 허니콤보 = 2L;
 
-    private final InMemoryProductDao inMemoryProductDao;
+    private final ProductDao productDao;
     private List<Product> fixtures;
 
-    public ProductFixture(final InMemoryProductDao inMemoryProductDao) {
-        this.inMemoryProductDao = inMemoryProductDao;
+    public ProductFixture(final ProductDao productDao) {
+        this.productDao = productDao;
     }
 
     public static ProductFixture setUp() {
@@ -49,11 +50,11 @@ public class ProductFixture {
         final Product product = new Product();
         product.setName(productName);
         product.setPrice(price);
-        return inMemoryProductDao.save(product);
+        return productDao.save(product);
     }
 
-    public InMemoryProductDao getInMemoryProductDao() {
-        return inMemoryProductDao;
+    public ProductDao getProductDao() {
+        return productDao;
     }
 
     public List<Product> getFixtures() {
