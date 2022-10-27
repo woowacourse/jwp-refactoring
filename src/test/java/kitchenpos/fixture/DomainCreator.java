@@ -48,7 +48,7 @@ public class DomainCreator {
         final Order order = new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
         order.setId(id);
         order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
+        order.updateOrderStatus(orderStatus);
         order.setOrderedTime(orderedTime);
         order.setOrderLineItems(orderLineItems);
         orderLineItems
@@ -60,8 +60,6 @@ public class DomainCreator {
 
     public static OrderLineItem createOrderLineItem(final Long seq, final Long orderId,
         final Long menuId, final int quantity) {
-        final OrderLineItem orderLineItem = new OrderLineItem(seq, orderId, menuId, quantity);
-
-        return orderLineItem;
+        return new OrderLineItem(seq, orderId, menuId, quantity);
     }
 }

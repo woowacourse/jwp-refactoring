@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -29,6 +28,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse create(final OrderTableCreateRequest request) {
         final OrderTable orderTable = orderTableDao.save(request.toEntity());
+
         return OrderTableResponse.from(orderTable);
     }
 
@@ -41,57 +41,30 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId,
-        final OrderTableUpdateEmptyRequest request) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTableUpdateEmptyRequest request
+    ) {
+        final OrderTable orderTable = orderTableDao.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
-
-        validateNotGrouping(savedOrderTable);
         validateCompletion(orderTableId);
+        orderTable.updateEmpty(request.isEmpty());
 
-        savedOrderTable.setEmpty(request.isEmpty());
-        final OrderTable updatedOrderTable = orderTableDao.save(savedOrderTable);
-
-        return OrderTableResponse.from(updatedOrderTable);
+        return OrderTableResponse.from(orderTableDao.save(orderTable));
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
-        final OrderTableUpdateNumberOfGuestsRequest request) {
-        final int numberOfGuests = request.getNumberOfGuests();
-        // OrderTable로 이동 예정
-        validateNumberOfGuests(numberOfGuests);
-
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTableUpdateNumberOfGuestsRequest request
+    ) {
+        final OrderTable orderTable = orderTableDao.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
-        validateNotEmpty(savedOrderTable);
+        orderTable.updateNumberOfGuests(request.getNumberOfGuests());
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-        final OrderTable updatedOrderTable = orderTableDao.save(savedOrderTable);
-
-        return OrderTableResponse.from(updatedOrderTable);
-    }
-
-    private void validateNumberOfGuests(final int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateNotGrouping(final OrderTable savedOrderTable) {
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
+        return OrderTableResponse.from(orderTableDao.save(orderTable));
     }
 
     private void validateCompletion(final Long orderTableId) {
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
             orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateNotEmpty(final OrderTable savedOrderTable) {
-        if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
     }

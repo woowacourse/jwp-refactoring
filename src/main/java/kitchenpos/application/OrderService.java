@@ -1,8 +1,6 @@
 package kitchenpos.application;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -14,6 +12,7 @@ import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderUpdateStatusRequest;
 import kitchenpos.dto.response.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,41 +43,38 @@ public class OrderService {
         validateNotDuplicateMenuId(request.getOrderLineItems());
         validateTableNotEmpty(request.getOrderTableId());
 
-        final Order savedOrder = orderDao.save(request.toEntity());
+        final Order order = orderDao.save(request.toEntity());
+        final List<OrderLineItem> orderLineItems = saveOrderLineItems(
+            request.getOrderLineItems(), order.getId());
 
-        final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : request.getOrderLineItems()) {
-            orderLineItem.setOrderId(orderId);
-            savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
-        }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
-
-        return OrderResponse.of(savedOrder, savedOrderLineItems);
+        return OrderResponse.of(order, orderLineItems);
     }
 
     public List<OrderResponse> list() {
-        final List<Order> orders = orderDao.findAll();
-
-        return orders.stream()
+        return orderDao.findAll()
+            .stream()
             .map(it -> OrderResponse.of(it, orderLineItemDao.findAllByOrderId(it.getId())))
             .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderResponse changeOrderStatus(final Long orderId, final Order order) {
-        final Order savedOrder = orderDao.findById(orderId)
+    public OrderResponse changeOrderStatus(
+        final Long orderId, final OrderUpdateStatusRequest request
+    ) {
+        final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
+        final Order order = orderDao.findById(orderId)
             .orElseThrow(IllegalArgumentException::new);
+        order.updateOrderStatus(orderStatus.name());
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
+        return OrderResponse.of(orderDao.save(order), orderLineItemDao.findAllByOrderId(orderId));
+    }
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
-
-        return OrderResponse.of(
-            orderDao.save(savedOrder), orderLineItemDao.findAllByOrderId(orderId));
+    private List<OrderLineItem> saveOrderLineItems(
+        final List<OrderLineItem> orderLineItems, final Long orderId) {
+        return orderLineItems.stream()
+            .map(it -> new OrderLineItem(null, orderId, it.getMenuId(), it.getQuantity()))
+            .map(orderLineItemDao::save)
+            .collect(Collectors.toList());
     }
 
     private void validateNotDuplicateMenuId(final List<OrderLineItem> orderLineItems) {

@@ -32,54 +32,52 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
-        final OrderTables orderTables = new OrderTables(request.getOrderTables());
+        final OrderTables requestOrderTables = new OrderTables(request.getOrderTables());
         final OrderTables savedOrderTables = new OrderTables(
-            orderTableDao.findAllByIdIn(orderTables.getIds()));
+            orderTableDao.findAllByIdIn(requestOrderTables.getIds()));
 
-        validateOrderTablesSize(orderTables, savedOrderTables);
-        validatePossibleGrouping(savedOrderTables);
+        savedOrderTables.validateSameSize(requestOrderTables);
+        savedOrderTables.validateNotGroupAll();
 
-        final TableGroup savedTableGroup = tableGroupDao.save(request.toEntity());
+        final TableGroup tableGroup = tableGroupDao.save(request.toEntity());
+        final List<OrderTable> orderTables = saveOrderTables(
+            savedOrderTables.getOrderTables(), tableGroup.getId());
 
-        final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables.getOrderTables()) {
-            savedOrderTable.setTableGroupId(tableGroupId);
-            savedOrderTable.setEmpty(false);
-            orderTableDao.save(savedOrderTable);
-        }
-
-        return TableGroupResponse.of(savedTableGroup, savedOrderTables);
+        return TableGroupResponse.of(tableGroup, orderTables);
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
+        final OrderTables orderTables = new OrderTables(
+            orderTableDao.findAllByTableGroupId(tableGroupId));
 
-        final List<Long> orderTableIds = orderTables.stream()
-            .map(OrderTable::getId)
+        validateCompletion(orderTables.getIds());
+
+        saveOrderTables(orderTables, null, false);
+    }
+
+    private List<OrderTable> saveOrderTables(
+        final List<OrderTable> orderTables, final Long tableGroupId
+    ) {
+        return orderTables.stream()
+            .map(it -> new OrderTable(it.getId(), tableGroupId, it.getNumberOfGuests(),
+                it.isEmpty()))
+            .map(orderTableDao::save)
             .collect(Collectors.toList());
+    }
 
+    private void saveOrderTables(
+        final OrderTables orderTables, final Long tableGroupId, final boolean empty
+    ) {
+        orderTables.getOrderTables()
+            .stream()
+            .map(it -> new OrderTable(it.getId(), tableGroupId, it.getNumberOfGuests(), empty))
+            .forEach(orderTableDao::save);
+    }
+
+    private void validateCompletion(final List<Long> orderTableIds) {
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
             orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
-            orderTableDao.save(orderTable);
-        }
-    }
-
-    private void validateOrderTablesSize(final OrderTables orderTables,
-        final OrderTables savedOrderTables) {
-        if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validatePossibleGrouping(final OrderTables savedOrderTables) {
-        if (!savedOrderTables.canGrouping()) {
             throw new IllegalArgumentException();
         }
     }

@@ -176,7 +176,7 @@ public class ServiceTest {
 
     protected Order saveAndGetOrder(final String status) {
         final Order order = saveAndGetOrder();
-        order.setOrderStatus(status);
+        order.updateOrderStatus(status);
 
         return orderDao.save(order);
     }

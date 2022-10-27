@@ -6,7 +6,7 @@ import kitchenpos.domain.TableGroup;
 
 public class TableGroupFixture extends DomainCreator {
 
-    public static TableGroup createTableGroup(Long id, OrderTable... orderTables) {
+    public static TableGroup createTableGroup(final Long id, final OrderTable... orderTables) {
         return createTableGroup(id, List.of(orderTables));
     }
 }

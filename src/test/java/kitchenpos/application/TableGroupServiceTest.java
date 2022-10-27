@@ -37,7 +37,9 @@ class TableGroupServiceTest extends ServiceTest {
         // then
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getOrderTables()).hasSize(2)
+            () -> assertThat(actual.getOrderTables()).hasSize(2),
+            () -> assertThat(tableGroupDao.findAll()).hasSize(1),
+            () -> assertThat(orderTableDao.findAll()).hasSize(2)
         );
     }
 
@@ -48,7 +50,10 @@ class TableGroupServiceTest extends ServiceTest {
         final OrderTable orderTable1 = orderTableDao.save(빈_테이블_1번);
         final OrderTable orderTable2 = orderTableDao.save(빈_테이블_2번);
 
-        final TableGroup tableGroup = saveTableGroup(orderTable1, orderTable2);
+        final TableGroup tableGroup = tableGroupDao.save(
+            createTableGroup(null, List.of(orderTable1, orderTable2)));
+        updateOrderTable(orderTable1, tableGroup);
+        updateOrderTable(orderTable2, tableGroup);
 
         // when
         tableGroupService.ungroup(tableGroup.getId());
@@ -64,13 +69,12 @@ class TableGroupServiceTest extends ServiceTest {
         );
     }
 
-    private TableGroup saveTableGroup(final OrderTable... orderTables) {
-        final TableGroup tableGroup = tableGroupDao.save(createTableGroup(1L, orderTables));
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(tableGroup.getId());
-            orderTableDao.save(orderTable);
-        }
-
-        return tableGroup;
+    private void updateOrderTable(final OrderTable orderTable1, final TableGroup tableGroup) {
+        orderTableDao.save(new OrderTable(
+            orderTable1.getId(),
+            tableGroup.getId(),
+            orderTable1.getNumberOfGuests(),
+            orderTable1.isEmpty())
+        );
     }
 }

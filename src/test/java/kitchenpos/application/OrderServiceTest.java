@@ -12,6 +12,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.dto.request.OrderUpdateStatusRequest;
 import kitchenpos.dto.response.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,7 +47,6 @@ class OrderServiceTest extends ServiceTest {
     void create_empty_orderLineItems_throwException() {
         // given
         final OrderTable orderTable = saveAndGetOrderTable(false);
-
         final OrderCreateRequest request = createOrderCreateRequest(orderTable.getId(), List.of());
 
         // when & then
@@ -115,7 +115,7 @@ class OrderServiceTest extends ServiceTest {
     void changeOrderStatus(final OrderStatus status) {
         // given
         final Order order = saveAndGetOrder();
-        final Order request = createRequestOrderStatus(status);
+        final OrderUpdateStatusRequest request = createRequestOrderStatus(status);
 
         // when
         final OrderResponse actual = orderService.changeOrderStatus(order.getId(), request);
@@ -129,8 +129,7 @@ class OrderServiceTest extends ServiceTest {
     void changeOrderStatus_status_completion_throwException() {
         // given
         final Order order = saveAndGetOrder(OrderStatus.COMPLETION.name());
-
-        final Order request = createRequestOrderStatus(OrderStatus.COMPLETION);
+        final OrderUpdateStatusRequest request = createRequestOrderStatus(OrderStatus.COMPLETION);
 
         // when & when
         assertThatThrownBy(

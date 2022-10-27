@@ -29,12 +29,16 @@ public class OrderTables {
             .collect(Collectors.toList());
     }
 
-    public boolean canGrouping() {
+    public void validateSameSize(final OrderTables orderTables) {
+        if (!Objects.equals(this.orderTables.size(), orderTables.size())) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateNotGroupAll() {
         for (final OrderTable orderTable : orderTables) {
             validatePossibleGrouping(orderTable);
         }
-
-        return true;
     }
 
     private void validatePossibleGrouping(final OrderTable orderTable) {
