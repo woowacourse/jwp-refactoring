@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
@@ -32,22 +31,30 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+    public OrderTable changeEmpty(final Long orderTableId, final OrderTable request) {
+        final OrderTable orderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
+        validateTableGroupIsNull(orderTable);
+        validateOrderStatus(orderTableId);
+
+        OrderTable updateOrderTable = new OrderTable(orderTableId, orderTable.getNumberOfGuests(), request.isEmpty());
+        return orderTableDao.save(updateOrderTable);
+    }
+
+    private void validateTableGroupIsNull(final OrderTable orderTable) {
+        if (orderTable.isTableGroupIdNotNull()) {
             throw new IllegalArgumentException();
         }
+    }
 
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+    private void validateOrderStatus(final Long orderTableId) {
+        List<String> conditions = Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name());
+        boolean existsOrderInConditions = orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, conditions);
+
+        if (existsOrderInConditions) {
             throw new IllegalArgumentException();
         }
-
-        savedOrderTable.setEmpty(orderTable.isEmpty());
-
-        return orderTableDao.save(savedOrderTable);
     }
 
     @Transactional

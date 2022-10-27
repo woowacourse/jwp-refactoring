@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.util.Objects;
 
 public class OrderTable {
+
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
@@ -26,12 +27,16 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public Long getId() {
-        return id;
+    public boolean isTableGroupIdNotNull() {
+        return Objects.nonNull(tableGroupId);
     }
 
     public boolean isNotEmpty() {
         return !empty || Objects.nonNull(tableGroupId);
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public void setId(final Long id) {
