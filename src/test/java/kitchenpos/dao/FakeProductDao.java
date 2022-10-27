@@ -8,17 +8,18 @@ import kitchenpos.domain.Product;
 public class FakeProductDao implements ProductDao {
 
     private final List<Product> IN_MEMORY_PRODUCT;
+    private Long id;
 
     public FakeProductDao() {
         IN_MEMORY_PRODUCT = new ArrayList<>();
+        id = 1L;
     }
 
     @Override
     public Product save(Product entity) {
-        IN_MEMORY_PRODUCT.add(entity);
-        Long id = (long) IN_MEMORY_PRODUCT.size();
-        entity.setId(id);
-        return entity;
+        Product product = new Product(id++, entity.getName(), entity.getPrice());
+        IN_MEMORY_PRODUCT.add(product);
+        return product;
     }
 
     @Override
