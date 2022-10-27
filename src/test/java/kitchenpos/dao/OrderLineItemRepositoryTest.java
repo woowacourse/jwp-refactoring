@@ -44,7 +44,9 @@ class OrderLineItemRepositoryTest {
     @DisplayName("OrderLineItem을 저장한다.")
     void save() {
         Menu menu = createMenu();
-        Order order = createOrder();
+        List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getId(), 1),
+                new OrderLineItem(menu.getId(), 2));
+        Order order = createOrder(orderLineItems);
 
         OrderLineItem orderLineItem = orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 1));
         assertThat(orderLineItem).isEqualTo(orderLineItemRepository.findById(orderLineItem.getSeq()).orElseThrow());
@@ -54,26 +56,25 @@ class OrderLineItemRepositoryTest {
     @DisplayName("모든 OrderLineItem을 조회한다.")
     void findAll() {
         Menu menu = createMenu();
-        Order order = createOrder();
+        List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getId(), 1),
+                new OrderLineItem(menu.getId(), 2));
+        createOrder(orderLineItems);
 
-        OrderLineItem orderLineItem1 = orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 1));
-        OrderLineItem orderLineItem2 = orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 2));
-
-        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAll();
-        assertThat(orderLineItems).contains(orderLineItem1, orderLineItem2);
+        List<OrderLineItem> foundOrderLineItems = orderLineItemRepository.findAll();
+        assertThat(foundOrderLineItems).hasSize(2);
     }
 
     @Test
     @DisplayName("Order에 포함된 모든 OrderLineItem을 조회한다.")
     void findAllByOrderId() {
         Menu menu = createMenu();
-        Order order = createOrder();
 
-        OrderLineItem orderLineItem1 = orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 1));
-        OrderLineItem orderLineItem2 = orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 2));
+        List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getId(), 1),
+                new OrderLineItem(menu.getId(), 2));
+        Order order = createOrder(orderLineItems);
 
-        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(order.getId());
-        assertThat(orderLineItems).containsExactly(orderLineItem1, orderLineItem2);
+        List<OrderLineItem> foundOrderLineItems = orderLineItemRepository.findAllByOrderId(order.getId());
+        assertThat(foundOrderLineItems).hasSize(2);
     }
 
     private Menu createMenu() {
@@ -81,10 +82,11 @@ class OrderLineItemRepositoryTest {
         return menuRepository.save(new Menu(MENU1_NAME, MENU1_PRICE, menuGroup.getId()));
     }
 
-    private Order createOrder() {
+    private Order createOrder(final List<OrderLineItem> orderLineItems) {
         OrderTable orderTable1 = orderTableRepository.save(new OrderTable(10, true));
         OrderTable orderTable2 = orderTableRepository.save(new OrderTable(10, true));
         tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
-        return orderRepository.save(new Order(orderTable1.getId(), OrderStatus.COOKING, LocalDateTime.now()));
+        return orderRepository.save(
+                new Order(orderTable1.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems));
     }
 }

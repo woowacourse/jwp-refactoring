@@ -1,19 +1,28 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.fixtures.DomainFixtures.MENU1_NAME;
+import static kitchenpos.support.fixtures.DomainFixtures.MENU1_PRICE;
+import static kitchenpos.support.fixtures.DomainFixtures.MENU_GROUP_NAME1;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.dto.request.OrderTableCreateCommand;
 import kitchenpos.application.dto.request.OrderTableEmptyCommand;
 import kitchenpos.application.dto.request.OrderTableGuestCommand;
 import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -40,6 +49,12 @@ class TableServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
     @Test
     @DisplayName("OrderTable을 생성한다.")
@@ -91,8 +106,12 @@ class TableServiceTest {
         @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
         @DisplayName("OrderTable의 주문 상태가 COMPLETION이 아닐 경우 예외가 발생한다.")
         void orderTableOrdersNotCompletionFailed(final OrderStatus orderStatus) {
+            Menu menu = createMenu(MENU1_NAME, MENU1_PRICE);
             OrderTableResponse orderTableResponse = tableService.create(new OrderTableCreateCommand(10, false));
-            orderRepository.save(new Order(orderTableResponse.id(), orderStatus, LocalDateTime.now()));
+
+            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getId(), 1),
+                    new OrderLineItem(menu.getId(), 2));
+            orderRepository.save(new Order(orderTableResponse.id(), orderStatus, LocalDateTime.now(), orderLineItems));
 
             assertThatThrownBy(
                     () -> tableService.changeEmpty(orderTableResponse.id(), new OrderTableEmptyCommand(true)))
@@ -156,5 +175,10 @@ class TableServiceTest {
                     orderTableGuestCommand);
             assertThat(result.numberOfGuests()).isEqualTo(20);
         }
+    }
+
+    private Menu createMenu(final String name, final BigDecimal price) {
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP_NAME1));
+        return menuRepository.save(new Menu(name, price, menuGroup.getId()));
     }
 }

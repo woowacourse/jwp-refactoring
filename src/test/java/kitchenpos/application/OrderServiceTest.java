@@ -170,10 +170,10 @@ class OrderServiceTest {
             Menu menu = createMenu(MENU1_NAME, MENU1_PRICE);
             OrderTable orderTable = createOrderTable(false);
 
+            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getId(), 1),
+                    new OrderLineItem(menu.getId(), 2));
             Order order = orderRepository.save(
-                    new Order(orderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now()));
-            orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 1));
-            orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 2));
+                    new Order(orderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now(), orderLineItems));
 
             assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(),
                     new OrderStatusCommand(OrderStatus.COMPLETION.name())))
@@ -187,10 +187,10 @@ class OrderServiceTest {
             Menu menu = createMenu(MENU1_NAME, MENU1_PRICE);
             OrderTable orderTable = createOrderTable(false);
 
+            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getId(), 1),
+                    new OrderLineItem(menu.getId(), 2));
             Order order = orderRepository.save(
-                    new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now()));
-            orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 1));
-            orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 2));
+                    new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems));
 
             OrderResponse orderResponse = orderService.changeOrderStatus(order.getId(),
                     new OrderStatusCommand(OrderStatus.MEAL.name()));
