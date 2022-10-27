@@ -11,6 +11,7 @@ import kitchenpos.application.ProductService;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 
 @SpringBootTest
@@ -40,4 +41,7 @@ public class ServiceTest {
 
     @Autowired
     protected TableGroupDao tableGroupDao;
+
+    @Autowired
+    protected OrderTableDao orderTableDao;
 }

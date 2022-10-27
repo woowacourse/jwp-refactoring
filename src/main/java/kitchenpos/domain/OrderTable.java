@@ -2,16 +2,33 @@ package kitchenpos.domain;
 
 import java.util.Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 /**
  * 매장에서 주문이 발생하는 영역
  * emptyTable: 주문을 등록할 수 없는 OrderTable
  * numberOfGuests: 방문한 손님 수. 필수는 아니며 Order 는 0명으로 등록할 수 있다.
  */
+@Entity
+@Table(name = "order_table")
 public class OrderTable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "table_group_id")
     private Long tableGroupId;
+
+    @Column(name = "number_of_guests")
     private int numberOfGuests;
+
+    @Column(name = "empty")
     private boolean empty;
 
     public OrderTable() {
