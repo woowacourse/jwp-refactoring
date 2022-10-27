@@ -5,7 +5,7 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.dao.TableGroupDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,7 +42,7 @@ class ServiceTest {
     protected MenuDao menuDao;
 
     @Autowired
-    protected ProductDao productDao;
+    protected ProductRepository productRepository;
 
     @Autowired
     protected OrderTableDao orderTableDao;

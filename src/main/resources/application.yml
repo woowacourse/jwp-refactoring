@@ -1,11 +1,3 @@
-logging:
-  level:
-    org:
-      hibernate:
-        SQL: debug
-        type:
-          descriptor:
-            sql: trace
 spring:
   h2:
     console:
@@ -15,3 +7,11 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+        type:
+          descriptor:
+            sql: trace

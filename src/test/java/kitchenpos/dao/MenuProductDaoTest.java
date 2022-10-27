@@ -25,7 +25,7 @@ class MenuProductDaoTest {
     private MenuProductDao menuProductDao;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuGroupDao menuGroupDao;
@@ -39,7 +39,7 @@ class MenuProductDaoTest {
 
     @BeforeEach
     void setUp() {
-        productDao.save(product);
+        productRepository.save(product);
         menuGroupDao.save(menuGroup);
         menuDao.save(menu);
     }

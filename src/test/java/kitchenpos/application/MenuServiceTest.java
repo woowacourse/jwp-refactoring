@@ -35,7 +35,7 @@ class MenuServiceTest {
             @BeforeEach
             void setUp() {
                 menuGroup = menuGroupDao.save(메뉴_그룹_생성("한마리메뉴"));
-                productDao.save(상품_생성("치킨", BigDecimal.valueOf(1_000L)));
+                productRepository.save(상품_생성("치킨", BigDecimal.valueOf(1_000L)));
             }
 
             final MenuProduct menuProduct = 메뉴_상품_생성(1L, 1L, 5);
@@ -58,7 +58,7 @@ class MenuServiceTest {
             @BeforeEach
             void setUp() {
                 menuGroup = menuGroupDao.save(메뉴_그룹_생성("한마리메뉴"));
-                productDao.save(상품_생성("치킨", BigDecimal.valueOf(1_000L)));
+                productRepository.save(상품_생성("치킨", BigDecimal.valueOf(1_000L)));
             }
 
             final MenuProduct menuProduct = 메뉴_상품_생성(1L, 1L, 1);

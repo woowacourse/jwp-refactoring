@@ -19,10 +19,7 @@ public class TestFixtures {
     }
 
     public static Product 상품_생성(final String name, final BigDecimal price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-        return product;
+        return new Product(name, price);
     }
 
     public static MenuGroup 메뉴_그룹_생성(final String name) {
