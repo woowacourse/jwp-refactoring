@@ -10,6 +10,8 @@ import kitchenpos.support.DataSupport;
 import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,10 +45,10 @@ class ProductServiceTest {
                 .isThrownBy(() -> productService.create(request));
     }
 
-    @DisplayName("상품을 등록할 때 상품 가격이 0보다 작으면 예외가 발생한다.")
-    @Test
-    void create_throwsException_ifPriceUnder0() {
-        final Product request = RequestBuilder.ofProduct(-1);
+    @ValueSource(ints = {-1, -500, -1000})
+    @ParameterizedTest(name = "상품을 등록할 때 상품 가격이 0보다 작은 {0}이면 예외가 발생한다.")
+    void create_throwsException_ifPriceUnder0(final int price) {
+        final Product request = RequestBuilder.ofProduct(price);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> productService.create(request));
     }

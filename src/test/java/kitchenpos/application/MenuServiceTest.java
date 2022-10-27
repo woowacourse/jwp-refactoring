@@ -14,6 +14,8 @@ import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,19 +77,19 @@ class MenuServiceTest {
                 .isThrownBy(() -> menuService.create(request));
     }
 
-    @DisplayName("메뉴를 등록할 때 가격이 0보다 작으면 예외가 발생한다.")
-    @Test
-    void create_throwsException_ifPriceUnder0() {
-        final Menu request = RequestBuilder.ofMenu(savedMenuGroup, savedProducts, -1);
+    @ValueSource(ints = {-1, -500, -1000})
+    @ParameterizedTest(name = "메뉴를 등록할 때 가격이 0보다 작은 {0}이면 예외가 발생한다.")
+    void create_throwsException_ifPriceUnder0(final int price) {
+        final Menu request = RequestBuilder.ofMenu(savedMenuGroup, savedProducts, price);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> menuService.create(request));
     }
 
-    @DisplayName("메뉴를 등록할 때 가격이 상품 가격의 총 합보다 크면 예외가 발생한다.")
-    @Test
-    void create_throwsException_ifPriceOverProduct() {
+    @ValueSource(ints = {1, 500, 1000})
+    @ParameterizedTest(name = "메뉴를 등록할 때 가격이 상품 가격의 총 합보다 크면 예외가 발생한다({0}만큼 초과).")
+    void create_throwsException_ifPriceOverProduct(final int addedAmount) {
         // given
-        final int priceOverProduct = PRICE + 1;
+        final int priceOverProduct = PRICE + addedAmount;
 
         // when, then
         final Menu request = RequestBuilder.ofMenu(savedMenuGroup, savedProducts, priceOverProduct);
