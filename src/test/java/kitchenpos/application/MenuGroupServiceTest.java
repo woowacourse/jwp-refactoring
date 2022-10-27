@@ -27,8 +27,7 @@ class MenuGroupServiceTest extends ServiceTestBase {
     @Test
     void 메뉴_그룹_이름을_null_값으로_생성() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(null);
+        MenuGroup menuGroup = new MenuGroup(null, null);
 
         // when & then
         assertThatThrownBy(() -> menuGroupService.create(menuGroup))
