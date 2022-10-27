@@ -1,15 +1,16 @@
 package kitchenpos.application;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import kitchenpos.application.dto.OrderTableCreationDto;
+import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TableService {
@@ -21,6 +22,7 @@ public class TableService {
         this.orderTableDao = orderTableDao;
     }
 
+    @Deprecated
     @Transactional
     public OrderTable create(final OrderTable orderTable) {
         orderTable.setId(null);
@@ -28,6 +30,12 @@ public class TableService {
 
         return orderTableDao.save(orderTable);
     }
+
+    @Transactional
+    public OrderTableDto createOrderTable(final OrderTableCreationDto orderTableCreationDto) {
+        return OrderTableDto.from(orderTableDao.save(OrderTableCreationDto.toEntity(orderTableCreationDto)));
+    }
+
 
     public List<OrderTable> list() {
         return orderTableDao.findAll();

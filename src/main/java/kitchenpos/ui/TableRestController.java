@@ -1,12 +1,19 @@
 package kitchenpos.ui;
 
-import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.net.URI;
 import java.util.List;
+import kitchenpos.application.TableService;
+import kitchenpos.application.dto.OrderTableCreationDto;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.request.OrderTableCreationRequest;
+import kitchenpos.ui.dto.response.OrderTableResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TableRestController {
@@ -16,6 +23,7 @@ public class TableRestController {
         this.tableService = tableService;
     }
 
+    @Deprecated
     @PostMapping("/api/tables")
     public ResponseEntity<OrderTable> create(@RequestBody final OrderTable orderTable) {
         final OrderTable created = tableService.create(orderTable);
@@ -23,6 +31,15 @@ public class TableRestController {
         return ResponseEntity.created(uri)
                 .body(created)
                 ;
+    }
+
+    @PostMapping("/api/v2/tables")
+    public ResponseEntity<OrderTableResponse> createOrderTable(
+            @RequestBody final OrderTableCreationRequest orderTableCreationRequest) {
+        final OrderTableResponse created = OrderTableResponse.from(
+                tableService.createOrderTable(OrderTableCreationDto.from(orderTableCreationRequest)));
+        final URI uri = URI.create("/api/v2/tables/" + created.getId());
+        return ResponseEntity.created(uri).body(created);
     }
 
     @GetMapping("/api/tables")

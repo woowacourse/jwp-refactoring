@@ -38,6 +38,7 @@ public class MenuService {
         this.productDao = productDao;
     }
 
+    @Deprecated
     @Transactional
     public Menu create(final Menu menu) {
         final BigDecimal price = menu.getPrice();

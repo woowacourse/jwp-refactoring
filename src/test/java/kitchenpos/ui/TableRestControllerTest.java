@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 import java.util.Map;
+import kitchenpos.application.dto.OrderTableCreationDto;
 import kitchenpos.common.fixture.RequestBody;
 import kitchenpos.application.TableService;
 import kitchenpos.common.ControllerTest;
@@ -38,9 +39,9 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("주문 테이블을 생성한다.")
     @Test
     void createOrderTable() throws Exception {
-        when(tableService.create(any(OrderTable.class))).thenReturn(DomainFixture.getOrderTable(true));
+        when(tableService.createOrderTable(any(OrderTableCreationDto.class))).thenReturn(DtoFixture.getOrderTableDto(true));
 
-        final ResultActions resultActions = mockMvc.perform(post("/api/tables")
+        final ResultActions resultActions = mockMvc.perform(post("/api/v2/tables")
                         .content(objectMapper.writeValueAsString(RequestBody.ORDER_TABLE_1))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
