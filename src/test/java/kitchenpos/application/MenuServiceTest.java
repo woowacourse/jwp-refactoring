@@ -95,8 +95,8 @@ class MenuServiceTest {
         menu.setPrice(BigDecimal.valueOf(1000L));
 
         List<MenuProduct> menuProducts = new ArrayList<>();
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(0L);
+        final long NON_EXIST_ID = 0L;
+        MenuProduct menuProduct = new MenuProduct(NON_EXIST_ID, 1);
         menuProducts.add(menuProduct);
         menu.setMenuProducts(menuProducts);
 
@@ -106,7 +106,7 @@ class MenuServiceTest {
     }
 
     @Test
-    @DisplayName("Menu의 가격과 Menu에 포함된 Product 가격의 합이 달라서는 안된다")
+    @DisplayName("Product의 가격의 합보다 Menu의 가격이 더 커서는 안된다")
     void throwException_WhenMenuPriceAndSumOfMenuProductPrice_NotMatch() {
         // given
         final BigDecimal PRODUCT_PRICE = BigDecimal.valueOf(1000L);
@@ -120,10 +120,7 @@ class MenuServiceTest {
                         .build()
         ).getId();
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(QUANTITY);
-        List<MenuProduct> menuProducts = List.of(menuProduct);
+        List<MenuProduct> menuProducts = List.of(new MenuProduct(productId, QUANTITY));
 
         Menu menu = new Menu();
         menu.setMenuGroupId(1L);
@@ -139,19 +136,24 @@ class MenuServiceTest {
     @DisplayName("메뉴를 생성한다")
     void saveMenu() {
         // given
-        Long productId = productDao.save(aProduct().build()).getId();
+        final BigDecimal PRODUCT_PRICE = BigDecimal.valueOf(14_000L);
+        final long QUANTITY = 1L;
+        final BigDecimal MENU_PRICE = PRODUCT_PRICE.multiply(BigDecimal.valueOf(QUANTITY));
+
+        Long productId = productDao.save(
+                aProduct()
+                        .withPrice(PRODUCT_PRICE)
+                        .build()
+        ).getId();
 
         Long menuGroupId = menuGroupDao.save(createMenuGroup()).getId();
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(2);
-        List<MenuProduct> menuProducts = List.of(menuProduct);
+        List<MenuProduct> menuProducts = List.of(new MenuProduct(productId, QUANTITY));
 
         Menu menu = new Menu();
         menu.setName("강정치킨");
         menu.setMenuGroupId(menuGroupId);
-        menu.setPrice(BigDecimal.valueOf(2000L));
+        menu.setPrice(MENU_PRICE);
         menu.setMenuProducts(menuProducts);
 
         // when

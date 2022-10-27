@@ -39,10 +39,7 @@ class MenuProductDaoTest {
     @DisplayName("MenuProduct를 저장하고 저장된 엔티티를 반환한다")
     void save() {
         // given
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(1L);
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(1L);
+        MenuProduct menuProduct = new MenuProduct(null, 1L, 1L, 1L);
 
         // when
         MenuProduct savedMenuProduct = sut.save(menuProduct);
@@ -66,10 +63,7 @@ class MenuProductDaoTest {
         // given
         List<MenuProduct> previousSaved = sut.findAll();
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(1L);
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(1L);
+        MenuProduct menuProduct = new MenuProduct(null, 1L, 1L, 1L);
 
         sut.save(menuProduct);
 
@@ -94,10 +88,7 @@ class MenuProductDaoTest {
 
         Long productId = productDao.save(aProduct().build()).getId();
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(1);
+        MenuProduct menuProduct = new MenuProduct(null, menuId, productId, 1L);
         MenuProduct savedMenuProduct = sut.save(menuProduct);
 
         // when
