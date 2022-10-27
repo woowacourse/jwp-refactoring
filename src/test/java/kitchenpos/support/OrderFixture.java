@@ -2,9 +2,9 @@ package kitchenpos.support;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 
 public class OrderFixture {
 

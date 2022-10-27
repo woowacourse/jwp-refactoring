@@ -14,12 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.table.domain.repository.OrderTableRepository;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.product.domain.Product;
+import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Nested
     @DisplayName("테이블 그룹핑 테스트")
@@ -128,8 +128,8 @@ class TableGroupServiceTest extends ServiceTest {
         void ungroup() {
             tableGroupService.ungroup(tableGroup.getId());
             final List<OrderTable> orderTables = tableGroup.getOrderTables();
-            final Optional<OrderTable> firstTable = orderTableDao.findById(orderTables.get(0).getId());
-            final Optional<OrderTable> secondTable = orderTableDao.findById(orderTables.get(1).getId());
+            final Optional<OrderTable> firstTable = orderTableRepository.findById(orderTables.get(0).getId());
+            final Optional<OrderTable> secondTable = orderTableRepository.findById(orderTables.get(1).getId());
 
             assertAll(
                     () -> assertThat(firstTable.get().getTableGroupId()).isNull(),
