@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -25,7 +26,7 @@ public class Menu {
     private Long menuGroupId;
 
     @OneToMany(mappedBy = "menu")
-    private List<MenuProduct> menuProducts;
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
     }
@@ -43,10 +44,7 @@ public class Menu {
     }
 
     public Menu(String name, BigDecimal price, Long menuGroupId) {
-        validatePrice(price);
-        this.name = name;
-        this.price = price;
-        this.menuGroupId = menuGroupId;
+        this(name, price, menuGroupId, new ArrayList<>());
     }
 
     public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {

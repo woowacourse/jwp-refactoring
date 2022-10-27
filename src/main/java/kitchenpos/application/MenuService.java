@@ -37,8 +37,7 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
-        final List<Product> products = getProducts(menuRequest);
-        final Menu menu = menuRequest.toEntity(products);
+        final Menu menu = convertToMenu(menuRequest);
 
         validateMenuGroupExist(menu.getMenuGroupId());
         validateMenuPrice(menu);
@@ -51,6 +50,11 @@ public class MenuService {
         }
 
         return MenuResponse.of(savedMenu);
+    }
+
+    private Menu convertToMenu(final MenuRequest menuRequest) {
+        final List<Product> products = getProducts(menuRequest);
+        return menuRequest.toEntity(products);
     }
 
     private List<Product> getProducts(final MenuRequest menuRequest) {
