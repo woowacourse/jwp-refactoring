@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductCreateRequest;
+import kitchenpos.dto.response.ProductCreateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -25,11 +27,11 @@ class ProductServiceTest extends ServiceTest {
 
             private final String name = "햄버거";
             private final BigDecimal price = BigDecimal.valueOf(5000);
-            private final Product product = new Product(name, price);
+            private final ProductCreateRequest productCreateRequest = new ProductCreateRequest(name, price);
 
             @Test
             void 상품을_추가한다() {
-                Product actual = productService.create(product);
+                ProductCreateResponse actual = productService.create(productCreateRequest);
 
                 assertAll(() -> {
                     assertThat(actual.getId()).isNotNull();
@@ -44,11 +46,11 @@ class ProductServiceTest extends ServiceTest {
 
             private final String name = "햄버거";
             private final BigDecimal price = null;
-            private final Product product = new Product(name, price);
+            private final ProductCreateRequest productCreateRequest = new ProductCreateRequest(name, price);
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> productService.create(product))
+                assertThatThrownBy(() -> productService.create(productCreateRequest))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("상품의 가격은 null 이거나 0원 미만일 수 없습니다.");
             }
@@ -59,11 +61,11 @@ class ProductServiceTest extends ServiceTest {
 
             private final String name = "햄버거";
             private final BigDecimal price = BigDecimal.valueOf(-1);
-            private final Product product = new Product(name, price);
+            private final ProductCreateRequest productCreateRequest = new ProductCreateRequest(name, price);
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> productService.create(product))
+                assertThatThrownBy(() -> productService.create(productCreateRequest))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("상품의 가격은 null 이거나 0원 미만일 수 없습니다.");
             }

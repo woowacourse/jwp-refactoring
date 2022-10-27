@@ -9,7 +9,8 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductCreateRequest;
+import kitchenpos.dto.response.ProductCreateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -29,8 +30,9 @@ class MenuServiceTest extends ServiceTest {
             private final String name = "햄버거";
             private final BigDecimal price = BigDecimal.valueOf(5000);
             private final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("햄버거 세트"));
-            private final Product product = productService.create(new Product(name, price));
-            private final MenuProduct menuProduct = new MenuProduct(product.getId(), 1);
+            private final ProductCreateResponse productCreateResponse = productService.create(
+                    new ProductCreateRequest(name, price));
+            private final MenuProduct menuProduct = new MenuProduct(productCreateResponse.getId(), 1);
             private final Menu menu = new Menu(name, price, menuGroup.getId(), List.of(menuProduct));
 
             @Test
@@ -50,8 +52,9 @@ class MenuServiceTest extends ServiceTest {
             private final String name = "햄버거";
             private final BigDecimal price = null;
             private final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("햄버거 세트"));
-            private final Product product = productService.create(new Product(name, BigDecimal.valueOf(5000)));
-            private final MenuProduct menuProduct = new MenuProduct(product.getId(), 1);
+            private final ProductCreateResponse productCreateResponse = productService.create(
+                    new ProductCreateRequest(name, BigDecimal.valueOf(5000)));
+            private final MenuProduct menuProduct = new MenuProduct(productCreateResponse.getId(), 1);
             private final Menu menu = new Menu(name, price, menuGroup.getId(), List.of(menuProduct));
 
             @Test
@@ -68,8 +71,9 @@ class MenuServiceTest extends ServiceTest {
             private final String name = "햄버거";
             private final BigDecimal price = BigDecimal.valueOf(-1);
             private final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("햄버거 세트"));
-            private final Product product = productService.create(new Product(name, BigDecimal.valueOf(5000)));
-            private final MenuProduct menuProduct = new MenuProduct(product.getId(), 1);
+            private final ProductCreateResponse productCreateResponse = productService.create(
+                    new ProductCreateRequest(name, BigDecimal.valueOf(5000)));
+            private final MenuProduct menuProduct = new MenuProduct(productCreateResponse.getId(), 1);
             private final Menu menu = new Menu(name, price, menuGroup.getId(), List.of(menuProduct));
 
             @Test
@@ -85,8 +89,9 @@ class MenuServiceTest extends ServiceTest {
 
             private final String name = "햄버거";
             private final BigDecimal price = BigDecimal.valueOf(5000);
-            private final Product product = productService.create(new Product(name, price));
-            private final MenuProduct menuProduct = new MenuProduct(product.getId(), 1);
+            private final ProductCreateResponse productCreateResponse = productService.create(
+                    new ProductCreateRequest(name, price));
+            private final MenuProduct menuProduct = new MenuProduct(productCreateResponse.getId(), 1);
             private final Menu menu = new Menu(name, price, 0L, List.of(menuProduct));
 
             @Test
@@ -103,8 +108,9 @@ class MenuServiceTest extends ServiceTest {
             private final String name = "햄버거";
             private final BigDecimal price = BigDecimal.valueOf(5000);
             private final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("햄버거 세트"));
-            private final Product product = productService.create(new Product(name, BigDecimal.valueOf(4999)));
-            private final MenuProduct menuProduct = new MenuProduct(product.getId(), 1);
+            private final ProductCreateResponse productCreateResponse = productService.create(
+                    new ProductCreateRequest(name, BigDecimal.valueOf(4999)));
+            private final MenuProduct menuProduct = new MenuProduct(productCreateResponse.getId(), 1);
             private final Menu menu = new Menu(name, price, menuGroup.getId(), List.of(menuProduct));
 
             @Test
