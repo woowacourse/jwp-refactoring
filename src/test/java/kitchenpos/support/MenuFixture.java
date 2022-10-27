@@ -12,7 +12,9 @@ public class MenuFixture {
 
     private static final int QUANTITY = 1;
 
-    public static Menu 메뉴_생성(final String name, final BigDecimal price, final Long menuGroupId,
+    public static Menu 메뉴_생성(final String name,
+                             final BigDecimal price,
+                             final Long menuGroupId,
                              final Product... products) {
         final Menu menu = new Menu();
         menu.setName(name);
