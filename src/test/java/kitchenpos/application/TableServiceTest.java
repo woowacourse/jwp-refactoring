@@ -13,9 +13,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.TransactionalTest;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ class TableServiceTest {
     @Autowired
     private TableGroupRepository tableGroupRepository;
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
     @Autowired
     private TableService tableService;
 
@@ -86,7 +86,7 @@ class TableServiceTest {
     @Test
     void 변경_대상_테이블의_주문_목록_중_식사_중인_주문이_있을_경우_예외를_반환한다() {
         OrderTable orderTable = tableService.create(주문_테이블을_생성한다(null, 1, false));
-        orderDao.save(주문을_생성한다(orderTable.getId(), COOKING.name(), LocalDateTime.now(), null));
+        orderRepository.save(주문을_생성한다(orderTable.getId(), COOKING.name(), LocalDateTime.now(), null));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -95,7 +95,7 @@ class TableServiceTest {
     @Test
     void 변경_대상_테이블의_주문_목록_중_조리_중인_주문이_있을_경우_예외를_반환한다() {
         OrderTable orderTable = tableService.create(주문_테이블을_생성한다(null, 1, false));
-        orderDao.save(주문을_생성한다(orderTable.getId(), MEAL.name(), LocalDateTime.now(), null));
+        orderRepository.save(주문을_생성한다(orderTable.getId(), MEAL.name(), LocalDateTime.now(), null));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))
                 .isInstanceOf(IllegalArgumentException.class);

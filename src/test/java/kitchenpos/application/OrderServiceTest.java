@@ -44,15 +44,15 @@ class OrderServiceTest {
                 .getId();
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
-        OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
-        Order order = 주문을_생성한다(orderTableId, null, LocalDateTime.now(), List.of(orderLineItem));
+        Order order = 주문을_생성한다(orderTableId, null, LocalDateTime.now(), new ArrayList<>());
+        OrderLineItem orderLineItem = 주문_항목을_생성한다(order, menuId, 1);
 
         Order savedOrder = orderService.create(order);
 
         assertAll(
                 () -> assertThat(savedOrder.getId()).isNotNull(),
                 () -> assertThat(savedOrder.getOrderStatus()).isNotNull(),
-                () -> assertThat(orderLineItem.getOrderId()).isEqualTo(savedOrder.getId())
+                () -> assertThat(orderLineItem.getOrder()).isEqualTo(savedOrder)
         );
     }
 
@@ -71,8 +71,8 @@ class OrderServiceTest {
                 .getId();
         Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, new ArrayList<>()))
                 .getId();
-        OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
-        Order order = 주문을_생성한다(0L, null, LocalDateTime.now(), List.of(orderLineItem));
+        Order order = 주문을_생성한다(0L, null, LocalDateTime.now(), new ArrayList<>());
+        주문_항목을_생성한다(order, menuId, 1);
 
         assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -85,8 +85,8 @@ class OrderServiceTest {
                 .getId();
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true))
                 .getId();
-        OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
-        Order order = 주문을_생성한다(orderTableId, null, LocalDateTime.now(), List.of(orderLineItem));
+        Order order = 주문을_생성한다(orderTableId, null, LocalDateTime.now(), new ArrayList<>());
+        주문_항목을_생성한다(order, menuId, 1);
 
         assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -99,9 +99,12 @@ class OrderServiceTest {
                 .getId();
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
-        OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
-        Order order1 = orderService.create(주문을_생성한다(orderTableId, null, LocalDateTime.now(), List.of(orderLineItem)));
-        Order order2 = orderService.create(주문을_생성한다(orderTableId, null, LocalDateTime.now(), List.of(orderLineItem)));
+        Order order1 = 주문을_생성한다(orderTableId, null, LocalDateTime.now(), new ArrayList<>());
+        Order order2 = 주문을_생성한다(orderTableId, null, LocalDateTime.now(), new ArrayList<>());
+        주문_항목을_생성한다(order1, menuId, 1);
+        주문_항목을_생성한다(order2, menuId, 1);
+        orderService.create(order1);
+        orderService.create(order2);
 
         List<Order> actual = orderService.list();
 
@@ -118,8 +121,9 @@ class OrderServiceTest {
                 .getId();
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
-        OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
-        Order order = orderService.create(주문을_생성한다(orderTableId, null, LocalDateTime.now(), List.of(orderLineItem)));
+        Order order = 주문을_생성한다(orderTableId, null, LocalDateTime.now(), new ArrayList<>());
+        OrderLineItem orderLineItem = 주문_항목을_생성한다(order, menuId, 1);
+        orderService.create(order);
         order.setOrderStatus(MEAL.name());
 
         Order changedOrder = orderService.changeOrderStatus(order.getId(), order);
@@ -141,10 +145,10 @@ class OrderServiceTest {
                 .getId();
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
-        OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
-        Order order = orderService.create(주문을_생성한다(orderTableId, null, LocalDateTime.now(), List.of(orderLineItem)));
+        Order order = 주문을_생성한다(orderTableId, null, LocalDateTime.now(), new ArrayList<>());
+        주문_항목을_생성한다(order, menuId, 1);
+        orderService.create(order);
         order.setOrderStatus(COMPLETION.name());
-        orderService.changeOrderStatus(order.getId(), order);
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), order))
                 .isInstanceOf(IllegalArgumentException.class);

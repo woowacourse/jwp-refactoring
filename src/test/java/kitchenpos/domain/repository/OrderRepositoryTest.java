@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.domain.repository;
 
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
@@ -12,18 +12,17 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.TransactionalTest;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @TransactionalTest
-class OrderDaoTest {
+class OrderRepositoryTest {
 
     @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Test
     void 주문을_저장하면_id가_채워진다() {
@@ -31,7 +30,7 @@ class OrderDaoTest {
                 .getId();
         Order order = 주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null);
 
-        Order savedOrder = orderDao.save(order);
+        Order savedOrder = orderRepository.save(order);
 
         assertAll(
                 () -> assertThat(savedOrder.getId()).isNotNull(),
@@ -45,12 +44,12 @@ class OrderDaoTest {
     void 저장하는_주문의_id가_null이_아니면_업데이트_한다() {
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
-        Long orderId = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null))
+        Long orderId = orderRepository.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null))
                 .getId();
         Order updateOrder = 주문을_생성한다(orderTableId, MEAL.name(), LocalDateTime.now(), null);
         updateOrder.setId(orderId);
 
-        Order savedOrder = orderDao.save(updateOrder);
+        Order savedOrder = orderRepository.save(updateOrder);
 
         assertThat(savedOrder).usingRecursiveComparison()
                 .isEqualTo(updateOrder);
@@ -60,9 +59,9 @@ class OrderDaoTest {
     void id로_주문을_조회할_수_있다() {
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
-        Order order = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null));
+        Order order = orderRepository.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null));
 
-        Order actual = orderDao.findById(order.getId())
+        Order actual = orderRepository.findById(order.getId())
                 .orElseGet(Assertions::fail);
 
         assertThat(actual).usingRecursiveComparison()
@@ -71,7 +70,7 @@ class OrderDaoTest {
 
     @Test
     void 없는_id로_주문을_조회하면_Optional_empty를_반환한다() {
-        Optional<Order> actual = orderDao.findById(0L);
+        Optional<Order> actual = orderRepository.findById(0L);
 
         assertThat(actual).isEmpty();
     }
@@ -80,10 +79,10 @@ class OrderDaoTest {
     void 모든_주문을_조회할_수_있다() {
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
-        Order order1 = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null));
-        Order order2 = orderDao.save(주문을_생성한다(orderTableId, MEAL.name(), LocalDateTime.now(), null));
+        Order order1 = orderRepository.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null));
+        Order order2 = orderRepository.save(주문을_생성한다(orderTableId, MEAL.name(), LocalDateTime.now(), null));
 
-        List<Order> actual = orderDao.findAll();
+        List<Order> actual = orderRepository.findAll();
 
         assertThat(actual).hasSize(2)
                 .usingFieldByFieldElementComparator()
@@ -94,9 +93,9 @@ class OrderDaoTest {
     void 주문_테이블에_해당하고_주문_상태_목록에_있는_주문이_있으면_true를_반환한다() {
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
-        orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null));
+        orderRepository.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null));
 
-        boolean actual = orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING.name()));
+        boolean actual = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING.name()));
 
         assertThat(actual).isTrue();
     }
@@ -106,7 +105,7 @@ class OrderDaoTest {
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
 
-        boolean actual = orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING.name()));
+        boolean actual = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING.name()));
 
         assertThat(actual).isFalse();
     }
@@ -115,9 +114,9 @@ class OrderDaoTest {
     void 주문_테이블_목록에_있으면서_주문_상태_목록에_있는_주문이_있으면_true를_반환한다() {
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
-        orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null));
+        orderRepository.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null));
 
-        boolean actual = orderDao.existsByOrderTableIdInAndOrderStatusIn(List.of(orderTableId),
+        boolean actual = orderRepository.existsByOrderTableIdInAndOrderStatusIn(List.of(orderTableId),
                 List.of(COOKING.name()));
 
         assertThat(actual).isTrue();
@@ -128,7 +127,7 @@ class OrderDaoTest {
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
 
-        boolean actual = orderDao.existsByOrderTableIdInAndOrderStatusIn(List.of(orderTableId),
+        boolean actual = orderRepository.existsByOrderTableIdInAndOrderStatusIn(List.of(orderTableId),
                 List.of(COOKING.name()));
 
         assertThat(actual).isFalse();

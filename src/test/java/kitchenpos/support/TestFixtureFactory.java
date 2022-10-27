@@ -45,12 +45,8 @@ public class TestFixtureFactory {
         return order;
     }
 
-    public static OrderLineItem 주문_항목을_생성한다(final Long orderId, final Long menuId, final long quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-        return orderLineItem;
+    public static OrderLineItem 주문_항목을_생성한다(final Order order, final Long menuId, final long quantity) {
+        return new OrderLineItem(null, order, menuId, quantity);
     }
 
     public static OrderTable 주문_테이블을_생성한다(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {

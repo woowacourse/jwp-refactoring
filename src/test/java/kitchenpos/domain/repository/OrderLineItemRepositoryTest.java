@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.domain.repository;
 
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
@@ -16,16 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.TransactionalTest;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @TransactionalTest
-class OrderLineItemDaoTest {
+class OrderLineItemRepositoryTest {
 
     @Autowired
     private MenuGroupRepository menuGroupDao;
@@ -34,9 +32,9 @@ class OrderLineItemDaoTest {
     @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
     @Autowired
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Test
     void 주문_항목을_저장하면_id가_채워진다() {
@@ -46,11 +44,11 @@ class OrderLineItemDaoTest {
                 .getId();
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true))
                 .getId();
-        Long orderId = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), new ArrayList<>()))
-                .getId();
-        OrderLineItem orderLineItem = 주문_항목을_생성한다(orderId, menuId, 1);
+        Order order = orderRepository.save(
+                주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
+        OrderLineItem orderLineItem = 주문_항목을_생성한다(order, menuId, 1);
 
-        OrderLineItem savedOrderLineItem = orderLineItemDao.save(orderLineItem);
+        OrderLineItem savedOrderLineItem = orderLineItemRepository.save(orderLineItem);
 
         assertAll(
                 () -> assertThat(savedOrderLineItem.getSeq()).isNotNull(),
@@ -68,11 +66,11 @@ class OrderLineItemDaoTest {
                 .getId();
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true))
                 .getId();
-        Long orderId = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), new ArrayList<>()))
-                .getId();
-        OrderLineItem orderLineItem = orderLineItemDao.save(주문_항목을_생성한다(orderId, menuId, 1));
+        Order order = orderRepository.save(
+                주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
+        OrderLineItem orderLineItem = orderLineItemRepository.save(주문_항목을_생성한다(order, menuId, 1));
 
-        OrderLineItem actual = orderLineItemDao.findById(orderLineItem.getSeq())
+        OrderLineItem actual = orderLineItemRepository.findById(orderLineItem.getSeq())
                 .orElseGet(Assertions::fail);
 
         assertThat(actual).usingRecursiveComparison()
@@ -81,7 +79,7 @@ class OrderLineItemDaoTest {
 
     @Test
     void 없는_id로_주문_항목을_조회하면_Optional_empty를_반환한다() {
-        Optional<OrderLineItem> actual = orderLineItemDao.findById(0L);
+        Optional<OrderLineItem> actual = orderLineItemRepository.findById(0L);
 
         assertThat(actual).isEmpty();
     }
@@ -94,12 +92,12 @@ class OrderLineItemDaoTest {
                 .getId();
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true))
                 .getId();
-        Long orderId = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), new ArrayList<>()))
-                .getId();
-        OrderLineItem orderLineItem1 = orderLineItemDao.save(주문_항목을_생성한다(orderId, menuId, 1));
-        OrderLineItem orderLineItem2 = orderLineItemDao.save(주문_항목을_생성한다(orderId, menuId, 2));
+        Order order = orderRepository.save(
+                주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
+        OrderLineItem orderLineItem1 = orderLineItemRepository.save(주문_항목을_생성한다(order, menuId, 1));
+        OrderLineItem orderLineItem2 = orderLineItemRepository.save(주문_항목을_생성한다(order, menuId, 2));
 
-        List<OrderLineItem> actual = orderLineItemDao.findAll();
+        List<OrderLineItem> actual = orderLineItemRepository.findAll();
 
         assertThat(actual).hasSize(2)
                 .usingFieldByFieldElementComparator()
@@ -114,14 +112,14 @@ class OrderLineItemDaoTest {
                 .getId();
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true))
                 .getId();
-        Long orderId1 = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), new ArrayList<>()))
-                .getId();
-        Long orderId2 = orderDao.save(주문을_생성한다(orderTableId, MEAL.name(), LocalDateTime.now(), new ArrayList<>()))
-                .getId();
-        OrderLineItem orderLineItem = orderLineItemDao.save(주문_항목을_생성한다(orderId1, menuId, 1));
-        orderLineItemDao.save(주문_항목을_생성한다(orderId2, menuId, 1));
+        Order order1 = orderRepository.save(
+                주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
+        Order order2 = orderRepository.save(
+                주문을_생성한다(orderTableId, MEAL.name(), LocalDateTime.now(), new ArrayList<>()));
+        OrderLineItem orderLineItem = orderLineItemRepository.save(주문_항목을_생성한다(order1, menuId, 1));
+        orderLineItemRepository.save(주문_항목을_생성한다(order2, menuId, 1));
 
-        List<OrderLineItem> actual = orderLineItemDao.findAllByOrderId(orderId1);
+        List<OrderLineItem> actual = orderLineItemRepository.findAllByOrder(order1);
 
         assertThat(actual).hasSize(1)
                 .usingFieldByFieldElementComparator()

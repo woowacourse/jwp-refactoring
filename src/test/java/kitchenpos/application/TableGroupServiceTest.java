@@ -11,9 +11,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.TransactionalTest;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ class TableGroupServiceTest {
     @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
     @Autowired
     private TableGroupService tableGroupService;
 
@@ -97,7 +97,7 @@ class TableGroupServiceTest {
         OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 2, true));
         Long tableGroupId = tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()))
                 .getId();
-        orderDao.save(주문을_생성한다(orderTable1.getId(), COOKING.name(), LocalDateTime.now(), null));
+        orderRepository.save(주문을_생성한다(orderTable1.getId(), COOKING.name(), LocalDateTime.now(), null));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId)).isInstanceOf(IllegalArgumentException.class);
     }
