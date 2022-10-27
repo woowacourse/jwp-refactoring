@@ -18,6 +18,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.ProductDto;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.request.ProductRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,13 +42,9 @@ public class AcceptanceTest {
     }
 
     protected long 상품을_생성한다(final String name, final int price) {
-        ProductDto product = new ProductDto();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
-
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(product)
+                .body(new ProductRequest(name, BigDecimal.valueOf(price)))
                 .when().log().all()
                 .post("/api/products")
                 .then().log().all()

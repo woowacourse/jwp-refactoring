@@ -2,7 +2,10 @@ package kitchenpos.ui.dto.request;
 
 public class MenuGroupRequest {
 
-    private final String name;
+    private String name;
+
+    private MenuGroupRequest() {
+    }
 
     public MenuGroupRequest(String name) {
         this.name = name;

@@ -16,7 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 @DisplayName("메뉴 그룹 관련 기능에서")
 @ExtendWith(DataClearExtension.class)
-class MenuGroupApplicationTest {
+class MenuGroupServiceTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
