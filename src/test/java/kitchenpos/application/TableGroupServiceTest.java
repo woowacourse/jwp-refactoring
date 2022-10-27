@@ -142,8 +142,8 @@ class TableGroupServiceTest extends ServiceTest {
             // given
             OrderTable orderTable1 = createAndSaveOrderTable(true, null);
             OrderTable orderTable2 = createAndSaveOrderTable(true, null);
-            createAndSaveOrder(orderTable1.getId(), status);
-            createAndSaveOrder(orderTable2.getId(), status);
+            Order order1 = orderDao.save(new Order(orderTable1.getId()));
+            order1.changeStatus(status);
 
             List<OrderTable> tables = new ArrayList<OrderTable>() {{
                 add(orderTable1);
@@ -185,12 +185,4 @@ class TableGroupServiceTest extends ServiceTest {
         return orderTableDao.save(orderTable);
     }
 
-    private Order createAndSaveOrder(long orderTableId, String status) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(status);
-
-        return orderDao.save(order);
-    }
 }

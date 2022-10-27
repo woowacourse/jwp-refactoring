@@ -101,7 +101,8 @@ class TableServiceTest extends ServiceTest {
         void invalidStatus(String status) {
             // given
             OrderTable savedOrderTable = createAndSaveOrderTable(null);
-            createAndSaveOrder(savedOrderTable.getId(), status);
+            Order savedOrder = orderDao.save(new Order(savedOrderTable.getId()));
+            savedOrder.changeStatus(status);
 
             OrderTable orderTable = new OrderTable();
             orderTable.setEmpty(true);
@@ -181,15 +182,6 @@ class TableServiceTest extends ServiceTest {
         tableGroup.setCreatedDate(LocalDateTime.now());
 
         return tableGroupDao.save(tableGroup);
-    }
-
-    private Order createAndSaveOrder(long orderTableId, String status) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(status);
-
-        return orderDao.save(order);
     }
 
 }
