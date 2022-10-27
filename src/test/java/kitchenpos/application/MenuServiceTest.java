@@ -8,7 +8,6 @@ import static org.mockito.BDDMockito.given;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
@@ -65,10 +64,10 @@ public class MenuServiceTest extends ServiceTest {
 
             given(menuGroupDao.existsById(createRequest.getMenuGroupId()))
                     .willReturn(true);
-            given(productDao.findById(PRODUCT_A_ID))
-                    .willReturn(Optional.of(productA));
-            given(productDao.findById(PRODUCT_B_ID))
-                    .willReturn(Optional.of(productB));
+            given(productDao.getById(PRODUCT_A_ID))
+                    .willReturn(productA);
+            given(productDao.getById(PRODUCT_B_ID))
+                    .willReturn(productB);
 
         }
 
@@ -89,7 +88,8 @@ public class MenuServiceTest extends ServiceTest {
         @DisplayName("메뉴 가격이 없으면, 예외를 던진다.")
         void fail_noPrice() {
             //given
-            createRequest = new MenuCreateRequest("메뉴 이름", null, MENU_GROUP_ID, Arrays.asList(menuProductA, menuProductB));
+            createRequest = new MenuCreateRequest("메뉴 이름", null, MENU_GROUP_ID,
+                    Arrays.asList(menuProductA, menuProductB));
 
             //when & then
             assertThatThrownBy(() -> menuService.create(createRequest))
@@ -121,18 +121,6 @@ public class MenuServiceTest extends ServiceTest {
         }
 
         @Test
-        @DisplayName("메뉴에 포함될 상품들이 존재하지 않으면, 예외를 던진다.")
-        void fail_noExistMenuProduct() {
-            //given
-            given(productDao.findById(PRODUCT_A_ID))
-                    .willReturn(Optional.empty());
-
-            //when & then
-            assertThatThrownBy(() -> menuService.create(createRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         @DisplayName("메뉴의 가격보다 포함된 상품들의 총합이 싸면, 예외를 던진다.")
         void fail_sumIsCheaperThenPrice() {
             //given
@@ -141,10 +129,10 @@ public class MenuServiceTest extends ServiceTest {
             productB = new Product(PRODUCT_B_ID, "상품B", BigDecimal.valueOf(100));
             menuProductB = new MenuProduct(null, MENU_ID, PRODUCT_B_ID, 1);
 
-            given(productDao.findById(PRODUCT_A_ID))
-                    .willReturn(Optional.of(productA));
-            given(productDao.findById(PRODUCT_B_ID))
-                    .willReturn(Optional.of(productB));
+            given(productDao.getById(PRODUCT_A_ID))
+                    .willReturn(productA);
+            given(productDao.getById(PRODUCT_B_ID))
+                    .willReturn(productB);
 
             createRequest = new MenuCreateRequest("메뉴 이름", BigDecimal.valueOf(201), MENU_GROUP_ID,
                     Arrays.asList(menuProductA, menuProductB));
