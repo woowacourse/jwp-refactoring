@@ -26,17 +26,9 @@ public enum ProductFixtures {
         this.price = price;
     }
 
-    public static Product 상품_생성(final String name, final BigDecimal price) {
-        return 상품_생성(null, name, price);
-    }
-
-    public static Product 상품_생성(final Long id, final String name, final BigDecimal price) {
-        return new Product(id, name, price);
-    }
-
     public static List<Product> 상품_목록_조회() {
         return Arrays.stream(ProductFixtures.values())
-                .map(fixture -> 상품_생성(fixture.getId(), fixture.getName(), BigDecimal.valueOf(fixture.getPrice())))
+                .map(fixture -> new Product(fixture.getId(), fixture.getName(), BigDecimal.valueOf(fixture.getPrice())))
                 .collect(Collectors.toList());
     }
 
