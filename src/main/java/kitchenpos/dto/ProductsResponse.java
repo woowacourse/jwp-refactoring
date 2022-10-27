@@ -8,7 +8,7 @@ public class ProductsResponse {
 
     private List<ProductResponse> products;
 
-    public ProductsResponse(List<ProductResponse> products) {
+    private ProductsResponse(List<ProductResponse> products) {
         this.products = products;
     }
 

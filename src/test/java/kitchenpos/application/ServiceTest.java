@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -12,8 +13,6 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.ProductCreateRequest;
-import kitchenpos.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +45,9 @@ public abstract class ServiceTest {
     @Autowired
     ProductDao productDao;
 
+    @Autowired
+    MenuGroupDao menuGroupDao;
+
     protected MenuProduct 메뉴_상품을_생성한다(String productName, int productPrice, Long quantity) {
         return 메뉴_상품을_생성한다(null, productName, productPrice, quantity);
     }
@@ -61,8 +63,8 @@ public abstract class ServiceTest {
     }
 
     protected MenuGroup 메뉴_그룹을_저장한다(String name) {
-        MenuGroup menuGroup1 = new MenuGroup(name);
-        return menuGroupService.create(menuGroup1);
+        MenuGroup menuGroup = new MenuGroup(name);
+        return menuGroupDao.save(menuGroup);
     }
 
     protected Menu 메뉴를_저장한다(String menuName) {
