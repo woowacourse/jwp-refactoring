@@ -1,6 +1,12 @@
 package kitchenpos.application;
 
 
+import static kitchenpos.support.MenuFixture.메뉴_생성;
+import static kitchenpos.support.MenuGroupFixture.메뉴_그룹1;
+import static kitchenpos.support.OrderFixture.주문_생성;
+import static kitchenpos.support.ProductFixture.상품1;
+
+import java.math.BigDecimal;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
