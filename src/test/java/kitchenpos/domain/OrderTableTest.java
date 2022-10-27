@@ -1,8 +1,11 @@
 package kitchenpos.domain;
 
+import static kitchenpos.support.Fixture.createOrderTableWithNumberOfGuests;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import org.assertj.core.api.Assertions;
+import kitchenpos.support.Fixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -11,8 +14,38 @@ import org.junit.jupiter.api.Test;
 class OrderTableTest {
 
     @Nested
+    @DisplayName("updateNumberOfGuests 메서드는")
+    class UpdateNumberOfGuests {
+
+        @Test
+        @DisplayName("테이블 인원을 수정한다.")
+        void success() {
+            //given
+            OrderTable orderTable = createOrderTableWithNumberOfGuests(2);
+            int expected = 4;
+
+            //when
+            orderTable.updateNumberOfGuests(expected);
+
+            //then
+            assertThat(orderTable.getNumberOfGuests()).isEqualTo(expected);
+        }
+
+        @Test
+        @DisplayName("테이블이 비어있으면, 예외를 던진다.")
+        void fail_empty() {
+            //given
+            OrderTable orderTable = Fixture.createEmptyOrderTable();
+
+            //when & then
+            assertThatThrownBy(() -> orderTable.updateNumberOfGuests(2))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    @Nested
     @DisplayName("checkCanGroup 메서드는")
-    class checkCanGroup {
+    class CheckCanGroup {
 
         @Test
         @DisplayName("그룹이 지정되어있지 않고 비어있는지 확인한다.")
@@ -31,7 +64,7 @@ class OrderTableTest {
             OrderTable orderTable = new OrderTable(1L, 1L, 0, true);
 
             //when & then
-            Assertions.assertThatThrownBy(orderTable::checkCanGroup)
+            assertThatThrownBy(orderTable::checkCanGroup)
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -42,7 +75,7 @@ class OrderTableTest {
             OrderTable orderTable = new OrderTable(1L, null, 2, false);
 
             //when & then
-            Assertions.assertThatThrownBy(orderTable::checkCanGroup)
+            assertThatThrownBy(orderTable::checkCanGroup)
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

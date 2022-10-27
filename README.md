@@ -180,3 +180,9 @@ Controller에서 받아온 객체를 그대로 save하거나, 해당 객체의 �
    - [x] MenuGroupCreateRequest
      - 지금 당장은 필요없지만, 컨트롤러와 도메인의 경계를 명확히 하고자 가져감.
    - [x] OrderTableCreateRequest
+   - [x] OrderTableUpdateRequest
+
+
+
+4. Service에 있던 기능들 도메인에게 책임부여
+   - [ ] OrderTable.updateNumberOfGuests()

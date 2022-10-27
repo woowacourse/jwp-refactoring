@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class TableService {
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
@@ -22,17 +23,16 @@ public class TableService {
         this.orderTableDao = orderTableDao;
     }
 
-    @Transactional
     public OrderTable create(final OrderTableCreateRequest orderTable) {
         OrderTable orderTableInput = new OrderTable(null, null, orderTable.getNumberOfGuests(), orderTable.isEmpty());
         return orderTableDao.save(orderTableInput);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTable> list() {
         return orderTableDao.findAll();
     }
 
-    @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTableUpdateRequest request) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
@@ -51,23 +51,10 @@ public class TableService {
         return orderTableDao.save(savedOrderTable);
     }
 
-    @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTableUpdateRequest request) {
-        final int numberOfGuests = request.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTable orderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.updateNumberOfGuests(numberOfGuests);
-
-        return orderTableDao.save(savedOrderTable);
+        orderTable.updateNumberOfGuests(request.getNumberOfGuests());
+        return orderTableDao.save(orderTable);
     }
 }

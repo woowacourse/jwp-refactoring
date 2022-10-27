@@ -15,6 +15,30 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void updateNumberOfGuests(int numberOfGuests) {
+        checkEmpty();
+        checkNumberOfGuests(numberOfGuests);
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    private void checkNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void checkCanGroup() {
+        if (!empty || Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void checkEmpty() {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -35,23 +59,7 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void updateNumberOfGuests(int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
     public void setTableGroupId(Long tableGroupId) {
         this.tableGroupId = tableGroupId;
-    }
-
-    public void checkCanGroup() {
-        if (!empty || Objects.nonNull(tableGroupId)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    public void checkEmpty() {
-        if (empty) {
-            throw new IllegalArgumentException();
-        }
     }
 }
