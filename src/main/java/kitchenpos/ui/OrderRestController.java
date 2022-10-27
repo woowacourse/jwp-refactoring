@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 
+// todo: order controller 리팩터링 완료 후 도메인 리팩터링 시작
+//  1. 일급 컬렉션 분리
+//  2. 서비스 로직 도메인으로 이동
 @RestController
 public class OrderRestController {
     private final OrderService orderService;
