@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 public class Product {
 
@@ -33,23 +32,11 @@ public class Product {
         this.name = name;
     }
 
-    public BigDecimal getPrice() {
-        return price.value;
+    public Price getPrice() {
+        return price;
     }
 
     public void setPrice(final BigDecimal price) {
         this.price = new Price(price);
-    }
-
-    private static class Price {
-
-        private final BigDecimal value;
-
-        Price(final BigDecimal value) {
-            if (Objects.isNull(value) || value.compareTo(BigDecimal.ZERO) < 0) {
-                throw new IllegalArgumentException();
-            }
-            this.value = value;
-        }
     }
 }

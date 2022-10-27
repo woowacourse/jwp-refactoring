@@ -27,7 +27,7 @@ class ProductServiceTest extends FakeSpringContext {
 
             assertAll(
                     () -> assertThat(result.getName()).isEqualTo(product.getName()),
-                    () -> assertThat(result.getPrice().compareTo(product.getPrice())).isEqualTo(0)
+                    () -> assertThat(result.getPrice().getPrice().compareTo(product.getPrice().getPrice())).isEqualTo(0)
             );
         }
     }
@@ -58,7 +58,7 @@ class ProductServiceTest extends FakeSpringContext {
         private Optional<Product> findProductInList(final List<Product> result, final Product target) {
             return result.stream()
                     .filter(product -> product.getName().equals(target.getName())
-                            && product.getPrice().compareTo(target.getPrice()) == 0)
+                            && product.getPrice().getPrice().compareTo(target.getPrice().getPrice()) == 0)
                     .findAny();
         }
     }
