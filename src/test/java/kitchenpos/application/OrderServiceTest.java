@@ -7,10 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderLineItemRequest;
+import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.response.OrderResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,16 +39,16 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        final OrderLineItem orderLineItemRequest = createOrderLineItemRequest(validMenuId, 2);
-        final Order orderRequest = createOrderRequest(validOrderTableId, List.of(orderLineItemRequest));
+        final OrderLineItemRequest orderLineItemRequest = createOrderLineItemRequest(validMenuId, 2);
+        final OrderRequest orderRequest = createOrderRequest(validOrderTableId, List.of(orderLineItemRequest));
 
         // when
-        final Order savedOrder = orderService.create(orderRequest);
+        final OrderResponse response = orderService.create(orderRequest);
 
         // then
         assertAll(
-                () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
-                () -> assertThat(savedOrder.getId()).isNotNull()
+                () -> assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+                () -> assertThat(response.getId()).isNotNull()
         );
     }
 
@@ -55,7 +56,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create_throwException_ifOrderLineItemsEmpty() {
         // given
-        final Order orderRequest = createOrderRequest(validOrderTableId, List.of());
+        final OrderRequest orderRequest = createOrderRequest(validOrderTableId, List.of());
 
         // when, then
         assertThatThrownBy(() -> orderService.create(orderRequest))
@@ -68,11 +69,11 @@ class OrderServiceTest extends ServiceTest {
     void create_throwException_ifMenuNotExist() {
         // given
         final Long noExistMenuId = 999L;
-        final OrderLineItem orderLineItemRequest = createOrderLineItemRequest(noExistMenuId, 2);
-        final Order order = createOrderRequest(validOrderTableId, List.of(orderLineItemRequest));
+        final OrderLineItemRequest orderLineItemRequest = createOrderLineItemRequest(noExistMenuId, 2);
+        final OrderRequest orderRequest = createOrderRequest(validOrderTableId, List.of(orderLineItemRequest));
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("없는 메뉴는 주문할 수 없습니다.");
     }
@@ -82,11 +83,11 @@ class OrderServiceTest extends ServiceTest {
     void create_throwException_ifTableNotExist() {
         // given
         final Long noExistTableId = 999L;
-        final OrderLineItem orderLineItemRequest = createOrderLineItemRequest(validMenuId, 2);
-        final Order order = createOrderRequest(noExistTableId, List.of(orderLineItemRequest));
+        final OrderLineItemRequest orderLineItemRequest = createOrderLineItemRequest(validMenuId, 2);
+        final OrderRequest orderRequest = createOrderRequest(noExistTableId, List.of(orderLineItemRequest));
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("없는 테이블에서는 주문할 수 없습니다.");
     }
@@ -96,11 +97,11 @@ class OrderServiceTest extends ServiceTest {
     void create_throwException_ifTableNotEmpty() {
         // given
         final OrderTable emptyOrderTable = orderTableDao.save(createOrderTable(0, true));
-        final OrderLineItem orderLineItemRequest = createOrderLineItemRequest(validMenuId, 2);
-        final Order order = createOrderRequest(emptyOrderTable.getId(), List.of(orderLineItemRequest));
+        final OrderLineItemRequest orderLineItemRequest = createOrderLineItemRequest(validMenuId, 2);
+        final OrderRequest orderRequest = createOrderRequest(emptyOrderTable.getId(), List.of(orderLineItemRequest));
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("사용 중이지 않은 테이블입니다.");
     }
@@ -109,26 +110,20 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void findAll() {
         // given
-        final OrderLineItem orderLineItemRequest = createOrderLineItemRequest(validMenuId, 2);
-        final Order order = createOrderRequest(validOrderTableId, List.of(orderLineItemRequest));
-        orderService.create(order);
+        final OrderLineItemRequest orderLineItemRequest = createOrderLineItemRequest(validMenuId, 2);
+        final OrderRequest orderRequest = createOrderRequest(validOrderTableId, List.of(orderLineItemRequest));
+        orderService.create(orderRequest);
 
         // when, then
         assertThat(orderService.findAll()).hasSize(1);
     }
 
-    private OrderLineItem createOrderLineItemRequest(final Long menuId, final long quantity) {
-
-        final OrderLineItem orderLineItemRequest = new OrderLineItem();
-        orderLineItemRequest.setMenuId(menuId);
-        orderLineItemRequest.setQuantity(quantity);
-        return orderLineItemRequest;
+    private OrderLineItemRequest createOrderLineItemRequest(final Long menuId, final long quantity) {
+        return new OrderLineItemRequest(menuId, quantity);
     }
 
-    private Order createOrderRequest(final Long orderTableId, final List<OrderLineItem> orderLineItemRequests) {
-        final Order orderRequest = new Order();
-        orderRequest.setOrderTableId(orderTableId);
-        orderRequest.setOrderLineItems(orderLineItemRequests);
-        return orderRequest;
+    private OrderRequest createOrderRequest(final Long orderTableId,
+                                            final List<OrderLineItemRequest> orderLineItemRequests) {
+        return new OrderRequest(orderTableId, orderLineItemRequests);
     }
 }
