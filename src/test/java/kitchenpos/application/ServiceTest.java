@@ -40,14 +40,6 @@ public abstract class ServiceTest {
     @Autowired
     OrderService orderService;
 
-    protected OrderTable 테이블을_생성한다(int numberOfGuests, boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-
-        return orderTable;
-    }
-
     protected MenuProduct 메뉴_상품을_생성한다(Long id, String productName, int productPrice, Long quantity) {
         Product product = 상품을_저장한다(productName, productPrice);
         return new MenuProduct(id, product.getId(), quantity);
@@ -89,21 +81,18 @@ public abstract class ServiceTest {
     }
 
     protected OrderTable 테이블을_저장한다(int numberOfGuests) {
-        OrderTable orderTable = 테이블을_생성한다(numberOfGuests, false);
+        OrderTable orderTable = new OrderTable(numberOfGuests, false);
         return tableService.create(orderTable);
     }
 
     protected OrderTable 빈_테이블을_저장한다() {
-        OrderTable orderTable = 테이블을_생성한다(0, true);
+        OrderTable orderTable = new OrderTable(0, true);
         return tableService.create(orderTable);
     }
 
     protected TableGroup 테이블_그룹을_저장한다(OrderTable... orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(orderTables));
-
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
-        return savedTableGroup;
+        TableGroup tableGroup = new TableGroup(null, List.of(orderTables));
+        return tableGroupService.create(tableGroup);
     }
 
     protected Order 주문을_저장한다() {
@@ -112,13 +101,9 @@ public abstract class ServiceTest {
 
     protected Order 주문을_저장한다(OrderTable orderTable) {
         Menu menu = 메뉴를_저장한다("메뉴");
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(3L);
+        OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3L);
 
-        Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
+        Order order = new Order(orderTable.getId(), null, null, List.of(orderLineItem));
 
         return orderService.create(order);
     }

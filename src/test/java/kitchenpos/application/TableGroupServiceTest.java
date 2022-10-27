@@ -26,8 +26,7 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable orderTable1 = 빈_테이블을_저장한다();
             OrderTable orderTable2 = 빈_테이블을_저장한다();
 
-            TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+            TableGroup tableGroup = new TableGroup(null, List.of(orderTable1, orderTable2));
 
             // when
             TableGroup savedTableGroup = tableGroupService.create(tableGroup);
@@ -47,8 +46,7 @@ class TableGroupServiceTest extends ServiceTest {
             // given
             OrderTable orderTable1 = 빈_테이블을_저장한다();
 
-            TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(orderTable1));
+            TableGroup tableGroup = new TableGroup(null, List.of(orderTable1));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -58,8 +56,7 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 그룹화하려는_테이블_리스트가_비어있다면_예외가_발생한다() {
             // given
-            TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(Collections.emptyList());
+            TableGroup tableGroup = new TableGroup(null, Collections.emptyList());
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -70,12 +67,9 @@ class TableGroupServiceTest extends ServiceTest {
         void 그룹화하려는_테이블이_존재하지_않는다면_예외가_발생한다() {
             // given
             OrderTable orderTable1 = 빈_테이블을_저장한다();
-            OrderTable orderTable2 = new OrderTable();
-            orderTable2.setNumberOfGuests(0);
-            orderTable2.setEmpty(true);
+            OrderTable orderTable2 = new OrderTable(0, true);
 
-            TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+            TableGroup tableGroup = new TableGroup(null, List.of(orderTable1, orderTable2));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -88,8 +82,7 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable orderTable1 = 빈_테이블을_저장한다();
             OrderTable orderTable2 = 테이블을_저장한다(4);
 
-            TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+            TableGroup tableGroup = new TableGroup(null, List.of(orderTable1, orderTable2));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -102,14 +95,12 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable orderTable1 = 빈_테이블을_저장한다();
             OrderTable orderTable2 = 빈_테이블을_저장한다();
 
-            TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+            TableGroup tableGroup = new TableGroup(null, List.of(orderTable1, orderTable2));
 
             tableGroupService.create(tableGroup);
 
             OrderTable orderTable3 = 빈_테이블을_저장한다();
-            TableGroup newTableGroup = new TableGroup();
-            newTableGroup.setOrderTables(List.of(orderTable2, orderTable3));
+            TableGroup newTableGroup = new TableGroup(null, List.of(orderTable2, orderTable3));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(newTableGroup))
@@ -149,8 +140,7 @@ class TableGroupServiceTest extends ServiceTest {
             TableGroup savedTableGroup = 테이블_그룹을_저장한다(savedOrderTable1, savedOrderTable2);
 
             Order savedOrder = 주문을_저장한다(savedOrderTable1);
-            Order order = new Order();
-            order.setOrderStatus(OrderStatus.COOKING.name());
+            Order order = new Order(null, OrderStatus.COOKING.name(), null, Collections.emptyList());
             orderService.changeOrderStatus(savedOrder.getId(), order);
 
             // when & then

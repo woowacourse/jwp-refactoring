@@ -23,10 +23,7 @@ public class TableService {
 
     @Transactional
     public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-
-        return orderTableDao.save(orderTable);
+        return orderTableDao.save(new OrderTable(orderTable.getNumberOfGuests(), orderTable.isEmpty()));
     }
 
     public List<OrderTable> list() {
@@ -47,9 +44,10 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+        OrderTable updatedOrderTable = new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
+                savedOrderTable.getNumberOfGuests(), orderTable.isEmpty());
 
-        return orderTableDao.save(savedOrderTable);
+        return orderTableDao.save(updatedOrderTable);
     }
 
     @Transactional
@@ -67,8 +65,9 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
+        OrderTable updatedOrderTable = new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
+                numberOfGuests, savedOrderTable.isEmpty());
 
-        return orderTableDao.save(savedOrderTable);
+        return orderTableDao.save(updatedOrderTable);
     }
 }

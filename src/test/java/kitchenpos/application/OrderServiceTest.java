@@ -24,13 +24,9 @@ class OrderServiceTest extends ServiceTest {
             // given
             OrderTable orderTable = 테이블을_저장한다(4);
             Menu menu = 메뉴를_저장한다("메뉴");
-            OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(menu.getId());
-            orderLineItem.setQuantity(3L);
+            OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3L);
 
-            Order order = new Order();
-            order.setOrderTableId(orderTable.getId());
-            order.setOrderLineItems(List.of(orderLineItem));
+            Order order = new Order(orderTable.getId(), null, null, List.of(orderLineItem));
 
             // when
             final Order savedOrder = orderService.create(order);
@@ -46,9 +42,7 @@ class OrderServiceTest extends ServiceTest {
             // given
             OrderTable orderTable = 테이블을_저장한다(4);
 
-            Order order = new Order();
-            order.setOrderTableId(orderTable.getId());
-            order.setOrderLineItems(Collections.emptyList());
+            Order order = new Order(orderTable.getId(), null, null, Collections.emptyList());
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))
@@ -59,13 +53,9 @@ class OrderServiceTest extends ServiceTest {
         void 존재하지_않는_메뉴를_주문하면_예외가_발생한다() {
             // given
             OrderTable orderTable = 테이블을_저장한다(4);
-            OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(0L);
-            orderLineItem.setQuantity(3L);
+            OrderLineItem orderLineItem = new OrderLineItem(null, 0L, 3L);
 
-            Order order = new Order();
-            order.setOrderTableId(orderTable.getId());
-            order.setOrderLineItems(List.of(orderLineItem));
+            Order order = new Order(orderTable.getId(), null, null, List.of(orderLineItem));
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))
@@ -76,13 +66,9 @@ class OrderServiceTest extends ServiceTest {
         void 주문하는_테이블이_존재하지_않는다면_예외가_발생한다() {
             // given
             Menu menu = 메뉴를_저장한다("메뉴");
-            OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(menu.getId());
-            orderLineItem.setQuantity(3L);
+            OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3L);
 
-            Order order = new Order();
-            order.setOrderTableId(0L);
-            order.setOrderLineItems(List.of(orderLineItem));
+            Order order = new Order(0L, null, null, List.of(orderLineItem));
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))
@@ -94,13 +80,9 @@ class OrderServiceTest extends ServiceTest {
             // given
             OrderTable orderTable = 빈_테이블을_저장한다();
             Menu menu = 메뉴를_저장한다("메뉴");
-            OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(menu.getId());
-            orderLineItem.setQuantity(3L);
+            OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3L);
 
-            Order order = new Order();
-            order.setOrderTableId(orderTable.getId());
-            order.setOrderLineItems(List.of(orderLineItem));
+            Order order = new Order(orderTable.getId(), null, null, List.of(orderLineItem));
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))
@@ -131,8 +113,7 @@ class OrderServiceTest extends ServiceTest {
             // given
             Order savedOrder = 주문을_저장한다();
 
-            Order order = new Order();
-            order.setOrderStatus(OrderStatus.MEAL.name());
+            Order order = new Order(null, OrderStatus.MEAL.name(), null, Collections.emptyList());
 
             // when
             orderService.changeOrderStatus(savedOrder.getId(), order);
@@ -153,13 +134,12 @@ class OrderServiceTest extends ServiceTest {
             // given
             Order savedOrder = 주문을_저장한다();
 
-            Order order1 = new Order();
-            order1.setOrderStatus(OrderStatus.COMPLETION.name());
+
+            Order order1 = new Order(null, OrderStatus.COMPLETION.name(), null, Collections.emptyList());
             orderService.changeOrderStatus(savedOrder.getId(), order1);
 
             // when & then
-            Order order2 = new Order();
-            order2.setOrderStatus(OrderStatus.MEAL.name());
+            Order order2 = new Order(null, OrderStatus.MEAL.name(), null, Collections.emptyList());
             assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), order2))
                     .isInstanceOf(IllegalArgumentException.class);
         }

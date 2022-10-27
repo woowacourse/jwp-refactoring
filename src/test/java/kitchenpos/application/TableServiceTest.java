@@ -4,10 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
 
+import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,9 +20,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 테이블_생성_메소드는_입력받은_테이블을_저장한다() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(4);
-        orderTable.setEmpty(false);
+        OrderTable orderTable = new OrderTable(4, false);
 
         // when
         OrderTable savedOrderTable = tableService.create(orderTable);
@@ -56,8 +56,8 @@ class TableServiceTest extends ServiceTest {
             // given
             OrderTable savedOrderTable = 테이블을_저장한다(4);
 
-            OrderTable emptyOrderTable = new OrderTable();
-            emptyOrderTable.setEmpty(isEmpty);
+            // TODO: 0
+            OrderTable emptyOrderTable = new OrderTable(0, isEmpty);
 
             // when
             tableService.changeEmpty(savedOrderTable.getId(), emptyOrderTable);
@@ -78,12 +78,10 @@ class TableServiceTest extends ServiceTest {
             OrderTable savedOrderTable = 테이블을_저장한다(4);
 
             Order savedOrder = 주문을_저장한다(savedOrderTable);
-            Order order = new Order();
-            order.setOrderStatus(OrderStatus.COOKING.name());
+            Order order = new Order(null, OrderStatus.COOKING.name(), null, Collections.emptyList());
             orderService.changeOrderStatus(savedOrder.getId(), order);
 
-            OrderTable emptyOrderTable = new OrderTable();
-            emptyOrderTable.setEmpty(true);
+            OrderTable emptyOrderTable = new OrderTable(0, true);
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), emptyOrderTable));
@@ -94,10 +92,9 @@ class TableServiceTest extends ServiceTest {
             // given
             OrderTable savedOrderTable1 = 빈_테이블을_저장한다();
             OrderTable savedOrderTable2 = 빈_테이블을_저장한다();
-            테이블_그룹을_저장한다(savedOrderTable1, savedOrderTable2);
+            TableGroup tableGroup = 테이블_그룹을_저장한다(savedOrderTable1, savedOrderTable2);
 
-            OrderTable emptyOrderTable = new OrderTable();
-            emptyOrderTable.setEmpty(true);
+            OrderTable emptyOrderTable = new OrderTable(tableGroup.getId(), 0, true);
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable1.getId(), emptyOrderTable))
@@ -107,8 +104,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 존재하지_않는_테이블이라면_예외가_발생한다() {
             // given
-            OrderTable emptyOrderTable = new OrderTable();
-            emptyOrderTable.setEmpty(true);
+            OrderTable emptyOrderTable = new OrderTable(0, true);
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(0L, emptyOrderTable))
@@ -124,9 +120,7 @@ class TableServiceTest extends ServiceTest {
             // given
             OrderTable savedOrderTable = 테이블을_저장한다(4);
 
-            OrderTable orderTable = new OrderTable();
-            orderTable.setNumberOfGuests(2);
-            orderTable.setEmpty(false);
+            OrderTable orderTable = new OrderTable(2, false);
 
             // when
             tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable);
@@ -144,9 +138,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 존재하지_않는_테이블이라면_예외가_발생한다() {
             // given
-            OrderTable orderTable = new OrderTable();
-            orderTable.setNumberOfGuests(5);
-            orderTable.setEmpty(false);
+            OrderTable orderTable = new OrderTable(5, false);
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, orderTable))
@@ -158,8 +150,7 @@ class TableServiceTest extends ServiceTest {
             // given
             OrderTable savedOrderTable = 빈_테이블을_저장한다();
 
-            OrderTable orderTable = new OrderTable();
-            orderTable.setNumberOfGuests(5);
+            OrderTable orderTable = new OrderTable(5, true);
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable))
@@ -171,9 +162,7 @@ class TableServiceTest extends ServiceTest {
             // given
             OrderTable savedOrderTable = 테이블을_저장한다(4);
 
-            OrderTable orderTable = new OrderTable();
-            orderTable.setNumberOfGuests(-1);
-            orderTable.setEmpty(false);
+            OrderTable orderTable = new OrderTable(-1, false);
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable))
