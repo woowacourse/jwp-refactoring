@@ -11,12 +11,13 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.IdRequest;
 import kitchenpos.dto.request.MenuGroupRequest;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.request.ProductRequest;
+import kitchenpos.dto.request.TableGroupRequest;
 
 public class RequestBuilder {
 
@@ -65,11 +66,13 @@ public class RequestBuilder {
         return new OrderTableRequest(numberOfGuests, false);
     }
 
-    public static TableGroup ofTableGroup(final OrderTable... orderTables) {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(orderTables));
+    public static TableGroupRequest ofTableGroup(final OrderTable... orderTables) {
+        final List<IdRequest> orderTableIds = Arrays.stream(orderTables)
+                .map(OrderTable::getId)
+                .map(IdRequest::new)
+                .collect(Collectors.toList());
 
-        return tableGroup;
+        return new TableGroupRequest(orderTableIds);
     }
 
     public static Order ofOrder(final OrderStatus orderStatus) {

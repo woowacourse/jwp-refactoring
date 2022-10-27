@@ -3,6 +3,7 @@ package kitchenpos.acceptance;
 import io.restassured.response.ValidatableResponse;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.support.RequestBuilder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +21,7 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
         final OrderTable savedTable2 = dataSupport.saveOrderTable(0, true);
 
         // when
-        final TableGroup request = RequestBuilder.ofTableGroup(savedTable1, savedTable2);
+        final TableGroupRequest request = RequestBuilder.ofTableGroup(savedTable1, savedTable2);
         final ValidatableResponse response = post("/api/table-groups", request);
 
         // then

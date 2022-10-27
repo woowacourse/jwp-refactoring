@@ -7,6 +7,7 @@ import java.util.List;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.support.DataSupport;
 import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.DisplayName;
@@ -32,7 +33,7 @@ class TableGroupServiceTest {
         final OrderTable savedOrderTable2 = dataSupport.saveOrderTable(0, true);
 
         // when
-        final TableGroup request = RequestBuilder.ofTableGroup(savedOrderTable1, savedOrderTable2);
+        final TableGroupRequest request = RequestBuilder.ofTableGroup(savedOrderTable1, savedOrderTable2);
         final TableGroup savedTableGroup = tableGroupService.create(request);
 
         // then
@@ -48,7 +49,7 @@ class TableGroupServiceTest {
         unsavedOrderTable.setTableGroupId(0L);
 
         // when, then
-        final TableGroup request = RequestBuilder.ofTableGroup(savedOrderTable, unsavedOrderTable);
+        final TableGroupRequest request = RequestBuilder.ofTableGroup(savedOrderTable, unsavedOrderTable);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> tableGroupService.create(request));
     }
@@ -60,7 +61,7 @@ class TableGroupServiceTest {
         final OrderTable savedOrderTable = dataSupport.saveOrderTable(0, true);
 
         // when, then
-        final TableGroup request = RequestBuilder.ofTableGroup(savedOrderTable);
+        final TableGroupRequest request = RequestBuilder.ofTableGroup(savedOrderTable);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> tableGroupService.create(request));
     }
@@ -73,7 +74,7 @@ class TableGroupServiceTest {
         final OrderTable savedNotEmptyTable = dataSupport.saveOrderTable(0, false);
 
         // when, then
-        final TableGroup request = RequestBuilder.ofTableGroup(savedEmptyTable, savedNotEmptyTable);
+        final TableGroupRequest request = RequestBuilder.ofTableGroup(savedEmptyTable, savedNotEmptyTable);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> tableGroupService.create(request));
     }
@@ -87,7 +88,7 @@ class TableGroupServiceTest {
         final OrderTable savedGroupedTable = dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0, true);
 
         // when, then
-        final TableGroup request = RequestBuilder.ofTableGroup(savedUngroupedTable, savedGroupedTable);
+        final TableGroupRequest request = RequestBuilder.ofTableGroup(savedUngroupedTable, savedGroupedTable);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> tableGroupService.create(request));
     }
