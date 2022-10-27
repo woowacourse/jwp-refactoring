@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -22,9 +21,11 @@ public class TableService {
         this.orderTableDao = orderTableDao;
     }
 
-    public OrderTable create(final OrderTableCreateRequest orderTable) {
-        OrderTable orderTableInput = new OrderTable(null, null, orderTable.getNumberOfGuests(), orderTable.isEmpty());
-        return orderTableDao.save(orderTableInput);
+    public OrderTable create(final OrderTableCreateRequest request) {
+        return orderTableDao.save(new OrderTable(null,
+                null,
+                request.getNumberOfGuests(),
+                request.isEmpty()));
     }
 
     @Transactional(readOnly = true)
@@ -33,16 +34,18 @@ public class TableService {
     }
 
     public OrderTable changeEmpty(final Long orderTableId, final OrderTableUpdateRequest request) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTable orderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId,
-                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        checkOrderIsInProgress(orderTableId);
+        orderTable.updateEmpty(request.isEmpty());
+        return orderTableDao.save(orderTable);
+    }
+
+    private void checkOrderIsInProgress(Long orderTableId) {
+        if (orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, OrderStatus.collectInProgress())) {
             throw new IllegalArgumentException();
         }
-
-        savedOrderTable.updateEmpty(request.isEmpty());
-        return orderTableDao.save(savedOrderTable);
     }
 
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTableUpdateRequest request) {

@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 public class Order {
     private Long id;
@@ -53,7 +52,7 @@ public class Order {
     }
 
     public void checkUpdatable() {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), orderStatus)) {
+        if (OrderStatus.isCompleted(orderStatus)) {
             throw new IllegalArgumentException();
         }
     }

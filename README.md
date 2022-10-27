@@ -170,20 +170,36 @@ Controller에서 받아온 객체를 그대로 save하거나, 해당 객체의 �
 
        결론 : 양방향 매핑을 삭제한다. 
 
-     JPA에 시간을 너무 많이써서 롤백하고 다시 2번으로 돌아감.
+     JPA에 시간을 너무 많이써서 롤백했다.
 
 
 
-2. Controller에서 요청받을 때 사용할 RequestDto를 만든다
-   - [x] OrderUpdateRequest
-   - [x] OrderCreateRequest
-   - [x] MenuGroupCreateRequest
-     - 지금 당장은 필요없지만, 컨트롤러와 도메인의 경계를 명확히 하고자 가져감.
-   - [x] OrderTableCreateRequest
-   - [x] OrderTableUpdateRequest
+4. Controller에서 요청받을 때 사용할 RequestDto를 만든다
+
+- [x] OrderUpdateRequest
+- [x] OrderCreateRequest
+- [x] MenuGroupCreateRequest
+  - 지금 당장은 필요없지만, 컨트롤러와 도메인의 경계를 명확히 하고자 가져감.
+- [x] OrderTableCreateRequest
+- [x] OrderTableUpdateRequest
 
 
 
-4. Service에 있던 기능들 도메인에게 책임부여
-   - [x] OrderTable.updateNumberOfGuests()
-   - [x] OrderTable.updateEmpty()
+5. Service에 있던 기능들 도메인에게 책임부여
+
+- [x] OrderTable.updateNumberOfGuests()
+- [x] OrderTable.updateEmpty()
+
+
+
+6. Controller에서 요청받을 때 사용할 RequestDto를 만든다.
+
+- [x] 누락된 MenuProductCreateRequest를 만듬
+  - Menu가 생성될 때 MenuProduct의 Id값도 생성된다는 것을 깨달음
+
+
+
+7. OrderStatus에 상태 검증 메서드 추가
+   1. 완료 상태인지 검증
+   2. 진행중인 목록을 반환하는 기능 추가
+
