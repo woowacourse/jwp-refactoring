@@ -92,10 +92,11 @@ public class TableServiceTest {
 
         OrderTable savedOrderTable = orderTableDao.save(emptyOrderTable);
 
-        Order order = generateOrder(LocalDateTime.now(), savedOrderTable.getId(), OrderStatus.COOKING.name(), new ArrayList<>());
+        Order order = generateOrder(LocalDateTime.now(), savedOrderTable.getId(), OrderStatus.COOKING.name(),
+                new ArrayList<>());
         orderDao.save(order);
         // when
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), nonEmptyOrderTable)).isInstanceOf(
-                IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), nonEmptyOrderTable))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
