@@ -9,15 +9,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import kitchenpos.Application;
+import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.common.DataClearExtension;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroupDto;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.ProductDto;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.request.MenuProductRequest;
+import kitchenpos.ui.dto.request.MenuRequest;
 import kitchenpos.ui.dto.request.ProductRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -83,24 +85,13 @@ public class AcceptanceTest {
     }
 
     protected long 메뉴를_생성한다(String name, int price, long menuGroup, List<Long> products, int quantity) {
-        List<MenuProduct> menuProducts = products.stream()
-                .map(product -> {
-                    MenuProduct menuProduct = new MenuProduct();
-                    menuProduct.setProductId(product);
-                    menuProduct.setQuantity(quantity);
-                    return menuProduct;
-                })
+        List<MenuProductRequest> menuProducts = products.stream()
+                .map(product -> new MenuProductRequest(product, quantity))
                 .collect(Collectors.toList());
-
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuGroupId(menuGroup);
-        menu.setMenuProducts(menuProducts);
 
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(menu)
+                .body(new MenuRequest(name, BigDecimal.valueOf(price), menuGroup, menuProducts))
                 .when().log().all()
                 .post("/api/menus")
                 .then().log().all()
@@ -108,12 +99,12 @@ public class AcceptanceTest {
                 .extract().body().jsonPath().getLong("id");
     }
 
-    protected List<Menu> 메뉴를_조회한다() {
+    protected List<MenuResponse> 메뉴를_조회한다() {
         return RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/menus")
                 .then().log().all()
-                .extract().body().jsonPath().getList(".", Menu.class);
+                .extract().body().jsonPath().getList(".", MenuResponse.class);
     }
 
     protected long 테이블을_생성한다(int numberOfGuests, boolean empty) {
