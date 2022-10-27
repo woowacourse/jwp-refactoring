@@ -84,8 +84,7 @@ abstract class ServiceTest {
     }
 
     protected MenuGroup saveMenuGroup(final String name) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
+        final MenuGroup menuGroup = new MenuGroup(name);
         return menuGroupDao.save(menuGroup);
     }
 
