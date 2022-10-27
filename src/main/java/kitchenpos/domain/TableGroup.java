@@ -20,14 +20,19 @@ public class TableGroup {
         this(id, createdDate, new ArrayList<>());
     }
 
-    public void validateSizeOfOrderTables() {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+    public void validateExistOrderTable(final long existOrderTableSize) {
+        if (orderTables.size() != existOrderTableSize) {
             throw new IllegalArgumentException();
         }
     }
 
-    public void validateExistOrderTable(final long existOrderTableSize) {
-        if (orderTables.size() != existOrderTableSize) {
+    public void updateOrderTables(final List<OrderTable> groupedOrderTables) {
+        validateSizeOfOrderTables(groupedOrderTables);
+        this.orderTables = new ArrayList<>(groupedOrderTables);
+    }
+
+    private void validateSizeOfOrderTables(final List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
         }
     }

@@ -21,12 +21,6 @@ public class OrderTable {
         }
     }
 
-    public void validateGroupable() {
-        if (!empty || Objects.nonNull(tableGroupId)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     public void updateEmpty(final boolean empty) {
         validateNotGrouping();
         this.empty = empty;
@@ -48,6 +42,22 @@ public class OrderTable {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public void groupTableBy(final Long tableGroupId) {
+        validateGroupable();
+        this.tableGroupId = tableGroupId;
+        this.empty = false;
+    }
+
+    private void validateGroupable() {
+        if (!empty || Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void ungroup() {
+        this.tableGroupId = null;
     }
 
     public Long getId() {

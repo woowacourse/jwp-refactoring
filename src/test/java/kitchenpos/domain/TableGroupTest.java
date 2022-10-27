@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.Collections;
 import kitchenpos.fixtures.OrderTableFixtures;
 import kitchenpos.fixtures.TableGroupFixtures;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +16,7 @@ class TableGroupTest {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final TableGroup tableGroup = TableGroupFixtures.createWithOrderTables(orderTable);
 
-        assertThatThrownBy(tableGroup::validateSizeOfOrderTables)
+        assertThatThrownBy(() -> tableGroup.updateOrderTables(Collections.singletonList(orderTable)))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 

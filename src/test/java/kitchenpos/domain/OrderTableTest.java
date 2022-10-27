@@ -22,7 +22,7 @@ class OrderTableTest {
     void validateGroupableWithAlreadyGrouping() {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(1L, 3);
 
-        assertThatThrownBy(orderTable::validateGroupable)
+        assertThatThrownBy(() -> orderTable.groupTableBy(2L))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
@@ -31,7 +31,7 @@ class OrderTableTest {
     void validateGroupableWithEmptyOrderTable() {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 3);
 
-        assertThatThrownBy(orderTable::validateGroupable)
+        assertThatThrownBy(() -> orderTable.groupTableBy(2L))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
