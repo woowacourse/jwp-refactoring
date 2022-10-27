@@ -2,9 +2,9 @@ package kitchenpos.acceptance;
 
 import io.restassured.response.ValidatableResponse;
 import java.util.Arrays;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.support.RequestBuilder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +24,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         final int discountedPrice = price - 500;
 
         // when
-        final Menu request = RequestBuilder.ofMenu(savedMenuGroup, Arrays.asList(savedProduct), discountedPrice);
+        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, Arrays.asList(savedProduct), discountedPrice);
         final ValidatableResponse response = post("/api/menus", request);
 
         // then

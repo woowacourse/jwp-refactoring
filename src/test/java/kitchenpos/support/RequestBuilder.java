@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -14,6 +13,8 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.dto.request.MenuProductRequest;
+import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.request.ProductRequest;
 
 public class RequestBuilder {
@@ -39,18 +40,16 @@ public class RequestBuilder {
         return new MenuGroupRequest(DEFAULT_MENU_GROUP_NAME);
     }
 
-    public static Menu ofMenu(final MenuGroup menuGroup, final List<Product> products, final int price) {
-        final List<MenuProduct> menuProducts = products.stream()
-                .map(RequestBuilder::ofMenuProduct)
+    public static MenuRequest ofMenu(final MenuGroup menuGroup, final List<Product> products, final int price) {
+        return ofMenu(menuGroup, products, new BigDecimal(price));
+    }
+
+    public static MenuRequest ofMenu(final MenuGroup menuGroup, final List<Product> products, final BigDecimal price) {
+        final List<MenuProductRequest> menuProducts = products.stream()
+                .map(product -> new MenuProductRequest(product.getId(), 1))
                 .collect(Collectors.toList());
 
-        final Menu menu = new Menu();
-        menu.setName(DEFAULT_MENU_NAME);
-        menu.setPrice(new BigDecimal(price));
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setMenuProducts(menuProducts);
-
-        return menu;
+        return new MenuRequest(DEFAULT_MENU_NAME, price, menuGroup.getId(), menuProducts);
     }
 
     public static OrderTable ofEmptyTable() {
@@ -92,14 +91,6 @@ public class RequestBuilder {
         orderTable.setNumberOfGuests(numberOfGuests);
         orderTable.setEmpty(empty);
         return orderTable;
-    }
-
-    private static MenuProduct ofMenuProduct(final Product product) {
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(product.getId());
-        menuProduct.setQuantity(1);
-
-        return menuProduct;
     }
 
     private static Order ofOrder(final Long menuId, final Long tableId) {

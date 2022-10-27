@@ -9,6 +9,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.support.DataSupport;
 import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +47,7 @@ class MenuServiceTest {
     @Test
     void create() {
         // given, when
-        final Menu request = RequestBuilder.ofMenu(savedMenuGroup, savedProducts, PRICE);
+        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, savedProducts, PRICE);
         final Menu savedMenu = menuService.create(request);
 
         // then
@@ -62,7 +63,7 @@ class MenuServiceTest {
         final List<Product> unsavedProducts = Arrays.asList(unsavedProduct);
 
         // when, then
-        final Menu request = RequestBuilder.ofMenu(savedMenuGroup, unsavedProducts, PRICE);
+        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, unsavedProducts, PRICE);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> menuService.create(request));
     }
@@ -70,8 +71,7 @@ class MenuServiceTest {
     @DisplayName("메뉴를 등록할 때 가격을 입력하지 않으면 예외가 발생한다.")
     @Test
     void create_throwsException_ifNoPrice() {
-        final Menu request = RequestBuilder.ofMenu(savedMenuGroup, savedProducts, 0);
-        request.setPrice(null);
+        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, savedProducts, null);
 
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> menuService.create(request));
@@ -80,7 +80,7 @@ class MenuServiceTest {
     @ValueSource(ints = {-1, -500, -1000})
     @ParameterizedTest(name = "메뉴를 등록할 때 가격이 0보다 작은 {0}이면 예외가 발생한다.")
     void create_throwsException_ifPriceUnder0(final int price) {
-        final Menu request = RequestBuilder.ofMenu(savedMenuGroup, savedProducts, price);
+        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, savedProducts, price);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> menuService.create(request));
     }
@@ -92,7 +92,7 @@ class MenuServiceTest {
         final int priceOverProduct = PRICE + addedAmount;
 
         // when, then
-        final Menu request = RequestBuilder.ofMenu(savedMenuGroup, savedProducts, priceOverProduct);
+        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, savedProducts, priceOverProduct);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> menuService.create(request));
     }
