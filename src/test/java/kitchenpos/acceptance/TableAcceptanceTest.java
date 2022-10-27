@@ -27,7 +27,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
         RestAssured.port = port;
     }
 
-    public static long createTable(OrderTable table) {
+    public static Long createTable(OrderTable table) {
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .body(table)
@@ -68,28 +68,27 @@ public class TableAcceptanceTest extends AcceptanceTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void changeEmpty(boolean empty) {
-        long tableId = createTable(new OrderTable(null, 2, true));
+        Long tableId = createTable(new OrderTable(null, 2, true));
 
-        Long updatedTableId = updateTableEmpty(tableId, empty);
+        updateTableEmpty(tableId, empty);
 
         List<OrderTable> tables = getTables();
         OrderTable table = tables.stream()
-                .filter(t -> updatedTableId.equals(t.getId()))
+                .filter(t -> tableId.equals(t.getId()))
                 .findFirst()
                 .orElseThrow();
 
         assertThat(table.isEmpty()).isEqualTo(empty);
     }
 
-    private Long updateTableEmpty(long tableId, boolean empty) {
-        return RestAssured.given().log().all()
+    private void updateTableEmpty(long tableId, boolean empty) {
+        RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .body(Map.of("empty", empty))
                 .when().log().all()
                 .put("/api/tables/" + tableId + "/empty")
                 .then().log().all()
-                .statusCode(HttpStatus.OK.value())
-                .extract().jsonPath().getLong("id");
+                .statusCode(HttpStatus.OK.value());
     }
 
     @DisplayName("테이블의 방문한 손님 수를 변경한다.")

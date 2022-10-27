@@ -17,6 +17,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,9 +50,9 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         Long orderId1 = createOrder(tableId1, List.of(menuId1));
         Long orderId2 = createOrder(tableId2, List.of(menuId1, menuId2));
 
-        List<Order> orders = getOrders();
+        List<OrderResponse> orders = getOrders();
 
-        assertThat(orders).extracting(Order::getId, Order::getOrderTableId)
+        assertThat(orders).extracting(OrderResponse::getId, OrderResponse::getOrderTableId)
                 .containsExactlyInAnyOrder(
                         tuple(orderId1, tableId1),
                         tuple(orderId2, tableId2)
@@ -74,13 +75,13 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                 .extract().jsonPath().getLong("id");
     }
 
-    private List<Order> getOrders() {
+    private List<OrderResponse> getOrders() {
         return RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/orders")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .extract().body().jsonPath().getList(".", Order.class);
+                .extract().body().jsonPath().getList(".", OrderResponse.class);
     }
 
     @DisplayName("주문 상태를 변경한다.")
@@ -104,8 +105,8 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         updateOrderStatus(orderId, orderStatus);
 
-        List<Order> orders = getOrders();
-        Order order = orders.stream()
+        List<OrderResponse> orders = getOrders();
+        OrderResponse order = orders.stream()
                 .filter(o -> orderId.equals(o.getId()))
                 .findFirst()
                 .orElseThrow();

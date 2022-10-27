@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.application.dto.OrderTableEmptyRequest;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,13 +32,13 @@ class TableServiceTest extends ApplicationTest {
     @ValueSource(booleans = {true, false})
     void changeEmpty(boolean empty) {
         OrderTable table = 주문테이블_생성(new OrderTable(null, 5, true));
-        OrderTable updateTable = new OrderTable(table.getId(), table.getNumberOfGuests(), empty);
+        OrderTableEmptyRequest orderTableEmptyRequest = new OrderTableEmptyRequest(empty);
 
-        OrderTable updatedTable = tableService.changeEmpty(table.getId(), updateTable);
+        tableService.changeEmpty(table.getId(), orderTableEmptyRequest);
 
         List<OrderTable> tables = tableService.list();
         OrderTable foundTable = tables.stream()
-                .filter(t -> updatedTable.getId().equals(t.getId()))
+                .filter(t -> table.getId().equals(t.getId()))
                 .findFirst()
                 .orElseThrow();
 

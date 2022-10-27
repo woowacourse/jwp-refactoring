@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.util.List;
 import kitchenpos.application.dto.MenuGroupRequest;
-import kitchenpos.application.dto.MenuGroupResponse;
+import kitchenpos.ui.dto.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
