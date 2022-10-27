@@ -1,5 +1,10 @@
 package kitchenpos.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+import javax.sql.DataSource;
 import kitchenpos.domain.OrderLineItem;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -8,12 +13,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
@@ -66,6 +65,17 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("seq", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+    }
+
+    public void update(final OrderLineItem entity) {
+        final String sql = "UPDATE order_line_item SET order_id = (:orderId), menu_id = (:menuId),"
+                + " quantity = (:quantity) WHERE seq = (:seq)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("orderId", entity.getOrderId())
+                .addValue("menuId", entity.getMenuId())
+                .addValue("quantity", entity.getQuantity())
+                .addValue("seq", entity.getSeq());
+        jdbcTemplate.update(sql, parameters);
     }
 
     private OrderLineItem toEntity(final ResultSet resultSet) throws SQLException {
