@@ -3,18 +3,17 @@ package kitchenpos;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import kitchenpos.application.dto.MenuRequest;
-import kitchenpos.domain.Menu;
+import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 
 public class DomainFixtures {
 
     private DomainFixtures() {
     }
 
-    public static Product 맛있는_라면() {
-        return new Product("맛있는 라면", new BigDecimal(1300));
+    public static ProductRequest 맛있는_라면() {
+        return new ProductRequest("맛있는 라면", new BigDecimal(1300));
     }
 
     public static MenuRequest 라면_메뉴() {
