@@ -31,9 +31,7 @@ class ProductServiceTest {
         @ParameterizedTest(name = "[{index}] {displayName} price = {0}")
         @ValueSource(longs = {0, 1_000})
         void createProduct(final Long price) {
-            final Product product = new Product();
-            product.setName("짱구");
-            product.setPrice(BigDecimal.valueOf(price));
+            final Product product = new Product("짱구", BigDecimal.valueOf(price));
 
             final Product actual = sut.create(product);
 
@@ -56,7 +54,7 @@ class ProductServiceTest {
         @DisplayName("상품 가격이 0원보다 적은 경우 등록할 수 없다.")
         @Test
         void createWithPriceLessThanZero() {
-            final Product 짱구 = 상품_생성("짱구", -1);
+            final Product 짱구 = 상품_생성("짱구", BigDecimal.valueOf(-1));
 
             assertThatThrownBy(() -> sut.create(짱구))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -70,8 +68,8 @@ class ProductServiceTest {
 
         assertThat(sut.list())
                 .hasSize(6)
-                .extracting(product -> 상품_생성(product.getId(), product.getName(), product.getPrice().intValue()))
                 .usingRecursiveFieldByFieldElementComparator()
+                .usingElementComparatorIgnoringFields("price")
                 .isEqualTo(products);
     }
 }
