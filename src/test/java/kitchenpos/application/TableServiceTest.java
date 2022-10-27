@@ -1,6 +1,8 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.order.OrderStatus.COOKING;
+import static kitchenpos.fixture.Fixture.사인테이블_생성요청;
+import static kitchenpos.fixture.Fixture.삼인테이블_생성요청;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -8,8 +10,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import kitchenpos.application.request.OrderTableCreateRequest;
 import kitchenpos.application.request.OrderTableUpdateRequest;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.ordertable.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -42,10 +45,13 @@ class TableServiceTest {
         @Nested
         class 호출되는_경우 extends ServiceTest {
 
-            private static final int EXPECT_SIZE = 8;
+            private static final int EXPECT_SIZE = 2;
 
             @Test
             void OrderTable의_목록을_반환한다() {
+                tableService.create(삼인테이블_생성요청);
+                tableService.create(사인테이블_생성요청);
+
                 final List<OrderTable> actual = tableService.list();
 
                 assertThat(actual).hasSize(EXPECT_SIZE);
@@ -74,11 +80,12 @@ class TableServiceTest {
 
             @Test
             void 예외가_발생한다() {
-                final OrderTable orderTable = orderTableDao.save(new OrderTable(1L, 5, false));
+                final OrderTable orderTable = orderTableRepository.save(new OrderTable(1L, 5, false));
 
-                assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), null))
-                        .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("해당 OrderTable이 이미 TableGroup에 속해있습니다.");
+                assertThatThrownBy(
+                        () -> tableService.changeEmpty(orderTable.getId(), new OrderTableUpdateRequest(5, false)))
+                        .isInstanceOf(IllegalStateException.class)
+                        .hasMessage("OrderTable이 이미 TableGroup에 속해있습니다.");
             }
         }
 
@@ -87,9 +94,11 @@ class TableServiceTest {
 
             @Test
             void 예외가_발생한다() {
-                orderDao.save(new Order(1L, COOKING.name()));
+                final OrderTable orderTable = orderTableRepository.save(new OrderTable(1L, 5, false));
+                orderRepository.save(new Order(orderTable.getId(), COOKING, List.of(new OrderLineItem(1L, 1L))));
 
-                assertThatThrownBy(() -> tableService.changeEmpty(1L, null))
+                assertThatThrownBy(
+                        () -> tableService.changeEmpty(orderTable.getId(), new OrderTableUpdateRequest(5, false)))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("해당 OrderTable의 Order중 아직 완료되지 않은 것이 존재합니다.");
             }
@@ -102,7 +111,9 @@ class TableServiceTest {
 
             @Test
             void OrderTable의_empty_상태를_변경한다() {
-                final OrderTable actual = tableService.changeEmpty(1L, request);
+                final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
+
+                final OrderTable actual = tableService.changeEmpty(orderTable.getId(), request);
 
                 assertThat(actual.isEmpty()).isFalse();
             }
@@ -119,8 +130,11 @@ class TableServiceTest {
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, new OrderTableUpdateRequest(
-                        INVALID_NUMBER_OF_GUESTS, false)))
+                final OrderTable orderTable = orderTableRepository.save(new OrderTable(1L, 5, false));
+
+                assertThatThrownBy(
+                        () -> tableService.changeNumberOfGuests(orderTable.getId(), new OrderTableUpdateRequest(
+                                INVALID_NUMBER_OF_GUESTS, false)))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("손님의 수는 음수일 수 없습니다.");
             }
@@ -143,11 +157,11 @@ class TableServiceTest {
         @Nested
         class 입력받은_OrderTable이_empty_상태인_경우 extends ServiceTest {
 
-            private static final long EMPTY_ORDER_TABLE_ID = 1L;
-
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> tableService.changeNumberOfGuests(EMPTY_ORDER_TABLE_ID,
+                final OrderTable orderTable = orderTableRepository.save(new OrderTable(1L, 5, true));
+
+                assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(),
                         new OrderTableUpdateRequest(3, false)))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("해당 OrderTable이 empty 상태 입니다.");
@@ -163,7 +177,8 @@ class TableServiceTest {
 
             @Test
             void OrderTable의_손님의_수를_변경한다() {
-                tableService.changeEmpty(1L, new OrderTableUpdateRequest(3, false));
+                final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
+                tableService.changeEmpty(orderTable.getId(), new OrderTableUpdateRequest(3, false));
 
                 final OrderTable actual = tableService.changeNumberOfGuests(1L, request);
 
