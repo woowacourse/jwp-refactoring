@@ -1,21 +1,15 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.fixture.ProductFixture.INVALID_PRODUCT_PRICE;
-import static kitchenpos.application.fixture.ProductFixture.PRODUCT_NAME;
 import static kitchenpos.application.fixture.ProductFixture.PRODUCT_PRICE;
 import static kitchenpos.application.fixture.ProductFixture.UNSAVED_PRODUCT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Optional;
-import java.util.stream.Stream;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class ProductServiceTest extends ServiceTest {
@@ -46,26 +40,10 @@ class ProductServiceTest extends ServiceTest {
         assertThat(numberOfSavedProductBeforeCreate + 1).isEqualTo(numberOfSavedProduct);
     }
 
-    @DisplayName("이름이나 가격이 없으면 예외가 발생한다.")
-    @ParameterizedTest
-    @MethodSource("argsOfCreateException")
-    void create_Exception(Product wrongProduct) {
-        assertThatThrownBy(() -> productService.create(wrongProduct))
-                .isInstanceOf(Exception.class);
-    }
-
-    static Stream<Arguments> argsOfCreateException() {
-        return Stream.of(
-                Arguments.of(new Product(null, PRODUCT_PRICE)),
-                Arguments.of(new Product(PRODUCT_NAME, null))
-        );
-    }
-
-    @DisplayName("상품 가격이 0원 미만이면 예외가 발생한다.")
+    @DisplayName("이름이 없으면 예외가 발생한다.")
     @Test
-    void create_Exception_Invalid_Price() {
-        Product wrongPriceProduct = new Product(PRODUCT_NAME, INVALID_PRODUCT_PRICE);
-        assertThatThrownBy(() -> productService.create(wrongPriceProduct))
-                .isInstanceOf(IllegalArgumentException.class);
+    void create_Exception() {
+        assertThatThrownBy(() -> productService.create(new Product(null, PRODUCT_PRICE)))
+                .isInstanceOf(Exception.class);
     }
 }
