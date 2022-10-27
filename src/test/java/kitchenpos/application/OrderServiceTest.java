@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
@@ -21,7 +22,8 @@ class OrderServiceTest extends ServiceTest {
     @Test
     @DisplayName("주문을 생성한다")
     void create() {
-        final Menu menu = new Menu(1L, "치킨메뉴", BigDecimal.valueOf(20_000L), 1L, new ArrayList<>());
+        final MenuProducts menuProducts = new MenuProducts(new ArrayList<>());
+        final Menu menu = new Menu(1L, "치킨메뉴", BigDecimal.valueOf(20_000L), 1L, menuProducts);
         final MenuProduct menuProduct = saveAndGetMenuProduct(1L, 1L, 1L);
 
         final Order actual = orderService.create(
@@ -36,7 +38,8 @@ class OrderServiceTest extends ServiceTest {
     @Test
     @DisplayName("존재하지 않는 메뉴로 주문을 생성하면 예외를 반환한다")
     void create_notExistMenuException() {
-        final Menu menu = new Menu(1L, "치킨메뉴", BigDecimal.valueOf(20_000L), 1L, new ArrayList<>());
+        final MenuProducts menuProducts = new MenuProducts(new ArrayList<>());
+        final Menu menu = new Menu(1L, "치킨메뉴", BigDecimal.valueOf(20_000L), 1L, menuProducts);
 
         final MenuProduct invalidMenuProduct = saveAndGetMenuProduct(1L, 999999999L, 1L);
 

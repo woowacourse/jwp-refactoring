@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -9,6 +8,7 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,38 +39,35 @@ public class MenuService {
         if (!menuGroupDao.existsById(menuGroupId)) {
             throw new IllegalArgumentException();
         }
+        validateMenuPrice(price, menuProducts);
 
+        final Menu savedMenu = menuDao.save(new Menu(name, price, menuGroupId));
+        updateMenuProductsByMenuId(menuProducts, savedMenu);
+
+        return savedMenu;
+    }
+
+    private void validateMenuPrice(final BigDecimal price, final List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = productDao.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
-
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
+    }
 
-        final Menu savedMenu = menuDao.save(new Menu(name, price, menuGroupId));
-
-        final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
+    private void updateMenuProductsByMenuId(final List<MenuProduct> menuProducts, final Menu savedMenu) {
+        savedMenu.addMenuIdToMenuProducts();
         for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
+            menuProductDao.update(menuProduct);
         }
-        savedMenu.setMenuProducts(savedMenuProducts);
-
-        return savedMenu;
+        savedMenu.changeAllMenuProducts(new MenuProducts(menuProducts));
     }
 
     public List<Menu> list() {
-        final List<Menu> menus = menuDao.findAll();
-
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
-
-        return menus;
+        return menuDao.findAll();
     }
 }

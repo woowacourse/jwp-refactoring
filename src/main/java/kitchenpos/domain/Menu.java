@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,20 +10,20 @@ public class Menu {
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+    private MenuProducts menuProducts;
 
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
-                final List<MenuProduct> menuProducts) {
+                final MenuProducts menuProducts) {
         validatePrice(price);
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = new ArrayList<>(menuProducts);
+        this.menuProducts = menuProducts;
     }
 
     public Menu(final String name, final BigDecimal price, final Long menuGroupId) {
-        this(null, name, price, menuGroupId, new ArrayList<>());
+        this(null, name, price, menuGroupId, new MenuProducts(new ArrayList<>()));
     }
 
     private void validatePrice(final BigDecimal price) {
@@ -38,8 +37,16 @@ public class Menu {
         this.price = price;
     }
 
+    public void addMenuIdToMenuProducts() {
+        menuProducts.addMenuId(id);
+    }
+
     public void addMenuProduct(final MenuProduct... menuProducts) {
-        this.menuProducts.addAll(Arrays.asList(menuProducts));
+        this.menuProducts.addMenuProduct(menuProducts);
+    }
+
+    public void changeAllMenuProducts(final MenuProducts menuProducts) {
+        this.menuProducts = menuProducts;
     }
 
     public Long getId() {
@@ -58,11 +65,11 @@ public class Menu {
         return menuGroupId;
     }
 
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+    public List<MenuProduct> getAllMenuProduct() {
+        return menuProducts.getMenuProducts();
     }
 
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+    public MenuProducts getMenuProducts() {
+        return menuProducts;
     }
 }

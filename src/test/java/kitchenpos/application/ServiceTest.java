@@ -14,6 +14,7 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItems;
@@ -84,7 +85,8 @@ public class ServiceTest {
 
     protected Menu saveAndGetMenu(final Long id) {
         saveAndGetMenuGroup(1L);
-        return menuDao.save(new Menu(id, "피자세트메뉴", BigDecimal.valueOf(15_000L), 1L, new ArrayList<>()));
+        final MenuProducts menuProducts = new MenuProducts(new ArrayList<>());
+        return menuDao.save(new Menu(id, "피자세트메뉴", BigDecimal.valueOf(15_000L), 1L, menuProducts));
     }
 
     protected MenuGroup saveAndGetMenuGroup(final Long id) {
@@ -105,7 +107,8 @@ public class ServiceTest {
 
     protected Order saveAndGetOrder(final Long id, final String status) {
         final MenuGroup menuGroup = saveAndGetMenuGroup(1L);
-        final Menu menu = new Menu(1L, "치킨메뉴", BigDecimal.valueOf(20_000L), menuGroup.getId(), new ArrayList<>());
+        final MenuProducts menuProducts = new MenuProducts(new ArrayList<>());
+        final Menu menu = new Menu(1L, "치킨메뉴", BigDecimal.valueOf(20_000L), menuGroup.getId(), menuProducts);
 
         final Product product = saveAndGetProduct(1L);
         final MenuProduct menuProduct = saveAndGetMenuProduct(1L, menu.getId(), product.getId());
@@ -121,7 +124,8 @@ public class ServiceTest {
 
     protected Order saveAndGetOrderInOrderTable(final Long id, final OrderTable orderTable, final String status) {
         final MenuGroup menuGroup = saveAndGetMenuGroup(1L);
-        final Menu menu = new Menu(1L, "치킨메뉴", BigDecimal.valueOf(20_000L), menuGroup.getId(), new ArrayList<>());
+        final MenuProducts menuProducts = new MenuProducts(new ArrayList<>());
+        final Menu menu = new Menu(1L, "치킨메뉴", BigDecimal.valueOf(20_000L), menuGroup.getId(), menuProducts);
 
         final Product product = saveAndGetProduct(1L);
         final MenuProduct menuProduct = saveAndGetMenuProduct(1L, menu.getId(), product.getId());

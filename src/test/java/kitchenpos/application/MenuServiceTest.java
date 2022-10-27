@@ -10,6 +10,7 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ class MenuServiceTest extends ServiceTest {
         menu.addMenuProduct(saveAndGetMenuProduct(1L, 1L, 1L));
 
         final Menu actual =
-                menuService.create(menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menu.getMenuProducts());
+                menuService.create(menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menu.getAllMenuProduct());
 
         assertThat(actual.getName()).isEqualTo("피자세트메뉴");
     }
@@ -36,7 +37,7 @@ class MenuServiceTest extends ServiceTest {
         menu.addMenuProduct(saveAndGetMenuProduct(1L, 1L, 1L));
 
         assertThatThrownBy(() -> menuService.create(
-                menu.getName(), BigDecimal.valueOf(-1L), menu.getMenuGroupId(), menu.getMenuProducts())
+                menu.getName(), BigDecimal.valueOf(-1L), menu.getMenuGroupId(), menu.getAllMenuProduct())
         )
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -47,7 +48,7 @@ class MenuServiceTest extends ServiceTest {
         final Menu actual = createMenuRequest(BigDecimal.valueOf(999999999L), 1L);
 
         assertThatThrownBy(() -> menuService.create(
-                actual.getName(), actual.getPrice(), actual.getMenuGroupId(), actual.getMenuProducts())
+                actual.getName(), actual.getPrice(), actual.getMenuGroupId(), actual.getAllMenuProduct())
         )
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -58,7 +59,7 @@ class MenuServiceTest extends ServiceTest {
         final Menu actual = createMenuRequestNotExistProduct(BigDecimal.valueOf(15_000L), 1L);
 
         assertThatThrownBy(() -> menuService.create(
-                actual.getName(), actual.getPrice(), actual.getMenuGroupId(), actual.getMenuProducts())
+                actual.getName(), actual.getPrice(), actual.getMenuGroupId(), actual.getAllMenuProduct())
         )
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -80,7 +81,8 @@ class MenuServiceTest extends ServiceTest {
 
     private Menu createMenuRequest(final BigDecimal price, final Long menuId) {
         final MenuGroup menuGroup = saveAndGetMenuGroup(1L);
-        final Menu menu = new Menu(menuId, "치킨메뉴", price, menuGroup.getId(), new ArrayList<>());
+        final MenuProducts menuProducts = new MenuProducts(new ArrayList<>());
+        final Menu menu = new Menu(menuId, "치킨메뉴", price, menuGroup.getId(), menuProducts);
 
         final Product product = saveAndGetProduct(1L);
         final MenuProduct menuProduct = saveAndGetMenuProduct(1L, menu.getId(), product.getId());
@@ -91,7 +93,8 @@ class MenuServiceTest extends ServiceTest {
 
     private Menu createMenuRequestNotExistProduct(final BigDecimal price, final Long menuId) {
         final MenuGroup menuGroup = saveAndGetMenuGroup(1L);
-        final Menu menu = new Menu(menuId, "치킨메뉴", price, menuGroup.getId(), new ArrayList<>());
+        final MenuProducts menuProducts = new MenuProducts(new ArrayList<>());
+        final Menu menu = new Menu(menuId, "치킨메뉴", price, menuGroup.getId(), menuProducts);
 
         final MenuProduct menuProduct = saveAndGetMenuProduct(1L, menu.getId(), 999999999L);
         menu.addMenuProduct(menuProduct);
