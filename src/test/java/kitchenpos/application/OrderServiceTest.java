@@ -50,10 +50,8 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void 주문_정상_생성() {
         // given
-        Order order = new Order();
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderTableId(orderTableId);
+        Order order = 주문(orderTableId, orderLineItems);
 
         // when
         Order savedOrder = orderService.create(order);
@@ -66,9 +64,7 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void 주문_항목_0개인_경우_실패() {
         // given
-        Order order = new Order();
-        order.setOrderLineItems(new ArrayList<>());
-        order.setOrderTableId(orderTableId);
+        Order order = 주문(orderTableId, new ArrayList<>());
 
         // when & then
         assertThatThrownBy(() -> orderService.create(order))
@@ -78,10 +74,8 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void menu_id가_null인_주문_항목을_주문하는_경우_실패() {
         // given
-        Order order = new Order();
         List<OrderLineItem> orderLineItems = Collections.singletonList(menuId가_null인_주문_항목());
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderTableId(orderTableId);
+        Order order = 주문(orderTableId, orderLineItems);
 
         // when & then
         assertThatThrownBy(() -> orderService.create(order))
@@ -91,10 +85,8 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void 주문_목록_조회() {
         // given
-        Order order = new Order();
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderTableId(orderTableId);
+        Order order = 주문(orderTableId, orderLineItems);
         Order savedOrder = orderService.create(order);
 
         // when
@@ -115,14 +107,12 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void 주문_상태_정상_변경() {
         // given
-        Order order = new Order();
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderTableId(orderTableId);
+        Order order = 주문(orderTableId, orderLineItems);
         Order savedOrder = orderService.create(order);
 
-        String changedStatus = OrderStatus.COOKING.name();
-        savedOrder.setOrderStatus(changedStatus);
+        OrderStatus changedStatus = OrderStatus.COOKING;
+        savedOrder.changeOrderStatus(changedStatus);
 
         // when
         orderService.changeOrderStatus(savedOrder.getId(), savedOrder);
@@ -130,16 +120,14 @@ class OrderServiceTest extends ServiceTestBase {
         // then
         Optional<Order> actual = orderDao.findById(savedOrder.getId());
         assertThat(actual).isNotEmpty();
-        assertThat(actual.get().getOrderStatus()).isEqualTo(changedStatus);
+        assertThat(actual.get().getOrderStatus()).isEqualTo(changedStatus.name());
     }
 
     @Test
     void 존재하지_않는_주문_상태_변경_시_실패() {
         // given
-        Order order = new Order();
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderTableId(orderTableId);
+        Order order = 주문(orderTableId, orderLineItems);
         orderService.create(order);
 
         // when & then
@@ -150,13 +138,11 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void COMPLETION_주문_상태_변경_시_실패() {
         // given
-        Order order = new Order();
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderTableId(orderTableId);
+        Order order = 주문(orderTableId, orderLineItems);
 
         Order savedOrder = orderService.create(order);
-        savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
+        savedOrder.changeOrderStatus(OrderStatus.COMPLETION);
         orderDao.save(savedOrder);
 
         // when & then

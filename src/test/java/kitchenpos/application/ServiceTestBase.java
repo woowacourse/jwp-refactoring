@@ -121,14 +121,16 @@ public class ServiceTestBase {
     }
 
     public void 주문_생성(final Menu menu, final OrderTable orderTable, final OrderStatus orderStatus) {
-        Order order = new Order();
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목(menu.getId()));
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderTableId(orderTable.getId());
+        Order order = new Order(null, orderTable.getId(), orderStatus.name(), LocalDateTime.now());
+        order.addOrderLineItems(orderLineItems);
+        orderService.create(order);
+    }
 
-        Order savedOrder = orderService.create(order);
-        savedOrder.setOrderStatus(orderStatus.name());
-        orderService.changeOrderStatus(savedOrder.getId(), savedOrder);
+    public Order 주문(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        Order order = new Order(null, orderTableId, null, LocalDateTime.now());
+        order.addOrderLineItems(orderLineItems);
+        return order;
     }
 
     public OrderLineItem 주문_항목(final Long menuId) {
