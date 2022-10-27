@@ -47,6 +47,11 @@ public class OrderTable {
         return !empty || Objects.nonNull(tableGroupId);
     }
 
+    public void ungroup() {
+        tableGroupId = null;
+        empty = false;
+    }
+
     public Long getId() {
         return id;
     }

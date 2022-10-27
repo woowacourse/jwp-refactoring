@@ -38,6 +38,18 @@ public class OrderTables {
                 .anyMatch(OrderTable::isUsing);
     }
 
+    public List<Long> getIds() {
+        return values.stream()
+                .map(OrderTable::getId)
+                .toList();
+    }
+
+    public void ungroup() {
+        for (OrderTable orderTable : values) {
+            orderTable.ungroup();
+        }
+    }
+
     public List<OrderTable> getValues() {
         return values;
     }
