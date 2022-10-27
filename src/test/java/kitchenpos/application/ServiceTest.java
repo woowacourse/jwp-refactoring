@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -112,13 +111,9 @@ abstract class ServiceTest {
 
     protected Order saveOrder(final OrderTable orderTable, final String orderStatus,
                               final Pair<Menu, Long>... orderLineItemPairs) {
-        final List<OrderLineItem> orderLineItems = new ArrayList<>();
-        for (final Pair<Menu, Long> pair : orderLineItemPairs) {
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(pair.getFirst().getId());
-            orderLineItem.setQuantity(pair.getSecond());
-            orderLineItems.add(orderLineItem);
-        }
+        final List<OrderLineItem> orderLineItems = Arrays.stream(orderLineItemPairs)
+                .map(pair -> new OrderLineItem(pair.getFirst().getId(), pair.getSecond()))
+                .collect(Collectors.toList());
 
         final Order order = new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), orderLineItems);
         return orderDao.save(order);

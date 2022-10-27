@@ -71,11 +71,8 @@ public class OrderService {
 
         final List<OrderLineItemResponse> orderLineItemResponses = new ArrayList<>();
         for (final OrderLineItemRequest orderLineItemRequest : orderLineItems) {
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setOrderId(orderId);
-            orderLineItem.setQuantity(orderLineItemRequest.getQuantity());
-            orderLineItem.setMenuId(orderLineItemRequest.getMenuId());
-
+            final OrderLineItem orderLineItem = new OrderLineItem(orderId, orderLineItemRequest.getMenuId(),
+                    orderLineItemRequest.getQuantity());
             final OrderLineItem savedOrderLineItem = orderLineItemDao.save(orderLineItem);
             final OrderLineItemResponse response = new OrderLineItemResponse(savedOrderLineItem.getSeq(),
                     savedOrderLineItem.getOrderId(), savedOrderLineItem.getMenuId(), savedOrderLineItem.getQuantity());
