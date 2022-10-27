@@ -6,26 +6,31 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.fixture.ProductFixture;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
 class ProductServiceTest {
 
-    @Autowired
+    private ProductDao productDao;
     private ProductService productService;
+
+    @BeforeEach
+    void setUp() {
+        productDao = ProductFixture.setUp().getInMemoryProductDao();
+        productService = new ProductService(productDao);
+    }
+
 
     @Test
     @DisplayName("상품을 생성한다.")
     void createProduct() {
         final String productName = "맥북m1";
         final BigDecimal productPrice = BigDecimal.valueOf(3000);
-        final Product product = new Product(productName, productPrice);
+        final Product product = ProductFixture.createProduct(productName, productPrice);
 
         final Product persistedProduct = productService.create(product);
 
@@ -38,18 +43,18 @@ class ProductServiceTest {
     @Test
     @DisplayName("상품 가격이 null일 경우 예외 발생")
     void whenProductPriceIsNull() {
-        final Product product = new Product("맥북m1", null);
+        final Product product = ProductFixture.createProductByPrice(null);
 
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    @DisplayName("상품 가격이 0원 일때 생성한다.")
+    @DisplayName("상품 가격이 0원 일때 생성된다.")
     void whenProductPriceIsZero() {
         final String productName = "맥북m1";
         final BigDecimal productPrice = BigDecimal.ZERO;
-        final Product product = new Product(productName, productPrice);
+        final Product product = ProductFixture.createProduct(productName, productPrice);
 
         final Product persistedProduct = productService.create(product);
 
@@ -62,7 +67,7 @@ class ProductServiceTest {
     @Test
     @DisplayName("상품 가격이 0원 미만 일때 예외 발생")
     void whenProductPriceIsUnderZero() {
-        final Product product = new Product("맥북m1", BigDecimal.valueOf(-1));
+        final Product product = ProductFixture.createProductByPrice(new BigDecimal(-1));
 
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -71,8 +76,14 @@ class ProductServiceTest {
     @Test
     @DisplayName("상품 목록을 조회한다.")
     void getProducts() {
+        final List<Product> expectedProducts = ProductFixture.setUp()
+                .getFixtures();
         final List<Product> products = productService.list();
 
-        assertThat(products).hasSize(6);
+        assertAll(
+                () -> assertThat(products).hasSameSizeAs(expectedProducts),
+                () -> assertThat(products).usingRecursiveComparison()
+                        .isEqualTo(expectedProducts)
+        );
     }
 }
