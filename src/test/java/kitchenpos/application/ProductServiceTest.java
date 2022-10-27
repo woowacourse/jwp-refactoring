@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.fixture.ProductFixture.createProduct;
 import static kitchenpos.application.fixture.ProductFixture.짜장면;
 import static kitchenpos.application.fixture.ProductFixture.짬뽕;
 import static kitchenpos.application.fixture.ProductFixture.탕수육;
@@ -9,7 +8,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductRequest;
+import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -19,10 +19,10 @@ public class ProductServiceTest extends ServiceTest {
     @DisplayName("상품을 등록한다.")
     void create() {
         // given
-        final Product product = createProduct("짜장면", 10_000);
+        final ProductRequest request = new ProductRequest("짜장면", 10_000L);
 
         // when
-        final Product actual = productService.create(product);
+        final ProductResponse actual = productService.create(request);
 
         // then
         final Long actualId = actual.getId();
@@ -36,10 +36,10 @@ public class ProductServiceTest extends ServiceTest {
     @DisplayName("create : 상품의 가격이 0원 미만이면 예외가 발생한다.")
     void create_invalidPrice_throwException() {
         // given
-        final Product product = createProduct("짜장면", -1);
+        final ProductRequest request = new ProductRequest("짜장면", -1L);
 
         // when & then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -52,9 +52,9 @@ public class ProductServiceTest extends ServiceTest {
         상품등록(탕수육);
 
         // when
-        final List<Product> list = productService.list();
+        final List<ProductResponse> actual = productService.list();
 
         // then
-        assertThat(list).hasSize(3);
+        assertThat(actual).hasSize(3);
     }
 }

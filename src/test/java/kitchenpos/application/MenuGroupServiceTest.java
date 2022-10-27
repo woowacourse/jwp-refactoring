@@ -17,16 +17,16 @@ public class MenuGroupServiceTest extends ServiceTest {
     @DisplayName("메뉴 그룹을 생성한다.")
     void create() {
         // given
-        final MenuGroupRequest menuGroupRequest = new MenuGroupRequest("메뉴 그룹");
+        final MenuGroupRequest request = new MenuGroupRequest("메뉴 그룹");
 
         // when
-        final MenuGroupResponse createdMenuGroup = menuGroupService.create(menuGroupRequest);
+        final MenuGroupResponse actual = menuGroupService.create(request);
 
         // then
-        final Long createdMenuGroupId = createdMenuGroup.getId();
+        final Long actualId = actual.getId();
         assertAll(
-                () -> assertThat(createdMenuGroupId).isNotNull(),
-                () -> assertThat(menuGroupDao.findById(createdMenuGroupId)).isPresent()
+                () -> assertThat(actualId).isNotNull(),
+                () -> assertThat(menuGroupDao.findById(actualId)).isPresent()
         );
     }
 
