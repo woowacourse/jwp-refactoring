@@ -1,12 +1,14 @@
 package kitchenpos.dao;
 
+import static kitchenpos.fixture.MenuBuilder.aMenu;
+import static kitchenpos.fixture.MenuGroupFactory.createMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,20 +22,21 @@ class MenuDaoTest {
     DataSource dataSource;
 
     MenuDao sut;
+    MenuGroupDao menuGroupDao;
+
 
     @BeforeEach
     void setUp() {
         sut = new JdbcTemplateMenuDao(dataSource);
+        menuGroupDao = new JdbcTemplateMenuGroupDao(dataSource);
     }
 
     @Test
     @DisplayName("Menu를 저장하고 저장된 Menu를 반환한다")
     void save() {
         // given
-        Menu menu = new Menu();
-        menu.setName("강정치킨");
-        menu.setPrice(BigDecimal.valueOf(1000L));
-        menu.setMenuGroupId(1L);
+        Menu menu = aMenu(savedMenuGroup().getId())
+                .build();
 
         // when
         Menu savedMenu = sut.save(menu);
@@ -55,11 +58,10 @@ class MenuDaoTest {
     void findAll() {
         // given
         List<Menu> previousSaved = sut.findAll();
-        Menu menu = new Menu();
-        menu.setName("강정치킨");
-        menu.setPrice(BigDecimal.valueOf(1000L));
-        menu.setMenuGroupId(1L);
-        sut.save(menu);
+        sut.save(
+                aMenu(savedMenuGroup().getId())
+                        .build()
+        );
 
         // when
         List<Menu> actual = sut.findAll();
@@ -72,22 +74,24 @@ class MenuDaoTest {
     @DisplayName("입력받은 id 리스트에 해당하는 Menu의 개수를 반환한다")
     void countByIdIn() {
         // given
-        Menu menu1 = new Menu();
-        menu1.setName("강정치킨");
-        menu1.setPrice(BigDecimal.valueOf(1000L));
-        menu1.setMenuGroupId(1L);
-        Long menuId1 = sut.save(menu1).getId();
+        Long menuId1 = sut.save(
+                aMenu(savedMenuGroup().getId())
+                        .build()
+        ).getId();
 
-        Menu menu2 = new Menu();
-        menu2.setName("순살치킨");
-        menu2.setPrice(BigDecimal.valueOf(1000L));
-        menu2.setMenuGroupId(1L);
-        Long menuId2 = sut.save(menu2).getId();
+        Long menuId2 = sut.save(
+                aMenu(savedMenuGroup().getId())
+                        .build()
+        ).getId();
 
         // when
         long count = sut.countByIdIn(List.of(menuId1, menuId2));
 
         // then
         assertThat(count).isEqualTo(2);
+    }
+
+    private MenuGroup savedMenuGroup() {
+        return menuGroupDao.save(createMenuGroup());
     }
 }

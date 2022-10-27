@@ -1,14 +1,14 @@
 package kitchenpos.dao;
 
+import static kitchenpos.fixture.MenuBuilder.aMenu;
 import static kitchenpos.fixture.MenuGroupFactory.createMenuGroup;
 import static kitchenpos.fixture.ProductBuilder.aProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
-import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -78,13 +78,10 @@ class MenuProductDaoTest {
     @DisplayName("입력받은 Menu Id와 연관된 MenuProduct 목록을 조회한다")
     void findAllByMenuId() {
         // given
-        Long menuGroupId = menuGroupDao.save(createMenuGroup()).getId();
-
-        Menu menu = new Menu();
-        menu.setName("강정치킨");
-        menu.setPrice(BigDecimal.valueOf(1000L));
-        menu.setMenuGroupId(menuGroupId);
-        Long menuId = menuDao.save(menu).getId();
+        Long menuId = menuDao.save(
+                aMenu(savedMenuGroup().getId())
+                        .build()
+        ).getId();
 
         Long productId = productDao.save(aProduct().build()).getId();
 
@@ -96,5 +93,9 @@ class MenuProductDaoTest {
 
         // then
         assertThat(actual).isEqualTo(List.of(savedMenuProduct));
+    }
+
+    private MenuGroup savedMenuGroup() {
+        return menuGroupDao.save(createMenuGroup());
     }
 }

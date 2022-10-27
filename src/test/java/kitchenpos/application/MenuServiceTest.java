@@ -1,18 +1,19 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuBuilder.aMenu;
 import static kitchenpos.fixture.MenuGroupFactory.createMenuGroup;
 import static kitchenpos.fixture.ProductBuilder.aProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,10 +44,9 @@ class MenuServiceTest {
     @DisplayName("Menu의 가격은 null일 수 없다")
     void throwException_WhenPriceNull() {
         // given
-        Menu menu = new Menu();
-        menu.setName("강정치킨");
-        menu.setMenuGroupId(1L);
-        menu.setMenuProducts(new ArrayList<>());
+        Menu menu = aMenu(savedMenuGroup().getId())
+                .withPrice(null)
+                .build();
 
         // when && then
         assertThatThrownBy(() -> sut.create(menu))
@@ -58,11 +58,9 @@ class MenuServiceTest {
     @DisplayName("Menu의 가격은 음수일 수 없다")
     void throwException_WhenPriceNegative() {
         // given
-        Menu menu = new Menu();
-        menu.setName("강정치킨");
-        menu.setPrice(BigDecimal.valueOf(-1L));
-        menu.setMenuGroupId(1L);
-        menu.setMenuProducts(new ArrayList<>());
+        Menu menu = aMenu(savedMenuGroup().getId())
+                .withPrice(BigDecimal.valueOf(-1L))
+                .build();
 
         // when && then
         assertThatThrownBy(() -> sut.create(menu))
@@ -74,11 +72,9 @@ class MenuServiceTest {
     @DisplayName("Menu의 MenuGroupId가 존재하지 않으면 Menu를 생성할 수 없다")
     void throwException_WhenGivenNonExistMenuGroupId() {
         // given
-        Menu menu = new Menu();
-        menu.setName("강정치킨");
-        menu.setMenuGroupId(0L);
-        menu.setPrice(BigDecimal.valueOf(1000L));
-        menu.setMenuProducts(new ArrayList<>());
+        final long NON_EXIST_ID = 0L;
+        Menu menu = aMenu(NON_EXIST_ID)
+                .build();
 
         // when && when
         assertThatThrownBy(() -> sut.create(menu))
@@ -90,18 +86,10 @@ class MenuServiceTest {
     @DisplayName("Menu에 포함된 Product가 존재하지 않으면 Menu를 생성할 수 없다")
     void throwException_WhenGivenNonExistMenuProductId() {
         // given
-        Long menuGroupId = menuGroupDao.save(createMenuGroup()).getId();
-
-        Menu menu = new Menu();
-        menu.setName("강정치킨");
-        menu.setMenuGroupId(menuGroupId);
-        menu.setPrice(BigDecimal.valueOf(1000L));
-
-        List<MenuProduct> menuProducts = new ArrayList<>();
         final long NON_EXIST_ID = 0L;
-        MenuProduct menuProduct = new MenuProduct(NON_EXIST_ID, 1);
-        menuProducts.add(menuProduct);
-        menu.setMenuProducts(menuProducts);
+        Menu menu = aMenu(savedMenuGroup().getId())
+                .withMenuProducts(List.of(new MenuProduct(NON_EXIST_ID, 1)))
+                .build();
 
         // when && when
         assertThatThrownBy(() -> sut.create(menu))
@@ -124,12 +112,10 @@ class MenuServiceTest {
                         .build()
         ).getId();
 
-        List<MenuProduct> menuProducts = List.of(new MenuProduct(productId, QUANTITY));
-
-        Menu menu = new Menu();
-        menu.setMenuGroupId(1L);
-        menu.setPrice(WRONG_MENU_PRICE);
-        menu.setMenuProducts(menuProducts);
+        Menu menu = aMenu(savedMenuGroup().getId())
+                .withMenuProducts(List.of(new MenuProduct(productId, QUANTITY)))
+                .withPrice(WRONG_MENU_PRICE)
+                .build();
 
         // when && then
         assertThatThrownBy(() -> sut.create(menu))
@@ -151,15 +137,10 @@ class MenuServiceTest {
                         .build()
         ).getId();
 
-        Long menuGroupId = menuGroupDao.save(createMenuGroup()).getId();
-
-        List<MenuProduct> menuProducts = List.of(new MenuProduct(productId, QUANTITY));
-
-        Menu menu = new Menu();
-        menu.setName("강정치킨");
-        menu.setMenuGroupId(menuGroupId);
-        menu.setPrice(MENU_PRICE);
-        menu.setMenuProducts(menuProducts);
+        Menu menu = aMenu(savedMenuGroup().getId())
+                .withPrice(MENU_PRICE)
+                .withMenuProducts(List.of(new MenuProduct(productId, QUANTITY)))
+                .build();
 
         // when
         Menu savedMenu = sut.create(menu);
@@ -186,5 +167,9 @@ class MenuServiceTest {
         for (MenuProduct menuProduct : menuProducts) {
             assertThat(menuProduct.getMenuId()).isEqualTo(menuId);
         }
+    }
+
+    private MenuGroup savedMenuGroup() {
+        return menuGroupDao.save(createMenuGroup());
     }
 }
