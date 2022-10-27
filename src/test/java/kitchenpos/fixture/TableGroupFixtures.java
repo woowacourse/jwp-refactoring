@@ -1,7 +1,7 @@
 package kitchenpos.fixture;
 
-import kitchenpos.dto.OrderTableIdRequest;
-import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.request.OrderTableIdRequest;
+import kitchenpos.dto.request.TableGroupCreateRequest;
 
 import java.util.List;
 

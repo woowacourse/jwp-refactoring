@@ -3,7 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.fixture.ProductFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

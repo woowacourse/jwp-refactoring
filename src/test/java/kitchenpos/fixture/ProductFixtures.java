@@ -1,6 +1,6 @@
 package kitchenpos.fixture;
 
-import kitchenpos.dto.ProductCreateRequest;
+import kitchenpos.dto.request.ProductCreateRequest;
 
 import java.math.BigDecimal;
 
