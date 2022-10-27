@@ -48,21 +48,18 @@ public abstract class ServiceTest {
         return orderTable;
     }
 
+    protected MenuProduct 메뉴_상품을_생성한다(Long id, String productName, int productPrice, Long quantity) {
+        Product product = 상품을_저장한다(productName, productPrice);
+        return new MenuProduct(id, product.getId(), quantity);
+    }
+
     protected MenuProduct 메뉴_상품을_생성한다(String productName, int productPrice, Long quantity) {
         Product product = 상품을_저장한다(productName, productPrice);
-
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(product.getId());
-        menuProduct.setQuantity(quantity);
-
-        return menuProduct;
+        return new MenuProduct(null, product.getId(), quantity);
     }
 
     protected Product 상품을_저장한다(String name, int price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
-
+        Product product = new Product(name, BigDecimal.valueOf(price));
         return productService.create(product);
     }
 
@@ -85,24 +82,19 @@ public abstract class ServiceTest {
 
         MenuGroup menuGroup = 메뉴_그룹을_저장한다("메뉴 그룹");
 
-        Menu menu = new Menu();
-        menu.setName(menuName);
-        menu.setPrice(BigDecimal.valueOf(menuProducts.size() * 5000L));
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setMenuProducts(menuProducts);
+        Menu menu = new Menu(
+                menuName, BigDecimal.valueOf(menuProducts.size() * 5000L), menuGroup.getId(), menuProducts);
 
         return menuService.create(menu);
     }
 
     protected OrderTable 테이블을_저장한다(int numberOfGuests) {
         OrderTable orderTable = 테이블을_생성한다(numberOfGuests, false);
-
         return tableService.create(orderTable);
     }
 
     protected OrderTable 빈_테이블을_저장한다() {
         OrderTable orderTable = 테이블을_생성한다(0, true);
-
         return tableService.create(orderTable);
     }
 

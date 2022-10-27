@@ -18,26 +18,22 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void 입력받은_상품을_저장한다() {
             // given
-            Product newProduct = new Product();
-            newProduct.setName("상품1");
-            newProduct.setPrice(BigDecimal.valueOf(10000));
+            Product newProduct = new Product("상품 1", BigDecimal.valueOf(10000));
 
             // when
             final Product savedProduct = productService.create(newProduct);
 
             // then
             List<Product> products = productService.list();
-            assertThat(products).extracting(Product::getId, Product::getName,
-                            (product) -> product.getPrice().intValue())
-                    .contains(tuple(savedProduct.getId(), "상품1", 10000));
+            assertThat(products)
+                    .extracting(Product::getId, Product::getName, (product) -> product.getPrice().intValue())
+                    .contains(tuple(savedProduct.getId(), newProduct.getName(), newProduct.getPrice().intValue()));
         }
 
         @Test
         void 상품_가격이_음수면_예외가_발생한다() {
             // given
-            Product product = new Product();
-            product.setName("상품1");
-            product.setPrice(BigDecimal.valueOf(-1));
+            Product product = new Product("상품 1", BigDecimal.valueOf(-1));
 
             // when & then
             assertThatThrownBy(() -> productService.create(product))

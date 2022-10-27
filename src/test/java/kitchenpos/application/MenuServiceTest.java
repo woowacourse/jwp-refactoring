@@ -24,11 +24,8 @@ class MenuServiceTest extends ServiceTest {
             MenuProduct menuProduct2 = 메뉴_상품을_생성한다("상품 2", 2000, 1L);
             MenuGroup menuGroup = 메뉴_그룹을_저장한다("메뉴 그룹");
 
-            Menu newMenu = new Menu();
-            newMenu.setName("메뉴");
-            newMenu.setPrice(BigDecimal.valueOf(3000));
-            newMenu.setMenuGroupId(menuGroup.getId());
-            newMenu.setMenuProducts(List.of(menuProduct1, menuProduct2));
+            Menu newMenu = new Menu(
+                    "메뉴", BigDecimal.valueOf(3000), menuGroup.getId(), List.of(menuProduct1, menuProduct2));
 
             // when
             Menu savedMenu = menuService.create(newMenu);
@@ -47,11 +44,8 @@ class MenuServiceTest extends ServiceTest {
             MenuProduct menuProduct2 = 메뉴_상품을_생성한다("상품 2", 2000, 1L);
             MenuGroup menuGroup = 메뉴_그룹을_저장한다("메뉴 그룹");
 
-            Menu newMenu = new Menu();
-            newMenu.setName("메뉴");
-            newMenu.setPrice(BigDecimal.valueOf(-1));
-            newMenu.setMenuGroupId(menuGroup.getId());
-            newMenu.setMenuProducts(List.of(menuProduct1, menuProduct2));
+            Menu newMenu = new Menu(
+                    "메뉴", BigDecimal.valueOf(-1), menuGroup.getId(), List.of(menuProduct1, menuProduct2));
 
             // when & then
             assertThatThrownBy(() -> menuService.create(newMenu))
@@ -64,11 +58,8 @@ class MenuServiceTest extends ServiceTest {
             MenuProduct menuProduct1 = 메뉴_상품을_생성한다("상품 1", 1000, 1L);
             MenuProduct menuProduct2 = 메뉴_상품을_생성한다("상품 2", 2000, 1L);
 
-            Menu newMenu = new Menu();
-            newMenu.setName("메뉴");
-            newMenu.setPrice(BigDecimal.valueOf(3000));
-            newMenu.setMenuGroupId(0L);
-            newMenu.setMenuProducts(List.of(menuProduct1, menuProduct2));
+            Menu newMenu = new Menu(
+                    "메뉴", BigDecimal.valueOf(3000), 0L, List.of(menuProduct1, menuProduct2));
 
             // when & then
             assertThatThrownBy(() -> menuService.create(newMenu))
@@ -79,17 +70,11 @@ class MenuServiceTest extends ServiceTest {
         void 존재하지_않는_상품을_포함하여_요청하면_예외가_발생한다() {
             // given
             MenuProduct menuProduct1 = 메뉴_상품을_생성한다("상품 1", 1000, 1L);
-            MenuProduct menuProduct2 = new MenuProduct();
-            menuProduct2.setProductId(0L);
-            menuProduct2.setQuantity(1L);
-
+            MenuProduct menuProduct2 = 메뉴_상품을_생성한다(0L, "없는 상품", 1000, 1L);
             MenuGroup menuGroup = 메뉴_그룹을_저장한다("메뉴 그룹");
 
-            Menu newMenu = new Menu();
-            newMenu.setName("메뉴");
-            newMenu.setPrice(BigDecimal.valueOf(3000));
-            newMenu.setMenuGroupId(menuGroup.getId());
-            newMenu.setMenuProducts(List.of(menuProduct1, menuProduct2));
+            Menu newMenu = new Menu(
+                    "메뉴", BigDecimal.valueOf(3000), menuGroup.getId(), List.of(menuProduct1, menuProduct2));
 
             // when & then
             assertThatThrownBy(() -> menuService.create(newMenu))
@@ -103,11 +88,8 @@ class MenuServiceTest extends ServiceTest {
             MenuProduct menuProduct2 = 메뉴_상품을_생성한다("상품 2", 2000, 1L);
             MenuGroup menuGroup = 메뉴_그룹을_저장한다("메뉴 그룹");
 
-            Menu newMenu = new Menu();
-            newMenu.setName("메뉴");
-            newMenu.setPrice(BigDecimal.valueOf(10000));
-            newMenu.setMenuGroupId(menuGroup.getId());
-            newMenu.setMenuProducts(List.of(menuProduct1, menuProduct2));
+            Menu newMenu = new Menu(
+                    "메뉴", BigDecimal.valueOf(10000), menuGroup.getId(), List.of(menuProduct1, menuProduct2));
 
             // when & then
             assertThatThrownBy(() -> menuService.create(newMenu))

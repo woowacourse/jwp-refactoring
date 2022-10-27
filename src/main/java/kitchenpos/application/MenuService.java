@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -62,12 +63,11 @@ public class MenuService {
         final Menu savedMenu = menuDao.save(menu);
 
         final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
+        for (final MenuProduct menuProductRequest : menuProducts) {
+            MenuProduct menuProduct = new MenuProduct(
+                    menuId, menuProductRequest.getProductId(), menuProductRequest.getQuantity());
+            savedMenu.addMenuProduct(menuProductDao.save(menuProduct));
         }
-        savedMenu.setMenuProducts(savedMenuProducts);
 
         return savedMenu;
     }
@@ -75,10 +75,13 @@ public class MenuService {
     public List<Menu> list() {
         final List<Menu> menus = menuDao.findAll();
 
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
-
-        return menus;
+        return menus.stream()
+                .map(menu -> new Menu(
+                        menu.getId(),
+                        menu.getName(),
+                        menu.getPrice(),
+                        menu.getMenuGroupId(),
+                        menuProductDao.findAllByMenuId(menu.getId())
+                )).collect(Collectors.toList());
     }
 }
