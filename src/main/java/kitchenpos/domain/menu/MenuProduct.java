@@ -17,6 +17,14 @@ public class MenuProduct {
         this(null, null, productId, quantity);
     }
 
+    public boolean isSameProduct(final Long productId) {
+        return this.productId.equals(productId);
+    }
+
+    public void addQuantity() {
+        this.quantity++;
+    }
+
     public Long getSeq() {
         return seq;
     }

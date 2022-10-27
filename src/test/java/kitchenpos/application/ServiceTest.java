@@ -3,13 +3,11 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.domain.menu.MenuProductRepository;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.product.Product;
@@ -22,9 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @Transactional
 public abstract class ServiceTest {
-
-    private static final int DEFAULT_MENU_PRODUCT_QUANTITY = 1;
-    private static final int DEFAULT_ORDER_LINE_QUANTITY = 1;
 
     @Autowired
     protected ProductService productService;
@@ -75,7 +70,7 @@ public abstract class ServiceTest {
         스테이크 = 메뉴_그룹_등록("스테이크");
         음료 = 메뉴_그룹_등록("음료");
         세트 = 메뉴_그룹_등록("세트");
-        파스타한상 = 메뉴_등록("파스타한상", 35000L, 세트, 토마토파스타, 목살스테이크, 탄산음료);
+        파스타한상 = 메뉴_등록("파스타한상", 35000L, 세트, 토마토파스타.getId(), 목살스테이크.getId(), 탄산음료.getId());
         빈_테이블1 = 테이블_등록();
         빈_테이블2 = 테이블_등록();
         손님있는_식사중_테이블 = 손님_채운_테이블_생성(3);
@@ -102,15 +97,9 @@ public abstract class ServiceTest {
         return menuGroupService.list();
     }
 
-    public Menu 메뉴_등록(final String name, final Long price, final MenuGroup menuGroup, final Product... products) {
-        final Menu menu = Menu.of(name, price, menuGroup.getId());
-        addProducts(menu, products);
+    public Menu 메뉴_등록(final String name, final Long price, final MenuGroup menuGroup, final Long... productIds) {
+        final Menu menu = Menu.create(name, price, menuGroup.getId(), List.of(productIds));
         return menuService.create(menu);
-    }
-
-    private void addProducts(final Menu menu, final Product[] products) {
-        Arrays.stream(products)
-                .forEach(product -> menu.addProduct(product.getId(), DEFAULT_MENU_PRODUCT_QUANTITY));
     }
 
     public List<Menu> 메뉴_전체_조회() {

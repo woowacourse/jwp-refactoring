@@ -1,8 +1,13 @@
 package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
 
 public class Menu {
     private Long id;
@@ -18,8 +23,18 @@ public class Menu {
         this.menuGroupId = menuGroupId;
     }
 
-    public static Menu of(final String name, final Long price, final Long menuGroupId) {
-        return new Menu(null, name, createBigDecimal(price), menuGroupId);
+    public static Menu create(final String name, final Long price, final Long menuGroupId, final List<Long> productIds) {
+        final Menu menu = new Menu(null, name, createBigDecimal(price), menuGroupId);
+        productIds.forEach(menu::addProduct);
+        return menu;
+    }
+
+    public void addProduct(final Long productId) {
+        final Optional<MenuProduct> menuProduct = findProduct(productId);
+        menuProduct.ifPresentOrElse(
+                MenuProduct::addQuantity,
+                () -> menuProducts.add(new MenuProduct(productId, 1))
+        );
     }
 
     private static BigDecimal createBigDecimal(final Long price) {
@@ -27,6 +42,12 @@ public class Menu {
             return null;
         }
         return BigDecimal.valueOf(price);
+    }
+
+    private Optional<MenuProduct> findProduct(final Long productId) {
+        return menuProducts.stream()
+                .filter(menuProduct -> menuProduct.isSameProduct(productId))
+                .findAny();
     }
 
     public void addProduct(final Long productId, final long quantity) {

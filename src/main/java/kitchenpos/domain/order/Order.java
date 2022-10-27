@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.menu.Menu;
 
 public class Order {
     private Long id;
@@ -38,11 +37,6 @@ public class Order {
         return orderLineItems.stream()
                 .filter(orderLineItem -> orderLineItem.isSameMenu(menuId))
                 .findAny();
-    }
-
-    private boolean hasMenu(final Long menuId) {
-        return orderLineItems.stream()
-                .anyMatch(orderLineItem -> orderLineItem.isSameMenu(menuId));
     }
 
     public Long getId() {
