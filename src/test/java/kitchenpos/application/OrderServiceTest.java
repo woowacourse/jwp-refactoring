@@ -31,6 +31,7 @@ class OrderServiceTest extends ServiceTest{
     void setUp() {
         final OrderTable orderTable = getOrderTable(1L);
         orderTable.setId(1L);
+        orderTable.setEmpty(false);
         order = getOrder();
         order.setOrderLineItems(Arrays.asList(getOrderLineItem(order.getId())));
         final OrderLineItem orderLineItem = getOrderLineItem(order.getId());
@@ -71,6 +72,23 @@ class OrderServiceTest extends ServiceTest{
                 Arguments.of(new Order(1L, Arrays.asList(new OrderLineItem(), new OrderLineItem())),
                         "주문 상품 목록에 등록되지 않은 메뉴가 존재할 경우")
         );
+    }
+
+    @Test
+    @DisplayName("비어있는 주문 테이블로 주문을 생성할 경우 예외가 발생한다.")
+    void createWithEmptyOrderTable() {
+        // given
+        final OrderTable orderTable = getOrderTable();
+        orderTable.setId(1L);
+        orderTable.setEmpty(true);
+        given(orderTableDao.findById(1L)).willReturn(Optional.of(orderTable));
+
+        // when
+        order.setOrderTableId(1L);
+
+        // when
+        assertThatThrownBy(() -> orderService.create(order))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
