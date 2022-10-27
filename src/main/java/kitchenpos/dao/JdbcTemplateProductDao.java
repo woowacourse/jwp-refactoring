@@ -64,7 +64,7 @@ public class JdbcTemplateProductDao implements ProductDao {
         final Product entity = new Product();
         entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
         entity.setName(resultSet.getString("name"));
-        entity.setPrice(resultSet.getBigDecimal("price"));
+        entity.setPrice(resultSet.getLong("price"));
         return entity;
     }
 }
