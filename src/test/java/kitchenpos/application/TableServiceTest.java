@@ -12,6 +12,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.fixture.TableGroupFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -74,9 +75,7 @@ class TableServiceTest {
     void cannotChangeEmpty_ForOrderTableInTableGroup() {
         OrderTable savedOrderTable1 = orderTableDao.save(createEmptyTable());
         OrderTable savedOrderTable2 = orderTableDao.save(createEmptyTable());
-
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
+        TableGroup tableGroup = TableGroupFactory.createTableGroup(List.of(savedOrderTable1, savedOrderTable2));
         tableGroupService.create(tableGroup);
 
         OrderTable orderTable = createChangeOrderTableRequest(true);

@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static kitchenpos.fixture.OrderTableFactory.createEmptyTable;
 import static kitchenpos.fixture.OrderTableFactory.createOrderTable;
+import static kitchenpos.fixture.TableGroupFactory.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -10,11 +11,13 @@ import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.fixture.TableGroupFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,6 +34,9 @@ class TableGroupServiceTest {
     OrderTableDao orderTableDao;
 
     @Autowired
+    TableGroupDao tableGroupDao;
+
+    @Autowired
     OrderDao orderDao;
 
     @Autowired
@@ -40,8 +46,7 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블이 없을 경우 단체 지정을 할 수 없다")
     void cannotCreateTableGroup_WhenNoOrderTable() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Collections.emptyList());
+        TableGroup tableGroup = createTableGroup(Collections.emptyList());
 
         // when && then
         assertThatThrownBy(() -> sut.create(tableGroup))
@@ -54,9 +59,7 @@ class TableGroupServiceTest {
     void cannotCreateTableGroup_WhenSizeLessThanTwo() {
         // given
         OrderTable orderTable = orderTableDao.save(createEmptyTable());
-
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(orderTable));
+        TableGroup tableGroup = createTableGroup(List.of(orderTable));
 
         // when && then
         assertThatThrownBy(() -> sut.create(tableGroup))
@@ -71,8 +74,7 @@ class TableGroupServiceTest {
         OrderTable notSavedOrderTable = createEmptyTable();
         OrderTable orderTable = orderTableDao.save(createEmptyTable());
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(orderTable, notSavedOrderTable));
+        TableGroup tableGroup = createTableGroup(List.of(orderTable, notSavedOrderTable));
 
         // when && then
         assertThatThrownBy(() -> sut.create(tableGroup))
@@ -87,8 +89,7 @@ class TableGroupServiceTest {
         OrderTable orderTable1 = orderTableDao.save(createEmptyTable());
         OrderTable orderTable2 = orderTableDao.save(createOrderTable(1, false));
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+        TableGroup tableGroup = createTableGroup(List.of(orderTable1, orderTable2));
 
         // when && then
         assertThatThrownBy(() -> sut.create(tableGroup))
@@ -104,8 +105,7 @@ class TableGroupServiceTest {
         OrderTable alreadyGrouped = defaultTableGroup.getOrderTables().get(0);
         OrderTable orderTable = orderTableDao.save(createEmptyTable());
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(alreadyGrouped, orderTable));
+        TableGroup tableGroup = createTableGroup(List.of(alreadyGrouped, orderTable));
 
         // when && then
         assertThatThrownBy(() -> sut.create(tableGroup))
@@ -115,13 +115,11 @@ class TableGroupServiceTest {
 
     @Test
     @DisplayName("주문 테이블 단체를 지정한다")
-    void createTableGroup() {
+    void testCreateTableGroup() {
         // given
         OrderTable orderTable1 = orderTableDao.save(createEmptyTable());
         OrderTable orderTable2 = orderTableDao.save(createEmptyTable());
-
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+        TableGroup tableGroup = createTableGroup(List.of(orderTable1, orderTable2));
 
         // when
         TableGroup savedTableGroup = sut.create(tableGroup);
@@ -177,11 +175,9 @@ class TableGroupServiceTest {
     }
 
     private TableGroup newTableGroup() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(
-                        orderTableDao.save(createEmptyTable()),
-                        orderTableDao.save(createEmptyTable())));
-        return tableGroup;
+        return createTableGroup(List.of(
+                orderTableDao.save(createEmptyTable()),
+                orderTableDao.save(createEmptyTable())));
     }
 
     private OrderLineItem newOrderLineItem() {
