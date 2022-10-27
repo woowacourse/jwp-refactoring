@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -20,10 +21,10 @@ class TableGroupServiceTest extends ServiceTestBase {
     @Test
     void 테이블_그룹_정상_생성() {
         // given
-        TableGroup tableGroup = new TableGroup();
+        TableGroup tableGroup = new TableGroup(null, LocalDateTime.now());
         OrderTable orderTable1 = 빈_주문_테이블_생성();
         OrderTable orderTable2 = 빈_주문_테이블_생성();
-        tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2));
+        tableGroup.addOrderTables(Arrays.asList(orderTable1, orderTable2));
 
         // when
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
@@ -36,9 +37,9 @@ class TableGroupServiceTest extends ServiceTestBase {
     @Test
     void 주문_테이블_1개로_테이블_그룹_생성_시_실패() {
         // given
-        TableGroup tableGroup = new TableGroup();
+        TableGroup tableGroup = new TableGroup(null, LocalDateTime.now());
         OrderTable orderTable = 빈_주문_테이블_생성();
-        tableGroup.setOrderTables(Collections.singletonList(orderTable));
+        tableGroup.addOrderTables(Collections.singletonList(orderTable));
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -48,10 +49,10 @@ class TableGroupServiceTest extends ServiceTestBase {
     @Test
     void 비어있지_않은_주문_테이블로_테이블_그룹_생성_시_실패() {
         // given
-        TableGroup tableGroup = new TableGroup();
+        TableGroup tableGroup = new TableGroup(null, LocalDateTime.now());
         OrderTable orderTable1 = 주문_테이블_생성();
         OrderTable orderTable2 = 주문_테이블_생성();
-        tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2));
+        tableGroup.addOrderTables(Arrays.asList(orderTable1, orderTable2));
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -61,10 +62,10 @@ class TableGroupServiceTest extends ServiceTestBase {
     @Test
     void 저장되지_않은_주문_테이블로_테이블_그룹_생성_시_실패() {
         // given
-        TableGroup tableGroup = new TableGroup();
+        TableGroup tableGroup = new TableGroup(null, LocalDateTime.now());
         OrderTable orderTable1 = new OrderTable();
         OrderTable orderTable2 = new OrderTable();
-        tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2));
+        tableGroup.addOrderTables(Arrays.asList(orderTable1, orderTable2));
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -74,9 +75,9 @@ class TableGroupServiceTest extends ServiceTestBase {
     @Test
     void 단체_지정_정상_해제() {
         // given
-        TableGroup tableGroup = new TableGroup();
+        TableGroup tableGroup = new TableGroup(null, LocalDateTime.now());
         List<OrderTable> orderTables = Arrays.asList(빈_주문_테이블_생성(), 빈_주문_테이블_생성());
-        tableGroup.setOrderTables(orderTables);
+        tableGroup.addOrderTables(orderTables);
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
         Long tableGroupId = savedTableGroup.getId();
 

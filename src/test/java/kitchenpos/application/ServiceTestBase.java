@@ -142,9 +142,8 @@ public class ServiceTestBase {
     }
 
     public TableGroup 단체_지정_생성(final List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        TableGroup tableGroup = new TableGroup(null, LocalDateTime.now());
+        tableGroup.addOrderTables(orderTables);
 
         TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
         updateOrderTables(savedTableGroup, orderTables);
