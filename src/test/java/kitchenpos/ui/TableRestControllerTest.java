@@ -13,9 +13,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 import kitchenpos.application.dto.request.OrderTableCreateCommand;
 import kitchenpos.application.dto.request.OrderTableEmptyCommand;
+import kitchenpos.application.dto.request.OrderTableGuestCommand;
 import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.OrderTableEmptyRequest;
+import kitchenpos.ui.dto.OrderTableGuestRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -65,13 +66,14 @@ class TableRestControllerTest extends ControllerTest {
 
     @Test
     void changeNumberOfGuests() throws Exception {
-        OrderTable orderTable = new OrderTable(1L, 1L, 10, true);
-        given(tableService.changeNumberOfGuests(anyLong(), any(OrderTable.class))).willReturn(orderTable);
+        OrderTableResponse orderTableResponse = new OrderTableResponse(1L, 1L, 10, false);
+        given(tableService.changeNumberOfGuests(anyLong(), any(OrderTableGuestCommand.class))).willReturn(
+                orderTableResponse);
 
         mockMvc.perform(put("/api/tables/1/number-of-guests")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(orderTable)))
+                        .content(objectMapper.writeValueAsString(new OrderTableGuestRequest(10))))
                 .andExpectAll(status().isOk(),
-                        content().string(objectMapper.writeValueAsString(orderTable)));
+                        content().string(objectMapper.writeValueAsString(orderTableResponse)));
     }
 }

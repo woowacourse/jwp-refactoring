@@ -62,4 +62,38 @@ class OrderTableTest {
             assertThat(orderTable.isEmpty()).isFalse();
         }
     }
+
+    @Nested
+    @DisplayName("OrderTable의 정원을 변경할 때 ")
+    class ChangeNumberOfGuestsTest {
+
+        @Test
+        @DisplayName("변경할 정원이 음수일 경우 예외가 발생한다.")
+        void numberNegativeFailed() {
+            OrderTable orderTable = new OrderTable(1L, 10, true);
+
+            assertThatThrownBy(() -> orderTable.changeNumberOfGuests(-1))
+                    .isInstanceOf(InvalidOrderTableException.class)
+                    .hasMessage("테이블 인원은 음수일 수 없습니다.");
+        }
+
+        @Test
+        @DisplayName("비어있을 경우 예외가 발생한다.")
+        void emptyFailed() {
+            OrderTable orderTable = new OrderTable(10, true);
+
+            assertThatThrownBy(() -> orderTable.changeNumberOfGuests(5))
+                    .isInstanceOf(InvalidOrderTableException.class)
+                    .hasMessage("테이블이 비어있을 수 없습니다.");
+        }
+
+        @Test
+        @DisplayName("정상적인 경우 성공한다.")
+        void changeNumberOfGuests() {
+            OrderTable orderTable = new OrderTable(10, false);
+            orderTable.changeNumberOfGuests(5);
+
+            assertThat(orderTable.getNumberOfGuests()).isEqualTo(5);
+        }
+    }
 }

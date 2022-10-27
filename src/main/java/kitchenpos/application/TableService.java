@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.dto.request.OrderTableCreateCommand;
 import kitchenpos.application.dto.request.OrderTableEmptyCommand;
+import kitchenpos.application.dto.request.OrderTableGuestCommand;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
@@ -51,22 +52,11 @@ public class TableService {
         }
     }
 
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("테이블 인원은 음수일 수 없습니다.");
-        }
-
-        final OrderTable savedOrderTable = getOrderTable(orderTableId);
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException("테이블이 비어있을 수 없습니다.");
-        }
-
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
-        return orderTableRepository.save(savedOrderTable);
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
+                                                   final OrderTableGuestCommand orderTableGuestCommand) {
+        final OrderTable foundOrderTable = getOrderTable(orderTableId);
+        foundOrderTable.changeNumberOfGuests(orderTableGuestCommand.numberOfGuests());
+        return OrderTableResponse.from(foundOrderTable);
     }
 
     private OrderTable getOrderTable(final Long orderTableId) {

@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.dto.request.OrderTableCreateCommand;
 import kitchenpos.application.dto.request.OrderTableEmptyCommand;
+import kitchenpos.application.dto.request.OrderTableGuestCommand;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
@@ -119,18 +120,17 @@ class TableServiceTest {
         void negativeNumberFailed() {
             OrderTableResponse orderTableResponse = tableService.create(new OrderTableCreateCommand(10, false));
 
-            OrderTable changingOrderTable = new OrderTable(-1, false);
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableResponse.id(), changingOrderTable))
-                    .isInstanceOf(IllegalArgumentException.class)
+            OrderTableGuestCommand orderTableGuestCommand = new OrderTableGuestCommand(-1);
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableResponse.id(), orderTableGuestCommand))
+                    .isInstanceOf(InvalidOrderTableException.class)
                     .hasMessage("테이블 인원은 음수일 수 없습니다.");
         }
 
         @Test
         @DisplayName("주문 테이블이 존재하지 않을 경우 예외가 발생한다.")
         void orderTableNotFoundFailed() {
-            OrderTable changingOrderTable = new OrderTable(10, false);
-
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, changingOrderTable))
+            OrderTableGuestCommand orderTableGuestCommand = new OrderTableGuestCommand(2);
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, orderTableGuestCommand))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("주문 테이블을 찾을 수 없습니다.");
         }
@@ -140,8 +140,8 @@ class TableServiceTest {
         void orderTableEmptyFailed() {
             OrderTableResponse orderTableResponse = tableService.create(new OrderTableCreateCommand(10, true));
 
-            OrderTable changingOrderTable = new OrderTable(10, false);
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableResponse.id(), changingOrderTable))
+            OrderTableGuestCommand orderTableGuestCommand = new OrderTableGuestCommand(10);
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableResponse.id(), orderTableGuestCommand))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("테이블이 비어있을 수 없습니다.");
         }
@@ -151,9 +151,10 @@ class TableServiceTest {
         void changeNumberOfGuests() {
             OrderTableResponse orderTableResponse = tableService.create(new OrderTableCreateCommand(10, false));
 
-            OrderTable changingOrderTable = new OrderTable(20, false);
-            OrderTable result = tableService.changeNumberOfGuests(orderTableResponse.id(), changingOrderTable);
-            assertThat(result.getNumberOfGuests()).isEqualTo(20);
+            OrderTableGuestCommand orderTableGuestCommand = new OrderTableGuestCommand(20);
+            OrderTableResponse result = tableService.changeNumberOfGuests(orderTableResponse.id(),
+                    orderTableGuestCommand);
+            assertThat(result.numberOfGuests()).isEqualTo(20);
         }
     }
 }

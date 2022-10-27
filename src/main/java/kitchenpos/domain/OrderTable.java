@@ -64,6 +64,24 @@ public class OrderTable {
         }
     }
 
+    public void changeNumberOfGuests(final int changingNumber) {
+        validateChangingSize(changingNumber);
+        validateEmpty();
+        numberOfGuests = changingNumber;
+    }
+
+    private void validateChangingSize(final int changingNumber) {
+        if (changingNumber < 0) {
+            throw new InvalidOrderTableException("테이블 인원은 음수일 수 없습니다.");
+        }
+    }
+
+    private void validateEmpty() {
+        if (empty) {
+            throw new InvalidOrderTableException("테이블이 비어있을 수 없습니다.");
+        }
+    }
+
     public Long getId() {
         return id;
     }
