@@ -76,13 +76,9 @@ public class OrderService {
     }
 
     public List<Order> list() {
-        final List<Order> orders = orderDao.findAll();
-
-        for (final Order order : orders) {
-            order.addOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
-        }
-
-        return orders;
+        return orderDao.findAll().stream()
+                .peek(order -> order.addOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId())))
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -90,9 +86,7 @@ public class OrderService {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException("[ERROR] 주문이 완료된 상태에서는 상태를 못 바꿉니다.");
-        }
+        validateCompletionStatus(savedOrder);
 
         savedOrder.setOrderStatus(order.getOrderStatus());
 
@@ -101,5 +95,11 @@ public class OrderService {
         savedOrder.addOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
 
         return savedOrder;
+    }
+
+    private void validateCompletionStatus(Order savedOrder) {
+        if(savedOrder.isCompletionStatus()){
+            throw new IllegalArgumentException("[ERROR] 주문이 완료된 상태에서는 상태를 못 바꿉니다.");
+        }
     }
 }

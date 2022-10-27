@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import org.springframework.util.CollectionUtils;
 
 public class Order {
@@ -78,5 +79,9 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
+    }
+
+    public boolean isCompletionStatus() {
+        return Objects.equals(OrderStatus.COMPLETION, orderStatus);
     }
 }
