@@ -10,18 +10,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import kitchenpos.dao.FakeProductDao;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
 public class ProductServiceTest {
 
-    private final ProductService productService;
+    private ProductService productService;
 
-    public ProductServiceTest() {
+    @BeforeEach
+    void beforeEach() {
         this.productService = new ProductService(new FakeProductDao());
     }
 
