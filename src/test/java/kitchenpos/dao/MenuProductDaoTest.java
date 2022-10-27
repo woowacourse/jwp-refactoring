@@ -22,7 +22,7 @@ class MenuProductDaoTest extends JdbcDaoTest {
         final Product savedProduct = 제품을_저장한다(PRODUCT_PRICE_10000.생성());
         final MenuGroup savedMenuGroup = 메뉴그룹을_저장한다(MENU_GROUP_1.생성());
         final Menu savedMenu = 메뉴를_저장한다(MENU_PRICE_10000.생성(savedMenuGroup.getId()));
-        final MenuProduct menuProduct = new MenuProduct(savedMenu.getId(), savedProduct.getId(), 10);
+        final MenuProduct menuProduct = new MenuProduct(savedMenu, savedProduct, 10);
 
         // when
         final MenuProduct savedMenuProduct = menuProductDao.save(menuProduct);
@@ -37,7 +37,7 @@ class MenuProductDaoTest extends JdbcDaoTest {
         final Product savedProduct = 제품을_저장한다(PRODUCT_PRICE_10000.생성());
         final MenuGroup savedMenuGroup = 메뉴그룹을_저장한다(MENU_GROUP_1.생성());
         final Menu savedMenu = 메뉴를_저장한다(MENU_PRICE_10000.생성(savedMenuGroup.getId()));
-        final MenuProduct savedMenuProduct = 메뉴상품을_저장한다(MENU_PRODUCT_1.생성(savedMenu.getId(), savedProduct.getId()));
+        final MenuProduct savedMenuProduct = 메뉴상품을_저장한다(MENU_PRODUCT_1.생성(savedMenu, savedProduct));
 
         // when
         final MenuProduct foundMenuProduct = menuProductDao.findById(savedMenuProduct.getSeq())
@@ -53,13 +53,13 @@ class MenuProductDaoTest extends JdbcDaoTest {
         final Product savedProduct = 제품을_저장한다(PRODUCT_PRICE_10000.생성());
         final MenuGroup savedMenuGroup = 메뉴그룹을_저장한다(MENU_GROUP_1.생성());
         final Menu savedMenu = 메뉴를_저장한다(MENU_PRICE_10000.생성(savedMenuGroup.getId()));
-        final MenuProduct savedMenuProduct = 메뉴상품을_저장한다(MENU_PRODUCT_1.생성(savedMenu.getId(), savedProduct.getId()));
+        final MenuProduct savedMenuProduct = 메뉴상품을_저장한다(MENU_PRODUCT_1.생성(savedMenu, savedProduct));
 
         // when
         final List<MenuProduct> menuProducts = menuProductDao.findAll();
 
         // then
-        assertThat(menuProducts).usingFieldByFieldElementComparator()
+        assertThat(menuProducts).usingRecursiveFieldByFieldElementComparator()
                 .containsOnly(savedMenuProduct);
     }
 
@@ -69,14 +69,13 @@ class MenuProductDaoTest extends JdbcDaoTest {
         final Product savedProduct = 제품을_저장한다(PRODUCT_PRICE_10000.생성());
         final MenuGroup savedMenuGroup = 메뉴그룹을_저장한다(MENU_GROUP_1.생성());
         final Menu savedMenu = 메뉴를_저장한다(MENU_PRICE_10000.생성(savedMenuGroup.getId()));
-        final MenuProduct savedMenuProduct = 메뉴상품을_저장한다(MENU_PRODUCT_1.생성(savedMenu.getId(), savedProduct.getId()));
+        final MenuProduct savedMenuProduct = 메뉴상품을_저장한다(MENU_PRODUCT_1.생성(savedMenu, savedProduct));
 
         // when
         final List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(savedMenu.getId());
 
         // then
-        assertThat(menuProducts).usingFieldByFieldElementComparator()
-                .hasSize(1)
+        assertThat(menuProducts).usingRecursiveFieldByFieldElementComparator()
                 .containsOnly(savedMenuProduct);
     }
 }

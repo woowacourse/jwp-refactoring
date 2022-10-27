@@ -19,6 +19,10 @@ public class Product {
     protected Product() {
     }
 
+    public Product(Long id) {
+        this.id = id;
+    }
+
     public Product(final String name, final BigDecimal price) {
         this(null, name, price);
     }

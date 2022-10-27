@@ -7,12 +7,16 @@ import static kitchenpos.support.ProductFixture.PRODUCT_PRICE_1000;
 import static kitchenpos.support.ProductFixture.PRODUCT_PRICE_10000;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
+import kitchenpos.dto.request.MenuProductRequest;
+import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.response.MenuResponse;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -23,33 +27,33 @@ class MenuServiceTest extends ServiceTest {
         // given
         final Long productId = 제품을_저장한다(PRODUCT_PRICE_10000.생성()).getId();
         final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final Menu menu = MENU_PRICE_10000.생성(menuGroupId, List.of(MENU_PRODUCT_1.생성(productId)));
+        final MenuRequest menuRequest = new MenuRequest("메뉴", new BigDecimal(10_000), menuGroupId,
+                List.of(new MenuProductRequest(productId, 1)));
 
         // when
-        final Menu savedMenu = menuService.create(menu);
+        final MenuResponse menuResponse = menuService.create(menuRequest);
 
         // then
-        assertThat(savedMenu.getId()).isEqualTo(1L);
+        assertThat(menuResponse.getId()).isEqualTo(1L);
     }
 
     @Test
     void 메뉴의_가격이_음수이면_예외를_발생한다() {
         // given
-        final Menu menu = new Menu("메뉴", new BigDecimal(-1), null);
+        final MenuRequest menuRequest = new MenuRequest("메뉴", new BigDecimal(-1), null, List.of());
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 메뉴의_가격이_null이면_예외를_발생한다() {
         // given
-        final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final Menu menu = new Menu("메뉴", null, menuGroupId);
+        final MenuRequest menuRequest = new MenuRequest("메뉴", null, null, List.of());
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -57,10 +61,10 @@ class MenuServiceTest extends ServiceTest {
     void 메뉴의_그룹이_존재하지_않으면_예외를_발생한다() {
         // given
         final long notExistMenuGroupId = Long.MAX_VALUE;
-        final Menu menu = MENU_PRICE_10000.생성(notExistMenuGroupId);
+        final MenuRequest menuRequest = new MenuRequest("메뉴",  new BigDecimal(10_000), notExistMenuGroupId, List.of());
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -69,31 +73,32 @@ class MenuServiceTest extends ServiceTest {
         // given
         final Long productId = 제품을_저장한다(PRODUCT_PRICE_1000.생성()).getId();
         final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final Menu menu = MENU_PRICE_10000.생성(menuGroupId, List.of(MENU_PRODUCT_1.생성(productId)));
+
+        final List<MenuProductRequest> menuProductRequests = List.of(new MenuProductRequest(productId, 1));
+        final MenuRequest menuRequest = new MenuRequest("메뉴",  new BigDecimal(10_000), menuGroupId, menuProductRequests);
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 모든_메뉴를_조회할_때_메뉴제품도_함께_조회되어야_한다() {
         // given
-        final Long productId = 제품을_저장한다(PRODUCT_PRICE_10000.생성()).getId();
+        final Product product = 제품을_저장한다(PRODUCT_PRICE_10000.생성());
         final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
         final Menu savedMenu = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId));
-        final MenuProduct savedMenuProduct = 메뉴상품을_저장한다(MENU_PRODUCT_1.생성(savedMenu.getId(), productId));
+        final MenuProduct savedMenuProduct = 메뉴상품을_저장한다(MENU_PRODUCT_1.생성(savedMenu, product));
+        savedMenu.setMenuProducts(List.of(savedMenuProduct));
+
+        final MenuResponse expected = MenuResponse.of(savedMenu);
 
         // when
-        final List<Menu> menus = menuService.list();
+        final List<MenuResponse> actual = menuService.list();
 
         // then
-        assertAll(
-                () ->  assertThat(menus).usingRecursiveFieldByFieldElementComparator()
-                        .usingElementComparatorIgnoringFields("menuProducts")
-                        .containsOnly(savedMenu),
-                () -> assertThat(menus.get(0).getMenuProducts()).usingRecursiveFieldByFieldElementComparator()
-                        .containsOnly(savedMenuProduct)
-        );
+        assertThat(actual).usingRecursiveFieldByFieldElementComparator()
+                .usingComparatorForType(Comparator.comparingInt(BigDecimal::intValue), BigDecimal.class)
+                .containsOnly(expected);
     }
 }

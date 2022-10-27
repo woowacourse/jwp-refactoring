@@ -1,19 +1,22 @@
 package kitchenpos.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.sql.DataSource;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class JdbcTemplateMenuProductDao implements MenuProductDao {
@@ -33,9 +36,14 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
 
     @Override
     public MenuProduct save(final MenuProduct entity) {
-        final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
-        final Number key = jdbcInsert.executeAndReturnKey(parameters);
-        return select(key.longValue());
+        final String sql = "INSERT INTO menu_product (MENU_ID, PRODUCT_ID, QUANTITY) VALUES(:menuId, :productId, :quantity)";
+        final SqlParameterSource sqlParameterSource = new MapSqlParameterSource()
+                .addValue("menuId", entity.getMenu().getId())
+                .addValue("productId", entity.getProduct().getId())
+                .addValue("quantity", entity.getQuantity());
+        final KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(sql, sqlParameterSource, keyHolder);
+        return select(Objects.requireNonNull(keyHolder.getKey()).longValue());
     }
 
     @Override
@@ -69,11 +77,10 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
     }
 
     private MenuProduct toEntity(final ResultSet resultSet) throws SQLException {
-        final MenuProduct entity = new MenuProduct();
-        entity.setSeq(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setMenuId(resultSet.getLong("menu_id"));
-        entity.setProductId(resultSet.getLong("product_id"));
-        entity.setQuantity(resultSet.getLong("quantity"));
-        return entity;
+        return new MenuProduct(resultSet.getLong(KEY_COLUMN_NAME),
+                new Menu(resultSet.getLong("menu_id")),
+                new Product(resultSet.getLong("product_id")),
+                resultSet.getLong("quantity")
+        );
     }
 }
