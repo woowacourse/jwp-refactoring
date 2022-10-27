@@ -11,6 +11,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.request.OrderTableRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,9 @@ class TableRestControllerTest {
 
         OrderLineItem item = createOrderLineItemRequest(후라이드치킨_메뉴.id(), 1L);
         createOrder(1L, item);
+        createOrder(1L, createOrderLineItemRequest(후라이드치킨_메뉴.id(), 2L));
+        createOrder(1L, createOrderLineItemRequest(후라이드치킨_메뉴.id(), 2L));
+        createOrder(1L, createOrderLineItemRequest(후라이드치킨_메뉴.id(), 2L));
 
         // act & assert
         assertThatThrownBy(() -> changeOrderTableStatus(1L, true))
@@ -101,14 +105,8 @@ class TableRestControllerTest {
     }
 
     private void changeOrderTableStatus(long orderTableId, boolean isEmpty) {
-        OrderTable orderTableRequest = createOrderTableRequest(isEmpty);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(isEmpty);
         sut.changeEmpty(orderTableId, orderTableRequest);
-    }
-
-    private OrderTable createOrderTableRequest(boolean isEmpty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(isEmpty);
-        return orderTable;
     }
 
     private OrderLineItem createOrderLineItemRequest(long menuId, long quantity) {
@@ -126,8 +124,7 @@ class TableRestControllerTest {
     }
 
     private void changeNumberOfGuest(long orderTableId, int numberOfGuest) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuest);
-        sut.changeNumberOfGuests(orderTableId, orderTable);
+        OrderTableRequest request = new OrderTableRequest(numberOfGuest);
+        sut.changeNumberOfGuests(orderTableId, request);
     }
 }

@@ -8,7 +8,7 @@ import common.IntegrationTest;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.request.OrderTableRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,19 +122,13 @@ class OrderRestControllerTest {
     }
 
     private void changeOrderTableToEmptyStatus(long orderTableId) {
-        OrderTable orderTableRequest = createOrderTableRequest(true);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(true);
         tableRestController.changeEmpty(orderTableId, orderTableRequest);
     }
 
     private void changeOrderTableToExistStatus(long orderTableId) {
-        OrderTable orderTableRequest = createOrderTableRequest(false);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(false);
         tableRestController.changeEmpty(orderTableId, orderTableRequest);
-    }
-
-    private OrderTable createOrderTableRequest(boolean isEmpty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(isEmpty);
-        return orderTable;
     }
 
     private void changeOrderStatus(long orderId, String status) {

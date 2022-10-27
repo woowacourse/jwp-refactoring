@@ -2,7 +2,7 @@ package kitchenpos.ui.response;
 
 public class MenuGroupResponse {
 
-    private final long id;
+    private final Long id;
     private final String name;
 
     public MenuGroupResponse(final long id, final String name) {
@@ -10,7 +10,7 @@ public class MenuGroupResponse {
         this.name = name;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

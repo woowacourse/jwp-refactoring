@@ -11,6 +11,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.request.OrderTableRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,14 +107,8 @@ class TableGroupRestControllerTest {
     }
 
     private void changeOrderTableStatus(long orderTableId, boolean isEmpty) {
-        OrderTable orderTableRequest = createOrderTableRequest(isEmpty);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(isEmpty);
         tableRestController.changeEmpty(orderTableId, orderTableRequest);
-    }
-
-    private OrderTable createOrderTableRequest(boolean isEmpty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(isEmpty);
-        return orderTable;
     }
 
     private TableGroup groupOrderTables(long... tableIds) {
