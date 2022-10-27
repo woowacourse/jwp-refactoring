@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.ProductFactory.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -37,8 +38,8 @@ class MenuServiceTest {
     @Nested
     class create {
 
-        private final Product pizza = productDao.save(new Product("피자", new BigDecimal(10_000)));
-        private final Product coke = productDao.save(new Product("콜라", new BigDecimal(1_000)));
+        private final Product pizza = productDao.save(product("피자", 10_000));
+        private final Product coke = productDao.save(product("콜라", 1_000));
 
         private final MenuProduct pizzaInMenu = new MenuProduct(pizza.getId(), 1);
         private final MenuProduct cokeInMenu = new MenuProduct(coke.getId(), 1);
@@ -138,9 +139,9 @@ class MenuServiceTest {
     @Nested
     class list {
 
-        private final Product pizza = productDao.save(new Product("피자", new BigDecimal(10_000)));
-        private final Product pasta = productDao.save(new Product("파스타", new BigDecimal(9_000)));
-        private final Product coke = productDao.save(new Product("콜라", new BigDecimal(1_000)));
+        private final Product pizza = productDao.save(product("피자", 10_000));
+        private final Product pasta = productDao.save(product("파스타", 9_000));
+        private final Product coke = productDao.save(product("콜라", 1_000));
 
         private final MenuProduct pizzaInMenu = new MenuProduct(pizza.getId(), 1);
         private final MenuProduct pastaInMenu = new MenuProduct(pasta.getId(), 1);

@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.ProductFactory.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -18,7 +19,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +75,7 @@ class TableServiceTest {
     @Test
     void changeEmpty_orderStatusIsNotCompletion_throwsException() {
 
-        final var pizza = productDao.save(new Product("피자", new BigDecimal(10_000)));
+        final var pizza = productDao.save(product("피자", 10_000));
         final var pizzaInMenu = new MenuProduct(pizza.getId(), 1);
 
         final var italian = menuGroupDao.save(new MenuGroup("양식"));

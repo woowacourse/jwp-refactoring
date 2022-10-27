@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.ProductFactory.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -18,7 +19,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +47,8 @@ class OrderServiceTest {
     @DisplayName("주문 등록")
     @Test
     void create() {
-        final var pizza = productDao.save(new Product("피자", new BigDecimal(10_000)));
-        final var coke = productDao.save(new Product("콜라", new BigDecimal(1_000)));
+        final var pizza = productDao.save(product("피자", 10_000));
+        final var coke = productDao.save(product("콜라", 1_000));
 
         final var pizzaInMenu = new MenuProduct(pizza.getId(), 1);
         final var cokeInMenu = new MenuProduct(coke.getId(), 2);
@@ -85,7 +85,7 @@ class OrderServiceTest {
     @DisplayName("주문 항목의 메뉴가 중복된다면 등록 시 예외 발생")
     @Test
     void create_duplicatedMenuInOrderLineItems_throwsException() {
-        final var pizza = productDao.save(new Product("피자", new BigDecimal(10_000)));
+        final var pizza = productDao.save(product("피자", 10_000));
         final var pizzaInMenu = new MenuProduct(pizza.getId(), 1);
 
         final var italian = menuGroupDao.save(new MenuGroup("양식"));
@@ -107,7 +107,7 @@ class OrderServiceTest {
     @DisplayName("주문 테이블이 빈 상태라면 등록 시 예외 발생")
     @Test
     void create_orderTableIsEmptyTrue_throwsException() {
-        final var pizza = productDao.save(new Product("피자", new BigDecimal(10_000)));
+        final var pizza = productDao.save(product("피자", 10_000));
         final var pizzaInMenu = new MenuProduct(pizza.getId(), 1);
 
         final var italian = menuGroupDao.save(new MenuGroup("양식"));
@@ -130,7 +130,7 @@ class OrderServiceTest {
     @DisplayName("주문 상태 변경")
     @Test
     void changeOrderStatus() {
-        final var pizza = productDao.save(new Product("피자", new BigDecimal(10_000)));
+        final var pizza = productDao.save(product("피자", 10_000));
         final var pizzaInMenu = new MenuProduct(pizza.getId(), 1);
 
         final var italian = menuGroupDao.save(new MenuGroup("양식"));
@@ -155,7 +155,7 @@ class OrderServiceTest {
     @DisplayName("주문 상태가 COMPLETION이라면, 주문 상태 변경 시 예외 발생")
     @Test
     void changeOrderStatus_orderStatusIsCompletion_throwsException() {
-        final var pizza = productDao.save(new Product("피자", new BigDecimal(10_000)));
+        final var pizza = productDao.save(product("피자", 10_000));
         final var pizzaInMenu = new MenuProduct(pizza.getId(), 1);
 
         final var italian = menuGroupDao.save(new MenuGroup("양식"));

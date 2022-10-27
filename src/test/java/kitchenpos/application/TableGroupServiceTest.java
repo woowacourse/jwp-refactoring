@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.ProductFactory.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -20,7 +21,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -165,8 +165,8 @@ class TableGroupServiceTest {
     @DisplayName("그룹의 주문 테이블 중 하나라도 COMPLETION 상태가 아니라면 해제 시 예외 발생")
     @Test
     void ungroup_containsNotCompletionStatus_throwsException() {
-        final var pizza = productDao.save(new Product("피자", new BigDecimal(10_000)));
-        final var coke = productDao.save(new Product("콜라", new BigDecimal(1_000)));
+        final var pizza = productDao.save(product("피자", 10_000));
+        final var coke = productDao.save(product("콜라", 1_000));
         final var pizzaInMenu = new MenuProduct(pizza.getId(), 1);
         final var cokeInMenu = new MenuProduct(coke.getId(), 2);
 
