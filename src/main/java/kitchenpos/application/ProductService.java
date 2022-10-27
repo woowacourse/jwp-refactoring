@@ -22,7 +22,7 @@ public class ProductService {
 
     @Transactional
     public ProductResponse create(final ProductRequest request) {
-        final Product product = convert(request);
+        final Product product = convertToProduct(request);
         final BigDecimal price = product.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
@@ -30,26 +30,26 @@ public class ProductService {
         }
 
         final Product savedProduct = productDao.save(product);
-        return convert(savedProduct);
+        return convertToProductResponse(savedProduct);
     }
 
     public List<ProductResponse> list() {
         final List<Product> products = productDao.findAll();
-        return convert(products);
+        return convertToProductResponses(products);
     }
 
-    private Product convert(final ProductRequest request) {
+    private Product convertToProduct(final ProductRequest request) {
         final Product product = new Product();
         product.setName(request.getName());
         product.setPrice(request.getPrice());
         return product;
     }
 
-    private ProductResponse convert(final Product product) {
+    private ProductResponse convertToProductResponse(final Product product) {
         return new ProductResponse(product.getId(), product.getName(), product.getPrice());
     }
 
-    private List<ProductResponse> convert(final List<Product> products) {
+    private List<ProductResponse> convertToProductResponses(final List<Product> products) {
         return products.stream()
             .map(product -> new ProductResponse(product.getId(), product.getName(), product.getPrice()))
             .collect(Collectors.toUnmodifiableList());
