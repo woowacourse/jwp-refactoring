@@ -2,6 +2,7 @@ package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,5 +22,18 @@ class JdbcTemplateTableGroupDaoTest extends JdbcTemplateTest{
     void save() {
         final TableGroup tableGroup = tableGroupDao.save(getTableGroup());
         assertThat(tableGroup.getId()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("목록을 조회한다.")
+    void list() {
+        // given
+        tableGroupDao.save(getTableGroup());
+
+        // when
+        final List<TableGroup> actual = tableGroupDao.findAll();
+
+        // then
+        assertThat(actual.size()).isEqualTo(1);
     }
 }

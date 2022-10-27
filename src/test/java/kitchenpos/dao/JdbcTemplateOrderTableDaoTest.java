@@ -2,6 +2,7 @@ package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,5 +26,12 @@ class JdbcTemplateOrderTableDaoTest extends JdbcTemplateTest{
         final TableGroup tableGroup = tableGroupDao.save(getTableGroup());
         final OrderTable orderTable = orderTableDao.save(getOrderTable(tableGroup.getId()));
         assertThat(orderTable.getId()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("목록을 조회한다.")
+    void list() {
+        final List<OrderTable> actual = orderTableDao.findAll();
+        assertThat(actual.size()).isEqualTo(8);
     }
 }

@@ -2,6 +2,7 @@ package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,5 +35,12 @@ class JdbcTemplateMenuGroupDaoTest extends JdbcTemplateTest{
     @DisplayName("존재하지 않는 id일 경우 false 를 반환한다.")
     void nonExist() {
         assertThat(menuGroupDao.existsById(0L)).isFalse();
+    }
+
+    @Test
+    @DisplayName("목록을 조회한다.")
+    void list() {
+        final List<MenuGroup> actual = menuGroupDao.findAll();
+        assertThat(actual.size()).isEqualTo(4);
     }
 }

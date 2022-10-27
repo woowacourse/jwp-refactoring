@@ -2,6 +2,7 @@ package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,5 +22,12 @@ class JdbcTemplateProductDaoTest extends JdbcTemplateTest{
     void save() {
         final Product savedProduct = productDao.save(후라이드());
         assertThat(savedProduct.getId()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("목록을 조회한다.")
+    void list() {
+        final List<Product> actual = productDao.findAll();
+        assertThat(actual.size()).isEqualTo(6);
     }
 }

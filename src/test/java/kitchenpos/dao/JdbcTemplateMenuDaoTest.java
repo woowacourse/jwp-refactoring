@@ -2,6 +2,7 @@ package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,5 +26,12 @@ class JdbcTemplateMenuDaoTest extends JdbcTemplateTest{
         final MenuGroup menuGroup = menuGroupDao.save(추천메뉴());
         final Menu menu = menuDao.save(후라이드후라이드(menuGroup.getId()));
         assertThat(menu.getId()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("목록을 조회한다.")
+    void list() {
+        final List<Menu> actual = menuDao.findAll();
+        assertThat(actual.size()).isEqualTo(6);
     }
 }

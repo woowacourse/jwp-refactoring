@@ -62,4 +62,17 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest {
         // then
         assertThat(actual).isFalse();
     }
+
+    @Test
+    @DisplayName("목록을 조회한다.")
+    void list() {
+        // given
+        orderDao.save(getOrder());
+
+        // when
+        final List<Order> actual = orderDao.findAll();
+
+        // then
+        assertThat(actual.size()).isEqualTo(1);
+    }
 }
