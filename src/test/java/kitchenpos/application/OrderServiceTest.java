@@ -11,7 +11,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -41,18 +45,6 @@ class OrderServiceTest extends FakeSpringContext {
                 () -> assertThat(result.getOrderTableId()).isEqualTo(order.getOrderTableId()),
                 () -> assertThat(result.getOrderStatus()).isEqualTo(order.getOrderStatus())
         );
-    }
-
-    @DisplayName("주문 항목이 비어있다면 등록 시 예외 발생")
-    @Test
-    void create_emptyOrderLineItems_throwsException() {
-        final var table = orderTableDao.save(emptyTable(2));
-
-        final var order = order(table);
-
-        assertThatThrownBy(
-                () -> orderService.create(order)
-        ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 항목의 메뉴가 중복된다면 등록 시 예외 발생")
@@ -96,7 +88,7 @@ class OrderServiceTest extends FakeSpringContext {
 
         final var table = orderTableDao.save(notEmptyTable(2));
 
-        final var order = orderDao.save(order(table, pizzaMenu));
+        final var order = createThenSaveOrderAndRelateds(pizzaMenu, table);
         final var updatedOrder = order(table, OrderStatus.MEAL, pizzaMenu);
 
         final var result = orderService.changeOrderStatus(order.getId(), updatedOrder);
@@ -121,5 +113,16 @@ class OrderServiceTest extends FakeSpringContext {
         assertThatThrownBy(
                 () -> orderService.changeOrderStatus(order.getId(), updatedOrder)
         ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private Order createThenSaveOrderAndRelateds(final Menu pizzaMenu, final OrderTable table) {
+        final var order = orderDao.save(order(table, pizzaMenu));
+        final var orderLineItems = order.getOrderLineItems();
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.setOrderId(order.getId());
+            orderLineItemDao.save(orderLineItem);
+
+        }
+        return order;
     }
 }

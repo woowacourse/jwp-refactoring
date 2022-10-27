@@ -7,9 +7,27 @@ public class Order {
 
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private LineItems orderLineItems;
+
+    public Order() {
+    }
+
+    public Order(final List<OrderLineItem> orderLineItems) {
+        this.orderLineItems = new LineItems(orderLineItems);
+    }
+
+    public void changeStatus(final OrderStatus orderStatus) {
+        validateNotCompleted(orderStatus);
+        this.orderStatus = orderStatus;
+    }
+
+    private void validateNotCompleted(final OrderStatus orderStatus) {
+        if (orderStatus == OrderStatus.COMPLETION) {
+            throw new IllegalArgumentException();
+        }
+    }
 
     public Long getId() {
         return id;
@@ -27,12 +45,12 @@ public class Order {
         this.orderTableId = orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
     public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
+        this.orderStatus = OrderStatus.valueOf(orderStatus);
     }
 
     public LocalDateTime getOrderedTime() {
@@ -44,10 +62,26 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return orderLineItems.lineItems;
     }
 
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = new LineItems(orderLineItems);
+    }
+
+    private static class LineItems {
+
+        private final List<OrderLineItem> lineItems;
+
+        private LineItems(final List<OrderLineItem> lineItems) {
+            validateNotEmpty(lineItems);
+            this.lineItems = lineItems;
+        }
+
+        private void validateNotEmpty(final List<OrderLineItem> lineItems) {
+            if (lineItems.isEmpty()) {
+                throw new IllegalArgumentException();
+            }
+        }
     }
 }
