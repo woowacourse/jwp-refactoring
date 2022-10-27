@@ -70,7 +70,8 @@ class TableServiceTest {
 
         // when && then
         assertThatThrownBy(() -> sut.changeEmpty(0L, orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("주문 테이블이 존재하지 않습니다");
     }
 
     @Test
@@ -97,7 +98,8 @@ class TableServiceTest {
 
         // when && then
         assertThatThrownBy(() -> sut.changeEmpty(savedOrderTable1.getId(), orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("단체 테이블에 속해있습니다");
     }
 
     @ParameterizedTest
@@ -121,7 +123,8 @@ class TableServiceTest {
 
         // when && when
         assertThatThrownBy(() -> sut.changeEmpty(orderTableId, newOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("요리 중 혹은 식사 중인 테이블입니다");
     }
 
     @Test
@@ -161,7 +164,8 @@ class TableServiceTest {
 
         // when && then
         assertThatThrownBy(() -> sut.changeNumberOfGuests(orderTableId, newOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("손님 수는 음수일 수 없습니다");
     }
 
     @Test
@@ -171,7 +175,8 @@ class TableServiceTest {
         orderTable.setNumberOfGuests(1);
 
         assertThatThrownBy(() -> sut.changeNumberOfGuests(0L, orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("존재하지 않는 주문 테이블입니다");
     }
 
     @Test
@@ -188,7 +193,8 @@ class TableServiceTest {
 
         // when && then
         assertThatThrownBy(() -> sut.changeNumberOfGuests(orderTableId, newOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("빈 테이블입니다");
     }
 
     @Test

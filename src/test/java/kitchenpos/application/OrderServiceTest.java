@@ -39,7 +39,8 @@ class OrderServiceTest {
 
         // when && then
         assertThatThrownBy(() -> sut.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("주문 항목이 존재하지 않습니다");
     }
 
     @Test
@@ -62,7 +63,32 @@ class OrderServiceTest {
 
         // when && then
         assertThatThrownBy(() -> sut.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("주문 항목의 메뉴가 유효하지 않습니다");
+    }
+
+    @Test
+    @DisplayName("주문 항목에 포함된 메뉴가 존재하지 않을 경우 예외가 발생한다")
+    void throwExceptionWhenNonExistMenu() {
+        // given
+        OrderLineItem orderLineItem1 = new OrderLineItem();
+        orderLineItem1.setMenuId(0L);
+        orderLineItem1.setQuantity(1);
+
+        OrderLineItem orderLineItem2 = new OrderLineItem();
+        orderLineItem2.setMenuId(1L);
+        orderLineItem2.setQuantity(2);
+
+        List<OrderLineItem> orderLineItems = List.of(orderLineItem1, orderLineItem2);
+
+        Order order = new Order();
+        order.setOrderTableId(1L);
+        order.setOrderLineItems(orderLineItems);
+
+        // when && then
+        assertThatThrownBy(() -> sut.create(order))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("주문 항목의 메뉴가 유효하지 않습니다");
     }
 
     @Test
@@ -81,7 +107,8 @@ class OrderServiceTest {
 
         // when && then
         assertThatThrownBy(() -> sut.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("주문 테이블이 존재하지 않습니다");
     }
 
     @Test
@@ -105,7 +132,8 @@ class OrderServiceTest {
 
         // when && then
         assertThatThrownBy(() -> sut.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("주문 테이블이 비어있습니다");
     }
 
     @Test
@@ -160,7 +188,8 @@ class OrderServiceTest {
 
         // when && then
         assertThatThrownBy(() -> sut.changeOrderStatus(0L, order))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("주문이 존재하지 않습니다");
     }
 
     @Test
@@ -178,7 +207,8 @@ class OrderServiceTest {
 
         // when && then
         assertThatThrownBy(() -> sut.changeOrderStatus(savedOrder.getId(), mealStatusOrder))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("이미 완료된 주문입니다");
     }
 
     @Test

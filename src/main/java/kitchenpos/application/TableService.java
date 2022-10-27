@@ -35,15 +35,17 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다. orderTableId = " + orderTableId));
 
         if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(
+                    String.format("단체 테이블에 속해있습니다. orderTableId = %d, tableGroupId = %d", orderTableId,
+                            savedOrderTable.getTableGroupId()));
         }
 
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("요리 중 혹은 식사 중인 테이블입니다.");
         }
 
         savedOrderTable.setEmpty(orderTable.isEmpty());
@@ -56,14 +58,14 @@ public class TableService {
         final int numberOfGuests = orderTable.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("손님 수는 음수일 수 없습니다. numberOfGuests = " + numberOfGuests);
         }
 
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다. orderTableId = " + orderTableId));
 
         if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("빈 테이블입니다.");
         }
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);

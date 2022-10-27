@@ -34,7 +34,8 @@ class ProductServiceTest {
 
         // when && then
         assertThatThrownBy(() -> sut.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("가격이 유효하지 않습니다");
     }
 
     @Test
@@ -47,7 +48,8 @@ class ProductServiceTest {
 
         // when && then
         assertThatThrownBy(() -> sut.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("가격이 유효하지 않습니다");
     }
 
     @Test

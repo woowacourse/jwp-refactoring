@@ -50,7 +50,8 @@ class MenuServiceTest {
 
         // when && then
         assertThatThrownBy(() -> sut.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("가격이 유효하지 않습니다");
     }
 
     @Test
@@ -65,7 +66,8 @@ class MenuServiceTest {
 
         // when && then
         assertThatThrownBy(() -> sut.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("가격이 유효하지 않습니다");
     }
 
     @Test
@@ -80,7 +82,8 @@ class MenuServiceTest {
 
         // when && when
         assertThatThrownBy(() -> sut.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("메뉴 그룹이 존재하지 않습니다");
     }
 
     @Test
@@ -102,7 +105,8 @@ class MenuServiceTest {
 
         // when && when
         assertThatThrownBy(() -> sut.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("상품이 존재하지 않습니다");
     }
 
     @Test
@@ -129,7 +133,8 @@ class MenuServiceTest {
 
         // when && then
         assertThatThrownBy(() -> sut.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("메뉴의 가격은 상품 전체 가격의 합보다 클 수 없습니다");
     }
 
     @Test
