@@ -26,8 +26,7 @@ public class ProductServiceTest {
         @Test
         void success() {
             // when
-            Product product = new Product("상품1", new BigDecimal(1000));
-            Product actual = productService.create(product);
+            Product actual = productService.create("상품1", 1000L);
 
             // then
             assertThat(actual.getName()).isEqualTo("상품1");
@@ -37,8 +36,7 @@ public class ProductServiceTest {
         @Test
         void priceLessThanZero_exception() {
             // then
-            Product product = new Product("상품1", BigDecimal.valueOf(-1));
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create("상품", -1L))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -46,8 +44,7 @@ public class ProductServiceTest {
         @Test
         void priceIs_exception() {
             // then
-            Product product = new Product("상품1", null);
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create("상품1", null))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

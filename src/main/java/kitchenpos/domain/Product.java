@@ -10,9 +10,28 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, BigDecimal price) {
+    public Product(Long id, String name, BigDecimal price) {
+        this.id = id;
         this.name = name;
         this.price = price;
+    }
+
+    public Product(String name, BigDecimal price) {
+        this(null, name, price);
+        validatePrice(price);
+    }
+
+    public static Product of (String name, Long price) {
+        if (price == null) {
+            throw new IllegalArgumentException();
+        }
+        return new Product(name, BigDecimal.valueOf(price));
+    }
+
+    private void validatePrice(BigDecimal price) {
+        if (price == null || price.compareTo(BigDecimal.ZERO) < 0){
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {

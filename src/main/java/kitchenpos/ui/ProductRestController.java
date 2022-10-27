@@ -1,37 +1,36 @@
 package kitchenpos.ui;
 
-import kitchenpos.application.ProductService;
-import kitchenpos.domain.Product;
+import java.net.URI;
+import java.util.List;
+import kitchenpos.application.ProductApiService;
+import kitchenpos.ui.dto.ProductRequest;
+import kitchenpos.ui.dto.ProductResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
-import java.util.List;
-
 @RestController
 public class ProductRestController {
-    private final ProductService productService;
 
-    public ProductRestController(final ProductService productService) {
-        this.productService = productService;
+    private final ProductApiService productApiService;
+
+    public ProductRestController(final ProductApiService productApiService) {
+        this.productApiService = productApiService;
     }
 
     @PostMapping("/api/products")
-    public ResponseEntity<Product> create(@RequestBody final Product product) {
-        final Product created = productService.create(product);
-        final URI uri = URI.create("/api/products/" + created.getId());
+    public ResponseEntity<ProductResponse> create(@RequestBody ProductRequest productRequest) {
+        ProductResponse response = productApiService.create(productRequest);
+        URI uri = URI.create("/api/products/" + response.getId());
         return ResponseEntity.created(uri)
-                .body(created)
-                ;
+                .body(response);
     }
 
     @GetMapping("/api/products")
-    public ResponseEntity<List<Product>> list() {
+    public ResponseEntity<List<ProductResponse>> list() {
         return ResponseEntity.ok()
-                .body(productService.list())
-                ;
+                .body(productApiService.list());
     }
 }
