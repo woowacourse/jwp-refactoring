@@ -1,9 +1,11 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.menugroup.MenuGroupCreateRequest;
+import kitchenpos.dto.menugroup.MenuGroupCreateResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,32 +19,34 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴_그룹을_생성할_수_있다() {
         // given
-        MenuGroup menuGroup = 메뉴_그룹_추천상품();
+        final MenuGroupCreateRequest menuGroupCreateRequest = 메뉴_그룹_추천상품_요청();
 
         // when
-        MenuGroup actual = menuGroupService.create(menuGroup);
+        MenuGroupCreateResponse actual = menuGroupService.create(menuGroupCreateRequest);
 
         // then
-        assertThat(actual.getName()).isEqualTo(menuGroup.getName());
+        assertAll(
+                () -> assertThat(actual.getId()).isNotNull(),
+                () -> assertThat(actual.getName()).isEqualTo(menuGroupCreateRequest.getName())
+        );
     }
 
     @Test
     void 메뉴_그룹_목록을_조회한다() {
         // given
-        MenuGroup menuGroup = 메뉴_그룹_추천상품();
+        final MenuGroupCreateRequest menuGroupCreateRequest = 메뉴_그룹_추천상품_요청();
 
-        menuGroupService.create(menuGroup);
+        menuGroupService.create(menuGroupCreateRequest);
 
         // when
-        List<MenuGroup> actual = menuGroupService.list();
+        List<MenuGroupCreateResponse> actual = menuGroupService.list();
 
+        // TODO: 2022/10/27 내부 데이터까지 확인
         // then
         assertThat(actual).hasSizeGreaterThanOrEqualTo(1);
     }
 
-    public MenuGroup 메뉴_그룹_추천상품() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("추천상품");
-        return menuGroup;
+    public MenuGroupCreateRequest 메뉴_그룹_추천상품_요청() {
+        return new MenuGroupCreateRequest("추천상품");
     }
 }

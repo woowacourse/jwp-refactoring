@@ -116,9 +116,7 @@ class MenuServiceTest {
     }
 
     public MenuGroup 추천메뉴() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("추천메뉴");
-        return menuGroupDao.save(menuGroup);
+        return menuGroupDao.save(new MenuGroup("추천메뉴"));
     }
 
     public MenuProduct 후라이드_세트_메뉴_상품() {
