@@ -1,7 +1,7 @@
 package kitchenpos.acceptance;
 
 import io.restassured.response.ValidatableResponse;
-import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.support.RequestBuilder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +15,7 @@ public class ProductAcceptanceTest extends AcceptanceTest {
     @Test
     void create() {
         // given, when
-        final Product request = RequestBuilder.ofProduct();
+        final ProductRequest request = RequestBuilder.ofProduct();
         final ValidatableResponse response = post("/api/products", request);
 
         // then

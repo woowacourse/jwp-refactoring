@@ -1,7 +1,7 @@
 package kitchenpos.acceptance;
 
 import io.restassured.response.ValidatableResponse;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.MenuGroupRequest;
 import kitchenpos.support.RequestBuilder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +15,7 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void create() {
         // given, when
-        final MenuGroup request = RequestBuilder.ofMenuGroup();
+        final MenuGroupRequest request = RequestBuilder.ofMenuGroup();
         final ValidatableResponse response = post("/api/menu-groups", request);
 
         // then

@@ -13,6 +13,8 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.dto.request.ProductRequest;
 
 public class RequestBuilder {
 
@@ -21,23 +23,20 @@ public class RequestBuilder {
     private static final String DEFAULT_MENU_GROUP_NAME = "음료 메뉴";
     private static final String DEFAULT_MENU_NAME = "포키 정식";
 
-    public static Product ofProduct() {
+    public static ProductRequest ofProduct() {
         return ofProduct(DEFAULT_PRODUCT_PRICE);
     }
 
-    public static Product ofProduct(final int price) {
-        final Product product = new Product();
-        product.setName(DEFAULT_PRODUCT_NAME);
-        product.setPrice(new BigDecimal(price));
-
-        return product;
+    public static ProductRequest ofProduct(final int price) {
+        return ofProduct(new BigDecimal(price));
     }
 
-    public static MenuGroup ofMenuGroup() {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(DEFAULT_MENU_GROUP_NAME);
+    public static ProductRequest ofProduct(final BigDecimal price) {
+        return new ProductRequest(DEFAULT_PRODUCT_NAME, price);
+    }
 
-        return menuGroup;
+    public static MenuGroupRequest ofMenuGroup() {
+        return new MenuGroupRequest(DEFAULT_MENU_GROUP_NAME);
     }
 
     public static Menu ofMenu(final MenuGroup menuGroup, final List<Product> products, final int price) {

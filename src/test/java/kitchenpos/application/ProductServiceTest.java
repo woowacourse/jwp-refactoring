@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.support.DataSupport;
 import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +30,7 @@ class ProductServiceTest {
     @Test
     void create() {
         // given, when
-        final Product request = RequestBuilder.ofProduct();
+        final ProductRequest request = RequestBuilder.ofProduct();
         final Product savedProduct = productService.create(request);
 
         // then
@@ -39,8 +40,7 @@ class ProductServiceTest {
     @DisplayName("상품을 등록할 때 상품 가격을 입력하지 않으면 예외가 발생한다.")
     @Test
     void create_throwsException_ifNoPrice() {
-        final Product request = RequestBuilder.ofProduct();
-        request.setPrice(null);
+        final ProductRequest request = RequestBuilder.ofProduct(null);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> productService.create(request));
     }
@@ -48,7 +48,7 @@ class ProductServiceTest {
     @ValueSource(ints = {-1, -500, -1000})
     @ParameterizedTest(name = "상품을 등록할 때 상품 가격이 0보다 작은 {0}이면 예외가 발생한다.")
     void create_throwsException_ifPriceUnder0(final int price) {
-        final Product request = RequestBuilder.ofProduct(price);
+        final ProductRequest request = RequestBuilder.ofProduct(price);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> productService.create(request));
     }

@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.MenuGroupRequest;
 import kitchenpos.support.DataSupport;
 import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +27,7 @@ class MenuGroupServiceTest {
     @Test
     void create() {
         // given, when
-        final MenuGroup request = RequestBuilder.ofMenuGroup();
+        final MenuGroupRequest request = RequestBuilder.ofMenuGroup();
         final MenuGroup savedMenuGroup = menuGroupService.create(request);
 
         // then
