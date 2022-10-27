@@ -185,4 +185,5 @@ Controller에서 받아온 객체를 그대로 save하거나, 해당 객체의 �
 
 
 4. Service에 있던 기능들 도메인에게 책임부여
-   - [ ] OrderTable.updateNumberOfGuests()
+   - [x] OrderTable.updateNumberOfGuests()
+   - [x] OrderTable.updateEmpty()

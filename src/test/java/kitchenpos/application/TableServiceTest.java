@@ -159,7 +159,7 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("주문 테이블이 비어있으면, 예외를 던진다")
         void fail_emptyOrderTable() {
             //given
-            savedOrderTable.setEmpty(true);
+            savedOrderTable.updateEmpty(true);
 
             //when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(ORDER_TABLE_ID, request))

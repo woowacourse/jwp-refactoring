@@ -103,8 +103,8 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("그룹으로 지정할 주문 테이블이 비어있지 않으면, 예외를 던진다.")
         void fail_notEmptyTable() {
             //given
-            orderTableA.setEmpty(false);
-            orderTableB.setEmpty(false);
+            orderTableA.updateEmpty(false);
+            orderTableB.updateEmpty(false);
 
             //when & then
             assertThatThrownBy(() -> tableGroupService.create(createRequest))

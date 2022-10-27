@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import static kitchenpos.support.Fixture.createEmptyOrderTable;
+import static kitchenpos.support.Fixture.createGroupedOrderTable;
 import static kitchenpos.support.Fixture.createOrderTableWithNumberOfGuests;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -12,6 +14,34 @@ import org.junit.jupiter.api.Test;
 
 @DisplayName("OrderTable 의")
 class OrderTableTest {
+
+    @Nested
+    @DisplayName("updateEmpty 메서드는")
+    class UpdateEmpty {
+        @Test
+        @DisplayName("테이블 비움상태를 수정한다.")
+        void success() {
+            //given
+            OrderTable orderTable = createEmptyOrderTable();
+
+            //when
+            orderTable.updateEmpty(false);
+
+            //then
+            assertThat(orderTable.isEmpty()).isFalse();
+        }
+
+        @Test
+        @DisplayName("테이블이 그룹에 속해있으면, 예외를 던진다.")
+        void fail_existGroupId() {
+            //given
+            OrderTable orderTable = createGroupedOrderTable();
+
+            //when & then
+            assertThatThrownBy(() -> orderTable.updateEmpty(false))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
 
     @Nested
     @DisplayName("updateNumberOfGuests 메서드는")

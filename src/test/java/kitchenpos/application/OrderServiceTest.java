@@ -129,7 +129,7 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("주문한 테이블의 상태가 Empty이면, 예외를 던진다.")
         void fail_orderTableIsEmpty() {
             //given
-            orderTable.setEmpty(true);
+            orderTable.updateEmpty(true);
 
             //when & then
             assertThatThrownBy(() -> orderService.create(request))
