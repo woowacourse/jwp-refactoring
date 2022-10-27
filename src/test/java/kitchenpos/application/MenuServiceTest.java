@@ -42,50 +42,16 @@ class MenuServiceTest extends FakeSpringContext {
             assertAll(
                     () -> assertThat(result.getName()).isEqualTo(menu.getName()),
                     () -> assertThat(result.getMenuGroupId()).isEqualTo(menu.getMenuGroupId()),
-                    () -> assertThat(result.getPrice().compareTo(menu.getPrice())).isEqualTo(0)
+                    () -> assertThat(result.getPrice().getPrice().compareTo(menu.getPrice().getPrice())).isEqualTo(0)
             );
-        }
-
-        @DisplayName("가격이 null이면")
-        @Nested
-        class priceIsNull {
-
-            private final BigDecimal invalidPrice = null;
-
-            @DisplayName("예외를 던진다")
-            @Test
-            void throwsException() {
-                final var invalidMenu = menu("피자와 콜라", invalidPrice, italian, List.of(pizza, coke));
-
-                assertThatThrownBy(
-                        () -> menuService.create(invalidMenu)
-                ).isInstanceOf(IllegalArgumentException.class);
-            }
-        }
-
-        @DisplayName("가격이 0 미만이면")
-        @Nested
-        class priceIsUnderZero {
-
-            private final BigDecimal invalidPrice = new BigDecimal(-1);
-
-            @DisplayName("예외를 던진다")
-            @Test
-            void throwsException() {
-                final var invalidMenu = menu("피자와 콜라", invalidPrice, italian, List.of(pizza, coke));
-
-                assertThatThrownBy(
-                        () -> menuService.create(invalidMenu)
-                ).isInstanceOf(IllegalArgumentException.class);
-            }
         }
 
         @DisplayName("가격이 각 상품의 수량과 가격을 곱한 값의 총합보다 크다면")
         @Nested
         class priceOverTotalOfMenuProducts {
 
-            private final BigDecimal pizzaTotalPrice = pizza.getPrice().multiply(new BigDecimal(MENU_QUANTITY));
-            private final BigDecimal cokeTotalPrice = coke.getPrice().multiply(new BigDecimal(MENU_QUANTITY));
+            private final BigDecimal pizzaTotalPrice = pizza.getPrice().getPrice().multiply(new BigDecimal(MENU_QUANTITY));
+            private final BigDecimal cokeTotalPrice = coke.getPrice().getPrice().multiply(new BigDecimal(MENU_QUANTITY));
 
             private final BigDecimal invalidPrice = pizzaTotalPrice.add(cokeTotalPrice)
                     .add(new BigDecimal(1));
@@ -150,7 +116,7 @@ class MenuServiceTest extends FakeSpringContext {
             return result.stream()
                     .filter(menu -> menu.getName().equals(target.getName())
                             && menu.getMenuGroupId().equals(target.getMenuGroupId())
-                            && menu.getPrice().compareTo(target.getPrice()) == 0)
+                            && menu.getPrice().getPrice().compareTo(target.getPrice().getPrice()) == 0)
                     .findAny();
         }
     }

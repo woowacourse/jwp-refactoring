@@ -6,21 +6,21 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class ProductTest {
+class PriceTest {
 
-    @DisplayName("가격이 null 이라면 예외가 발생한다")
+    @DisplayName("가격이 null이 될 수 없다")
     @Test
     void priceIsNull_throwsException() {
         assertThatThrownBy(
-                () -> new Product("콜라", null)
+                () -> new Price(null)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("가격이 0 미만 이라면 예외가 발생한다")
+    @DisplayName("가격은 0 미만이 될 수 없다")
     @Test
     void priceIsUnderZero_throwsException() {
         assertThatThrownBy(
-                () -> new Product("콜라", new BigDecimal(-1))
+                () -> new Price(new BigDecimal(-1))
         ).isInstanceOf(IllegalArgumentException.class);
     }
 }

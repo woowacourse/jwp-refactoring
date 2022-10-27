@@ -21,7 +21,7 @@ public class MenuFactory {
             menuProduct.setQuantity(MENU_QUANTITY);
             menuProduct.setProductId(product.getId());
             menuProducts.add(menuProduct);
-            totalPrice += product.getPrice().intValue() * menuProduct.getQuantity();
+            totalPrice += product.getPrice().getPrice().intValue() * menuProduct.getQuantity();
         }
 
         final var menu = new Menu();
