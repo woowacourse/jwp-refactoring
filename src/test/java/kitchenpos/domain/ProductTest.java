@@ -28,5 +28,4 @@ public class ProductTest {
         assertThatThrownBy(() -> new Product("test", BigDecimal.valueOf(-100)))
             .isInstanceOf(IllegalArgumentException.class);
     }
-
 }
