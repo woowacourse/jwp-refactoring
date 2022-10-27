@@ -49,4 +49,19 @@ public class TableStepDefinition {
             .then().log().all()
             .statusCode(HttpStatus.OK.value());
     }
+
+    public static void 테이블의_손님의_숫자를_변경한다(
+        final long orderTableId,
+        final int numberOfGuests) {
+
+        OrderTable orderTable = new OrderTable(orderTableId, numberOfGuests, false);
+
+        RestAssured.given().log().all()
+            .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+            .body(orderTable)
+            .when().log().all()
+            .put("/api/tables/" + orderTableId + "/number-of-guests")
+            .then().log().all()
+            .statusCode(HttpStatus.OK.value());
+    }
 }
