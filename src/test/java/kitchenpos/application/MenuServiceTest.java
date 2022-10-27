@@ -59,7 +59,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     @DisplayName("등록되는 메뉴는 메뉴 그룹에 반드시 포함되어야 한다.")
     void createWithNullMenuGroup() {
-        final MenuGroup emptyMenuGroup = new MenuGroup();
+        final MenuGroup emptyMenuGroup = new MenuGroup(-1L, "없는그룹");
 
         assertThatThrownBy(() -> 메뉴_등록("런치세트", 15000L, emptyMenuGroup, 토마토파스타, 탄산음료))
                 .isInstanceOf(IllegalArgumentException.class);

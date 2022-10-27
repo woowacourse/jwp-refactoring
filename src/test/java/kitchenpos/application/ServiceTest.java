@@ -104,8 +104,7 @@ public abstract class ServiceTest {
     }
 
     public MenuGroup 메뉴_그룹_등록(final String name) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
+        final MenuGroup menuGroup = new MenuGroup(name);
         return menuGroupService.create(menuGroup);
     }
 
