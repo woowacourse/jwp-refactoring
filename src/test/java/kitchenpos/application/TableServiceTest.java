@@ -7,28 +7,30 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.dao.FakeOrderDao;
+import kitchenpos.dao.FakeOrderTableDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
 public class TableServiceTest {
 
-    @Autowired
     private TableService tableService;
 
-    @Autowired
     private OrderDao orderDao;
-    @Autowired
     private OrderTableDao orderTableDao;
+
+    @BeforeEach
+    void beforeEach() {
+        this.orderDao = new FakeOrderDao();
+        this.orderTableDao = new FakeOrderTableDao();
+        this.tableService = new TableService(orderDao, orderTableDao);
+    }
 
     @Test
     @DisplayName("주문 테이블을 생성한다.")
@@ -55,7 +57,7 @@ public class TableServiceTest {
         List<OrderTable> products = tableService.list();
 
         // then
-        assertThat(products.size()).isEqualTo(8);
+        assertThat(products.size()).isEqualTo(0);
     }
 
     @Test
@@ -85,13 +87,14 @@ public class TableServiceTest {
 
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        Order order= new Order();
+        Order order = new Order();
         order.setOrderedTime(LocalDateTime.now());
         order.setOrderTableId(savedOrderTable.getId());
         order.setOrderStatus(OrderStatus.COOKING.name());
         order.setOrderLineItems(new ArrayList<>());
         orderDao.save(order);
         // when
-        assertThatThrownBy(()->tableService.changeEmpty(savedOrderTable.getId(), orderTable)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), orderTable)).isInstanceOf(
+                IllegalArgumentException.class);
     }
 }
