@@ -180,4 +180,8 @@ Controller에서 받아온 객체를 그대로 save하거나, 해당 객체의 �
 
    - [x] OrderCreateRequest
 
+   - [x] MenuGroupCreateRequest
+
+     - 지금 당장은 필요없지만, 컨트롤러와 도메인의 경계를 명확히 하고자 가져감.
+
      
