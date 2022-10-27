@@ -191,12 +191,7 @@ public abstract class ServiceTest {
 
     private List<OrderLineItem> makeOrderLineItems(final Menu[] menus) {
         return Arrays.stream(menus)
-                .map(menu -> {
-                    final OrderLineItem orderLineItem = new OrderLineItem();
-                    orderLineItem.setMenuId(menu.getId());
-                    orderLineItem.setQuantity(DEFAULT_ORDER_LINE_QUANTITY);
-                    return orderLineItem;
-                })
+                .map(menu -> new OrderLineItem(menu.getId(), DEFAULT_ORDER_LINE_QUANTITY))
                 .collect(Collectors.toUnmodifiableList());
     }
 
