@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class MenuGroupService {
     private final MenuGroupRepository menuGroupRepository;
 
@@ -16,11 +17,11 @@ public class MenuGroupService {
         this.menuGroupRepository = menuGroupRepository;
     }
 
-    @Transactional
     public MenuGroupResponse create(final MenuGroupRequest request) {
         return MenuGroupResponse.from(menuGroupRepository.save(request.toMenuGroup()));
     }
 
+    @Transactional(readOnly = true)
     public List<MenuGroupResponse> list() {
         return menuGroupRepository.findAll().stream()
                 .map(MenuGroupResponse::from)

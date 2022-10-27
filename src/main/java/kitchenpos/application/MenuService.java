@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
@@ -33,7 +34,6 @@ public class MenuService {
         this.productRepository = productRepository;
     }
 
-    @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
@@ -59,6 +59,7 @@ public class MenuService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<MenuResponse> list() {
         return menuRepository.findAll().stream()
                 .map(MenuResponse::from)
