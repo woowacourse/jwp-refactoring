@@ -3,6 +3,8 @@ package kitchenpos.application;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import kitchenpos.application.dto.request.OrderTableCreateCommand;
+import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderStatus;
@@ -20,6 +22,7 @@ public class TableService {
         this.orderTableRepository = orderTableRepository;
     }
 
+    @Deprecated
     @Transactional
     public OrderTable create(final OrderTable orderTable) {
         orderTable.setId(null);
@@ -28,8 +31,16 @@ public class TableService {
         return orderTableRepository.save(orderTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    @Transactional
+    public OrderTableResponse create(final OrderTableCreateCommand orderTableCreateCommand) {
+        OrderTable orderTable = orderTableCreateCommand.toEntity();
+        return OrderTableResponse.from(orderTableRepository.save(orderTable));
+    }
+
+    public List<OrderTableResponse> list() {
+        return orderTableRepository.findAll().stream()
+                .map(OrderTableResponse::from)
+                .toList();
     }
 
     @Transactional

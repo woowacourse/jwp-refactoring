@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,10 +36,10 @@ class TableRestControllerTest extends ControllerTest {
     @Test
     @DisplayName("OrderTable List를 반환한다.")
     void list() throws Exception {
-        OrderTable orderTable1 = new OrderTable(1L, 1L, 10, false);
-        OrderTable orderTable2 = new OrderTable(2L, 2L, 5, false);
+        OrderTableResponse orderTable1 = new OrderTableResponse(1L, 1L, 10, false);
+        OrderTableResponse orderTable2 = new OrderTableResponse(2L, 2L, 5, false);
 
-        List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
+        List<OrderTableResponse> orderTables = List.of(orderTable1, orderTable2);
         given(tableService.list()).willReturn(orderTables);
         mockMvc.perform(get("/api/tables"))
                 .andExpectAll(status().isOk(),
