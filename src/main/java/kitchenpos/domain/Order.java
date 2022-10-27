@@ -1,8 +1,6 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Order {
@@ -10,28 +8,36 @@ public class Order {
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private OrderLineItems orderLineItems;
 
     public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
-                 final List<OrderLineItem> orderLineItems) {
+                 final OrderLineItems orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = new ArrayList<>(orderLineItems);
+        this.orderLineItems = orderLineItems;
     }
 
     public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
-                 final List<OrderLineItem> orderLineItems) {
+                 final OrderLineItems orderLineItems) {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
+    public boolean isOrderLineItemsEmpty() {
+        return orderLineItems.isEmpty();
+    }
+
+    public boolean hasValidMenus(final long registeredMenuCounts) {
+        return orderLineItems.getOrderLineItemCounts() == registeredMenuCounts;
+    }
+
     public void addOrderLineItem(final OrderLineItem... orderLineItems) {
-        this.orderLineItems.addAll(Arrays.asList(orderLineItems));
+        this.orderLineItems.addOrderLineItem(orderLineItems);
     }
 
     public void changeAllOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = new ArrayList<>(orderLineItems);
+        this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
     public boolean isCompletionOrder() {
@@ -40,6 +46,14 @@ public class Order {
 
     public void changeOrderStatus(final String orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    public List<Long> getOrderMenuIds() {
+        return orderLineItems.getOrderLineItemMenuIds();
+    }
+
+    public void addOrderIdsToOrderLineItems(final Long orderId) {
+        orderLineItems.addOrderId(orderId);
     }
 
     public Long getId() {
@@ -58,11 +72,11 @@ public class Order {
         return orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
+    public OrderLineItems getOrderLineItems() {
         return orderLineItems;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public List<OrderLineItem> getOrderLineItemsList() {
+        return orderLineItems.getOrderLineItems();
     }
 }

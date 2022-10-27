@@ -16,6 +16,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,8 +113,8 @@ public class ServiceTest {
         menuDao.save(menu);
 
         final OrderTable orderTable = saveAndGetNotEmptyOrderTable(1L);
-
-        final Order order = new Order(id, orderTable.getId(), status, LocalDateTime.now(), new ArrayList<>());
+        final OrderLineItems orderLineItems = new OrderLineItems(new ArrayList<>());
+        final Order order = new Order(id, orderTable.getId(), status, LocalDateTime.now(), orderLineItems);
         order.addOrderLineItem(saveAndGetOrderLineItem(1L, menu.getId(), order.getId()));
         return orderDao.save(order);
     }
@@ -127,7 +128,8 @@ public class ServiceTest {
         menu.addMenuProduct(menuProduct);
         menuDao.save(menu);
 
-        final Order order = new Order(id, orderTable.getId(), status, LocalDateTime.now(), new ArrayList<>());
+        final OrderLineItems orderLineItems = new OrderLineItems(new ArrayList<>());
+        final Order order = new Order(id, orderTable.getId(), status, LocalDateTime.now(), orderLineItems);
         order.addOrderLineItem(saveAndGetOrderLineItem(1L, menu.getId(), order.getId()));
         return orderDao.save(order);
     }

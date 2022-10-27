@@ -11,6 +11,7 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
@@ -93,8 +94,8 @@ class OrderServiceTest extends ServiceTest {
         menuDao.save(menu);
 
         final OrderTable orderTable = saveAndGetNotEmptyOrderTable(1L);
-
-        final Order order = new Order(1L, orderTable.getId(), orderStatus, LocalDateTime.now(), new ArrayList<>());
+        final OrderLineItems orderLineItems = new OrderLineItems(new ArrayList<>());
+        final Order order = new Order(1L, orderTable.getId(), orderStatus, LocalDateTime.now(), orderLineItems);
         order.addOrderLineItem(saveAndGetOrderLineItem(1L, orderMenuId, order.getId()));
         return order;
     }
