@@ -1,6 +1,7 @@
 package kitchenpos.ui;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -9,26 +10,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.ui.dto.request.MenuGroupCreateRequest;
+import kitchenpos.ui.dto.response.MenuGroupCreateResponse;
 import kitchenpos.ui.dto.response.MenuGroupResponse;
-import kitchenpos.ui.mapper.MenuGroupMapper;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 class MenuGroupRestControllerTest extends RestControllerTest {
 
-    @Autowired
-    private MenuGroupMapper menuGroupMapper;
-
     @Test
     void 메뉴_그룹_생성에_성공한다() throws Exception {
         MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest("메뉴 그룹");
-        when(menuGroupService.create(menuGroupMapper.toMenuGroup(menuGroupCreateRequest)))
-                .thenReturn(new MenuGroup(1L, "메뉴 그룹"));
+        when(menuGroupService.create(refEq(menuGroupCreateRequest)))
+                .thenReturn(new MenuGroupCreateResponse(1L, "메뉴 그룹"));
 
         mockMvc.perform(post("/api/menu-groups")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -40,7 +36,7 @@ class MenuGroupRestControllerTest extends RestControllerTest {
 
     @Test
     void 메뉴_그룹_목록_조회에_성공한다() throws Exception {
-        MenuGroup expected = new MenuGroup(1L, "메뉴 그룹");
+        MenuGroupResponse expected = new MenuGroupResponse(1L, "메뉴 그룹");
         when(menuGroupService.list()).thenReturn(List.of(expected));
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/menu-groups"))
