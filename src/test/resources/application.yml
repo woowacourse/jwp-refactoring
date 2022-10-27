@@ -12,7 +12,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
+        ddl-auto: validate
 logging:
   level:
     org.hibernate.type.descriptor.sql:
