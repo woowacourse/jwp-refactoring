@@ -9,9 +9,12 @@ import kitchenpos.application.dto.request.MenuCommand;
 import kitchenpos.application.dto.request.MenuProductCommand;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.common.DataClearExtension;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.ProductRepository;
+import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.menu.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -27,6 +30,9 @@ public class MenuServiceTest {
 
     @Autowired
     private MenuService menuService;
+
+    @Autowired
+    private MenuRepository menuRepository;
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;
@@ -105,5 +111,18 @@ public class MenuServiceTest {
                         .hasMessage("메뉴의 가격이 상품의 가격보다 높습니다.");
             }
         }
+    }
+
+    @Test
+    @DisplayName("존재하는 메뉴을 모두 조회한다.")
+    void list() {
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("추천메뉴"));
+        Product product = productRepository.save(new Product("강정치킨", BigDecimal.valueOf(18000)));
+
+        Menu menu = menuRepository.save(new Menu("강정치킨", BigDecimal.valueOf(37000), menuGroup.getId()));
+
+        menu.addMenuProduct(new MenuProduct(menu.getId(), product.getId(), 2));
+
+        assertThat(menuService.list()).hasSize(1);
     }
 }

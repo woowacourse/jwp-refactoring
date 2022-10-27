@@ -3,7 +3,7 @@ package kitchenpos.application.dto.request;
 public class MenuProductCommand {
 
     private final Long productId;
-    private final int quantity;
+    private final long quantity;
 
     public MenuProductCommand(Long productId, int quantity) {
         this.productId = productId;
@@ -14,7 +14,7 @@ public class MenuProductCommand {
         return productId;
     }
 
-    public int getQuantity() {
+    public long getQuantity() {
         return quantity;
     }
 }
