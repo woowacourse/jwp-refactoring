@@ -1,7 +1,8 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuGroupFixture.세트메뉴;
+import static kitchenpos.fixture.MenuGroupFixture.세트메뉴_REQUEST;
 import static kitchenpos.fixture.MenuGroupFixture.할인메뉴;
+import static kitchenpos.fixture.MenuGroupFixture.할인메뉴_REQUEST;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -24,19 +25,19 @@ public class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 생성한다.")
     void create() {
         // when
-        MenuGroup newMenuGroup = menuGroupService.create(할인메뉴);
+        MenuGroup newMenuGroup = menuGroupService.create(할인메뉴_REQUEST);
 
         // then
         assertThat(newMenuGroup.getId()).isEqualTo(1L);
-        assertThat(newMenuGroup.getName()).isEqualTo(할인메뉴.getName());
+        assertThat(newMenuGroup.getName()).isEqualTo(할인메뉴_REQUEST.getName());
     }
 
     @Test
     @DisplayName("메뉴 그룹 목록을 조회한다.")
     void list() {
         // given
-        menuGroupService.create(할인메뉴);
-        menuGroupService.create(세트메뉴);
+        menuGroupService.create(할인메뉴_REQUEST);
+        menuGroupService.create(세트메뉴_REQUEST);
 
         // when
         List<MenuGroup> menuGroups = menuGroupService.list();
