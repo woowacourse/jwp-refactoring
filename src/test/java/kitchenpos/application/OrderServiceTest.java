@@ -2,6 +2,8 @@ package kitchenpos.application;
 
 import static kitchenpos.fixture.MenuFactory.menu;
 import static kitchenpos.fixture.MenuGroupFactory.menuGroup;
+import static kitchenpos.fixture.OrderTableFactory.emptyTable;
+import static kitchenpos.fixture.OrderTableFactory.notEmptyTable;
 import static kitchenpos.fixture.ProductFactory.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -16,7 +18,6 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,7 @@ class OrderServiceTest {
         final var pizzaOrderItem = new OrderLineItem(pizzaMenu.getId(), 2);
         final var cokeOrderItem = new OrderLineItem(cokeMenu.getId(), 2);
 
-        final var table = orderTableDao.save(new OrderTable(2));
+        final var table = orderTableDao.save(notEmptyTable(2));
 
         final var order = new Order(table.getId(), List.of(pizzaOrderItem, cokeOrderItem));
 
@@ -67,7 +68,7 @@ class OrderServiceTest {
     @DisplayName("주문 항목이 비어있다면 등록 시 예외 발생")
     @Test
     void create_emptyOrderLineItems_throwsException() {
-        final var table = orderTableDao.save(new OrderTable(2));
+        final var table = orderTableDao.save(emptyTable(2));
 
         final var order = new Order(table.getId(), Collections.emptyList());
 
@@ -86,7 +87,7 @@ class OrderServiceTest {
         final var onePizzaOrderItem = new OrderLineItem(pizzaMenu.getId(), 1);
         final var twoPizzasOrderItem = new OrderLineItem(pizzaMenu.getId(), 2);
 
-        final var table = orderTableDao.save(new OrderTable(2));
+        final var table = orderTableDao.save(emptyTable(2));
 
         final var order = new Order(table.getId(), List.of(onePizzaOrderItem, twoPizzasOrderItem));
 
@@ -104,8 +105,7 @@ class OrderServiceTest {
 
         final var orderItem = new OrderLineItem(pizzaMenu.getId(), 1);
 
-        final var emptyTable = new OrderTable(2);
-        emptyTable.setEmpty(true);
+        final var emptyTable = emptyTable(2);
         orderTableDao.save(emptyTable);
 
         final var order = new Order(emptyTable.getId(), List.of(orderItem));
@@ -124,7 +124,7 @@ class OrderServiceTest {
 
         final var orderItem = new OrderLineItem(pizzaMenu.getId(), 1);
 
-        final var table = orderTableDao.save(new OrderTable(2));
+        final var table = orderTableDao.save(notEmptyTable(2));
 
         final var saved = orderService.create(new Order(table.getId(), List.of(orderItem)));
         final var changed = new Order(table.getId(), List.of(orderItem));
@@ -146,7 +146,7 @@ class OrderServiceTest {
 
         final var orderItem = new OrderLineItem(pizzaMenu.getId(), 1);
 
-        final var table = orderTableDao.save(new OrderTable(2));
+        final var table = orderTableDao.save(notEmptyTable(2));
 
         final var order = new Order(table.getId(), List.of(orderItem));
         order.setOrderStatus(OrderStatus.COMPLETION.name());

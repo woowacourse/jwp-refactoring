@@ -2,6 +2,8 @@ package kitchenpos.application;
 
 import static kitchenpos.fixture.MenuFactory.menu;
 import static kitchenpos.fixture.MenuGroupFactory.menuGroup;
+import static kitchenpos.fixture.OrderTableFactory.emptyTable;
+import static kitchenpos.fixture.OrderTableFactory.notEmptyTable;
 import static kitchenpos.fixture.ProductFactory.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -18,7 +20,6 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,21 +53,13 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 등록")
     @Test
     void create() {
-        final var singleTable = new OrderTable(1);
-        singleTable.setEmpty(true);
-        final var savedSingleTable = orderTableDao.save(singleTable);
-
-        final var doubleTable = new OrderTable(2);
-        doubleTable.setEmpty(true);
-        final var savedDoubleTable = orderTableDao.save(doubleTable);
+        final var savedSingleTable = orderTableDao.save(emptyTable(1));
+        final var savedDoubleTable = orderTableDao.save(emptyTable(2));
 
         final var tableGroup = new TableGroup(List.of(savedSingleTable, savedDoubleTable));
 
         final var result = tableGroupService.create(tableGroup);
-        assertAll(
-                () -> assertThat(result).isNotNull(),
-                () -> assertThat(result.getOrderTables()).containsExactly(savedSingleTable, savedDoubleTable)
-        );
+        assertThat(result.getOrderTables().size()).isEqualTo(tableGroup.getOrderTables().size());
     }
 
     @DisplayName("주문 테이블 목록이 비어있다면, 테이블 그룹 등록 시 예외 발생")
@@ -82,9 +75,7 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블이 하나 뿐이라면, 테이블 그룹 등록 시 예외 발생")
     @Test
     void create_onlyOneOrderTable_throwsException() {
-        final var table = new OrderTable(1);
-        table.setEmpty(true);
-        final var savedTable = orderTableDao.save(table);
+        final var savedTable = orderTableDao.save(emptyTable(1));
 
         final var tableGroup = new TableGroup(List.of(savedTable));
 
@@ -96,13 +87,8 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블 중 하나라도 빈 상태가 아니라면, 테이블 그룹 등록 시 예외 발생")
     @Test
     void create_containsNotEmptyTable_throwsException() {
-        final var notEmptyTable = new OrderTable(2);
-        notEmptyTable.setEmpty(false);
-        final var savedNotEmptyTable = orderTableDao.save(notEmptyTable);
-
-        final var emptyTable = new OrderTable(2);
-        emptyTable.setEmpty(true);
-        final var savedEmptyTable = orderTableDao.save(emptyTable);
+        final var savedNotEmptyTable = orderTableDao.save(notEmptyTable(2));
+        final var savedEmptyTable = orderTableDao.save(emptyTable(2));
 
         final var tableGroup = new TableGroup(List.of(savedNotEmptyTable, savedEmptyTable));
 
@@ -114,17 +100,9 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블 중 하나라도 이미 단체 id를 갖고 있다면, 테이블 그룹 등록 시 예외 발생")
     @Test
     void create_containsAlreadyGroupedTable_throwsException() {
-        final var singleTable = new OrderTable(1);
-        singleTable.setEmpty(true);
-        final var savedSingleTable = orderTableDao.save(singleTable);
-
-        final var coupleTable = new OrderTable(2);
-        coupleTable.setEmpty(true);
-        final var savedCoupleTable = orderTableDao.save(coupleTable);
-
-        final var tripleTable = new OrderTable(3);
-        tripleTable.setEmpty(true);
-        final var savedTripleTable = orderTableDao.save(tripleTable);
+        final var savedSingleTable = orderTableDao.save(emptyTable(1));
+        final var savedCoupleTable = orderTableDao.save(emptyTable(2));
+        final var savedTripleTable = orderTableDao.save(emptyTable(3));
 
         final var otherTableGroup = new TableGroup(List.of(savedSingleTable, savedCoupleTable));
         tableGroupService.create(otherTableGroup);
@@ -139,13 +117,8 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 해제")
     @Test
     void ungroup() {
-        final var singleTable = new OrderTable(1);
-        singleTable.setEmpty(true);
-        final var savedSingleTable = orderTableDao.save(singleTable);
-
-        final var doubleTable = new OrderTable(2);
-        doubleTable.setEmpty(true);
-        final var savedDoubleTable = orderTableDao.save(doubleTable);
+        final var savedSingleTable = orderTableDao.save(emptyTable(1));
+        final var savedDoubleTable = orderTableDao.save(emptyTable(2));
 
         final var tableGroup = new TableGroup(List.of(savedSingleTable, savedDoubleTable));
 
@@ -171,25 +144,20 @@ class TableGroupServiceTest {
         final var pizzaMenu = menuDao.save(menu("피자파티", italian, List.of(pizza)));
         final var cokeMenu = menuDao.save(menu("콜라파티", italian, List.of(coke)));
 
-        final var singleTable = new OrderTable(1);
-        singleTable.setEmpty(true);
-        final var savedSingleTable = orderTableDao.save(singleTable);
+        final var singleTable = orderTableDao.save(emptyTable(1));
+        final var doubleTable = orderTableDao.save(emptyTable(2));
 
-        final var doubleTable = new OrderTable(2);
-        doubleTable.setEmpty(true);
-        final var savedDoubleTable = orderTableDao.save(doubleTable);
-
-        final var orderInMeal = new Order(savedDoubleTable.getId(), List.of(new OrderLineItem(pizzaMenu.getId(), 1)));
+        final var orderInMeal = new Order(doubleTable.getId(), List.of(new OrderLineItem(pizzaMenu.getId(), 1)));
         orderInMeal.setOrderedTime(LocalDateTime.now());
         orderInMeal.setOrderStatus(OrderStatus.MEAL.name());
         orderDao.save(orderInMeal);
 
-        final var orderInCompletion = new Order(savedDoubleTable.getId(), List.of(new OrderLineItem(cokeMenu.getId(), 1)));
+        final var orderInCompletion = new Order(doubleTable.getId(), List.of(new OrderLineItem(cokeMenu.getId(), 1)));
         orderInCompletion.setOrderedTime(LocalDateTime.now());
         orderInCompletion.setOrderStatus(OrderStatus.COMPLETION.name());
         orderDao.save(orderInCompletion);
 
-        final var tableGroup = new TableGroup(List.of(savedSingleTable, savedDoubleTable));
+        final var tableGroup = new TableGroup(List.of(singleTable, doubleTable));
         final var savedTableGroup = tableGroupService.create(tableGroup);
 
         assertThatThrownBy(

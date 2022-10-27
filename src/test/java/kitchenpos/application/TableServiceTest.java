@@ -2,6 +2,8 @@ package kitchenpos.application;
 
 import static kitchenpos.fixture.MenuFactory.menu;
 import static kitchenpos.fixture.MenuGroupFactory.menuGroup;
+import static kitchenpos.fixture.OrderTableFactory.emptyTable;
+import static kitchenpos.fixture.OrderTableFactory.notEmptyTable;
 import static kitchenpos.fixture.ProductFactory.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -16,7 +18,6 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ class TableServiceTest {
     @DisplayName("주문 테이블 등록")
     @Test
     void create() {
-        final var table = new OrderTable(2);
+        final var table = emptyTable(2);
 
         final var result = tableService.create(table);
 
@@ -57,9 +58,9 @@ class TableServiceTest {
     @DisplayName("등록된 주문 테이블의 빈 테이블 여부 상태 변경")
     @Test
     void changeEmpty() {
-        final var table = tableService.create(new OrderTable(2));
+        final var table = tableService.create(notEmptyTable(2));
 
-        final var updatedTable = new OrderTable(2);
+        final var updatedTable = notEmptyTable(2);
         updatedTable.setEmpty(true);
 
         final var result = tableService.changeEmpty(table.getId(), updatedTable);
@@ -79,14 +80,13 @@ class TableServiceTest {
 
         final var orderItem = new OrderLineItem(pizzaMenu.getId(), 1);
 
-        final var table = tableService.create(new OrderTable(2));
+        final var table = tableService.create(emptyTable(2));
         final var order = new Order(table.getId(), List.of(orderItem));
         order.setOrderedTime(LocalDateTime.now());
         order.setOrderStatus(OrderStatus.MEAL.name());
         orderDao.save(order);
 
-        final var changed = new OrderTable(2);
-        changed.setEmpty(true);
+        final var changed = emptyTable(2);
 
         assertThatThrownBy(
                 () -> tableService.changeEmpty(table.getId(), changed)
@@ -96,11 +96,11 @@ class TableServiceTest {
     @DisplayName("단체 지정된 주문 테이블의 빈 테이블 여부 상태 변경 시 예외 발생")
     @Test
     void changeEmpty_hasTableGroup_throwsException() {
-        final var table = new OrderTable(2);
+        final var table = notEmptyTable(2);
         table.setTableGroupId(1L);
         tableService.create(table);
 
-        final var updatedTable = new OrderTable(2);
+        final var updatedTable = emptyTable(2);
         updatedTable.setEmpty(true);
 
         assertThatThrownBy(
@@ -111,9 +111,9 @@ class TableServiceTest {
     @DisplayName("등록된 주문 테이블의 고객 수 변경")
     @Test
     void changeNumberOfGuests() {
-        final var table = tableService.create(new OrderTable(2));
+        final var table = tableService.create(notEmptyTable(2));
 
-        final var updatedTable = new OrderTable(3);
+        final var updatedTable = notEmptyTable(3);
 
         final var result = tableService.changeNumberOfGuests(table.getId(), updatedTable);
         assertAll(
@@ -125,9 +125,9 @@ class TableServiceTest {
     @DisplayName("등록된 주문 테이블의 고객 수를 0 미만으로 변경 시 예외 발생")
     @Test
     void changeNumberOfGuests_toUnderZero_throwsException() {
-        final var table = tableService.create(new OrderTable(2));
+        final var table = tableService.create(notEmptyTable(2));
 
-        final var updatedTable = new OrderTable(-1);
+        final var updatedTable = notEmptyTable(-1);
 
         assertThatThrownBy(
                 () -> tableService.changeNumberOfGuests(table.getId(), updatedTable)
@@ -137,11 +137,10 @@ class TableServiceTest {
     @DisplayName("등록된 주문 테이블의 상태가 빈 테이블 일 때, 고객 수 변경 시 예외 발생")
     @Test
     void changeNumberOfGuests_tableIsEmptyTrue_throwsException() {
-        final var table = new OrderTable(2);
-        table.setEmpty(true);
+        final var table = emptyTable(2);
         tableService.create(table);
 
-        final var updatedTable = new OrderTable(3);
+        final var updatedTable = emptyTable(3);
 
         assertThatThrownBy(
                 () -> tableService.changeNumberOfGuests(table.getId(), updatedTable)
@@ -153,8 +152,8 @@ class TableServiceTest {
     void list() {
         final var existingTables = tableService.list();
 
-        final var twoPeopleTable = new OrderTable(2);
-        final var fivePeopleTable = new OrderTable(5);
+        final var twoPeopleTable = emptyTable(2);
+        final var fivePeopleTable = emptyTable(5);
 
         tableService.create(twoPeopleTable);
         tableService.create(fivePeopleTable);

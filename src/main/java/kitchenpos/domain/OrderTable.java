@@ -1,19 +1,11 @@
 package kitchenpos.domain;
 
-import java.util.Objects;
-
 public class OrderTable {
+
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
-
-    public OrderTable() {
-    }
-
-    public OrderTable(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
 
     public Long getId() {
         return id;
@@ -45,22 +37,5 @@ public class OrderTable {
 
     public void setEmpty(final boolean empty) {
         this.empty = empty;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        OrderTable that = (OrderTable) o;
-        return Objects.equals(id, that.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, tableGroupId, numberOfGuests, empty);
     }
 }
