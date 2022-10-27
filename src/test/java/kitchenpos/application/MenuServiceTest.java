@@ -84,7 +84,7 @@ class MenuServiceTest extends ServiceTestEnvironment {
         final Product savedProduct1 =serviceDependencies.save(product1);
         final Product savedProduct2 =serviceDependencies.save(product2);
 
-        final MenuGroup notSavedMenuGroup = MenuGroupFixture.createDefaultWithoutId();
+        final MenuGroup notSavedMenuGroup = MenuGroupFixture.createDefaultWithNotSavedId();
 
         final Menu menu = MenuFixture.createWithPrice(notSavedMenuGroup, 1000L, savedProduct1, savedProduct2);
 
@@ -100,7 +100,7 @@ class MenuServiceTest extends ServiceTestEnvironment {
         final Product product1 = ProductFixture.createWithPrice(1000L);
         final Product product2 = ProductFixture.createWithPrice(1000L);
 
-        final MenuGroup menuGroup = MenuGroupFixture.createDefaultWithoutId();
+        final MenuGroup menuGroup = MenuGroupFixture.createDefaultWithNotSavedId();
 
         final Menu menu = MenuFixture.createWithPrice(menuGroup, 1000L, product1, product2);
 
