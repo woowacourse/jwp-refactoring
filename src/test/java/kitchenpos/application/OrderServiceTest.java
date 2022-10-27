@@ -6,8 +6,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuProductRepository;
+import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductRepository;
@@ -17,7 +18,9 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.Quantity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,19 +44,25 @@ class OrderServiceTest extends ServiceTest {
     private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuProductRepository menuProductRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
 
     private OrderLineItem orderLineItem1;
     private OrderLineItem orderLineItem2;
 
     @BeforeEach
     void setUp() {
-        Product product = productRepository.save(Product.of("상품1", 2500.0));
+        Product product = productRepository.save(Product.of("상품1", new BigDecimal(2500.0)));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
-        Menu menu1 = menuDao.save(new Menu("메뉴1", new BigDecimal(5000), menuGroup.getId(),
-                List.of(new MenuProduct(product.getId(), 1L))));
-        Menu menu2 = menuDao.save(new Menu("메뉴2", new BigDecimal(4500), menuGroup.getId(),
-                List.of(new MenuProduct(product.getId(), 1L))));
+        MenuProduct menuProduct1 = new MenuProduct(null, product, Quantity.from(2L));
+        MenuProduct menuProduct2 = new MenuProduct(null, product, Quantity.from(3L));
+        Menu menu1 = menuRepository.save(Menu.of("메뉴1", Price.from(new BigDecimal(5000.0)), menuGroup,
+                List.of(menuProduct1, menuProduct2)));
+        Menu menu2 = menuRepository
+                .save(Menu.of("메뉴2", Price.from(new BigDecimal(4500.0)), menuGroup, List.of(menuProduct2)));
+
         orderLineItem1 = new OrderLineItem(menu1.getId(), 2);
         orderLineItem2 = new OrderLineItem(menu2.getId(), 1);
     }

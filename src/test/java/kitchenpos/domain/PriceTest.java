@@ -1,11 +1,15 @@
 package kitchenpos.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import kitchenpos.exception.EmptyDataException;
-import kitchenpos.exception.InvalidPriceException;
+import kitchenpos.exception.LowerThanZeroPriceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 class PriceTest {
 
@@ -21,9 +25,20 @@ class PriceTest {
     @DisplayName("0보다 작은 값으로 Price를 생성하려고 하면 예외를 발생시킨다.")
     @Test
     void from_Exception_InvalidPrice() {
-        double invalidPrice = -0.1;
+        BigDecimal invalidPrice = new BigDecimal(-1);
 
         assertThatThrownBy(() -> Price.from(invalidPrice))
-                .isInstanceOf(InvalidPriceException.class);
+                .isInstanceOf(LowerThanZeroPriceException.class);
+    }
+
+    @DisplayName("다른 가격을 받아 자신의 가격이 더 비싼지 반환한다.")
+    @ParameterizedTest
+    @CsvSource({"999, true", "1001, false"})
+    void isHigher(int another, boolean expected) {
+        Price price = Price.from(new BigDecimal(1000));
+
+        boolean actual = price.isHigher(new BigDecimal(another));
+
+        assertThat(actual).isEqualTo(expected);
     }
 }

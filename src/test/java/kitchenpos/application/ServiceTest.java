@@ -1,10 +1,18 @@
 package kitchenpos.application;
 
-import kitchenpos.support.DatabaseCleanerExtension;
-import org.junit.jupiter.api.extension.ExtendWith;
+import kitchenpos.support.DatabaseCleaner;
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-@ExtendWith(DatabaseCleanerExtension.class)
 public class ServiceTest {
+
+    @Autowired
+    private DatabaseCleaner databaseCleaner;
+
+    @BeforeEach
+    void cleanUp() {
+        databaseCleaner.clear();
+    }
 }
