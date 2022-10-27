@@ -6,11 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.dto.response.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,7 +31,7 @@ class MenuServiceTest extends ServiceTest {
             "후라이드", product.getPrice(), saveAndGetMenuGroup().getId(), menuProducts);
 
         // when
-        final Menu actual = menuService.create(request);
+        final MenuResponse actual = menuService.create(request);
 
         // then
         assertAll(
@@ -96,7 +96,7 @@ class MenuServiceTest extends ServiceTest {
         saveAndGetMenu(menuGroup.getId());
 
         // when
-        final List<Menu> actual = menuService.list();
+        final List<MenuResponse> actual = menuService.list();
 
         // then
         assertThat(actual).hasSize(1);
