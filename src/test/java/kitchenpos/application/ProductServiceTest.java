@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductCreateRequest;
+import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,7 +23,7 @@ class ProductServiceTest extends ServiceTest {
         final ProductCreateRequest request = new ProductCreateRequest("후라이드", BigDecimal.valueOf(16000));
 
         // when
-        final Product actual = productService.create(request);
+        final ProductResponse actual = productService.create(request);
 
         // then
         assertAll(
@@ -63,7 +64,7 @@ class ProductServiceTest extends ServiceTest {
         saveAndGetProduct();
 
         // when
-        final List<Product> actual = productService.list();
+        final List<ProductResponse> actual = productService.list();
 
         // then
         assertThat(actual).hasSize(1);
