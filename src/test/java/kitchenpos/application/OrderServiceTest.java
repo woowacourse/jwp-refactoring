@@ -152,10 +152,7 @@ class OrderServiceTest extends ServiceTest {
     }
 
     private OrderTable createAndSaveOrderTable() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(10);
-        orderTable.setEmpty(false);
-
+        OrderTable orderTable = new OrderTable(10,false);
         return orderTableDao.save(orderTable);
     }
 

@@ -4,13 +4,13 @@ import java.util.List;
 
 public class TableGroupCreateRequest {
 
-    private List<OrderTableCreateRequest> orderTables;
+    private List<TableGroupOrderTableCreateRequest> orderTables;
 
-    public TableGroupCreateRequest(List<OrderTableCreateRequest> orderTables) {
+    public TableGroupCreateRequest(List<TableGroupOrderTableCreateRequest> orderTables) {
         this.orderTables = orderTables;
     }
 
-    public List<OrderTableCreateRequest> getOrderTables() {
+    public List<TableGroupOrderTableCreateRequest> getOrderTables() {
         return orderTables;
     }
 }

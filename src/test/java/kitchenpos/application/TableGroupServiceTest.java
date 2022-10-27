@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -14,8 +13,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.TableGroupOrderTableCreateRequest;
 
 class TableGroupServiceTest extends ServiceTest {
 
@@ -27,12 +26,12 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("예외사항이 존재하지 않는 경우 새로운 테이블 그룹을 생성한다.")
         void create() {
             // given
-            OrderTable orderTable1 = createAndSaveOrderTable(true, null);
-            OrderTable orderTable2 = createAndSaveOrderTable(true, null);
+            OrderTable orderTable1 = createAndSaveOrderTable(true);
+            OrderTable orderTable2 = createAndSaveOrderTable(true);
             TableGroupCreateRequest request = new TableGroupCreateRequest(
-                new ArrayList<OrderTableCreateRequest>() {{
-                    add(new OrderTableCreateRequest(orderTable1.getId()));
-                    add(new OrderTableCreateRequest(orderTable2.getId()));
+                new ArrayList<TableGroupOrderTableCreateRequest>() {{
+                    add(new TableGroupOrderTableCreateRequest(orderTable1.getId()));
+                    add(new TableGroupOrderTableCreateRequest(orderTable2.getId()));
                 }}
             );
 
@@ -48,9 +47,9 @@ class TableGroupServiceTest extends ServiceTest {
         void invalidOrderTable() {
             // given
             TableGroupCreateRequest request = new TableGroupCreateRequest(
-                new ArrayList<OrderTableCreateRequest>() {{
-                    add(new OrderTableCreateRequest(0L));
-                    add(new OrderTableCreateRequest(0L));
+                new ArrayList<TableGroupOrderTableCreateRequest>() {{
+                    add(new TableGroupOrderTableCreateRequest(0L));
+                    add(new TableGroupOrderTableCreateRequest(0L));
                 }}
             );
 
@@ -64,12 +63,12 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("비어있지 않은 테이블인 경우 예외가 발생한다.")
         void notEmptyOrderTable() {
             // given
-            OrderTable orderTable1 = createAndSaveOrderTable(false, null);
-            OrderTable orderTable2 = createAndSaveOrderTable(false, null);
+            OrderTable orderTable1 = createAndSaveOrderTable(false);
+            OrderTable orderTable2 = createAndSaveOrderTable(false);
             TableGroupCreateRequest request = new TableGroupCreateRequest(
-                new ArrayList<OrderTableCreateRequest>() {{
-                    add(new OrderTableCreateRequest(orderTable1.getId()));
-                    add(new OrderTableCreateRequest(orderTable2.getId()));
+                new ArrayList<TableGroupOrderTableCreateRequest>() {{
+                    add(new TableGroupOrderTableCreateRequest(orderTable1.getId()));
+                    add(new TableGroupOrderTableCreateRequest(orderTable2.getId()));
                 }}
             );
 
@@ -83,13 +82,13 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("테이블의 tableGroupId가 존재하는 경우 예외가 발생한다.")
         void existTableGroupId() {
             // given
-            long alreadyExistTableGroupId = createAndSaveTableGroup().getId();
-            OrderTable orderTable1 = createAndSaveOrderTable(true, alreadyExistTableGroupId);
-            OrderTable orderTable2 = createAndSaveOrderTable(true, alreadyExistTableGroupId);
+            long savedGroupId = createAndSaveTableGroup().getId();
+            OrderTable orderTable1 = createAndSaveOrderTable(true, savedGroupId);
+            OrderTable orderTable2 = createAndSaveOrderTable(true, savedGroupId);
             TableGroupCreateRequest request = new TableGroupCreateRequest(
-                new ArrayList<OrderTableCreateRequest>() {{
-                    add(new OrderTableCreateRequest(orderTable1.getId()));
-                    add(new OrderTableCreateRequest(orderTable2.getId()));
+                new ArrayList<TableGroupOrderTableCreateRequest>() {{
+                    add(new TableGroupOrderTableCreateRequest(orderTable1.getId()));
+                    add(new TableGroupOrderTableCreateRequest(orderTable2.getId()));
                 }}
             );
 
@@ -109,17 +108,15 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("예외사항이 존재하지 않는 경우 그룹이 해제된다.")
         void ungroup() {
             // given
-            List<OrderTable> tables = new ArrayList<OrderTable>() {{
-                add(createAndSaveOrderTable(true, null));
-                add(createAndSaveOrderTable(true, null));
-            }};
-            TableGroup savedTableGroup = tableGroupService.create(createTableGroup(tables));
+            long savedGroupId = createAndSaveTableGroup().getId();
+            createAndSaveOrderTable(false, savedGroupId);
+            createAndSaveOrderTable(false, savedGroupId);
 
             // when
-            tableGroupService.ungroup(savedTableGroup.getId());
+            tableGroupService.ungroup(savedGroupId);
 
             // then
-            assertThat(orderTableDao.findAllByTableGroupId(savedTableGroup.getId())).isEmpty();
+            assertThat(orderTableDao.findAllByTableGroupId(savedGroupId)).isEmpty();
         }
 
         @ParameterizedTest
@@ -127,28 +124,19 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("COOKING 혹은 MEAL 상태의 테이블인 경우 예외가 발생한다.")
         void wrongTableState(String status) {
             // given
-            OrderTable orderTable1 = createAndSaveOrderTable(true, null);
-            OrderTable orderTable2 = createAndSaveOrderTable(true, null);
-            Order order1 = orderDao.save(new Order(orderTable1.getId()));
-            order1.changeStatus(status);
+            long savedGroupId = createAndSaveTableGroup().getId();
+            OrderTable orderTable = createAndSaveOrderTable(false, savedGroupId);
+            createAndSaveOrderTable(false, savedGroupId);
 
-            List<OrderTable> tables = new ArrayList<OrderTable>() {{
-                add(orderTable1);
-                add(orderTable2);
-            }};
-            TableGroup savedTableGroup = tableGroupService.create(createTableGroup(tables));
+            Order order = new Order(orderTable.getId());
+            order.changeStatus(status);
+            orderDao.save(order);
 
             // when, then
-            assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableGroupService.ungroup(savedGroupId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("주문이 시작되어 그룹을 해제할 수 없습니다.");
         }
-    }
-
-    private TableGroup createTableGroup(List<OrderTable> tables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(tables);
-
-        return tableGroup;
     }
 
     private TableGroup createAndSaveTableGroup() {
@@ -156,17 +144,16 @@ class TableGroupServiceTest extends ServiceTest {
         return tableGroupDao.save(tableGroup);
     }
 
-    private OrderTable createOrderTable(boolean empty, Long tableGroupId) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(10);
-        orderTable.setEmpty(empty);
+    private OrderTable createAndSaveOrderTable(boolean empty) {
+        OrderTable orderTable = new OrderTable(10, empty);
 
-        return orderTable;
+        return orderTableDao.save(orderTable);
     }
 
-    private OrderTable createAndSaveOrderTable(boolean empty, Long tableGroupId) {
-        OrderTable orderTable = createOrderTable(empty, tableGroupId);
+    private OrderTable createAndSaveOrderTable(boolean empty, long tableGroupId) {
+        OrderTable orderTable = new OrderTable(10, empty);
+        orderTable.setTableGroupId(tableGroupId);
+
         return orderTableDao.save(orderTable);
     }
 

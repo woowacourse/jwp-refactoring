@@ -27,7 +27,7 @@ class TableGroupTest {
     void oneTable() {
         // given
         List<OrderTable> orderTables = new ArrayList<OrderTable>() {{
-            add(new OrderTable());
+            add(new OrderTable(10,false));
         }};
 
         // when, then
