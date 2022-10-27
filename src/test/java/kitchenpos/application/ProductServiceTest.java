@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,7 +13,7 @@ import org.springframework.test.context.jdbc.Sql;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.fixture.ProductFixtures.createProduct;
+import static kitchenpos.fixture.ProductFixtures.createProductRequest;
 import static kitchenpos.fixture.ProductFixtures.간장치킨;
 import static kitchenpos.fixture.ProductFixtures.통구이;
 import static kitchenpos.fixture.ProductFixtures.후라이드;
@@ -34,7 +35,7 @@ class ProductServiceTest {
     @DisplayName("product를 생성한다.")
     @Test
     void createProductSuccess() {
-        Product 후라이드 = 후라이드();
+        ProductCreateRequest 후라이드 = 후라이드();
         Product actual = productService.create(후라이드);
 
         assertAll(
@@ -47,7 +48,7 @@ class ProductServiceTest {
     @DisplayName("price가 null인 경우 예외를 던진다.")
     @Test
     void createProductByPriceNull() {
-        Product 양념치킨 = createProduct("양념치킨", null);
+        ProductCreateRequest 양념치킨 = createProductRequest("양념치킨", null);
 
         assertThatThrownBy(() -> productService.create(양념치킨))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -57,7 +58,7 @@ class ProductServiceTest {
     @ParameterizedTest
     @ValueSource(ints = {Integer.MIN_VALUE, -1})
     void createProductByPriceNegative(final int price) {
-        Product 반반치킨 = createProduct("반반치킨", BigDecimal.valueOf(price));
+        ProductCreateRequest 반반치킨 = createProductRequest("반반치킨", BigDecimal.valueOf(price));
 
         assertThatThrownBy(() -> productService.create(반반치킨))
                 .isInstanceOf(IllegalArgumentException.class);
