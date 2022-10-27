@@ -74,8 +74,6 @@ class TableGroupServiceTest {
     }
 
     private OrderTable createOrderTable(boolean isEmpty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(isEmpty);
-        return orderTable;
+        return new OrderTable(0, isEmpty);
     }
 }
