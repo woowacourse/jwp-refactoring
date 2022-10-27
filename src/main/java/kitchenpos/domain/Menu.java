@@ -4,14 +4,12 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class Menu {
-    private Long id;
-    private String name;
-    private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
 
-    public Menu() {
-    }
+    private final Long id;
+    private final String name;
+    private final BigDecimal price;
+    private final Long menuGroupId;
+    private final List<MenuProduct> menuProducts;
 
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this.id = id;

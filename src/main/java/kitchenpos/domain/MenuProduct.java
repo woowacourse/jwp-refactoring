@@ -2,13 +2,10 @@ package kitchenpos.domain;
 
 public class MenuProduct {
 
-    private Long seq;
-    private Long menuId;
-    private Long productId;
-    private long quantity;
-
-    public MenuProduct() {
-    }
+    private final Long seq;
+    private final Long menuId;
+    private final Long productId;
+    private final long quantity;
 
     public MenuProduct(Long seq, Long menuId, Long productId, long quantity) {
         this.seq = seq;

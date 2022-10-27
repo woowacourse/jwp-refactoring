@@ -5,14 +5,11 @@ import java.util.List;
 
 public class Order {
 
-    private Long id;
-    private Long orderTableId;
-    private String orderStatus;
-    private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
-
-    public Order() {
-    }
+    private final Long id;
+    private final Long orderTableId;
+    private final String orderStatus;
+    private final LocalDateTime orderedTime;
+    private final List<OrderLineItem> orderLineItems;
 
     public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
