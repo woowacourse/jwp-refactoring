@@ -43,10 +43,7 @@ public class MenuService {
         validatePrice(price);
         validateExistMenuGroup(menuCreateRequest.getMenuGroupId());
 
-        List<MenuProduct> menuProducts = menuCreateRequest.getMenuProductsDto().stream()
-                .map(MenuProductDto::toMenuProduct)
-                .collect(Collectors.toList());
-        BigDecimal sum = calculateSum(menuProducts);
+        BigDecimal sum = calculateSum(extractMenuProductsFrom(menuCreateRequest.getMenuProductsDto()));
         validateSum(price, sum);
 
         return saveMenu(menuCreateRequest);
@@ -74,6 +71,12 @@ public class MenuService {
         if (!menuGroupDao.existsById(menuGroupId)) {
             throw new IllegalArgumentException();
         }
+    }
+
+    private List<MenuProduct> extractMenuProductsFrom(final List<MenuProductDto> menuProductsDto) {
+        return menuProductsDto.stream()
+                .map(MenuProductDto::toMenuProduct)
+                .collect(Collectors.toList());
     }
 
     private BigDecimal calculateSum(final List<MenuProduct> menuProducts) {

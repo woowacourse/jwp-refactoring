@@ -33,28 +33,67 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
-        final List<Long> orderTableIds = request.getOrderTableIdsDto().stream()
-                .map(OrderTableIdDto::getOrderTableId)
+        final List<OrderTable> savedOrderTables = getOrderTables(extractOrderTableIds(request.getOrderTableIdsDto()));
+        validateEmptyOrderTable(savedOrderTables);
+
+        final TableGroup savedTableGroup = tableGroupDao.save(request.toTableGroup(LocalDateTime.now(), savedOrderTables));
+
+        setOrderTablesInTableGroup(savedOrderTables, savedTableGroup);
+        return TableGroupResponse.from(savedTableGroup);
+    }
+
+    @Transactional
+    public void ungroup(final Long tableGroupId) {
+        final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
+        final List<Long> orderTableIds = orderTables.stream()
+                .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
+        validateCompletion(orderTableIds);
+        saveAll(orderTables);
+    }
+
+    private void saveAll(final List<OrderTable> orderTables) {
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.setTableGroupId(null);
+            orderTable.setEmpty(false);
+            orderTableDao.save(orderTable);
+        }
+    }
+
+    private void validateOrderTableSize(final List<Long> orderTableIds) {
         if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
             throw new IllegalArgumentException();
         }
+    }
 
+    private List<Long> extractOrderTableIds(final List<OrderTableIdDto> orderTableIdsDto) {
+        final List<Long> orderTableIds = orderTableIdsDto.stream()
+                .map(OrderTableIdDto::getOrderTableId)
+                .collect(Collectors.toList());
+
+        validateOrderTableSize(orderTableIds);
+        return orderTableIds;
+    }
+
+    private List<OrderTable> getOrderTables(final List<Long> orderTableIds) {
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
         if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
+        return savedOrderTables;
+    }
 
+    private void validateEmptyOrderTable(final List<OrderTable> savedOrderTables) {
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
                 throw new IllegalArgumentException();
             }
         }
+    }
 
-        final TableGroup savedTableGroup = tableGroupDao.save(request.toTableGroup(LocalDateTime.now(), savedOrderTables));
-
+    private void setOrderTablesInTableGroup(final List<OrderTable> savedOrderTables, final TableGroup savedTableGroup) {
         final Long tableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.setTableGroupId(tableGroupId);
@@ -62,27 +101,12 @@ public class TableGroupService {
             orderTableDao.save(savedOrderTable);
         }
         savedTableGroup.setOrderTables(savedOrderTables);
-
-        return TableGroupResponse.from(savedTableGroup);
     }
 
-    @Transactional
-    public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
-
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
+    private void validateCompletion(final List<Long> orderTableIds) {
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
-            orderTableDao.save(orderTable);
         }
     }
 }

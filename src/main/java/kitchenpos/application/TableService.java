@@ -40,18 +40,9 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeStatusRequest request) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        final OrderTable savedOrderTable = getOrderTableById(orderTableId);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
+        validateCompletionStatus(orderTableId);
         savedOrderTable.setEmpty(request.isEmpty());
 
         return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
@@ -60,20 +51,42 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableChangeNumberOfGuestsRequest request) {
         final int numberOfGuests = request.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
+        validateNumberOfGuests(numberOfGuests);
 
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
+        validateOrderTableEmpty(savedOrderTable);
         savedOrderTable.setNumberOfGuests(numberOfGuests);
 
         return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
+    }
+
+    private void validateNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private OrderTable getOrderTableById(final Long orderTableId) {
+        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
+            throw new IllegalArgumentException();
+        }
+        return savedOrderTable;
+    }
+
+    private void validateCompletionStatus(final Long orderTableId) {
+        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
+                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateOrderTableEmpty(final OrderTable savedOrderTable) {
+        if (savedOrderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
     }
 }

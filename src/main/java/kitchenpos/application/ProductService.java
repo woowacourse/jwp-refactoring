@@ -22,11 +22,7 @@ public class ProductService {
     @Transactional
     public ProductResponse create(final ProductCreateRequest request) {
         final BigDecimal price = request.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
+        validatePrice(price);
         return ProductResponse.from(productDao.save(request.toProduct()));
     }
 
@@ -35,5 +31,11 @@ public class ProductService {
         return products.stream()
                 .map(ProductResponse::from)
                 .collect(Collectors.toList());
+    }
+
+    private void validatePrice(final BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 }
