@@ -9,12 +9,14 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.response.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MenuService {
@@ -36,7 +38,7 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuCreateRequest request) {
+    public MenuResponse create(final MenuCreateRequest request) {
         validateMenuGroupId(request.getMenuGroupId());
         validatePrice(request.getPrice());
         validateTotalPrice(request.getPrice(), request.getMenuProducts());
@@ -48,8 +50,14 @@ public class MenuService {
             menuProduct.setMenuId(menuId);
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
-        savedMenu.setMenuProducts(savedMenuProducts);
-        return savedMenu;
+        return MenuResponse.of(savedMenu, savedMenuProducts);
+    }
+
+    public List<MenuResponse> list() {
+        final List<Menu> menus = menuDao.findAll();
+        return menus.stream()
+                .map(it -> MenuResponse.of(it, menuProductDao.findAllByMenuId(it.getId())))
+                .collect(Collectors.toList());
     }
 
     private void validateMenuGroupId(final Long id) {
@@ -75,15 +83,5 @@ public class MenuService {
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
-    }
-
-    public List<Menu> list() {
-        final List<Menu> menus = menuDao.findAll();
-
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
-
-        return menus;
     }
 }

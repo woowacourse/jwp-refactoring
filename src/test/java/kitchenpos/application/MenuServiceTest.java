@@ -1,9 +1,10 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.fixture.ProductFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,11 +46,11 @@ class MenuServiceTest {
     @Test
     void createMenuSuccess() {
         Product 후라이드 = productService.create(후라이드());
-        MenuGroup 한마리메뉴 = menuGroupService.create(한마리메뉴());
+        MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         MenuCreateRequest 메뉴_후라이드치킨 = 후라이드치킨(한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));
 
-        Menu actual = menuService.create(메뉴_후라이드치킨);
+        MenuResponse actual = menuService.create(메뉴_후라이드치킨);
 
         assertAll(
                 () -> assertThat(actual.getName()).isEqualTo(메뉴_후라이드치킨.getName()),
@@ -63,7 +64,7 @@ class MenuServiceTest {
     @Test
     void createMenuByPriceNull() {
         Product 후라이드 = productService.create(후라이드());
-        MenuGroup 한마리메뉴 = menuGroupService.create(한마리메뉴());
+        MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         MenuCreateRequest 메뉴_후라이드치킨 = createMenu("후라이드치킨", null, 한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));
 
@@ -76,7 +77,7 @@ class MenuServiceTest {
     @ValueSource(ints = {Integer.MIN_VALUE, -1})
     void createMenuByPriceNegative(final int price) {
         Product 후라이드 = productService.create(후라이드());
-        MenuGroup 한마리메뉴 = menuGroupService.create(한마리메뉴());
+        MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         MenuCreateRequest 메뉴_후라이드치킨 = createMenu("후라이드치킨", BigDecimal.valueOf(price), 한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));
 
@@ -99,7 +100,7 @@ class MenuServiceTest {
     @Test
     void createMenuByOverProductPrice() {
         Product 후라이드 = productService.create(후라이드());
-        MenuGroup 한마리메뉴 = menuGroupService.create(한마리메뉴());
+        MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         MenuCreateRequest 메뉴_후라이드치킨 = createMenu("후라이드치킨", BigDecimal.valueOf(20000), 한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));
 
@@ -112,7 +113,7 @@ class MenuServiceTest {
     void findAllMenu() {
         Product 후라이드 = productService.create(후라이드());
         Product 양념치킨 = productService.create(ProductFixtures.양념치킨());
-        MenuGroup 한마리메뉴 = menuGroupService.create(한마리메뉴());
+        MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         // 메뉴
         MenuCreateRequest 메뉴_후라이드치킨 = createMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));
@@ -121,7 +122,7 @@ class MenuServiceTest {
 
         menuService.create(메뉴_후라이드치킨);
         menuService.create(메뉴_양념치킨);
-        List<Menu> menus = menuService.list();
+        List<MenuResponse> menus = menuService.list();
 
         assertThat(menus).hasSize(2);
     }

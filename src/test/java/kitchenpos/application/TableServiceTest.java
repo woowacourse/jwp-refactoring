@@ -1,7 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -11,6 +9,8 @@ import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.dto.request.OrderTableCreateRequest;
 import kitchenpos.dto.request.OrderTableUpdateNumberOfGuestsRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.dto.response.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -88,10 +88,10 @@ class TableServiceTest {
     void changeOrderTableEmpty() {
         // 메뉴 설정
         Product 후라이드 = productService.create(후라이드());
-        MenuGroup 한마리메뉴 = menuGroupService.create(한마리메뉴());
+        MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         MenuCreateRequest request = createMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));
-        Menu 메뉴_후라이드치킨 = menuService.create(request);
+        MenuResponse 메뉴_후라이드치킨 = menuService.create(request);
 
         // 테이블 설정
         OrderTable 테이블_1번 = tableService.create(테이블_1번());

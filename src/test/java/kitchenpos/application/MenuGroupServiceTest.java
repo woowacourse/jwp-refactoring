@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.request.MenuGroupCreateRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ class MenuGroupServiceTest {
     @Test
     void createMenuGroup() {
         MenuGroupCreateRequest 한마리메뉴 = 한마리메뉴();
-        MenuGroup actual = menuGroupService.create(한마리메뉴);
+        MenuGroupResponse actual = menuGroupService.create(한마리메뉴);
 
         assertThat(actual.getName()).isEqualTo(한마리메뉴.getName());
     }
@@ -38,9 +38,9 @@ class MenuGroupServiceTest {
     @DisplayName("menuGroup을 전체 조회한다.")
     @Test
     void findAllMenuGroup() {
-        MenuGroup 한마리메뉴 = menuGroupService.create(한마리메뉴());
-        MenuGroup 두마리메뉴 = menuGroupService.create(두마리메뉴());
-        List<MenuGroup> menuGroups = menuGroupService.list();
+        MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
+        MenuGroupResponse 두마리메뉴 = menuGroupService.create(두마리메뉴());
+        List<MenuGroupResponse> menuGroups = menuGroupService.list();
 
         assertAll(
                 () -> assertThat(menuGroups).hasSize(2),

@@ -1,7 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -9,6 +7,8 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.fixture.OrderTableFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,10 +57,10 @@ class OrderServiceTest {
     void createOrderSuccess() {
         // 메뉴 설정
         Product 후라이드 = productService.create(후라이드());
-        MenuGroup 한마리메뉴 = menuGroupService.create(한마리메뉴());
+        MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         MenuCreateRequest request = createMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));
-        Menu 메뉴_후라이드치킨 = menuService.create(request);
+        MenuResponse 메뉴_후라이드치킨 = menuService.create(request);
 
         // 1번테이블, 0명
         OrderTable orderTable = tableService.create(테이블_1번());
@@ -92,10 +92,10 @@ class OrderServiceTest {
     void createOrderByNotEqualSize() {
         // 메뉴 설정
         Product 후라이드 = productService.create(후라이드());
-        MenuGroup 한마리메뉴 = menuGroupService.create(한마리메뉴());
+        MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         MenuCreateRequest request = createMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));
-        Menu 메뉴_후라이드치킨 = menuService.create(request);
+        MenuResponse 메뉴_후라이드치킨 = menuService.create(request);
 
         // 1번테이블, 0명
         OrderTable orderTable = tableService.create(테이블_1번());
@@ -117,10 +117,10 @@ class OrderServiceTest {
     void createOrderByOrderTableIsEmpty() {
         // 메뉴 설정
         Product 후라이드 = productService.create(후라이드());
-        MenuGroup 한마리메뉴 = menuGroupService.create(한마리메뉴());
+        MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         MenuCreateRequest request = createMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));
-        Menu 메뉴_후라이드치킨 = menuService.create(request);
+        MenuResponse 메뉴_후라이드치킨 = menuService.create(request);
 
         // 주문할 메뉴
         OrderLineItemCreateRequest orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
@@ -135,10 +135,10 @@ class OrderServiceTest {
     void findAllOrder() {
         // 메뉴 설정
         Product 후라이드 = productService.create(후라이드());
-        MenuGroup 한마리메뉴 = menuGroupService.create(한마리메뉴());
+        MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         MenuCreateRequest request = createMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));
-        Menu 메뉴_후라이드치킨 = menuService.create(request);
+        MenuResponse 메뉴_후라이드치킨 = menuService.create(request);
 
         // 테이블 설정
         OrderTable 테이블_1번 = tableService.create(테이블_1번());
@@ -162,10 +162,10 @@ class OrderServiceTest {
     void changeOrderStatus() {
         // 메뉴 설정
         Product 후라이드 = productService.create(후라이드());
-        MenuGroup 한마리메뉴 = menuGroupService.create(한마리메뉴());
+        MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         MenuCreateRequest request = createMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));
-        Menu 메뉴_후라이드치킨 = menuService.create(request);
+        MenuResponse 메뉴_후라이드치킨 = menuService.create(request);
 
         // 테이블 설정
         OrderTable orderTable = tableService.create(테이블_1번());
@@ -192,10 +192,10 @@ class OrderServiceTest {
     void changeOrderStatusToCompletion() {
         // 메뉴 설정
         Product 후라이드 = productService.create(후라이드());
-        MenuGroup 한마리메뉴 = menuGroupService.create(한마리메뉴());
+        MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         MenuCreateRequest request = createMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));
-        Menu 메뉴_후라이드치킨 = menuService.create(request);
+        MenuResponse 메뉴_후라이드치킨 = menuService.create(request);
 
         // 테이블 설정
         OrderTable orderTable = tableService.create(테이블_1번());
