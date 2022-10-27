@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class OrderTable {
     private final Long id;
-    private Long tableGroupId;
+    private final Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
@@ -33,8 +33,8 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void setTableGroupId(Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public boolean isNotPossibleTableGrouping() {
+        return !isEmpty() || Objects.nonNull(this.tableGroupId);
     }
 
     public void setEmpty(boolean empty) {

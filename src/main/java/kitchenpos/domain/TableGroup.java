@@ -4,31 +4,47 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class TableGroup {
-    private Long id;
-    private LocalDateTime createdDate;
+    private final Long id;
+    private final LocalDateTime createdDate;
     private List<OrderTable> orderTables;
+
+    public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+        this.id = id;
+        this.createdDate = createdDate;
+        validateOrderTables(orderTables);
+        this.orderTables = orderTables;
+    }
+
+    public TableGroup(Long id, LocalDateTime createdDate) {
+        this.id = id;
+        this.createdDate = createdDate;
+    }
+
+    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
+        this(null, createdDate, orderTables);
+    }
+
+    private void validateOrderTables(List<OrderTable> orderTables) {
+        for (OrderTable orderTable : orderTables) {
+            validateOrderTable(orderTable);
+        }
+    }
+
+    private void validateOrderTable(OrderTable orderTable) {
+        if (orderTable.isNotPossibleTableGrouping()) {
+            throw new IllegalArgumentException();
+        }
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 }
