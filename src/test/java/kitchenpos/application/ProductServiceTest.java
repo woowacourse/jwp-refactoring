@@ -38,7 +38,8 @@ public class ProductServiceTest {
     void create_WhenNullPrice() {
         // when & then
         assertThatThrownBy(() -> productService.create(뿌링클_NULL_REQUEST))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격은 공백이거나 0원보다 작을 수 없습니다.");
     }
 
     @Test
@@ -46,7 +47,8 @@ public class ProductServiceTest {
     void create_WhenPriceUnderZero() {
         // when & then
         assertThatThrownBy(() -> productService.create(뿌링클_UNDER_ZERO_REQUEST))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격은 공백이거나 0원보다 작을 수 없습니다.");
     }
 
     @Test

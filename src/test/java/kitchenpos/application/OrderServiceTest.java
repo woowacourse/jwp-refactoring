@@ -7,6 +7,8 @@ import static kitchenpos.fixture.OrderFixture.generateOrder;
 import static kitchenpos.fixture.OrderLineItemFixture.generateOrderLineItem;
 import static kitchenpos.fixture.OrderTableFixture.generateOrderTable;
 import static kitchenpos.fixture.ProductFixture.generateProduct;
+import static kitchenpos.fixture.ProductFixture.뿌링클;
+import static kitchenpos.fixture.ProductFixture.사이다;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -64,8 +66,6 @@ public class OrderServiceTest {
         this.menuProductDao = new FakeMenuProductDao();
         this.productDao = new FakeProductDao();
         this.orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
-        Product 사이다 = generateProduct("사이다", 1000);
-        Product 뿌링클 = generateProduct("뿌링클", 19000);
         Product 사이다_1L = productDao.save(사이다);
         Product 뿌링클_2L = productDao.save(뿌링클);
 
