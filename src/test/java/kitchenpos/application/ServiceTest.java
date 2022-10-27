@@ -56,5 +56,4 @@ public class ServiceTest {
     protected Menu 메뉴_등록(final Menu menu) {
         return menuService.create(menu);
     }
-
 }

@@ -90,15 +90,11 @@ class TableServiceTest extends ServiceTest {
         @ValueSource(strings = {"COOKING", "MEAL"})
         @DisplayName("테이블 상태가 조리중이거나 식사중이면 예외를 발생시킨다.")
         void changeEmpty_cookingOrMeal(final String orderStatus) {
-            final int lessThanSingleProductPrice = 9000;
+
+            final BigDecimal lessThanSingleProductPrice = BigDecimal.valueOf(9000);
             final Product savedProduct = 상품_등록(상품);
             final MenuGroup savedMenuGroup = 메뉴_그룹_등록(메뉴_그룹);
-            final Menu savedMenu = 메뉴_등록(메뉴_생성(
-                    "메뉴이름",
-                    BigDecimal.valueOf(lessThanSingleProductPrice),
-                    savedMenuGroup.getId(),
-                    savedProduct));
-
+            final Menu savedMenu = 메뉴_등록(메뉴_생성("메뉴이름", lessThanSingleProductPrice, savedMenuGroup.getId(), savedProduct));
             final OrderTable savedTable = 주문_테이블_등록(비어있지_않은_주문_테이블);
             주문_등록(주문_생성(savedTable.getId(), savedMenu, orderStatus));
 

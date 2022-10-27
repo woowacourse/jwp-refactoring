@@ -143,14 +143,10 @@ class TableGroupServiceTest extends ServiceTest {
         void ungroup_CookingOrMeal(final String orderStatus) {
 
             final OrderTable orderTable = tableGroup.getOrderTables().get(0);
-            final int lessThanSingleProductPrice = 9000;
+            final BigDecimal lessThanSingleProductPrice = BigDecimal.valueOf(9000);
             final Product savedProduct = 상품_등록(상품);
             final MenuGroup savedMenuGroup = 메뉴_그룹_등록(메뉴_그룹);
-            final Menu savedMenu = 메뉴_등록(메뉴_생성(
-                    "메뉴이름",
-                    BigDecimal.valueOf(lessThanSingleProductPrice),
-                    savedMenuGroup.getId(),
-                    savedProduct));
+            final Menu savedMenu = 메뉴_등록(메뉴_생성("메뉴이름", lessThanSingleProductPrice, savedMenuGroup.getId(), savedProduct));
             주문_등록(주문_생성(orderTable.getId(), savedMenu, orderStatus));
 
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
