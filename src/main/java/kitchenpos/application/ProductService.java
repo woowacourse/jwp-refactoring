@@ -9,8 +9,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
+@Transactional(readOnly = true)
 @Service
 public class ProductService {
+
     private final ProductDao productDao;
 
     public ProductService(final ProductDao productDao) {

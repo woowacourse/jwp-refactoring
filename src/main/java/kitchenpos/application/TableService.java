@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+@Transactional(readOnly = true)
 @Service
 public class TableService {
     private final OrderDao orderDao;
