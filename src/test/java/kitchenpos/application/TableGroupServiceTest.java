@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.support.TestFixtureFactory.단체_지정을_생성한다;
 import static kitchenpos.support.TestFixtureFactory.주문_테이블을_생성한다;
 import static kitchenpos.support.TestFixtureFactory.주문을_생성한다;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,18 +32,14 @@ class TableGroupServiceTest {
     void 단체_지정을_할_수_있다() {
         OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
         OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 2, true));
-        TableGroup tableGroup = 단체_지정을_생성한다(LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroup savedTableGroup = tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()));
 
         orderTable1.setEmpty(false);
         orderTable2.setEmpty(false);
 
         assertAll(
                 () -> assertThat(savedTableGroup.getId()).isNotNull(),
-                () -> assertThat(savedTableGroup).usingRecursiveComparison()
-                        .ignoringFields("id", "orderTables")
-                        .isEqualTo(tableGroup),
                 () -> assertThat(savedTableGroup.getOrderTables())
                         .usingFieldByFieldElementComparator()
                         .containsExactly(orderTable1, orderTable2)
@@ -54,45 +49,44 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정하려는_테이블이_2개_미만이면_예외를_반환한다() {
         OrderTable orderTable = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
-        TableGroup tableGroup = 단체_지정을_생성한다(LocalDateTime.now(), List.of(orderTable));
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable.getId()))).isInstanceOf(
+                IllegalArgumentException.class);
     }
 
     @Test
     void 단체_지정하려는_테이블이_존재하지_않으면_예외를_반환한다() {
         OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
-        OrderTable orderTable2 = 주문_테이블을_생성한다(null, 2, true);
-        TableGroup tableGroup = 단체_지정을_생성한다(LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable1.getId(), 0L)))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 단체_지정하려는_테이블이_빈_테이블이_아니면_예외를_반환한다() {
         OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
         OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 2, false));
-        TableGroup tableGroup = 단체_지정을_생성한다(LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId())))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 이미_지정된_테이블을_단체_지정할_수_없다() {
         OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
         OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 2, true));
-        TableGroup tableGroup = 단체_지정을_생성한다(LocalDateTime.now(), List.of(orderTable1, orderTable2));
-        tableGroupService.create(tableGroup);
+        tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()));
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId())))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 테이블의_단체_지정을_해제할_수_있다() {
         OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
         OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 2, true));
-        Long tableGroupId = tableGroupService.create(
-                단체_지정을_생성한다(LocalDateTime.now(), List.of(orderTable1, orderTable2))).getId();
+        Long tableGroupId = tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()))
+                .getId();
 
         assertDoesNotThrow(() -> tableGroupService.ungroup(tableGroupId));
     }
@@ -101,8 +95,8 @@ class TableGroupServiceTest {
     void 단체_지정하려는_테이블의_주문_목록_중_식사_중인_주문이_있을_경우_예외를_반환한다() {
         OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
         OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 2, true));
-        Long tableGroupId = tableGroupService.create(
-                단체_지정을_생성한다(LocalDateTime.now(), List.of(orderTable1, orderTable2))).getId();
+        Long tableGroupId = tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()))
+                .getId();
         orderDao.save(주문을_생성한다(orderTable1.getId(), COOKING.name(), LocalDateTime.now(), null));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId)).isInstanceOf(IllegalArgumentException.class);
