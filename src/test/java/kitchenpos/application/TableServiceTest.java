@@ -13,6 +13,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableCreateRequest;
 import kitchenpos.dto.request.OrderTableUpdateEmptyRequest;
 import kitchenpos.dto.request.OrderTableUpdateNumberOfGuestsRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +26,7 @@ class TableServiceTest extends ServiceTest {
         final OrderTableCreateRequest request = createOrderTableCreateRequest(3, true);
 
         // when
-        final OrderTable actual = tableService.create(request);
+        final OrderTableResponse actual = tableService.create(request);
 
         // then
         assertThat(actual).isNotNull();
@@ -38,7 +39,7 @@ class TableServiceTest extends ServiceTest {
         saveAndGetOrderTable();
 
         // when
-        final List<OrderTable> actual = tableService.list();
+        final List<OrderTableResponse> actual = tableService.list();
 
         // then
         assertThat(actual).hasSize(1);
@@ -52,7 +53,7 @@ class TableServiceTest extends ServiceTest {
         final OrderTableUpdateEmptyRequest request = createRequestEmpty(false);
 
         // when
-        final OrderTable actual = tableService.changeEmpty(table.getId(), request);
+        final OrderTableResponse actual = tableService.changeEmpty(table.getId(), request);
 
         // then
         assertThat(actual.getId()).isEqualTo(table.getId());
@@ -84,7 +85,7 @@ class TableServiceTest extends ServiceTest {
         final OrderTableUpdateNumberOfGuestsRequest request = createRequestNumberOfGuests(100);
 
         // when
-        final OrderTable actual = tableService.changeNumberOfGuests(table.getId(), request);
+        final OrderTableResponse actual = tableService.changeNumberOfGuests(table.getId(), request);
 
         // then
         assertThat(actual.getNumberOfGuests()).isEqualTo(100);
