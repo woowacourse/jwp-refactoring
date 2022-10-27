@@ -2,6 +2,10 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import kitchenpos.exception.AlreadyGroupedException;
+import kitchenpos.exception.CanNotGroupException;
+import kitchenpos.exception.NumberOfGuestsSizeException;
+import kitchenpos.exception.TableEmptyException;
 import kitchenpos.fixtures.OrderTableFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +18,7 @@ class OrderTableTest {
         final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
 
         assertThatThrownBy(orderTable::validateOrderable)
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(TableEmptyException.class);
     }
 
     @Test
@@ -23,7 +27,7 @@ class OrderTableTest {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(1L, 3);
 
         assertThatThrownBy(() -> orderTable.groupTableBy(2L))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(CanNotGroupException.class);
     }
 
     @Test
@@ -32,7 +36,7 @@ class OrderTableTest {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 3);
 
         assertThatThrownBy(() -> orderTable.groupTableBy(2L))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(CanNotGroupException.class);
     }
 
     @Test
@@ -41,7 +45,7 @@ class OrderTableTest {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(1L, 3);
 
         assertThatThrownBy(() -> orderTable.updateEmpty(true))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(AlreadyGroupedException.class);
     }
 
     @Test
@@ -50,6 +54,6 @@ class OrderTableTest {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
 
         assertThatThrownBy(() -> orderTable.updateNumberOfGuests(-1))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(NumberOfGuestsSizeException.class);
     }
 }

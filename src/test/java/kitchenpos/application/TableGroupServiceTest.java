@@ -14,6 +14,10 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.exception.CanNotGroupException;
+import kitchenpos.exception.NotEnoughForGroupingException;
+import kitchenpos.exception.OrderNotCompletionException;
+import kitchenpos.exception.OrderTableSizeException;
 import kitchenpos.fixtures.OrderFixtures;
 import kitchenpos.fixtures.OrderTableFixtures;
 import kitchenpos.fixtures.TableGroupFixtures;
@@ -77,7 +81,7 @@ class TableGroupServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(NotEnoughForGroupingException.class);
     }
 
     @Test
@@ -89,7 +93,7 @@ class TableGroupServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(OrderTableSizeException.class);
     }
 
     @Test
@@ -102,7 +106,7 @@ class TableGroupServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(OrderTableSizeException.class);
     }
 
     @Test
@@ -118,7 +122,7 @@ class TableGroupServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(CanNotGroupException.class);
     }
 
     @Test
@@ -142,7 +146,7 @@ class TableGroupServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(newTableGroup))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(CanNotGroupException.class);
     }
 
     @Test
@@ -196,6 +200,6 @@ class TableGroupServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(alreadyGroupedTable.getId()))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(OrderNotCompletionException.class);
     }
 }

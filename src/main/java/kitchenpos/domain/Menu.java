@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import kitchenpos.exception.IllegalPriceException;
+import kitchenpos.exception.MenuTotalPriceException;
 
 public class Menu {
     private Long id;
@@ -27,11 +29,11 @@ public class Menu {
 
     public void validatePrice(final BigDecimal menuProductPriceSum) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalPriceException();
         }
 
         if (price.compareTo(menuProductPriceSum) > 0) {
-            throw new IllegalArgumentException();
+            throw new MenuTotalPriceException();
         }
     }
 

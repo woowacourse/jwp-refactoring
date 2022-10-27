@@ -14,6 +14,12 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.exception.NotFoundOrderException;
+import kitchenpos.exception.NotFoundOrderTableException;
+import kitchenpos.exception.OrderCompletionException;
+import kitchenpos.exception.OrderLineItemEmptyException;
+import kitchenpos.exception.OrderLineItemSizeException;
+import kitchenpos.exception.TableEmptyException;
 import kitchenpos.fixtures.OrderFixtures;
 import kitchenpos.fixtures.OrderLineItemFixtures;
 import kitchenpos.fixtures.OrderTableFixtures;
@@ -72,7 +78,7 @@ class OrderServiceTest {
 
         // when, then
         assertThatThrownBy(() -> orderService.create(order))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(OrderLineItemEmptyException.class);
     }
 
     @Test
@@ -84,7 +90,7 @@ class OrderServiceTest {
 
         // when, then
         assertThatThrownBy(() -> orderService.create(order))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(OrderLineItemSizeException.class);
     }
 
     @Test
@@ -96,7 +102,7 @@ class OrderServiceTest {
 
         // when, then
         assertThatThrownBy(() -> orderService.create(order))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(NotFoundOrderTableException.class);
     }
 
     @Test
@@ -108,7 +114,7 @@ class OrderServiceTest {
 
         // when, then
         assertThatThrownBy(() -> orderService.create(order))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(TableEmptyException.class);
     }
 
     @Test
@@ -164,7 +170,7 @@ class OrderServiceTest {
 
         // when, then
         assertThatThrownBy(() -> orderService.changeOrderStatus(-1L, order))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(NotFoundOrderException.class);
     }
 
     @Test
@@ -173,9 +179,10 @@ class OrderServiceTest {
         // given
         final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableId(1L);
         final Order completionOrder = orderDao.save(order);
+        final Order orderInMeal = OrderFixtures.MEAL_ORDER.create();
 
         // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, completionOrder))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(completionOrder.getId(), orderInMeal))
+                .isExactlyInstanceOf(OrderCompletionException.class);
     }
 }

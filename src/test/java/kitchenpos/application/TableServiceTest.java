@@ -12,6 +12,12 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.exception.AlreadyGroupedException;
+import kitchenpos.exception.NotFoundOrderException;
+import kitchenpos.exception.NotFoundOrderTableException;
+import kitchenpos.exception.NumberOfGuestsSizeException;
+import kitchenpos.exception.OrderNotCompletionException;
+import kitchenpos.exception.TableEmptyException;
 import kitchenpos.fixtures.OrderFixtures;
 import kitchenpos.fixtures.OrderTableFixtures;
 import kitchenpos.fixtures.TableGroupFixtures;
@@ -104,7 +110,7 @@ class TableServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(-1L, notEmptyOrderTable))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(NotFoundOrderException.class);
     }
 
     @Test
@@ -121,7 +127,7 @@ class TableServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), notEmptyOrderTable))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(AlreadyGroupedException.class);
     }
 
     @ParameterizedTest
@@ -139,7 +145,7 @@ class TableServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), notEmptyOrderTable))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(OrderNotCompletionException.class);
     }
 
     @Test
@@ -175,7 +181,7 @@ class TableServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), threeGuestsOrderTable))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(NumberOfGuestsSizeException.class);
     }
 
     @Test
@@ -186,7 +192,7 @@ class TableServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(-1L, threeGuestsOrderTable))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(NotFoundOrderTableException.class);
     }
 
     @Test
@@ -200,6 +206,6 @@ class TableServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), threeGuestsOrderTable))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(TableEmptyException.class);
     }
 }

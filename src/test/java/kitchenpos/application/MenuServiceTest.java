@@ -11,6 +11,10 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.exception.IllegalPriceException;
+import kitchenpos.exception.MenuTotalPriceException;
+import kitchenpos.exception.NotFoundMenuGroupException;
+import kitchenpos.exception.NotFoundProductException;
 import kitchenpos.fixtures.MenuFixtures;
 import kitchenpos.fixtures.MenuProductFixtures;
 import org.junit.jupiter.api.DisplayName;
@@ -66,7 +70,7 @@ class MenuServiceTest {
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(IllegalPriceException.class);
     }
 
     @Test
@@ -78,7 +82,7 @@ class MenuServiceTest {
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(IllegalPriceException.class);
     }
 
     @Test
@@ -90,7 +94,7 @@ class MenuServiceTest {
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(NotFoundMenuGroupException.class);
     }
 
     @Test
@@ -104,7 +108,7 @@ class MenuServiceTest {
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(NotFoundProductException.class);
     }
 
     @Test
@@ -118,7 +122,7 @@ class MenuServiceTest {
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(MenuTotalPriceException.class);
     }
 
     @Test

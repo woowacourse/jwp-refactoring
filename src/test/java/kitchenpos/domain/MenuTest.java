@@ -3,6 +3,8 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import kitchenpos.exception.IllegalPriceException;
+import kitchenpos.exception.MenuTotalPriceException;
 import kitchenpos.fixtures.MenuFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +18,7 @@ class MenuTest {
                 .createWithPrice(null);
 
         assertThatThrownBy(() -> menu.validatePrice(new BigDecimal(30_000)))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(IllegalPriceException.class);
     }
 
     @Test
@@ -26,7 +28,7 @@ class MenuTest {
                 .createWithPrice(new BigDecimal(-1));
 
         assertThatThrownBy(() -> menu.validatePrice(new BigDecimal(30_000)))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(IllegalPriceException.class);
     }
 
     @Test
@@ -36,6 +38,6 @@ class MenuTest {
                 .createWithPrice(new BigDecimal(30_001));
 
         assertThatThrownBy(() -> menu.validatePrice(new BigDecimal(30_000)))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(MenuTotalPriceException.class);
     }
 }

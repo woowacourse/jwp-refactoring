@@ -12,6 +12,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.exception.NotFoundOrderException;
+import kitchenpos.exception.NotFoundOrderTableException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +42,7 @@ public class OrderService {
         validateOrderLineItemMatchMenu(order);
 
         final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(NotFoundOrderTableException::new);
         orderTable.validateOrderable();
 
         final Order newOrder = new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
@@ -81,7 +83,7 @@ public class OrderService {
     @Transactional
     public Order changeOrderStatus(final Long orderId, final Order order) {
         final Order savedOrder = orderDao.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(NotFoundOrderException::new);
 
         savedOrder.updateOrderStatus(OrderStatus.valueOf(order.getOrderStatus()).name());
         final Order changedOrder = orderDao.save(savedOrder);

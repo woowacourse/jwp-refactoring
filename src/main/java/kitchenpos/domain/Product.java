@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import kitchenpos.exception.IllegalPriceException;
 
 public class Product {
     private Long id;
@@ -20,7 +21,7 @@ public class Product {
 
     public void validatePrice() {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalPriceException();
         }
     }
 

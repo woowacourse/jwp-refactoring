@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import kitchenpos.exception.IllegalPriceException;
 import kitchenpos.fixtures.ProductFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ class ProductTest {
         final Product product = ProductFixtures.CHICKEN.createWithPrice(null);
 
         assertThatThrownBy(product::validatePrice)
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(IllegalPriceException.class);
     }
 
     @Test
@@ -35,6 +36,6 @@ class ProductTest {
         final Product product = ProductFixtures.CHICKEN.createWithPrice(new BigDecimal(-1));
 
         assertThatThrownBy(product::validatePrice)
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(IllegalPriceException.class);
     }
 }

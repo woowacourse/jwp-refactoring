@@ -1,6 +1,10 @@
 package kitchenpos.domain;
 
 import java.util.Objects;
+import kitchenpos.exception.AlreadyGroupedException;
+import kitchenpos.exception.CanNotGroupException;
+import kitchenpos.exception.NumberOfGuestsSizeException;
+import kitchenpos.exception.TableEmptyException;
 
 public class OrderTable {
     private Long id;
@@ -17,7 +21,7 @@ public class OrderTable {
 
     public void validateOrderable() {
         if (empty) {
-            throw new IllegalArgumentException();
+            throw new TableEmptyException();
         }
     }
 
@@ -28,7 +32,7 @@ public class OrderTable {
 
     private void validateNotGrouping() {
         if (Objects.nonNull(tableGroupId)) {
-            throw new IllegalArgumentException();
+            throw new AlreadyGroupedException();
         }
     }
 
@@ -40,7 +44,7 @@ public class OrderTable {
 
     private void validateNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new NumberOfGuestsSizeException();
         }
     }
 
@@ -51,8 +55,8 @@ public class OrderTable {
     }
 
     private void validateGroupable() {
-        if (!empty || Objects.nonNull(tableGroupId)) {
-            throw new IllegalArgumentException();
+        if (!empty | Objects.nonNull(tableGroupId)) {
+            throw new CanNotGroupException();
         }
     }
 

@@ -3,6 +3,8 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.exception.NotEnoughForGroupingException;
+import kitchenpos.exception.OrderTableSizeException;
 import org.springframework.util.CollectionUtils;
 
 public class TableGroup {
@@ -22,7 +24,7 @@ public class TableGroup {
 
     public void validateExistOrderTable(final long existOrderTableSize) {
         if (orderTables.size() != existOrderTableSize) {
-            throw new IllegalArgumentException();
+            throw new OrderTableSizeException();
         }
     }
 
@@ -33,7 +35,7 @@ public class TableGroup {
 
     private void validateSizeOfOrderTables(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new NotEnoughForGroupingException();
         }
     }
 

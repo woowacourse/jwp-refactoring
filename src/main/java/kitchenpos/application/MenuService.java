@@ -10,6 +10,8 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.exception.NotFoundMenuGroupException;
+import kitchenpos.exception.NotFoundProductException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +37,7 @@ public class MenuService {
     @Transactional
     public Menu create(final Menu menu) {
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+            throw new NotFoundMenuGroupException();
         }
 
         validateMenuPrice(menu);
@@ -51,7 +53,7 @@ public class MenuService {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menu.getMenuProducts()) {
             final Product product = productDao.findById(menuProduct.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
+                    .orElseThrow(NotFoundProductException::new);
             sum = sum.add(product.calculateTotalPrice(menuProduct.getQuantity()));
         }
         menu.validatePrice(sum);

@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import kitchenpos.exception.OrderCompletionException;
+import kitchenpos.exception.OrderLineItemEmptyException;
+import kitchenpos.exception.OrderLineItemSizeException;
 import org.springframework.util.CollectionUtils;
 
 public class Order {
@@ -28,13 +31,13 @@ public class Order {
 
     public void validateNotEmptyOrderLineItems() {
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
+            throw new OrderLineItemEmptyException();
         }
     }
 
     public void validateOrderLineItemSize(final long menuCount) {
         if (orderLineItems.size() != menuCount) {
-            throw new IllegalArgumentException();
+            throw new OrderLineItemSizeException();
         }
     }
 
@@ -49,7 +52,7 @@ public class Order {
 
     private void validateOrderNotCompletion() {
         if (Objects.equals(OrderStatus.COMPLETION.name(), orderStatus)) {
-            throw new IllegalArgumentException();
+            throw new OrderCompletionException();
         }
     }
 

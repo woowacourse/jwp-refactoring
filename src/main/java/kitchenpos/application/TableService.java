@@ -6,6 +6,9 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.exception.NotFoundOrderException;
+import kitchenpos.exception.NotFoundOrderTableException;
+import kitchenpos.exception.OrderNotCompletionException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +35,7 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(NotFoundOrderException::new);
 
         validateOrderCompletion(orderTableId);
         savedOrderTable.updateEmpty(orderTable.isEmpty());
@@ -42,14 +45,14 @@ public class TableService {
     private void validateOrderCompletion(final Long orderTableId) {
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId,
                 Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new OrderNotCompletionException();
         }
     }
 
     @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(NotFoundOrderTableException::new);
 
         savedOrderTable.updateNumberOfGuests(orderTable.getNumberOfGuests());
         return orderTableDao.save(savedOrderTable);

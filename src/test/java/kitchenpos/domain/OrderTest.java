@@ -2,6 +2,9 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import kitchenpos.exception.OrderCompletionException;
+import kitchenpos.exception.OrderLineItemEmptyException;
+import kitchenpos.exception.OrderLineItemSizeException;
 import kitchenpos.fixtures.OrderFixtures;
 import kitchenpos.fixtures.OrderLineItemFixtures;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +18,7 @@ class OrderTest {
         final Order order = OrderFixtures.COOKING_ORDER.create();
 
         assertThatThrownBy(order::validateNotEmptyOrderLineItems)
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(OrderLineItemEmptyException.class);
     }
 
     @Test
@@ -25,15 +28,15 @@ class OrderTest {
         final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(1L, orderLineItem);
 
         assertThatThrownBy(() -> order.validateOrderLineItemSize(2))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(OrderLineItemSizeException.class);
     }
 
     @Test
-    @DisplayName("주문의 상태가 완료가 아닌지 검증한다")
+    @DisplayName("주문이 이미 완료된 상태라면 상태를 변경할 수 없다")
     void validateOrderNotCompletion() {
         final Order order = OrderFixtures.COMPLETION_ORDER.create();
-        
+
         assertThatThrownBy(() -> order.updateOrderStatus(OrderFixtures.COOKING_ORDER.name()))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(OrderCompletionException.class);
     }
 }

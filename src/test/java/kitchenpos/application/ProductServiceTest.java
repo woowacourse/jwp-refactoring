@@ -9,6 +9,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.exception.IllegalPriceException;
 import kitchenpos.fixtures.ProductFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,7 @@ class ProductServiceTest {
 
         // when, then
         assertThatThrownBy(() -> productService.create(product))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(IllegalPriceException.class);
     }
 
     @Test
@@ -61,7 +62,7 @@ class ProductServiceTest {
 
         // when, then
         assertThatThrownBy(() -> productService.create(product))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(IllegalPriceException.class);
     }
 
     @Test

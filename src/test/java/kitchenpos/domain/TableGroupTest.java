@@ -3,6 +3,8 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Collections;
+import kitchenpos.exception.NotEnoughForGroupingException;
+import kitchenpos.exception.OrderTableSizeException;
 import kitchenpos.fixtures.OrderTableFixtures;
 import kitchenpos.fixtures.TableGroupFixtures;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +19,7 @@ class TableGroupTest {
         final TableGroup tableGroup = TableGroupFixtures.createWithOrderTables(orderTable);
 
         assertThatThrownBy(() -> tableGroup.updateOrderTables(Collections.singletonList(orderTable)))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(NotEnoughForGroupingException.class);
     }
 
     @Test
@@ -28,6 +30,6 @@ class TableGroupTest {
         final TableGroup tableGroup = TableGroupFixtures.createWithOrderTables(orderTable1, orderTable2);
 
         assertThatThrownBy(() -> tableGroup.validateExistOrderTable(1))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(OrderTableSizeException.class);
     }
 }
