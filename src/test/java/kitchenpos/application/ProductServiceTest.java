@@ -9,11 +9,8 @@ import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class ProductServiceTest {
+public class ProductServiceTest extends ApplicationTest {
 
     @Autowired
     private ProductService productService;
@@ -21,7 +18,7 @@ public class ProductServiceTest {
     @DisplayName("상품을 저장한다.")
     @Test
     void saveProduct() {
-        Product product = givenProduct("강정치킨", 17000);
+        Product product = new Product("강정치킨", BigDecimal.valueOf(17_000));
 
         Product savedProduct = productService.create(product);
 
@@ -35,9 +32,9 @@ public class ProductServiceTest {
     @DisplayName("상품 목록을 조회한다.")
     @Test
     void list() {
-        Product product1 = givenProduct("강정치킨", 17000);
-        Product product2 = givenProduct("마늘치킨", 18000);
-        Product product3 = givenProduct("간장치킨", 19000);
+        Product product1 = new Product("강정치킨", BigDecimal.valueOf(17_000));
+        Product product2 = new Product("마늘치킨", BigDecimal.valueOf(18_000));
+        Product product3 = new Product("간장치킨", BigDecimal.valueOf(19_000));
 
         Product savedProduct1 = productService.create(product1);
         Product savedProduct2 = productService.create(product2);
@@ -50,12 +47,5 @@ public class ProductServiceTest {
                         tuple(savedProduct2.getId(), "마늘치킨", 18000),
                         tuple(savedProduct3.getId(), "간장치킨", 19000)
                 );
-    }
-
-    private Product givenProduct(String name, long price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
-        return product;
     }
 }

@@ -1,4 +1,4 @@
-package acceptance;
+package kitchenpos.acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -8,29 +8,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import io.restassured.RestAssured;
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.Application;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
-@SpringBootTest(
-        webEnvironment = WebEnvironment.RANDOM_PORT,
-        classes = Application.class
-)
-public class ProductAcceptanceTest {
-
-    @LocalServerPort
-    private int port;
-
-    @BeforeEach
-    void setUp() {
-        RestAssured.port = port;
-    }
+public class ProductAcceptanceTest extends AcceptanceTest {
 
     public static long createProduct(String name, int price) {
         Product product = givenProduct(name, price);
@@ -45,10 +28,7 @@ public class ProductAcceptanceTest {
     }
 
     public static Product givenProduct(String name, int price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
-        return product;
+        return new Product(name, BigDecimal.valueOf(price));
     }
 
     @DisplayName("상품 목록을 조회한다.")

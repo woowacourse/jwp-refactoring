@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -14,65 +12,28 @@ import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class MenuServiceTest {
+public class MenuServiceTest extends ApplicationTest {
 
     @Autowired
     private MenuService menuService;
 
-    @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
     @DisplayName("메뉴를 조회한다.")
     @Test
     void list() {
-        Product product = givenProduct("강정치킨", 17000);
-        MenuGroup menuGroup = givenMenuGroup("라라 메뉴");
-        MenuProduct menuProduct = givenMenuProduct(product.getId(), 1);
+        Product product = 상품_생성(new Product("상품1", BigDecimal.valueOf(17_000)));
+        MenuGroup menuGroup = 메뉴그룹_생성(new MenuGroup("메뉴그룹1"));
+        MenuProduct menuProduct = new MenuProduct(product.getId(), 1);
 
-        Menu menu = givenMenu("해장 세트", 15000, menuGroup.getId(), List.of(menuProduct));
-        Menu savedMenu = menuService.create(menu);
+        Menu menu1 = 메뉴_생성(new Menu("해장 세트", BigDecimal.valueOf(15_000), menuGroup.getId(), List.of(menuProduct)));
+        Menu menu2 = 메뉴_생성(new Menu("아침 세트", BigDecimal.valueOf(9_000), menuGroup.getId(), List.of(menuProduct)));
 
         List<Menu> menus = menuService.list();
 
         assertThat(menus).extracting(Menu::getId, Menu::getName, p -> p.getPrice().intValueExact())
                 .containsExactlyInAnyOrder(
-                        tuple(savedMenu.getId(), "해장 세트", 15000)
+                        tuple(menu1.getId(), "해장 세트", 15_000),
+                        tuple(menu2.getId(), "아침 세트", 9_000)
                 );
-    }
-
-    private Product givenProduct(String name, long price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
-        return productDao.save(product);
-    }
-
-    private MenuGroup givenMenuGroup( String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        return menuGroupDao.save(menuGroup);
-    }
-
-    private MenuProduct givenMenuProduct(long productId, int quantity) {
-        MenuProduct menuProduct1 = new MenuProduct();
-        menuProduct1.setProductId(productId);
-        menuProduct1.setQuantity(quantity);
-        return menuProduct1;
-    }
-
-    private Menu givenMenu(String name, int price, long menuGroupId, List<MenuProduct> menuProducts) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-        return menu;
     }
 }

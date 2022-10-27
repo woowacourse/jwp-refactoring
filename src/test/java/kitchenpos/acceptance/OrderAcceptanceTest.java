@@ -1,64 +1,50 @@
-package acceptance;
+package kitchenpos.acceptance;
 
-import static acceptance.MenuAcceptanceTest.createMenu;
-import static acceptance.MenuAcceptanceTest.givenMenuProduct;
-import static acceptance.MenuGroupAcceptanceTest.createMenuGroup;
-import static acceptance.ProductAcceptanceTest.createProduct;
-import static acceptance.TableAcceptanceTest.createTable;
+import static kitchenpos.acceptance.MenuAcceptanceTest.createMenu;
+import static kitchenpos.acceptance.TableAcceptanceTest.createTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import io.restassured.RestAssured;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import kitchenpos.Application;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
-@SpringBootTest(
-        webEnvironment = WebEnvironment.RANDOM_PORT,
-        classes = Application.class
-)
-public class OrderAcceptanceTest {
-
-    @LocalServerPort
-    private int port;
-
-    @BeforeEach
-    void setUp() {
-        RestAssured.port = port;
-    }
+public class OrderAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("주문 목록을 조회한다.")
     @Test
     void findProducts() {
-        long tableId1 = createTable(7, false);
-        long tableId2 = createTable(2, false);
+        long tableId1 = createTable(new OrderTable(null, 7, false));
+        long tableId2 = createTable(new OrderTable(null, 2, false));
 
-        long menuGroupId = createMenuGroup("라라 메뉴");
+        long menuGroupId = MenuGroupAcceptanceTest.createMenuGroup("라라 메뉴");
 
-        long productId1 = createProduct("후라이드", 9000);
-        long productId2 = createProduct("돼지국밥", 7000);
-        long productId3 = createProduct("피자", 12000);
+        long productId1 = ProductAcceptanceTest.createProduct("후라이드", 9_000);
+        long productId2 = ProductAcceptanceTest.createProduct("돼지국밥", 7_000);
+        long productId3 = ProductAcceptanceTest.createProduct("피자", 12_000);
 
-        MenuProduct menuProduct1 = givenMenuProduct(productId1, 1);
-        MenuProduct menuProduct2 = givenMenuProduct(productId2, 1);
-        MenuProduct menuProduct3 = givenMenuProduct(productId3, 1);
+        MenuProduct menuProduct1 = new MenuProduct(productId1, 1);
+        MenuProduct menuProduct2 = new MenuProduct(productId2, 1);
+        MenuProduct menuProduct3 = new MenuProduct(productId3, 1);
 
-        long menuId1 = createMenu("해장 세트", 15000, menuGroupId, List.of(menuProduct1, menuProduct2));
-        long menuId2 = createMenu("아재 세트", 13000, menuGroupId, List.of(menuProduct3, menuProduct2));
+        long menuId1 = createMenu(
+                new Menu("해장 세트", BigDecimal.valueOf(15_000), menuGroupId, List.of(menuProduct1, menuProduct2)));
+        long menuId2 = createMenu(
+                new Menu("아재 세트", BigDecimal.valueOf(13_000), menuGroupId, List.of(menuProduct3, menuProduct2)));
 
         long orderId1 = createOrder(tableId1, List.of(menuId1));
         long orderId2 = createOrder(tableId2, List.of(menuId1, menuId2));
@@ -74,16 +60,9 @@ public class OrderAcceptanceTest {
 
     private long createOrder(long tableId, List<Long> menuIds) {
         List<OrderLineItem> orderLineItems = menuIds.stream()
-                .map(id -> {
-                    OrderLineItem orderLineItem = new OrderLineItem();
-                    orderLineItem.setMenuId(id);
-                    orderLineItem.setQuantity(3);
-                    return orderLineItem;
-                })
+                .map(id -> new OrderLineItem(null, id, 3))
                 .collect(Collectors.toList());
-        Order order = new Order();
-        order.setOrderTableId(tableId);
-        order.setOrderLineItems(orderLineItems);
+        Order order = new Order(tableId, null, null, orderLineItems);
 
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -108,17 +87,18 @@ public class OrderAcceptanceTest {
     @ParameterizedTest
     @ValueSource(strings = {"MEAL", "COMPLETION"})
     void changeOrderStatus(String orderStatus) {
-        long tableId = createTable(7, false);
+        long tableId = createTable(new OrderTable(null, 7, false));
 
-        long menuGroupId = createMenuGroup("라라 메뉴");
+        long menuGroupId = MenuGroupAcceptanceTest.createMenuGroup("라라 메뉴");
 
-        long productId1 = createProduct("후라이드", 9000);
-        long productId2 = createProduct("돼지국밥", 7000);
+        long productId1 = ProductAcceptanceTest.createProduct("후라이드", 9000);
+        long productId2 = ProductAcceptanceTest.createProduct("돼지국밥", 7000);
 
-        MenuProduct menuProduct1 = givenMenuProduct(productId1, 1);
-        MenuProduct menuProduct2 = givenMenuProduct(productId2, 1);
+        MenuProduct menuProduct1 = new MenuProduct(productId1, 1);
+        MenuProduct menuProduct2 = new MenuProduct(productId2, 1);
 
-        long menuId = createMenu("해장 세트", 15000, menuGroupId, List.of(menuProduct1, menuProduct2));
+        long menuId = createMenu(
+                new Menu("해장 세트", BigDecimal.valueOf(15_000), menuGroupId, List.of(menuProduct1, menuProduct2)));
 
         long orderId = createOrder(tableId, List.of(menuId));
 
@@ -134,12 +114,9 @@ public class OrderAcceptanceTest {
     }
 
     private Long updateOrderStatus(Long orderId, String orderStatus) {
-        Order order = new Order();
-        order.setOrderStatus(orderStatus);
-
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(order)
+                .body(Map.of("orderStatus", orderStatus))
                 .when().log().all()
                 .put("/api/orders/" + orderId + "/order-status")
                 .then().log().all()

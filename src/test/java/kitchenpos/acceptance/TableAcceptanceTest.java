@@ -1,4 +1,4 @@
-package acceptance;
+package kitchenpos.acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -7,23 +7,17 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import io.restassured.RestAssured;
 import java.util.List;
-import kitchenpos.Application;
+import java.util.Map;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
-@SpringBootTest(
-        webEnvironment = WebEnvironment.RANDOM_PORT,
-        classes = Application.class
-)
-public class TableAcceptanceTest {
+public class TableAcceptanceTest extends AcceptanceTest {
 
     @LocalServerPort
     private int port;
@@ -33,8 +27,7 @@ public class TableAcceptanceTest {
         RestAssured.port = port;
     }
 
-    public static long createTable(int numberOfGuests, boolean empty) {
-        OrderTable table = givenTable(numberOfGuests, empty);
+    public static long createTable(OrderTable table) {
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .body(table)
@@ -45,19 +38,12 @@ public class TableAcceptanceTest {
                 .extract().jsonPath().getLong("id");
     }
 
-    public static OrderTable givenTable(int numberOfGuests, boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
-    }
-
     @DisplayName("테이블 목록을 조회한다.")
     @Test
     void findTables() {
-        long tableId1 = createTable(0, true);
-        long tableId2 = createTable(2, false);
-        long tableId3 = createTable(3, false);
+        long tableId1 = createTable(new OrderTable(null, 0, true));
+        long tableId2 = createTable(new OrderTable(null, 2, false));
+        long tableId3 = createTable(new OrderTable(null, 3, false));
 
         List<OrderTable> tables = getTables();
 
@@ -82,7 +68,7 @@ public class TableAcceptanceTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void changeEmpty(boolean empty) {
-        long tableId = createTable(2, true);
+        long tableId = createTable(new OrderTable(null, 2, true));
 
         Long updatedTableId = updateTableEmpty(tableId, empty);
 
@@ -96,11 +82,9 @@ public class TableAcceptanceTest {
     }
 
     private Long updateTableEmpty(long tableId, boolean empty) {
-        OrderTable table = givenTable(0, empty);
-
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(table)
+                .body(Map.of("empty", empty))
                 .when().log().all()
                 .put("/api/tables/" + tableId + "/empty")
                 .then().log().all()
@@ -112,9 +96,9 @@ public class TableAcceptanceTest {
     @ParameterizedTest
     @ValueSource(ints = {4, 2})
     void changNumberOfGuests(int numberOfGuests) {
-        Long tableId = createTable(7, false);
+        Long tableId = createTable(new OrderTable(null, 7, false));
 
-        Long updatedTableId = updateTableNumberOfGuests(tableId, numberOfGuests, false);
+        Long updatedTableId = updateTableNumberOfGuests(tableId, numberOfGuests);
 
         List<OrderTable> tables = getTables();
         OrderTable table = tables.stream()
@@ -125,12 +109,10 @@ public class TableAcceptanceTest {
         assertThat(table.getNumberOfGuests()).isEqualTo(numberOfGuests);
     }
 
-    private Long updateTableNumberOfGuests(Long tableId, int numberOfGuests, boolean empty) {
-        OrderTable table = givenTable(numberOfGuests, empty);
-
+    private Long updateTableNumberOfGuests(Long tableId, int numberOfGuests) {
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(table)
+                .body(Map.of("numberOfGuests", numberOfGuests))
                 .when().log().all()
                 .put("/api/tables/" + tableId + "/number-of-guests")
                 .then().log().all()

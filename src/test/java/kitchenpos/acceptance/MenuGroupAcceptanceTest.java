@@ -1,4 +1,4 @@
-package acceptance;
+package kitchenpos.acceptance;
 
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -8,29 +8,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import io.restassured.RestAssured;
 import java.util.List;
 import java.util.Map;
-import kitchenpos.Application;
 import kitchenpos.domain.MenuGroup;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
-@SpringBootTest(
-        webEnvironment = WebEnvironment.RANDOM_PORT,
-        classes = Application.class
-)
-public class MenuGroupAcceptanceTest {
-
-    @LocalServerPort
-    private int port;
-
-    @BeforeEach
-    void setUp() {
-        RestAssured.port = port;
-    }
+public class MenuGroupAcceptanceTest extends AcceptanceTest {
 
     public static long createMenuGroup(String name) {
         return RestAssured.given().log().all()
