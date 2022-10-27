@@ -1,9 +1,9 @@
 package kitchenpos.acceptance;
 
 import io.restassured.response.ValidatableResponse;
-import java.util.Arrays;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.support.RequestBuilder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,11 +18,10 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
         // given
         final OrderTable savedTable1 = dataSupport.saveOrderTable(0, true);
         final OrderTable savedTable2 = dataSupport.saveOrderTable(0, true);
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(savedTable1, savedTable2));
 
         // when
-        final ValidatableResponse response = post("/api/table-groups", tableGroup);
+        final TableGroup request = RequestBuilder.ofTableGroup(savedTable1, savedTable2);
+        final ValidatableResponse response = post("/api/table-groups", request);
 
         // then
         response.statusCode(HttpStatus.CREATED.value())

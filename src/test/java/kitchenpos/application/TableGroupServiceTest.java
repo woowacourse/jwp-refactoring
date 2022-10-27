@@ -3,12 +3,12 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.support.DataSupport;
+import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +28,12 @@ class TableGroupServiceTest {
     @Test
     void create() {
         // given
-        final TableGroup tableGroup = new TableGroup();
         final OrderTable savedOrderTable1 = dataSupport.saveOrderTable(0, true);
         final OrderTable savedOrderTable2 = dataSupport.saveOrderTable(0, true);
-        final List<OrderTable> orderTables = Arrays.asList(savedOrderTable1, savedOrderTable2);
-        tableGroup.setOrderTables(orderTables);
 
         // when
-        final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        final TableGroup request = RequestBuilder.ofTableGroup(savedOrderTable1, savedOrderTable2);
+        final TableGroup savedTableGroup = tableGroupService.create(request);
 
         // then
         assertThat(savedTableGroup.getId()).isNotNull();
@@ -45,45 +43,39 @@ class TableGroupServiceTest {
     @Test
     void create_throwsException_ifTableNotFound() {
         // given
-        final TableGroup tableGroup = new TableGroup();
         final OrderTable savedOrderTable = dataSupport.saveOrderTable(0, true);
         final OrderTable unsavedOrderTable = new OrderTable();
         unsavedOrderTable.setTableGroupId(100L);
-        final List<OrderTable> orderTables = Arrays.asList(savedOrderTable, unsavedOrderTable);
-        tableGroup.setOrderTables(orderTables);
 
         // when, then
+        final TableGroup request = RequestBuilder.ofTableGroup(savedOrderTable, unsavedOrderTable);
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> tableGroupService.create(tableGroup));
+                .isThrownBy(() -> tableGroupService.create(request));
     }
 
     @DisplayName("2개 미만의 테이블을 그룹으로 지정하면 예외가 발생한다.")
     @Test
     void create_throwsException_ifTableUnder2() {
         // given
-        final TableGroup tableGroup = new TableGroup();
         final OrderTable savedOrderTable = dataSupport.saveOrderTable(0, true);
-        final List<OrderTable> orderTables = Arrays.asList(savedOrderTable);
-        tableGroup.setOrderTables(orderTables);
 
         // when, then
+        final TableGroup request = RequestBuilder.ofTableGroup(savedOrderTable);
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> tableGroupService.create(tableGroup));
+                .isThrownBy(() -> tableGroupService.create(request));
     }
 
-    @DisplayName("2개 미만의 테이블을 그룹으로 지정하면 예외가 발생한다.")
+    @DisplayName("비어있지 않은 테이블을 그룹으로 지정하면 예외가 발생한다.")
     @Test
     void create_throwsException_ifTableNotEmpty() {
         // given
-        final TableGroup tableGroup = new TableGroup();
         final OrderTable savedEmptyTable = dataSupport.saveOrderTable(0, true);
         final OrderTable savedNotEmptyTable = dataSupport.saveOrderTable(0, false);
-        final List<OrderTable> orderTables = Arrays.asList(savedEmptyTable, savedNotEmptyTable);
-        tableGroup.setOrderTables(orderTables);
 
         // when, then
+        final TableGroup request = RequestBuilder.ofTableGroup(savedEmptyTable, savedNotEmptyTable);
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> tableGroupService.create(tableGroup));
+                .isThrownBy(() -> tableGroupService.create(request));
     }
 
     @DisplayName("이미 그룹으로 지정된 테이블을 그룹으로 지정하면 예외가 발생한다.")
@@ -91,15 +83,13 @@ class TableGroupServiceTest {
     void create_throwsException_ifTableGrouped() {
         // given
         final TableGroup savedTableGroup = dataSupport.saveTableGroup();
-        final TableGroup tableGroup = new TableGroup();
         final OrderTable savedUngroupedTable = dataSupport.saveOrderTable(0, true);
         final OrderTable savedGroupedTable = dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0, true);
-        final List<OrderTable> orderTables = Arrays.asList(savedUngroupedTable, savedGroupedTable);
-        tableGroup.setOrderTables(orderTables);
 
         // when, then
+        final TableGroup request = RequestBuilder.ofTableGroup(savedUngroupedTable, savedGroupedTable);
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> tableGroupService.create(tableGroup));
+                .isThrownBy(() -> tableGroupService.create(request));
     }
 
     @DisplayName("지정된 단체를 해제할 수 있다.")

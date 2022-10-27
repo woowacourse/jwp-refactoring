@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.support.DataSupport;
+import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +25,9 @@ class MenuGroupServiceTest {
     @DisplayName("새로운 메뉴 그룹을 등록할 수 있다.")
     @Test
     void create() {
-        // given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("추천 메뉴");
-
-        // when
-        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        // given, when
+        final MenuGroup request = RequestBuilder.ofMenuGroup();
+        final MenuGroup savedMenuGroup = menuGroupService.create(request);
 
         // then
         assertThat(savedMenuGroup.getId()).isNotNull();

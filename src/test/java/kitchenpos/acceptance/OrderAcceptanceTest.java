@@ -2,8 +2,6 @@ package kitchenpos.acceptance;
 
 import io.restassured.response.ValidatableResponse;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -12,6 +10,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.support.RequestBuilder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,17 +25,9 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         final OrderTable savedTable = 손님이_있는_테이블_등록();
         final Menu savedMenu = 메뉴_등록();
 
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
-        orderLineItem.setQuantity(1);
-        final List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
-
-        final Order order = new Order();
-        order.setOrderTableId(savedTable.getId());
-        order.setOrderLineItems(orderLineItems);
-
         // when
-        final ValidatableResponse response = post("/api/orders", order);
+        final Order request = RequestBuilder.ofOrder(savedMenu, savedTable);
+        final ValidatableResponse response = post("/api/orders", request);
 
         // then
         response.statusCode(HttpStatus.CREATED.value())
@@ -63,13 +54,11 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         final OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(savedMenu.getId());
         orderLineItem.setQuantity(1);
-
         final Order savedOrder = dataSupport.saveOrder(savedTable.getId(), OrderStatus.COOKING.name(), orderLineItem);
-        final Order mealOrder = new Order();
-        mealOrder.setOrderStatus(OrderStatus.MEAL.name());
 
         // when
-        final ValidatableResponse response = put("/api/orders/" + savedOrder.getId() + "/order-status", mealOrder);
+        final Order request = RequestBuilder.ofOrder(OrderStatus.MEAL);
+        final ValidatableResponse response = put("/api/orders/" + savedOrder.getId() + "/order-status", request);
 
         // then
         response.statusCode(HttpStatus.OK.value())
@@ -83,10 +72,12 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     private Menu 메뉴_등록() {
         final Product savedProduct = dataSupport.saveProduct("치킨마요", new BigDecimal(3500));
         final MenuGroup savedMenuGroup = dataSupport.saveMenuGroup("추천 메뉴");
+
         final MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(savedProduct.getId());
         menuProduct.setQuantity(1);
-        final Menu savedMenu = dataSupport.saveMenu("치킨마요", new BigDecimal(3500), savedMenuGroup.getId(), menuProduct);
+        final Menu savedMenu =
+                dataSupport.saveMenu("치킨마요", new BigDecimal(3500), savedMenuGroup.getId(), menuProduct);
         return savedMenu;
     }
 }

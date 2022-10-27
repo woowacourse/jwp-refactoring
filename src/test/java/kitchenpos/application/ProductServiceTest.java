@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Product;
 import kitchenpos.support.DataSupport;
+import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +27,9 @@ class ProductServiceTest {
     @DisplayName("새로운 상품을 등록할 수 있다.")
     @Test
     void create() {
-        // given
-        final Product product = new Product();
-        product.setName("치킨마요");
-        product.setPrice(new BigDecimal(3500));
-
-        // when
-        final Product savedProduct = productService.create(product);
+        // given, when
+        final Product request = RequestBuilder.ofProduct();
+        final Product savedProduct = productService.create(request);
 
         // then
         assertThat(savedProduct.getId()).isNotNull();
@@ -41,26 +38,17 @@ class ProductServiceTest {
     @DisplayName("상품을 등록할 때 상품 가격을 입력하지 않으면 예외가 발생한다.")
     @Test
     void create_throwsException_ifNoPrice() {
-        // given
-        final Product product = new Product();
-        product.setName("치킨마요");
-
-        // when, then
+        final Product request = RequestBuilder.ofProduct(null);
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> productService.create(product));
+                .isThrownBy(() -> productService.create(request));
     }
 
     @DisplayName("상품을 등록할 때 상품 가격이 0보다 작으면 예외가 발생한다.")
     @Test
     void create_throwsException_ifPriceUnder0() {
-        // given
-        final Product product = new Product();
-        product.setName("치킨마요");
-        product.setPrice(new BigDecimal(-1));
-
-        // when, then
+        final Product request = RequestBuilder.ofProduct(new BigDecimal(-1));
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> productService.create(product));
+                .isThrownBy(() -> productService.create(request));
     }
 
     @DisplayName("상품의 전체 목록을 조회할 수 있다.")

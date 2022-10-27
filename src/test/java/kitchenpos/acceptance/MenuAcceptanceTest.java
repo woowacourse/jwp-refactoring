@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.support.RequestBuilder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,18 +21,11 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         // given
         final Product savedProduct = dataSupport.saveProduct("참치마요", new BigDecimal(4000));
         final MenuGroup savedMenuGroup = dataSupport.saveMenuGroup("할인 상품");
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(1);
-
-        final Menu menu = new Menu();
-        menu.setName("참치마요");
-        menu.setPrice(new BigDecimal(3500));
-        menu.setMenuGroupId(savedMenuGroup.getId());
-        menu.setMenuProducts(Arrays.asList(menuProduct));
+        final BigDecimal discountedPrice = savedProduct.getPrice().add(new BigDecimal(-500));
 
         // when
-        final ValidatableResponse response = post("/api/menus", menu);
+        final Menu request = RequestBuilder.ofMenu(savedMenuGroup, Arrays.asList(savedProduct), discountedPrice);
+        final ValidatableResponse response = post("/api/menus", request);
 
         // then
         response.statusCode(HttpStatus.CREATED.value())
