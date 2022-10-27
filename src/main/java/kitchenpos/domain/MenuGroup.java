@@ -1,18 +1,20 @@
 package kitchenpos.domain;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
 
 public class MenuGroup {
 
     @Id
-    private Long id;
-    private String name;
+    private final Long id;
+    private final String name;
 
     public MenuGroup(final String name) {
         this(null, name);
     }
 
-    public MenuGroup(final Long id, final String name) {
+    @PersistenceCreator
+    private MenuGroup(final Long id, final String name) {
         this.id = id;
         this.name = name;
     }

@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -18,6 +17,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.ProductRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,7 +54,7 @@ abstract class ServiceTest {
     private ProductRepository productRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private MenuDao menuDao;
@@ -84,7 +84,7 @@ abstract class ServiceTest {
 
     protected MenuGroup saveMenuGroup(final String name) {
         final MenuGroup menuGroup = new MenuGroup(name);
-        return menuGroupDao.save(menuGroup);
+        return menuGroupRepository.save(menuGroup);
     }
 
     protected List<MenuProduct> getMenuProducts(final Pair<Product, Long>... pairs) {
