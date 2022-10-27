@@ -53,8 +53,13 @@ public class TableGroupService {
 
         final Long tableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            orderTableDao.save(
-                    new OrderTable(savedOrderTable.getId(), tableGroupId, savedOrderTable.getNumberOfGuests(), false)
+            orderTableDao.update(
+                    new OrderTable(
+                            savedOrderTable.getId(),
+                            tableGroupId,
+                            savedOrderTable.getNumberOfGuests(),
+                            savedOrderTable.isEmpty()
+                    )
             );
         }
 
