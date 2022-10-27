@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import kitchenpos.common.builder.MenuGroupBuilder;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.request.MenuGroupCreateRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
@@ -21,7 +21,7 @@ class MenuGroupServiceTest extends ServiceTest {
     private MenuGroupService menuGroupService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     private MenuGroup 루나세트;
 
@@ -52,7 +52,7 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void 메뉴_그룹을_조회한다() {
         // given
-        menuGroupDao.save(루나세트);
+        menuGroupRepository.save(루나세트);
 
         // when
         MenuGroupsResponse 메뉴그룹들 = menuGroupService.list();
