@@ -9,7 +9,6 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -19,6 +18,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.ProductRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ abstract class ServiceTest {
     protected OrderService orderService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuGroupDao menuGroupDao;
@@ -79,7 +79,7 @@ abstract class ServiceTest {
 
     protected Product saveProduct(final String name, final BigDecimal price) {
         final Product product = new Product(name, price);
-        return productDao.save(product);
+        return productRepository.save(product);
     }
 
     protected MenuGroup saveMenuGroup(final String name) {

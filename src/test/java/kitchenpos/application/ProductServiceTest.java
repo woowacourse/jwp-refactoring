@@ -77,7 +77,7 @@ class ProductServiceTest extends ServiceTest {
             saveProduct(name4);
 
             // when
-            final List<ProductResponse> actual = productService.list2();
+            final List<ProductResponse> actual = productService.list();
 
             // then
             assertThat(actual).extracting(ProductResponse::getName)

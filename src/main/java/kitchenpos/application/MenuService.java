@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
 import kitchenpos.ui.dto.request.MenuProductRequest;
 import kitchenpos.ui.dto.response.MenuResponse;
@@ -24,14 +24,14 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuGroupDao menuGroupDao;
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
     public MenuService(final MenuRepository menuRepository,
                        final MenuGroupDao menuGroupDao,
-                       final ProductDao productDao) {
+                       final ProductRepository productRepository) {
         this.menuRepository = menuRepository;
         this.menuGroupDao = menuGroupDao;
-        this.productDao = productDao;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -48,7 +48,7 @@ public class MenuService {
 
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProductRequest menuProduct : request.getMenuProducts()) {
-            final Product product = productDao.findById(menuProduct.getProductId())
+            final Product product = productRepository.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
