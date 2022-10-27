@@ -1,10 +1,23 @@
 package kitchenpos.domain.menu;
 
+import kitchenpos.domain.product.Product;
+
 public class MenuProduct {
     private Long seq;
     private Long menuId;
     private Long productId;
     private long quantity;
+
+    public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity) {
+        this.seq = seq;
+        this.menuId = menuId;
+        this.productId = productId;
+        this.quantity = quantity;
+    }
+
+    public MenuProduct(final Long productId, final long quantity) {
+        this(null, null, productId, quantity);
+    }
 
     public Long getSeq() {
         return seq;

@@ -92,6 +92,13 @@ public abstract class ServiceTest {
         return productService.create(product);
     }
 
+    private BigDecimal createBigDecimal(final Long price) {
+        if (price == null) {
+            return null;
+        }
+        return BigDecimal.valueOf(price);
+    }
+
     public List<Product> 상품_전체_조회() {
         return productService.list();
     }
@@ -107,30 +114,14 @@ public abstract class ServiceTest {
     }
 
     public Menu 메뉴_등록(final String name, final Long price, final MenuGroup menuGroup, final Product... products) {
-        final Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(createBigDecimal(price));
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setMenuProducts(makeMenuProducts(products));
+        final Menu menu = Menu.of(name, price, menuGroup.getId());
+        addProducts(menu, products);
         return menuService.create(menu);
     }
 
-    private BigDecimal createBigDecimal(final Long price) {
-        if (price == null) {
-            return null;
-        }
-        return BigDecimal.valueOf(price);
-    }
-
-    private List<MenuProduct> makeMenuProducts(final Product[] products) {
-        return Arrays.stream(products)
-                .map(product -> {
-                    final MenuProduct menuProduct = new MenuProduct();
-                    menuProduct.setProductId(product.getId());
-                    menuProduct.setQuantity(DEFAULT_MENU_PRODUCT_QUANTITY);
-                    return menuProduct;
-                })
-                .collect(Collectors.toUnmodifiableList());
+    private void addProducts(final Menu menu, final Product[] products) {
+        Arrays.stream(products)
+                .forEach(product -> menu.addProduct(product.getId(), DEFAULT_MENU_PRODUCT_QUANTITY));
     }
 
     public List<Menu> 메뉴_전체_조회() {

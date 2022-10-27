@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
@@ -25,7 +26,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     @DisplayName("존재하지 않는 메뉴는 주문할 수 없다.")
     void createNoExistMenu() {
-        final Menu notExistMenu = new Menu();
+        final Menu notExistMenu = new Menu(-1L, "없는메뉴", BigDecimal.valueOf(999_999L), -1L);
 
         assertThatThrownBy(() -> 주문_요청한다(손님있는_테이블, notExistMenu))
                 .isInstanceOf(IllegalArgumentException.class);
