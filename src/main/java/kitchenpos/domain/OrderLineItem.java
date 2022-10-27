@@ -7,9 +7,11 @@ public class OrderLineItem {
     private Long menuId;
     private long quantity;
 
+    protected OrderLineItem() {
+    }
+
     public OrderLineItem(final Long menuId, final long quantity) {
-        this.menuId = menuId;
-        this.quantity = quantity;
+        this(null, null, menuId, quantity);
     }
 
     public OrderLineItem(final Long seq, final Long orderId, final Long menuId, final long quantity) {

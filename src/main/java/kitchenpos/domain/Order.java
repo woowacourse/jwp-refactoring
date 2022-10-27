@@ -12,6 +12,9 @@ public class Order {
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
+    protected Order() {
+    }
+
     public Order(final Long orderTableId, final String orderStatus) {
         this(null, orderTableId, orderStatus, null, new ArrayList<>());
     }
