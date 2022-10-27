@@ -8,31 +8,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import kitchenpos.application.ProductApiService;
 import kitchenpos.ui.dto.ProductRequest;
 import kitchenpos.ui.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-@WebMvcTest(controllers = ProductRestController.class)
-public class ProductRestControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    protected ObjectMapper objectMapper;
-
-    @MockBean
-    private ProductApiService productApiService;
+public class ProductRestControllerTest extends ControllerTest {
 
     @DisplayName("POST /api/products")
     @Test
