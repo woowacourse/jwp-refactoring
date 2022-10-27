@@ -11,6 +11,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableIdRequest;
 import kitchenpos.dto.request.TableGroupCreateRequest;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +32,7 @@ class TableGroupServiceTest extends ServiceTest {
             List.of(orderTableIdRequest1, orderTableIdRequest2));
 
         // when
-        final TableGroup actual = tableGroupService.create(request);
+        final TableGroupResponse actual = tableGroupService.create(request);
 
         // then
         assertAll(
