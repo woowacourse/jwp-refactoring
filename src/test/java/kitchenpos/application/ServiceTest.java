@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFixture.createMenu;
 import static kitchenpos.fixture.MenuFixture.createMenuGroup;
 import static kitchenpos.fixture.MenuFixture.createMenuProduct;
+import static kitchenpos.fixture.MenuFixture.createMenuRequest;
 import static kitchenpos.fixture.OrderFixture.createOrder;
 import static kitchenpos.fixture.OrderFixture.updatedOrder;
 import static kitchenpos.fixture.ProductFixture.createProduct;
@@ -23,6 +23,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.MenuRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,10 +77,11 @@ abstract class ServiceTest {
     }
 
     protected Menu saveMenu(String menuName, MenuGroup menuGroup, Product product) {
-        MenuProduct menuProduct = createMenuProduct(product.getId(), 1);
-        return menuService.create(
-                createMenu(menuName, product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())),
-                        menuGroup.getId(), menuProduct));
+        MenuProduct menuProduct = createMenuProduct(product.getId(), 1, product.getPrice());
+        MenuRequest request = createMenuRequest(menuName,
+                product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())), menuGroup.getId(),
+                menuProduct);
+        return menuService.create(request);
     }
 
     protected OrderTable saveOrderTable(int numberOfGuests, boolean empty) {

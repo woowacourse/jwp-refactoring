@@ -12,7 +12,8 @@ public class Menu {
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
-    public Menu(final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
+    public Menu(final String name, final BigDecimal price, final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
     }
 
@@ -22,24 +23,30 @@ public class Menu {
 
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
+        validatePrice(price, menuProducts);
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
 
+    private void validatePrice(final BigDecimal price, final List<MenuProduct> menuProducts) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
 
-        BigDecimal sum = menuProducts.stream().map(MenuProduct::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
-        if (price.compareTo(sum) > 0) {
+        final BigDecimal sum = menuProducts.stream().map(MenuProduct::calculateAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        if (!menuProducts.isEmpty() && price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
     }
 
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+    public void updateMenuIdOfMenuProducts() {
+        for (final MenuProduct menuProduct : menuProducts) {
+            menuProduct.setMenuId(id);
+        }
     }
 
     public Long getId() {
@@ -60,5 +67,9 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
+    }
+
+    public void setMenuProducts(final List<MenuProduct> menuProducts) {
+        this.menuProducts = menuProducts;
     }
 }

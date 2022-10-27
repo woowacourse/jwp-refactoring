@@ -39,6 +39,13 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
     }
 
     @Override
+    public void saveAll(final List<MenuProduct> menuProducts) {
+        for (MenuProduct menuProduct : menuProducts) {
+            save(menuProduct);
+        }
+    }
+
+    @Override
     public Optional<MenuProduct> findById(final Long id) {
         try {
             return Optional.of(select(id));
