@@ -12,6 +12,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.dto.response.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,7 +35,7 @@ class OrderServiceTest extends ServiceTest {
             List.of(orderLineItem));
 
         // when
-        final Order actual = orderService.create(request);
+        final OrderResponse actual = orderService.create(request);
 
         // then
         assertThat(actual.getId()).isNotNull();
@@ -102,7 +103,7 @@ class OrderServiceTest extends ServiceTest {
         saveAndGetOrder();
 
         // when
-        final List<Order> actual = orderService.list();
+        final List<OrderResponse> actual = orderService.list();
 
         // then
         assertThat(actual).hasSize(1);
@@ -117,7 +118,7 @@ class OrderServiceTest extends ServiceTest {
         final Order request = createRequestOrderStatus(status);
 
         // when
-        final Order actual = orderService.changeOrderStatus(order.getId(), request);
+        final OrderResponse actual = orderService.changeOrderStatus(order.getId(), request);
 
         // then
         assertThat(actual.getOrderStatus()).isEqualTo(status.name());
