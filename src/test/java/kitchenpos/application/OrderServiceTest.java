@@ -153,7 +153,7 @@ class OrderServiceTest extends ServiceTest {
         void orderLineItem_MenuNotExist_ExceptionThrown() {
             // given
             MenuGroup menuGroup = menuGroupService.create(saveMenuGroup("반마리치킨"));
-            Product product = productService.create(saveProduct("크림치킨", BigDecimal.valueOf(15000.00)));
+            Product product = saveProduct("크림치킨", BigDecimal.valueOf(15000.00));
             Menu menu = saveMenu("크림치킨", menuGroup, product);
             OrderLineItem orderLineItem1 = new OrderLineItem();
             orderLineItem1.setMenuId(menu.getId());
@@ -175,7 +175,7 @@ class OrderServiceTest extends ServiceTest {
         void orderTable_NotExist_ExceptionThrown() {
             // given
             MenuGroup menuGroup = menuGroupService.create(saveMenuGroup("반마리치킨"));
-            Product product = productService.create(saveProduct("크림치킨", BigDecimal.valueOf(15000.00)));
+            Product product = saveProduct("크림치킨", BigDecimal.valueOf(15000.00));
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
             OrderLineItem orderLineItem1 = new OrderLineItem();
@@ -199,7 +199,7 @@ class OrderServiceTest extends ServiceTest {
         void orderTable_IsEmpty_ExceptionThrown() {
             // given
             MenuGroup menuGroup = menuGroupService.create(saveMenuGroup("반마리치킨"));
-            Product product = productService.create(saveProduct("크림치킨", BigDecimal.valueOf(15000.00)));
+            Product product = saveProduct("크림치킨", BigDecimal.valueOf(15000.00));
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
             OrderLineItem orderLineItem1 = new OrderLineItem();

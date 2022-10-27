@@ -5,7 +5,7 @@ import static kitchenpos.fixture.MenuFixture.createMenuProduct;
 import static kitchenpos.fixture.MenuFixture.createMenuRequest;
 import static kitchenpos.fixture.OrderFixture.createOrder;
 import static kitchenpos.fixture.OrderFixture.updatedOrder;
-import static kitchenpos.fixture.ProductFixture.createProduct;
+import static kitchenpos.fixture.ProductFixture.createProductRequest;
 import static kitchenpos.fixture.TableFixture.createOrderTable;
 import static kitchenpos.fixture.TableFixture.createTableGroup;
 
@@ -73,7 +73,7 @@ abstract class ServiceTest {
     }
 
     protected Product saveProduct(String name, BigDecimal price) {
-        return productService.create(createProduct(name, price));
+        return productService.create(createProductRequest(name, price));
     }
 
     protected Menu saveMenu(String menuName, MenuGroup menuGroup, Product product) {

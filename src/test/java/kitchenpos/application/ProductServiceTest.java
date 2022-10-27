@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.ProductFixture.createProduct;
+import static kitchenpos.fixture.ProductFixture.createProductRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,10 +41,10 @@ class ProductServiceTest extends ServiceTest {
         @DisplayName("product를 생성한다.")
         void success() {
             // given
-            Product product = new Product("크림치킨", BigDecimal.valueOf(10000.00));
+            ProductRequest request = new ProductRequest("크림치킨", BigDecimal.valueOf(10000.00));
 
             // when
-            Product savedProduct = productService.create(product);
+            Product savedProduct = productService.create(request);
 
             // then
             Optional<Product> actual = productDao.findById(savedProduct.getId());
@@ -56,10 +57,10 @@ class ProductServiceTest extends ServiceTest {
         @DisplayName("price가 null이거나 0보다 작은 경우 예외를 던진다.")
         void price_isNull_ExceptionThrown(BigDecimal price) {
             // given
-            Product product = createProduct("크림치킨", price);
+            ProductRequest request = createProductRequest("크림치킨", price);
 
             // when & then
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
