@@ -130,6 +130,6 @@ class MenuServiceTest {
     }
 
     public Product 후라이드() {
-        return productDao.save(new Product(null, "후라이드", BigDecimal.valueOf(10000)));
+        return productDao.save(new Product("후라이드", 10000));
     }
 }
