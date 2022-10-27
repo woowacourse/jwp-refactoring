@@ -2,7 +2,7 @@ package kitchenpos.domain;
 
 public class Price {
 
-    private long value;
+    private final long value;
 
     public Price(long value) {
         validate(value);
@@ -17,6 +17,10 @@ public class Price {
 
     public boolean isExpensiveThan(Price other) {
         return value > other.getValue();
+    }
+
+    public Price add(long additionalPrice) {
+        return new Price(value + additionalPrice);
     }
 
     public long getValue() {

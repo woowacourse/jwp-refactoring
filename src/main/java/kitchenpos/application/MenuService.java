@@ -46,7 +46,7 @@ public class MenuService {
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = productDao.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
-            sum = new Price(sum.getValue() + product.getPrice() * menuProduct.getQuantity());
+            sum = sum.add(product.getPrice() * menuProduct.getQuantity());
         }
 
         if (price.isExpensiveThan(sum)) {

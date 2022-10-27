@@ -27,4 +27,14 @@ class PriceTest {
 
         assertThat(result).isEqualTo(expect);
     }
+
+    @DisplayName("price에 가격을 더한다.")
+    @Test
+    void add() {
+        Price price = new Price(1000L);
+
+        Price increasedPrice = price.add(1L);
+
+        assertThat(increasedPrice.getValue()).isEqualTo(price.getValue() + 1);
+    }
 }
