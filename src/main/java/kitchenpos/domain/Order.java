@@ -33,11 +33,10 @@ public class Order {
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {
+        if (this.orderStatus == OrderStatus.COMPLETION) {
+            throw new IllegalArgumentException();
+        }
         this.orderStatus = orderStatus;
-    }
-
-    public boolean isCompletion() {
-        return orderStatus == OrderStatus.COMPLETION;
     }
 
     public Long getId() {

@@ -107,19 +107,11 @@ public class OrderService {
         final Order order = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        validateOrderStatus(order);
-
         order.changeOrderStatus(orderStatus);
 
         Order savedOrder = orderDao.save(order);
         savedOrder.addOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
 
         return savedOrder;
-    }
-
-    private void validateOrderStatus(final Order order) {
-        if (order.isCompletion()) {
-            throw new IllegalArgumentException();
-        }
     }
 }
