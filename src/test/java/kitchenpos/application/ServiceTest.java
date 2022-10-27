@@ -4,6 +4,7 @@ import static kitchenpos.domain.OrderStatus.COOKING;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
@@ -42,23 +43,57 @@ public class ServiceTest {
     @MockBean(name = "orderLineItemDao")
     protected OrderLineItemDao orderLineItemDao;
 
-    protected Product 후라이드() {
-        return new Product("후라이드", BigDecimal.valueOf(10000));
+    protected Product getProduct(final Long id, final int price) {
+        return getProduct(id, "후라이드", price);
     }
 
-    protected Menu 후라이드후라이드(final Long menuGroupId) {
+    protected Product getProduct() {
+        return getProduct(1L, "후라이드", 10000);
+    }
+
+    protected Product getProduct(final Long id, final String name, final int price) {
+        final Product product = new Product(name, BigDecimal.valueOf(price));
+        product.setId(id);
+        return product;
+    }
+
+    protected Menu getMenu(final int price) {
+        return getMenu("후라이드+후라이드", price, 1L, null);
+    }
+
+    protected Menu getMenu(final int price, final List<MenuProduct> menuProducts) {
+        return getMenu("후라이드+후라이드", price, 1L, menuProducts);
+    }
+
+    protected Menu getMenu(final Long menuGroupId) {
+        return getMenu("후라이드+후라이드", 17000, menuGroupId, null);
+    }
+
+    protected Menu getMenu(final String name,
+                           final int price,
+                           final Long menuGroupId,
+                           final List<MenuProduct> menuProducts) {
         final Menu menu = new Menu();
-        menu.setName("후라이드+후라이드");
-        menu.setPrice(BigDecimal.valueOf(17000));
+        menu.setName(name);
+        menu.setPrice(BigDecimal.valueOf(price));
         menu.setMenuGroupId(menuGroupId);
+        menu.setMenuProducts(menuProducts);
         return menu;
     }
 
     protected MenuProduct getMenuProduct() {
+        return getMenuProduct(1L, 1L, 1);
+    }
+
+    protected MenuProduct getMenuProduct(final Long productId) {
+        return getMenuProduct(productId, 1L, 1);
+    }
+
+    protected MenuProduct getMenuProduct(final Long productId, final Long menuId, final long quantity) {
         final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setMenuId(1L);
-        menuProduct.setQuantity(1);
+        menuProduct.setProductId(productId);
+        menuProduct.setMenuId(menuId);
+        menuProduct.setQuantity(quantity);
         return menuProduct;
     }
 

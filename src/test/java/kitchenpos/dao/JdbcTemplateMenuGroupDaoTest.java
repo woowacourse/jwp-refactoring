@@ -22,4 +22,17 @@ class JdbcTemplateMenuGroupDaoTest extends JdbcTemplateTest{
         final MenuGroup savedMenuGroup = menuGroupDao.save(추천메뉴());
         assertThat(savedMenuGroup.getId()).isNotNull();
     }
+
+    @Test
+    @DisplayName("존재하는 id일 경우 true 를 반환한다.")
+    void exist() {
+        final MenuGroup savedMenuGroup = menuGroupDao.save(추천메뉴());
+        assertThat(menuGroupDao.existsById(savedMenuGroup.getId())).isTrue();
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 id일 경우 false 를 반환한다.")
+    void nonExist() {
+        assertThat(menuGroupDao.existsById(0L)).isFalse();
+    }
 }
