@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 public class OrderTable {
     private Long id;
     private Long tableGroupId;
@@ -10,12 +12,14 @@ public class OrderTable {
     }
 
     public OrderTable(int numberOfGuests, boolean empty) {
+        validateNumberOfGuests(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
     public OrderTable(Long id, int numberOfGuests, boolean empty) {
         this.id = id;
+        validateNumberOfGuests(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -23,16 +27,30 @@ public class OrderTable {
     public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
+        validateNumberOfGuests(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public Long getId() {
-        return id;
+    private void validateNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("인원은 0이거나 음수일 수 없습니다.");
+        }
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public void validateTableGroupIdNotNull() {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException("테이블 그룹 아이디는 null이어야 합니다.");
+        }
+    }
+
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
+    }
+
+
+    public Long getId() {
+        return id;
     }
 
     public Long getTableGroupId() {
@@ -45,10 +63,6 @@ public class OrderTable {
 
     public int getNumberOfGuests() {
         return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
     }
 
     public boolean isEmpty() {

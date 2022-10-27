@@ -10,6 +10,9 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.application.dto.OrderTableChangeNumberOfGuestRequest;
+import kitchenpos.application.dto.OrderTableCreateRequestDto;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
@@ -40,8 +43,8 @@ class TableServiceTest {
                 .willReturn(ORDER_TABLE1);
 
         //when
-        OrderTable orderTable = new OrderTable(0, true);
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTableCreateRequestDto dto = new OrderTableCreateRequestDto(0, true);
+        OrderTable savedOrderTable = tableService.create(dto);
 
         //then
         assertThat(savedOrderTable).isEqualTo(ORDER_TABLE1);
@@ -72,9 +75,8 @@ class TableServiceTest {
                 .willReturn(new OrderTable(ORDER_TABLE1.getId(), ORDER_TABLE1.getNumberOfGuests(), expected));
 
         //when
-        Long orderTableId = 1L;
-        OrderTable orderTable = new OrderTable(0, expected);
-        OrderTable changedOrderTable = tableService.changeEmpty(orderTableId, orderTable);
+        OrderTableChangeEmptyRequest dto = new OrderTableChangeEmptyRequest(expected);
+        OrderTable changedOrderTable = tableService.changeEmpty(1L, dto);
 
         //then
         assertThat(changedOrderTable.isEmpty()).isEqualTo(expected);
@@ -91,19 +93,10 @@ class TableServiceTest {
 
         //when
         Long orderTableId = 1L;
-        OrderTable orderTable = new OrderTable(expected, false);
-        OrderTable savedOrderTable = tableService.changeNumberOfGuests(orderTableId, orderTable);
+        OrderTableChangeNumberOfGuestRequest dto = new OrderTableChangeNumberOfGuestRequest(4);
+        OrderTable savedOrderTable = tableService.changeNumberOfGuests(orderTableId, dto);
 
         //then
         assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(expected);
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = {-1, -100, -10000})
-    void changeNumberOfGuests_게스트가_음수인_경우(int numberOfGuests) {
-        Long orderTableId = 1L;
-        OrderTable orderTable = new OrderTable(numberOfGuests, false);
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 }
