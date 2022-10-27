@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.OrderTableFactory.createEmptyTable;
+import static kitchenpos.fixture.OrderTableFactory.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -51,7 +53,7 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블이 두 개 이하일 경우 단체 지정을 할 수 없다")
     void cannotCreateTableGroup_WhenSizeLessThanTwo() {
         // given
-        OrderTable orderTable = orderTableDao.save(newOrderTable(true));
+        OrderTable orderTable = orderTableDao.save(createEmptyTable());
 
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(orderTable));
@@ -66,11 +68,8 @@ class TableGroupServiceTest {
     @DisplayName("입력된 주문 테이블 수와 조회된 주문 테이블 수가 일치하지 않으면 단체 지정을 할 수 없다")
     void cannotCreateTableGroup_WhenOrderTableSize_DoesNotMatch() {
         // given
-        OrderTable notSavedOrderTable = new OrderTable();
-        notSavedOrderTable.setEmpty(true);
-        notSavedOrderTable.setNumberOfGuests(0);
-
-        OrderTable orderTable = orderTableDao.save(newOrderTable(true));
+        OrderTable notSavedOrderTable = createEmptyTable();
+        OrderTable orderTable = orderTableDao.save(createEmptyTable());
 
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(orderTable, notSavedOrderTable));
@@ -85,8 +84,8 @@ class TableGroupServiceTest {
     @DisplayName("비어있지 않은 주문 테이블이 하나라도 있는 경우 단체 지정을 할 수 없다")
     void cannotCreateTableGroup_WhenAnyOrderTable_IsNotEmpty() {
         // given
-        OrderTable orderTable1 = orderTableDao.save(newOrderTable(true));
-        OrderTable orderTable2 = orderTableDao.save(newOrderTable(false));
+        OrderTable orderTable1 = orderTableDao.save(createEmptyTable());
+        OrderTable orderTable2 = orderTableDao.save(createOrderTable(1, false));
 
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
@@ -103,7 +102,7 @@ class TableGroupServiceTest {
         // given
         TableGroup defaultTableGroup = sut.create(newTableGroup());
         OrderTable alreadyGrouped = defaultTableGroup.getOrderTables().get(0);
-        OrderTable orderTable = orderTableDao.save(newOrderTable(true));
+        OrderTable orderTable = orderTableDao.save(createEmptyTable());
 
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(alreadyGrouped, orderTable));
@@ -118,8 +117,8 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블 단체를 지정한다")
     void createTableGroup() {
         // given
-        OrderTable orderTable1 = orderTableDao.save(newOrderTable(true));
-        OrderTable orderTable2 = orderTableDao.save(newOrderTable(true));
+        OrderTable orderTable1 = orderTableDao.save(createEmptyTable());
+        OrderTable orderTable2 = orderTableDao.save(createEmptyTable());
 
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
@@ -180,16 +179,9 @@ class TableGroupServiceTest {
     private TableGroup newTableGroup() {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(
-                        orderTableDao.save(newOrderTable(true)),
-                        orderTableDao.save(newOrderTable(true))));
+                        orderTableDao.save(createEmptyTable()),
+                        orderTableDao.save(createEmptyTable())));
         return tableGroup;
-    }
-
-    private OrderTable newOrderTable(boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(empty);
-        return orderTable;
     }
 
     private OrderLineItem newOrderLineItem() {

@@ -8,6 +8,9 @@ public class MenuProduct {
     private Long productId;
     private long quantity;
 
+    private MenuProduct() {
+    }
+
     public MenuProduct(Long seq, Long menuId, Long productId, long quantity) {
         this.seq = seq;
         this.menuId = menuId;
@@ -27,7 +30,7 @@ public class MenuProduct {
         return menuId;
     }
 
-    public void addMenuId(final Long menuId) {
+    public void setMenuId(final Long menuId) {
         this.menuId = menuId;
     }
 

@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.OrderTableFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -37,14 +38,8 @@ class TableServiceTest {
 
     @Test
     @DisplayName("주문 테이블을 생성한다")
-    void createOrderTable() {
-        // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(1);
-
-        // when
-        OrderTable savedOrderTable = sut.create(orderTable);
+    void testCreateOrderTable() {
+        OrderTable savedOrderTable = sut.create(1, false);
 
         // then
         assertThat(savedOrderTable).isNotNull();
@@ -65,11 +60,11 @@ class TableServiceTest {
     @DisplayName("입력받은 id에 해당하는 주문 테이블이 존재하지 않는 경우, 주문 테이블 상태를 변경할 수 없다")
     void throwException_InNonExistOrderTable() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
+        final long NON_EXIST_ID = 0L;
+        OrderTable orderTable = createChangeOrderTableRequest(true);
 
         // when && then
-        assertThatThrownBy(() -> sut.changeEmpty(0L, orderTable))
+        assertThatThrownBy(() -> sut.changeEmpty(NON_EXIST_ID, orderTable))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("주문 테이블이 존재하지 않습니다");
     }
@@ -77,24 +72,14 @@ class TableServiceTest {
     @Test
     @DisplayName("단체 테이블에 속한 주문 테이블은 주문 테이블 상태를 변경할 수 없다")
     void cannotChangeEmpty_ForOrderTableInTableGroup() {
-        // given
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
-        orderTable1.setNumberOfGuests(0);
-
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
-        orderTable2.setNumberOfGuests(0);
-
-        OrderTable savedOrderTable1 = sut.create(orderTable1);
-        OrderTable savedOrderTable2 = sut.create(orderTable2);
+        OrderTable savedOrderTable1 = orderTableDao.save(createEmptyTable());
+        OrderTable savedOrderTable2 = orderTableDao.save(createEmptyTable());
 
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
         tableGroupService.create(tableGroup);
 
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
+        OrderTable orderTable = createChangeOrderTableRequest(true);
 
         // when && then
         assertThatThrownBy(() -> sut.changeEmpty(savedOrderTable1.getId(), orderTable))
@@ -107,10 +92,7 @@ class TableServiceTest {
     @DisplayName("주문 상태가 MEAL 혹은 COOKING이면 주문 테이블 상태를 변경할 수 없다")
     void cannotChangeEmpty_WhenOrderStatus_MEAL_or_COOKING(OrderStatus orderStatus) {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        orderTable.setNumberOfGuests(0);
-        Long orderTableId = sut.create(orderTable).getId();
+        Long orderTableId = orderTableDao.save(createOrderTable(1, false)).getId();
 
         Order order = new Order();
         order.setOrderTableId(orderTableId);
@@ -118,11 +100,10 @@ class TableServiceTest {
         order.setOrderedTime(LocalDateTime.now());
         orderDao.save(order);
 
-        OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setEmpty(true);
+        OrderTable changeRequest = createChangeOrderTableRequest(true);
 
         // when && when
-        assertThatThrownBy(() -> sut.changeEmpty(orderTableId, newOrderTable))
+        assertThatThrownBy(() -> sut.changeEmpty(orderTableId, changeRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("요리 중 혹은 식사 중인 테이블입니다");
     }
@@ -132,16 +113,11 @@ class TableServiceTest {
     void changeEmpty() {
         // given
         final int NUMBER_OF_GUEST = 0;
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        orderTable.setNumberOfGuests(NUMBER_OF_GUEST);
-        Long orderTableId = sut.create(orderTable).getId();
-
-        OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setEmpty(false);
+        Long orderTableId = orderTableDao.save(createOrderTable(NUMBER_OF_GUEST, true)).getId();
+        OrderTable changeRequest = createChangeOrderTableRequest(false);
 
         // when
-        OrderTable savedOrderTable = sut.changeEmpty(orderTableId, newOrderTable);
+        OrderTable savedOrderTable = sut.changeEmpty(orderTableId, changeRequest);
 
         // then
         assertThat(savedOrderTable.getId()).isNotNull();
@@ -154,16 +130,12 @@ class TableServiceTest {
     @DisplayName("입력된 손님 수가 음수이면 손님 수를 변경할 수 없다")
     void cannotChangeNumberOfGuest_WhenItIsNegative() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        orderTable.setNumberOfGuests(0);
-        Long orderTableId = sut.create(orderTable).getId();
+        Long orderTableId = orderTableDao.save(createOrderTable(1, false)).getId();
 
-        OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setNumberOfGuests(-1);
+        OrderTable changeRequest = createChangeOrderTableRequest(-1);
 
         // when && then
-        assertThatThrownBy(() -> sut.changeNumberOfGuests(orderTableId, newOrderTable))
+        assertThatThrownBy(() -> sut.changeNumberOfGuests(orderTableId, changeRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("손님 수는 음수일 수 없습니다");
     }
@@ -171,10 +143,10 @@ class TableServiceTest {
     @Test
     @DisplayName("존재하지 않는 주문 테이블의 손님 수를 변경할 수 없다")
     void cannotChangeNumberOfGuest_ThatDoesNotExist() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(1);
+        final long NON_EXIST_ID = 0L;
+        OrderTable changeRequest = createChangeOrderTableRequest(1);
 
-        assertThatThrownBy(() -> sut.changeNumberOfGuests(0L, orderTable))
+        assertThatThrownBy(() -> sut.changeNumberOfGuests(NON_EXIST_ID, changeRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("존재하지 않는 주문 테이블입니다");
     }
@@ -183,16 +155,12 @@ class TableServiceTest {
     @DisplayName("빈 상태의 주문 테이블의 손님 수를 변경할 수 없다")
     void cannotChangeNumberOfGuest_WhenOrderTableIsEmpty() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        orderTable.setNumberOfGuests(0);
-        Long orderTableId = sut.create(orderTable).getId();
+        Long orderTableId = orderTableDao.save(createEmptyTable()).getId();
 
-        OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setNumberOfGuests(1);
+        OrderTable changeRequest = createChangeOrderTableRequest(1);
 
         // when && then
-        assertThatThrownBy(() -> sut.changeNumberOfGuests(orderTableId, newOrderTable))
+        assertThatThrownBy(() -> sut.changeNumberOfGuests(orderTableId, changeRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("빈 테이블입니다");
     }
@@ -201,19 +169,15 @@ class TableServiceTest {
     @DisplayName("주문 테이블의 손님 수를 변경한다")
     void changeNumberOfGuest() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(1);
-        Long orderTableId = sut.create(orderTable).getId();
-
-        OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setNumberOfGuests(2);
+        final int CHANGED_NUMBER = 2;
+        Long orderTableId = orderTableDao.save(createOrderTable(1, false)).getId();
+        OrderTable changeRequest = createChangeOrderTableRequest(CHANGED_NUMBER);
 
         // when
-        OrderTable changedOrderTable = sut.changeNumberOfGuests(orderTableId, newOrderTable);
+        OrderTable changedOrderTable = sut.changeNumberOfGuests(orderTableId, changeRequest);
 
         // then
         assertThat(changedOrderTable.getId()).isNotNull();
-        assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(2);
+        assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(CHANGED_NUMBER);
     }
 }

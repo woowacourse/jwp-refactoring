@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.OrderTableFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -10,7 +11,6 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,10 +115,7 @@ class OrderServiceTest {
     @DisplayName("주문 테이블이 비어있으면 주문을 생성할 수 없다.")
     void throwExceptionWhenOrderTableIsEmpty() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
-        Long orderTableId = orderTableDao.save(orderTable).getId();
+        Long orderTableId = orderTableDao.save(createOrderTable(0, true)).getId();
 
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(1L);
@@ -140,10 +137,7 @@ class OrderServiceTest {
     @DisplayName("주문을 생성한다")
     void createOrder() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(1);
-        orderTable.setEmpty(false);
-        Long orderTableId = orderTableDao.save(orderTable).getId();
+        Long orderTableId = orderTableDao.save(createOrderTable(1, false)).getId();
 
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(1L);
@@ -237,10 +231,7 @@ class OrderServiceTest {
     }
 
     private Order createValidOrder() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(1);
-        orderTable.setEmpty(false);
-        Long orderTableId = orderTableDao.save(orderTable).getId();
+        Long orderTableId = orderTableDao.save(createOrderTable(1, false)).getId();
 
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(1L);
