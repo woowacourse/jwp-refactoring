@@ -37,24 +37,19 @@ public class MenuService {
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
-        validateMenuPrice(menu, menuProducts);
+
+        validateMenuPrice(menu);
         final Menu savedMenu = menuDao.save(menu);
 
-        final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            final MenuProduct newMenuProduct = new MenuProduct(menuProduct.getSeq(), menuId, menuProduct.getProductId(),
-                    menuProduct.getQuantity());
-            savedMenuProducts.add(menuProductDao.save(newMenuProduct));
-        }
-        return new Menu(savedMenu.getId(), savedMenu.getName(), savedMenu.getPrice(), savedMenu.getMenuGroupId(),
-                savedMenuProducts);
+        final List<MenuProduct> savedMenuProducts = saveMenuProducts(menu.getMenuProducts(), savedMenu.getId());
+
+        savedMenu.updateMenuProducts(savedMenuProducts);
+        return savedMenu;
     }
 
-    private void validateMenuPrice(final Menu menu, final List<MenuProduct> menuProducts) {
+    private void validateMenuPrice(final Menu menu) {
         BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
+        for (final MenuProduct menuProduct : menu.getMenuProducts()) {
             final Product product = productDao.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.calculateTotalPrice(menuProduct.getQuantity()));
@@ -62,11 +57,19 @@ public class MenuService {
         menu.validatePrice(sum);
     }
 
+    private List<MenuProduct> saveMenuProducts(final List<MenuProduct> menuProducts, final Long menuId) {
+        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
+        for (final MenuProduct menuProduct : menuProducts) {
+            menuProduct.updateMenuId(menuId);
+            savedMenuProducts.add(menuProductDao.save(menuProduct));
+        }
+        return savedMenuProducts;
+    }
+
     public List<Menu> list() {
-        final List<Menu> menus = new ArrayList<>();
-        for (final Menu menu : menuDao.findAll()) {
-            menus.add(new Menu(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(),
-                    menuProductDao.findAllByMenuId(menu.getId())));
+        final List<Menu> menus = menuDao.findAll();
+        for (final Menu menu : menus) {
+            menu.updateMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
         }
         return menus;
     }

@@ -35,6 +35,10 @@ public class Menu {
         }
     }
 
+    public void updateMenuProducts(final List<MenuProduct> menuProducts) {
+        this.menuProducts = new ArrayList<>(menuProducts);
+    }
+
     public Long getId() {
         return id;
     }
