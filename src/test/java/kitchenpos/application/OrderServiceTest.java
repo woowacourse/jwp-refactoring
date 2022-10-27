@@ -120,7 +120,7 @@ class OrderServiceTest extends ServiceTestBase {
         // then
         Optional<Order> actual = orderDao.findById(savedOrder.getId());
         assertThat(actual).isNotEmpty();
-        assertThat(actual.get().getOrderStatus()).isEqualTo(changedStatus.name());
+        assertThat(actual.get().getOrderStatus()).isEqualTo(changedStatus);
     }
 
     @Test

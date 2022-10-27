@@ -122,7 +122,7 @@ public class ServiceTestBase {
 
     public void 주문_생성(final Menu menu, final OrderTable orderTable, final OrderStatus orderStatus) {
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목(menu.getId()));
-        Order order = new Order(null, orderTable.getId(), orderStatus.name(), LocalDateTime.now());
+        Order order = new Order(null, orderTable.getId(), orderStatus, LocalDateTime.now());
         order.addOrderLineItems(orderLineItems);
         orderService.create(order);
     }

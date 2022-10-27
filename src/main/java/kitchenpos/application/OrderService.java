@@ -3,7 +3,6 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -47,7 +46,7 @@ public class OrderService {
         validateOrderTableNotEmpty(orderTable);
 
         final Order order = saveOrder(requestOrder, orderTable);
-        final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(requestOrder);
+        final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(order.getId(), requestOrder);
         order.addOrderLineItems(savedOrderLineItems);
 
         return order;
@@ -76,15 +75,14 @@ public class OrderService {
     private Order saveOrder(final Order requestOrder, final OrderTable orderTable) {
         Order order = new Order(
                 orderTable.getId(),
-                OrderStatus.COOKING.name(),
+                OrderStatus.COOKING,
                 LocalDateTime.now(),
                 requestOrder.getOrderLineItems()
         );
         return orderDao.save(order);
     }
 
-    private List<OrderLineItem> saveOrderLineItems(final Order order) {
-        final Long orderId = order.getId();
+    private List<OrderLineItem> saveOrderLineItems(final Long orderId, final Order order) {
         final List<OrderLineItem> result = new ArrayList<>();
 
         for (final OrderLineItem orderLineItem : order.getOrderLineItems()) {
@@ -109,11 +107,11 @@ public class OrderService {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        if (OrderStatus.COMPLETION == savedOrder.getOrderStatus()) {
             throw new IllegalArgumentException();
         }
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
+        final OrderStatus orderStatus = order.getOrderStatus();
         savedOrder.changeOrderStatus(orderStatus);
 
         orderDao.save(savedOrder);
