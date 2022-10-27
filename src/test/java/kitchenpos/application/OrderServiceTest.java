@@ -12,7 +12,6 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -20,6 +19,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,7 +32,7 @@ class OrderServiceTest extends ServiceTest {
     protected OrderDao orderDao;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuGroupDao menuGroupDao;
@@ -45,8 +45,8 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문을_생성할_수_있다() {
-        Product product1 = productDao.save(new Product("상품1", new BigDecimal(10000)));
-        Product product2 = productDao.save(new Product("상품2", new BigDecimal(20000)));
+        Product product1 = productRepository.save(new Product("상품1", new BigDecimal(10000)));
+        Product product2 = productRepository.save(new Product("상품2", new BigDecimal(20000)));
 
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹1"));
 
@@ -86,8 +86,8 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문_테이블이_빈_테이블인_경우_주문을_생성할_수_없다() {
-        Product product1 = productDao.save(new Product("상품1", new BigDecimal(10000)));
-        Product product2 = productDao.save(new Product("상품2", new BigDecimal(20000)));
+        Product product1 = productRepository.save(new Product("상품1", new BigDecimal(10000)));
+        Product product2 = productRepository.save(new Product("상품2", new BigDecimal(20000)));
 
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹1"));
 

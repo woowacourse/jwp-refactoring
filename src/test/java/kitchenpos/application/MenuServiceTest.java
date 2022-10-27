@@ -10,11 +10,11 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,15 +27,15 @@ class MenuServiceTest extends ServiceTest {
     private MenuDao menuDao;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuGroupDao menuGroupDao;
 
     @Test
     void 메뉴를_생성할_수_있다() {
-        Product product1 = productDao.save(new Product("상품1", new BigDecimal(10000)));
-        Product product2 = productDao.save(new Product("상품2", new BigDecimal(20000)));
+        Product product1 = productRepository.save(new Product("상품1", new BigDecimal(10000)));
+        Product product2 = productRepository.save(new Product("상품2", new BigDecimal(20000)));
 
         MenuProduct menuProduct1 = new MenuProduct(1L, null, product1.getId(), 2);
         MenuProduct menuProduct2 = new MenuProduct(2L, null, product2.getId(), 1);
@@ -74,8 +74,8 @@ class MenuServiceTest extends ServiceTest {
 
     @Test
     void 메뉴_가격이_메뉴_상품_가격의_합보다_작거나_같은_경우_메뉴를_생성할_수_없다() {
-        Product product1 = productDao.save(new Product("상품1", new BigDecimal(10000)));
-        Product product2 = productDao.save(new Product("상품2", new BigDecimal(20000)));
+        Product product1 = productRepository.save(new Product("상품1", new BigDecimal(10000)));
+        Product product2 = productRepository.save(new Product("상품2", new BigDecimal(20000)));
 
         MenuProduct menuProduct1 = new MenuProduct(1L, null, product1.getId(), 2);
         MenuProduct menuProduct2 = new MenuProduct(2L, null, product2.getId(), 1);
@@ -90,8 +90,8 @@ class MenuServiceTest extends ServiceTest {
 
     @Test
     void 전체_메뉴를_조회할_수_있다() {
-        Product product1 = productDao.save(new Product("상품1", new BigDecimal(10000)));
-        Product product2 = productDao.save(new Product("상품2", new BigDecimal(20000)));
+        Product product1 = productRepository.save(new Product("상품1", new BigDecimal(10000)));
+        Product product2 = productRepository.save(new Product("상품2", new BigDecimal(20000)));
 
         MenuProduct menuProduct1 = new MenuProduct(1L, null, product1.getId(), 2);
         MenuProduct menuProduct2 = new MenuProduct(2L, null, product2.getId(), 1);
