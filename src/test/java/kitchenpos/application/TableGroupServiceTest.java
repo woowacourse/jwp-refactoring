@@ -12,6 +12,9 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.TableForGroupingRequest;
+import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,23 +48,21 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        final TableGroup tableGroupRequest = createTableGroupRequest(
+        final TableGroupRequest tableGroupRequest = createTableGroupRequest(
                 List.of(createOrderTableRequest(emptyOrderTableId1), createOrderTableRequest(emptyOrderTableId2)));
 
         // when
-        final TableGroup savedTableGroup = tableGroupService.create(tableGroupRequest);
+        final TableGroupResponse response = tableGroupService.create(tableGroupRequest);
 
         // then
-        assertThat(savedTableGroup).usingRecursiveComparison()
-                .ignoringFields("id", "orderTables")
-                .isEqualTo(tableGroupRequest);
+        assertThat(response.getId()).isNotNull();
     }
 
     @DisplayName("2개 미만의 테이블을 단체 지정하면 예외를 반환한다.")
     @Test
     void create_throwException_ifOrderTableSizeUnderTwo() {
         // given
-        final TableGroup tableGroupRequest = createTableGroupRequest(
+        final TableGroupRequest tableGroupRequest = createTableGroupRequest(
                 List.of(createOrderTableRequest(emptyOrderTableId1)));
 
         // when, then
@@ -75,7 +76,7 @@ class TableGroupServiceTest extends ServiceTest {
     void create_throwException_ifTableNotExist() {
         // given
         final Long invalidTableId = 999L;
-        final TableGroup tableGroupRequest = createTableGroupRequest(
+        final TableGroupRequest tableGroupRequest = createTableGroupRequest(
                 List.of(createOrderTableRequest(emptyOrderTableId1), createOrderTableRequest(invalidTableId)));
 
         // when, then
@@ -90,7 +91,7 @@ class TableGroupServiceTest extends ServiceTest {
         // given
         final TableGroup savedTableGroup = tableGroupDao.save(createTableGroup(LocalDateTime.now()));
         final OrderTable orderTable = orderTableDao.save(createOrderTable(savedTableGroup.getId(), 0, true));
-        final TableGroup tableGroupRequest = createTableGroupRequest(
+        final TableGroupRequest tableGroupRequest = createTableGroupRequest(
                 List.of(createOrderTableRequest(orderTable.getId()), createOrderTableRequest(emptyOrderTableId1)));
 
         // when, then
@@ -104,7 +105,7 @@ class TableGroupServiceTest extends ServiceTest {
     void create_throwException_ifTableNotEmpty() {
         // given
         final OrderTable orderTable = orderTableDao.save(createOrderTable(4, false));
-        final TableGroup tableGroupRequest = createTableGroupRequest(
+        final TableGroupRequest tableGroupRequest = createTableGroupRequest(
                 List.of(createOrderTableRequest(orderTable.getId()), createOrderTableRequest(emptyOrderTableId1)));
 
         // when, then
@@ -138,15 +139,11 @@ class TableGroupServiceTest extends ServiceTest {
                 .hasMessage("이미 주문이 진행 중입니다.");
     }
 
-    private TableGroup createTableGroupRequest(final List<OrderTable> orderTableRequests) {
-        final TableGroup tableGroupRequest = new TableGroup();
-        tableGroupRequest.setOrderTables(orderTableRequests);
-        return tableGroupRequest;
+    private TableGroupRequest createTableGroupRequest(final List<TableForGroupingRequest> orderTableRequests) {
+        return new TableGroupRequest(orderTableRequests);
     }
 
-    private OrderTable createOrderTableRequest(final Long id) {
-        final OrderTable orderTableRequest = new OrderTable();
-        orderTableRequest.setId(id);
-        return orderTableRequest;
+    private TableForGroupingRequest createOrderTableRequest(final Long id) {
+        return new TableForGroupingRequest(id);
     }
 }

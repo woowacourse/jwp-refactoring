@@ -46,21 +46,12 @@ public class ServiceTest {
     }
 
     protected Menu createMenu(final String name, final Long price, final Long menuGroupId) {
-        final Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(new BigDecimal(price));
-        menu.setMenuGroupId(menuGroupId);
-        return menu;
+        return new Menu(name, new BigDecimal(price), menuGroupId);
     }
 
     protected OrderTable createOrderTable(final Long id, final Long tableGroupId, final int numberOfGuests,
                                           final boolean empty) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 
     protected OrderTable createOrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
@@ -72,9 +63,7 @@ public class ServiceTest {
     }
 
     protected TableGroup createTableGroup(final LocalDateTime createdDate) {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(createdDate);
-        return tableGroup;
+        return new TableGroup(createdDate);
     }
 
 }

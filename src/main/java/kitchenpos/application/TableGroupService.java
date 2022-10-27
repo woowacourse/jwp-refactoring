@@ -11,6 +11,9 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.TableForGroupingRequest;
+import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -29,20 +32,20 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+    public TableGroupResponse create(final TableGroupRequest request) {
+        final List<TableForGroupingRequest> orderTableRequests = request.getOrderTables();
 
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+        if (CollectionUtils.isEmpty(orderTableRequests) || orderTableRequests.size() < 2) {
             throw new IllegalArgumentException("2개 이상의 테이블만 단체 지정이 가능합니다.");
         }
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
+        final List<Long> orderTableIds = orderTableRequests.stream()
+                .map(TableForGroupingRequest::getId)
                 .collect(Collectors.toList());
 
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
-        if (orderTables.size() != savedOrderTables.size()) {
+        if (orderTableRequests.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException("존재하지 않는 테이블은 단체 지정할 수 없습니다.");
         }
 
@@ -52,7 +55,7 @@ public class TableGroupService {
             }
         }
 
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
 
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
@@ -62,9 +65,8 @@ public class TableGroupService {
             savedOrderTable.setEmpty(false);
             orderTableDao.save(savedOrderTable);
         }
-        savedTableGroup.setOrderTables(savedOrderTables);
 
-        return savedTableGroup;
+        return TableGroupResponse.of(savedTableGroup, savedOrderTables);
     }
 
     @Transactional

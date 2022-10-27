@@ -9,15 +9,20 @@ public class OrderTable {
     public OrderTable() {
     }
 
-    public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
+    public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this(null, tableGroupId, numberOfGuests, empty);
+    }
+
+    public OrderTable(final int numberOfGuests, final boolean empty) {
+        this(null, numberOfGuests, empty);
+    }
+
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         validateNumberOfGuestsNegative(numberOfGuests);
+        this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-    }
-
-    public OrderTable(int numberOfGuests, boolean empty) {
-        this(null, numberOfGuests, empty);
     }
 
     private void validateNumberOfGuestsNegative(int numberOfGuests) {
