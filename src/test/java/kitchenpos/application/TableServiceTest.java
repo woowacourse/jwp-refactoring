@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static kitchenpos.fixture.OrderTableFixture.두명인_테이블;
 import static kitchenpos.fixture.OrderTableFixture.주문가능_테이블;
 import static kitchenpos.fixture.OrderTableFixture.테이블그룹이_존재하지_않는_테이블;
-import static kitchenpos.fixture.OrderTableFixture.한명인_테이블;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;

@@ -1,6 +1,5 @@
 package kitchenpos.fixture;
 
-import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.InMemoryMenuGroupDao;
 import kitchenpos.dao.MenuGroupDao;

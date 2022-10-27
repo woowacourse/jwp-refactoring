@@ -5,7 +5,8 @@ import static kitchenpos.fixture.OrderFixture.완료된_세번째테이블_주�
 import static kitchenpos.fixture.OrderFixture.조리중인_첫번째테이블_주문;
 import static kitchenpos.fixture.OrderTableFixture.주문가능_테이블;
 import static kitchenpos.fixture.OrderTableFixture.한명인_테이블;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;

@@ -1,7 +1,7 @@
 package kitchenpos.fixture;
 
-import static kitchenpos.fixture.TableGroupFixture.주문상태_완료된_두번째테이블그룹;
 import static kitchenpos.fixture.TableGroupFixture.주문상태_안료되지_않은_첫번째테이블그룹;
+import static kitchenpos.fixture.TableGroupFixture.주문상태_완료된_두번째테이블그룹;
 
 import java.util.List;
 import kitchenpos.dao.InMemoryOrderTableDao;

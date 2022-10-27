@@ -1,10 +1,9 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixture.OrderTableFixture.두명인_테이블;
-import static kitchenpos.fixture.OrderTableFixture.주문가능_테이블;
 import static kitchenpos.fixture.OrderTableFixture.한명인_테이블;
-import static kitchenpos.fixture.TableGroupFixture.주문상태_완료된_두번째테이블그룹;
 import static kitchenpos.fixture.TableGroupFixture.주문상태_안료되지_않은_첫번째테이블그룹;
+import static kitchenpos.fixture.TableGroupFixture.주문상태_완료된_두번째테이블그룹;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
