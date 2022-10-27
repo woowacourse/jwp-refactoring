@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 public class MenuGroup {
     private Long id;
     private String name;
@@ -8,7 +10,14 @@ public class MenuGroup {
     }
 
     public MenuGroup(String name) {
+        validateEmptyName(name);
         this.name = name;
+    }
+
+    private void validateEmptyName(String name) {
+        if (Objects.isNull(name) || name.isEmpty()) {
+            throw new IllegalArgumentException("[ERROR] 이름은 공백일 수 없습니다.");
+        }
     }
 
     public Long getId() {
