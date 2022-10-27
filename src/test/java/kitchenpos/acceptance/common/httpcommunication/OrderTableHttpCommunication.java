@@ -12,7 +12,7 @@ public class OrderTableHttpCommunication {
 
     public static HttpCommunication getOrderTables() {
         return HttpCommunication.request()
-                .get("/api/tables")
+                .get("/api/v2/tables")
                 .build();
     }
 

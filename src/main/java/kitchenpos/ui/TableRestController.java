@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 import kitchenpos.application.TableService;
 import kitchenpos.application.dto.OrderTableCreationDto;
+import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.request.OrderTableCreationRequest;
 import kitchenpos.ui.dto.response.OrderTableResponse;
@@ -42,11 +43,17 @@ public class TableRestController {
         return ResponseEntity.created(uri).body(created);
     }
 
+    @Deprecated
     @GetMapping("/api/tables")
     public ResponseEntity<List<OrderTable>> list() {
         return ResponseEntity.ok()
                 .body(tableService.list())
                 ;
+    }
+
+    @GetMapping("/api/v2/tables")
+    public ResponseEntity<List<OrderTableDto>> getOrderTables() {
+        return ResponseEntity.ok().body(tableService.getOrderTables());
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")

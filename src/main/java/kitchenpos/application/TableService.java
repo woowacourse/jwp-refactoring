@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderTableCreationDto;
 import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.dao.OrderDao;
@@ -37,8 +38,16 @@ public class TableService {
     }
 
 
+    @Deprecated
     public List<OrderTable> list() {
         return orderTableDao.findAll();
+    }
+
+    public List<OrderTableDto> getOrderTables() {
+        return orderTableDao.findAll()
+                .stream()
+                .map(OrderTableDto::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional

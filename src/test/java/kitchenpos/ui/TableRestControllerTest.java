@@ -66,9 +66,9 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("주문 테이블 목록을 조회한다.")
     @Test
     void getOrderTables() throws Exception {
-        when(tableService.list()).thenReturn(List.of(DomainFixture.getOrderTable(true)));
+        when(tableService.getOrderTables()).thenReturn(List.of(DtoFixture.getOrderTableDto(true)));
 
-        final ResultActions resultActions = mockMvc.perform(get("/api/tables")
+        final ResultActions resultActions = mockMvc.perform(get("/api/v2/tables")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
