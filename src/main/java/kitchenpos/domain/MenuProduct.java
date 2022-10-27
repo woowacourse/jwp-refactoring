@@ -26,6 +26,10 @@ public class MenuProduct {
         this.menuId = menuId;
     }
 
+    public Long getMenuId() {
+        return menuId;
+    }
+
     public Long getProductId() {
         return productId;
     }
