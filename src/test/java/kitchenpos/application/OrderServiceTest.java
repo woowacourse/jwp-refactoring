@@ -31,6 +31,7 @@ class OrderServiceTest {
     private OrderService orderService;
     @Autowired
     private DataSupport dataSupport;
+
     private OrderTable savedUnEmptyTable;
     private Menu savedMenu;
 
@@ -151,7 +152,7 @@ class OrderServiceTest {
     void changeOrderStatus_throwsException_ifOrderNotFound() {
         final Order request = RequestBuilder.ofOrder(OrderStatus.MEAL);
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> orderService.changeOrderStatus(100L, request));
+                .isThrownBy(() -> orderService.changeOrderStatus(0L, request));
     }
 
     @DisplayName("완료된 주문의 상태를 변경하면 예외가 발생한다.")

@@ -45,7 +45,7 @@ class TableGroupServiceTest {
         // given
         final OrderTable savedOrderTable = dataSupport.saveOrderTable(0, true);
         final OrderTable unsavedOrderTable = new OrderTable();
-        unsavedOrderTable.setTableGroupId(100L);
+        unsavedOrderTable.setTableGroupId(0L);
 
         // when, then
         final TableGroup request = RequestBuilder.ofTableGroup(savedOrderTable, unsavedOrderTable);

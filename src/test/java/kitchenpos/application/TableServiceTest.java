@@ -74,7 +74,7 @@ class TableServiceTest {
     void changeEmpty_throwsException_whenTableNotFound() {
         final OrderTable request = RequestBuilder.ofFullTable();
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> tableService.changeEmpty(100L, request));
+                .isThrownBy(() -> tableService.changeEmpty(0L, request));
     }
 
     @DisplayName("단체 지정된 테이블의 상태를 변경하면 예외가 발생한다.")
@@ -140,7 +140,7 @@ class TableServiceTest {
     void changeNumberOfGuests_throwsException_ifTableNotFound() {
         final OrderTable request = RequestBuilder.ofTableWithGuests(2);
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> tableService.changeNumberOfGuests(100L, request));
+                .isThrownBy(() -> tableService.changeNumberOfGuests(0L, request));
     }
 
     @DisplayName("테이블의 고객 수를 0보다 작게 변경하면 예외가 발생한다.")

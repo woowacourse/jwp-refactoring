@@ -19,6 +19,7 @@ public class RequestBuilder {
     private static final String DEFAULT_PRODUCT_NAME = "콜라";
     private static final Integer DEFAULT_PRODUCT_PRICE = 2000;
     private static final String DEFAULT_MENU_GROUP_NAME = "음료 메뉴";
+    private static final String DEFAULT_MENU_NAME = "포키 정식";
 
     public static Product ofProduct() {
         return ofProduct(DEFAULT_PRODUCT_PRICE);
@@ -45,7 +46,7 @@ public class RequestBuilder {
                 .collect(Collectors.toList());
 
         final Menu menu = new Menu();
-        menu.setName("포키 정식");
+        menu.setName(DEFAULT_MENU_NAME);
         menu.setPrice(new BigDecimal(price));
         menu.setMenuGroupId(menuGroup.getId());
         menu.setMenuProducts(menuProducts);
