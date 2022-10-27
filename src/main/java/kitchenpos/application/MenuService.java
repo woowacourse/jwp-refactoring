@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.request.MenuRequest;
+import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -14,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class MenuService {
@@ -35,7 +38,8 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu menu) {
+    public MenuResponse create(final MenuRequest request) {
+        final Menu menu = convert(request);
         final BigDecimal price = menu.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
@@ -69,16 +73,35 @@ public class MenuService {
         }
         savedMenu.setMenuProducts(savedMenuProducts);
 
-        return savedMenu;
+        return convert(savedMenu);
     }
 
-    public List<Menu> list() {
+    public List<MenuResponse> list() {
         final List<Menu> menus = menuDao.findAll();
 
         for (final Menu menu : menus) {
             menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
         }
 
-        return menus;
+        return convert(menus);
+    }
+
+    private Menu convert(final MenuRequest request) {
+        final Menu menu = new Menu();
+        menu.setName(request.getName());
+        menu.setPrice(request.getPrice());
+        menu.setMenuGroupId(request.getMenuGroupId());
+        menu.setMenuProducts(request.getMenuProducts());
+        return menu;
+    }
+
+    private MenuResponse convert(final Menu menu) {
+        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menu.getMenuProducts());
+    }
+
+    private List<MenuResponse> convert(final List<Menu> menus) {
+        return menus.stream()
+            .map(menu -> new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menu.getMenuProducts()))
+            .collect(Collectors.toUnmodifiableList());
     }
 }
