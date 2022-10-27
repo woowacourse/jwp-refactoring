@@ -64,6 +64,9 @@ public class JdbcOrderService implements OrderService {
 
         order.setId(null);
 
+        if (Objects.isNull(order.getOrderTableId())) {
+            throw new IllegalArgumentException();
+        }
         final OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
