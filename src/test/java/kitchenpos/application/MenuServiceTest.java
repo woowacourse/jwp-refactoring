@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.ProductBuilder.aProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -13,7 +14,6 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,19 +111,25 @@ class MenuServiceTest {
     @DisplayName("Menu의 가격과 Menu에 포함된 Product 가격의 합이 달라서는 안된다")
     void throwException_WhenMenuPriceAndSumOfMenuProductPrice_NotMatch() {
         // given
-        Product product = new Product();
-        product.setName("강정치킨");
-        product.setPrice(BigDecimal.valueOf(1000L));
-        Long productId = productDao.save(product).getId();
+        final BigDecimal PRODUCT_PRICE = BigDecimal.valueOf(1000L);
+        final long QUANTITY = 2;
+        final BigDecimal WRONG_MENU_PRICE = PRODUCT_PRICE.multiply(BigDecimal.valueOf(QUANTITY))
+                .add(BigDecimal.valueOf(1000L));
+
+        Long productId = productDao.save(
+                aProduct()
+                        .withPrice(PRODUCT_PRICE)
+                        .build()
+        ).getId();
 
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(productId);
-        menuProduct.setQuantity(2);
+        menuProduct.setQuantity(QUANTITY);
         List<MenuProduct> menuProducts = List.of(menuProduct);
 
         Menu menu = new Menu();
         menu.setMenuGroupId(1L);
-        menu.setPrice(BigDecimal.valueOf(3000L));
+        menu.setPrice(WRONG_MENU_PRICE);
         menu.setMenuProducts(menuProducts);
 
         // when && then
@@ -135,10 +141,7 @@ class MenuServiceTest {
     @DisplayName("메뉴를 생성한다")
     void saveMenu() {
         // given
-        Product product = new Product();
-        product.setName("강정치킨");
-        product.setPrice(BigDecimal.valueOf(1000L));
-        Long productId = productDao.save(product).getId();
+        Long productId = productDao.save(aProduct().build()).getId();
 
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("치킨");

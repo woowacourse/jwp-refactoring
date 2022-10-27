@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.ProductBuilder.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -7,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.fixture.ProductBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +29,9 @@ class ProductServiceTest {
     @DisplayName("가격은 null일 수 없다")
     void throwException_WhenPriceNull() {
         // given
-        Product product = new Product();
-        product.setName("강정치킨");
+        Product product = aProduct()
+                .withPrice(null)
+                .build();
 
         // when && then
         assertThatThrownBy(() -> sut.create(product))
@@ -39,9 +42,9 @@ class ProductServiceTest {
     @DisplayName("가격은 음수일 수 없다")
     void throwException_WhenPriceNegative() {
         // given
-        Product product = new Product();
-        product.setName("강정치킨");
-        product.setPrice(BigDecimal.valueOf(-1L));
+        Product product = aProduct()
+                .withPrice(BigDecimal.valueOf(-1L))
+                .build();
 
         // when && then
         assertThatThrownBy(() -> sut.create(product))
@@ -52,9 +55,7 @@ class ProductServiceTest {
     @DisplayName("Product를 생성한다")
     void delegateSaveAndReturnSavedEntity() {
         // given
-        Product product = new Product();
-        product.setName("강정치킨");
-        product.setPrice(BigDecimal.valueOf(1000L));
+        Product product = aProduct().build();
 
         // when
         Product savedProduct = sut.create(product);

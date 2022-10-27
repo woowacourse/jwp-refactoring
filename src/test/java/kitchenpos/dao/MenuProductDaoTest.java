@@ -1,5 +1,6 @@
 package kitchenpos.dao;
 
+import static kitchenpos.fixture.ProductBuilder.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.fixture.ProductBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -94,10 +96,7 @@ class MenuProductDaoTest {
         menu.setMenuGroupId(menuGroupId);
         Long menuId = menuDao.save(menu).getId();
 
-        Product product = new Product();
-        product.setName("강정치킨");
-        product.setPrice(BigDecimal.valueOf(1000L));
-        Long productId = productDao.save(product).getId();
+        Long productId = productDao.save(aProduct().build()).getId();
 
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setMenuId(menuId);
