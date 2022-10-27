@@ -2,10 +2,11 @@ package kitchenpos.application;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.dto.response.MenuGroupsResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class MenuGroupService {
@@ -16,11 +17,13 @@ public class MenuGroupService {
     }
 
     @Transactional
-    public MenuGroup create(final MenuGroup menuGroup) {
-        return menuGroupDao.save(menuGroup);
+    public MenuGroupResponse create(final MenuGroupRequest menuGroupRequest) {
+        final MenuGroup menuGroup = menuGroupRequest.toEntity();
+        final MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        return MenuGroupResponse.of(savedMenuGroup);
     }
 
-    public List<MenuGroup> list() {
-        return menuGroupDao.findAll();
+    public MenuGroupsResponse list() {
+        return MenuGroupsResponse.of(menuGroupDao.findAll());
     }
 }

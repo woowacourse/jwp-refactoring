@@ -53,7 +53,7 @@ public class MenuService {
         return MenuResponse.of(savedMenu);
     }
 
-    private List<Product> getProducts(MenuRequest menuRequest) {
+    private List<Product> getProducts(final MenuRequest menuRequest) {
         final List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProductRequests();
         final List<Long> productIds = menuProductRequests.stream()
                 .map(MenuProductRequest::getProductId)
