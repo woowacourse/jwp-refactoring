@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.request.ProductCreateRequest;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -55,7 +55,7 @@ class ProductServiceTest {
                 assertAll(
                         () -> assertThat(actual.getId()).isNotNull(),
                         () -> assertThat(actual.getName()).isEqualTo("상품"),
-                        () -> assertThat(actual.getPrice()).isEqualByComparingTo(new BigDecimal(10000))
+                        () -> assertThat(actual.getPrice().getValue()).isEqualByComparingTo(new BigDecimal(10000))
                 );
             }
         }
