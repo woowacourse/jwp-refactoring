@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import kitchenpos.application.ProductCreateRequest;
+import kitchenpos.application.request.ProductCreateRequest;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
 

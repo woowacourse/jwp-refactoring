@@ -53,7 +53,7 @@ public class TableGroup {
     }
 
     public TableGroup(final List<OrderTable> orderTables) {
-        this(null, orderTables);
+        this(LocalDateTime.now(), orderTables);
     }
 
     private void validateOrderTables(final List<OrderTable> orderTables) {

@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -8,6 +7,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.application.request.OrderTableCreateRequest;
+import kitchenpos.application.request.TableGroupCreateRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -36,10 +37,7 @@ public class TableGroupService {
             .collect(Collectors.toUnmodifiableList());
 
         List<OrderTable> orderTables = orderTableDao.findAllByIdIn(orderTableIds);
-
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
-
-        return tableGroupDao.save(tableGroup);
+        return tableGroupDao.save(new TableGroup(orderTables));
     }
 
     @Transactional
@@ -51,11 +49,15 @@ public class TableGroupService {
             .map(OrderTable::getId)
             .collect(Collectors.toUnmodifiableList());
 
+        validateOrdersNotCompletion(orderTableIds);
+
+        tableGroup.unGroup();
+    }
+
+    private void validateOrdersNotCompletion(final List<Long> orderTableIds) {
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds,
             Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
-
-        tableGroup.unGroup();
     }
 }

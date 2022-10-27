@@ -7,8 +7,8 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.application.OrderTableCreateRequest;
-import kitchenpos.application.TableGroupCreateRequest;
+import kitchenpos.application.request.OrderTableCreateRequest;
+import kitchenpos.application.request.TableGroupCreateRequest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 

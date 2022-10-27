@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import kitchenpos.application.TableGroupCreateRequest;
+import kitchenpos.application.request.TableGroupCreateRequest;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.domain.TableGroup;
 

@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.application.request;
 
 import java.util.List;
 

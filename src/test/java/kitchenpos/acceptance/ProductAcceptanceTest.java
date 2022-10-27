@@ -6,7 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-import kitchenpos.application.ProductCreateRequest;
+import kitchenpos.application.request.ProductCreateRequest;
 
 public class ProductAcceptanceTest extends AcceptanceTest {
 

@@ -9,7 +9,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
-import kitchenpos.application.ProductCreateRequest;
+import kitchenpos.application.request.ProductCreateRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;

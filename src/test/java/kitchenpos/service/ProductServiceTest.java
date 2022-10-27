@@ -10,7 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.application.ProductCreateRequest;
+import kitchenpos.application.request.ProductCreateRequest;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
 
