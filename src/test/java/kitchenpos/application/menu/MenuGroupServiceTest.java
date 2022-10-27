@@ -1,10 +1,11 @@
-package kitchenpos.application;
+package kitchenpos.application.menu;
 
 import static kitchenpos.support.fixture.MenuGroupFixture.createSaleMenuGroup;
 import static kitchenpos.support.fixture.MenuGroupFixture.createSuggestionMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.Optional;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.support.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -19,11 +20,12 @@ class MenuGroupServiceTest extends IntegrationTest {
     @DisplayName("메뉴그룹을 등록할 수 있다.")
     @Test
     void create() {
-        final MenuGroup menuGroup = createSaleMenuGroup();
+        final MenuGroupRequest menuGroupRequest = new MenuGroupRequest("할인메뉴");
 
-        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroupResponse menuGroupResponse = menuGroupService.create(menuGroupRequest);
 
-        assertThat(savedMenuGroup.getId()).isNotNull();
+        final Optional<MenuGroup> savedMenuGroup = menuGroupDao.findById(menuGroupResponse.getId());
+        assertThat(savedMenuGroup).isPresent();
     }
 
     @DisplayName("메뉴그룹 목록을 조회할 수 있다.")
@@ -33,8 +35,8 @@ class MenuGroupServiceTest extends IntegrationTest {
         menuGroupDao.save(createSaleMenuGroup());
         menuGroupDao.save(createSuggestionMenuGroup());
 
-        final List<MenuGroup> menuGroups = menuGroupService.list();
-        final int afterSize = menuGroups.size();
+        final List<MenuGroupResponse> menuGroupResponses = menuGroupService.list();
+        final int afterSize = menuGroupResponses.size();
 
         assertThat(afterSize - originSize).isEqualTo(2);
     }

@@ -51,9 +51,9 @@ class ProductServiceTest extends IntegrationTest {
         productDao.save(createPepperoni());
         productDao.save(createPineapple());
 
-        final List<Product> products = productService.list();
+        final List<ProductResponse> productResponses = productService.list();
 
-        final int afterSize = products.size();
+        final int afterSize = productResponses.size();
         assertThat(afterSize - originSize).isEqualTo(2);
     }
 }
