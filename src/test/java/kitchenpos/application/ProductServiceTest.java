@@ -1,8 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.ProductFixture.상품1;
-import static kitchenpos.support.ProductFixture.상품2;
-import static kitchenpos.support.ProductFixture.상품3;
+import static kitchenpos.support.ProductFixture.상품;
 import static kitchenpos.support.ProductFixture.상품_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -59,9 +57,9 @@ class ProductServiceTest extends ServiceTest {
     @Test
     @DisplayName("현재 등록된 물품들을 반환한다.")
     void list() {
-        상품_등록(상품1);
-        상품_등록(상품2);
-        상품_등록(상품3);
+        상품_등록(상품);
+        상품_등록(상품);
+        상품_등록(상품);
 
         final List<Product> actual = productService.list();
 

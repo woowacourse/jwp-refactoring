@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
 import static kitchenpos.support.MenuFixture.메뉴_생성;
-import static kitchenpos.support.MenuGroupFixture.메뉴_그룹1;
+import static kitchenpos.support.MenuGroupFixture.메뉴_그룹;
 import static kitchenpos.support.OrderFixture.주문_생성;
 import static kitchenpos.support.OrderTableFixture.비어있는_주문_테이블;
 import static kitchenpos.support.OrderTableFixture.비어있지_않은_주문_테이블;
-import static kitchenpos.support.ProductFixture.상품1;
+import static kitchenpos.support.ProductFixture.상품;
 import static kitchenpos.support.TableGroupFixture.테이블_그룹_구성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -92,9 +92,6 @@ class TableGroupServiceTest extends ServiceTest {
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class);
-
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -147,8 +144,8 @@ class TableGroupServiceTest extends ServiceTest {
 
             final OrderTable orderTable = tableGroup.getOrderTables().get(0);
             final int lessThanSingleProductPrice = 9000;
-            final Product savedProduct = 상품_등록(상품1);
-            final MenuGroup savedMenuGroup = 메뉴_그룹_등록(메뉴_그룹1);
+            final Product savedProduct = 상품_등록(상품);
+            final MenuGroup savedMenuGroup = 메뉴_그룹_등록(메뉴_그룹);
             final Menu savedMenu = 메뉴_등록(메뉴_생성(
                     "메뉴이름",
                     BigDecimal.valueOf(lessThanSingleProductPrice),
