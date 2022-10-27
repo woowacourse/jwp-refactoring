@@ -15,6 +15,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.MenuCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -49,7 +50,7 @@ public class MenuServiceTest extends ServiceTest {
         private Product productB;
         private MenuProduct menuProductA;
         private MenuProduct menuProductB;
-        private Menu menu;
+        private MenuCreateRequest createRequest;
 
         @BeforeEach
         void setUp() {
@@ -59,10 +60,10 @@ public class MenuServiceTest extends ServiceTest {
             menuProductA = new MenuProduct(null, MENU_ID, PRODUCT_A_ID, 2);
             menuProductB = new MenuProduct(null, MENU_ID, PRODUCT_B_ID, 2);
 
-            menu = new Menu(MENU_ID, "메뉴 이름", BigDecimal.valueOf(MENU_PRICE), MENU_GROUP_ID,
+            createRequest = new MenuCreateRequest("메뉴 이름", BigDecimal.valueOf(MENU_PRICE), MENU_GROUP_ID,
                     Arrays.asList(menuProductA, menuProductB));
 
-            given(menuGroupDao.existsById(menu.getMenuGroupId()))
+            given(menuGroupDao.existsById(createRequest.getMenuGroupId()))
                     .willReturn(true);
             given(productDao.findById(PRODUCT_A_ID))
                     .willReturn(Optional.of(productA));
@@ -75,7 +76,7 @@ public class MenuServiceTest extends ServiceTest {
         @DisplayName("등록할 수 있는 메뉴를 받으면, 메뉴를 저장하고 내용을 반환한다.")
         void success() {
             //when
-            Menu actual = menuService.create(menu);
+            Menu actual = menuService.create(createRequest);
 
             //then
             assertAll(
@@ -88,10 +89,10 @@ public class MenuServiceTest extends ServiceTest {
         @DisplayName("메뉴 가격이 없으면, 예외를 던진다.")
         void fail_noPrice() {
             //given
-            menu = new Menu(MENU_ID, "메뉴 이름", null, MENU_GROUP_ID, Arrays.asList(menuProductA, menuProductB));
+            createRequest = new MenuCreateRequest("메뉴 이름", null, MENU_GROUP_ID, Arrays.asList(menuProductA, menuProductB));
 
             //when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(createRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -99,11 +100,11 @@ public class MenuServiceTest extends ServiceTest {
         @DisplayName("메뉴 가격이 음수면, 예외를 던진다.")
         void fail_priceIsNegative() {
             //given
-            menu = new Menu(MENU_ID, "메뉴 이름", BigDecimal.valueOf(-1), MENU_GROUP_ID,
+            createRequest = new MenuCreateRequest("메뉴 이름", BigDecimal.valueOf(-1), MENU_GROUP_ID,
                     Arrays.asList(menuProductA, menuProductB));
 
             //when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(createRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -111,11 +112,11 @@ public class MenuServiceTest extends ServiceTest {
         @DisplayName("메뉴가 포함될 메뉴그룹이 존재하지 않으면, 예외를 던진다.")
         void fail_noExistMenuGroup() {
             //given
-            given(menuGroupDao.existsById(menu.getMenuGroupId()))
+            given(menuGroupDao.existsById(createRequest.getMenuGroupId()))
                     .willReturn(false);
 
             //when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(createRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -127,7 +128,7 @@ public class MenuServiceTest extends ServiceTest {
                     .willReturn(Optional.empty());
 
             //when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(createRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -145,10 +146,11 @@ public class MenuServiceTest extends ServiceTest {
             given(productDao.findById(PRODUCT_B_ID))
                     .willReturn(Optional.of(productB));
 
-            menu = new Menu(MENU_ID, "메뉴 이름", BigDecimal.valueOf(201), MENU_GROUP_ID, Arrays.asList(menuProductA, menuProductB));
+            createRequest = new MenuCreateRequest("메뉴 이름", BigDecimal.valueOf(201), MENU_GROUP_ID,
+                    Arrays.asList(menuProductA, menuProductB));
 
             //when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(createRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -159,12 +161,9 @@ public class MenuServiceTest extends ServiceTest {
         private static final long PRODUCT_A_ID = 1L;
         private static final long PRODUCT_B_ID = 2L;
         private static final long MENU_ID = 1L;
-        private static final long MENU_GROUP_ID = 1L;
-        private static final long MENU_PRICE = 10000;
 
         private MenuProduct menuProductA;
         private MenuProduct menuProductB;
-        private Menu menu;
 
         @Test
         @DisplayName("전체 메뉴를 조회할 때, 메뉴상품도 같이 조회할 수 있다.")
@@ -172,9 +171,6 @@ public class MenuServiceTest extends ServiceTest {
             //given
             menuProductA = new MenuProduct(null, MENU_ID, PRODUCT_A_ID, 2);
             menuProductB = new MenuProduct(null, MENU_ID, PRODUCT_B_ID, 2);
-
-//            menu = ClassConstructor.menu(MENU_ID, "메뉴 이름", BigDecimal.valueOf(MENU_PRICE), MENU_GROUP_ID,
-//                    Arrays.asList(menuProductA, menuProductB));
 
             given(menuProductDao.findAllByMenuId(1L))
                     .willReturn(Arrays.asList(menuProductA, menuProductB));
