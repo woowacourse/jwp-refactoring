@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 public class OrderTable {
     private Long id;
     private Long tableGroupId;
@@ -15,6 +17,12 @@ public class OrderTable {
 
     public void validateOrderable() {
         if (empty) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateGroupable() {
+        if (!empty || Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException();
         }
     }

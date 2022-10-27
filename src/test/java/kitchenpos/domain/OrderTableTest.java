@@ -16,4 +16,22 @@ class OrderTableTest {
         assertThatThrownBy(orderTable::validateOrderable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    @DisplayName("주문 테이블이 이미 단체가 지정되어 있으면 단체로 지정하지 못한다")
+    void validateGroupableWithAlreadyGrouping() {
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(1L, 3);
+
+        assertThatThrownBy(orderTable::validateGroupable)
+                .isExactlyInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("주문 테이블에 이미 손님이 있다면 단체로 지정하지 못한다")
+    void validateGroupableWithEmptyOrderTable() {
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 3);
+
+        assertThatThrownBy(orderTable::validateGroupable)
+                .isExactlyInstanceOf(IllegalArgumentException.class);
+    }
 }

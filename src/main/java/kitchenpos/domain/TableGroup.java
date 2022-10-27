@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.util.CollectionUtils;
 
 public class TableGroup {
     private Long id;
@@ -17,6 +18,18 @@ public class TableGroup {
 
     public TableGroup(final Long id, final LocalDateTime createdDate) {
         this(id, createdDate, new ArrayList<>());
+    }
+
+    public void validateSizeOfOrderTables() {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateExistOrderTable(final long existOrderTableSize) {
+        if (orderTables.size() != existOrderTableSize) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
