@@ -9,8 +9,12 @@ import org.springframework.util.CollectionUtils;
 public class TableGroup {
 
     private final Long id;
-    private LocalDateTime createdDate;
+    private final LocalDateTime createdDate;
     private final List<OrderTable> orderTables;
+
+    public TableGroup(final LocalDateTime createdDate) {
+        this(null, createdDate);
+    }
 
     public TableGroup(final Long id, final LocalDateTime createdDate) {
         this.id = id;
@@ -34,10 +38,6 @@ public class TableGroup {
 
     public void addOrderTables(final List<OrderTable> orderTables) {
         this.orderTables.addAll(orderTables);
-    }
-
-    public void setCreatedDateNow() {
-        this.createdDate = LocalDateTime.now();
     }
 
     public Long getId() {

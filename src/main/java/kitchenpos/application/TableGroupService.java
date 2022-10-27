@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,38 +29,58 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
+    public TableGroup create(final TableGroup request) {
+        validateRequestOrderTablesSize(request);
+
+        final List<OrderTable> orderTables = findOrderTables(request);
+        validateOrderTablesSize(request, orderTables);
+        validateHaveNotEmptyOrderTable(orderTables);
+
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        savedTableGroup.addOrderTables(orderTables);
+
+        updateOrderTables(savedTableGroup);
+
+        return savedTableGroup;
+    }
+
+    private void validateRequestOrderTablesSize(final TableGroup tableGroup) {
         if (tableGroup.isInvalidOrderTablesSize()) {
             throw new IllegalArgumentException();
         }
+    }
 
+    private List<OrderTable> findOrderTables(final TableGroup tableGroup) {
         final List<Long> orderTableIds = tableGroup.generateOrderTableIds();
+        return orderTableDao.findAllByIdIn(orderTableIds);
+    }
 
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-
+    private void validateOrderTablesSize(final TableGroup tableGroup, final List<OrderTable> savedOrderTables) {
         if (tableGroup.isSameOrderTablesSize(savedOrderTables.size())) {
             throw new IllegalArgumentException();
         }
+    }
 
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (savedOrderTable.isNotEmpty()) {
-                throw new IllegalArgumentException();
-            }
+    private void validateHaveNotEmptyOrderTable(final List<OrderTable> orderTables) {
+        boolean isNotEmptyOrderTable = orderTables.stream()
+                .anyMatch(OrderTable::isNotEmpty);
+
+        if (isNotEmptyOrderTable) {
+            throw new IllegalArgumentException();
         }
+    }
 
-        tableGroup.setCreatedDateNow();
+    private void updateOrderTables(final TableGroup tableGroup) {
+        final Long tableGroupId = tableGroup.getId();
+        List<OrderTable> orderTables = tableGroup.getOrderTables()
+                .stream()
+                .map(it -> new OrderTable(it.getId(), tableGroupId, it.getNumberOfGuests(), false))
+                .collect(Collectors.toList());
 
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-
-        final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            OrderTable orderTable = new OrderTable(savedOrderTable.getId(), tableGroupId,
-                    savedOrderTable.getNumberOfGuests(), false);
+        for (OrderTable orderTable : orderTables) {
             orderTableDao.save(orderTable);
         }
-        savedTableGroup.addOrderTables(savedOrderTables);
-
-        return savedTableGroup;
     }
 
     @Transactional
