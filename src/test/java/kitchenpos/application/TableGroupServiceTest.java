@@ -5,12 +5,12 @@ import static kitchenpos.fixture.MenuGroupFactory.menuGroup;
 import static kitchenpos.fixture.OrderTableFactory.emptyTable;
 import static kitchenpos.fixture.OrderTableFactory.notEmptyTable;
 import static kitchenpos.fixture.ProductFactory.product;
+import static kitchenpos.fixture.TableGroupFactory.tableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -20,7 +20,6 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,10 +52,10 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 등록")
     @Test
     void create() {
-        final var savedSingleTable = orderTableDao.save(emptyTable(1));
-        final var savedDoubleTable = orderTableDao.save(emptyTable(2));
+        final var singleTable = orderTableDao.save(emptyTable(1));
+        final var doubleTable = orderTableDao.save(emptyTable(2));
 
-        final var tableGroup = new TableGroup(List.of(savedSingleTable, savedDoubleTable));
+        final var tableGroup = tableGroup(singleTable, doubleTable);
 
         final var result = tableGroupService.create(tableGroup);
         assertThat(result.getOrderTables().size()).isEqualTo(tableGroup.getOrderTables().size());
@@ -65,19 +64,19 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블 목록이 비어있다면, 테이블 그룹 등록 시 예외 발생")
     @Test
     void create_emptyOrderTables_throwsException() {
-        final var tableGroup = new TableGroup(Collections.emptyList());
+        final var emptyTableGroup = tableGroup();
 
         assertThatThrownBy(
-                () -> tableGroupService.create(tableGroup)
+                () -> tableGroupService.create(emptyTableGroup)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 테이블이 하나 뿐이라면, 테이블 그룹 등록 시 예외 발생")
     @Test
     void create_onlyOneOrderTable_throwsException() {
-        final var savedTable = orderTableDao.save(emptyTable(1));
+        final var singleTable = orderTableDao.save(emptyTable(1));
 
-        final var tableGroup = new TableGroup(List.of(savedTable));
+        final var tableGroup = tableGroup(singleTable);
 
         assertThatThrownBy(
                 () -> tableGroupService.create(tableGroup)
@@ -87,10 +86,10 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블 중 하나라도 빈 상태가 아니라면, 테이블 그룹 등록 시 예외 발생")
     @Test
     void create_containsNotEmptyTable_throwsException() {
-        final var savedNotEmptyTable = orderTableDao.save(notEmptyTable(2));
-        final var savedEmptyTable = orderTableDao.save(emptyTable(2));
+        final var notEmptyTable = orderTableDao.save(notEmptyTable(2));
+        final var emptyTable = orderTableDao.save(emptyTable(2));
 
-        final var tableGroup = new TableGroup(List.of(savedNotEmptyTable, savedEmptyTable));
+        final var tableGroup = tableGroup(notEmptyTable, emptyTable);
 
         assertThatThrownBy(
                 () -> tableGroupService.create(tableGroup)
@@ -100,14 +99,14 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블 중 하나라도 이미 단체 id를 갖고 있다면, 테이블 그룹 등록 시 예외 발생")
     @Test
     void create_containsAlreadyGroupedTable_throwsException() {
-        final var savedSingleTable = orderTableDao.save(emptyTable(1));
-        final var savedCoupleTable = orderTableDao.save(emptyTable(2));
-        final var savedTripleTable = orderTableDao.save(emptyTable(3));
+        final var singleTable = orderTableDao.save(emptyTable(1));
+        final var coupleTable = orderTableDao.save(emptyTable(2));
+        final var tripleTable = orderTableDao.save(emptyTable(3));
 
-        final var otherTableGroup = new TableGroup(List.of(savedSingleTable, savedCoupleTable));
+        final var otherTableGroup = tableGroup(singleTable, coupleTable);
         tableGroupService.create(otherTableGroup);
 
-        final var tableGroup = new TableGroup(List.of(savedCoupleTable, savedTripleTable));
+        final var tableGroup = tableGroup(coupleTable, tripleTable);
 
         assertThatThrownBy(
                 () -> tableGroupService.create(tableGroup)
@@ -117,16 +116,16 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 해제")
     @Test
     void ungroup() {
-        final var savedSingleTable = orderTableDao.save(emptyTable(1));
-        final var savedDoubleTable = orderTableDao.save(emptyTable(2));
+        final var singleTable = orderTableDao.save(emptyTable(1));
+        final var doubleTable = orderTableDao.save(emptyTable(2));
 
-        final var tableGroup = new TableGroup(List.of(savedSingleTable, savedDoubleTable));
+        final var tableGroup = tableGroup(singleTable, doubleTable);
 
         final var grouped = tableGroupService.create(tableGroup);
         tableGroupService.ungroup(grouped.getId());
 
         final var ungroupedTables = orderTableDao.findAllByIdIn(
-                List.of(savedSingleTable.getId(), savedDoubleTable.getId()));
+                List.of(singleTable.getId(), doubleTable.getId()));
         assertAll(
                 () -> assertThat(ungroupedTables).allMatch(table -> table.getTableGroupId() == null),
                 () -> assertThat(ungroupedTables).allMatch(table -> !table.isEmpty())
@@ -157,7 +156,7 @@ class TableGroupServiceTest {
         orderInCompletion.setOrderStatus(OrderStatus.COMPLETION.name());
         orderDao.save(orderInCompletion);
 
-        final var tableGroup = new TableGroup(List.of(singleTable, doubleTable));
+        final var tableGroup = tableGroup(singleTable, doubleTable);
         final var savedTableGroup = tableGroupService.create(tableGroup);
 
         assertThatThrownBy(
