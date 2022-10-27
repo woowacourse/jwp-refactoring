@@ -13,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -41,6 +42,20 @@ public class TableServiceTest extends ServiceTest {
                 () -> assertThat(actualId).isNotNull(),
                 () -> assertThat(orderTableDao.findById(actualId)).isPresent()
         );
+    }
+
+    @Test
+    @DisplayName("주문테이블 목록을 조회한다.")
+    void list() {
+        // given
+        테이블등록(createOrderTable(5, false));
+        테이블등록(createOrderTable(5, false));
+
+        // when
+        final List<OrderTable> actual = tableService.list();
+
+        // then
+        assertThat(actual).hasSize(2);
     }
 
     @Test
