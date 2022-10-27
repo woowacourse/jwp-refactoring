@@ -13,7 +13,6 @@ import kitchenpos.application.ProductCreateRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
 
 public class MenuServiceTest extends ServiceTest {
 
@@ -28,17 +27,6 @@ public class MenuServiceTest extends ServiceTest {
 
         // then
         assertEqualToMenu(menu, savedMenu);
-    }
-
-    @Test
-    @DisplayName("가격이 음수이면 예외를 던진다.")
-    void create_price_negative() {
-        // given
-        Menu menu = createMenu(-1);
-
-        // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
-            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

@@ -6,16 +6,36 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 /**
  * MenuGroup에 속하는 실제 주문 가능 단위
  */
+@Entity
+@Table(name = "menu")
 public class Menu {
 
-    private String name;
-    private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "price")
+    private BigDecimal price;
+
+    @Column(name = "menu_group_id")
+    private Long menuGroupId;
+
+    @OneToMany(mappedBy = "menuId")
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
         final List<MenuProduct> menuProducts) {
@@ -24,6 +44,13 @@ public class Menu {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = List.copyOf(menuProducts);
+        validatePrice(price);
+    }
+
+    private void validatePrice(final BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
@@ -36,6 +63,26 @@ public class Menu {
     }
 
     public Menu() {
+    }
+
+    public void validatePriceUnderProductsSum(final List<Product> products) {
+        if (price.compareTo(calculateProductsSum(products)) > 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void setIdToMenuProducts() {
+        for (final MenuProduct menuProduct : menuProducts) {
+            menuProduct.setMenuId(id);
+        }
+    }
+
+    private BigDecimal calculateProductsSum(final List<Product> products) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (int i = 0; i < menuProducts.size(); i++) {
+            sum = sum.add(products.get(i).getPrice().multiply(BigDecimal.valueOf(menuProducts.get(i).getQuantity())));
+        }
+        return sum;
     }
 
     public Long getId() {

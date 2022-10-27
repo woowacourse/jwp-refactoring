@@ -11,7 +11,6 @@ import kitchenpos.application.ProductCreateRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
 
 public class MenuAcceptanceTest extends AcceptanceTest {
 
