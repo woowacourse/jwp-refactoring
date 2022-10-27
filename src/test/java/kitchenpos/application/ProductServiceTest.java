@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ class ProductServiceTest extends ServiceTestBase {
     @Test
     void createProduct() {
         // given
-        Product chicken = 후라이드_치킨();
+        ProductRequest chicken = createProductRequest("후라이드치킨", 18000);
 
         // when
         Product savedChicken = productService.create(chicken);
@@ -54,9 +55,7 @@ class ProductServiceTest extends ServiceTestBase {
     @Test
     void createPriceNullProduct() {
         // given
-        Product chicken = new Product();
-        chicken.setName("후라이드치킨");
-        chicken.setPrice(null);
+        ProductRequest chicken = new ProductRequest("후라이드치킨", null);
 
         // when & then
         assertThatThrownBy(
@@ -69,7 +68,7 @@ class ProductServiceTest extends ServiceTestBase {
     @Test
     void createPrice0Product() {
         // given
-        Product chicken = 상품_등록("페퍼로니피자", -1000);
+        ProductRequest chicken = createProductRequest("페퍼로니피자", -1000);
 
         // when & then
         assertThatThrownBy(

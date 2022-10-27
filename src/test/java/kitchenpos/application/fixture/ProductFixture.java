@@ -6,26 +6,14 @@ import kitchenpos.domain.Product;
 public class ProductFixture {
 
     public static Product 후라이드_치킨() {
-        Product chicken = new Product();
-        chicken.setName("후라이드치킨");
-        chicken.setPrice(BigDecimal.valueOf(18000));
-
-        return chicken;
+        return new Product("후라이드치킨", BigDecimal.valueOf(18000));
     }
 
     public static Product 양념_치킨() {
-        Product pizza = new Product();
-        pizza.setName("양념치킨");
-        pizza.setPrice(BigDecimal.valueOf(19000));
-
-        return pizza;
+        return new Product("양념치킨", BigDecimal.valueOf(19000));
     }
 
     public static Product 포테이토_피자() {
-        Product pizza = new Product();
-        pizza.setName("포테이토피자");
-        pizza.setPrice(BigDecimal.valueOf(15000));
-
-        return pizza;
+        return new Product("포테이토피자", BigDecimal.valueOf(15000));
     }
 }

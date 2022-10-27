@@ -18,15 +18,20 @@ public class Product {
     }
 
     private void validateProductPrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+        if (isPriceNullOrMinus(price)) {
             throw new IllegalArgumentException("상품의 가격은 비어있거나 0보다 작을 수 없습니다.");
         }
+    }
+
+    private boolean isPriceNullOrMinus(final BigDecimal price) {
+        return Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0;
     }
 
     public Long getId() {
         return id;
     }
 
+    @Deprecated
     public void setId(final Long id) {
         this.id = id;
     }
@@ -35,6 +40,7 @@ public class Product {
         return name;
     }
 
+    @Deprecated
     public void setName(final String name) {
         this.name = name;
     }
@@ -43,6 +49,7 @@ public class Product {
         return price;
     }
 
+    @Deprecated
     public void setPrice(final BigDecimal price) {
         this.price = price;
     }

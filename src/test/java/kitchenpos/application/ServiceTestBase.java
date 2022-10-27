@@ -20,6 +20,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.ProductRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -53,9 +54,13 @@ public abstract class ServiceTestBase {
     protected TableGroupDao tableGroupDao;
 
     protected Product 상품_등록(String name, int price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
+        Product product = new Product(name, BigDecimal.valueOf(price));
+
+        return product;
+    }
+
+    protected ProductRequest createProductRequest(String name, int price) {
+        ProductRequest product = new ProductRequest(name, BigDecimal.valueOf(price));
 
         return product;
     }

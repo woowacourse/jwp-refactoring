@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +16,10 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final Product productRequest) {
+    public Product create(final ProductRequest productRequest) {
         Product product = new Product(productRequest.getName(), productRequest.getPrice());
 
-        return productDao.save(productRequest);
+        return productDao.save(product);
     }
 
     public List<Product> list() {
