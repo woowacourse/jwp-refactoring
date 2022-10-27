@@ -8,7 +8,7 @@ public class Menu {
 
     private final Long id;
     private final String name;
-    private final BigDecimal price;
+    private final Price price;
     private final Long menuGroupId;
     private final List<MenuProduct> menuProducts;
 
@@ -19,9 +19,15 @@ public class Menu {
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
         this.menuGroupId = menuGroupId;
         this.menuProducts = new ArrayList<>();
+    }
+
+    public void validatePriceIsCheaperThanSum(BigDecimal sumOfPrice) {
+        if (price.isMoreExpensive(sumOfPrice)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -33,7 +39,7 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 
     public Long getMenuGroupId() {

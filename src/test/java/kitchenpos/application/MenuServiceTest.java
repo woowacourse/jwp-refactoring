@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import static kitchenpos.fixture.MenuFixture.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -63,26 +62,6 @@ class MenuServiceTest {
             assertThat(actual.getId()).isNotNull();
         }
 
-        @DisplayName("가격이 Null일 경우 예외가 발생한다")
-        @Test
-        void throwExceptionWithNullPrice() {
-            BigDecimal price = null;
-            Menu menu = 후라이드_양념치킨_두마리세트.toMenu(price, 두마리메뉴.getId(), 후라이드.getId(), 양념치킨.getId());
-
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("가격이 음수인 경우 예외가 발생한다")
-        @Test
-        void throwExceptionWithNegativePrice() {
-            BigDecimal price = new BigDecimal(-1);
-            Menu menu = 후라이드_양념치킨_두마리세트.toMenu(price, 두마리메뉴.getId(), 후라이드.getId(), 양념치킨.getId());
-
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
         @DisplayName("메뉴 그룹이 존재하지 않을 경우 예외가 발생한다")
         @Test
         void throwExceptionWithNotExistMenuGroup() {
@@ -98,17 +77,6 @@ class MenuServiceTest {
         void throwExceptionWithNotExistProduct() {
             Long notExistProductId = 0L;
             Menu menu = 후라이드_양념치킨_두마리세트.toMenu(두마리메뉴.getId(), notExistProductId, 양념치킨.getId());
-
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("메뉴 가격이 메뉴를 이루는 가격보다 크면 예외가 발생한다")
-        @Test
-        void throwExceptionWithTooBigPrice() {
-            // product1: 후라이드 16000원, product2: 양념치킨 16000원 => 단일 상품 가격 총합: 32000원
-            BigDecimal price = new BigDecimal(40_000);
-            Menu menu = 후라이드_양념치킨_두마리세트.toMenu(price, 두마리메뉴.getId(), 후라이드.getId(), 양념치킨.getId());
 
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);

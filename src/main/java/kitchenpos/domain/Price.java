@@ -21,4 +21,8 @@ public class Price {
     public BigDecimal getValue() {
         return value;
     }
+
+    public boolean isMoreExpensive(BigDecimal target) {
+        return value.compareTo(target) > 0;
+    }
 }

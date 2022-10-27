@@ -24,12 +24,6 @@ public enum MenuFixture {
         return menu;
     }
 
-    public Menu toMenu(BigDecimal price, Long menuGroupId, Long... productIds) {
-        Menu menu = new Menu(name, price, menuGroupId);
-        addMenuProducts(menu, productIds);
-        return menu;
-    }
-
     private static void addMenuProducts(Menu menu, Long[] productIds) {
         for (Long productId : productIds) {
             menu.addMenuProduct(new MenuProduct(productId, 1));
