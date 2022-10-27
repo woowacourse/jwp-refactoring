@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.dto.request.OrderTableCreateCommand;
+import kitchenpos.application.dto.request.OrderTableEmptyCommand;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
@@ -15,6 +16,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.exception.InvalidOrderTableException;
 import kitchenpos.support.cleaner.ApplicationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -67,9 +69,7 @@ class TableServiceTest {
         @Test
         @DisplayName("OrderTable이 존재하지 않으면 예외가 발생한다.")
         void orderTableNotFoundFailed() {
-            OrderTable orderTable = orderTableRepository.save(new OrderTable(10, true));
-
-            assertThatThrownBy(() -> tableService.changeEmpty(0L, orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(0L, new OrderTableEmptyCommand(true)))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("주문 테이블을 찾을 수 없습니다.");
         }
@@ -81,8 +81,8 @@ class TableServiceTest {
             OrderTable orderTable2 = orderTableRepository.save(new OrderTable(10, true));
             tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), orderTable1))
-                    .isInstanceOf(IllegalArgumentException.class)
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), new OrderTableEmptyCommand(true)))
+                    .isInstanceOf(InvalidOrderTableException.class)
                     .hasMessage("이미 테이블 그룹에 속해있습니다.");
         }
 
@@ -93,7 +93,8 @@ class TableServiceTest {
             OrderTableResponse orderTableResponse = tableService.create(new OrderTableCreateCommand(10, false));
             orderRepository.save(new Order(orderTableResponse.id(), orderStatus.name(), LocalDateTime.now()));
 
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableResponse.id(), new OrderTable(11, true)))
+            assertThatThrownBy(
+                    () -> tableService.changeEmpty(orderTableResponse.id(), new OrderTableEmptyCommand(true)))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("현재 조리 / 식사 중입니다.");
         }
@@ -101,10 +102,11 @@ class TableServiceTest {
         @Test
         @DisplayName("정상적인 경우 성공한다.")
         void changeEmpty() {
-            OrderTable orderTable = tableService.create(new OrderTable(10, true));
-            OrderTable changedOrderTable = tableService.changeEmpty(orderTable.getId(), orderTable);
+            OrderTableResponse orderTableResponse = tableService.create(new OrderTableCreateCommand(10, true));
+            OrderTableResponse updatedResponse = tableService.changeEmpty(orderTableResponse.id(),
+                    new OrderTableEmptyCommand(false));
 
-            assertThat(changedOrderTable.isEmpty()).isTrue();
+            assertThat(updatedResponse.empty()).isFalse();
         }
     }
 

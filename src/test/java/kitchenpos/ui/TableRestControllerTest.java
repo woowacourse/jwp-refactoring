@@ -12,8 +12,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 import kitchenpos.application.dto.request.OrderTableCreateCommand;
+import kitchenpos.application.dto.request.OrderTableEmptyCommand;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.OrderTableEmptyRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -51,14 +53,14 @@ class TableRestControllerTest extends ControllerTest {
     @Test
     @DisplayName("비어있는 상태로 변경한다.")
     void changeEmpty() throws Exception {
-        OrderTable orderTable = new OrderTable(1L, 1L, 10, true);
-        given(tableService.changeEmpty(anyLong(), any(OrderTable.class))).willReturn(orderTable);
+        OrderTableResponse orderTableResponse = new OrderTableResponse(1L, 1L, 10, true);
+        given(tableService.changeEmpty(anyLong(), any(OrderTableEmptyCommand.class))).willReturn(orderTableResponse);
 
         mockMvc.perform(put("/api/tables/1/empty")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(orderTable)))
+                        .content(objectMapper.writeValueAsString(new OrderTableEmptyRequest(true))))
                 .andExpectAll(status().isOk(),
-                        content().string(objectMapper.writeValueAsString(orderTable)));
+                        content().string(objectMapper.writeValueAsString(orderTableResponse)));
     }
 
     @Test

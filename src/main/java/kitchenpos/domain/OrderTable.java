@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import kitchenpos.exception.InvalidOrderTableException;
 
 @Entity
 @Table(name = "order_table")
@@ -50,6 +51,17 @@ public class OrderTable {
     public void ungroup() {
         tableGroupId = null;
         empty = false;
+    }
+
+    public void changeEmpty(final boolean empty) {
+        validateAffiliatedTable();
+        this.empty = empty;
+    }
+
+    private void validateAffiliatedTable() {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new InvalidOrderTableException("이미 테이블 그룹에 속해있습니다.");
+        }
     }
 
     public Long getId() {

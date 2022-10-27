@@ -1,7 +1,9 @@
 package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import kitchenpos.exception.InvalidOrderTableException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,6 +36,30 @@ class OrderTableTest {
             OrderTable orderTable = new OrderTable(10, true);
 
             assertThat(orderTable.isUsing()).isFalse();
+        }
+    }
+
+    @Nested
+    @DisplayName("OrderTable의 비어있는 여부를 변경할 때 ")
+    class ChangeEmptyTest {
+
+        @Test
+        @DisplayName("이미 테이블 그룹에 속해있으면 예외가 발생한다.")
+        void alreadyJoinedFailed() {
+            OrderTable orderTable = new OrderTable(1L, 10, true);
+
+            assertThatThrownBy(() -> orderTable.changeEmpty(false))
+                    .isInstanceOf(InvalidOrderTableException.class)
+                    .hasMessage("이미 테이블 그룹에 속해있습니다.");
+        }
+
+        @Test
+        @DisplayName("정상적인 경우 성공한다.")
+        void changeEmpty() {
+            OrderTable orderTable = new OrderTable(10, true);
+            orderTable.changeEmpty(false);
+
+            assertThat(orderTable.isEmpty()).isFalse();
         }
     }
 }
