@@ -30,10 +30,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse create(final OrderTableCreateRequest request) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(request.getNumberOfGuests());
-        orderTable.setEmpty(request.isEmpty());
-
+        final OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
         return toResponse(orderTableDao.save(orderTable));
     }
 
@@ -58,7 +55,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(request.isEmpty());
+        savedOrderTable.changeEmpty(request.isEmpty());
 
         return toResponse(orderTableDao.save(savedOrderTable));
     }
@@ -78,7 +75,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
+        savedOrderTable.changeNumberOfGuests(numberOfGuests);
 
         return toResponse(orderTableDao.save(savedOrderTable));
     }

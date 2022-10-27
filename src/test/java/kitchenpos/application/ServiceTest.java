@@ -103,9 +103,7 @@ abstract class ServiceTest {
     }
 
     protected OrderTable saveOrderTable(final int numberOfGuests, final boolean empty) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
+        final OrderTable orderTable = new OrderTable(numberOfGuests, empty);
         return orderTableDao.save(orderTable);
     }
 
@@ -126,8 +124,10 @@ abstract class ServiceTest {
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(savedTableGroup.getId());
-            orderTableDao.save(orderTable);
+            final OrderTable saved = new OrderTable(orderTable.getId(), savedTableGroup.getId(),
+                    orderTable.getNumberOfGuests(),
+                    orderTable.isEmpty());
+            orderTableDao.save(saved);
         }
 
         return savedTableGroup;

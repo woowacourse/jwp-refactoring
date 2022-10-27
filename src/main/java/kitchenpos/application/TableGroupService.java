@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -66,14 +67,17 @@ public class TableGroupService {
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
-            savedOrderTable.setEmpty(false);
-            orderTableDao.save(savedOrderTable);
-        }
-        savedTableGroup.setOrderTables(savedOrderTables);
 
-        final List<OrderTableResponse> orderTableResponses = savedOrderTables.stream()
+        final List<OrderTable> updatedOrderTables = new ArrayList<>();
+        for (final OrderTable savedOrderTable : savedOrderTables) {
+            final OrderTable orderTable = new OrderTable(savedOrderTable.getId(), tableGroupId,
+                    savedOrderTable.getNumberOfGuests(), false);
+            orderTableDao.save(orderTable);
+            updatedOrderTables.add(orderTable);
+        }
+        savedTableGroup.setOrderTables(updatedOrderTables);
+
+        final List<OrderTableResponse> orderTableResponses = updatedOrderTables.stream()
                 .map(it -> new OrderTableResponse(it.getId(), tableGroupId, it.getNumberOfGuests(), it.isEmpty()))
                 .collect(Collectors.toList());
         return new TableGroupResponse(savedTableGroup.getId(), savedTableGroup.getCreatedDate(), orderTableResponses);
@@ -93,9 +97,8 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
-            orderTableDao.save(orderTable);
+            final OrderTable updated = new OrderTable(orderTable.getId(), orderTable.getNumberOfGuests(), false);
+            orderTableDao.save(updated);
         }
     }
 }
