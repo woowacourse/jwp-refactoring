@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -22,7 +21,7 @@ public class TableGroup {
 
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "tableGroup", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     private List<OrderTable> orderTables = new ArrayList<>();
 
     public TableGroup() {
@@ -48,14 +47,13 @@ public class TableGroup {
 
     private void groupOrderTables(List<OrderTable> orderTables) {
         for (OrderTable orderTable : orderTables) {
-            validate(orderTable);
-            orderTable.changeTableGroup(this);
+            orderTable.beGrouped(this);
         }
     }
 
-    private void validate(OrderTable orderTable) {
-        if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
+    public void ungroupOrderTables() {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.beUngrouped();
         }
     }
 
@@ -71,15 +69,7 @@ public class TableGroup {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 }

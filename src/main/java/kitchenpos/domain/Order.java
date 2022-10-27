@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,7 +29,9 @@ public class Order {
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
 
-    private String orderStatus;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
+
     private LocalDateTime orderedTime;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -37,7 +41,7 @@ public class Order {
     protected Order() {
     }
 
-    public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         validateOrderTable(orderTable);
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
@@ -52,18 +56,22 @@ public class Order {
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
-            throw new IllegalStateException();
+        validateNotCompleted();
+        this.orderStatus = orderStatus;
+    }
+
+    private void validateNotCompleted() {
+        if (orderStatus.isCompleted()) {
+            throw new IllegalStateException("주문이 이미 완료 상태입니다.");
         }
-        this.orderStatus = orderStatus.name();
+    }
+
+    public boolean isCompleted() {
+        return this.orderStatus.isCompleted();
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public OrderTable getOrderTable() {
@@ -71,7 +79,7 @@ public class Order {
     }
 
     public String getOrderStatus() {
-        return orderStatus;
+        return orderStatus.name();
     }
 
     public LocalDateTime getOrderedTime() {

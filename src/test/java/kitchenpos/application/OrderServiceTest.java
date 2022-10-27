@@ -153,7 +153,7 @@ class OrderServiceTest {
     @Test
     void changeOrderStatusWithAlreadyCompletedStatus() {
         // given
-        String orderStatus = OrderStatus.COMPLETION.name();
+        OrderStatus orderStatus = OrderStatus.COMPLETION;
         Order savedOrder = orderRepository.save(createOrder(orderStatus));
 
         // when

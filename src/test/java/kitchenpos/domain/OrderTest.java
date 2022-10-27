@@ -14,7 +14,7 @@ class OrderTest {
     @Test
     void constructOrder() {
         // given
-        String orderStatus = OrderStatus.COOKING.name();
+        OrderStatus orderStatus = OrderStatus.COOKING;
         LocalDateTime orderedTime = LocalDateTime.now();
         List<OrderLineItem> orderLineItems = List.of();
         // when
@@ -42,7 +42,7 @@ class OrderTest {
     @Test
     void changeOrderStatusWithAlreadyCompletionStatus() {
         // given
-        Order order = createOrder(OrderStatus.COMPLETION.name());
+        Order order = createOrder(OrderStatus.COMPLETION);
         // when & then
         assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.MEAL))
                 .isInstanceOf(IllegalStateException.class);

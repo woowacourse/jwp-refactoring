@@ -18,18 +18,18 @@ public class OrderFixtures {
     }
 
     public static Order createOrder() {
-        return createOrder(OrderStatus.COOKING.name());
+        return createOrder(OrderStatus.COOKING);
     }
 
     public static Order createOrder(OrderTable orderTable) {
-        return createOrder(orderTable, OrderStatus.COOKING.name());
+        return createOrder(orderTable, OrderStatus.COOKING);
     }
 
-    public static Order createOrder(String orderStatus) {
+    public static Order createOrder(OrderStatus orderStatus) {
         return createOrder(OrderTableFixtures.createOrderTable(1L, null, 2, false), orderStatus);
     }
 
-    public static Order createOrder(OrderTable orderTable, String orderStatus) {
+    public static Order createOrder(OrderTable orderTable, OrderStatus orderStatus) {
         return new Order(orderTable, orderStatus, LocalDateTime.now(), List.of(new OrderLineItem(1L, 2)));
     }
 

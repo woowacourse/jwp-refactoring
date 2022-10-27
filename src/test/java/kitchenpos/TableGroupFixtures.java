@@ -14,7 +14,7 @@ public class TableGroupFixtures {
     }
 
     public static TableGroup createTableGroup() {
-        return new TableGroup(0L, LocalDateTime.now(), List.of(createOrderTable(), createOrderTable()));
+        return new TableGroup(null, LocalDateTime.now(), List.of(createOrderTable(), createOrderTable()));
     }
 
     public static TableGroup createTableGroup(Long id, LocalDateTime createdDateTime, List<OrderTable> orderTables) {

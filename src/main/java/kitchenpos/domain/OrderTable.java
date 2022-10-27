@@ -76,10 +76,28 @@ public class OrderTable {
         }
     }
 
-    public void changeTableGroup(TableGroup tableGroup) {
-        // todo : check if table group should be null before allocation
+    public void beGrouped(TableGroup tableGroup) {
+        validateEmpty();
         this.empty = false;
         this.tableGroup = tableGroup;
+    }
+
+    private void validateEmpty() {
+        if (!this.empty || this.tableGroup != null) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void beUngrouped() {
+        validateOrderCompleted();
+        this.tableGroup = null;
+        this.empty = false;
+    }
+
+    private void validateOrderCompleted() {
+        if (getOrders().stream().anyMatch(order -> !order.isCompleted())) {
+            throw new IllegalStateException("완료되지 않은 주문이 있습니다.");
+        }
     }
 
     public Long getId() {
@@ -90,27 +108,15 @@ public class OrderTable {
         return tableGroup;
     }
 
+    public List<Order> getOrders() {
+        return orders;
+    }
+
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setTableGroupId(Long tableGroupId) {
-        this.tableGroup = tableGroup;
-    }
-
-    public void setNumberOfGuests(int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    public void setEmpty(boolean empty) {
-        this.empty = empty;
     }
 }

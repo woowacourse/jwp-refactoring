@@ -43,7 +43,7 @@ public class OrderService {
 
         Order order = new Order(
                 orderTable,
-                OrderStatus.COOKING.name(),
+                OrderStatus.COOKING,
                 LocalDateTime.now(),
                 itemRequests.stream()
                         .map(OrderLineItemRequest::toOrderLineItem)

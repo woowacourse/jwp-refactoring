@@ -8,6 +8,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
+import kitchenpos.OrderTableFixtures;
 import kitchenpos.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.dao.OrderRepository;
@@ -108,17 +110,19 @@ class TableGroupServiceTest {
     }
 
     @Test
-    void ungroupWithCookingStatus() {
+    void ungroupWithCookingStatus(@Autowired EntityManager entityManager) {
         // given
         TableGroup savedTableGroup = tableGroupRepository.save(createTableGroup());
         int any = 0;
         OrderTable orderTable = savedTableGroup.getOrderTables().get(any);
 
-        Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), null);
+        Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), null);
         orderRepository.save(order);
+        entityManager.flush();
+        entityManager.clear();
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalStateException.class);
     }
 }
