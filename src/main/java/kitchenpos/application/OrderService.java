@@ -38,15 +38,15 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order requestOrder) {
-        validateOrderLineItems(requestOrder.getOrderLineItems());
+    public Order create(final Order request) {
+        validateOrderLineItems(request.getOrderLineItems());
 
-        final OrderTable orderTable = orderTableDao.findById(requestOrder.getOrderTableId())
+        final OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
         validateOrderTableNotEmpty(orderTable);
 
-        final Order order = saveOrder(requestOrder, orderTable);
-        final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(order.getId(), requestOrder);
+        final Order order = saveOrder(request, orderTable);
+        final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(order.getId(), request);
         order.addOrderLineItems(savedOrderLineItems);
 
         return order;
