@@ -1,5 +1,12 @@
 package kitchenpos.application;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -7,13 +14,6 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class MenuService {
@@ -62,12 +62,11 @@ public class MenuService {
         final Menu savedMenu = menuDao.save(menu);
 
         final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
             menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
+            MenuProduct savedMenuProduct = menuProductDao.save(menuProduct);
+            savedMenu.addMenuProduct(savedMenuProduct);
         }
-        savedMenu.setMenuProducts(savedMenuProducts);
 
         return savedMenu;
     }
@@ -76,9 +75,16 @@ public class MenuService {
         final List<Menu> menus = menuDao.findAll();
 
         for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+            addAllMenuProducts(menu);
         }
 
         return menus;
+    }
+
+    private void addAllMenuProducts(Menu menu) {
+        List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(menu.getId());
+        for (MenuProduct menuProduct : menuProducts) {
+            menu.addMenuProduct(menuProduct);
+        }
     }
 }

@@ -67,8 +67,7 @@ class MenuServiceTest {
         @Test
         void throwExceptionWithNullPrice() {
             BigDecimal price = null;
-            Menu menu = 후라이드_양념치킨_두마리세트.toMenu(두마리메뉴.getId(), 후라이드.getId(), 양념치킨.getId());
-            menu.setPrice(price);
+            Menu menu = 후라이드_양념치킨_두마리세트.toMenu(price, 두마리메뉴.getId(), 후라이드.getId(), 양념치킨.getId());
 
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -78,8 +77,7 @@ class MenuServiceTest {
         @Test
         void throwExceptionWithNegativePrice() {
             BigDecimal price = new BigDecimal(-1);
-            Menu menu = 후라이드_양념치킨_두마리세트.toMenu(두마리메뉴.getId(), 후라이드.getId(), 양념치킨.getId());
-            menu.setPrice(price);
+            Menu menu = 후라이드_양념치킨_두마리세트.toMenu(price, 두마리메뉴.getId(), 후라이드.getId(), 양념치킨.getId());
 
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -110,8 +108,7 @@ class MenuServiceTest {
         void throwExceptionWithTooBigPrice() {
             // product1: 후라이드 16000원, product2: 양념치킨 16000원 => 단일 상품 가격 총합: 32000원
             BigDecimal price = new BigDecimal(40_000);
-            Menu menu = 후라이드_양념치킨_두마리세트.toMenu(두마리메뉴.getId(), 후라이드.getId(), 양념치킨.getId());
-            menu.setPrice(price);
+            Menu menu = 후라이드_양념치킨_두마리세트.toMenu(price, 두마리메뉴.getId(), 후라이드.getId(), 양념치킨.getId());
 
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);

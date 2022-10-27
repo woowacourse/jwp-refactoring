@@ -1,9 +1,6 @@
 package kitchenpos.fixture;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
@@ -22,12 +19,20 @@ public enum MenuFixture {
     }
 
     public Menu toMenu(Long menuGroupId, Long... productIds) {
-        return new Menu(name, price, menuGroupId, createMenuProducts(productIds));
+        Menu menu = new Menu(name, price, menuGroupId);
+        addMenuProducts(menu, productIds);
+        return menu;
     }
 
-    private List<MenuProduct> createMenuProducts(Long... productIds) {
-        return Arrays.stream(productIds)
-                .map(id -> new MenuProduct(id, 1))
-                .collect(Collectors.toList());
+    public Menu toMenu(BigDecimal price, Long menuGroupId, Long... productIds) {
+        Menu menu = new Menu(name, price, menuGroupId);
+        addMenuProducts(menu, productIds);
+        return menu;
+    }
+
+    private static void addMenuProducts(Menu menu, Long[] productIds) {
+        for (Long productId : productIds) {
+            menu.addMenuProduct(new MenuProduct(productId, 1));
+        }
     }
 }
