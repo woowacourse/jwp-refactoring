@@ -20,11 +20,22 @@ public class ProductServiceTest {
     @Autowired
     private ProductService productService;
 
-    @DisplayName("product 가격이 null이거나 0보다 작은 경우 예외가 발생한다.")
+    @DisplayName("product 가격이 0보다 작은 경우 예외가 발생한다.")
     @Test
-    void create_ifPriceIsNullOrMinus_throwsException() {
+    void create_ifPriceIsNegative_throwsException() {
         // given
         final Product product = new Product("후라이드", BigDecimal.valueOf(-1000));
+
+        // when, then
+        assertThatThrownBy(() -> productService.create(product))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("product 가격이 null인 경우 예외가 발생한다.")
+    @Test
+    void create_ifPriceIsNull_throwsException() {
+        // given
+        final Product product = new Product("후라이드", null);
 
         // when, then
         assertThatThrownBy(() -> productService.create(product))
