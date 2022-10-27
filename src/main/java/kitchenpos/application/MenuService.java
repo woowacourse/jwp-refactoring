@@ -67,13 +67,8 @@ public class MenuService {
         final Menu savedMenu = menuDao.save(menu);
 
         final List<MenuProductResponse> menuProductResponses = menuProducts.stream()
-                .map(it -> {
-                    final MenuProduct menuProduct = new MenuProduct();
-                    menuProduct.setMenuId(savedMenu.getId());
-                    menuProduct.setQuantity(it.getQuantity());
-                    menuProduct.setProductId(it.getProductId());
-                    return menuProduct;
-                }).map(menuProductDao::save)
+                .map(it -> new MenuProduct(savedMenu.getId(), it.getProductId(), it.getQuantity()))
+                .map(menuProductDao::save)
                 .map(it -> new MenuProductResponse(it.getSeq(), it.getMenuId(), it.getProductId(), it.getQuantity()))
                 .collect(Collectors.toList());
 

@@ -3,7 +3,9 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
@@ -89,14 +91,9 @@ abstract class ServiceTest {
     }
 
     protected List<MenuProduct> getMenuProducts(final Pair<Product, Long>... pairs) {
-        final List<MenuProduct> menuProducts = new ArrayList<>();
-        for (final Pair<Product, Long> pair : pairs) {
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProductId(pair.getFirst().getId());
-            menuProduct.setQuantity(pair.getSecond());
-            menuProducts.add(menuProduct);
-        }
-        return menuProducts;
+        return Arrays.stream(pairs)
+                .map(pair -> new MenuProduct(pair.getFirst().getId(), pair.getSecond()))
+                .collect(Collectors.toList());
     }
 
     protected Menu saveMenu(final String name, final BigDecimal price, final MenuGroup menuGroup,
