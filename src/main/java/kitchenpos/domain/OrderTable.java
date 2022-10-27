@@ -79,4 +79,11 @@ public class OrderTable {
                 ", empty=" + empty +
                 '}';
     }
+
+    public void changeEmpty(boolean isEmpty) {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
+        this.empty = isEmpty;
+    }
 }
