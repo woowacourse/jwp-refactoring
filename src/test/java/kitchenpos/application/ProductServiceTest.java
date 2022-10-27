@@ -3,10 +3,13 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import java.util.List;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductCreateRequest;
+import kitchenpos.dto.ProductResponse;
+import kitchenpos.dto.ProductsResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -18,25 +21,27 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void 입력받은_상품을_저장한다() {
             // given
-            Product newProduct = new Product("상품 1", BigDecimal.valueOf(10000));
+            ProductCreateRequest product = new ProductCreateRequest("상품 1", BigDecimal.valueOf(10000));
 
             // when
-            final Product savedProduct = productService.create(newProduct);
+            ProductResponse response = productService.create(product);
 
             // then
-            List<Product> products = productService.list();
-            assertThat(products)
-                    .extracting(Product::getId, Product::getName, (product) -> product.getPrice().intValue())
-                    .contains(tuple(savedProduct.getId(), newProduct.getName(), newProduct.getPrice().intValue()));
+            assertAll(() -> {
+                assertThat(response.getId()).isNotNull();
+                assertThat(response)
+                        .extracting(ProductResponse::getName, productResponse -> productResponse.getPrice().intValue())
+                        .containsExactly(product.getName(), product.getPrice().intValue());
+            });
         }
 
         @Test
         void 상품_가격이_음수면_예외가_발생한다() {
             // given
-            Product product = new Product("상품 1", BigDecimal.valueOf(-1));
+            ProductCreateRequest request = new ProductCreateRequest("상품 1", BigDecimal.valueOf(-1));
 
             // when & then
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -48,12 +53,12 @@ class ProductServiceTest extends ServiceTest {
         Product product2 = 상품을_저장한다("상품2", 20000);
 
         // when
-        final List<Product> products = productService.list();
+        ProductsResponse products = productService.list();
 
         // then
-        assertThat(products).hasSize(2)
-                .extracting(Product::getId, Product::getName, Product::getPrice)
-                .contains(tuple(product1.getId(), product1.getName(), product1.getPrice()),
-                        tuple(product2.getId(), product2.getName(), product2.getPrice()));
+        assertThat(products.getProducts()).hasSize(2)
+                .extracting(ProductResponse::getName, ProductResponse::getPrice)
+                .contains(tuple(product1.getName(), product1.getPrice()),
+                        tuple(product2.getName(), product2.getPrice()));
     }
 }
