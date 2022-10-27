@@ -12,11 +12,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -39,13 +39,13 @@ class OrderServiceTest {
     private OrderDao orderDao;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
     private OrderLineItemDao orderLineItemDao;
@@ -201,11 +201,11 @@ class OrderServiceTest {
     }
 
     private Menu createMenu(final String name, final BigDecimal price) {
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(MENU_GROUP_NAME1));
-        return menuDao.save(new Menu(name, price, menuGroup.getId()));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP_NAME1));
+        return menuRepository.save(new Menu(name, price, menuGroup.getId()));
     }
 
     private OrderTable createOrderTable(final boolean empty) {
-        return orderTableDao.save(new OrderTable(10, empty));
+        return orderTableRepository.save(new OrderTable(10, empty));
     }
 }

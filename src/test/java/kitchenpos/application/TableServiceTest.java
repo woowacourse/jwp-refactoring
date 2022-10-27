@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -31,7 +31,7 @@ class TableServiceTest {
     private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private OrderDao orderDao;
@@ -65,7 +65,7 @@ class TableServiceTest {
         @Test
         @DisplayName("OrderTable이 존재하지 않으면 예외가 발생한다.")
         void orderTableNotFoundFailed() {
-            OrderTable orderTable = orderTableDao.save(new OrderTable(10, true));
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(10, true));
 
             assertThatThrownBy(() -> tableService.changeEmpty(0L, orderTable))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -75,8 +75,8 @@ class TableServiceTest {
         @Test
         @DisplayName("OrderTable이 테이블 그룹에 속해있지 않을 경우 예외가 발생한다.")
         void orderTableNotInTableGroupFailed() {
-            OrderTable orderTable1 = orderTableDao.save(new OrderTable(10, true));
-            OrderTable orderTable2 = orderTableDao.save(new OrderTable(10, true));
+            OrderTable orderTable1 = orderTableRepository.save(new OrderTable(10, true));
+            OrderTable orderTable2 = orderTableRepository.save(new OrderTable(10, true));
             tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), orderTable1))

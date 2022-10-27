@@ -13,6 +13,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -30,6 +31,7 @@ class MenuRepositoryTest {
     private ProductRepository productRepository;
 
     @Test
+    @DisplayName("모두 조회한다.")
     void findAllFetch() {
         Product product = productRepository.save(new Product(PRODUCT1_NAME, PRODUCT1_PRICE));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP_NAME1));
@@ -43,5 +45,14 @@ class MenuRepositoryTest {
                 () -> assertThat(menus).hasSize(1),
                 () -> assertThat(menus.get(0).getMenuProducts().size()).isEqualTo(1)
         );
+    }
+
+    @Test
+    @DisplayName("숫자를 센다.")
+    void countByIdIn() {
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP_NAME1));
+
+        Menu menu = menuRepository.save(new Menu(MENU1_NAME, MENU1_PRICE, menuGroup.getId()));
+        assertThat(menuRepository.countByIdIn(List.of(menu.getMenuGroupId()))).isEqualTo(1);
     }
 }

@@ -14,4 +14,6 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
 
     @EntityGraph(attributePaths = {"menuProducts"}, type = EntityGraphType.LOAD)
     List<Menu> findAll();
+
+    long countByIdIn(List<Long> ids);
 }

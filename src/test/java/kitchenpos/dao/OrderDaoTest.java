@@ -16,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 class OrderDaoTest extends DaoTest {
 
     private OrderDao orderDao;
-    private OrderTableDao orderTableDao;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private TableGroupRepository tableGroupRepository;
@@ -24,14 +26,13 @@ class OrderDaoTest extends DaoTest {
     @BeforeEach
     void setUp() {
         orderDao = new JdbcTemplateOrderDao(dataSource);
-        orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
     }
 
     @Test
     @DisplayName("Order를 저장한다.")
     void save() {
-        OrderTable orderTable1 = orderTableDao.save(new OrderTable(10, true));
-        OrderTable orderTable2 = orderTableDao.save(new OrderTable(10, true));
+        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(10, true));
+        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(10, true));
         tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
         Order order = orderDao.save(new Order(orderTable1.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
@@ -41,8 +42,8 @@ class OrderDaoTest extends DaoTest {
     @Test
     @DisplayName("모든 Order를 조회한다.")
     void findAll() {
-        OrderTable orderTable1 = orderTableDao.save(new OrderTable(10, true));
-        OrderTable orderTable2 = orderTableDao.save(new OrderTable(10, true));
+        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(10, true));
+        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(10, true));
         tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
         Order order1 = orderDao.save(new Order(orderTable1.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
@@ -55,8 +56,8 @@ class OrderDaoTest extends DaoTest {
     @Test
     @DisplayName("OrderTableId와 OrderStatus 내에 Order가 존재하는지 확인한다.")
     void existsByOrderTableIdAndOrderStatusIn() {
-        OrderTable orderTable1 = orderTableDao.save(new OrderTable(10, true));
-        OrderTable orderTable2 = orderTableDao.save(new OrderTable(10, true));
+        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(10, true));
+        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(10, true));
         tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
         orderDao.save(new Order(orderTable1.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
@@ -70,8 +71,8 @@ class OrderDaoTest extends DaoTest {
     @Test
     @DisplayName("OrderTableId 중 하나 이상의 id와 OrderStatus 중 하나 이상의 상태에 Order가 존재하는지 확인한다.")
     void existsByOrderTableIdInAndOrderStatusIn() {
-        OrderTable orderTable1 = orderTableDao.save(new OrderTable(10, true));
-        OrderTable orderTable2 = orderTableDao.save(new OrderTable(10, true));
+        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(10, true));
+        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(10, true));
         tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
         orderDao.save(new Order(orderTable1.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));

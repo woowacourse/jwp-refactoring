@@ -23,7 +23,9 @@ class OrderLineItemDaoTest extends DaoTest {
 
     private OrderLineItemDao orderLineItemDao;
     private OrderDao orderDao;
-    private OrderTableDao orderTableDao;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private TableGroupRepository tableGroupRepository;
@@ -38,7 +40,6 @@ class OrderLineItemDaoTest extends DaoTest {
     void setUp() {
         orderLineItemDao = new JdbcTemplateOrderLineItemDao(dataSource);
         orderDao = new JdbcTemplateOrderDao(dataSource);
-        orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
     }
 
     @Test
@@ -83,8 +84,8 @@ class OrderLineItemDaoTest extends DaoTest {
     }
 
     private Order createOrder() {
-        OrderTable orderTable1 = orderTableDao.save(new OrderTable(10, true));
-        OrderTable orderTable2 = orderTableDao.save(new OrderTable(10, true));
+        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(10, true));
+        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(10, true));
         tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
         return orderDao.save(new Order(orderTable1.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
     }

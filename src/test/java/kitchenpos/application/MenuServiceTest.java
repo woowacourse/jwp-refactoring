@@ -17,7 +17,7 @@ import java.util.List;
 import kitchenpos.application.dto.request.MenuCommand;
 import kitchenpos.application.dto.request.MenuProductCommand;
 import kitchenpos.application.dto.response.MenuResponse;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
@@ -34,7 +34,7 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -46,7 +46,7 @@ class MenuServiceTest {
         @Test
         @DisplayName("가격이 음수일 경우 실패한다.")
         void priceNegativeFailed() {
-            MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(MENU_GROUP_NAME1));
+            MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP_NAME1));
             MenuCommand menuCommand = new MenuCommand(MENU1_NAME, BigDecimal.valueOf(-1000), menuGroup.getId(),
                     Collections.emptyList());
             assertThatThrownBy(
@@ -67,7 +67,7 @@ class MenuServiceTest {
         @Test
         @DisplayName("Product가 존재하지 않을 경우 실패한다.")
         void productNotFoundFailed() {
-            MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(MENU_GROUP_NAME1));
+            MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP_NAME1));
             MenuCommand menuCommand = new MenuCommand(MENU1_NAME, MENU1_PRICE, menuGroup.getId(),
                     List.of(new MenuProductCommand(0L, 1)));
 
@@ -79,7 +79,7 @@ class MenuServiceTest {
         @Test
         @DisplayName("Product가격의 합보다 메뉴 가격이 높을 경우 실패한다.")
         void priceIsOverProductPriceSumFailed() {
-            MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(MENU_GROUP_NAME1));
+            MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP_NAME1));
             Product product = productRepository.save(new Product(PRODUCT1_NAME, PRODUCT1_PRICE));
             MenuCommand menuCommand = new MenuCommand(MENU2_NAME, MENU2_PRICE, menuGroup.getId(),
                     List.of(new MenuProductCommand(product.getId(), 1)));
@@ -92,7 +92,7 @@ class MenuServiceTest {
         @Test
         @DisplayName("메뉴를 생성한다.")
         void createMenu() {
-            MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(MENU_GROUP_NAME1));
+            MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP_NAME1));
             Product product = productRepository.save(new Product(PRODUCT1_NAME, PRODUCT1_PRICE));
             MenuCommand menuCommand = new MenuCommand(MENU1_NAME, MENU1_PRICE, menuGroup.getId(),
                     List.of(new MenuProductCommand(product.getId(), 1)));
@@ -110,7 +110,7 @@ class MenuServiceTest {
     @Test
     @DisplayName("모든 메뉴를 조회한다.")
     void list() {
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(MENU_GROUP_NAME1));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP_NAME1));
         Product product = productRepository.save(new Product(PRODUCT1_NAME, PRODUCT1_PRICE));
         MenuCommand menuCommand = new MenuCommand(MENU1_NAME, MENU1_PRICE, menuGroup.getId(),
                 List.of(new MenuProductCommand(product.getId(), 1)));
