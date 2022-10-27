@@ -5,22 +5,25 @@ import kitchenpos.application.dto.request.ProductCommand;
 import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
+@Transactional
 public class ProductService {
 
     private final ProductRepository productRepository;
 
-    @Transactional
+    public ProductService(final ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
     public ProductResponse create(final ProductCommand productCommand) {
         Product product = productRepository.save(productCommand.toEntity());
         return ProductResponse.from(product);
     }
 
+    @Transactional(readOnly = true)
     public List<ProductResponse> list() {
         return productRepository.findAll()
                 .stream()

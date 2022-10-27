@@ -7,18 +7,21 @@ import kitchenpos.dao.MenuRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.MenuValidator;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
+@Transactional
 public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuValidator menuValidator;
 
-    @Transactional
+    public MenuService(final MenuRepository menuRepository, final MenuValidator menuValidator) {
+        this.menuRepository = menuRepository;
+        this.menuValidator = menuValidator;
+    }
+
     public MenuResponse create(final MenuCommand menuCommand) {
         Menu menu = menuCommand.toEntity();
         MenuProducts menuProducts = menuCommand.toMenuProducts();
