@@ -36,6 +36,10 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
+    public boolean isCompletion() {
+        return orderStatus == OrderStatus.COMPLETION;
+    }
+
     public Long getId() {
         return id;
     }

@@ -103,21 +103,23 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
-        final Order savedOrder = orderDao.findById(orderId)
+    public Order changeOrderStatus(final Long orderId, final OrderStatus orderStatus) {
+        final Order order = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (OrderStatus.COMPLETION == savedOrder.getOrderStatus()) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderStatus(order);
 
-        final OrderStatus orderStatus = order.getOrderStatus();
-        savedOrder.changeOrderStatus(orderStatus);
+        order.changeOrderStatus(orderStatus);
 
-        orderDao.save(savedOrder);
-
+        Order savedOrder = orderDao.save(order);
         savedOrder.addOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
 
         return savedOrder;
+    }
+
+    private void validateOrderStatus(final Order order) {
+        if (order.isCompletion()) {
+            throw new IllegalArgumentException();
+        }
     }
 }

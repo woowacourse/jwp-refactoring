@@ -115,7 +115,7 @@ class OrderServiceTest extends ServiceTestBase {
         savedOrder.changeOrderStatus(changedStatus);
 
         // when
-        orderService.changeOrderStatus(savedOrder.getId(), savedOrder);
+        orderService.changeOrderStatus(savedOrder.getId(), changedStatus);
 
         // then
         Optional<Order> actual = orderDao.findById(savedOrder.getId());
@@ -131,7 +131,7 @@ class OrderServiceTest extends ServiceTestBase {
         orderService.create(order);
 
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(100L, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(100L, order.getOrderStatus()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -146,7 +146,7 @@ class OrderServiceTest extends ServiceTestBase {
         orderDao.save(savedOrder);
 
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), savedOrder))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), savedOrder.getOrderStatus()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
