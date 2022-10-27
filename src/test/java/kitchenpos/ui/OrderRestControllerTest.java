@@ -45,14 +45,14 @@ class OrderRestControllerTest extends ControllerTest {
     @Test
     @DisplayName("Order를 모두 조회한다.")
     void list() throws Exception {
-        Order order1 = createOrder(1L);
-        Order order2 = createOrder(2L);
-        List<Order> orders = List.of(order1, order2);
+        OrderResponse orderResponse1 = createOrderResponse(1L);
+        OrderResponse orderResponse2 = createOrderResponse(2L);
+        List<OrderResponse> orderResponses = List.of(orderResponse1, orderResponse2);
 
-        given(orderService.list()).willReturn(orders);
+        given(orderService.list()).willReturn(orderResponses);
         mockMvc.perform(get("/api/orders"))
                 .andExpectAll(status().isOk(),
-                        content().string(objectMapper.writeValueAsString(orders)));
+                        content().string(objectMapper.writeValueAsString(orderResponses)));
     }
 
     @Test

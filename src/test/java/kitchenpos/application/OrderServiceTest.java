@@ -145,7 +145,7 @@ class OrderServiceTest {
                 new OrderLineItemCommand(menu2.getId(), 1));
         OrderCommand orderCommand = new OrderCommand(orderTable.getId(), orderLineItemCommands);
         orderService.create(orderCommand);
-        List<Order> orders = orderService.list();
+        List<OrderResponse> orders = orderService.list();
 
         assertThat(orders).hasSize(1);
     }
