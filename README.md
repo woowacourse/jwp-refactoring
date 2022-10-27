@@ -5,10 +5,8 @@
 ### 1단계 - 테스트를 통한 코드 보호
 
 - [x] 키친포스의 코드를 보고 요구사항을 파악하여 작성
-- [ ] 요구사항을 기반으로 테스트 코드를 작성
-    - [ ] 모든 Business Object에 대해 테스트 코드 작성
-    - [ ] @SpringBootTest 통합테스트
-    - [ ] @ExtendWith(MockitoExtension.class) 단위 테스트
+- [x] 요구사항을 기반으로 테스트 코드를 작성
+    - [x] 모든 Business Object에 대해 테스트 코드 작성
 
 ## 요구사항
 
