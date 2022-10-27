@@ -33,8 +33,8 @@ public class TableServiceTest {
     @ValueSource(booleans = {true, false})
     void createTable(final Boolean empty) {
         final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(5);
-        orderTable.setEmpty(empty);
+        orderTable.changeNumberOfGuests(5);
+        orderTable.changeEmpty(empty);
 
         final OrderTable actual = sut.create(orderTable);
 
