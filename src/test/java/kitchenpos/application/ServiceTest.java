@@ -78,9 +78,7 @@ abstract class ServiceTest {
     }
 
     protected Product saveProduct(final String name, final BigDecimal price) {
-        final Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
+        final Product product = new Product(name, price);
         return productDao.save(product);
     }
 
