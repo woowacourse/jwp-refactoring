@@ -9,6 +9,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,9 @@ public class MenuServiceTest extends ApplicationTest {
         Menu menu1 = 메뉴_생성(new Menu("해장 세트", BigDecimal.valueOf(15_000), menuGroup.getId(), List.of(menuProduct)));
         Menu menu2 = 메뉴_생성(new Menu("아침 세트", BigDecimal.valueOf(9_000), menuGroup.getId(), List.of(menuProduct)));
 
-        List<Menu> menus = menuService.list();
+        List<MenuResponse> menus = menuService.list();
 
-        assertThat(menus).extracting(Menu::getId, Menu::getName, p -> p.getPrice().intValueExact())
+        assertThat(menus).extracting(MenuResponse::getId, MenuResponse::getName, p -> p.getPrice().intValueExact())
                 .containsExactlyInAnyOrder(
                         tuple(menu1.getId(), "해장 세트", 15_000),
                         tuple(menu2.getId(), "아침 세트", 9_000)

@@ -21,7 +21,7 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public Menu(final long id, final String name, final BigDecimal price, final long menuGroupId) {
+    public Menu(long id, String name, BigDecimal price, long menuGroupId) {
         this(id, name, price, menuGroupId, List.of());
 
     }
@@ -38,39 +38,19 @@ public class Menu {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
     public Long getMenuGroupId() {
         return menuGroupId;
     }
 
-    public void setMenuGroupId(Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
-    }
-
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public void setMenuProducts(List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
     }
 }
