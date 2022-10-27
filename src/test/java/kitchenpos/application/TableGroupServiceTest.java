@@ -13,6 +13,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -74,9 +76,7 @@ class TableGroupServiceTest extends FakeSpringContext {
         final var coupleTable = orderTableDao.save(emptyTable(2));
         final var tripleTable = orderTableDao.save(emptyTable(3));
 
-        final var otherGroup = tableGroupDao.save(tableGroup(singleTable, coupleTable));
-        singleTable.setTableGroupId(otherGroup.getId());
-        orderTableDao.save(singleTable);
+        createTableGroupAndSave(singleTable, coupleTable);
 
         final var tableGroup = tableGroup(singleTable, tripleTable);
 
@@ -91,11 +91,7 @@ class TableGroupServiceTest extends FakeSpringContext {
         final var singleTable = orderTableDao.save(emptyTable(1));
         final var doubleTable = orderTableDao.save(emptyTable(2));
 
-        final var tableGroup = tableGroupDao.save(tableGroup(singleTable, doubleTable));
-        singleTable.setTableGroupId(tableGroup.getId());
-        doubleTable.setTableGroupId(tableGroup.getId());
-        orderTableDao.save(singleTable);
-        orderTableDao.save(doubleTable);
+        final var tableGroup = createTableGroupAndSave(singleTable, doubleTable);
 
         tableGroupService.ungroup(tableGroup.getId());
 
@@ -124,14 +120,19 @@ class TableGroupServiceTest extends FakeSpringContext {
         orderDao.save(order(singleTable, OrderStatus.MEAL, pizzaMenu));
         orderDao.save(order(doubleTable, OrderStatus.COMPLETION, cokeMenu));
 
-        final var tableGroup = tableGroupDao.save(tableGroup(singleTable, doubleTable));
-        singleTable.setTableGroupId(tableGroup.getId());
-        doubleTable.setTableGroupId(tableGroup.getId());
-        orderTableDao.save(singleTable);
-        orderTableDao.save(doubleTable);
+        final var tableGroup = createTableGroupAndSave(singleTable, doubleTable);
 
         assertThatThrownBy(
                 () -> tableGroupService.ungroup(tableGroup.getId())
         ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private TableGroup createTableGroupAndSave(final OrderTable... orderTables) {
+        final var group = tableGroupDao.save(tableGroup(orderTables));
+        for (OrderTable orderTable : orderTables) {
+            orderTable.setTableGroupId(group.getId());
+            orderTableDao.save(orderTable);
+        }
+        return group;
     }
 }
