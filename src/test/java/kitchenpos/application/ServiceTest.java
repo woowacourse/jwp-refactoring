@@ -5,16 +5,16 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.menu.MenuProductRepository;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.table.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,7 +46,7 @@ public abstract class ServiceTest {
     protected TableGroupService tableGroupService;
 
     @Autowired
-    protected MenuProductDao menuProductDao;
+    protected MenuProductRepository menuProductRepository;
 
     protected Product 토마토파스타;
     protected Product 목살스테이크;
@@ -145,7 +145,7 @@ public abstract class ServiceTest {
     }
 
     public List<MenuProduct> 메뉴_상품_조회(final Menu menu) {
-        return menuProductDao.findAllByMenuId(menu.getId());
+        return menuProductRepository.findAllByMenuId(menu.getId());
     }
 
     public OrderTable 테이블_등록() {
