@@ -43,4 +43,13 @@ class OrderTableTest {
         assertThatThrownBy(() -> orderTable.updateEmpty(true))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    @DisplayName("주문 테이블의 손님 수는 0보다 작을 수 없다")
+    void validateNumberOfGuests() {
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
+
+        assertThatThrownBy(() -> orderTable.updateNumberOfGuests(-1))
+                .isExactlyInstanceOf(IllegalArgumentException.class);
+    }
 }

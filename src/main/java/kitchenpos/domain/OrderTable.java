@@ -38,6 +38,18 @@ public class OrderTable {
         }
     }
 
+    public void updateNumberOfGuests(final int numberOfGuests) {
+        validateNumberOfGuests(numberOfGuests);
+        validateOrderable();
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Long getId() {
         return id;
     }
