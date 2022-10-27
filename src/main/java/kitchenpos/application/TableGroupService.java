@@ -48,11 +48,7 @@ public class TableGroupService {
             orderTableDao.save(savedOrderTable);
         }
 
-        return new TableGroupResponse(
-            savedTableGroup.getId(),
-            savedTableGroup.getCreatedDate(),
-            savedOrderTables.getOrderTables()
-        );
+        return TableGroupResponse.of(savedTableGroup, savedOrderTables);
     }
 
     @Transactional
