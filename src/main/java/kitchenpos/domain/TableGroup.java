@@ -19,12 +19,6 @@ public class TableGroup {
         this.createdDate = createdDate;
     }
 
-    public TableGroup(List<OrderTable> orderTables) {
-        validateOrderTables(orderTables);
-        this.createdDate = LocalDateTime.now();
-        this.orderTables = orderTables;
-    }
-
     public Long getId() {
         return id;
     }
@@ -33,15 +27,12 @@ public class TableGroup {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public List<OrderTable> getOrderTables() {
         return orderTables;
     }
 
     public void setOrderTables(final List<OrderTable> orderTables) {
+        validateOrderTables(orderTables);
         this.orderTables = orderTables;
     }
 

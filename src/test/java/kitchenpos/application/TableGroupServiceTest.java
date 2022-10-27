@@ -83,8 +83,8 @@ class TableGroupServiceTest extends ServiceTest {
         void existTableGroupId() {
             // given
             long savedGroupId = createAndSaveTableGroup().getId();
-            OrderTable orderTable1 = createAndSaveOrderTable(true, savedGroupId);
-            OrderTable orderTable2 = createAndSaveOrderTable(true, savedGroupId);
+            OrderTable orderTable1 = createAndSaveOrderTable(savedGroupId);
+            OrderTable orderTable2 = createAndSaveOrderTable(savedGroupId);
             TableGroupCreateRequest request = new TableGroupCreateRequest(
                 new ArrayList<TableGroupOrderTableCreateRequest>() {{
                     add(new TableGroupOrderTableCreateRequest(orderTable1.getId()));
@@ -109,8 +109,8 @@ class TableGroupServiceTest extends ServiceTest {
         void ungroup() {
             // given
             long savedGroupId = createAndSaveTableGroup().getId();
-            createAndSaveOrderTable(false, savedGroupId);
-            createAndSaveOrderTable(false, savedGroupId);
+            createAndSaveOrderTable(savedGroupId);
+            createAndSaveOrderTable(savedGroupId);
 
             // when
             tableGroupService.ungroup(savedGroupId);
@@ -125,8 +125,8 @@ class TableGroupServiceTest extends ServiceTest {
         void wrongTableState(String status) {
             // given
             long savedGroupId = createAndSaveTableGroup().getId();
-            OrderTable orderTable = createAndSaveOrderTable(false, savedGroupId);
-            createAndSaveOrderTable(false, savedGroupId);
+            OrderTable orderTable = createAndSaveOrderTable(savedGroupId);
+            createAndSaveOrderTable(savedGroupId);
 
             Order order = new Order(orderTable.getId());
             order.changeStatus(status);
@@ -150,9 +150,9 @@ class TableGroupServiceTest extends ServiceTest {
         return orderTableDao.save(orderTable);
     }
 
-    private OrderTable createAndSaveOrderTable(boolean empty, long tableGroupId) {
-        OrderTable orderTable = new OrderTable(10, empty);
-        orderTable.setTableGroupId(tableGroupId);
+    private OrderTable createAndSaveOrderTable(long tableGroupId) {
+        OrderTable orderTable = new OrderTable(10, true);
+        orderTable.group(tableGroupId);
 
         return orderTableDao.save(orderTable);
     }

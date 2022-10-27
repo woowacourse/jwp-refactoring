@@ -40,7 +40,7 @@ class OrderTableTest {
         void ungroup() {
             // given
             OrderTable orderTable = new OrderTable(10, true);
-            orderTable.setTableGroupId(1L);
+            orderTable.group(1L);
 
             // when
             orderTable.ungroup();

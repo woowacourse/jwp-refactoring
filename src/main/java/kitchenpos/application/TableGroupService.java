@@ -42,12 +42,12 @@ public class TableGroupService {
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty()) {
-                throw new IllegalArgumentException("비어있지 않은 테이블입니다.");
-            }
-
             if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
                 throw new IllegalArgumentException("이미 다른 그룹에 존재하는 테이블입니다.");
+            }
+
+            if (!savedOrderTable.isEmpty()) {
+                throw new IllegalArgumentException("비어있지 않은 테이블입니다.");
             }
         }
 
