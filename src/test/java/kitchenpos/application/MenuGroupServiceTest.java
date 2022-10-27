@@ -20,8 +20,7 @@ public class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 등록할 수 있다.")
     @Test
     void createMenuGroup() {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("떡잎 유치원");
+        final MenuGroup menuGroup = new MenuGroup("떡잎 유치원");
 
         final MenuGroup actual = sut.create(menuGroup);
 

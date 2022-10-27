@@ -21,20 +21,9 @@ public enum MenuGroupFixtures {
         this.name = name;
     }
 
-    public static MenuGroup 메뉴_그룹_생성(final String name) {
-        return 메뉴_그룹_생성(null, name);
-    }
-
-    private static MenuGroup 메뉴_그룹_생성(final Long id, final String name) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(id);
-        menuGroup.setName(name);
-        return menuGroup;
-    }
-
     public static List<MenuGroup> 메뉴_그룹_목록_조회() {
         return Arrays.stream(MenuGroupFixtures.values())
-                .map(fixture -> 메뉴_그룹_생성(fixture.getId(), fixture.getName()))
+                .map(fixture -> new MenuGroup(fixture.getId(), fixture.getName()))
                 .collect(Collectors.toList());
     }
 
