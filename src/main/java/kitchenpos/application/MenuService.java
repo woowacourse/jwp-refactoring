@@ -63,10 +63,7 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final Menu menu = new Menu();
-        menu.setName(request.getName());
-        menu.setPrice(request.getPrice());
-        menu.setMenuGroupId(request.getMenuGroupId());
+        final Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId());
         final Menu savedMenu = menuDao.save(menu);
 
         final List<MenuProductResponse> menuProductResponses = menuProducts.stream()

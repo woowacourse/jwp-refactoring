@@ -102,14 +102,8 @@ abstract class ServiceTest {
 
     protected Menu saveMenu(final String name, final BigDecimal price, final MenuGroup menuGroup,
                             final Pair<Product, Long>... menuProductPairs) {
-        final Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroup.getId());
-
         final List<MenuProduct> menuProducts = getMenuProducts(menuProductPairs);
-        menu.setMenuProducts(menuProducts);
-
+        final Menu menu = new Menu(name, price, menuGroup.getId(), menuProducts);
         return menuDao.save(menu);
     }
 
