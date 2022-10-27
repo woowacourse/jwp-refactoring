@@ -4,6 +4,20 @@ public class MenuGroup {
     private Long id;
     private String name;
 
+    public MenuGroup() {
+    }
+
+    public MenuGroup(final String name) {
+        validateName(name);
+        this.name = name;
+    }
+    
+    private void validateName(final String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("이름은 null일 수 없습니다.");
+        }
+    }
+
     public Long getId() {
         return id;
     }

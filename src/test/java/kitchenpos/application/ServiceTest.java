@@ -38,9 +38,7 @@ public class ServiceTest {
     protected DatabaseCleanUp databaseCleanUp;
 
     protected MenuGroup createMenuGroup(final String name) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        return menuGroup;
+        return new MenuGroup(name);
     }
 
     protected Product createProduct(final String name, final Long price) {
