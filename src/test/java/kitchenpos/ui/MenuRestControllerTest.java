@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import kitchenpos.application.dto.MenuCreationDto;
 import kitchenpos.common.fixture.RequestBody;
 import kitchenpos.application.MenuService;
 import kitchenpos.common.ControllerTest;
@@ -35,9 +36,9 @@ class MenuRestControllerTest extends ControllerTest {
     @DisplayName("메뉴를 생성해야 한다.")
     @Test
     void createMenu() throws Exception {
-        when(menuService.create(any(Menu.class))).thenReturn(DomainFixture.getMenu());
+        when(menuService.create(any(MenuCreationDto.class))).thenReturn(DtoFixture.getMenuDto());
 
-        final ResultActions resultActions = mockMvc.perform(post("/api/menus")
+        final ResultActions resultActions = mockMvc.perform(post("/api/v2/menus")
                         .content(objectMapper.writeValueAsString(RequestBody.getMenuProductFixture(1L, 1L)))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())

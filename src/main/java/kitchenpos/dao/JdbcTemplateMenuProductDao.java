@@ -1,6 +1,14 @@
 package kitchenpos.dao;
 
+import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+import javax.sql.DataSource;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Price;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -8,12 +16,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class JdbcTemplateMenuProductDao implements MenuProductDao {
@@ -62,18 +64,21 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
     }
 
     private MenuProduct select(final Long id) {
-        final String sql = "SELECT id, menu_id, product_id, quantity FROM menu_product WHERE id = (:id)";
+        final String sql = "SELECT mp.id, mp.menu_id, mp.product_id, mp.quantity, p.name, p.price "
+                + "FROM menu_product mp "
+                + "JOIN product p "
+                + "ON mp.product_id=p.id "
+                + "WHERE mp.id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     private MenuProduct toEntity(final ResultSet resultSet) throws SQLException {
-        final MenuProduct entity = new MenuProduct();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setMenuId(resultSet.getLong("menu_id"));
-        entity.setProductId(resultSet.getLong("product_id"));
-        entity.setQuantity(resultSet.getLong("quantity"));
-        return entity;
+        BigDecimal price = BigDecimal.valueOf(resultSet.getLong("price"));
+        final Product product = new Product(resultSet.getLong("product_id"), resultSet.getString("name"), price);
+        return new MenuProduct(resultSet.getLong(KEY_COLUMN_NAME),
+                resultSet.getLong("menu_id"),
+                product, resultSet.getLong("quantity"));
     }
 }
