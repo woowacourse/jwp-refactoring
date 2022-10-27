@@ -1,5 +1,15 @@
 package kitchenpos.application;
 
+import static java.util.stream.Collectors.toList;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import kitchenpos.application.request.OrderTableRequest;
+import kitchenpos.application.request.TableGroupRequest;
+import kitchenpos.application.response.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -9,12 +19,6 @@ import kitchenpos.domain.TableGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class TableGroupService {
@@ -30,7 +34,8 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
+    public TableGroupResponse create(final TableGroupRequest request) {
+        final TableGroup tableGroup = new TableGroup(request.getCreatedDate(), getOrderTables(request));
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
@@ -65,7 +70,7 @@ public class TableGroupService {
         }
         savedTableGroup.setOrderTables(savedOrderTables);
 
-        return savedTableGroup;
+        return TableGroupResponse.from(savedTableGroup);
     }
 
     @Transactional
@@ -86,5 +91,12 @@ public class TableGroupService {
             orderTable.setEmpty(false);
             orderTableDao.save(orderTable);
         }
+    }
+
+    private static List<OrderTable> getOrderTables(final TableGroupRequest request) {
+        final List<OrderTableRequest> orderTables = request.getOrderTables();
+        return orderTables.stream()
+                .map(it -> new OrderTable(it.getId(), it.getTableGroupId(), it.getNumberOfGuests(), it.isEmpty()))
+                .collect(toList());
     }
 }

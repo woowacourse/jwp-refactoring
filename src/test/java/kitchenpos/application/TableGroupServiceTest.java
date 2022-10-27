@@ -1,11 +1,16 @@
 package kitchenpos.application;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.RepositoryTest;
+import kitchenpos.application.request.OrderTableRequest;
+import kitchenpos.application.request.TableGroupRequest;
+import kitchenpos.application.response.OrderTableResponse;
+import kitchenpos.application.response.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -43,11 +48,11 @@ class TableGroupServiceTest {
     @Test
     void create() {
         // given
-        final List<OrderTable> orderTables = tableService.list();
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
+        final List<OrderTableRequest> orderTableRequests = toOrderTableRequests(tableService.list());
+        final TableGroupRequest tableGroupRequest = new TableGroupRequest(LocalDateTime.now(), orderTableRequests);
 
         // when
-        final TableGroup createdTableGroup = sut.create(tableGroup);
+        final TableGroupResponse createdTableGroup = sut.create(tableGroupRequest);
 
         // then
         assertThat(createdTableGroup).isNotNull();
@@ -63,9 +68,11 @@ class TableGroupServiceTest {
     @Test
     void canNotCreateTableGroupLessThenTwoTable() {
         // given
-        final List<OrderTable> orderTables = tableService.list();
+        final List<OrderTable> orderTables = toOrderTables(tableService.list());
         final OrderTable orderTable = orderTables.get(0);
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable));
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(orderTable.getTableGroupId(),
+                orderTable.getNumberOfGuests(), orderTable.isEmpty());
+        final TableGroupRequest tableGroup = new TableGroupRequest(LocalDateTime.now(), List.of(orderTableRequest));
 
         // when & then
         assertThatThrownBy(() -> sut.create(tableGroup))
@@ -76,9 +83,10 @@ class TableGroupServiceTest {
     @Test
     void canCreateTableGroupWhenExistOrderTable() {
         // given
-        final OrderTable orderTable1 = new OrderTable(1, true);
-        final OrderTable orderTable2 = new OrderTable(1, true);
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
+        final OrderTableRequest orderTable1 = new OrderTableRequest(1, true);
+        final OrderTableRequest orderTable2 = new OrderTableRequest(1, true);
+        final TableGroupRequest tableGroup = new TableGroupRequest(LocalDateTime.now(),
+                List.of(orderTable1, orderTable2));
 
         // when & then
         assertThatThrownBy(() -> sut.create(tableGroup))
@@ -89,30 +97,33 @@ class TableGroupServiceTest {
     @Test
     void canNotCreateTableGroupWhenAlreadyGrouping() {
         // given
-        final List<OrderTable> orderTables = tableService.list();
-        sut.create(new TableGroup(LocalDateTime.now(), orderTables));
+        final List<OrderTableRequest> orderTables = toOrderTableRequests(tableService.list());
+        sut.create(new TableGroupRequest(LocalDateTime.now(), orderTables));
 
-        final OrderTable orderTable1 = orderTables.get(0);
-        final OrderTable orderTable2 = orderTables.get(1);
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
+        final OrderTableRequest orderTable1 = orderTables.get(0);
+        final OrderTableRequest orderTable2 = orderTables.get(1);
+        final TableGroupRequest tableGroup = new TableGroupRequest(LocalDateTime.now(),
+                List.of(orderTable1, orderTable2));
 
         // when & then
         assertThatThrownBy(() -> sut.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-    
+
     @DisplayName("테이블이 이미 그룹에 지정되어 그룹 id 를 가지고 있으면 그룹핑 할 수 없다.")
     @Test
     void canNotCreateTableGroupWhenTableInGroup() {
         // given
-        final List<OrderTable> orderTables = tableService.list();
+        final List<OrderTableRequest> orderTables = toOrderTableRequests(tableService.list());
 
-        final TableGroup createdTableGroup = sut.create(new TableGroup(LocalDateTime.now(), orderTables));
+        final TableGroupResponse createdTableGroup = sut.create(new TableGroupRequest(LocalDateTime.now(), orderTables));
         final OrderTable orderTable = new OrderTable(createdTableGroup.getId(), 0, true);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        orderTables.add(savedOrderTable);
 
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
+        final OrderTableRequest orderTableRequest = OrderTableRequest.from(savedOrderTable);
+        orderTables.add(orderTableRequest);
+
+        final TableGroupRequest tableGroup = new TableGroupRequest(LocalDateTime.now(), orderTables);
 
         // when & then
         assertThatThrownBy(() -> sut.create(tableGroup))
@@ -123,17 +134,17 @@ class TableGroupServiceTest {
     @Test
     void ungroup() {
         // given
-        final List<OrderTable> orderTables = tableService.list();
-        final TableGroup tableGroup = sut.create(new TableGroup(LocalDateTime.now(), orderTables));
+        final List<OrderTableRequest> orderTables = toOrderTableRequests(tableService.list());
+        final TableGroupResponse tableGroup = sut.create(new TableGroupRequest(LocalDateTime.now(), orderTables));
 
         // when
         sut.ungroup(tableGroup.getId());
 
         // then
-        final List<OrderTable> results = tableService.list();
+        final List<OrderTableResponse> results = tableService.list();
         assertThat(results)
                 .hasSize(8)
-                .extracting(OrderTable::getTableGroupId)
+                .extracting(OrderTableResponse::getTableGroupId)
                 .containsExactly(null, null, null, null, null, null, null, null);
     }
 
@@ -141,14 +152,14 @@ class TableGroupServiceTest {
     @Test
     void canNotUngroupWhenCookOrMeal() {
         // given
-        final OrderTable orderTable = new OrderTable(0, true);
-        final OrderTable anotherOrderTable = new OrderTable(0, true);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(0, true);
+        final OrderTableRequest anotherOrderTableRequest = new OrderTableRequest(0, true);
 
-        final OrderTable createdOrderTable = tableService.create(orderTable);
-        final OrderTable createdAnotherOrderTable = tableService.create(anotherOrderTable);
+        final OrderTableResponse createdOrderTable = tableService.create(orderTableRequest);
+        final OrderTableResponse createdAnotherOrderTable = tableService.create(anotherOrderTableRequest);
+        final TableGroupRequest tableGroup = createTableGroupRequest(LocalDateTime.now(), List.of(createdOrderTable, createdAnotherOrderTable));
 
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(createdOrderTable, createdAnotherOrderTable));
-        final TableGroup createdTableGroup = sut.create(tableGroup);
+        final TableGroupResponse createdTableGroup = sut.create(tableGroup);
 
         saveCookingOrder(createdOrderTable);
 
@@ -157,9 +168,32 @@ class TableGroupServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private void saveCookingOrder(final OrderTable createdOrderTable) {
+    private TableGroupRequest createTableGroupRequest(final LocalDateTime createdDate,
+                                                      final List<OrderTableResponse> orderTables) {
+        final List<OrderTableRequest> orderTableRequests = orderTables.stream()
+                .map(it -> new OrderTableRequest(it.getId(), it.getTableGroupId(), it.getNumberOfGuests(),
+                        it.isEmpty()))
+                .collect(toList());
+
+        return new TableGroupRequest(createdDate, orderTableRequests);
+    }
+
+    private List<OrderTableRequest> toOrderTableRequests(final List<OrderTableResponse> orderTableResponses) {
+        return orderTableResponses.stream()
+                .map(it -> new OrderTableRequest(it.getId(), it.getTableGroupId(), it.getNumberOfGuests(), it.isEmpty()))
+                .collect(toList());
+    }
+
+    private void saveCookingOrder(final OrderTableResponse createdOrderTable) {
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
-        final Order order = new Order(createdOrderTable.getId(), "COOKING", LocalDateTime.now(), List.of(orderLineItem));
+        final Order order = new Order(createdOrderTable.getId(), "COOKING", LocalDateTime.now(),
+                List.of(orderLineItem));
         orderDao.save(order);
+    }
+
+    private List<OrderTable> toOrderTables(final List<OrderTableResponse> orderTableResponses) {
+        return orderTableResponses.stream()
+                .map(it -> new OrderTable(it.getId(), it.getTableGroupId(), it.getNumberOfGuests(), it.isEmpty()))
+                .collect(toList());
     }
 }

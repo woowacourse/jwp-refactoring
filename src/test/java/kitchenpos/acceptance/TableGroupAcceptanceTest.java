@@ -1,16 +1,17 @@
 package kitchenpos.acceptance;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 import io.restassured.RestAssured;
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.application.request.OrderTableRequest;
+import kitchenpos.application.request.TableGroupRequest;
+import kitchenpos.application.response.OrderTableResponse;
+import kitchenpos.application.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -21,24 +22,24 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void create() {
         // given
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), getOrderTables());
+        final TableGroupRequest tableGroupRequest = new TableGroupRequest(LocalDateTime.now(), getOrderTableRequests());
 
         // when
-        final TableGroup response = RestAssured.given().log().all()
+        final TableGroupResponse response = RestAssured.given().log().all()
                 .contentType(APPLICATION_JSON_VALUE)
-                .body(tableGroup)
+                .body(tableGroupRequest)
                 .when().log().all()
                 .post("/api/table-groups")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
-                .extract().as(TableGroup.class);
+                .extract().as(TableGroupResponse.class);
 
         // then
         assertThat(response).isNotNull();
         assertThat(response.getId()).isNotNull();
         assertThat(response.getOrderTables())
                 .hasSize(8)
-                .extracting(OrderTable::getNumberOfGuests, OrderTable::isEmpty)
+                .extracting(OrderTableResponse::getNumberOfGuests, OrderTableResponse::isEmpty)
                 .containsExactly(
                         tuple(0, false), tuple(0, false),
                         tuple(0, false), tuple(0, false),
@@ -51,57 +52,71 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void ungroup() {
         // given
-        final OrderTable orderTable1 = saveOrderTable(0, true);
-        final OrderTable orderTable2 = saveOrderTable(0, true);
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
-        final TableGroup savedTableGroup = saveTableGroup(tableGroup);
+        final OrderTableResponse orderTable1 = saveOrderTable(0, true);
+        final OrderTableResponse orderTable2 = saveOrderTable(0, true);
+        final Long savedTableGroupId = saveTableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
         // when & then
         RestAssured.given().log().all()
                 .contentType(APPLICATION_JSON_VALUE)
-                .pathParam("tableGroupId", savedTableGroup.getId())
+                .pathParam("tableGroupId", savedTableGroupId)
                 .when().log().all()
                 .delete("/api/table-groups/{tableGroupId}")
                 .then().log().all()
                 .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
-    private static List<OrderTable> getOrderTables() {
-        final ExtractableResponse<Response> response = RestAssured.given().log().all()
+    private static List<OrderTableRequest> getOrderTableRequests() {
+        final List<OrderTableResponse> orderTableResponses = RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/tables")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .extract();
+                .extract()
+                .jsonPath()
+                .getList(".", OrderTableResponse.class);
 
-        return getOrderTables(response);
+        return orderTableResponses.stream()
+                .map(it -> new OrderTableRequest(it.getId(), it.getTableGroupId(), it.getNumberOfGuests(),
+                        it.isEmpty()))
+                .collect(toList());
     }
 
-    private static List<OrderTable> getOrderTables(final ExtractableResponse<Response> response) {
-        return response.jsonPath().getList(".", OrderTable.class);
-    }
+    private static Long saveTableGroup(final LocalDateTime createdTime, final List<OrderTableResponse> orderTables) {
+        final TableGroupRequest tableGroupRequest = makeTableGroupRequest(createdTime, orderTables);
 
-    private static TableGroup saveTableGroup(final TableGroup tableGroup) {
-        return RestAssured.given().log().all()
+        final TableGroupResponse tableGroupResponse = RestAssured.given().log().all()
                 .contentType(APPLICATION_JSON_VALUE)
-                .body(tableGroup)
+                .body(tableGroupRequest)
                 .when().log().all()
                 .post("/api/table-groups")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
-                .extract().as(TableGroup.class);
+                .extract().as(TableGroupResponse.class);
+
+        return tableGroupResponse.getId();
     }
 
-    private static OrderTable saveOrderTable(final int numberOfGuests, final boolean empty) {
-        final OrderTable orderTable = new OrderTable(numberOfGuests, empty);
+    private static TableGroupRequest makeTableGroupRequest(final LocalDateTime createdTime,
+                                                           final List<OrderTableResponse> orderTables) {
+        final List<OrderTableRequest> orderTableRequests = orderTables.stream()
+                .map(it -> new OrderTableRequest(it.getId(), it.getTableGroupId(),
+                        it.getNumberOfGuests(), it.isEmpty()))
+                .collect(toList());
+
+        return new TableGroupRequest(createdTime, orderTableRequests);
+    }
+
+    private static OrderTableResponse saveOrderTable(final int numberOfGuests, final boolean empty) {
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(numberOfGuests, empty);
 
         return RestAssured.given().log().all()
                 .contentType(APPLICATION_JSON_VALUE)
-                .body(orderTable)
+                .body(orderTableRequest)
                 .when().log().all()
                 .post("/api/tables")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
-                .extract().as(OrderTable.class);
+                .extract().as(OrderTableResponse.class);
     }
 }

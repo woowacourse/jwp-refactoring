@@ -7,6 +7,8 @@ import static org.assertj.core.api.Assertions.tuple;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.RepositoryTest;
+import kitchenpos.application.request.ProductRequest;
+import kitchenpos.application.response.ProductResponse;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,29 +33,29 @@ class ProductServiceTest {
     @Test
     void create() {
         // given
-        final Product product = new Product("후라이드", BigDecimal.valueOf(16000));
+        final ProductRequest request = new ProductRequest("후라이드", BigDecimal.valueOf(16000));
 
         // when
-        final Product createdProduct = sut.create(product);
+        final ProductResponse productResponse = sut.create(request);
 
         // then
-        assertThat(createdProduct).isNotNull();
-        assertThat(createdProduct.getId()).isNotNull();
-        final Product foundProduct = productDao.findById(createdProduct.getId()).get();
+        assertThat(productResponse).isNotNull();
+        assertThat(productResponse.getId()).isNotNull();
+        final Product foundProduct = productDao.findById(productResponse.getId()).get();
         assertThat(foundProduct)
                 .usingRecursiveComparison()
                 .ignoringFields("id")
-                .isEqualTo(createdProduct);
+                .isEqualTo(productResponse);
     }
 
     @DisplayName("상품의 가격이 0보다 작으면 상품을 등록할 수 없다.")
     @Test
     void createWithMinusPrice() {
         // given
-        final Product product = new Product("후라이드", BigDecimal.valueOf(-1));
+        final ProductRequest request = new ProductRequest("후라이드", BigDecimal.valueOf(-1));
 
         // when & then
-        assertThatThrownBy(() -> sut.create(product))
+        assertThatThrownBy(() -> sut.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -61,11 +63,10 @@ class ProductServiceTest {
     @Test
     void createWithNullPrice() {
         // given
-        final Product product = new Product();
-        product.setName("후라이드");
+        final ProductRequest request = new ProductRequest("후라이드", null);
 
         // when & then
-        assertThatThrownBy(() -> sut.create(product))
+        assertThatThrownBy(() -> sut.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -73,12 +74,12 @@ class ProductServiceTest {
     @Test
     void list() {
         // when
-        final List<Product> products = sut.list();
+        final List<ProductResponse> products = sut.list();
 
         // then
         assertThat(products)
                 .hasSize(6)
-                .extracting(Product::getName, product -> product.getPrice().longValue())
+                .extracting(ProductResponse::getName, product -> product.getPrice().longValue())
                 .containsExactlyInAnyOrder(
                         tuple("후라이드", 16_000L),
                         tuple("양념치킨", 16_000L),

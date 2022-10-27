@@ -5,10 +5,9 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 import io.restassured.RestAssured;
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.response.MenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
@@ -50,20 +49,20 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @Test
     void list() {
         // when
-        final ExtractableResponse<Response> response = RestAssured.given().log().all()
+        final List<MenuResponse> menus = RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/menus")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .extract();
-
-        final List<Menu> menus = getMenus(response);
+                .extract()
+                .jsonPath()
+                .getList(".", MenuResponse.class);
 
         // then
         assertThat(menus)
                 .hasSize(6)
                 .filteredOn(it -> it.getId() != null)
-                .extracting(Menu::getName, menu -> menu.getPrice().longValue(), Menu::getMenuGroupId)
+                .extracting(MenuResponse::getName, menu -> menu.getPrice().longValue(), MenuResponse::getMenuGroupId)
                 .containsExactlyInAnyOrder(
                         tuple("후라이드치킨", 16_000L, 2L),
                         tuple("양념치킨", 16_000L, 2L),
@@ -76,9 +75,5 @@ class MenuAcceptanceTest extends AcceptanceTest {
 
     private MenuProduct createMenuProduct() {
         return new MenuProduct(MENU_ID, PRODUCT_ID, QUANTITY);
-    }
-
-    private static List<Menu> getMenus(final ExtractableResponse<Response> response) {
-        return response.jsonPath().getList(".", Menu.class);
     }
 }

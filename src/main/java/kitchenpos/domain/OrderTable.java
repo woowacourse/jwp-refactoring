@@ -10,15 +10,19 @@ public class OrderTable {
     public OrderTable() {
     }
 
-    public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
+    public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this(null, tableGroupId, numberOfGuests, empty);
+    }
+
     public OrderTable(final int numberOfGuests, final boolean empty) {
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
+        this(null, null, numberOfGuests, empty);
     }
 
     public Long getId() {

@@ -7,13 +7,15 @@ import static org.assertj.core.api.Assertions.tuple;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.RepositoryTest;
+import kitchenpos.application.request.OrderLineItemRequest;
+import kitchenpos.application.request.OrderRequest;
+import kitchenpos.application.request.OrderTableRequest;
+import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,40 +60,36 @@ class TableServiceTest {
     @Test
     void create() {
         // given
-        final OrderTable orderTable = new OrderTable(0, true);
+        final OrderTableRequest request = new OrderTableRequest(0, true);
 
         // when
-        final OrderTable createdOrderTable = sut.create(orderTable);
+        final OrderTableResponse response = sut.create(request);
 
         // then
-        assertThat(createdOrderTable).isNotNull();
-        assertThat(createdOrderTable.getId()).isNotNull();
-        final OrderTable foundOrderTable = orderTableDao.findById(createdOrderTable.getId()).get();
+        assertThat(response).isNotNull();
+        assertThat(response.getId()).isNotNull();
+        final OrderTable foundOrderTable = orderTableDao.findById(response.getId()).get();
         assertThat(foundOrderTable)
                 .usingRecursiveComparison()
                 .ignoringFields("id")
-                .isEqualTo(createdOrderTable);
+                .isEqualTo(response);
     }
 
     @DisplayName("전체 주문 테이블 목록을 조회할 수 있다.")
     @Test
     void list() {
         // when
-        final List<OrderTable> orderTables = sut.list();
+        final List<OrderTableResponse> responses = sut.list();
 
         // then
-        assertThat(orderTables)
+        assertThat(responses)
                 .hasSize(8)
-                .extracting(OrderTable::getNumberOfGuests, OrderTable::isEmpty)
+                .extracting(OrderTableResponse::getNumberOfGuests, OrderTableResponse::isEmpty)
                 .containsExactlyInAnyOrder(
-                        tuple(0, true),
-                        tuple(0, true),
-                        tuple(0, true),
-                        tuple(0, true),
-                        tuple(0, true),
-                        tuple(0, true),
-                        tuple(0, true),
-                        tuple(0, true)
+                        tuple(0, true), tuple(0, true),
+                        tuple(0, true), tuple(0, true),
+                        tuple(0, true), tuple(0, true),
+                        tuple(0, true), tuple(0, true)
                 );
     }
 
@@ -100,13 +98,13 @@ class TableServiceTest {
     void changeTableEmpty() {
         // given
         final Long orderTableId = 1L;
-        final OrderTable orderTable = new OrderTable(0, true);
+        final OrderTableRequest request = new OrderTableRequest(0, true);
 
         // when
-        final OrderTable changedOrderTable = sut.changeEmpty(orderTableId, orderTable);
+        final OrderTableResponse changedResponse = sut.changeEmpty(orderTableId, request);
 
         // then
-        assertThat(changedOrderTable.isEmpty()).isTrue();
+        assertThat(changedResponse.isEmpty()).isTrue();
     }
 
     @DisplayName("테이블의 그룹(id)은 비어 있지 않으면 주문 테이블 상태를 비어있는 상태로 변경할 수 없다.")
@@ -120,8 +118,11 @@ class TableServiceTest {
         orderTable.setTableGroupId(savedTableGroup.getId());
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
+        final OrderTableRequest request = new OrderTableRequest(savedOrderTable.getId(),
+                savedOrderTable.getNumberOfGuests(), savedOrderTable.isEmpty());
+
         // when & then
-        assertThatThrownBy(() -> sut.changeEmpty(savedOrderTable.getId(), savedOrderTable))
+        assertThatThrownBy(() -> sut.changeEmpty(savedOrderTable.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -132,12 +133,15 @@ class TableServiceTest {
         final OrderTable orderTable = orderTableDao.save(new OrderTable(0, false));
         final Long orderTableId = orderTable.getId();
 
-        final OrderLineItem orderLineItem = createOrderLineItem();
-        final Order order = new Order(orderTableId, "COOKING", LocalDateTime.now(), List.of(orderLineItem));
-        orderService.create(order);
+        final OrderLineItemRequest orderLineItem = createOrderLineItemRequest();
+        final OrderRequest orderRequest = new OrderRequest(orderTableId, "COOKING", LocalDateTime.now(),
+                List.of(orderLineItem));
+        orderService.create(orderRequest);
+
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(orderTable);
 
         // when & then
-        assertThatThrownBy(() -> sut.changeEmpty(orderTableId, orderTable))
+        assertThatThrownBy(() -> sut.changeEmpty(orderTableId, orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -146,10 +150,10 @@ class TableServiceTest {
     void changeEmptyWithEmptyOrderTable() {
         // given
         final long invalidOrderTableId = -1L;
-        final OrderTable orderTable = new OrderTable(0, false);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(0, false);
 
         // when & then
-        assertThatThrownBy(() -> sut.changeEmpty(invalidOrderTableId, orderTable))
+        assertThatThrownBy(() -> sut.changeEmpty(invalidOrderTableId, orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -157,42 +161,44 @@ class TableServiceTest {
     @Test
     void canChangeGuestsCount() {
         // given
-        final OrderTable orderTable = new OrderTable(1, false);
-        final OrderTable createdOrderTable = sut.create(orderTable);
-        final Long orderTableId = createdOrderTable.getId();
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(1, false);
+        final OrderTableResponse orderTableResponse = sut.create(orderTableRequest);
+        final Long orderTableId = orderTableResponse.getId();
+
+        final OrderTableRequest changeNumberOfGuestsRequest = new OrderTableRequest(2, false);
 
         // when
-        final OrderTable changedOrderTable = sut.changeNumberOfGuests(orderTableId, orderTable);
+        final OrderTableResponse changedOrderTable = sut.changeNumberOfGuests(orderTableId, changeNumberOfGuestsRequest);
 
         // then
-        assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
+        assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(changeNumberOfGuestsRequest.getNumberOfGuests());
     }
 
     @DisplayName("손님의 수는 0보다 작을 수 없다.")
     @Test
     void GuestsCountCanNotLessThenZero() {
         // given
-        final OrderTable orderTable = new OrderTable(INVALID_NUMBER_OF_GUESTS, false);
-        final OrderTable createdOrderTable = sut.create(orderTable);
-        final Long orderTableId = createdOrderTable.getId();
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(INVALID_NUMBER_OF_GUESTS, false);
+        final OrderTableResponse createdOrderTableResponse = sut.create(orderTableRequest);
+        final Long orderTableId = createdOrderTableResponse.getId();
 
         // when & then
-        assertThatThrownBy(() -> sut.changeNumberOfGuests(orderTableId, orderTable));
+        assertThatThrownBy(() -> sut.changeNumberOfGuests(orderTableId, orderTableRequest));
     }
 
     @DisplayName("주문 테이블의 손님 수를 변경하려면 주문 테이블은 비어있으면 안된다.")
     @Test
     void tableEmptyWhenChangeGuestsCount() {
         // given
-        final OrderTable orderTable = new OrderTable(1, true);
-        final OrderTable createdOrderTable = sut.create(orderTable);
-        final Long orderTableId = createdOrderTable.getId();
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(1, true);
+        final OrderTableResponse createdOrderTableResponse = sut.create(orderTableRequest);
+        final Long orderTableId = createdOrderTableResponse.getId();
 
         // when & then
-        assertThatThrownBy(() -> sut.changeNumberOfGuests(orderTableId, orderTable));
+        assertThatThrownBy(() -> sut.changeNumberOfGuests(orderTableId, orderTableRequest));
     }
 
-    private OrderLineItem createOrderLineItem() {
-        return new OrderLineItem(SEQUENCE, ORDER_ID, MENU_ID, QUANTITY);
+    private OrderLineItemRequest createOrderLineItemRequest() {
+        return new OrderLineItemRequest(SEQUENCE, ORDER_ID, MENU_ID, QUANTITY);
     }
 }
