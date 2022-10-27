@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -62,5 +63,23 @@ class TableGroupServiceTest extends ServiceTest {
                 () -> assertThat(orderTable1.getTableGroupId()).isNull(),
                 () -> assertThat(orderTable2.getTableGroupId()).isNull()
         );
+    }
+
+    @Test
+    @DisplayName("`계산 완료` 상태가 아닌 테이블이 포함된 테이블 그룹을 해제하면 예외를 반환한다")
+    void ungroup_cookingException() {
+        final List<OrderTable> orderTables = new ArrayList<>();
+        final OrderTable orderTable1 = saveAndGetOrderTable(1L, true);
+        final OrderTable orderTable2 = saveAndGetOrderTable(1L, true);
+        orderTables.add(orderTable1);
+        orderTables.add(orderTable2);
+
+        final TableGroup tableGroup = tableGroupService.create(orderTables);
+        final List<OrderTable> orderTablesInGroup = tableGroup.getOrderTables();
+
+        saveAndGetOrderInOrderTable(1L,  orderTablesInGroup.get(0), OrderStatus.COOKING.name());
+
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

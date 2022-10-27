@@ -12,7 +12,9 @@ class ProductServiceTest extends ServiceTest {
     @Test
     @DisplayName("상품을 생성한다")
     void create() {
-        final Product actual = saveAndGetProduct(1L);
+        final Product product = saveAndGetProduct(1L);
+
+        final Product actual = productService.create(product.getName(), product.getPrice());
 
         assertThat(actual.getName()).isEqualTo("하와이안피자");
     }

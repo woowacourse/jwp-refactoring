@@ -14,7 +14,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     @DisplayName("테이블을 생성한다")
     void create() {
-        final OrderTable actual = saveAndGetOrderTable(1L, true);
+        final OrderTable actual = tableService.create(1, true);
 
         assertThat(actual.getId()).isEqualTo(1L);
     }
@@ -79,6 +79,16 @@ class TableServiceTest extends ServiceTest {
     void changeNumberOfGuests_negativeNumberException() {
         final OrderTable orderTable = saveAndGetOrderTable(1L, false);
         final int expected = -1;
+
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), expected))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("비어 있는 테이블의 손님 수를 변경하면 예외를 반환한다")
+    void changeNumberOfGuests_notEmptyTableException() {
+        final OrderTable orderTable = saveAndGetOrderTable(1L, true);
+        final int expected = 2;
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), expected))
                 .isInstanceOf(IllegalArgumentException.class);

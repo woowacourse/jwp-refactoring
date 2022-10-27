@@ -113,7 +113,21 @@ public class ServiceTest {
 
         final OrderTable orderTable = saveAndGetNotEmptyOrderTable(1L);
 
-        final Order order = new Order(1L, orderTable.getId(), status, LocalDateTime.now(), new ArrayList<>());
+        final Order order = new Order(id, orderTable.getId(), status, LocalDateTime.now(), new ArrayList<>());
+        order.addOrderLineItem(saveAndGetOrderLineItem(1L, menu.getId(), order.getId()));
+        return orderDao.save(order);
+    }
+
+    protected Order saveAndGetOrderInOrderTable(final Long id, final OrderTable orderTable, final String status) {
+        final MenuGroup menuGroup = saveAndGetMenuGroup(1L);
+        final Menu menu = new Menu(1L, "치킨메뉴", BigDecimal.valueOf(20_000L), menuGroup.getId(), new ArrayList<>());
+
+        final Product product = saveAndGetProduct(1L);
+        final MenuProduct menuProduct = saveAndGetMenuProduct(1L, menu.getId(), product.getId());
+        menu.addMenuProduct(menuProduct);
+        menuDao.save(menu);
+
+        final Order order = new Order(id, orderTable.getId(), status, LocalDateTime.now(), new ArrayList<>());
         order.addOrderLineItem(saveAndGetOrderLineItem(1L, menu.getId(), order.getId()));
         return orderDao.save(order);
     }
