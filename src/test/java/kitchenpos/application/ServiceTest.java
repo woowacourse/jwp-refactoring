@@ -112,9 +112,6 @@ abstract class ServiceTest {
 
     protected Order saveOrder(final OrderTable orderTable, final String orderStatus,
                               final Pair<Menu, Long>... orderLineItemPairs) {
-        final Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
-
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (final Pair<Menu, Long> pair : orderLineItemPairs) {
             final OrderLineItem orderLineItem = new OrderLineItem();
@@ -122,10 +119,8 @@ abstract class ServiceTest {
             orderLineItem.setQuantity(pair.getSecond());
             orderLineItems.add(orderLineItem);
         }
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(LocalDateTime.now());
 
+        final Order order = new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), orderLineItems);
         return orderDao.save(order);
     }
 
