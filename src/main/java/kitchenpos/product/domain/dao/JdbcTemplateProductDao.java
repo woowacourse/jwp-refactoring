@@ -36,11 +36,11 @@ public class JdbcTemplateProductDao implements ProductDao {
 
     @Override
     public Product save(final Product product) {
-        final Number key = jdbcInsert.executeAndReturnKey(toSavingProductSqlParameters(product));
+        final Number key = jdbcInsert.executeAndReturnKey(toProductSqlParameters(product));
         return select(key.longValue());
     }
 
-    private SqlParameterSource toSavingProductSqlParameters(Product product) {
+    private SqlParameterSource toProductSqlParameters(Product product) {
         MapSqlParameterSource productSqlParameters = new MapSqlParameterSource();
         productSqlParameters.addValue(NAME_COLUMN, product.getName().getValue());
         productSqlParameters.addValue(PRICE_COLUMN, product.getPrice().getValue());
