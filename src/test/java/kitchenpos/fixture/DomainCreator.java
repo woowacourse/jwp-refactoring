@@ -45,7 +45,7 @@ public class DomainCreator {
         final String orderStatus,
         final LocalDateTime orderedTime,
         final List<OrderLineItem> orderLineItems) {
-        final Order order = new Order();
+        final Order order = new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
         order.setId(id);
         order.setOrderTableId(orderTableId);
         order.setOrderStatus(orderStatus);
@@ -59,13 +59,8 @@ public class DomainCreator {
     }
 
     public static OrderLineItem createOrderLineItem(final Long seq, final Long orderId,
-        final Long menuId,
-        final int quantity) {
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setSeq(seq);
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
+        final Long menuId, final int quantity) {
+        final OrderLineItem orderLineItem = new OrderLineItem(seq, orderId, menuId, quantity);
 
         return orderLineItem;
     }

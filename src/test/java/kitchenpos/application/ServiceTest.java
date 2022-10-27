@@ -33,6 +33,8 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuGroupCreateRequest;
 import kitchenpos.dto.MenuProductCreateRequest;
+import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderLineItemCreateRequest;
 import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableIdRequest;
 import kitchenpos.dto.ProductCreateRequest;
@@ -216,5 +218,15 @@ public class ServiceTest {
     protected OrderTableCreateRequest createOrderTableCreateRequest(
         final int numberOfGuests, final boolean empty) {
         return new OrderTableCreateRequest(numberOfGuests, empty);
+    }
+
+    protected OrderLineItemCreateRequest createOrderLineItemCreateRequest(
+        final Long menuId, final int quantity) {
+        return new OrderLineItemCreateRequest(menuId, quantity);
+    }
+
+    protected OrderCreateRequest createOrderCreateRequest(
+        final Long orderTableId, final List<OrderLineItemCreateRequest> orderLineItem) {
+        return new OrderCreateRequest(orderTableId, orderLineItem);
     }
 }

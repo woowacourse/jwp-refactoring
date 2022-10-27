@@ -32,7 +32,7 @@
     - 추가한 주문을 반환한다.
     - 조건
       - orderLineItems가 empty면 안된다.
-      - menuId들 총 개수와 orderLineItems의 수가 같아야 한다.
+      - menuId가 중복되면 안된다.
       - menuId가 꼭 저장되어 있어야 한다.
       - orderTable가 없거나 비어있으면 안된다. 
   - 현재 주문 목록을 확인할 수 있다. 
