@@ -55,13 +55,6 @@ public class Menu {
         this(null, name, price, menuGroupId, new MenuProducts(Collections.emptyList()));
     }
 
-    public Menu(final String name,
-                final BigDecimal price,
-                final Long menuGroupId,
-                final MenuProducts menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
-    }
-
     public void addMenuProducts(final MenuProducts menuProducts) {
         menuProducts.belongsTo(id);
         this.menuProducts.addAll(menuProducts);

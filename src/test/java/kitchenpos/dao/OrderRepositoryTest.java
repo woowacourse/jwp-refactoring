@@ -33,7 +33,7 @@ class OrderRepositoryTest {
         tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
         Order order = orderRepository.save(
-                new Order(orderTable1.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
+                new Order(orderTable1.getId(), OrderStatus.COOKING, LocalDateTime.now()));
         assertThat(order).isEqualTo(orderRepository.findById(order.getId()).orElseThrow());
     }
 
@@ -45,9 +45,9 @@ class OrderRepositoryTest {
         tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
         Order order1 = orderRepository.save(
-                new Order(orderTable1.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
+                new Order(orderTable1.getId(), OrderStatus.COOKING, LocalDateTime.now()));
         Order order2 = orderRepository.save(
-                new Order(orderTable2.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
+                new Order(orderTable2.getId(), OrderStatus.COOKING, LocalDateTime.now()));
 
         List<Order> orders = orderRepository.findAll();
         assertThat(orders).containsExactly(order1, order2);
@@ -60,10 +60,10 @@ class OrderRepositoryTest {
         OrderTable orderTable2 = orderTableRepository.save(new OrderTable(10, true));
         tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
-        orderRepository.save(new Order(orderTable1.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
+        orderRepository.save(new Order(orderTable1.getId(), OrderStatus.COOKING, LocalDateTime.now()));
 
         boolean actual = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTable1.getId(),
-                List.of(OrderStatus.COOKING.name()));
+                List.of(OrderStatus.COOKING));
 
         assertThat(actual).isTrue();
     }
@@ -75,10 +75,10 @@ class OrderRepositoryTest {
         OrderTable orderTable2 = orderTableRepository.save(new OrderTable(10, true));
         tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
-        orderRepository.save(new Order(orderTable1.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
+        orderRepository.save(new Order(orderTable1.getId(), OrderStatus.COOKING, LocalDateTime.now()));
 
         boolean actual = orderRepository.existsByOrderTableIdInAndOrderStatusIn(List.of(orderTable1.getId()),
-                List.of(OrderStatus.COOKING.name()));
+                List.of(OrderStatus.COOKING));
 
         assertThat(actual).isTrue();
     }

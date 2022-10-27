@@ -11,7 +11,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import kitchenpos.application.dto.request.OrderCommand;
+import kitchenpos.application.dto.request.OrderLineItemCommand;
+import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderLineItemRepository;
@@ -59,9 +63,8 @@ class OrderServiceTest {
         void orderLineItemEmptyFailed() {
             OrderTable orderTable = createOrderTable(false);
 
-            Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
-
-            assertThatThrownBy(() -> orderService.create(order))
+            OrderCommand orderCommand = new OrderCommand(orderTable.getId(), Collections.emptyList());
+            assertThatThrownBy(() -> orderService.create(orderCommand))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("세부 주문 내역이 비어있습니다.");
         }
@@ -72,12 +75,11 @@ class OrderServiceTest {
             Menu menu1 = createMenu(MENU1_NAME, MENU1_PRICE);
             OrderTable orderTable = createOrderTable(false);
 
-            Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
-            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(order.getId(), menu1.getId(), 1),
-                    new OrderLineItem(order.getId(), 0L, 1));
-            order.addOrderLineItems(orderLineItems);
+            List<OrderLineItemCommand> orderLineItemCommands = List.of(new OrderLineItemCommand(menu1.getId(), 1),
+                    new OrderLineItemCommand(0L, 1));
+            OrderCommand orderCommand = new OrderCommand(orderTable.getId(), orderLineItemCommands);
 
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(orderCommand))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("존재하지 않는 메뉴입니다.");
         }
@@ -88,12 +90,11 @@ class OrderServiceTest {
             Menu menu1 = createMenu(MENU1_NAME, MENU1_PRICE);
             Menu menu2 = createMenu(MENU2_NAME, MENU2_PRICE);
 
-            Order order = new Order(0L, OrderStatus.COOKING.name(), LocalDateTime.now());
-            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(order.getId(), menu1.getId(), 1),
-                    new OrderLineItem(order.getId(), menu2.getId(), 1));
-            order.addOrderLineItems(orderLineItems);
+            List<OrderLineItemCommand> orderLineItemCommands = List.of(new OrderLineItemCommand(menu1.getId(), 1),
+                    new OrderLineItemCommand(menu2.getId(), 1));
+            OrderCommand orderCommand = new OrderCommand(0L, orderLineItemCommands);
 
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(orderCommand))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("주문 테이블을 찾을 수 없습니다.");
         }
@@ -105,12 +106,11 @@ class OrderServiceTest {
             Menu menu2 = createMenu(MENU2_NAME, MENU2_PRICE);
             OrderTable orderTable = createOrderTable(true);
 
-            Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
-            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(order.getId(), menu1.getId(), 1),
-                    new OrderLineItem(order.getId(), menu2.getId(), 1));
-            order.addOrderLineItems(orderLineItems);
+            List<OrderLineItemCommand> orderLineItemCommands = List.of(new OrderLineItemCommand(menu1.getId(), 1),
+                    new OrderLineItemCommand(menu2.getId(), 1));
+            OrderCommand orderCommand = new OrderCommand(orderTable.getId(), orderLineItemCommands);
 
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(orderCommand))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("주문 테이블이 비어있습니다.");
         }
@@ -122,15 +122,14 @@ class OrderServiceTest {
             Menu menu2 = createMenu(MENU2_NAME, MENU2_PRICE);
             OrderTable orderTable = createOrderTable(false);
 
-            Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
-            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(order.getId(), menu1.getId(), 1),
-                    new OrderLineItem(order.getId(), menu2.getId(), 1));
-            order.addOrderLineItems(orderLineItems);
+            List<OrderLineItemCommand> orderLineItemCommands = List.of(new OrderLineItemCommand(menu1.getId(), 1),
+                    new OrderLineItemCommand(menu2.getId(), 1));
+            OrderCommand orderCommand = new OrderCommand(orderTable.getId(), orderLineItemCommands);
 
-            Order savedOrder = orderService.create(order);
+            OrderResponse orderResponse = orderService.create(orderCommand);
             assertAll(
-                    () -> assertThat(savedOrder.getId()).isNotNull(),
-                    () -> assertThat(savedOrder.getOrderLineItems()).hasSize(2)
+                    () -> assertThat(orderResponse.id()).isNotNull(),
+                    () -> assertThat(orderResponse.orderLineItems()).hasSize(2)
             );
         }
     }
@@ -142,15 +141,13 @@ class OrderServiceTest {
         Menu menu2 = createMenu(MENU2_NAME, MENU2_PRICE);
         OrderTable orderTable = createOrderTable(false);
 
-        Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
-        List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(order.getId(), menu1.getId(), 1),
-                new OrderLineItem(order.getId(), menu2.getId(), 1));
-        order.addOrderLineItems(orderLineItems);
-
-        Order savedOrder = orderService.create(order);
+        List<OrderLineItemCommand> orderLineItemCommands = List.of(new OrderLineItemCommand(menu1.getId(), 1),
+                new OrderLineItemCommand(menu2.getId(), 1));
+        OrderCommand orderCommand = new OrderCommand(orderTable.getId(), orderLineItemCommands);
+        orderService.create(orderCommand);
         List<Order> orders = orderService.list();
 
-        assertThat(orders).containsExactly(savedOrder);
+        assertThat(orders).hasSize(1);
     }
 
     @Nested
@@ -161,7 +158,7 @@ class OrderServiceTest {
         @DisplayName("주문이 없을 경우 예외가 발생한다.")
         void orderNotFoundFailed() {
             assertThatThrownBy(() -> orderService.changeOrderStatus(0L,
-                    new Order(null, OrderStatus.COMPLETION.name(), LocalDateTime.now())))
+                    new Order(null, OrderStatus.COMPLETION, LocalDateTime.now())))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("주문이 존재하지 않습니다.");
         }
@@ -173,12 +170,12 @@ class OrderServiceTest {
             OrderTable orderTable = createOrderTable(false);
 
             Order order = orderRepository.save(
-                    new Order(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now()));
+                    new Order(orderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now()));
             orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 1));
             orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 2));
 
             assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(),
-                    new Order(null, OrderStatus.COMPLETION.name(), LocalDateTime.now())))
+                    new Order(null, OrderStatus.COMPLETION, LocalDateTime.now())))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("이미 식사가 완료되었습니다.");
         }
@@ -190,14 +187,14 @@ class OrderServiceTest {
             OrderTable orderTable = createOrderTable(false);
 
             Order order = orderRepository.save(
-                    new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
+                    new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now()));
             orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 1));
             orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 2));
 
             Order changedOrder = orderService.changeOrderStatus(order.getId(),
-                    new Order(null, OrderStatus.MEAL.name(), null));
+                    new Order(null, OrderStatus.MEAL, null));
 
-            assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+            assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
         }
     }
 

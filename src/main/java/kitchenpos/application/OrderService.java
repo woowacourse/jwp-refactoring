@@ -1,9 +1,10 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import kitchenpos.application.dto.request.OrderCommand;
+import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderLineItemRepository;
 import kitchenpos.dao.OrderRepository;
@@ -12,26 +13,31 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
+
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderValidator orderValidator;
 
     public OrderService(final MenuRepository menuRepository, final OrderRepository orderRepository,
                         final OrderLineItemRepository orderLineItemRepository,
-                        final OrderTableRepository orderTableRepository) {
+                        final OrderTableRepository orderTableRepository, final OrderValidator orderValidator) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
+        this.orderValidator = orderValidator;
     }
 
+    @Deprecated
     @Transactional
     public Order create(final Order order) {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
@@ -56,11 +62,6 @@ public class OrderService {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("주문 테이블이 비어있습니다.");
         }
-
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-
         final Order savedOrder = orderRepository.save(order);
 
         final Long orderId = savedOrder.getId();
@@ -72,6 +73,12 @@ public class OrderService {
         savedOrder.addOrderLineItems(savedOrderLineItems);
 
         return savedOrder;
+    }
+
+    @Transactional
+    public OrderResponse create(final OrderCommand orderCommand) {
+        Order order = Order.create(orderCommand.orderTableId(), orderCommand.toOrderLineItems(), orderValidator);
+        return OrderResponse.from(orderRepository.save(order));
     }
 
     public List<Order> list() {
@@ -89,12 +96,12 @@ public class OrderService {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException("이미 식사가 완료되었습니다.");
         }
-
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+//
+//        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
+//        savedOrder.setOrderStatus(orderStatus);
 
         orderRepository.save(savedOrder);
 

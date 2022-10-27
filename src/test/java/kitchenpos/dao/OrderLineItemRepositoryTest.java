@@ -85,6 +85,6 @@ class OrderLineItemRepositoryTest {
         OrderTable orderTable1 = orderTableRepository.save(new OrderTable(10, true));
         OrderTable orderTable2 = orderTableRepository.save(new OrderTable(10, true));
         tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
-        return orderRepository.save(new Order(orderTable1.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
+        return orderRepository.save(new Order(orderTable1.getId(), OrderStatus.COOKING, LocalDateTime.now()));
     }
 }

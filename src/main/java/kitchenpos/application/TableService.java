@@ -47,7 +47,7 @@ public class TableService {
 
     private void validateOrderStatus(final Long orderTableId) {
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException("현재 조리 / 식사 중입니다.");
         }
     }

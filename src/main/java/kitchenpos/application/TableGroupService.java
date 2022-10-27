@@ -52,7 +52,7 @@ public class TableGroupService {
 
     private void validateTableOrderStatus(final OrderTables orderTables) {
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTables.getIds(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+                orderTables.getIds(), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException("주문 그룹을 분리할 수 없습니다.");
         }
     }

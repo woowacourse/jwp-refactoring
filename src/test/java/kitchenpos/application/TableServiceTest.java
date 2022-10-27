@@ -92,7 +92,7 @@ class TableServiceTest {
         @DisplayName("OrderTable의 주문 상태가 COMPLETION이 아닐 경우 예외가 발생한다.")
         void orderTableOrdersNotCompletionFailed(final OrderStatus orderStatus) {
             OrderTableResponse orderTableResponse = tableService.create(new OrderTableCreateCommand(10, false));
-            orderRepository.save(new Order(orderTableResponse.id(), orderStatus.name(), LocalDateTime.now()));
+            orderRepository.save(new Order(orderTableResponse.id(), orderStatus, LocalDateTime.now()));
 
             assertThatThrownBy(
                     () -> tableService.changeEmpty(orderTableResponse.id(), new OrderTableEmptyCommand(true)))

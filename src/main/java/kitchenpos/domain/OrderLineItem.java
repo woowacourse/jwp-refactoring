@@ -17,7 +17,7 @@ public class OrderLineItem {
     @Column(length = 20)
     private Long seq;
 
-    @Column(name = "order_id", length = 20, nullable = false)
+    @Column(name = "order_id", length = 20)
     private Long orderId;
 
     @Column(name = "menu_id", length = 20, nullable = false)
@@ -35,6 +35,10 @@ public class OrderLineItem {
 
     public OrderLineItem(final Long orderId, final Long menuId, final long quantity) {
         this(null, orderId, menuId, quantity);
+    }
+
+    public OrderLineItem(final Long menuId, final long quantity) {
+        this(null, null, menuId, quantity);
     }
 
     protected OrderLineItem() {

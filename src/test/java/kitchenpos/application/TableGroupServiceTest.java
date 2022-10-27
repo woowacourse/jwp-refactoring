@@ -80,7 +80,7 @@ class TableGroupServiceTest {
                     List.of(new OrderTableCommand(orderTable1.getId()), new OrderTableCommand(orderTable2.getId())));
             TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupCommand);
 
-            orderRepository.save(new Order(orderTable1.getId(), orderStatus.name(), LocalDateTime.now()));
+            orderRepository.save(new Order(orderTable1.getId(), orderStatus, LocalDateTime.now()));
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.id()))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("주문 그룹을 분리할 수 없습니다.");
@@ -96,7 +96,7 @@ class TableGroupServiceTest {
                     List.of(new OrderTableCommand(orderTable1.getId()), new OrderTableCommand(orderTable2.getId())));
             TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupCommand);
 
-            orderRepository.save(new Order(orderTable1.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now()));
+            orderRepository.save(new Order(orderTable1.getId(), OrderStatus.COMPLETION, LocalDateTime.now()));
             tableGroupService.ungroup(tableGroupResponse.id());
 
             assertThat(orderTableRepository.findAllByTableGroupId(tableGroupResponse.id())).isEmpty();
