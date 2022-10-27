@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.application.dto.MenuGroupRequest;
 import kitchenpos.application.support.IntegrationTest;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -20,13 +21,13 @@ public class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 등록할 수 있다.")
     @Test
     void createMenuGroup() {
-        final MenuGroup menuGroup = new MenuGroup("떡잎 유치원");
+        final MenuGroupRequest request = new MenuGroupRequest("떡잎 유치원");
 
-        final MenuGroup actual = sut.create(menuGroup);
+        final MenuGroup actual = sut.create(request);
 
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getName()).isEqualTo(menuGroup.getName())
+                () -> assertThat(actual.getName()).isEqualTo(request.getName())
         );
     }
 
