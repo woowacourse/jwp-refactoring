@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 import java.util.List;
 
-@RestController
 @RequestMapping("/api/menus")
+@RestController
 public class MenuRestController {
     private final MenuService menuService;
 
