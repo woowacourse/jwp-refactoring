@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.OrderTableFixture.generateOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -17,23 +18,22 @@ import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
 public class TableGroupServiceTest {
 
-    @Autowired
     private TableGroupService tableGroupService;
 
-    @Autowired
     private OrderDao orderDao;
-    @Autowired
     private OrderTableDao orderTableDao;
-    @Autowired
     private TableGroupDao tableGroupDao;
+
+    @BeforeEach
+    void beforeEach() {
+        this.orderDao = new FakeOrderDao();
+        this.orderTableDao = new FakeOrderTableDao();
+        this.tableGroupDao = new FakeTableGroupDao();
+        this.tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
+    }
 
     @Test
     @DisplayName("테이블 그룹을 생성한다.")
@@ -42,14 +42,8 @@ public class TableGroupServiceTest {
         TableGroup tableGroup = new TableGroup();
         List<OrderTable> orderTables = new ArrayList<>();
 
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
-        orderTable1.setNumberOfGuests(0);
-        orderTable1.setTableGroupId(null);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
-        orderTable2.setNumberOfGuests(0);
-        orderTable2.setTableGroupId(null);
+        OrderTable orderTable1 = generateOrderTable(null, 0, true);
+        OrderTable orderTable2 = generateOrderTable(null, 0, true);
 
         orderTables.add(orderTableDao.save(orderTable1));
         orderTables.add(orderTableDao.save(orderTable2));
@@ -86,10 +80,7 @@ public class TableGroupServiceTest {
         TableGroup tableGroup = new TableGroup();
         List<OrderTable> orderTables = new ArrayList<>();
 
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
-        orderTable1.setNumberOfGuests(0);
-        orderTable1.setTableGroupId(null);
+        OrderTable orderTable1 = generateOrderTable(null, 0, true);
 
         orderTables.add(orderTableDao.save(orderTable1));
 
@@ -106,15 +97,8 @@ public class TableGroupServiceTest {
         TableGroup tableGroup = new TableGroup();
         List<OrderTable> orderTables = new ArrayList<>();
 
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
-        orderTable1.setNumberOfGuests(0);
-        orderTable1.setTableGroupId(null);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable1.setId(10L);
-        orderTable1.setEmpty(true);
-        orderTable1.setNumberOfGuests(0);
-        orderTable1.setTableGroupId(null);
+        OrderTable orderTable1 = generateOrderTable(null, 0, true);
+        OrderTable orderTable2 = generateOrderTable(null, 0, true);
 
         orderTables.add(orderTableDao.save(orderTable1));
         orderTables.add(orderTable2);
@@ -132,14 +116,8 @@ public class TableGroupServiceTest {
         TableGroup tableGroup = new TableGroup();
         List<OrderTable> orderTables = new ArrayList<>();
 
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
-        orderTable1.setNumberOfGuests(0);
-        orderTable1.setTableGroupId(null);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
-        orderTable2.setNumberOfGuests(0);
-        orderTable2.setTableGroupId(null);
+        OrderTable orderTable1 = generateOrderTable(null, 0, true);
+        OrderTable orderTable2 = generateOrderTable(null, 0, true);
 
         orderTables.add(orderTableDao.save(orderTable1));
         orderTables.add(orderTableDao.save(orderTable2));

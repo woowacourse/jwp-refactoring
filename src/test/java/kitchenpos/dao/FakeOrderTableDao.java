@@ -16,10 +16,18 @@ public class FakeOrderTableDao implements OrderTableDao {
 
     @Override
     public OrderTable save(OrderTable entity) {
-        IN_MEMORY_ORDER_TABLE.add(entity);
-        Long id = (long) IN_MEMORY_ORDER_TABLE.size();
-        entity.setId(id);
-        return entity;
+        if (entity.getId() == null) {
+            IN_MEMORY_ORDER_TABLE.add(entity);
+            Long id = (long) IN_MEMORY_ORDER_TABLE.size();
+            entity.setId(id);
+            return entity;
+        }
+        Long id = entity.getId();
+        OrderTable originOriginTable = findById(id).get();
+        originOriginTable.setTableGroupId(entity.getTableGroupId());
+        originOriginTable.setEmpty(entity.isEmpty());
+        originOriginTable.setTableGroupId(entity.getTableGroupId());
+        return originOriginTable;
     }
 
     @Override
@@ -44,6 +52,7 @@ public class FakeOrderTableDao implements OrderTableDao {
     @Override
     public List<OrderTable> findAllByTableGroupId(Long tableGroupId) {
         return IN_MEMORY_ORDER_TABLE.stream()
+                .filter(orderTable -> orderTable.getTableGroupId() != null)
                 .filter(orderTable -> orderTable.getTableGroupId().equals(tableGroupId))
                 .collect(Collectors.toList());
     }
