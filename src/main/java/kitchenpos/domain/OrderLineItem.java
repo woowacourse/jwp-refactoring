@@ -13,6 +13,10 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
+    public void updateOrderId(final Long orderId) {
+        this.orderId = orderId;
+    }
+
     public Long getSeq() {
         return seq;
     }

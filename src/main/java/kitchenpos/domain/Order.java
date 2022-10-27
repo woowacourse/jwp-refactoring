@@ -32,13 +32,22 @@ public class Order {
         }
     }
 
-    public void validateExistMenu(final long menuCount) {
+    public void validateOrderLineItemSize(final long menuCount) {
         if (orderLineItems.size() != menuCount) {
             throw new IllegalArgumentException();
         }
     }
 
-    public void validateOrderNotCompletion() {
+    public void updateOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        this.orderLineItems = new ArrayList<>(orderLineItems);
+    }
+
+    public void updateOrderStatus(final String orderStatus) {
+        validateOrderNotCompletion();
+        this.orderStatus = orderStatus;
+    }
+
+    private void validateOrderNotCompletion() {
         if (Objects.equals(OrderStatus.COMPLETION.name(), orderStatus)) {
             throw new IllegalArgumentException();
         }

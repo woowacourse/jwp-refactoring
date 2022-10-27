@@ -24,7 +24,7 @@ class OrderTest {
         final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
         final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(1L, orderLineItem);
 
-        assertThatThrownBy(() -> order.validateExistMenu(2))
+        assertThatThrownBy(() -> order.validateOrderLineItemSize(2))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
@@ -32,8 +32,8 @@ class OrderTest {
     @DisplayName("주문의 상태가 완료가 아닌지 검증한다")
     void validateOrderNotCompletion() {
         final Order order = OrderFixtures.COMPLETION_ORDER.create();
-
-        assertThatThrownBy(order::validateOrderNotCompletion)
+        
+        assertThatThrownBy(() -> order.updateOrderStatus(OrderFixtures.COOKING_ORDER.name()))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 }
