@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.support.TestFixtureFactory.id를_가진_주문_테이블을_생성한다;
 import static kitchenpos.support.TestFixtureFactory.단체_지정을_생성한다;
 import static kitchenpos.support.TestFixtureFactory.주문_테이블을_생성한다;
 import static kitchenpos.support.TestFixtureFactory.주문을_생성한다;
@@ -10,12 +11,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.TransactionalTest;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,9 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 class TableServiceTest {
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
     @Autowired
     private OrderDao orderDao;
     @Autowired
@@ -76,9 +79,9 @@ class TableServiceTest {
     void 변경_대상_테이블이_단체_지정되어_있으면_예외를_반환한다() {
         OrderTable orderTable1 = tableService.create(주문_테이블을_생성한다(null, 1, true));
         OrderTable orderTable2 = tableService.create(주문_테이블을_생성한다(null, 0, true));
-        orderTable1.setTableGroupId(
-                tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now(), List.of(orderTable1, orderTable2))).getId());
-        orderTableDao.save(orderTable1);
+        TableGroup tableGroup = tableGroupRepository
+                .save(단체_지정을_생성한다(LocalDateTime.now(), new ArrayList<>()));
+        tableGroup.group(List.of(orderTable1, orderTable2));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), orderTable1))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -105,22 +108,22 @@ class TableServiceTest {
     @Test
     void 테이블의_방문한_손님_수를_변경할_수_있다() {
         OrderTable orderTable = tableService.create(주문_테이블을_생성한다(null, 0, false));
-        orderTable.setNumberOfGuests(1);
+        OrderTable updateOrderTable = id를_가진_주문_테이블을_생성한다(orderTable.getId(), null, 1, false);
 
-        tableService.changeNumberOfGuests(orderTable.getId(), orderTable);
+        tableService.changeNumberOfGuests(orderTable.getId(), updateOrderTable);
 
         assertThat(orderTable.getNumberOfGuests()).isOne();
     }
 
     @Test
     void 변경하려는_인원이_0명_미만이면_예외를_반환한다() {
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, 주문_테이블을_생성한다(0L, -1, false)))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, 주문_테이블을_생성한다(null, -1, false)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 인원_변경_테이블이_존재하지_않으면_예외를_반환한다() {
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, 주문_테이블을_생성한다(0L, 1, false)))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, 주문_테이블을_생성한다(null, 1, false)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

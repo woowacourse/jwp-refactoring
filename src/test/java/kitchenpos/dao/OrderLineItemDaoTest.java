@@ -19,6 +19,7 @@ import kitchenpos.TransactionalTest;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ class OrderLineItemDaoTest {
     @Autowired
     private MenuRepository menuRepository;
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
     @Autowired
     private OrderDao orderDao;
     @Autowired
@@ -43,7 +44,7 @@ class OrderLineItemDaoTest {
                 .getId();
         Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, new ArrayList<>()))
                 .getId();
-        Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, true))
+        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true))
                 .getId();
         Long orderId = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), new ArrayList<>()))
                 .getId();
@@ -65,7 +66,7 @@ class OrderLineItemDaoTest {
                 .getId();
         Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, new ArrayList<>()))
                 .getId();
-        Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, true))
+        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true))
                 .getId();
         Long orderId = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), new ArrayList<>()))
                 .getId();
@@ -91,7 +92,7 @@ class OrderLineItemDaoTest {
                 .getId();
         Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, new ArrayList<>()))
                 .getId();
-        Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, true))
+        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true))
                 .getId();
         Long orderId = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), new ArrayList<>()))
                 .getId();
@@ -111,7 +112,7 @@ class OrderLineItemDaoTest {
                 .getId();
         Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, new ArrayList<>()))
                 .getId();
-        Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, true))
+        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true))
                 .getId();
         Long orderId1 = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), new ArrayList<>()))
                 .getId();

@@ -53,18 +53,16 @@ public class TestFixtureFactory {
         return orderLineItem;
     }
 
-    public static OrderTable 주문_테이블을_생성한다(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+    public static OrderTable 주문_테이블을_생성한다(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+        return new OrderTable(null, tableGroup, numberOfGuests, empty);
+    }
+
+    public static OrderTable id를_가진_주문_테이블을_생성한다(final Long id, final TableGroup tableGroup, final int numberOfGuests,
+                                                 final boolean empty) {
+        return new OrderTable(id, tableGroup, numberOfGuests, empty);
     }
 
     public static TableGroup 단체_지정을_생성한다(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(createdDate);
-        tableGroup.setOrderTables(orderTables);
-        return tableGroup;
+        return new TableGroup(null, createdDate, orderTables);
     }
 }

@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.domain.repository;
 
 import static kitchenpos.support.TestFixtureFactory.단체_지정을_생성한다;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,16 +14,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @TransactionalTest
-class TableGroupDaoTest {
+class TableGroupRepositoryTest {
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Test
     void 단체_지정을_저장_하면_id가_채워진다() {
         TableGroup tableGroup = 단체_지정을_생성한다(LocalDateTime.now(), null);
 
-        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         assertAll(
                 () -> assertThat(savedTableGroup.getId()).isNotNull(),
@@ -35,9 +35,9 @@ class TableGroupDaoTest {
 
     @Test
     void id로_단체_지정을_조회할_수_있다() {
-        TableGroup tableGroup = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now(), null));
+        TableGroup tableGroup = tableGroupRepository.save(단체_지정을_생성한다(LocalDateTime.now(), null));
 
-        TableGroup actual = tableGroupDao.findById(tableGroup.getId())
+        TableGroup actual = tableGroupRepository.findById(tableGroup.getId())
                 .orElseGet(Assertions::fail);
 
         assertThat(actual).usingRecursiveComparison()
@@ -46,17 +46,17 @@ class TableGroupDaoTest {
 
     @Test
     void 없는_id로_단체_지정을_조회하면_Optional_empty를_반환한다() {
-        Optional<TableGroup> actual = tableGroupDao.findById(0L);
+        Optional<TableGroup> actual = tableGroupRepository.findById(0L);
 
         assertThat(actual).isEmpty();
     }
 
     @Test
     void 모든_단체_지정을_조회할_수_있다() {
-        TableGroup tableGroup1 = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now(), null));
-        TableGroup tableGroup2 = tableGroupDao.save(단체_지정을_생성한다(LocalDateTime.now(), null));
+        TableGroup tableGroup1 = tableGroupRepository.save(단체_지정을_생성한다(LocalDateTime.now(), null));
+        TableGroup tableGroup2 = tableGroupRepository.save(단체_지정을_생성한다(LocalDateTime.now(), null));
 
-        List<TableGroup> actual = tableGroupDao.findAll();
+        List<TableGroup> actual = tableGroupRepository.findAll();
 
         assertThat(actual).hasSize(2)
                 .usingFieldByFieldElementComparator()

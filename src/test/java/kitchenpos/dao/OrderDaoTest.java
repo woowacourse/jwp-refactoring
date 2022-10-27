@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.TransactionalTest;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +21,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 class OrderDaoTest {
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
     @Autowired
     private OrderDao orderDao;
 
     @Test
     void 주문을_저장하면_id가_채워진다() {
-        Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, false))
+        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
         Order order = 주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null);
 
@@ -42,7 +43,7 @@ class OrderDaoTest {
 
     @Test
     void 저장하는_주문의_id가_null이_아니면_업데이트_한다() {
-        Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, false))
+        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
         Long orderId = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null))
                 .getId();
@@ -57,7 +58,7 @@ class OrderDaoTest {
 
     @Test
     void id로_주문을_조회할_수_있다() {
-        Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, false))
+        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
         Order order = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null));
 
@@ -77,7 +78,7 @@ class OrderDaoTest {
 
     @Test
     void 모든_주문을_조회할_수_있다() {
-        Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, false))
+        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
         Order order1 = orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null));
         Order order2 = orderDao.save(주문을_생성한다(orderTableId, MEAL.name(), LocalDateTime.now(), null));
@@ -91,7 +92,7 @@ class OrderDaoTest {
 
     @Test
     void 주문_테이블에_해당하고_주문_상태_목록에_있는_주문이_있으면_true를_반환한다() {
-        Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, false))
+        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
         orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null));
 
@@ -102,7 +103,7 @@ class OrderDaoTest {
 
     @Test
     void 주문_테이블에_해당하고_주문_상태_목록에_있는_주문이_없으면_false를_반환한다() {
-        Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, false))
+        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
 
         boolean actual = orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING.name()));
@@ -112,7 +113,7 @@ class OrderDaoTest {
 
     @Test
     void 주문_테이블_목록에_있으면서_주문_상태_목록에_있는_주문이_있으면_true를_반환한다() {
-        Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, false))
+        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
         orderDao.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null));
 
@@ -124,7 +125,7 @@ class OrderDaoTest {
 
     @Test
     void 주문_테이블_목록에_있으면서_주문_상태_목록에_있는_주문이_없으면_false를_반환한다() {
-        Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, false))
+        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
 
         boolean actual = orderDao.existsByOrderTableIdInAndOrderStatusIn(List.of(orderTableId),

@@ -16,11 +16,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.TransactionalTest;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,7 +32,7 @@ class OrderServiceTest {
     @Autowired
     private MenuRepository menuRepository;
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
     @Autowired
     private OrderService orderService;
 
@@ -42,7 +42,7 @@ class OrderServiceTest {
                 .getId();
         Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, new ArrayList<>()))
                 .getId();
-        Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, false))
+        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
         OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
         Order order = 주문을_생성한다(orderTableId, null, LocalDateTime.now(), List.of(orderLineItem));
@@ -58,7 +58,7 @@ class OrderServiceTest {
 
     @Test
     void 생성하려는_주문에_주문_항목이_없으면_예외를_반환한다() {
-        Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, false))
+        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
         Order order = 주문을_생성한다(orderTableId, null, LocalDateTime.now(), List.of());
 
@@ -83,7 +83,7 @@ class OrderServiceTest {
                 .getId();
         Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, new ArrayList<>()))
                 .getId();
-        Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, true))
+        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true))
                 .getId();
         OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
         Order order = 주문을_생성한다(orderTableId, null, LocalDateTime.now(), List.of(orderLineItem));
@@ -97,7 +97,7 @@ class OrderServiceTest {
                 .getId();
         Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, new ArrayList<>()))
                 .getId();
-        Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, false))
+        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
         OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
         Order order1 = orderService.create(주문을_생성한다(orderTableId, null, LocalDateTime.now(), List.of(orderLineItem)));
@@ -116,7 +116,7 @@ class OrderServiceTest {
                 .getId();
         Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, new ArrayList<>()))
                 .getId();
-        Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, false))
+        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
         OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
         Order order = orderService.create(주문을_생성한다(orderTableId, null, LocalDateTime.now(), List.of(orderLineItem)));
@@ -139,7 +139,7 @@ class OrderServiceTest {
                 .getId();
         Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.valueOf(1_000), menuGroupId, new ArrayList<>()))
                 .getId();
-        Long orderTableId = orderTableDao.save(주문_테이블을_생성한다(null, 1, false))
+        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
         OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
         Order order = orderService.create(주문을_생성한다(orderTableId, null, LocalDateTime.now(), List.of(orderLineItem)));
