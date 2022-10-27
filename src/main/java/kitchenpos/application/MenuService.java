@@ -81,10 +81,6 @@ public class MenuService {
     public MenusResponse list() {
         final List<Menu> menus = menuDao.findAll();
 
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
-
         return MenusResponse.of(menus);
     }
 }

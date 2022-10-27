@@ -7,6 +7,7 @@ import static kitchenpos.support.ProductFixture.PRODUCT_PRICE_1000;
 import static kitchenpos.support.ProductFixture.PRODUCT_PRICE_10000;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
@@ -16,6 +17,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.response.MenuProductResponse;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.MenusResponse;
 import org.junit.jupiter.api.Test;
@@ -62,7 +64,7 @@ class MenuServiceTest extends ServiceTest {
     void 메뉴의_그룹이_존재하지_않으면_예외를_발생한다() {
         // given
         final long notExistMenuGroupId = Long.MAX_VALUE;
-        final MenuRequest menuRequest = new MenuRequest("메뉴",  new BigDecimal(10_000), notExistMenuGroupId, List.of());
+        final MenuRequest menuRequest = new MenuRequest("메뉴", new BigDecimal(10_000), notExistMenuGroupId, List.of());
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuRequest))
@@ -76,7 +78,7 @@ class MenuServiceTest extends ServiceTest {
         final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
 
         final List<MenuProductRequest> menuProductRequests = List.of(new MenuProductRequest(productId, 1));
-        final MenuRequest menuRequest = new MenuRequest("메뉴",  new BigDecimal(10_000), menuGroupId, menuProductRequests);
+        final MenuRequest menuRequest = new MenuRequest("메뉴", new BigDecimal(10_000), menuGroupId, menuProductRequests);
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuRequest))
@@ -90,16 +92,23 @@ class MenuServiceTest extends ServiceTest {
         final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
         final Menu savedMenu = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId));
         final MenuProduct savedMenuProduct = 메뉴상품을_저장한다(MENU_PRODUCT_1.생성(savedMenu, product));
-        savedMenu.setMenuProducts(List.of(savedMenuProduct));
 
-        final MenuResponse expected = MenuResponse.of(savedMenu);
+        final MenuResponse expectedMenuResponse = MenuResponse.of(savedMenu);
+        final MenuProductResponse expectedMenuProductResponse = MenuProductResponse.of(savedMenuProduct);
 
         // when
         final MenusResponse menusResponse = menuService.list();
 
         // then
-        assertThat(menusResponse.getMenus()).usingRecursiveFieldByFieldElementComparator()
-                .usingComparatorForType(Comparator.comparingInt(BigDecimal::intValue), BigDecimal.class)
-                .containsOnly(expected);
+        assertAll(
+                () ->  assertThat(menusResponse.getMenus()).usingRecursiveFieldByFieldElementComparator()
+                        .usingElementComparatorIgnoringFields("menuProductResponses")
+                        .usingComparatorForType(Comparator.comparingInt(BigDecimal::intValue), BigDecimal.class)
+                        .containsOnly(expectedMenuResponse),
+                () -> assertThat(menusResponse.getMenus().get(0).getMenuProductResponses())
+                        .usingRecursiveFieldByFieldElementComparator()
+                        .usingComparatorForType(Comparator.comparingInt(BigDecimal::intValue), BigDecimal.class)
+                        .containsOnly(expectedMenuProductResponse)
+        );
     }
 }

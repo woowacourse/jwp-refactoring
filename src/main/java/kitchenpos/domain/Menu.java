@@ -26,7 +26,7 @@ public class Menu {
     private Long menuGroupId;
 
     @OneToMany(mappedBy = "menu")
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+    private List<MenuProduct> menuProducts;
 
     protected Menu() {
     }
@@ -87,9 +87,5 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
     }
 }
