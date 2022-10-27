@@ -16,8 +16,8 @@ public class MenuGroupService {
     }
 
     @Transactional
-    public MenuGroup create(final MenuGroup menuGroup) {
-        return menuGroupDao.save(menuGroup);
+    public MenuGroup create(final String name) {
+        return menuGroupDao.save(new MenuGroup(name));
     }
 
     public List<MenuGroup> list() {

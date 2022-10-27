@@ -3,15 +3,15 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 
 public class Product {
-    private Long id;
-    private String name;
-    private BigDecimal price;
+    private final Long id;
+    private final String name;
+    private final BigDecimal price;
 
-    public Product(String name, BigDecimal price) {
+    public Product(final String name, final BigDecimal price) {
         this(null, name, price);
     }
 
-    public Product(Long id, String name, BigDecimal price) {
+    public Product(final Long id, final String name, final BigDecimal price) {
         if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
@@ -25,23 +25,11 @@ public class Product {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public BigDecimal getPrice() {
         return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
     }
 }
