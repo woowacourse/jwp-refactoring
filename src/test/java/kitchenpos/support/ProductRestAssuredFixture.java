@@ -2,7 +2,6 @@ package kitchenpos.support;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.support.SimpleRestAssured;
 
 public class ProductRestAssuredFixture {
 

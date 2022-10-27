@@ -51,10 +51,10 @@ public class ProductAcceptanceTest extends AcceptanceTest {
         final var response = 상품_목록_조회_요청();
 
         // then
-        final var created = toObjectList(response, ProductResponse.class);
+        final var found = toObjectList(response, ProductResponse.class);
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(created).hasSize(2)
+                () -> assertThat(found).hasSize(2)
         );
     }
 }
