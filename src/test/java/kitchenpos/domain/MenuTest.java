@@ -22,4 +22,12 @@ class MenuTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @DisplayName("메뉴의 가격이 총 가격보다 크면 예외를 반환한다.")
+    @Test
+    void validateTotalPrice() {
+        final Menu menu = new Menu("마이쮸 포도맛", BigDecimal.valueOf(2000), 1L);
+
+        assertThatThrownBy(() -> menu.validateTotalPrice(BigDecimal.valueOf(800)))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }

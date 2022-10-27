@@ -30,6 +30,12 @@ public class Menu {
         }
     }
 
+    public void validateTotalPrice(final BigDecimal totalPrice) {
+        if (price.compareTo(totalPrice) > 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Long getId() {
         return id;
     }

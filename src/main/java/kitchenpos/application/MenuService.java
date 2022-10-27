@@ -35,8 +35,6 @@ public class MenuService {
 
     @Transactional
     public Menu create(final Menu menu) {
-        final BigDecimal price = menu.getPrice();
-
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
@@ -47,12 +45,10 @@ public class MenuService {
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = productDao.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+            sum = sum.add(product.getTotalPrice(menuProduct.getQuantity()));
         }
 
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
+        menu.validateTotalPrice(sum);
 
         final Menu savedMenu = menuDao.save(menu);
 
