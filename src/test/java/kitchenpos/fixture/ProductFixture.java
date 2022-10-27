@@ -10,7 +10,22 @@ public class ProductFixture {
     public static Product 뿌링클_NULL = generateNullPrice("뿌링클");
     public static Product 뿌링클_INVALID = generateInvalidPrice("뿌링클");
 
-    private static Product generateNormal(final String productName, final int productPrice) {
+    public static Product generateProduct(final String productName, final int productPrice) {
+        Product product = new Product();
+        product.setName(productName);
+        product.setPrice(BigDecimal.valueOf(productPrice));
+        return product;
+    }
+
+    public static Product generateProductWithId(final String productName, final int productPrice, final Long id) {
+        Product product = new Product();
+        product.setId(id);
+        product.setName(productName);
+        product.setPrice(BigDecimal.valueOf(productPrice));
+        return product;
+    }
+
+    public static Product generateNormal(final String productName, final int productPrice) {
         Product product = new Product();
         product.setName(productName);
         product.setPrice(BigDecimal.valueOf(productPrice));
