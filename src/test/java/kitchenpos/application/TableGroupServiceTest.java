@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,12 +9,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.TableGroupCreateRequest;
 
 class TableGroupServiceTest extends ServiceTest {
 
@@ -27,73 +27,56 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("예외사항이 존재하지 않는 경우 새로운 테이블 그룹을 생성한다.")
         void create() {
             // given
-            List<OrderTable> tables = new ArrayList<OrderTable>() {{
-                add(createAndSaveOrderTable(true, null));
-                add(createAndSaveOrderTable(true, null));
-            }};
-            TableGroup tableGroup = createTableGroup(tables);
+            OrderTable orderTable1 = createAndSaveOrderTable(true, null);
+            OrderTable orderTable2 = createAndSaveOrderTable(true, null);
+            TableGroupCreateRequest request = new TableGroupCreateRequest(
+                new ArrayList<OrderTableCreateRequest>() {{
+                    add(new OrderTableCreateRequest(orderTable1.getId()));
+                    add(new OrderTableCreateRequest(orderTable2.getId()));
+                }}
+            );
 
             // when
-            TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+            TableGroup savedTableGroup = tableGroupService.create(request);
 
             // then
             assertThat(savedTableGroup.getId()).isNotNull();
-        }
-
-        @ParameterizedTest
-        @NullAndEmptySource
-        @DisplayName("테이블 정보가 비어있거나 null인 경우 예외가 발생한다.")
-        void nullAndEmptyOrderTables(List<OrderTable> tables) {
-            // given
-            TableGroup tableGroup = createTableGroup(tables);
-
-            // when, then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("테이블 정보가 2개 미만인 경우 예외가 발생한다.")
-        void oneTables() {
-            // given
-            List<OrderTable> tables = new ArrayList<OrderTable>() {{
-                add(createAndSaveOrderTable(true, null));
-            }};
-            TableGroup tableGroup = createTableGroup(tables);
-
-            // when, then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         @DisplayName("존재하지 않는 테이블인 경우 예외가 발생한다.")
         void invalidOrderTable() {
             // given
-            List<OrderTable> tables = new ArrayList<OrderTable>() {{
-                add(createOrderTable(true, null));
-                add(createOrderTable(true, null));
-            }};
-            TableGroup tableGroup = createTableGroup(tables);
+            TableGroupCreateRequest request = new TableGroupCreateRequest(
+                new ArrayList<OrderTableCreateRequest>() {{
+                    add(new OrderTableCreateRequest(0L));
+                    add(new OrderTableCreateRequest(0L));
+                }}
+            );
 
             // when, then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableGroupService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("존재하지 않은 테이블입니다.");
         }
 
         @Test
         @DisplayName("비어있지 않은 테이블인 경우 예외가 발생한다.")
         void notEmptyOrderTable() {
             // given
-            List<OrderTable> tables = new ArrayList<OrderTable>() {{
-                add(createAndSaveOrderTable(false, null));
-                add(createAndSaveOrderTable(false, null));
-            }};
-            TableGroup tableGroup = createTableGroup(tables);
+            OrderTable orderTable1 = createAndSaveOrderTable(false, null);
+            OrderTable orderTable2 = createAndSaveOrderTable(false, null);
+            TableGroupCreateRequest request = new TableGroupCreateRequest(
+                new ArrayList<OrderTableCreateRequest>() {{
+                    add(new OrderTableCreateRequest(orderTable1.getId()));
+                    add(new OrderTableCreateRequest(orderTable2.getId()));
+                }}
+            );
 
             // when, then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableGroupService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("비어있지 않은 테이블입니다.");
         }
 
         @Test
@@ -101,15 +84,19 @@ class TableGroupServiceTest extends ServiceTest {
         void existTableGroupId() {
             // given
             long alreadyExistTableGroupId = createAndSaveTableGroup().getId();
-            List<OrderTable> tables = new ArrayList<OrderTable>() {{
-                add(createAndSaveOrderTable(false, alreadyExistTableGroupId));
-                add(createAndSaveOrderTable(false, alreadyExistTableGroupId));
-            }};
-            TableGroup tableGroup = createTableGroup(tables);
+            OrderTable orderTable1 = createAndSaveOrderTable(true, alreadyExistTableGroupId);
+            OrderTable orderTable2 = createAndSaveOrderTable(true, alreadyExistTableGroupId);
+            TableGroupCreateRequest request = new TableGroupCreateRequest(
+                new ArrayList<OrderTableCreateRequest>() {{
+                    add(new OrderTableCreateRequest(orderTable1.getId()));
+                    add(new OrderTableCreateRequest(orderTable2.getId()));
+                }}
+            );
 
             // when, then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableGroupService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("이미 다른 그룹에 존재하는 테이블입니다.");
         }
 
     }
@@ -159,7 +146,6 @@ class TableGroupServiceTest extends ServiceTest {
 
     private TableGroup createTableGroup(List<OrderTable> tables) {
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
         tableGroup.setOrderTables(tables);
 
         return tableGroup;
@@ -167,7 +153,6 @@ class TableGroupServiceTest extends ServiceTest {
 
     private TableGroup createAndSaveTableGroup() {
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
         return tableGroupDao.save(tableGroup);
     }
 

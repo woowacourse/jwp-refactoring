@@ -17,7 +17,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemCreateRequest;
-import kitchenpos.dto.OrderStatusChangeReqeust;
+import kitchenpos.dto.OrderStatusChangeRequest;
 
 class OrderServiceTest extends ServiceTest {
 
@@ -105,7 +105,7 @@ class OrderServiceTest extends ServiceTest {
         void changeOrderStatus() {
             // given
             Order savedOrder = createAndSaveOrder();
-            OrderStatusChangeReqeust request = new OrderStatusChangeReqeust("MEAL");
+            OrderStatusChangeRequest request = new OrderStatusChangeRequest("MEAL");
 
             // when
             Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), request);
@@ -118,7 +118,7 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("존재하지 않는 order id인 경우 예외가 발생한다.")
         void wrongInvalidOrderId() {
             // given
-            OrderStatusChangeReqeust request = new OrderStatusChangeReqeust("MEAL");
+            OrderStatusChangeRequest request = new OrderStatusChangeRequest("MEAL");
 
             // when, then
             assertThatThrownBy(() -> orderService.changeOrderStatus(0L, request))

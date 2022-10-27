@@ -2,16 +2,16 @@ package kitchenpos.dto;
 
 public class MenuProductCreateRequest {
 
-    private Long id;
+    private Long productId;
     private long quantity;
 
-    public MenuProductCreateRequest(Long id, long quantity) {
-        this.id = id;
+    public MenuProductCreateRequest(Long productId, long quantity) {
+        this.productId = productId;
         this.quantity = quantity;
     }
 
-    public Long getId() {
-        return id;
+    public Long getProductId() {
+        return productId;
     }
 
     public long getQuantity() {

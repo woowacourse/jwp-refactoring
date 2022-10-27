@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -179,8 +178,6 @@ class TableServiceTest extends ServiceTest {
 
     private TableGroup createAndSaveTableGroup() {
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
         return tableGroupDao.save(tableGroup);
     }
 
