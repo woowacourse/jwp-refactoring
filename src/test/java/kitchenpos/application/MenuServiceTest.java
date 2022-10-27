@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.MenuCreateRequest;
+import kitchenpos.application.dto.request.MenuProductDto;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -85,7 +87,7 @@ class MenuServiceTest {
         void price가_음수면_예외를_반환한다() {
             // given
             BigDecimal negativePrice = BigDecimal.valueOf(-1000);
-            MenuCreateRequest request = 메뉴_생성_dto를_만든다(negativePrice, null, null);
+            MenuCreateRequest request = 메뉴_생성_dto를_만든다(negativePrice, null, new ArrayList<>());
 
             // when & then
             assertThatThrownBy(() -> menuService.create(request))
@@ -96,7 +98,7 @@ class MenuServiceTest {
         void menu_group이_존재하지_않으면_예외를_반환한다() {
             // given
             Long notExistMenuGroupId = 101L;
-            MenuCreateRequest request = 메뉴_생성_dto를_만든다(price, notExistMenuGroupId, null);
+            MenuCreateRequest request = 메뉴_생성_dto를_만든다(price, notExistMenuGroupId, new ArrayList<>());
             when(menuGroupDao.existsById(notExistMenuGroupId)).thenReturn(false);
 
             // when & then
@@ -161,6 +163,13 @@ class MenuServiceTest {
 
     private MenuCreateRequest 메뉴_생성_dto를_만든다(final BigDecimal price, final Long menuGroupId,
                                              final List<MenuProduct> menuProducts) {
-        return new MenuCreateRequest(1L, "pasta", price, menuGroupId, menuProducts);
+        return new MenuCreateRequest(
+                1L,
+                "pasta",
+                price,
+                menuGroupId,
+                menuProducts.stream()
+                .map(MenuProductDto::new)
+                .collect(Collectors.toList()));
     }
 }

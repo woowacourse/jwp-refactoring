@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.MenuCreateRequest;
+import kitchenpos.application.dto.request.MenuProductDto;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -42,7 +43,9 @@ public class MenuService {
         validatePrice(price);
         validateExistMenuGroup(menuCreateRequest.getMenuGroupId());
 
-        List<MenuProduct> menuProducts = menuCreateRequest.getMenuProducts();
+        List<MenuProduct> menuProducts = menuCreateRequest.getMenuProductsDto().stream()
+                .map(MenuProductDto::toMenuProduct)
+                .collect(Collectors.toList());
         BigDecimal sum = calculateSum(menuProducts);
         validateSum(price, sum);
 
@@ -91,7 +94,11 @@ public class MenuService {
 
     private MenuResponse saveMenu(final MenuCreateRequest menuCreateRequest) {
         final Menu savedMenu = menuDao.save(menuCreateRequest.toMenu());
-        saveMenuProducts(menuCreateRequest.getMenuProducts(), savedMenu);
+        List<MenuProductDto> menuProductsDto = menuCreateRequest.getMenuProductsDto();
+
+        saveMenuProducts(menuProductsDto.stream()
+                .map(MenuProductDto::toMenuProduct)
+                .collect(Collectors.toList()), savedMenu);
         return MenuResponse.from(savedMenu);
     }
 
