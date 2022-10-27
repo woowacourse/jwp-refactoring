@@ -15,7 +15,7 @@ public class ProductSaveRequest {
     }
 
     public Product toEntity() {
-        return new Product(Name.of(name), Price.valueOf(price));
+        return new Product(Name.of(name), Price.from(price));
     }
 
     public String getName() {

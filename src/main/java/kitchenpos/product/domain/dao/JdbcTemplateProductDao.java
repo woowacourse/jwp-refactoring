@@ -73,7 +73,7 @@ public class JdbcTemplateProductDao implements ProductDao {
         @Override
         public Product mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new Product(rs.getLong(KEY_COLUMN), Name.of(rs.getString(NAME_COLUMN)),
-                Price.of(rs.getBigDecimal(PRICE_COLUMN)));
+                Price.from(rs.getBigDecimal(PRICE_COLUMN)));
         }
     }
 }

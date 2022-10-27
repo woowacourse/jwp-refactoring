@@ -16,7 +16,7 @@ public enum ProductFixture {
 
     ProductFixture(String name, Integer price) {
         this.name = Name.of(name);
-        this.price = Price.valueOf(price);
+        this.price = Price.from(price);
     }
 
     public Product getProduct() {
