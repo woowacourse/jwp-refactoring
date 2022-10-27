@@ -2,7 +2,9 @@ package kitchenpos.acceptance;
 
 import static kitchenpos.acceptance.fixture.TableStepDefinition.테이블을_생성한다;
 import static kitchenpos.acceptance.fixture.TableStepDefinition.테이블을_조회한다;
+import static kitchenpos.acceptance.fixture.TableStepDefinition.테이블의_상태를_변경한다;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.List;
 import kitchenpos.domain.OrderTable;
@@ -22,5 +24,14 @@ public class TableAcceptanceTest extends AcceptanceTest {
 
         // then
         assertThat(extract).hasSize(3);
+    }
+
+    @Test
+    void 테이블을_빈_상태로_변경할_수_있다() {
+        // given
+        long 테이블 = 테이블을_생성한다(1L, 1);
+
+        // when & then
+        assertDoesNotThrow(() -> 테이블의_상태를_변경한다(테이블));
     }
 }

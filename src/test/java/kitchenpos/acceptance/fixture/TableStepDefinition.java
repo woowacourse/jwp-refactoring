@@ -5,8 +5,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import io.restassured.RestAssured;
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.http.HttpStatus;
 
@@ -38,11 +36,17 @@ public class TableStepDefinition {
     }
 
     public static void 테이블의_상태를_변경한다(
-        final long orderId,
-        final OrderStatus orderStatus
+        final long orderTableId
         ) {
 
-//        Order order = new Order();
+        OrderTable orderTable = new OrderTable(orderTableId, 0, true);
 
+        RestAssured.given().log().all()
+            .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+            .body(orderTable)
+            .when().log().all()
+            .put("/api/tables/" + orderTableId + "/empty")
+            .then().log().all()
+            .statusCode(HttpStatus.OK.value());
     }
 }
