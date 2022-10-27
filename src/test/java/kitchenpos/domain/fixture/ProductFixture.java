@@ -21,13 +21,6 @@ public class ProductFixture {
             .build();
     }
 
-    public static Product 후라이드_치킨의_가격은(final BigDecimal price) {
-        return 상품()
-            .이름("후라이드 치킨")
-            .가격(price)
-            .build();
-    }
-
     private static ProductFixture 상품() {
         return new ProductFixture();
     }
