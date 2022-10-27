@@ -20,10 +20,11 @@ public enum ProductFixture {
     }
 
     public Product toEntity() {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-        return product;
+        return new Product(null, name, price);
+    }
+
+    public Product toEntity(final BigDecimal price) {
+        return new Product(null, name, price);
     }
 
     public BigDecimal getPrice() {
