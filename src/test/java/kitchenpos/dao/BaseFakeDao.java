@@ -33,20 +33,20 @@ public abstract class BaseFakeDao<T> {
 
     private void setPrimaryKey(final T entity) throws IllegalAccessException, InvocationTargetException {
         final Class<?> entityClass = entity.getClass();
-        final var getId = getIdMethod(entityClass);
-        if (getId.isPresent()) {
-            getId.get().invoke(entity, key);
+        final var setId = setIdMethod(entityClass);
+        if (setId.isPresent()) {
+            setId.get().invoke(entity, key);
             return;
         }
-        final var getSeq = getSeqMethod(entityClass);
-        if (getSeq.isPresent()) {
-            getSeq.get().invoke(entity, key);
+        final var setSeq = setSeqMethod(entityClass);
+        if (setSeq.isPresent()) {
+            setSeq.get().invoke(entity, key);
             return;
         }
         throw new RuntimeException();
     }
 
-    private Optional<Method> getIdMethod(final Class<?> entityClass) {
+    private Optional<Method> setIdMethod(final Class<?> entityClass) {
         try {
             return Optional.of(entityClass.getMethod("setId", Long.class));
         } catch (NoSuchMethodException e) {
@@ -54,7 +54,7 @@ public abstract class BaseFakeDao<T> {
         }
     }
 
-    private Optional<Method> getSeqMethod(final Class<?> entityClass) {
+    private Optional<Method> setSeqMethod(final Class<?> entityClass) {
         try {
             return Optional.of(entityClass.getMethod("setSeq", Long.class));
         } catch (NoSuchMethodException e) {
