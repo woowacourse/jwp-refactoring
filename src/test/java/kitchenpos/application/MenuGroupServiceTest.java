@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ class MenuGroupServiceTest {
     @DisplayName("menuGroup을 생성한다.")
     @Test
     void createMenuGroup() {
-        MenuGroup 한마리메뉴 = 한마리메뉴();
+        MenuGroupCreateRequest 한마리메뉴 = 한마리메뉴();
         MenuGroup actual = menuGroupService.create(한마리메뉴);
 
         assertThat(actual.getName()).isEqualTo(한마리메뉴.getName());
