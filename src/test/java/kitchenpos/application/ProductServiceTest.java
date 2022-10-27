@@ -1,12 +1,13 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.ProductFixture.createProduct;
+import static kitchenpos.support.ProductFixture.createProductRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.support.IntegrationServiceTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,12 +21,12 @@ class ProductServiceTest extends IntegrationServiceTest {
         class 상품가에_null을_입력할_경우 {
 
             private final BigDecimal NULL_PRICE = null;
-            private final Product product = new Product("간장",  NULL_PRICE);
+            private final ProductRequest productRequest = new ProductRequest("간장",  NULL_PRICE);
 
             @Test
             void 예외가_발생한다() {
 
-                assertThatThrownBy(() -> productService.create(product))
+                assertThatThrownBy(() -> productService.create(productRequest))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("가격은 양의 정수이어야 합니다.");
             }
@@ -36,12 +37,12 @@ class ProductServiceTest extends IntegrationServiceTest {
 
             private final int MINUS_PRICE = -1;
 
-            private final Product product = createProduct(MINUS_PRICE);
+            private final ProductRequest productRequest = createProductRequest(MINUS_PRICE);
 
             @Test
             void 예외가_발생한다() {
 
-                assertThatThrownBy(() -> productService.create(product))
+                assertThatThrownBy(() -> productService.create(productRequest))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("가격은 양의 정수이어야 합니다.");
             }
@@ -50,12 +51,12 @@ class ProductServiceTest extends IntegrationServiceTest {
         @Nested
         class 상품을_정상적으로_생성가능한_경우 {
 
-            private final Product product = createProduct(18_000);
+            private final ProductRequest productRequest = createProductRequest(18_000);
 
             @Test
             void 저장된_상품이_반환된다() {
 
-                Product actual = productService.create(product);
+                Product actual = productService.create(productRequest);
                 assertThat(actual).isNotNull();
             }
         }

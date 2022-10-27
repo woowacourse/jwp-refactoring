@@ -1,7 +1,9 @@
 package kitchenpos.application;
 
+import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,20 +12,19 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@Transactional(readOnly = true)
 public class ProductService {
     private final ProductDao productDao;
+    private final MenuDao menuDao;
 
-    public ProductService(final ProductDao productDao) {
+    public ProductService(final ProductDao productDao, final MenuDao menuDao) {
         this.productDao = productDao;
+        this.menuDao = menuDao;
     }
 
     @Transactional
-    public Product create(final Product product) {
-        final BigDecimal price = product.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("가격은 양의 정수이어야 합니다.");
-        }
+    public Product create(final ProductRequest productRequest) {
+        final Product product = productRequest.toDomain();
 
         return productDao.save(product);
     }
