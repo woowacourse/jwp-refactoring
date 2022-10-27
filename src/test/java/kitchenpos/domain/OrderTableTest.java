@@ -34,4 +34,13 @@ class OrderTableTest {
         assertThatThrownBy(orderTable::validateGroupable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    @DisplayName("주문 테이블이 단체로 지정되어 있다면 테이블을 비울 수 없다")
+    void validateNotGrouping() {
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(1L, 3);
+
+        assertThatThrownBy(() -> orderTable.updateEmpty(true))
+                .isExactlyInstanceOf(IllegalArgumentException.class);
+    }
 }

@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
@@ -35,18 +34,16 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
+        validateOrderCompletion(orderTableId);
+        savedOrderTable.updateEmpty(orderTable.isEmpty());
+        return orderTableDao.save(savedOrderTable);
+    }
+
+    private void validateOrderCompletion(final Long orderTableId) {
+        if (orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId,
+                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
-
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderTable newOrder = new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
-                savedOrderTable.getNumberOfGuests(), orderTable.isEmpty());
-        return orderTableDao.save(newOrder);
     }
 
     @Transactional
@@ -63,7 +60,7 @@ public class TableService {
         if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        
+
         final OrderTable newOrder = new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
                 numberOfGuests, savedOrderTable.isEmpty());
         return orderTableDao.save(newOrder);

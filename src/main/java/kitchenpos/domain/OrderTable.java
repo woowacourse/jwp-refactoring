@@ -27,6 +27,17 @@ public class OrderTable {
         }
     }
 
+    public void updateEmpty(final boolean empty) {
+        validateNotGrouping();
+        this.empty = empty;
+    }
+
+    private void validateNotGrouping() {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Long getId() {
         return id;
     }
