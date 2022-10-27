@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class TableGroupService {
+
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
@@ -33,7 +34,7 @@ public class TableGroupService {
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("단체 지정할 테이블이 2개보다 작을 수 없습니다.");
         }
 
         final List<Long> orderTableIds = orderTables.stream()
@@ -43,12 +44,12 @@ public class TableGroupService {
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
         if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("실제 존재하는 주문 테이블과의 정보가 일치하지 않습니다.");
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("이미 테이블이 단체 지정되어있거나 비어있지 않으면 단체 지정할 수 없습니다.");
             }
         }
 
@@ -77,7 +78,7 @@ public class TableGroupService {
 
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("이미 테이블의 음식을 준비중이거나 식사중이면 단체 지정을 해제할 수 없습니다.");
         }
 
         for (final OrderTable orderTable : orderTables) {
