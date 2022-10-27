@@ -6,7 +6,7 @@ public class Product {
 
     private final Long id;
     private final String name;
-    private final BigDecimal price;
+    private final Price price;
 
     public Product(String name, BigDecimal price) {
         this(null, name, price);
@@ -15,7 +15,7 @@ public class Product {
     public Product(Long id, String name, BigDecimal price) {
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
     }
 
     public Long getId() {
@@ -27,6 +27,6 @@ public class Product {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 }
