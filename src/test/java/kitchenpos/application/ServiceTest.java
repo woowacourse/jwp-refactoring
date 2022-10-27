@@ -40,14 +40,13 @@ public abstract class ServiceTest {
     @Autowired
     OrderService orderService;
 
+    protected MenuProduct 메뉴_상품을_생성한다(String productName, int productPrice, Long quantity) {
+        return 메뉴_상품을_생성한다(null, productName, productPrice, quantity);
+    }
+
     protected MenuProduct 메뉴_상품을_생성한다(Long id, String productName, int productPrice, Long quantity) {
         Product product = 상품을_저장한다(productName, productPrice);
         return new MenuProduct(id, product.getId(), quantity);
-    }
-
-    protected MenuProduct 메뉴_상품을_생성한다(String productName, int productPrice, Long quantity) {
-        Product product = 상품을_저장한다(productName, productPrice);
-        return new MenuProduct(null, product.getId(), quantity);
     }
 
     protected Product 상품을_저장한다(String name, int price) {
@@ -56,9 +55,7 @@ public abstract class ServiceTest {
     }
 
     protected MenuGroup 메뉴_그룹을_저장한다(String name) {
-        MenuGroup menuGroup1 = new MenuGroup();
-        menuGroup1.setName(name);
-
+        MenuGroup menuGroup1 = new MenuGroup(name);
         return menuGroupService.create(menuGroup1);
     }
 

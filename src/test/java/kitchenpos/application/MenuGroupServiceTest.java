@@ -12,8 +12,7 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void 메뉴_그룹_등록_메소드는_입력받은_메뉴_그룹을_저장한다() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("추천 메뉴");
+        MenuGroup menuGroup = new MenuGroup("추천 메뉴");
 
         // when
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
