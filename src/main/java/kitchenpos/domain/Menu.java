@@ -11,12 +11,19 @@ public class Menu {
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
-    public Menu(final String name, final BigDecimal price, final Long menuGroupId) {
-        this(null, name, price, menuGroupId);
+    protected Menu() {
     }
 
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
         this(id, name, price, menuGroupId, new ArrayList<>());
+    }
+
+    public Menu(final String name, final BigDecimal price, final Long menuGroupId) {
+        this(null, name, price, menuGroupId);
+    }
+
+    public Menu(final String name, final BigDecimal price, final long menuGroupId, final List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroupId, menuProducts);
     }
 
     public Menu(final Long id, final String name, final BigDecimal price,

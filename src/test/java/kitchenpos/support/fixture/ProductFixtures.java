@@ -4,8 +4,9 @@ import java.math.BigDecimal;
 
 public enum ProductFixtures {
 
-    후라이드_상품(1L, "후라이드", 16000),
-    양념치킨_상품(2L, "앙념치킨", 16000)
+    후라이드상품(1L, "후라이드", 16000),
+    양념치킨상품(2L, "앙념치킨", 16000),
+    반반치킨상품(3L, "반반치킨", 16000)
     ;
 
     private final long id;
