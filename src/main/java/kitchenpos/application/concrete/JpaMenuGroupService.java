@@ -1,38 +1,36 @@
-package kitchenpos.application.old;
+package kitchenpos.application.concrete;
 
 import java.util.List;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.exception.badrequest.MenuGroupNameDuplicateException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.ui.dto.request.MenuGroupCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 @Transactional(readOnly = true)
 @Service
-public class JdbcMenuGroupService implements MenuGroupService {
+public class JpaMenuGroupService implements MenuGroupService {
     private final MenuGroupRepository menuGroupRepository;
 
-    public JdbcMenuGroupService(final MenuGroupRepository menuGroupRepository) {
+    public JpaMenuGroupService(final MenuGroupRepository menuGroupRepository) {
         this.menuGroupRepository = menuGroupRepository;
     }
 
     @Transactional
     @Override
     public MenuGroup create(final MenuGroupCreateRequest request) {
-        final var requestedName = request.getName();
-        validateName(requestedName);
-        return menuGroupRepository.save(new MenuGroup(requestedName));
+        final var name = request.getName();
+        validateDuplicateMenuGroupName(name);
+        final var newMenuGroup = new MenuGroup(name);
+
+        return menuGroupRepository.save(newMenuGroup);
     }
 
-    private void validateName(final String name) {
-        if (!StringUtils.hasText(name)) {
-            throw new IllegalArgumentException("유효하지 않은 메뉴 그룹명 : " + name);
-        }
-
+    private void validateDuplicateMenuGroupName(final String name) {
         if (menuGroupRepository.existsByName(name)) {
-            throw new IllegalArgumentException("이미 존재하는 메뉴 그룹명 : " + name);
+            throw new MenuGroupNameDuplicateException(name);
         }
     }
 
