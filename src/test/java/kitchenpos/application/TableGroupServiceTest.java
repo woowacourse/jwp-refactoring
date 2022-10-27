@@ -40,8 +40,7 @@ class TableGroupServiceTest {
     void 테이블_그룹을_생성한다() {
         // given
         List<OrderTable> orderTables = 저장된_기본_주문_테이블들();
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
+        TableGroup tableGroup = new TableGroup(null, null, orderTables);
 
         // when
         TableGroup actual = tableGroupService.create(tableGroup);
@@ -65,8 +64,7 @@ class TableGroupServiceTest {
         // given
         List<OrderTable> invalidOrderTable = Collections.singletonList(new OrderTable(null, null, 0, false));
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(invalidOrderTable);
+        TableGroup tableGroup = new TableGroup(null, null, invalidOrderTable);
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -79,8 +77,7 @@ class TableGroupServiceTest {
         List<OrderTable> invalidOrderTables = 저장된_기본_주문_테이블들();
         invalidOrderTables.add(new OrderTable(null, null, 0, false));
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(invalidOrderTables);
+        TableGroup tableGroup = new TableGroup(null, null, invalidOrderTables);
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -94,8 +91,7 @@ class TableGroupServiceTest {
         OrderTable invalidOrderTable = new OrderTable(null, null, 0, false);
         invalidOrderTables.add(orderTableDao.save(invalidOrderTable));
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(invalidOrderTables);
+        TableGroup tableGroup = new TableGroup(null, null, invalidOrderTables);
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -106,13 +102,11 @@ class TableGroupServiceTest {
     void 주문_테이블이_다른_테이블_그룹에_등록되어있다면_테이블_그룹으로_생성할_수_없다() {
         // given
         List<OrderTable> orderTables = 저장된_기본_주문_테이블들();
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
+        TableGroup tableGroup = new TableGroup(null, null, orderTables);
         TableGroup tableGroup1 = tableGroupService.create(tableGroup);
 
         // when
-        TableGroup tableGroup2 = new TableGroup();
-        tableGroup2.setOrderTables(tableGroup1.getOrderTables());
+        TableGroup tableGroup2 = new TableGroup(null, null, tableGroup1.getOrderTables());
 
         // then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup2))
@@ -127,8 +121,7 @@ class TableGroupServiceTest {
                 getOrderedOrderTable(OrderStatus.COMPLETION.name())
         );
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
+        TableGroup tableGroup = new TableGroup(null, null, orderTables);
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         // when
@@ -155,8 +148,7 @@ class TableGroupServiceTest {
                 getOrderedOrderTable(OrderStatus.COMPLETION.name())
         );
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
+        TableGroup tableGroup = new TableGroup(null, null, orderTables);
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         // when & then

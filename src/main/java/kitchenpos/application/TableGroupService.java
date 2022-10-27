@@ -3,7 +3,6 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -13,7 +12,6 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
@@ -30,42 +28,34 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
-
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+        if (tableGroup.hasInvalidOrderTables()) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
+        final List<Long> orderTableIds = tableGroup.getOrderTableIds();
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
-        if (orderTables.size() != savedOrderTables.size()) {
+        if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
+            if (!savedOrderTable.isEmpty() || savedOrderTable.hasTableGroupId()) {
                 throw new IllegalArgumentException();
             }
         }
 
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(null, LocalDateTime.now(), null));
 
         final Long tableGroupId = savedTableGroup.getId();
 
-        savedTableGroup.setOrderTables(
-                savedOrderTables.stream()
-                        .map(orderTable -> orderTableDao.save(
-                                new OrderTable(orderTable.getId(), tableGroupId, orderTable.getNumberOfGuests(), false)))
-                        .collect(Collectors.toList())
-        );
+        List<OrderTable> orderTables = savedOrderTables.stream()
+                .map(orderTable -> orderTableDao.save(
+                        new OrderTable(orderTable.getId(), tableGroupId, orderTable.getNumberOfGuests(),
+                                false)))
+                .collect(Collectors.toList());
 
-        return savedTableGroup;
+        return new TableGroup(savedTableGroup.getId(), savedTableGroup.getCreatedDate(), orderTables);
     }
 
     @Transactional
