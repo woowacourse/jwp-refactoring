@@ -17,17 +17,17 @@ import kitchenpos.domain.TableGroup;
 public class RequestBuilder {
 
     private static final String DEFAULT_PRODUCT_NAME = "콜라";
-    private static final BigDecimal DEFAULT_PRODUCT_PRICE = new BigDecimal(2000);
+    private static final Integer DEFAULT_PRODUCT_PRICE = 2000;
     private static final String DEFAULT_MENU_GROUP_NAME = "음료 메뉴";
 
     public static Product ofProduct() {
         return ofProduct(DEFAULT_PRODUCT_PRICE);
     }
 
-    public static Product ofProduct(final BigDecimal price) {
+    public static Product ofProduct(final int price) {
         final Product product = new Product();
         product.setName(DEFAULT_PRODUCT_NAME);
-        product.setPrice(price);
+        product.setPrice(new BigDecimal(price));
 
         return product;
     }
@@ -39,14 +39,14 @@ public class RequestBuilder {
         return menuGroup;
     }
 
-    public static Menu ofMenu(final MenuGroup menuGroup, final List<Product> products, final BigDecimal price) {
+    public static Menu ofMenu(final MenuGroup menuGroup, final List<Product> products, final int price) {
         final List<MenuProduct> menuProducts = products.stream()
                 .map(RequestBuilder::ofMenuProduct)
                 .collect(Collectors.toList());
 
         final Menu menu = new Menu();
         menu.setName("포키 정식");
-        menu.setPrice(price);
+        menu.setPrice(new BigDecimal(price));
         menu.setMenuGroupId(menuGroup.getId());
         menu.setMenuProducts(menuProducts);
 

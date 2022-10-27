@@ -1,7 +1,6 @@
 package kitchenpos.acceptance;
 
 import io.restassured.response.ValidatableResponse;
-import java.math.BigDecimal;
 import java.util.Arrays;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -19,9 +18,10 @@ public class MenuAcceptanceTest extends AcceptanceTest {
     @Test
     void create() {
         // given
-        final Product savedProduct = dataSupport.saveProduct("참치마요", new BigDecimal(4000));
+        final int price = 4000;
+        final Product savedProduct = dataSupport.saveProduct("참치마요", price);
         final MenuGroup savedMenuGroup = dataSupport.saveMenuGroup("할인 상품");
-        final BigDecimal discountedPrice = savedProduct.getPrice().add(new BigDecimal(-500));
+        final int discountedPrice = price - 500;
 
         // when
         final Menu request = RequestBuilder.ofMenu(savedMenuGroup, Arrays.asList(savedProduct), discountedPrice);

@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Product;
@@ -38,7 +37,8 @@ class ProductServiceTest {
     @DisplayName("상품을 등록할 때 상품 가격을 입력하지 않으면 예외가 발생한다.")
     @Test
     void create_throwsException_ifNoPrice() {
-        final Product request = RequestBuilder.ofProduct(null);
+        final Product request = RequestBuilder.ofProduct();
+        request.setPrice(null);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> productService.create(request));
     }
@@ -46,7 +46,7 @@ class ProductServiceTest {
     @DisplayName("상품을 등록할 때 상품 가격이 0보다 작으면 예외가 발생한다.")
     @Test
     void create_throwsException_ifPriceUnder0() {
-        final Product request = RequestBuilder.ofProduct(new BigDecimal(-1));
+        final Product request = RequestBuilder.ofProduct(-1);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> productService.create(request));
     }
@@ -55,8 +55,8 @@ class ProductServiceTest {
     @Test
     void list() {
         // given
-        final Product savedProduct1 = dataSupport.saveProduct("치킨마요", new BigDecimal(3500));
-        final Product savedProduct2 = dataSupport.saveProduct("참치마요", new BigDecimal(4000));
+        final Product savedProduct1 = dataSupport.saveProduct("치킨마요", 3500);
+        final Product savedProduct2 = dataSupport.saveProduct("참치마요", 4000);
 
         // when
         final List<Product> products = productService.list();

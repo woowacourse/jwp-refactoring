@@ -1,7 +1,6 @@
 package kitchenpos.acceptance;
 
 import io.restassured.response.ValidatableResponse;
-import java.math.BigDecimal;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -70,14 +69,14 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     }
 
     private Menu 메뉴_등록() {
-        final Product savedProduct = dataSupport.saveProduct("치킨마요", new BigDecimal(3500));
+        final int price = 3500;
+        final Product savedProduct = dataSupport.saveProduct("치킨마요", price);
         final MenuGroup savedMenuGroup = dataSupport.saveMenuGroup("추천 메뉴");
 
         final MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(savedProduct.getId());
         menuProduct.setQuantity(1);
-        final Menu savedMenu =
-                dataSupport.saveMenu("치킨마요", new BigDecimal(3500), savedMenuGroup.getId(), menuProduct);
-        return savedMenu;
+
+        return dataSupport.saveMenu("치킨마요", price, savedMenuGroup.getId(), menuProduct);
     }
 }

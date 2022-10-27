@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Menu;
@@ -23,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 class MenuServiceTest {
 
-    private static final BigDecimal PRICE = new BigDecimal(3500);
+    private static final int PRICE = 3500;
 
     @Autowired
     private MenuService menuService;
@@ -58,8 +57,6 @@ class MenuServiceTest {
         // given
         final Product unsavedProduct = new Product();
         unsavedProduct.setId(0L);
-        unsavedProduct.setName("없는 상품");
-        unsavedProduct.setPrice(PRICE);
         final List<Product> unsavedProducts = Arrays.asList(unsavedProduct);
 
         // when, then
@@ -71,7 +68,9 @@ class MenuServiceTest {
     @DisplayName("메뉴를 등록할 때 가격을 입력하지 않으면 예외가 발생한다.")
     @Test
     void create_throwsException_ifNoPrice() {
-        final Menu request = RequestBuilder.ofMenu(savedMenuGroup, savedProducts, null);
+        final Menu request = RequestBuilder.ofMenu(savedMenuGroup, savedProducts, 0);
+        request.setPrice(null);
+
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> menuService.create(request));
     }
@@ -79,7 +78,7 @@ class MenuServiceTest {
     @DisplayName("메뉴를 등록할 때 가격이 0보다 작으면 예외가 발생한다.")
     @Test
     void create_throwsException_ifPriceUnder0() {
-        final Menu request = RequestBuilder.ofMenu(savedMenuGroup, savedProducts, new BigDecimal(-1));
+        final Menu request = RequestBuilder.ofMenu(savedMenuGroup, savedProducts, -1);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> menuService.create(request));
     }
@@ -88,7 +87,7 @@ class MenuServiceTest {
     @Test
     void create_throwsException_ifPriceOverProduct() {
         // given
-        final BigDecimal priceOverProduct = PRICE.add(new BigDecimal(1));
+        final int priceOverProduct = PRICE + 1;
 
         // when, then
         final Menu request = RequestBuilder.ofMenu(savedMenuGroup, savedProducts, priceOverProduct);
@@ -104,11 +103,12 @@ class MenuServiceTest {
         final MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(savedProduct.getId());
         menuProduct.setQuantity(1);
+        final int discountedPrice = PRICE - 500;
 
         final Menu savedMenu1 = dataSupport.saveMenu(
                 "치킨마요", PRICE, savedMenuGroup.getId(), menuProduct);
         final Menu savedMenu2 = dataSupport.saveMenu(
-                "할인된 치킨마요", PRICE.add(new BigDecimal(-500)), savedMenuGroup.getId(), menuProduct);
+                "할인된 치킨마요", discountedPrice, savedMenuGroup.getId(), menuProduct);
 
         // when
         final List<Menu> menus = menuService.list();

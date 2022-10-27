@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Menu;
@@ -39,12 +38,13 @@ class OrderServiceTest {
     void saveData() {
         savedUnEmptyTable = dataSupport.saveOrderTable(2, false);
 
-        final Product savedProduct = dataSupport.saveProduct("치킨마요", new BigDecimal(3500));
+        final int price = 3500;
+        final Product savedProduct = dataSupport.saveProduct("치킨마요", price);
         final MenuGroup savedMenuGroup = dataSupport.saveMenuGroup("추천 메뉴");
         final MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(savedProduct.getId());
         menuProduct.setQuantity(1);
-        savedMenu = dataSupport.saveMenu("치킨마요", new BigDecimal(3500), savedMenuGroup.getId(), menuProduct);
+        savedMenu = dataSupport.saveMenu("치킨마요", price, savedMenuGroup.getId(), menuProduct);
     }
 
     @DisplayName("테이블에 대해 메뉴를 주문하고 주문 상태를 조리로 변경한다.")

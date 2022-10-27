@@ -46,10 +46,10 @@ public class DataSupport {
     @Autowired
     private OrderLineItemDao orderLineItemDao;
 
-    public Product saveProduct(final String name, final BigDecimal price) {
+    public Product saveProduct(final String name, final int price) {
         final Product product = new Product();
         product.setName(name);
-        product.setPrice(price);
+        product.setPrice(new BigDecimal(price));
         return productDao.save(product);
     }
 
@@ -60,12 +60,12 @@ public class DataSupport {
     }
 
     public Menu saveMenu(final String name,
-                         final BigDecimal price,
+                         final int price,
                          final Long menuGroupId,
                          final MenuProduct... menuProducts) {
         final Menu menu = new Menu();
         menu.setName(name);
-        menu.setPrice(price);
+        menu.setPrice(new BigDecimal(price));
         menu.setMenuGroupId(menuGroupId);
         final Menu savedMenu = menuDao.save(menu);
 
