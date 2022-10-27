@@ -103,11 +103,7 @@ public class ServiceTestBase {
     }
 
     public MenuProduct 메뉴_상품(final Product product) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(null);
-        menuProduct.setProductId(product.getId());
-        menuProduct.setQuantity(3);
-        return menuProduct;
+        return new MenuProduct(null, null, product.getId(), 3);
     }
 
     public List<MenuProduct> 메뉴_상품_목록_생성(final Product... products) {
@@ -116,16 +112,12 @@ public class ServiceTestBase {
 
     public List<MenuProduct> 메뉴_상품_목록_생성(final long quantity, final Product... products) {
         return Arrays.stream(products)
-                .map(it -> 메뉴_상품_생성(it, quantity))
+                .map(it -> 메뉴_상품(it, quantity))
                 .collect(Collectors.toList());
     }
 
-    public MenuProduct 메뉴_상품_생성(final Product product, final long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(null);
-        menuProduct.setProductId(product.getId());
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+    public MenuProduct 메뉴_상품(final Product product, final long quantity) {
+        return new MenuProduct(null, null, product.getId(), quantity);
     }
 
     public void 주문_생성(final Menu menu, final OrderTable orderTable, final OrderStatus orderStatus) {

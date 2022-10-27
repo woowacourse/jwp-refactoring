@@ -40,7 +40,7 @@ class OrderServiceTest extends ServiceTestBase {
         menuId = savedMenu.getId();
 
         for (MenuProduct menuProduct : menu.getMenuProducts()) {
-            menuProduct.setMenuId(menuId);
+            menuProduct.changeMenuId(menuId);
             menuProductDao.save(menuProduct);
         }
 
