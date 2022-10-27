@@ -18,6 +18,7 @@ public class Order {
     public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
+        this.orderStatus = OrderStatus.COOKING.name();
     }
 
     public Long getId() {
@@ -82,5 +83,12 @@ public class Order {
     @Override
     public int hashCode() {
         return Objects.hash(orderTableId, orderStatus, orderedTime, orderLineItems);
+    }
+
+    public void changeOrderStatus(String orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+            throw new IllegalArgumentException();
+        }
+        this.orderStatus = OrderStatus.valueOf(orderStatus).name();
     }
 }
