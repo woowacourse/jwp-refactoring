@@ -63,7 +63,6 @@ class OrderServiceTest extends ServiceTest {
     private MenuDao menuDao;
 
     private Menu 야채곱창_메뉴;
-
     private OrderTable 야채곱창_주문_테이블;
 
     @BeforeEach
