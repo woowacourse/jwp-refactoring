@@ -14,6 +14,8 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.request.OrderStatusRequest;
 import kitchenpos.support.DataSupport;
 import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +54,7 @@ class OrderServiceTest {
     @Test
     void create() {
         // given, when
-        final Order request = RequestBuilder.ofOrder(savedMenu, savedUnEmptyTable);
+        final OrderRequest request = RequestBuilder.ofOrder(savedMenu, savedUnEmptyTable);
         final Order savedOrder = orderService.create(request);
 
         // then
@@ -65,7 +67,7 @@ class OrderServiceTest {
     @DisplayName("주문 항목 없이 주문하면 예외가 발생한다.")
     @Test
     void create_throwsException_ifNoItem() {
-        final Order request = RequestBuilder.ofOrderWithoutMenu(savedUnEmptyTable);
+        final OrderRequest request = RequestBuilder.ofOrderWithoutMenu(savedUnEmptyTable);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> orderService.create(request));
     }
@@ -78,7 +80,7 @@ class OrderServiceTest {
         unsavedMenu.setId(0L);
 
         // when, then
-        final Order request = RequestBuilder.ofOrder(unsavedMenu, savedUnEmptyTable);
+        final OrderRequest request = RequestBuilder.ofOrder(unsavedMenu, savedUnEmptyTable);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> orderService.create(request));
     }
@@ -91,7 +93,7 @@ class OrderServiceTest {
         unsavedTable.setId(0L);
 
         // when, then
-        final Order request = RequestBuilder.ofOrder(savedMenu, unsavedTable);
+        final OrderRequest request = RequestBuilder.ofOrder(savedMenu, unsavedTable);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> orderService.create(request));
     }
@@ -103,7 +105,7 @@ class OrderServiceTest {
         final OrderTable emptyTable = dataSupport.saveOrderTable(0, true);
 
         // when, then
-        final Order request = RequestBuilder.ofOrder(savedMenu, emptyTable);
+        final OrderRequest request = RequestBuilder.ofOrder(savedMenu, emptyTable);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> orderService.create(request));
     }
@@ -139,7 +141,7 @@ class OrderServiceTest {
         final OrderStatus status = OrderStatus.MEAL;
 
         // when
-        final Order request = RequestBuilder.ofOrder(status);
+        final OrderStatusRequest request = RequestBuilder.ofOrder(status);
         orderService.changeOrderStatus(savedOrder.getId(), request);
 
         // then
@@ -150,7 +152,7 @@ class OrderServiceTest {
     @DisplayName("존재하지 않는 주문의 상태를 변경하면 예외가 발생한다.")
     @Test
     void changeOrderStatus_throwsException_ifOrderNotFound() {
-        final Order request = RequestBuilder.ofOrder(OrderStatus.MEAL);
+        final OrderStatusRequest request = RequestBuilder.ofOrder(OrderStatus.MEAL);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> orderService.changeOrderStatus(0L, request));
     }
@@ -162,7 +164,7 @@ class OrderServiceTest {
         final Order completeOrder = dataSupport.saveOrder(savedUnEmptyTable.getId(), OrderStatus.COMPLETION.name());
 
         // when, then
-        final Order request = RequestBuilder.ofOrder(OrderStatus.MEAL);
+        final OrderStatusRequest request = RequestBuilder.ofOrder(OrderStatus.MEAL);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> orderService.changeOrderStatus(completeOrder.getId(), request));
     }

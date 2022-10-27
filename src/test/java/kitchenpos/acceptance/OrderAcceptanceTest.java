@@ -9,12 +9,15 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.request.OrderStatusRequest;
 import kitchenpos.support.RequestBuilder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
+@DisplayName("주문 관련 api")
 public class OrderAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("주문을 등록한다.")
@@ -25,7 +28,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         final Menu savedMenu = 메뉴_등록();
 
         // when
-        final Order request = RequestBuilder.ofOrder(savedMenu, savedTable);
+        final OrderRequest request = RequestBuilder.ofOrder(savedMenu, savedTable);
         final ValidatableResponse response = post("/api/orders", request);
 
         // then
@@ -56,7 +59,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         final Order savedOrder = dataSupport.saveOrder(savedTable.getId(), OrderStatus.COOKING.name(), orderLineItem);
 
         // when
-        final Order request = RequestBuilder.ofOrder(OrderStatus.MEAL);
+        final OrderStatusRequest request = RequestBuilder.ofOrder(OrderStatus.MEAL);
         final ValidatableResponse response = put("/api/orders/" + savedOrder.getId() + "/order-status", request);
 
         // then
