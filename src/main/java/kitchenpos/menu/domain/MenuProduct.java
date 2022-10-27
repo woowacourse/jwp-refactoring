@@ -36,4 +36,16 @@ public class MenuProduct {
     public Price calculateTotalPrice() {
         return this.product.multiplyPriceWith(quantity);
     }
+
+    public Long getSeq() {
+        return seq;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public long getQuantity() {
+        return quantity.getValue();
+    }
 }

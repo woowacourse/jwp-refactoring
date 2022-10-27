@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import kitchenpos.common.exception.CustomErrorCode;
 import kitchenpos.common.exception.NotFoundException;
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.Product;
 import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
@@ -69,7 +68,7 @@ class MenuServiceTest {
                 () -> assertThat(created.getName()).isEqualTo(request.getName()),
                 () -> assertThat(created.getPrice().intValue()).isEqualTo(request.getPrice()),
                 () -> assertThat(created.getMenuGroupId()).isEqualTo(menuGroupId),
-                () -> assertThat(created.getProducts()).hasSize(2)
+                () -> assertThat(created.getMenuProducts()).hasSize(2)
         );
     }
 
@@ -120,7 +119,7 @@ class MenuServiceTest {
         menuRepository.save(뿌링클_치즈볼_메뉴_생성(menuGroupId, productA, productB));
 
         // when
-        List<Menu> foundMenus = menuService.list();
+        final var foundMenus = menuService.list();
 
         // then
         assertThat(foundMenus).hasSize(2);

@@ -2,16 +2,16 @@ package kitchenpos.menu.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.menu.repository.MenuGroupRepository;
-import kitchenpos.menu.repository.ProductRepository;
-import kitchenpos.menu.domain.Menu;
+import kitchenpos.common.exception.CustomErrorCode;
+import kitchenpos.common.exception.NotFoundException;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.Product;
 import kitchenpos.menu.domain.Quantity;
-import kitchenpos.common.exception.CustomErrorCode;
-import kitchenpos.common.exception.NotFoundException;
+import kitchenpos.menu.repository.MenuGroupRepository;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menu.repository.ProductRepository;
 import kitchenpos.menu.ui.dto.MenuCreateRequest;
+import kitchenpos.menu.ui.dto.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,11 +29,11 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuCreateRequest request) {
+    public MenuResponse create(final MenuCreateRequest request) {
         validateExistMenuGroup(request);
         // TODO: 2022/10/26 to pretty
         final List<MenuProduct> menuProducts = toMenuProducts(request);
-        return menuRepository.save(request.toMenu(menuProducts));
+        return MenuResponse.from(menuRepository.save(request.toMenu(menuProducts)));
     }
 
     private void validateExistMenuGroup(final MenuCreateRequest request) {
@@ -56,7 +56,10 @@ public class MenuService {
                 .orElseThrow(() -> new NotFoundException(CustomErrorCode.PRODUCT_NOT_FOUND_ERROR));
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<MenuResponse> list() {
+        return menuRepository.findAll()
+                .stream()
+                .map(MenuResponse::from)
+                .collect(Collectors.toUnmodifiableList());
     }
 }
