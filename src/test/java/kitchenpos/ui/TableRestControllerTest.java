@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import kitchenpos.application.dto.request.OrderTableCreateCommand;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
@@ -23,12 +24,13 @@ class TableRestControllerTest extends ControllerTest {
     @Test
     @DisplayName("OrderTable을 생성한다.")
     void create() throws Exception {
-        OrderTable orderTable = new OrderTable(1L, 1L, 10, false);
+        OrderTableCreateCommand orderTableCreateCommand = new OrderTableCreateCommand(10, false);
+        OrderTableResponse orderTableResponse = new OrderTableResponse(1L, 1L, 10, false);
 
-        given(tableService.create(any(OrderTable.class))).willReturn(orderTable);
+        given(tableService.create(any(OrderTableCreateCommand.class))).willReturn(orderTableResponse);
         mockMvc.perform(post("/api/tables")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(orderTable)))
+                        .content(objectMapper.writeValueAsString(orderTableCreateCommand)))
                 .andExpectAll(status().isCreated(),
                         header().string(HttpHeaders.LOCATION, "/api/tables/1"));
     }
