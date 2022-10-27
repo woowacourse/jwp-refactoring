@@ -1,13 +1,10 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.MenuProductCreateRequest;
 
 public class MenuProductFixtures {
 
-    public static MenuProduct createMenuProduct(final Long productId, final long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+    public static MenuProductCreateRequest createMenuProduct(final Long productId, final long quantity) {
+        return new MenuProductCreateRequest(productId, quantity);
     }
 }

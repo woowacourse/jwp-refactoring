@@ -6,14 +6,17 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.MenuCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.math.BigDecimal;
 import java.util.List;
 
+import static kitchenpos.fixture.MenuFixtures.createMenu;
 import static kitchenpos.fixture.MenuFixtures.후라이드치킨;
 import static kitchenpos.fixture.MenuGroupFixtures.한마리메뉴;
 import static kitchenpos.fixture.MenuProductFixtures.createMenuProduct;
@@ -130,9 +133,9 @@ class TableGroupServiceTest {
         // 메뉴 설정
         Product 후라이드 = productService.create(후라이드());
         MenuGroup 한마리메뉴 = menuGroupService.create(한마리메뉴());
-        Menu 메뉴_후라이드치킨 = 후라이드치킨(한마리메뉴.getId());
-        메뉴_후라이드치킨.setMenuProducts(List.of(createMenuProduct(후라이드.getId(), 1)));
-        메뉴_후라이드치킨 = menuService.create(메뉴_후라이드치킨);
+        MenuCreateRequest request = createMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(),
+                List.of(createMenuProduct(후라이드.getId(), 1)));
+        Menu 메뉴_후라이드치킨 = menuService.create(request);
 
         // 테이블 설정 및 그룹화
         OrderTable 테이블_1번 = tableService.create(테이블_1번());

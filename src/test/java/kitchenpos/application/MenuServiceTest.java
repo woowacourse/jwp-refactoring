@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.fixture.ProductFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static kitchenpos.fixture.MenuFixtures.createMenu;
-import static kitchenpos.fixture.MenuFixtures.양념치킨;
 import static kitchenpos.fixture.MenuFixtures.후라이드치킨;
 import static kitchenpos.fixture.MenuGroupFixtures.한마리메뉴;
 import static kitchenpos.fixture.MenuProductFixtures.createMenuProduct;
@@ -46,8 +46,8 @@ class MenuServiceTest {
     void createMenuSuccess() {
         Product 후라이드 = productService.create(후라이드());
         MenuGroup 한마리메뉴 = menuGroupService.create(한마리메뉴());
-        Menu 메뉴_후라이드치킨 = 후라이드치킨(한마리메뉴.getId());
-        메뉴_후라이드치킨.setMenuProducts(List.of(createMenuProduct(후라이드.getId(), 1)));
+        MenuCreateRequest 메뉴_후라이드치킨 = 후라이드치킨(한마리메뉴.getId(),
+                List.of(createMenuProduct(후라이드.getId(), 1)));
 
         Menu actual = menuService.create(메뉴_후라이드치킨);
 
@@ -64,8 +64,8 @@ class MenuServiceTest {
     void createMenuByPriceNull() {
         Product 후라이드 = productService.create(후라이드());
         MenuGroup 한마리메뉴 = menuGroupService.create(한마리메뉴());
-        Menu 메뉴_후라이드치킨 = createMenu("후라이드치킨", null, 한마리메뉴.getId());
-        메뉴_후라이드치킨.setMenuProducts(List.of(createMenuProduct(후라이드.getId(), 1)));
+        MenuCreateRequest 메뉴_후라이드치킨 = createMenu("후라이드치킨", null, 한마리메뉴.getId(),
+                List.of(createMenuProduct(후라이드.getId(), 1)));
 
         assertThatThrownBy(() -> menuService.create(메뉴_후라이드치킨))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -77,8 +77,8 @@ class MenuServiceTest {
     void createMenuByPriceNegative(final int price) {
         Product 후라이드 = productService.create(후라이드());
         MenuGroup 한마리메뉴 = menuGroupService.create(한마리메뉴());
-        Menu 메뉴_후라이드치킨 = createMenu("후라이드치킨", BigDecimal.valueOf(price), 한마리메뉴.getId());
-        메뉴_후라이드치킨.setMenuProducts(List.of(createMenuProduct(후라이드.getId(), 1)));
+        MenuCreateRequest 메뉴_후라이드치킨 = createMenu("후라이드치킨", BigDecimal.valueOf(price), 한마리메뉴.getId(),
+                List.of(createMenuProduct(후라이드.getId(), 1)));
 
         assertThatThrownBy(() -> menuService.create(메뉴_후라이드치킨))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -88,8 +88,8 @@ class MenuServiceTest {
     @Test
     void createMenuByNonExistMenuGroupId() {
         Product 후라이드 = productService.create(후라이드());
-        Menu 없는그룹_후라이드치킨 = 후라이드치킨(0L);
-        없는그룹_후라이드치킨.setMenuProducts(List.of(createMenuProduct(후라이드.getId(), 1)));
+        MenuCreateRequest 없는그룹_후라이드치킨 = 후라이드치킨(0L,
+                List.of(createMenuProduct(후라이드.getId(), 1)));
 
         assertThatThrownBy(() -> menuService.create(없는그룹_후라이드치킨))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -100,8 +100,8 @@ class MenuServiceTest {
     void createMenuByOverProductPrice() {
         Product 후라이드 = productService.create(후라이드());
         MenuGroup 한마리메뉴 = menuGroupService.create(한마리메뉴());
-        Menu 메뉴_후라이드치킨 = createMenu("후라이드치킨", BigDecimal.valueOf(20000), 한마리메뉴.getId());
-        메뉴_후라이드치킨.setMenuProducts(List.of(createMenuProduct(후라이드.getId(), 1)));
+        MenuCreateRequest 메뉴_후라이드치킨 = createMenu("후라이드치킨", BigDecimal.valueOf(20000), 한마리메뉴.getId(),
+                List.of(createMenuProduct(후라이드.getId(), 1)));
 
         assertThatThrownBy(() -> menuService.create(메뉴_후라이드치킨))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -114,10 +114,10 @@ class MenuServiceTest {
         Product 양념치킨 = productService.create(ProductFixtures.양념치킨());
         MenuGroup 한마리메뉴 = menuGroupService.create(한마리메뉴());
         // 메뉴
-        Menu 메뉴_후라이드치킨 = 후라이드치킨(한마리메뉴.getId());
-        메뉴_후라이드치킨.setMenuProducts(List.of(createMenuProduct(후라이드.getId(), 1)));
-        Menu 메뉴_양념치킨 = 양념치킨(한마리메뉴.getId());
-        메뉴_양념치킨.setMenuProducts(List.of(createMenuProduct(양념치킨.getId(), 1)));
+        MenuCreateRequest 메뉴_후라이드치킨 = createMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(),
+                List.of(createMenuProduct(후라이드.getId(), 1)));
+        MenuCreateRequest 메뉴_양념치킨 = createMenu("양념치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(),
+                List.of(createMenuProduct(양념치킨.getId(), 1)));
 
         menuService.create(메뉴_후라이드치킨);
         menuService.create(메뉴_양념치킨);
