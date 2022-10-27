@@ -29,7 +29,7 @@ public class OrderRequest {
                 orderStatus,
                 now,
                 orderLineItemRequests.stream()
-                        .map(request -> request.toOrderLineItem(null))
+                        .map(request -> request.toOrderLineItem())
                         .collect(Collectors.toList())
         );
     }

@@ -47,7 +47,7 @@ public class Order {
 
     private static void validateOrderTable(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 테이블이 비어있을 수 없습니다.");
         }
     }
 

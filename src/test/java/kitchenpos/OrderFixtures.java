@@ -30,7 +30,7 @@ public class OrderFixtures {
     }
 
     public static Order createOrder(OrderTable orderTable, String orderStatus) {
-        return new Order(orderTable, orderStatus, LocalDateTime.now(), List.of(new OrderLineItem(null, 1L, 2)));
+        return new Order(orderTable, orderStatus, LocalDateTime.now(), List.of(new OrderLineItem(1L, 2)));
     }
 
     public static OrderResponse createOrderResponse() {

@@ -30,7 +30,7 @@ public class OrderLineItemRequest {
         return quantity;
     }
 
-    public OrderLineItem toOrderLineItem(Long orderId) {
-        return new OrderLineItem(orderId, menuId, quantity);
+    public OrderLineItem toOrderLineItem() {
+        return new OrderLineItem(menuId, quantity);
     }
 }
