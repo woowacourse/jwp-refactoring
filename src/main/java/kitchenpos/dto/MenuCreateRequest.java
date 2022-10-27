@@ -8,10 +8,13 @@ import kitchenpos.domain.MenuProduct;
 
 public class MenuCreateRequest {
 
-    private final String name;
-    private final BigDecimal price;
-    private final Long menuGroupId;
-    private final List<MenuProductCreateRequest> menuProducts;
+    private String name;
+    private BigDecimal price;
+    private Long menuGroupId;
+    private List<MenuProductCreateRequest> menuProducts;
+
+    private MenuCreateRequest() {
+    }
 
     public MenuCreateRequest(final String name, final BigDecimal price, final Long menuGroupId,
         final List<MenuProductCreateRequest> menuProducts) {
@@ -19,6 +22,10 @@ public class MenuCreateRequest {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public BigDecimal getPrice() {

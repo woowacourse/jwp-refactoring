@@ -8,7 +8,10 @@ import kitchenpos.domain.TableGroup;
 
 public class TableGroupCreateRequest {
 
-    private final List<OrderTableIdRequest> orderTables;
+    private List<OrderTableIdRequest> orderTables;
+
+    private TableGroupCreateRequest() {
+    }
 
     public TableGroupCreateRequest(final List<OrderTableIdRequest> orderTables) {
         this.orderTables = orderTables;

@@ -9,8 +9,11 @@ import kitchenpos.domain.OrderStatus;
 
 public class OrderCreateRequest {
 
-    private final Long orderTableId;
-    private final List<OrderLineItemCreateRequest> orderLineItems;
+    private Long orderTableId;
+    private List<OrderLineItemCreateRequest> orderLineItems;
+
+    private OrderCreateRequest() {
+    }
 
     public OrderCreateRequest(final Long orderTableId,
         final List<OrderLineItemCreateRequest> orderLineItems) {

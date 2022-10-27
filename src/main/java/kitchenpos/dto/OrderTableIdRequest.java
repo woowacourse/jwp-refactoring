@@ -4,10 +4,17 @@ import kitchenpos.domain.OrderTable;
 
 public class OrderTableIdRequest {
 
-    private final Long id;
+    private Long id;
+
+    private OrderTableIdRequest() {
+    }
 
     public OrderTableIdRequest(final Long id) {
         this.id = id;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public OrderTable toEntity() {
