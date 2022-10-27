@@ -11,6 +11,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.MenuCreateRequest;
+import kitchenpos.ui.dto.MenuProductCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,15 +40,15 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final List<MenuProduct> menuProducts = request.getMenuProducts();
+        final List<MenuProductCreateRequest> menuProductsRequest = request.getMenuProducts();
 
-        Menu menu = new Menu(null, request.getName(), request.getPrice(), request.getMenuGroupId(), menuProducts);
+        Menu menu = new Menu(null, request.getName(), request.getPrice(), request.getMenuGroupId(), null);
 
         BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            Product product = productDao.getById(menuProduct.getProductId());
+        for (final MenuProductCreateRequest menuProductRequest : menuProductsRequest) {
+            Product product = productDao.getById(menuProductRequest.getProductId());
             BigDecimal price = product.getPrice();
-            long quantity = menuProduct.getQuantity();
+            long quantity = menuProductRequest.getQuantity();
             sum = sum.add(price).multiply(BigDecimal.valueOf(quantity));
         }
 
@@ -58,12 +59,12 @@ public class MenuService {
         final Menu savedMenu = menuDao.save(menu);
 
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
+        for (final MenuProductCreateRequest menuProductRequest : menuProductsRequest) {
             MenuProduct savedMenuProduct = menuProductDao.save(
-                    new MenuProduct(menuProduct.getSeq(),
+                    new MenuProduct(null,
                             savedMenu.getId(),
-                            menuProduct.getProductId(),
-                            menuProduct.getQuantity()));
+                            menuProductRequest.getProductId(),
+                            menuProductRequest.getQuantity()));
             savedMenuProducts.add(savedMenuProduct);
         }
         savedMenu.setMenuProducts(savedMenuProducts);

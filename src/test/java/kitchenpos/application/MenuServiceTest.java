@@ -15,6 +15,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.MenuCreateRequest;
+import kitchenpos.ui.dto.MenuProductCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -40,15 +41,14 @@ public class MenuServiceTest extends ServiceTest {
     class Create {
         private static final long PRODUCT_A_ID = 1L;
         private static final long PRODUCT_B_ID = 2L;
-        private static final long MENU_ID = 1L;
         private static final int PRODUCT_PRICE = 10000;
         private static final long MENU_GROUP_ID = 1L;
         private static final long MENU_PRICE = 10000;
 
         private Product productA;
         private Product productB;
-        private MenuProduct menuProductA;
-        private MenuProduct menuProductB;
+        private MenuProductCreateRequest menuProductA;
+        private MenuProductCreateRequest menuProductB;
         private MenuCreateRequest createRequest;
 
         @BeforeEach
@@ -56,8 +56,8 @@ public class MenuServiceTest extends ServiceTest {
             productA = new Product(PRODUCT_A_ID, "상품A", BigDecimal.valueOf(PRODUCT_PRICE));
             productB = new Product(PRODUCT_B_ID, "상품B", BigDecimal.valueOf(PRODUCT_PRICE));
 
-            menuProductA = new MenuProduct(null, MENU_ID, PRODUCT_A_ID, 2);
-            menuProductB = new MenuProduct(null, MENU_ID, PRODUCT_B_ID, 2);
+            menuProductA = new MenuProductCreateRequest(PRODUCT_A_ID, 2);
+            menuProductB = new MenuProductCreateRequest(PRODUCT_B_ID, 2);
 
             createRequest = new MenuCreateRequest("메뉴 이름", BigDecimal.valueOf(MENU_PRICE), MENU_GROUP_ID,
                     Arrays.asList(menuProductA, menuProductB));
@@ -125,9 +125,9 @@ public class MenuServiceTest extends ServiceTest {
         void fail_sumIsCheaperThenPrice() {
             //given
             productA = new Product(PRODUCT_A_ID, "상품A", BigDecimal.valueOf(100));
-            menuProductA = new MenuProduct(null, MENU_ID, PRODUCT_A_ID, 1);
+            menuProductA = new MenuProductCreateRequest(PRODUCT_A_ID, 1);
             productB = new Product(PRODUCT_B_ID, "상품B", BigDecimal.valueOf(100));
-            menuProductB = new MenuProduct(null, MENU_ID, PRODUCT_B_ID, 1);
+            menuProductB = new MenuProductCreateRequest(PRODUCT_B_ID, 1);
 
             given(productDao.getById(PRODUCT_A_ID))
                     .willReturn(productA);
