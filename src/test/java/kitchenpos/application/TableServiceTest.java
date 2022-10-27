@@ -4,11 +4,11 @@ import static kitchenpos.application.fixture.MenuFixture.createMenu;
 import static kitchenpos.application.fixture.MenuGroupFixture.메뉴그룹A;
 import static kitchenpos.application.fixture.OrderFixture.createOrder;
 import static kitchenpos.application.fixture.OrderTableFixture.createOrderTable;
-import static kitchenpos.application.fixture.OrderTableFixture.forUpdateEmpty;
-import static kitchenpos.application.fixture.OrderTableFixture.forUpdateGuestNumber;
 import static kitchenpos.application.fixture.ProductFixture.탕수육;
 import static kitchenpos.application.fixture.TableGroupFixture.createTableGroup;
 import static kitchenpos.application.fixture.dto.OrderTableDtoFixture.createOrderTableRequest;
+import static kitchenpos.application.fixture.dto.OrderTableDtoFixture.forUpdateEmpty;
+import static kitchenpos.application.fixture.dto.OrderTableDtoFixture.forUpdateGuestNumber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -52,7 +52,7 @@ public class TableServiceTest extends ServiceTest {
         테이블등록(createOrderTable(5, false));
 
         // when
-        final List<OrderTable> actual = tableService.list();
+        final List<OrderTableResponse> actual = tableService.list();
 
         // then
         assertThat(actual).hasSize(2);
@@ -65,7 +65,7 @@ public class TableServiceTest extends ServiceTest {
         final OrderTable table = 테이블등록(createOrderTable(5, false));
 
         // when
-        final OrderTable updatedTable = tableService.changeEmpty(table.getId(), forUpdateEmpty(true));
+        final OrderTableResponse updatedTable = tableService.changeEmpty(table.getId(), forUpdateEmpty(true));
 
         // then
         assertThat(updatedTable.isEmpty()).isTrue();
@@ -78,7 +78,7 @@ public class TableServiceTest extends ServiceTest {
         final OrderTable table = 테이블등록(createOrderTable(5, true));
 
         // when
-        final OrderTable updatedTable = tableService.changeEmpty(table.getId(), forUpdateEmpty(false));
+        final OrderTableResponse updatedTable = tableService.changeEmpty(table.getId(), forUpdateEmpty(false));
 
         // then
         assertThat(updatedTable.isEmpty()).isFalse();
@@ -128,7 +128,7 @@ public class TableServiceTest extends ServiceTest {
         final OrderTable table = 테이블등록(createOrderTable(5, false));
 
         // when
-        final OrderTable actual = tableService.changeNumberOfGuests(table.getId(), forUpdateGuestNumber(3));
+        final OrderTableResponse actual = tableService.changeNumberOfGuests(table.getId(), forUpdateGuestNumber(3));
 
         // then
         assertThat(actual.getNumberOfGuests()).isEqualTo(3);

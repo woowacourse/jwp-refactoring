@@ -82,7 +82,7 @@ public class MenuServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("메뉴 목록을 조회한다.")
+    @DisplayName("주문테이블 목록을 조회한다.")
     void list() {
         // given
         final MenuGroup menuGroup1 = 메뉴그룹등록(메뉴그룹A);

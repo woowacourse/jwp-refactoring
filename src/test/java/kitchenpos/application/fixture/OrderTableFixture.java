@@ -11,18 +11,4 @@ public class OrderTableFixture {
 
         return orderTable;
     }
-
-    public static OrderTable forUpdateEmpty(final boolean isEmpty) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(isEmpty);
-
-        return orderTable;
-    }
-
-    public static OrderTable forUpdateGuestNumber(final int numberOfGuests) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-
-        return orderTable;
-    }
 }

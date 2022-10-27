@@ -11,5 +11,4 @@ public class ProductDtoFixture {
     public static ProductResponse 짜장면_응답 = new ProductResponse(1L, "짜장면", BigDecimal.valueOf(8_000));
     public static ProductResponse 짬뽕_응답 = new ProductResponse(1L, "짜장면", BigDecimal.valueOf(8_000));
     public static ProductResponse 탕수육_응답 = new ProductResponse(1L, "짜장면", BigDecimal.valueOf(10_000));
-
 }
