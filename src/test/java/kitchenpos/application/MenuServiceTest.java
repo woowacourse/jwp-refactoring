@@ -43,8 +43,7 @@ class MenuServiceTest extends ServiceTestBase {
         Product product = productDao.save(불맛_떡볶이.toEntity());
         List<MenuProduct> menuProducts = 메뉴_상품_목록_생성(product);
 
-        Menu menu = 떡볶이.toEntity(menuGroup.getId(), menuProducts);
-        menu.setPrice(BigDecimal.valueOf(-1));
+        Menu menu = 떡볶이.toEntity(BigDecimal.valueOf(-1), menuGroup.getId(), menuProducts);
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -58,7 +57,6 @@ class MenuServiceTest extends ServiceTestBase {
         List<MenuProduct> menuProducts = 메뉴_상품_목록_생성(product);
 
         Menu menu = 떡볶이.toEntity(100L, menuProducts);
-        menu.setPrice(BigDecimal.valueOf(-1));
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -73,7 +71,6 @@ class MenuServiceTest extends ServiceTestBase {
         List<MenuProduct> menuProducts = 메뉴_상품_목록_생성(product);
 
         Menu menu = 떡볶이.toEntity(menuGroup.getId(), menuProducts);
-        menu.setPrice(BigDecimal.valueOf(-1));
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -90,8 +87,11 @@ class MenuServiceTest extends ServiceTestBase {
         List<MenuProduct> menuProducts = 메뉴_상품_목록_생성(quantity, product);
         BigDecimal menuProductsSum = product.getPrice().multiply(BigDecimal.valueOf(quantity));
 
-        Menu menu = 떡볶이.toEntity(menuGroup.getId(), menuProducts);
-        menu.setPrice(menuProductsSum.add(BigDecimal.valueOf(1000)));
+        Menu menu = 떡볶이.toEntity(
+                menuProductsSum.add(BigDecimal.valueOf(1000)),
+                menuGroup.getId(),
+                menuProducts
+        );
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))

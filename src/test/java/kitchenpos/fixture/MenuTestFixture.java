@@ -20,11 +20,12 @@ public enum MenuTestFixture {
     }
 
     public Menu toEntity(final long menuGroupId, final List<MenuProduct> menuProducts) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
+        return toEntity(price, menuGroupId, menuProducts);
+    }
+
+    public Menu toEntity(final BigDecimal price, final long menuGroupId, final List<MenuProduct> menuProducts) {
+        Menu menu = new Menu(null, name, price, menuGroupId);
+        menu.addMenuProducts(menuProducts);
         return menu;
     }
 }
