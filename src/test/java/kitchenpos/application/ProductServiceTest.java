@@ -17,16 +17,22 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
+@SpringBootTest
+@Sql("/truncate.sql")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class ProductServiceTest {
 
     private final ProductDao productDao;
     private final ProductService productService;
 
-    private ProductServiceTest() {
-        this.productDao = new FakeProductDao();
-        this.productService = new ProductService(productDao);
+    @Autowired
+    public ProductServiceTest(final ProductDao productDao, final ProductService productService) {
+        this.productDao = productDao;
+        this.productService = productService;
     }
 
     @BeforeEach

@@ -28,7 +28,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
+@SpringBootTest
+@Sql("/truncate.sql")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class MenuServiceTest {
 
@@ -39,12 +43,16 @@ class MenuServiceTest {
     private final MenuService menuService;
 
     @Autowired
-    private MenuServiceTest() {
-        this.menuDao = new FakeMenuDao();
-        this.menuGroupDao = new FakeMenuGroupDao();
-        this.menuProductDao = new FakeMenuProductDao();
-        this.productDao = new FakeProductDao();
-        this.menuService = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
+    public MenuServiceTest(final MenuDao menuDao,
+                           final MenuGroupDao menuGroupDao,
+                           final MenuProductDao menuProductDao,
+                           final ProductDao productDao,
+                           final MenuService menuService) {
+        this.menuDao = menuDao;
+        this.menuGroupDao = menuGroupDao;
+        this.menuProductDao = menuProductDao;
+        this.productDao = productDao;
+        this.menuService = menuService;
     }
 
     @BeforeEach
@@ -112,8 +120,9 @@ class MenuServiceTest {
 
     @Test
     void menu_list를_조회한다() {
-        menuDao.save(generateMenu("후라이드치킨", BigDecimal.valueOf(16000), 1L));
-        menuDao.save(generateMenu("양념치킨", BigDecimal.valueOf(17000), 1L));
+        MenuGroup 한마리메뉴 = menuGroupDao.save(generateMenuGroup("한마리메뉴"));
+        menuDao.save(generateMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId()));
+        menuDao.save(generateMenu("양념치킨", BigDecimal.valueOf(17000), 한마리메뉴.getId()));
 
         List<Menu> actual = menuService.list();
 

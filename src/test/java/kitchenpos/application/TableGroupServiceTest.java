@@ -23,7 +23,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
+@SpringBootTest
+@Sql("/truncate.sql")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class TableGroupServiceTest {
 
@@ -34,11 +38,14 @@ class TableGroupServiceTest {
     private final TableGroupService tableGroupService;
 
     @Autowired
-    private TableGroupServiceTest() {
-        this.orderDao = new FakeOrderDao();
-        this.orderTableDao = new FakeOrderTableDao();
-        this.tableGroupDao = new FakeTableGroupDao();
-        this.tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
+    public TableGroupServiceTest(final OrderDao orderDao,
+                                 final OrderTableDao orderTableDao,
+                                 final TableGroupDao tableGroupDao,
+                                 final TableGroupService tableGroupService) {
+        this.orderDao = orderDao;
+        this.orderTableDao = orderTableDao;
+        this.tableGroupDao = tableGroupDao;
+        this.tableGroupService = tableGroupService;
     }
 
     @BeforeEach

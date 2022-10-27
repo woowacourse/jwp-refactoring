@@ -14,7 +14,11 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
+@SpringBootTest
+@Sql("/truncate.sql")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class MenuGroupServiceTest {
 
@@ -22,9 +26,9 @@ class MenuGroupServiceTest {
     private final MenuGroupService menuGroupService;
 
     @Autowired
-    private MenuGroupServiceTest() {
-        this.menuGroupDao = new FakeMenuGroupDao();
-        this.menuGroupService = new MenuGroupService(menuGroupDao);
+    public MenuGroupServiceTest(final MenuGroupDao menuGroupDao, final MenuGroupService menuGroupService) {
+        this.menuGroupDao = menuGroupDao;
+        this.menuGroupService = menuGroupService;
     }
 
     @BeforeEach

@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.fixture.OrderTableFixtures;
 import kitchenpos.dao.fake.FakeMenuDao;
 import kitchenpos.dao.fake.FakeMenuGroupDao;
 import kitchenpos.dao.fake.FakeOrderDao;
@@ -37,7 +38,11 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
+@SpringBootTest
+@Sql("/truncate.sql")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class OrderServiceTest {
 
@@ -45,19 +50,22 @@ class OrderServiceTest {
     private final ProductDao productDao;
     private final MenuDao menuDao;
     private final OrderDao orderDao;
-    private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
     private final OrderService orderService;
 
     @Autowired
-    private OrderServiceTest() {
-        this.menuGroupDao = new FakeMenuGroupDao();
-        this.productDao = new FakeProductDao();
-        this.menuDao = new FakeMenuDao();
-        this.orderDao = new FakeOrderDao();
-        this.orderLineItemDao = new FakeOrderLineItemDao();
-        this.orderTableDao = new FakeOrderTableDao();
-        this.orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+    public OrderServiceTest(final MenuGroupDao menuGroupDao,
+                            final ProductDao productDao,
+                            final MenuDao menuDao,
+                            final OrderDao orderDao,
+                            final OrderTableDao orderTableDao,
+                            final OrderService orderService) {
+        this.menuGroupDao = menuGroupDao;
+        this.productDao = productDao;
+        this.menuDao = menuDao;
+        this.orderDao = orderDao;
+        this.orderTableDao = orderTableDao;
+        this.orderService = orderService;
     }
 
     @BeforeEach
@@ -131,8 +139,9 @@ class OrderServiceTest {
 
     @Test
     void order_list를_조회한다() {
-        orderDao.save(generateOrder(0L, List.of()));
-        orderDao.save(generateOrder(0L, List.of()));
+        OrderTable orderTable = orderTableDao.save(generateOrderTable(0, true));
+        orderDao.save(generateOrder(orderTable.getId(), OrderStatus.COOKING, List.of()));
+        orderDao.save(generateOrder(orderTable.getId(), OrderStatus.COOKING, List.of()));
 
         List<Order> actual = orderService.list();
 
@@ -141,21 +150,23 @@ class OrderServiceTest {
 
     @Test
     void order의_상태를_변경한다() {
-        Order order = orderDao.save(generateOrder(0L, OrderStatus.COOKING, List.of()));
-        Order changedOrder = generateOrder(0L, OrderStatus.MEAL, List.of());
+        OrderTable orderTable = orderTableDao.save(generateOrderTable(0, true));
+        Order order = orderDao.save(generateOrder(orderTable.getId(), OrderStatus.COOKING, List.of()));
+        Order changedOrder = generateOrder(orderTable.getId(), OrderStatus.MEAL, List.of());
 
         Order actual = orderService.changeOrderStatus(order.getId(), changedOrder);
 
         assertAll(() -> {
-            assertThat(actual.getOrderTableId()).isEqualTo(0L);
+            assertThat(actual.getOrderTableId()).isEqualTo(orderTable.getId());
             assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
         });
     }
 
     @Test
     void order의_상태가_COMPLETION인_경우_예외를_던진다() {
-        Order order = orderDao.save(generateOrder(0L, OrderStatus.COMPLETION, List.of()));
-        Order changedOrder = generateOrder(0L, OrderStatus.MEAL, List.of());
+        OrderTable orderTable = orderTableDao.save(generateOrderTable(0, true));
+        Order order = orderDao.save(generateOrder(orderTable.getId(), OrderStatus.COMPLETION, List.of()));
+        Order changedOrder = generateOrder(orderTable.getId(), OrderStatus.MEAL, List.of());
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), changedOrder))
                 .isInstanceOf(IllegalArgumentException.class);

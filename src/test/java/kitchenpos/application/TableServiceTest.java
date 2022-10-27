@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static kitchenpos.application.fixture.OrderFixtures.generateOrder;
 import static kitchenpos.application.fixture.OrderTableFixtures.*;
+import static kitchenpos.application.fixture.TableGroupFixtures.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -9,10 +10,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.dao.fake.FakeOrderDao;
 import kitchenpos.dao.fake.FakeOrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -21,19 +24,28 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
+@SpringBootTest
+@Sql("/truncate.sql")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class TableServiceTest {
 
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
+    private final TableGroupDao tableGroupDao;
     private final TableService tableService;
 
     @Autowired
-    private TableServiceTest() {
-        this.orderDao = new FakeOrderDao();
-        this.orderTableDao = new FakeOrderTableDao();
-        this.tableService = new TableService(orderDao, orderTableDao);
+    public TableServiceTest(final OrderDao orderDao,
+                            final OrderTableDao orderTableDao,
+                            final TableGroupDao tableGroupDao,
+                            final TableService tableService) {
+        this.orderDao = orderDao;
+        this.orderTableDao = orderTableDao;
+        this.tableGroupDao = tableGroupDao;
+        this.tableService = tableService;
     }
 
     @BeforeEach
@@ -81,7 +93,8 @@ class TableServiceTest {
 
     @Test
     void tableGroupId가_null이_아닌_경우_예외를_던진다() {
-        OrderTable orderTable = orderTableDao.save(generateOrderTable(0L, 0, true));
+        TableGroup tableGroup = tableGroupDao.save(generateTableGroup(List.of()));
+        OrderTable orderTable = orderTableDao.save(generateOrderTable(tableGroup.getId(), 0, true));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), generateOrderTable(0, false)))
                 .isInstanceOf(IllegalArgumentException.class);
