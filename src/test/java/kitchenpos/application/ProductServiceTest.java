@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,9 @@ public class ProductServiceTest extends ApplicationTest {
 
         Product savedProduct = productService.create(productRequest);
 
-        List<Product> products = productService.list();
-        assertThat(products).extracting(Product::getId, Product::getName, p -> p.getPrice().intValueExact())
+        List<ProductResponse> products = productService.list();
+        assertThat(products).extracting(ProductResponse::getId, ProductResponse::getName,
+                        p -> p.getPrice().intValueExact())
                 .containsExactlyInAnyOrder(
                         tuple(savedProduct.getId(), "강정치킨", 17000)
                 );
@@ -41,8 +43,9 @@ public class ProductServiceTest extends ApplicationTest {
         Product savedProduct2 = productService.create(productRequest2);
         Product savedProduct3 = productService.create(productRequest3);
 
-        List<Product> products = productService.list();
-        assertThat(products).extracting(Product::getId, Product::getName, p -> p.getPrice().intValueExact())
+        List<ProductResponse> products = productService.list();
+        assertThat(products).extracting(ProductResponse::getId, ProductResponse::getName,
+                        p -> p.getPrice().intValueExact())
                 .containsExactlyInAnyOrder(
                         tuple(savedProduct1.getId(), "강정치킨", 17000),
                         tuple(savedProduct2.getId(), "마늘치킨", 18000),
