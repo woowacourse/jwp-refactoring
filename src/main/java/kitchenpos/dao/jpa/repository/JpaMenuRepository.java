@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.dao.jpa.repository;
 
 import java.util.List;
 

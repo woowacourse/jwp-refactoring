@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.dao.jdbc;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 
 @Repository

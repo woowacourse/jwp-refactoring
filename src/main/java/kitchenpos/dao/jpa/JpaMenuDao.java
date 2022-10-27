@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.dao.jpa;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,11 +6,13 @@ import java.util.Optional;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.jpa.repository.JpaMenuRepository;
 import kitchenpos.domain.Menu;
 
 @Primary
 @Repository
-public class JpaMenuDao implements MenuDao{
+public class JpaMenuDao implements MenuDao {
 
     private final JpaMenuRepository menuRepository;
 

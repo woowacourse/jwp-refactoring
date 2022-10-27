@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.dao.jpa;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.jpa.repository.JpaOrderTableRepository;
 import kitchenpos.domain.OrderTable;
 
 @Primary
