@@ -2,10 +2,8 @@ package kitchenpos.application;
 
 import static kitchenpos.fixture.ProductFactory.product;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Product;
@@ -31,38 +29,6 @@ class ProductServiceTest extends FakeSpringContext {
                     () -> assertThat(result.getName()).isEqualTo(product.getName()),
                     () -> assertThat(result.getPrice().compareTo(product.getPrice())).isEqualTo(0)
             );
-        }
-
-        @DisplayName("상품 가격이 null 이라면")
-        @Nested
-        class priceIsNull {
-
-            private final BigDecimal invalidPrice = null;
-
-            @DisplayName("예외를 던진다")
-            @Test
-            void throwsException() {
-                final var invalidPriceProduct = product("사이다", invalidPrice);
-                assertThatThrownBy(
-                        () -> productService.create(invalidPriceProduct)
-                ).isInstanceOf(IllegalArgumentException.class);
-            }
-        }
-
-        @DisplayName("상품 가격이 null 이라면")
-        @Nested
-        class priceIsUnderZero {
-
-            private final BigDecimal invalidPrice = new BigDecimal(-1);
-
-            @DisplayName("예외를 던진다")
-            @Test
-            void throwsException() {
-                final var invalidPriceProduct = product("환타", invalidPrice);
-                assertThatThrownBy(
-                        () -> productService.create(invalidPriceProduct)
-                ).isInstanceOf(IllegalArgumentException.class);
-            }
         }
     }
 
