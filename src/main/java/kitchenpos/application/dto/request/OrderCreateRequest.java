@@ -2,6 +2,7 @@ package kitchenpos.application.dto.request;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 
@@ -11,7 +12,7 @@ public class OrderCreateRequest {
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderLineItemDto> orderLineItemsDto;
 
     public Long getId() {
         return id;
@@ -29,8 +30,8 @@ public class OrderCreateRequest {
         return orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+    public List<OrderLineItemDto> getOrderLineItemsDto() {
+        return orderLineItemsDto;
     }
 
     public OrderCreateRequest() {
@@ -38,12 +39,12 @@ public class OrderCreateRequest {
 
     public OrderCreateRequest(final Long id, final Long orderTableId, final String orderStatus,
                               final LocalDateTime orderedTime,
-                              final List<OrderLineItem> orderLineItems) {
+                              final List<OrderLineItemDto> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+        this.orderLineItemsDto = orderLineItems;
     }
 
     public Order toOrder(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
@@ -52,7 +53,13 @@ public class OrderCreateRequest {
                 orderTableId,
                 orderStatus,
                 orderedTime,
-                orderLineItems
+                toOrderLineItems()
         );
+    }
+
+    private List<OrderLineItem> toOrderLineItems() {
+        return this.orderLineItemsDto.stream()
+                .map(OrderLineItemDto::toOrderLineItem)
+                .collect(Collectors.toList());
     }
 }

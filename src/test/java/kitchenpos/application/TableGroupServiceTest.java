@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.request.OrderTableIdDto;
 import kitchenpos.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
@@ -90,9 +92,10 @@ class TableGroupServiceTest {
         void 저장된_order_table이_비어있지_않으면_예외를_반환한다() {
             // given
             OrderTable orderTable = new OrderTable(orderId, tableGroupId, numberOfGuests, false);
+            List<OrderTable> orderTables = Arrays.asList(orderTable, orderTable2);
             TableGroupCreateRequest request = 테이블_그룹_생성_dto를_만든다(id, createdDate,
-                    Arrays.asList(orderTable, orderTable2));
-            when(orderTableDao.findAllByIdIn(any())).thenReturn(request.getOrderTables());
+                    orderTables);
+            when(orderTableDao.findAllByIdIn(any())).thenReturn(orderTables);
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -104,9 +107,9 @@ class TableGroupServiceTest {
             // given
             Long notNullTableGroupId = 111L;
             OrderTable orderTable = new OrderTable(orderId, notNullTableGroupId, numberOfGuests, empty);
-            TableGroupCreateRequest request = 테이블_그룹_생성_dto를_만든다(id, createdDate,
-                    Arrays.asList(orderTable, orderTable2));
-            when(orderTableDao.findAllByIdIn(any())).thenReturn(request.getOrderTables());
+            List<OrderTable> orderTables = Arrays.asList(orderTable, orderTable2);
+            TableGroupCreateRequest request = 테이블_그룹_생성_dto를_만든다(id, createdDate, orderTables);
+            when(orderTableDao.findAllByIdIn(any())).thenReturn(orderTables);
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -119,7 +122,8 @@ class TableGroupServiceTest {
             TableGroupCreateRequest request = 테이블_그룹_생성_dto를_만든다(id, createdDate, orderTables);
             when(orderTableDao.findAllByIdIn(any())).thenReturn(orderTables);
 
-            when(tableGroupDao.save(any(TableGroup.class))).thenReturn(request.toTableGroup(LocalDateTime.now()));
+            when(tableGroupDao.save(any(TableGroup.class))).thenReturn(
+                    request.toTableGroup(LocalDateTime.now(), orderTables));
 
             // when
             TableGroupResponse response = tableGroupService.create(request);
@@ -134,7 +138,9 @@ class TableGroupServiceTest {
 
         private TableGroupCreateRequest 테이블_그룹_생성_dto를_만든다(final Long id, final LocalDateTime createdDate,
                                                            final List<OrderTable> orderTables) {
-            return new TableGroupCreateRequest(id, createdDate, orderTables);
+            return new TableGroupCreateRequest(id, createdDate, orderTables.stream()
+                    .map(OrderTableIdDto::new)
+                    .collect(Collectors.toList()));
         }
     }
 

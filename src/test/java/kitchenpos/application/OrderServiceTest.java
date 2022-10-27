@@ -12,8 +12,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.OrderChangeRequest;
 import kitchenpos.application.dto.request.OrderCreateRequest;
+import kitchenpos.application.dto.request.OrderLineItemDto;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -138,7 +140,14 @@ class OrderServiceTest {
                                                   final String orderStatus,
                                                   final LocalDateTime orderedTime,
                                                   final List<OrderLineItem> orderLineItems) {
-            return new OrderCreateRequest(id, orderTableId, orderStatus, orderedTime, orderLineItems);
+            return new OrderCreateRequest(
+                    id,
+                    orderTableId,
+                    orderStatus,
+                    orderedTime,
+                    orderLineItems.stream()
+                            .map(OrderLineItemDto::new)
+                            .collect(Collectors.toList()));
         }
     }
 

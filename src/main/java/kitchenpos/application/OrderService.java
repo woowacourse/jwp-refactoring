@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.request.OrderChangeRequest;
 import kitchenpos.application.dto.request.OrderCreateRequest;
+import kitchenpos.application.dto.request.OrderLineItemDto;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -42,7 +43,9 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
-        final List<OrderLineItem> orderLineItems = request.getOrderLineItems();
+        final List<OrderLineItem> orderLineItems = request.getOrderLineItemsDto().stream()
+                .map(OrderLineItemDto::toOrderLineItem)
+                .collect(Collectors.toList());
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();

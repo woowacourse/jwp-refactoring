@@ -9,15 +9,16 @@ public class TableGroupCreateRequest {
 
     private Long id;
     private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
+    private List<OrderTableIdDto> orderTableIdsDto;
 
     public TableGroupCreateRequest() {
     }
 
-    public TableGroupCreateRequest(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+    public TableGroupCreateRequest(final Long id, final LocalDateTime createdDate,
+                                   final List<OrderTableIdDto> orderTableIdsDto) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
+        this.orderTableIdsDto = orderTableIdsDto;
     }
 
     public Long getId() {
@@ -28,11 +29,11 @@ public class TableGroupCreateRequest {
         return createdDate;
     }
 
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
+    public List<OrderTableIdDto> getOrderTableIdsDto() {
+        return orderTableIdsDto;
     }
 
-    public TableGroup toTableGroup(final LocalDateTime createdDate) {
+    public TableGroup toTableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         return new TableGroup(id, createdDate, orderTables);
     }
 }
