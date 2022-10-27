@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.MenuGroupCreateRequest;
+import kitchenpos.dto.menuGroup.CreateMenuGroupRequest;
 
 @Service
 public class MenuGroupService {
@@ -18,7 +18,7 @@ public class MenuGroupService {
     }
 
     @Transactional
-    public MenuGroup create(final MenuGroupCreateRequest request) {
+    public MenuGroup create(final CreateMenuGroupRequest request) {
         MenuGroup menuGroup = new MenuGroup(request.getName());
         return menuGroupDao.save(menuGroup);
     }

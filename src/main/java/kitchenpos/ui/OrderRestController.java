@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
-import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderStatusChangeRequest;
+import kitchenpos.dto.order.CreateOrderRequest;
+import kitchenpos.dto.order.ChangeOrderStatusRequest;
 
 @RestController
 public class OrderRestController {
@@ -25,7 +25,7 @@ public class OrderRestController {
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<Order> create(@RequestBody final OrderCreateRequest request) {
+    public ResponseEntity<Order> create(@RequestBody final CreateOrderRequest request) {
         final Order created = orderService.create(request);
         final URI uri = URI.create("/api/orders/" + created.getId());
         return ResponseEntity.created(uri)
@@ -43,7 +43,7 @@ public class OrderRestController {
     @PutMapping("/api/orders/{orderId}/order-status")
     public ResponseEntity<Order> changeOrderStatus(
         @PathVariable final Long orderId,
-        @RequestBody final OrderStatusChangeRequest request
+        @RequestBody final ChangeOrderStatusRequest request
     ) {
         return ResponseEntity.ok(orderService.changeOrderStatus(orderId, request));
     }

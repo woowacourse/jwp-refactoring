@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.MenuGroupCreateRequest;
+import kitchenpos.dto.menuGroup.CreateMenuGroupRequest;
 
 class MenuGroupServiceTest extends ServiceTest {
 
@@ -16,7 +16,7 @@ class MenuGroupServiceTest extends ServiceTest {
     @DisplayName("새로운 메뉴 그룹을 생성한다.")
     void create() {
         // given
-        MenuGroupCreateRequest request = new MenuGroupCreateRequest("menuGroup");
+        CreateMenuGroupRequest request = new CreateMenuGroupRequest("menuGroup");
 
         // when
         MenuGroup savedMenuGroup = menuGroupService.create(request);

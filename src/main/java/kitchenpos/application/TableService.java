@@ -10,9 +10,9 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderTableChangeEmptyRequest;
-import kitchenpos.dto.OrderTableChangeNumberOfGuestRequest;
-import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.table.ChangeOrderTableEmptyRequest;
+import kitchenpos.dto.table.ChangeOrderTableNumberOfGuestRequest;
+import kitchenpos.dto.table.CreateOrderTableRequest;
 
 @Service
 public class TableService {
@@ -25,7 +25,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTableCreateRequest request) {
+    public OrderTable create(final CreateOrderTableRequest request) {
         OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
 
         return orderTableDao.save(orderTable);
@@ -36,7 +36,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
+    public OrderTable changeEmpty(final Long orderTableId, final ChangeOrderTableEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 테이블입니다."));
 
@@ -52,7 +52,7 @@ public class TableService {
 
     @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId,
-        final OrderTableChangeNumberOfGuestRequest request) {
+        final ChangeOrderTableNumberOfGuestRequest request) {
         final int numberOfGuests = request.getNumberOfGuests();
 
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)

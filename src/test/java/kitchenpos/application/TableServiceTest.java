@@ -12,9 +12,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderTableChangeEmptyRequest;
-import kitchenpos.dto.OrderTableChangeNumberOfGuestRequest;
-import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.table.ChangeOrderTableEmptyRequest;
+import kitchenpos.dto.table.ChangeOrderTableNumberOfGuestRequest;
+import kitchenpos.dto.table.CreateOrderTableRequest;
 
 class TableServiceTest extends ServiceTest {
 
@@ -26,7 +26,7 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("예외사항이 존재하지 않는 경우 새로운 테이블을 생성한다.")
         void create() {
             // given
-            OrderTableCreateRequest request = new OrderTableCreateRequest(10, true);
+            CreateOrderTableRequest request = new CreateOrderTableRequest(10, true);
 
             // when
             OrderTable savedOrderTable = tableService.create(request);
@@ -59,7 +59,7 @@ class TableServiceTest extends ServiceTest {
         void changeEmpty() {
             // given
             OrderTable savedOrderTable = createAndSaveOrderTable(10, false);
-            OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(true);
+            ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(true);
 
             // when
             OrderTable changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), request);
@@ -72,7 +72,7 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("존재하지 않는 테이블 id인 경우 예외가 발생한다.")
         void invalidOrderTableId() {
             // given
-            OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(true);
+            ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(true);
 
             // when, then
             assertThatThrownBy(() -> tableService.changeEmpty(0L, request))
@@ -89,7 +89,7 @@ class TableServiceTest extends ServiceTest {
             Order savedOrder = orderDao.save(new Order(savedOrderTable.getId()));
             savedOrder.changeStatus(status);
 
-            OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(true);
+            ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(true);
 
             // when, then
             assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), request))
@@ -108,7 +108,7 @@ class TableServiceTest extends ServiceTest {
         void changeNumberOfGuests() {
             // given
             OrderTable savedOrderTable = createAndSaveOrderTable(10, false);
-            OrderTableChangeNumberOfGuestRequest request = new OrderTableChangeNumberOfGuestRequest(20);
+            ChangeOrderTableNumberOfGuestRequest request = new ChangeOrderTableNumberOfGuestRequest(20);
 
             // when
             OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(), request);
@@ -121,7 +121,7 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("존재하지 않은 테이블 id의 경우 예외가 발생한다.")
         void invalidOrderTableId() {
             // given
-            OrderTableChangeNumberOfGuestRequest request = new OrderTableChangeNumberOfGuestRequest(20);
+            ChangeOrderTableNumberOfGuestRequest request = new ChangeOrderTableNumberOfGuestRequest(20);
 
             // when, then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, request))

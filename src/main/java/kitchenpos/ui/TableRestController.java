@@ -2,9 +2,9 @@ package kitchenpos.ui;
 
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderTableChangeEmptyRequest;
-import kitchenpos.dto.OrderTableChangeNumberOfGuestRequest;
-import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.table.ChangeOrderTableEmptyRequest;
+import kitchenpos.dto.table.ChangeOrderTableNumberOfGuestRequest;
+import kitchenpos.dto.table.CreateOrderTableRequest;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +21,7 @@ public class TableRestController {
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<OrderTable> create(@RequestBody final OrderTableCreateRequest request) {
+    public ResponseEntity<OrderTable> create(@RequestBody final CreateOrderTableRequest request) {
         final OrderTable created = tableService.create(request);
         final URI uri = URI.create("/api/tables/" + created.getId());
         return ResponseEntity.created(uri)
@@ -39,7 +39,7 @@ public class TableRestController {
     @PutMapping("/api/tables/{orderTableId}/empty")
     public ResponseEntity<OrderTable> changeEmpty(
             @PathVariable final Long orderTableId,
-            @RequestBody final OrderTableChangeEmptyRequest request
+            @RequestBody final ChangeOrderTableEmptyRequest request
     ) {
         return ResponseEntity.ok()
                 .body(tableService.changeEmpty(orderTableId, request))
@@ -49,7 +49,7 @@ public class TableRestController {
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
     public ResponseEntity<OrderTable> changeNumberOfGuests(
             @PathVariable final Long orderTableId,
-            @RequestBody final OrderTableChangeNumberOfGuestRequest request
+            @RequestBody final ChangeOrderTableNumberOfGuestRequest request
     ) {
         return ResponseEntity.ok()
                 .body(tableService.changeNumberOfGuests(orderTableId, request))

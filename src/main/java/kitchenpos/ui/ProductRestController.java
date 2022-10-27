@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.ProductCreateRequest;
+import kitchenpos.dto.product.CreateProductRequest;
 
 @RestController
 public class ProductRestController {
@@ -22,7 +22,7 @@ public class ProductRestController {
     }
 
     @PostMapping("/api/products")
-    public ResponseEntity<Product> create(@RequestBody final ProductCreateRequest request) {
+    public ResponseEntity<Product> create(@RequestBody final CreateProductRequest request) {
         final Product created = productService.create(request);
         final URI uri = URI.create("/api/products/" + created.getId());
         return ResponseEntity.created(uri)

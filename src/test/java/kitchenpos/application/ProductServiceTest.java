@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.Product;
-import kitchenpos.dto.ProductCreateRequest;
+import kitchenpos.dto.product.CreateProductRequest;
 
 class ProductServiceTest extends ServiceTest {
 
@@ -22,7 +22,7 @@ class ProductServiceTest extends ServiceTest {
         @DisplayName("예외사항이 존재하지 않는 경우 새로운 상품을 생성한다.")
         void create() {
             // given
-            ProductCreateRequest product = new ProductCreateRequest("이름", new BigDecimal(1000));
+            CreateProductRequest product = new CreateProductRequest("이름", new BigDecimal(1000));
 
             // when
             Product savedProduct = productService.create(product);

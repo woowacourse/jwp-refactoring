@@ -14,8 +14,8 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.MenuCreateRequest;
-import kitchenpos.dto.MenuProductCreateRequest;
+import kitchenpos.dto.menu.CreateMenuRequest;
+import kitchenpos.dto.menu.CreateMenuProductRequest;
 
 @Service
 public class MenuService {
@@ -37,16 +37,16 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuCreateRequest request) {
+    public Menu create(final CreateMenuRequest request) {
 
         if (!menuGroupDao.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException("존재하지 않는 메뉴그룹입니다.");
         }
 
-        final List<MenuProductCreateRequest> menuProducts = request.getMenuProducts();
+        final List<CreateMenuProductRequest> menuProducts = request.getMenuProducts();
 
         BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProductCreateRequest menuProduct : menuProducts) {
+        for (final CreateMenuProductRequest menuProduct : menuProducts) {
             final Product product = productDao.findById(menuProduct.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 제품입니다."));
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
@@ -61,7 +61,7 @@ public class MenuService {
 
         final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProductCreateRequest product : menuProducts) {
+        for (final CreateMenuProductRequest product : menuProducts) {
             MenuProduct menuProduct = new MenuProduct(menuId, product.getProductId(), product.getQuantity());
             menuProduct.setMenuId(menuId);
             savedMenuProducts.add(menuProductDao.save(menuProduct));

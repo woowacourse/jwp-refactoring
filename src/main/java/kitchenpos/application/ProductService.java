@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.ProductCreateRequest;
+import kitchenpos.dto.product.CreateProductRequest;
 
 @Service
 public class ProductService {
@@ -18,7 +18,7 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final ProductCreateRequest request) {
+    public Product create(final CreateProductRequest request) {
         final Product product = new Product(request.getName(), request.getPrice());
         return productDao.save(product);
     }

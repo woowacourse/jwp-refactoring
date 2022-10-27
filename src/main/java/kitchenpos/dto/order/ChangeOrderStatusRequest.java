@@ -1,10 +1,10 @@
-package kitchenpos.dto;
+package kitchenpos.dto.order;
 
-public class OrderStatusChangeRequest {
+public class ChangeOrderStatusRequest {
 
     private String status;
 
-    public OrderStatusChangeRequest(String status) {
+    public ChangeOrderStatusRequest(String status) {
         this.status = status;
     }
 

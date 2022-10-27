@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Test;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.MenuCreateRequest;
-import kitchenpos.dto.MenuProductCreateRequest;
+import kitchenpos.dto.menu.CreateMenuRequest;
+import kitchenpos.dto.menu.CreateMenuProductRequest;
 
 class MenuServiceTest extends ServiceTest {
 
@@ -29,7 +29,7 @@ class MenuServiceTest extends ServiceTest {
             Product product = createAndSaveProduct();
             MenuGroup menuGroup = createAndSaveMenuGroup();
 
-            MenuCreateRequest menu = createMenuCreateRequest(new BigDecimal(1000), menuGroup.getId(), product.getId(),
+            CreateMenuRequest menu = createMenuCreateRequest(new BigDecimal(1000), menuGroup.getId(), product.getId(),
                 10L);
 
             // when
@@ -45,7 +45,7 @@ class MenuServiceTest extends ServiceTest {
             // given
             Product product = createAndSaveProduct();
 
-            MenuCreateRequest menu = createMenuCreateRequest(new BigDecimal(1000), 0L, product.getId(), 10L);
+            CreateMenuRequest menu = createMenuCreateRequest(new BigDecimal(1000), 0L, product.getId(), 10L);
 
             // when, then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -59,7 +59,7 @@ class MenuServiceTest extends ServiceTest {
             // given
             MenuGroup menuGroup = createAndSaveMenuGroup();
 
-            MenuCreateRequest menu = createMenuCreateRequest(new BigDecimal(1000), menuGroup.getId(), 0L, 10L);
+            CreateMenuRequest menu = createMenuCreateRequest(new BigDecimal(1000), menuGroup.getId(), 0L, 10L);
 
             // when, then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -74,7 +74,7 @@ class MenuServiceTest extends ServiceTest {
             Product product = createAndSaveProduct();
             MenuGroup menuGroup = createAndSaveMenuGroup();
 
-            MenuCreateRequest menu = createMenuCreateRequest(new BigDecimal(2000), menuGroup.getId(), product.getId(),
+            CreateMenuRequest menu = createMenuCreateRequest(new BigDecimal(2000), menuGroup.getId(), product.getId(),
                 1L);
 
             // when, then
@@ -109,14 +109,14 @@ class MenuServiceTest extends ServiceTest {
         return menuGroupDao.save(menuGroup);
     }
 
-    private MenuCreateRequest createMenuCreateRequest(BigDecimal price, long menuGroupId,
+    private CreateMenuRequest createMenuCreateRequest(BigDecimal price, long menuGroupId,
         long productId, long quantity) {
-        return new MenuCreateRequest(
+        return new CreateMenuRequest(
             "name",
             price,
             menuGroupId,
-            new ArrayList<MenuProductCreateRequest>() {{
-                add(new MenuProductCreateRequest(productId, quantity));
+            new ArrayList<CreateMenuProductRequest>() {{
+                add(new CreateMenuProductRequest(productId, quantity));
             }}
         );
     }

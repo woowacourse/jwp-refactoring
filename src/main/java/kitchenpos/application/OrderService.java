@@ -14,9 +14,9 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderLineItemCreateRequest;
-import kitchenpos.dto.OrderStatusChangeRequest;
+import kitchenpos.dto.order.CreateOrderRequest;
+import kitchenpos.dto.order.CreateOrderLineItemRequest;
+import kitchenpos.dto.order.ChangeOrderStatusRequest;
 
 @Service
 public class OrderService {
@@ -38,7 +38,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderCreateRequest request) {
+    public Order create(final CreateOrderRequest request) {
         final List<Long> menuIds = request.getOrderLineItems().stream()
             .map(item -> item.getMenuId())
             .collect(Collectors.toList());
@@ -54,7 +54,7 @@ public class OrderService {
 
         final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (OrderLineItemCreateRequest item : request.getOrderLineItems()) {
+        for (CreateOrderLineItemRequest item : request.getOrderLineItems()) {
             final OrderLineItem orderLineItem = new OrderLineItem(orderId, item.getMenuId(), item.getQuantity());
             savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
         }
@@ -74,7 +74,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
+    public Order changeOrderStatus(final Long orderId, final ChangeOrderStatusRequest request) {
         final Order savedOrder = orderDao.findById(orderId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 주문입니다."));
 

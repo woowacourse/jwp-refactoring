@@ -13,8 +13,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.TableGroupCreateRequest;
-import kitchenpos.dto.TableGroupOrderTableCreateRequest;
+import kitchenpos.dto.tableGroup.CreateTableGroupRequest;
+import kitchenpos.dto.tableGroup.AddOrderTableToTableGroupRequest;
 
 class TableGroupServiceTest extends ServiceTest {
 
@@ -28,10 +28,10 @@ class TableGroupServiceTest extends ServiceTest {
             // given
             OrderTable orderTable1 = createAndSaveOrderTable(true);
             OrderTable orderTable2 = createAndSaveOrderTable(true);
-            TableGroupCreateRequest request = new TableGroupCreateRequest(
-                new ArrayList<TableGroupOrderTableCreateRequest>() {{
-                    add(new TableGroupOrderTableCreateRequest(orderTable1.getId()));
-                    add(new TableGroupOrderTableCreateRequest(orderTable2.getId()));
+            CreateTableGroupRequest request = new CreateTableGroupRequest(
+                new ArrayList<AddOrderTableToTableGroupRequest>() {{
+                    add(new AddOrderTableToTableGroupRequest(orderTable1.getId()));
+                    add(new AddOrderTableToTableGroupRequest(orderTable2.getId()));
                 }}
             );
 
@@ -46,10 +46,10 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("존재하지 않는 테이블인 경우 예외가 발생한다.")
         void invalidOrderTable() {
             // given
-            TableGroupCreateRequest request = new TableGroupCreateRequest(
-                new ArrayList<TableGroupOrderTableCreateRequest>() {{
-                    add(new TableGroupOrderTableCreateRequest(0L));
-                    add(new TableGroupOrderTableCreateRequest(0L));
+            CreateTableGroupRequest request = new CreateTableGroupRequest(
+                new ArrayList<AddOrderTableToTableGroupRequest>() {{
+                    add(new AddOrderTableToTableGroupRequest(0L));
+                    add(new AddOrderTableToTableGroupRequest(0L));
                 }}
             );
 
@@ -65,10 +65,10 @@ class TableGroupServiceTest extends ServiceTest {
             // given
             OrderTable orderTable1 = createAndSaveOrderTable(false);
             OrderTable orderTable2 = createAndSaveOrderTable(false);
-            TableGroupCreateRequest request = new TableGroupCreateRequest(
-                new ArrayList<TableGroupOrderTableCreateRequest>() {{
-                    add(new TableGroupOrderTableCreateRequest(orderTable1.getId()));
-                    add(new TableGroupOrderTableCreateRequest(orderTable2.getId()));
+            CreateTableGroupRequest request = new CreateTableGroupRequest(
+                new ArrayList<AddOrderTableToTableGroupRequest>() {{
+                    add(new AddOrderTableToTableGroupRequest(orderTable1.getId()));
+                    add(new AddOrderTableToTableGroupRequest(orderTable2.getId()));
                 }}
             );
 
@@ -85,10 +85,10 @@ class TableGroupServiceTest extends ServiceTest {
             long savedGroupId = createAndSaveTableGroup().getId();
             OrderTable orderTable1 = createAndSaveOrderTable(savedGroupId);
             OrderTable orderTable2 = createAndSaveOrderTable(savedGroupId);
-            TableGroupCreateRequest request = new TableGroupCreateRequest(
-                new ArrayList<TableGroupOrderTableCreateRequest>() {{
-                    add(new TableGroupOrderTableCreateRequest(orderTable1.getId()));
-                    add(new TableGroupOrderTableCreateRequest(orderTable2.getId()));
+            CreateTableGroupRequest request = new CreateTableGroupRequest(
+                new ArrayList<AddOrderTableToTableGroupRequest>() {{
+                    add(new AddOrderTableToTableGroupRequest(orderTable1.getId()));
+                    add(new AddOrderTableToTableGroupRequest(orderTable2.getId()));
                 }}
             );
 

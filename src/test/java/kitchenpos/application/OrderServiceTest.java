@@ -15,9 +15,9 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderLineItemCreateRequest;
-import kitchenpos.dto.OrderStatusChangeRequest;
+import kitchenpos.dto.order.CreateOrderRequest;
+import kitchenpos.dto.order.CreateOrderLineItemRequest;
+import kitchenpos.dto.order.ChangeOrderStatusRequest;
 
 class OrderServiceTest extends ServiceTest {
 
@@ -32,7 +32,7 @@ class OrderServiceTest extends ServiceTest {
             Menu savedMenu = createAndSaveMenu();
             OrderTable savedOrderTable = createAndSaveOrderTable();
 
-            OrderCreateRequest request = createOrderCreateRequest(
+            CreateOrderRequest request = createOrderCreateRequest(
                 savedOrderTable.getId(),
                 savedMenu.getId(),
                 10
@@ -51,7 +51,7 @@ class OrderServiceTest extends ServiceTest {
             // given
             OrderTable savedOrderTable = createAndSaveOrderTable();
 
-            OrderCreateRequest request = createOrderCreateRequest(
+            CreateOrderRequest request = createOrderCreateRequest(
                 savedOrderTable.getId(),
                 0L,
                 10
@@ -69,7 +69,7 @@ class OrderServiceTest extends ServiceTest {
             // given
             Menu savedMenu = createAndSaveMenu();
 
-            OrderCreateRequest request = createOrderCreateRequest(
+            CreateOrderRequest request = createOrderCreateRequest(
                 0L,
                 savedMenu.getId(),
                 10
@@ -105,7 +105,7 @@ class OrderServiceTest extends ServiceTest {
         void changeOrderStatus() {
             // given
             Order savedOrder = createAndSaveOrder();
-            OrderStatusChangeRequest request = new OrderStatusChangeRequest("MEAL");
+            ChangeOrderStatusRequest request = new ChangeOrderStatusRequest("MEAL");
 
             // when
             Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), request);
@@ -118,7 +118,7 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("존재하지 않는 order id인 경우 예외가 발생한다.")
         void wrongInvalidOrderId() {
             // given
-            OrderStatusChangeRequest request = new OrderStatusChangeRequest("MEAL");
+            ChangeOrderStatusRequest request = new ChangeOrderStatusRequest("MEAL");
 
             // when, then
             assertThatThrownBy(() -> orderService.changeOrderStatus(0L, request))
@@ -156,11 +156,11 @@ class OrderServiceTest extends ServiceTest {
         return orderTableDao.save(orderTable);
     }
 
-    private OrderCreateRequest createOrderCreateRequest(long orderTableId, long menuId, long quantity) {
-        OrderLineItemCreateRequest orderLineItem = new OrderLineItemCreateRequest(menuId, quantity);
-        return new OrderCreateRequest(
+    private CreateOrderRequest createOrderCreateRequest(long orderTableId, long menuId, long quantity) {
+        CreateOrderLineItemRequest orderLineItem = new CreateOrderLineItemRequest(menuId, quantity);
+        return new CreateOrderRequest(
             orderTableId,
-            new ArrayList<OrderLineItemCreateRequest>() {{
+            new ArrayList<CreateOrderLineItemRequest>() {{
                 add(orderLineItem);
             }}
         );

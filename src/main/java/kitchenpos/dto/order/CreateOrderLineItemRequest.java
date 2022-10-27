@@ -1,11 +1,11 @@
-package kitchenpos.dto;
+package kitchenpos.dto.order;
 
-public class OrderLineItemCreateRequest {
+public class CreateOrderLineItemRequest {
 
     private Long menuId;
     private long quantity;
 
-    public OrderLineItemCreateRequest(Long menuId, long quantity) {
+    public CreateOrderLineItemRequest(Long menuId, long quantity) {
         this.menuId = menuId;
         this.quantity = quantity;
     }

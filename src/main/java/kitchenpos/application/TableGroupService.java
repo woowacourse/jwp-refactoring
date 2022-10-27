@@ -14,7 +14,7 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.tableGroup.CreateTableGroupRequest;
 
 @Service
 public class TableGroupService {
@@ -30,7 +30,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupCreateRequest request) {
+    public TableGroup create(final CreateTableGroupRequest request) {
         final List<Long> orderTableIds = request.getOrderTables().stream()
             .map(table -> table.getId())
             .collect(Collectors.toList());
