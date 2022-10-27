@@ -18,6 +18,8 @@ import kitchenpos.dao.TableGroupDao;
 @Sql("classpath:truncate.sql")
 public class ServiceTest {
 
+    protected static Long NO_ID = null;
+
     @Autowired
     protected MenuService menuService;
 

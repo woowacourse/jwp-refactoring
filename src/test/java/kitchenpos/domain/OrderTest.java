@@ -12,6 +12,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 public class OrderTest {
 
+    private final Long noId = null;
+
     @Test
     @DisplayName("주문을 생성한다.")
     void create() {
@@ -23,7 +25,7 @@ public class OrderTest {
     @DisplayName("OrderLineItem 이 empty 인 경우 예외를 반환한다.")
     void validateOrderLineItems() {
         // when, then
-        assertThatThrownBy(() -> new Order(null, List.of()))
+        assertThatThrownBy(() -> new Order(noId, List.of()))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -42,7 +44,7 @@ public class OrderTest {
     }
 
     private Order createOrder() {
-        OrderLineItem orderLineItem = new OrderLineItem(null, null, 1);
-        return new Order(null, List.of(orderLineItem));
+        OrderLineItem orderLineItem = new OrderLineItem(noId, noId, 1);
+        return new Order(noId, List.of(orderLineItem));
     }
 }

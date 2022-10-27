@@ -1,6 +1,7 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.TableService;
+import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.domain.OrderTable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class TableRestController {
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<OrderTable> create(@RequestBody final OrderTable orderTable) {
+    public ResponseEntity<OrderTable> create(@RequestBody final OrderTableRequest orderTable) {
         final OrderTable created = tableService.create(orderTable);
         final URI uri = URI.create("/api/tables/" + created.getId());
         return ResponseEntity.created(uri)
@@ -34,7 +35,7 @@ public class TableRestController {
     @PutMapping("/api/tables/{orderTableId}/empty")
     public ResponseEntity<OrderTable> changeEmpty(
             @PathVariable final Long orderTableId,
-            @RequestBody final OrderTable orderTable) {
+            @RequestBody final OrderTableRequest orderTable) {
         return ResponseEntity.ok()
                 .body(tableService.changeEmpty(orderTableId, orderTable));
     }
@@ -42,7 +43,7 @@ public class TableRestController {
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
     public ResponseEntity<OrderTable> changeNumberOfGuests(
             @PathVariable final Long orderTableId,
-            @RequestBody final OrderTable orderTable) {
+            @RequestBody final OrderTableRequest orderTable) {
         return ResponseEntity.ok()
                 .body(tableService.changeNumberOfGuests(orderTableId, orderTable));
     }

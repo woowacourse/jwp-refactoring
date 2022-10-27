@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.application.request.OrderRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
@@ -26,7 +27,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order request) {
+    public Order create(final OrderRequest request) {
         final List<OrderLineItem> orderLineItems = request.getOrderLineItems();
 
         final OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
@@ -47,11 +48,11 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public Order changeOrderStatus(final Long orderId, final OrderRequest request) {
         final Order savedOrder = orderDao.findById(orderId)
             .orElseThrow(IllegalArgumentException::new);
 
-        savedOrder.changeStatus(order.getOrderStatus());
+        savedOrder.changeStatus(request.getOrderStatus());
         return savedOrder;
     }
 }

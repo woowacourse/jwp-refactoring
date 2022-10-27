@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.application.request.MenuRequest;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -35,9 +36,9 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu request) {
-        validateMenuGroupExists(request);
-        Menu menu = menuDao.save(request);
+    public Menu create(final MenuRequest request) {
+        validateMenuGroupExists(request.getMenuGroupId());
+        Menu menu = menuDao.save(request.toEntity());
         menu.setIdToMenuProducts();
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
 
@@ -52,8 +53,8 @@ public class MenuService {
         return menu;
     }
 
-    private void validateMenuGroupExists(final Menu request) {
-        if (!menuGroupDao.existsById(request.getMenuGroupId())) {
+    private void validateMenuGroupExists(final Long menuGroupId) {
+        if (!menuGroupDao.existsById(menuGroupId)) {
             throw new IllegalArgumentException();
         }
     }

@@ -41,6 +41,6 @@ public class JpaOrderDao implements OrderDao {
     @Override
     public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds,
         final List<String> orderStatuses) {
-        return false;
+        return orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatuses);
     }
 }

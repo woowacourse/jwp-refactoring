@@ -35,7 +35,21 @@ public class OrderTable {
     }
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
+        validateNumberOfGuests(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
+    private void validateNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void changeEmpty(final boolean empty) {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
         this.empty = empty;
     }
 
@@ -84,5 +98,12 @@ public class OrderTable {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
+        this.numberOfGuests = numberOfGuests;
     }
 }

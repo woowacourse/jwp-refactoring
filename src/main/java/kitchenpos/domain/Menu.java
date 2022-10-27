@@ -47,12 +47,6 @@ public class Menu {
         validatePrice(price);
     }
 
-    private void validatePrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
         this(id, name, price, menuGroupId, Collections.emptyList());
     }
@@ -63,6 +57,12 @@ public class Menu {
     }
 
     public Menu() {
+    }
+
+    private void validatePrice(final BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public void validatePriceUnderProductsSum(final List<Product> products) {
@@ -89,10 +89,6 @@ public class Menu {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
@@ -106,11 +102,7 @@ public class Menu {
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = List.copyOf(menuProducts);
+        return List.copyOf(menuProducts);
     }
 
     @Override

@@ -7,6 +7,7 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import kitchenpos.application.request.MenuGroupRequest;
 import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupServiceTest extends ServiceTest {
@@ -15,28 +16,30 @@ public class MenuGroupServiceTest extends ServiceTest {
     @DisplayName("메뉴를 등록한다.")
     void create() {
         // given
-        MenuGroup menuGroup = new MenuGroup("세마리세트");
+        MenuGroupRequest request = createRequest("세마리세트");
 
         // when
-        MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        MenuGroup savedMenuGroup = menuGroupService.create(request);
 
         // then
-        assertThat(savedMenuGroup).usingRecursiveComparison()
-            .ignoringFields("id")
-            .isEqualTo(menuGroup);
+        assertThat(savedMenuGroup.getId()).isNotNull();
+        assertThat(savedMenuGroup.getName()).isEqualTo(request.getName());
     }
 
     @Test
     @DisplayName("전체 메뉴를 조회한다.")
     void list() {
         // given
-        MenuGroup menuGroup = new MenuGroup("세마리세트");
-        MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        MenuGroup savedMenuGroup = menuGroupService.create(createRequest("세마리세트"));
 
         // when
         List<MenuGroup> result = menuGroupService.list();
 
         // then
         assertThat(result).contains(savedMenuGroup);
+    }
+
+    private MenuGroupRequest createRequest(final String name) {
+        return new MenuGroupRequest(null, name);
     }
 }

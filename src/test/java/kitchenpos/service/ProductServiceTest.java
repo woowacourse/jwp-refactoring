@@ -10,8 +10,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.application.request.ProductCreateRequest;
 import kitchenpos.application.ProductService;
+import kitchenpos.application.request.ProductCreateRequest;
 import kitchenpos.domain.Product;
 
 public class ProductServiceTest extends ServiceTest {
