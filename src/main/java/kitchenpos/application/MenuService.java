@@ -7,7 +7,6 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
@@ -43,11 +42,6 @@ public class MenuService {
         validateMenuPrice(menu);
 
         final Menu savedMenu = menuDao.save(menu);
-
-        for (final MenuProduct menuProduct : menu.getMenuProducts()) {
-            menuProduct.setMenu(savedMenu);
-            menuProductDao.save(menuProduct);
-        }
 
         return MenuResponse.of(savedMenu);
     }
