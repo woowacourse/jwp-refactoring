@@ -16,7 +16,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,7 +84,7 @@ public abstract class ServiceTest {
         return orderTableDao.save(orderTable);
     }
 
-    protected TableGroup 단체지정(final TableGroup tableGroup) {
+    protected TableGroupResponse 단체지정(final TableGroupRequest tableGroup) {
         return tableGroupService.create(tableGroup);
     }
 
