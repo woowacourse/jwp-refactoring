@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.fixtures.domain.OrderTableFixture.OrderTableRequestBuilder;
 import kitchenpos.fixtures.domain.TableGroupFixture.TableGroupRequestBuilder;
@@ -22,7 +22,7 @@ class TableServiceTest extends ServiceTest {
     private TableService tableService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private TableGroupService tableGroupService;
@@ -32,8 +32,8 @@ class TableServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        savedOrderTable1 = orderTableDao.save(createOrderTable(10, true));
-        savedOrderTable2 = orderTableDao.save(createOrderTable(15, true));
+        savedOrderTable1 = orderTableRepository.save(createOrderTable(10, true));
+        savedOrderTable2 = orderTableRepository.save(createOrderTable(15, true));
     }
 
     @DisplayName("create 메소드는")
@@ -69,7 +69,7 @@ class TableServiceTest extends ServiceTest {
             int expected = 4;
             for (int i = 0; i < expected; i++) {
                 OrderTable orderTable = createOrderTable(10, false);
-                orderTableDao.save(orderTable);
+                orderTableRepository.save(orderTable);
             }
 
             // when
@@ -137,7 +137,7 @@ class TableServiceTest extends ServiceTest {
         void Should_ChangeNumberOfGuests() {
             // given
             int expected = 100;
-            OrderTable orderTable = orderTableDao.save(createOrderTable(1, false));
+            OrderTable orderTable = orderTableRepository.save(createOrderTable(1, false));
             OrderTable request = new OrderTableRequestBuilder()
                     .numberOfGuests(expected)
                     .build();
@@ -166,7 +166,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableDoesNotExist() {
             // given
-            OrderTable orderTable = orderTableDao.save(createOrderTable(1, false));
+            OrderTable orderTable = orderTableRepository.save(createOrderTable(1, false));
             OrderTable request = new OrderTableRequestBuilder()
                     .numberOfGuests(100)
                     .build();
@@ -180,7 +180,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableIsEmpty() {
             // given
-            OrderTable orderTable = orderTableDao.save(createOrderTable(1, true));
+            OrderTable orderTable = orderTableRepository.save(createOrderTable(1, true));
             OrderTable request = new OrderTableRequestBuilder()
                     .numberOfGuests(100)
                     .build();

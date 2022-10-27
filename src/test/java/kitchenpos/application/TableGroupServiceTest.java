@@ -10,9 +10,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -31,13 +31,13 @@ class TableGroupServiceTest extends ServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     private OrderTable savedOrderTable1;
     private OrderTable savedOrderTable2;
@@ -158,8 +158,8 @@ class TableGroupServiceTest extends ServiceTest {
 
             // then
             assertAll(() -> {
-                assertThat(tableGroupDao.findById(tableGroup.getId())).isNotEmpty();
-                assertThat(orderTableDao.findAll())
+                assertThat(tableGroupRepository.findById(tableGroup.getId())).isNotEmpty();
+                assertThat(orderTableRepository.findAll())
                         .allMatch(orderTable -> Objects.isNull(orderTable.getTableGroupId()))
                         .allMatch(orderTable -> !orderTable.isEmpty());
             });
@@ -170,11 +170,12 @@ class TableGroupServiceTest extends ServiceTest {
         @ParameterizedTest
         void Should_ThrowIAE_When_AnyStatusOfOrderTablesIsCookingOrMeal(final OrderStatus orderStatus) {
             // given
-            OrderTable orderTable1 = orderTableDao.save(createOrderTable(10, true));
-            OrderTable orderTable2 = orderTableDao.save(createOrderTable(10, true));
+            OrderTable orderTable1 = orderTableRepository.save(createOrderTable(10, true));
+            OrderTable orderTable2 = orderTableRepository.save(createOrderTable(10, true));
 
-            orderDao.save(createOrder(orderTable1.getId(), orderStatus, LocalDateTime.now(), List.of()));
-            orderDao.save(createOrder(orderTable1.getId(), OrderStatus.COMPLETION, LocalDateTime.now(), List.of()));
+            orderRepository.save(createOrder(orderTable1.getId(), orderStatus, LocalDateTime.now(), List.of()));
+            orderRepository.save(
+                    createOrder(orderTable1.getId(), OrderStatus.COMPLETION, LocalDateTime.now(), List.of()));
 
             TableGroup request = tableGroupService.create(
                     createTableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));

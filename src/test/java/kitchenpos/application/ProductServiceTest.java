@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.fixtures.domain.ProductFixture.ProductRequestBuilder;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +21,7 @@ class ProductServiceTest extends ServiceTest {
     private ProductService productService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @DisplayName("create 메소드는 ")
     @Nested
@@ -82,7 +82,7 @@ class ProductServiceTest extends ServiceTest {
             int expected = 3;
             for (int i = 0; i < expected; i++) {
                 Product product = createProduct("product " + i, new BigDecimal(10_000));
-                productDao.save(product);
+                productRepository.save(product);
             }
 
             // when

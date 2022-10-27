@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -32,7 +32,7 @@ class OrderServiceTest extends ServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     private OrderTable savedOrderTable;
     private MenuGroup savedMenuGroup;
@@ -149,7 +149,7 @@ class OrderServiceTest extends ServiceTest {
             for (int i = 0; i < expected; i++) {
                 Order order = createOrder(savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
                         List.of(createdOrderLineItem));
-                orderDao.save(order);
+                orderRepository.save(order);
             }
 
             // when
@@ -169,7 +169,7 @@ class OrderServiceTest extends ServiceTest {
         @ParameterizedTest
         void Should_ChangeOrderStatus(final String after) {
             // given
-            Order oldOrder = orderDao.save(
+            Order oldOrder = orderRepository.save(
                     createOrder(savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
                             List.of(createdOrderLineItem)));
 
@@ -188,8 +188,9 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderDoesNotExist() {
             // given
-            Order order = orderDao.save(createOrder(savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
-                    List.of(createdOrderLineItem)));
+            Order order = orderRepository.save(
+                    createOrder(savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
+                            List.of(createdOrderLineItem)));
 
             Order orderRequest = new OrderRequestBuilder()
                     .build();
@@ -203,7 +204,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderStatusIsCompletion() {
             // given
-            Order completionOrder = orderDao.save(
+            Order completionOrder = orderRepository.save(
                     createOrder(savedOrderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
                             List.of(createdOrderLineItem)));
 

@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,7 +19,7 @@ class MenuGroupServiceTest extends ServiceTest {
     private MenuGroupService menuGroupService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @DisplayName("create 메소드는")
     @Nested
@@ -52,9 +52,9 @@ class MenuGroupServiceTest extends ServiceTest {
             MenuGroup menuGroup2 = createMenuGroup("한식");
             MenuGroup menuGroup3 = createMenuGroup("중식");
 
-            menuGroupDao.save(menuGroup1);
-            menuGroupDao.save(menuGroup2);
-            menuGroupDao.save(menuGroup3);
+            menuGroupRepository.save(menuGroup1);
+            menuGroupRepository.save(menuGroup2);
+            menuGroupRepository.save(menuGroup3);
 
             // when
             List<MenuGroup> actual = menuGroupService.list();
