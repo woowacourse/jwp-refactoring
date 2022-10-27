@@ -11,7 +11,7 @@ public class OrderFakeDao extends BaseFakeDao<Order> implements OrderDao {
         final var found = entities.values()
                 .stream()
                 .filter(order -> order.getOrderTableId().equals(orderTableId)
-                        && orderStatuses.contains(order.getOrderStatus()))
+                        && orderStatuses.contains(order.getOrderStatus().name()))
                 .findAny();
         return found.isPresent();
     }
@@ -22,7 +22,7 @@ public class OrderFakeDao extends BaseFakeDao<Order> implements OrderDao {
         final var found = entities.values()
                 .stream()
                 .filter(order -> orderTableIds.contains(order.getOrderTableId())
-                        && orderStatuses.contains(order.getOrderStatus()))
+                        && orderStatuses.contains(order.getOrderStatus().name()))
                 .findAny();
         return found.isPresent();
     }

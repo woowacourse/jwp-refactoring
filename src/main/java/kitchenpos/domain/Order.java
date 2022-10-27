@@ -19,11 +19,11 @@ public class Order {
     }
 
     public void changeStatus(final OrderStatus orderStatus) {
-        validateNotCompleted(orderStatus);
+        validateNotCompleted();
         this.orderStatus = orderStatus;
     }
 
-    private void validateNotCompleted(final OrderStatus orderStatus) {
+    private void validateNotCompleted() {
         if (orderStatus == OrderStatus.COMPLETION) {
             throw new IllegalArgumentException();
         }

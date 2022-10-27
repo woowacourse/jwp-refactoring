@@ -14,9 +14,11 @@ public abstract class BaseFakeDao<T> {
 
     public T save(T entity) {
         final var primaryKey = findPrimaryKey(entity);
-        if (primaryKey.isEmpty()) {
-            setPrimaryKey(entity);
+        if (primaryKey.isPresent()) {
+            entities.put(primaryKey.get(), entity);
+            return entity;
         }
+        setPrimaryKey(entity);
         entities.put(key, entity);
         key += 1;
         return entity;
