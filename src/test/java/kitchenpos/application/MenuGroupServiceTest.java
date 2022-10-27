@@ -15,8 +15,7 @@ class MenuGroupServiceTest extends ServiceTest {
     @DisplayName("create 메서드는 메뉴 분류를 생성한다.")
     void create() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("반마리치킨");
+        MenuGroup menuGroup = new MenuGroup("반마리치킨");
 
         // when
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);

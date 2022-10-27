@@ -9,25 +9,14 @@ import kitchenpos.domain.MenuProduct;
 public class MenuFixture {
 
     public static MenuGroup createMenuGroup(String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        return menuGroup;
+        return new MenuGroup(name);
     }
 
     public static MenuProduct createMenuProduct(Long productId, long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+        return new MenuProduct(productId, quantity);
     }
 
     public static Menu createMenu(String name, BigDecimal price, Long menuGroupId, MenuProduct... menuProducts) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(List.of(menuProducts));
-        return menu;
+        return new Menu(name, price, menuGroupId, List.of(menuProducts));
     }
-
 }

@@ -40,9 +40,7 @@ class ProductServiceTest extends ServiceTest {
         @DisplayName("product를 생성한다.")
         void success() {
             // given
-            Product product = new Product();
-            product.setName("크림치킨");
-            product.setPrice(BigDecimal.valueOf(10000.00));
+            Product product = new Product("크림치킨", BigDecimal.valueOf(10000.00));
 
             // when
             Product savedProduct = productService.create(product);

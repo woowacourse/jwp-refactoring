@@ -14,8 +14,6 @@ public class TableFixture {
     }
 
     public static TableGroup createTableGroup(OrderTable... orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(orderTables));
-        return tableGroup;
+        return new TableGroup(List.of(orderTables));
     }
 }

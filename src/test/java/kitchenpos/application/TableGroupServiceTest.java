@@ -35,8 +35,7 @@ class TableGroupServiceTest extends ServiceTest {
             // given
             OrderTable orderTable1 = saveOrderTable(2, true);
             OrderTable orderTable2 = saveOrderTable(4, true);
-            TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+            TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable2));
 
             // when
             TableGroup savedTableGroup = tableGroupService.create(tableGroup);
