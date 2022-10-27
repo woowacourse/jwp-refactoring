@@ -1,7 +1,8 @@
 package kitchenpos.dto.request;
 
-import com.sun.istack.NotNull;
+
 import java.math.BigDecimal;
+import javax.validation.constraints.NotNull;
 
 public class ProductRequest {
 

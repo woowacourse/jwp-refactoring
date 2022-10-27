@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import java.net.URI;
 import java.util.List;
+import javax.validation.Valid;
 import kitchenpos.application.ProductService;
 import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.dto.response.ProductResponse;
@@ -20,7 +21,7 @@ public class ProductRestController {
     }
 
     @PostMapping("/api/products")
-    public ResponseEntity<ProductResponse> create(@RequestBody final ProductRequest productRequest) {
+    public ResponseEntity<ProductResponse> create(@RequestBody @Valid final ProductRequest productRequest) {
         final ProductResponse response = productService.create(productRequest);
         final URI uri = URI.create("/api/products/" + response.getId());
         return ResponseEntity.created(uri).body(response);
