@@ -18,18 +18,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
-class TableGroupServiceTest {
+class TableGroupServiceTest extends ServiceTest{
 
-    @Autowired
-    private TableGroupService tableGroupService;
     @Autowired
     private TableService tableService;
     @Autowired
     private OrderService orderService;
     @Autowired
     private OrderTableDao orderTableDao;
+    @Autowired
+    private TableGroupService tableGroupService;
 
     @Nested
     @DisplayName("테이블 그룹핑 테스트")

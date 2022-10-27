@@ -16,14 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
-class OrderServiceTest {
-
-    @Autowired
-    private TableService tableService;
-    @Autowired
-    private OrderService orderService;
+class OrderServiceTest extends ServiceTest{
 
     @Nested
     @DisplayName("주문 생성 로직 테스트")

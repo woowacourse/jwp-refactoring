@@ -17,12 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
-class MenuServiceTest {
-
-    @Autowired
-    private MenuService menuService;
+class MenuServiceTest extends ServiceTest {
 
     private List<MenuProduct> createDummyMenuProducts() {
         return List.of(new MenuProduct(1L, 2));

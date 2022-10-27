@@ -21,16 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
-class TableServiceTest {
 
-    @Autowired
-    private TableService tableService;
-    @Autowired
-    private OrderService orderService;
-    @Autowired
-    private TableGroupService tableGroupService;
+class TableServiceTest extends ServiceTest{
 
     @Test
     @DisplayName("테이블을 생성한다.")
