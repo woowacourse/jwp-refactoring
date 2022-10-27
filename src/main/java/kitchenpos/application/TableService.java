@@ -1,24 +1,22 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.application.request.OrderTableCreateRequest;
 import kitchenpos.application.request.OrderTableUpdateRequest;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
     private final OrderTableDao orderTableDao;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
+    public TableService(final OrderRepository orderRepository, final OrderTableDao orderTableDao) {
+        this.orderRepository = orderRepository;
         this.orderTableDao = orderTableDao;
     }
 
@@ -40,10 +38,10 @@ public class TableService {
             throw new IllegalArgumentException("해당 OrderTable이 이미 TableGroup에 속해있습니다.");
         }
 
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("해당 OrderTable의 Order중 아직 완료되지 않은 것이 존재합니다.");
-        }
+//        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
+//                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+//            throw new IllegalArgumentException("해당 OrderTable의 Order중 아직 완료되지 않은 것이 존재합니다.");
+//        }
 
         savedOrderTable.setEmpty(request.isEmpty());
 

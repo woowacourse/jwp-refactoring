@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import kitchenpos.application.request.OrderTableCreateRequest;
 import kitchenpos.application.request.OrderTableUpdateRequest;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.Order;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -87,7 +87,7 @@ class TableServiceTest {
 
             @Test
             void 예외가_발생한다() {
-                orderDao.save(new Order(1L, COOKING.name()));
+                orderRepository.save(new Order(1L, COOKING));
 
                 assertThatThrownBy(() -> tableService.changeEmpty(1L, null))
                         .isInstanceOf(IllegalArgumentException.class)

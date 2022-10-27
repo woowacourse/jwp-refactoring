@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.order.OrderStatus.COMPLETION;
+import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
@@ -13,8 +13,8 @@ import kitchenpos.application.request.OrderCreateRequest;
 import kitchenpos.application.request.OrderLineItemRequest;
 import kitchenpos.application.request.OrderTableUpdateRequest;
 import kitchenpos.application.request.OrderUpdateRequest;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.Order;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -30,6 +30,8 @@ public class OrderServiceTest {
 
             @Test
             void 예외가_발생한다() {
+                final OrderTable orderTable = tableService.changeEmpty(1L, new OrderTableUpdateRequest(5, false));
+
                 assertThatThrownBy(() -> orderService.create(request))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("OrderLineItem이 존재하지 않습니다.");
@@ -46,9 +48,11 @@ public class OrderServiceTest {
 
             @Test
             void 예외가_발생한다() {
+                final OrderTable orderTable = tableService.changeEmpty(1L, new OrderTableUpdateRequest(5, false));
+
                 assertThatThrownBy(() -> orderService.create(request))
                         .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("존재하지 않는 메뉴가 존재합니다.");
+                        .hasMessage("해당 메뉴가 존재하지 않습니다.");
             }
         }
 
@@ -77,7 +81,7 @@ public class OrderServiceTest {
             @Test
             void 예외가_발생한다() {
                 assertThatThrownBy(() -> orderService.create(request))
-                        .isInstanceOf(IllegalArgumentException.class)
+                        .isInstanceOf(IllegalStateException.class)
                         .hasMessage("해당 OrderTable이 empty 상태 입니다.");
             }
         }
@@ -96,8 +100,8 @@ public class OrderServiceTest {
                         () -> assertThat(actual.getId()).isNotNull(),
                         () -> assertThat(actual.getOrderTableId()).isEqualTo(1L),
                         () -> assertThat(actual.getOrderedTime()).isBefore(LocalDateTime.now()),
-                        () -> assertThat(actual.getOrderStatus()).isEqualTo(COOKING.name()),
-                        () -> assertThat(actual.getOrderLineItems())
+                        () -> assertThat(actual.getOrderStatus()).isEqualTo(COOKING),
+                        () -> assertThat(actual.getOrderLineItems().getValue())
                                 .extracting("menuId", "quantity")
                                 .containsExactly(tuple(1L, 1L), tuple(2L, 1L))
                 );
@@ -149,10 +153,11 @@ public class OrderServiceTest {
 
             @Test
             void 예외가_발생한다() {
-                final Order actual = orderDao.save(new Order(1L, COMPLETION.name()));
+                final Order actual = orderRepository.save(new Order(1L, COMPLETION));
 
-                assertThatThrownBy(() -> orderService.changeOrderStatus(actual.getId(), null))
-                        .isInstanceOf(IllegalArgumentException.class)
+                assertThatThrownBy(() -> orderService.changeOrderStatus(actual.getId(), new OrderUpdateRequest(
+                        COOKING.name())))
+                        .isInstanceOf(IllegalStateException.class)
                         .hasMessage("이미 완료된 Order의 상태는 변경할 수 없습니다.");
             }
         }
@@ -170,7 +175,7 @@ public class OrderServiceTest {
 
                 final Order actual = orderService.changeOrderStatus(order.getId(), request);
 
-                assertThat(actual.getOrderStatus()).isEqualTo(COMPLETION.name());
+                assertThat(actual.getOrderStatus()).isEqualTo(COMPLETION);
             }
         }
     }
