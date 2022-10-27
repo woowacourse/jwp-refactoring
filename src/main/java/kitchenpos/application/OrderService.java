@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.application.dto.request.OrderCommand;
+import kitchenpos.application.dto.request.OrderStatusCommand;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderLineItemRepository;
@@ -46,7 +47,7 @@ public class OrderService {
                 .toList();
     }
 
-    @Transactional
+    @Deprecated
     public Order changeOrderStatus(final Long orderId, final Order order) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
@@ -63,5 +64,13 @@ public class OrderService {
         savedOrder.addOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
 
         return savedOrder;
+    }
+
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusCommand orderStatusCommand) {
+        final Order savedOrder = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
+        savedOrder.changeOrderStatus(OrderStatus.from(orderStatusCommand.orderStatus()));
+
+        return OrderResponse.from(savedOrder);
     }
 }

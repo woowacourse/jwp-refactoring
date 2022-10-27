@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import kitchenpos.exception.InvalidOrderException;
 
 @Entity
 @Table(name = "orders")
@@ -62,6 +63,13 @@ public class Order {
                                final OrderValidator orderValidator) {
         orderValidator.validate(orderTableId, orderLineItems);
         return new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    }
+
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        if (orderStatus.isCompletion()) {
+            throw new InvalidOrderException("이미 식사가 완료되었습니다.");
+        }
+        this.orderStatus = orderStatus;
     }
 
     public Long getId() {

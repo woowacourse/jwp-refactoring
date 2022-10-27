@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import kitchenpos.application.dto.request.OrderCommand;
 import kitchenpos.application.dto.request.OrderLineItemCommand;
+import kitchenpos.application.dto.request.OrderStatusCommand;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
@@ -157,8 +158,8 @@ class OrderServiceTest {
         @Test
         @DisplayName("주문이 없을 경우 예외가 발생한다.")
         void orderNotFoundFailed() {
-            assertThatThrownBy(() -> orderService.changeOrderStatus(0L,
-                    new Order(null, OrderStatus.COMPLETION, LocalDateTime.now())))
+            assertThatThrownBy(
+                    () -> orderService.changeOrderStatus(0L, new OrderStatusCommand(OrderStatus.COMPLETION.name())))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("주문이 존재하지 않습니다.");
         }
@@ -175,7 +176,7 @@ class OrderServiceTest {
             orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 2));
 
             assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(),
-                    new Order(null, OrderStatus.COMPLETION, LocalDateTime.now())))
+                    new OrderStatusCommand(OrderStatus.COMPLETION.name())))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("이미 식사가 완료되었습니다.");
         }
@@ -191,10 +192,10 @@ class OrderServiceTest {
             orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 1));
             orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 2));
 
-            Order changedOrder = orderService.changeOrderStatus(order.getId(),
-                    new Order(null, OrderStatus.MEAL, null));
+            OrderResponse orderResponse = orderService.changeOrderStatus(order.getId(),
+                    new OrderStatusCommand(OrderStatus.MEAL.name()));
 
-            assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
+            assertThat(orderResponse.orderStatus()).isEqualTo(OrderStatus.MEAL.name());
         }
     }
 

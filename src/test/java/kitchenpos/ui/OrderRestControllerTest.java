@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.dto.request.OrderCommand;
+import kitchenpos.application.dto.request.OrderStatusCommand;
 import kitchenpos.application.dto.response.OrderLineItemResponse;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.domain.Order;
@@ -20,6 +21,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.ui.dto.OrderLineItemRequest;
 import kitchenpos.ui.dto.OrderRequest;
+import kitchenpos.ui.dto.OrderStatusRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -58,14 +60,14 @@ class OrderRestControllerTest extends ControllerTest {
     @Test
     @DisplayName("Order의 상태를 변경한다.")
     void changeOrderStatus() throws Exception {
-        Order order = createOrder(1L);
+        OrderResponse orderResponse = createOrderResponse(1L);
 
-        given(orderService.changeOrderStatus(anyLong(), any(Order.class))).willReturn(order);
+        given(orderService.changeOrderStatus(anyLong(), any(OrderStatusCommand.class))).willReturn(orderResponse);
         mockMvc.perform(put("/api/orders/1/order-status")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(order)))
+                        .content(objectMapper.writeValueAsString(new OrderStatusRequest(OrderStatus.COMPLETION.name()))))
                 .andExpectAll(status().isOk(),
-                        content().string(objectMapper.writeValueAsString(order)));
+                        content().string(objectMapper.writeValueAsString(orderResponse)));
     }
 
     private Order createOrder(final Long id) {
@@ -79,7 +81,7 @@ class OrderRestControllerTest extends ControllerTest {
     private OrderResponse createOrderResponse(final Long id) {
         OrderLineItemResponse orderLineItem1 = new OrderLineItemResponse(1L, 1L, 1L, 10);
         OrderLineItemResponse orderLineItem2 = new OrderLineItemResponse(2L, 1L, 2L, 3);
-        return new OrderResponse(id, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(),
+        return new OrderResponse(id, 1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(),
                 List.of(orderLineItem1, orderLineItem2));
     }
 }
