@@ -60,10 +60,7 @@ public class TableGroupService {
             }
         }
 
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(savedOrderTables);
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         final Long tableGroupId = savedTableGroup.getId();
@@ -75,7 +72,6 @@ public class TableGroupService {
             orderTableDao.save(orderTable);
             updatedOrderTables.add(orderTable);
         }
-        savedTableGroup.setOrderTables(updatedOrderTables);
 
         final List<OrderTableResponse> orderTableResponses = updatedOrderTables.stream()
                 .map(it -> new OrderTableResponse(it.getId(), tableGroupId, it.getNumberOfGuests(), it.isEmpty()))

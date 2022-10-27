@@ -116,9 +116,7 @@ abstract class ServiceTest {
     }
 
     protected TableGroup saveTableGroup(final OrderTable... orderTables) {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(orderTables));
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTables));
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         for (final OrderTable orderTable : orderTables) {
