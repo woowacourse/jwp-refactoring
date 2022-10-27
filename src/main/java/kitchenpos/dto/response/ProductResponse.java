@@ -3,23 +3,23 @@ package kitchenpos.dto.response;
 import java.math.BigDecimal;
 import kitchenpos.domain.Product;
 
-public class ProductCreateResponse {
+public class ProductResponse {
 
     private Long id;
     private String name;
     private BigDecimal price;
 
-    private ProductCreateResponse() {
+    private ProductResponse() {
     }
 
-    private ProductCreateResponse(final Long id, final String name, final BigDecimal price) {
+    private ProductResponse(final Long id, final String name, final BigDecimal price) {
         this.id = id;
         this.name = name;
         this.price = price;
     }
 
-    public static ProductCreateResponse from(final Product product) {
-        return new ProductCreateResponse(product.getId(), product.getName(), product.getPrice().getValue());
+    public static ProductResponse from(final Product product) {
+        return new ProductResponse(product.getId(), product.getName(), product.getPrice().getValue());
     }
 
     public Long getId() {

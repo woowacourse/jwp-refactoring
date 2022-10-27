@@ -6,9 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductCreateRequest;
-import kitchenpos.dto.response.ProductCreateResponse;
+import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -31,7 +30,7 @@ class ProductServiceTest extends ServiceTest {
 
             @Test
             void 상품을_추가한다() {
-                ProductCreateResponse actual = productService.create(productCreateRequest);
+                ProductResponse actual = productService.create(productCreateRequest);
 
                 assertAll(() -> {
                     assertThat(actual.getId()).isNotNull();
@@ -80,7 +79,7 @@ class ProductServiceTest extends ServiceTest {
 
             @Test
             void 상품_목록을_반환한다() {
-                List<Product> products = productService.list();
+                List<ProductResponse> products = productService.list();
 
                 assertThat(products).isNotEmpty();
             }

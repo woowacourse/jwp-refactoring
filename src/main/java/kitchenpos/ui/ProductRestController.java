@@ -3,9 +3,8 @@ package kitchenpos.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.ProductService;
-import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductCreateRequest;
-import kitchenpos.dto.response.ProductCreateResponse;
+import kitchenpos.dto.response.ProductResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,16 +23,17 @@ public class ProductRestController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductCreateResponse> create(@RequestBody final ProductCreateRequest productCreateRequest) {
-        ProductCreateResponse created = productService.create(productCreateRequest);
-        URI uri = URI.create("/api/products/" + created.getId());
+    public ResponseEntity<ProductResponse> create(@RequestBody final ProductCreateRequest productCreateRequest) {
+        ProductResponse productResponse = productService.create(productCreateRequest);
+        URI uri = URI.create("/api/products/" + productResponse.getId());
         return ResponseEntity.created(uri)
-                .body(created);
+                .body(productResponse);
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> list() {
+    public ResponseEntity<List<ProductResponse>> list() {
+        List<ProductResponse> productResponses = productService.list();
         return ResponseEntity.ok()
-                .body(productService.list());
+                .body(productResponses);
     }
 }
