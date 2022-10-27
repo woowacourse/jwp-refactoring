@@ -21,9 +21,7 @@ public class ProductService {
 
     @Transactional
     public Product create(final Product product) {
-        final BigDecimal price = product.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+        if (product.isValidPrice()) {
             throw new IllegalArgumentException();
         }
 

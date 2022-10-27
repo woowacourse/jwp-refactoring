@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class Product {
 
@@ -12,6 +13,10 @@ public class Product {
         this.id = id;
         this.name = name;
         this.price = price;
+    }
+
+    public boolean isValidPrice() {
+        return Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0;
     }
 
     public BigDecimal multiplePrice(final long value) {
