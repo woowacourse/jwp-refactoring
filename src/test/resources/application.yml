@@ -1,0 +1,6 @@
+spring:
+  flyway:
+    enabled: false
+
+  datasource:
+    initialization-mode: always
