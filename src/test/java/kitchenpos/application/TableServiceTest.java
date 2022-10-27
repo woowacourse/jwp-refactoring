@@ -15,9 +15,8 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.fixture.OrderFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,10 +77,9 @@ class TableServiceTest {
         final var italian = menuGroupDao.save(menuGroup("양식"));
         final var pizzaMenu = menuDao.save(menu("피자파티", italian, List.of(pizza)));
 
-        final var orderItem = new OrderLineItem(pizzaMenu.getId(), 1);
-
         final var table = tableService.create(emptyTable(2));
-        final var order = new Order(table.getId(), List.of(orderItem));
+
+        final var order = OrderFactory.order(table, pizzaMenu);
         order.setOrderedTime(LocalDateTime.now());
         order.setOrderStatus(OrderStatus.MEAL.name());
         orderDao.save(order);

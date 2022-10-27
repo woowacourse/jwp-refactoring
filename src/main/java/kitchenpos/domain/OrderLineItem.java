@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.util.Objects;
 
 public class OrderLineItem {
+
     private Long seq;
     private Long orderId;
     private Long menuId;

@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static kitchenpos.fixture.MenuFactory.menu;
 import static kitchenpos.fixture.MenuGroupFactory.menuGroup;
+import static kitchenpos.fixture.OrderFactory.order;
 import static kitchenpos.fixture.OrderTableFactory.emptyTable;
 import static kitchenpos.fixture.OrderTableFactory.notEmptyTable;
 import static kitchenpos.fixture.ProductFactory.product;
@@ -17,8 +18,6 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -146,12 +145,12 @@ class TableGroupServiceTest {
         final var singleTable = orderTableDao.save(emptyTable(1));
         final var doubleTable = orderTableDao.save(emptyTable(2));
 
-        final var orderInMeal = new Order(doubleTable.getId(), List.of(new OrderLineItem(pizzaMenu.getId(), 1)));
+        final var orderInMeal = order(doubleTable, pizzaMenu);
         orderInMeal.setOrderedTime(LocalDateTime.now());
         orderInMeal.setOrderStatus(OrderStatus.MEAL.name());
         orderDao.save(orderInMeal);
 
-        final var orderInCompletion = new Order(doubleTable.getId(), List.of(new OrderLineItem(cokeMenu.getId(), 1)));
+        final var orderInCompletion = order(doubleTable, cokeMenu);
         orderInCompletion.setOrderedTime(LocalDateTime.now());
         orderInCompletion.setOrderStatus(OrderStatus.COMPLETION.name());
         orderDao.save(orderInCompletion);
