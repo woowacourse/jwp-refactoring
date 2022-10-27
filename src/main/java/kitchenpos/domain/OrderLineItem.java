@@ -17,16 +17,8 @@ public class OrderLineItem {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
-
     public Long getOrderId() {
         return orderId;
-    }
-
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
     }
 
     public Long getMenuId() {
@@ -35,5 +27,9 @@ public class OrderLineItem {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public void setOrderId(final Long orderId) {
+        this.orderId = orderId;
     }
 }

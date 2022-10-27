@@ -41,20 +41,20 @@ public class OrderTable {
         return tableGroupId;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
     public boolean isEmpty() {
         return empty;
+    }
+
+    public void setTableGroupId(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+    }
+
+    public void setNumberOfGuests(final int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
     }
 
     public void setEmpty(final boolean empty) {

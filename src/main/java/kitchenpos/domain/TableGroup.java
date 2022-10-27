@@ -6,8 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TableGroup {
-    private Long id;
-    private LocalDateTime createdDate;
+    private final Long id;
+    private final LocalDateTime createdDate;
     private List<OrderTable> orderTables;
 
     public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {

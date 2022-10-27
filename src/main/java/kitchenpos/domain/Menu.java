@@ -58,10 +58,6 @@ public class Menu {
         return menuGroupId;
     }
 
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
-    }
-
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }

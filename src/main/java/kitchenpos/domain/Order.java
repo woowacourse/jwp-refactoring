@@ -26,10 +26,6 @@ public class Order {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
-        this(null, orderTableId, orderStatus, orderedTime, new ArrayList<>());
-    }
-
     public void addOrderLineItem(final OrderLineItem... orderLineItems) {
         this.orderLineItems.addAll(Arrays.asList(orderLineItems));
     }
@@ -50,10 +46,6 @@ public class Order {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Long getOrderTableId() {
         return orderTableId;
     }
@@ -62,15 +54,15 @@ public class Order {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
     }
 }

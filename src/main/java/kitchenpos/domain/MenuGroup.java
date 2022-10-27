@@ -9,20 +9,16 @@ public class MenuGroup {
         this.name = name;
     }
 
-    public MenuGroup(final String name) {
-        this(null, name);
-    }
-
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     public void setName(final String name) {
