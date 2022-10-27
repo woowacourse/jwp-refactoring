@@ -73,13 +73,11 @@ public class TableGroupService {
 
     private void updateOrderTables(final TableGroup tableGroup) {
         final Long tableGroupId = tableGroup.getId();
-        List<OrderTable> orderTables = tableGroup.getOrderTables()
-                .stream()
-                .map(it -> new OrderTable(it.getId(), tableGroupId, it.getNumberOfGuests(), false))
-                .collect(Collectors.toList());
 
-        for (OrderTable orderTable : orderTables) {
-            orderTableDao.save(orderTable);
+        for (OrderTable orderTable : tableGroup.getOrderTables()) {
+            OrderTable savedOrderTable = new OrderTable(orderTable.getId(), tableGroupId,
+                    orderTable.getNumberOfGuests(), false);
+            orderTableDao.save(savedOrderTable);
         }
     }
 
