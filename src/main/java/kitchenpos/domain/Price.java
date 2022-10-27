@@ -15,6 +15,10 @@ public class Price {
         }
     }
 
+    public boolean isExpensiveThan(Price other) {
+        return value > other.getValue();
+    }
+
     public long getValue() {
         return value;
     }

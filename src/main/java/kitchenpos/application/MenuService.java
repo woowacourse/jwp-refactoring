@@ -42,14 +42,14 @@ public class MenuService {
 
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
 
-        long sum = 0L;
+        Price sum = new Price(0L);
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = productDao.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
-            sum += (product.getPrice() * menuProduct.getQuantity());
+            sum = new Price(sum.getValue() + product.getPrice() * menuProduct.getQuantity());
         }
 
-        if (price.getValue() > sum) {
+        if (price.isExpensiveThan(sum)) {
             throw new IllegalArgumentException();
         }
 
