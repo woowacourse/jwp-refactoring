@@ -43,4 +43,19 @@ public class OrderStepDefinition {
             .statusCode(HttpStatus.OK.value())
             .extract().body().jsonPath().getList(".", Order.class);
     }
+
+    public static void 주문의_상태를_변경한다(
+        final long orderId,
+        final String orderStatus) {
+
+        Order order = new Order(null, orderStatus);
+
+        RestAssured.given().log().all()
+            .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+            .body(order)
+            .when().log().all()
+            .put("/api/orders/" + orderId + "/order-status")
+            .then().log().all()
+            .statusCode(HttpStatus.OK.value());
+    }
 }
