@@ -7,14 +7,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "menu_product")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 public class MenuProduct {
 
     @Id
@@ -41,8 +36,27 @@ public class MenuProduct {
         this(null, menuId, productId, quantity);
     }
 
+    protected MenuProduct() {
+    }
+
     public void belongsTo(final Long menuId) {
         this.menuId = menuId;
+    }
+
+    public Long getSeq() {
+        return seq;
+    }
+
+    public Long getMenuId() {
+        return menuId;
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public long getQuantity() {
+        return quantity;
     }
 
     @Override

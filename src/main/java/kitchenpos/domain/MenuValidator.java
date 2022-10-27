@@ -6,15 +6,18 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.ProductRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class MenuValidator {
 
     private final MenuGroupRepository menuGroupRepository;
     private final ProductRepository productRepository;
+
+    public MenuValidator(final MenuGroupRepository menuGroupRepository, final ProductRepository productRepository) {
+        this.menuGroupRepository = menuGroupRepository;
+        this.productRepository = productRepository;
+    }
 
     public void validate(final Long menuGroupId, final MenuProducts menuProducts, final BigDecimal price) {
         if (!menuGroupRepository.existsById(menuGroupId)) {

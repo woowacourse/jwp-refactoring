@@ -6,13 +6,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Embeddable
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 public class MenuProducts {
 
     @OneToMany(cascade = CascadeType.PERSIST)
@@ -21,6 +16,9 @@ public class MenuProducts {
 
     public MenuProducts(final List<MenuProduct> menuProducts) {
         values.addAll(menuProducts);
+    }
+
+    protected MenuProducts() {
     }
 
     public void addAll(final MenuProducts menuProducts) {
@@ -41,6 +39,10 @@ public class MenuProducts {
         return values.stream()
                 .map(MenuProduct::getProductId)
                 .toList();
+    }
+
+    public List<MenuProduct> getValues() {
+        return values;
     }
 
     @Override

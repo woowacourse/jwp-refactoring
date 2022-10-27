@@ -11,14 +11,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import kitchenpos.exception.InvalidMenuException;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "menu")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 public class Menu {
 
     @Id
@@ -55,6 +50,9 @@ public class Menu {
         this(null, name, price, menuGroupId, new MenuProducts(Collections.emptyList()));
     }
 
+    protected Menu() {
+    }
+
     public void addMenuProducts(final MenuProducts menuProducts) {
         menuProducts.belongsTo(id);
         this.menuProducts.addAll(menuProducts);
@@ -62,6 +60,26 @@ public class Menu {
 
     public void addMenuProducts(final List<MenuProduct> rawMenuProducts) {
         addMenuProducts(new MenuProducts(rawMenuProducts));
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public Long getMenuGroupId() {
+        return menuGroupId;
+    }
+
+    public MenuProducts getMenuProducts() {
+        return menuProducts;
     }
 
     @Override
@@ -72,7 +90,7 @@ public class Menu {
         if (!(o instanceof Menu menu)) {
             return false;
         }
-        return Objects.equals(id, menu.id);
+        return Objects.equals(id, menu.getId());
     }
 
     @Override

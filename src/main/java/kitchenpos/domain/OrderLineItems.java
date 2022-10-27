@@ -29,10 +29,6 @@ public class OrderLineItems {
     protected OrderLineItems() {
     }
 
-    public void addAll(final List<OrderLineItem> orderLineItems) {
-        values.addAll(orderLineItems);
-    }
-
     public List<OrderLineItem> getValues() {
         return values;
     }

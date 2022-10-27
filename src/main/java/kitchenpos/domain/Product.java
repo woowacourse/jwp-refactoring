@@ -9,14 +9,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import kitchenpos.exception.InvalidProductException;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "product")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 public class Product {
 
     private static final int PRICE_STANDARD = 0;
@@ -44,12 +39,27 @@ public class Product {
         }
     }
 
+    public Product(final String name, final BigDecimal price) {
+        this(null, name, price);
+    }
+
+    protected Product() {
+    }
+
     private boolean isNotAllowedPrice(final BigDecimal price) {
         return Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < PRICE_STANDARD;
     }
 
-    public Product(final String name, final BigDecimal price) {
-        this(null, name, price);
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
     }
 
     @Override

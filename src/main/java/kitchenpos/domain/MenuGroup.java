@@ -7,14 +7,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "menu_group")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 public class MenuGroup {
 
     @Id
@@ -31,6 +26,17 @@ public class MenuGroup {
 
     public MenuGroup(final String name) {
         this(null, name);
+    }
+
+    protected MenuGroup() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override

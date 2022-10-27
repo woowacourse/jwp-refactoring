@@ -70,16 +70,8 @@ public class Order {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Long getOrderTableId() {
         return orderTableId;
-    }
-
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
     }
 
     public OrderStatus getOrderStatus() {
@@ -90,16 +82,8 @@ public class Order {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems.getValues();
-    }
-
-    public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems.addAll(orderLineItems);
     }
 
     @Override
@@ -110,7 +94,7 @@ public class Order {
         if (!(o instanceof Order order)) {
             return false;
         }
-        return Objects.equals(id, order.id);
+        return Objects.equals(id, order.getId());
     }
 
     @Override

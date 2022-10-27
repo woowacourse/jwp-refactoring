@@ -62,24 +62,12 @@ public class TableGroup {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public List<OrderTable> getOrderTables() {
         return orderTables.getValues();
-    }
-
-    public void addOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables.addAll(orderTables);
     }
 
     @Override
@@ -90,7 +78,7 @@ public class TableGroup {
         if (!(o instanceof TableGroup tableGroup)) {
             return false;
         }
-        return Objects.equals(id, tableGroup.id);
+        return Objects.equals(id, tableGroup.getId());
     }
 
     @Override
