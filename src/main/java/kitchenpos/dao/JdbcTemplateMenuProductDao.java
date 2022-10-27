@@ -38,6 +38,7 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
         return select(key.longValue());
     }
 
+    @Deprecated
     @Override
     public Optional<MenuProduct> findById(final Long id) {
         try {
@@ -47,6 +48,7 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
         }
     }
 
+    @Deprecated
     @Override
     public List<MenuProduct> findAll() {
         final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product";

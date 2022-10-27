@@ -39,6 +39,7 @@ public class JdbcTemplateTableGroupDao implements TableGroupDao {
         return select(key.longValue());
     }
 
+    @Deprecated
     @Override
     public Optional<TableGroup> findById(final Long id) {
         try {
@@ -48,6 +49,7 @@ public class JdbcTemplateTableGroupDao implements TableGroupDao {
         }
     }
 
+    @Deprecated
     @Override
     public List<TableGroup> findAll() {
         final String sql = "SELECT id, created_date FROM table_group";
