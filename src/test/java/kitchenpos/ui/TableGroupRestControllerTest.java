@@ -13,6 +13,7 @@ import kitchenpos.application.TableGroupService;
 import kitchenpos.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.ResultActions;
@@ -22,7 +23,7 @@ class TableGroupRestControllerTest extends ControllerTest {
 
     private final String defaultTableGroupUrl = "/api/table-groups";
 private final TableGroupResponse tableGroupResponse = new TableGroupResponse(1L, LocalDateTime.now(), new ArrayList<>());
-    @MockBean
+    @Autowired
     private TableGroupService tableGroupService;
 
     @Test

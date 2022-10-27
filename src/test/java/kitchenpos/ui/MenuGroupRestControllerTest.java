@@ -13,6 +13,7 @@ import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.dto.request.MenuGroupCreateRequest;
 import kitchenpos.application.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.ResultActions;
@@ -23,7 +24,7 @@ class MenuGroupRestControllerTest extends ControllerTest {
     private final String defaultMenuGroupUrl = "/api/menu-groups";
     private final MenuGroupResponse menuGroupResponse = new MenuGroupResponse(1L, "set-menu");
 
-    @MockBean
+    @Autowired
     private MenuGroupService menuGroupService;
 
     @Test

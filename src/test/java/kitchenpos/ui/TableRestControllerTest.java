@@ -15,6 +15,7 @@ import kitchenpos.application.dto.request.OrderTableChangeStatusRequest;
 import kitchenpos.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.ResultActions;
@@ -25,7 +26,7 @@ class TableRestControllerTest extends ControllerTest {
     private final String defaultTableUrl = "/api/tables";
     private final OrderTableResponse orderTableResponse = new OrderTableResponse(1L, 1L, 3, true);
 
-    @MockBean
+    @Autowired
     private TableService tableService;
 
     @Test

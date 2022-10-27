@@ -13,6 +13,7 @@ import kitchenpos.application.ProductService;
 import kitchenpos.application.dto.request.ProductCreateRequest;
 import kitchenpos.application.dto.response.ProductResponse;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.ResultActions;
@@ -23,7 +24,7 @@ class ProductRestControllerTest extends ControllerTest {
     private final String defaultProductUrl = "/api/products";
     private final ProductResponse productResponse = new ProductResponse(1L, "pasta", BigDecimal.valueOf(13000));
 
-    @MockBean
+    @Autowired
     private ProductService productService;
 
     @Test
