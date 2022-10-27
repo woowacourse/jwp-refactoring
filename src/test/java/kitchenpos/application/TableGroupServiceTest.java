@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,9 +21,9 @@ class TableGroupServiceTest extends ServiceTest {
         orderTables.add(saveAndGetOrderTable(1L, true));
         orderTables.add(saveAndGetOrderTable(2L, true));
 
-        final TableGroup actual = tableGroupService.create(orderTables);
+        final TableGroup actual = tableGroupService.create(new OrderTables(orderTables));
 
-        assertThat(actual.getOrderTables()).hasSize(2);
+        assertThat(actual.getAllOrderTables()).hasSize(2);
     }
 
     @Test
@@ -31,7 +32,7 @@ class TableGroupServiceTest extends ServiceTest {
         final List<OrderTable> orderTables = new ArrayList<>();
         orderTables.add(saveAndGetOrderTable(1L, true));
 
-        assertThatThrownBy(() -> tableGroupService.create(orderTables))
+        assertThatThrownBy(() -> tableGroupService.create(new OrderTables(orderTables)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -42,7 +43,7 @@ class TableGroupServiceTest extends ServiceTest {
         orderTables.add(saveAndGetOrderTable(1L, true));
         orderTables.add(saveAndGetOrderTable(2L, false));
 
-        assertThatThrownBy(() -> tableGroupService.create(orderTables))
+        assertThatThrownBy(() -> tableGroupService.create(new OrderTables(orderTables)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -51,17 +52,22 @@ class TableGroupServiceTest extends ServiceTest {
     void ungroup() {
         final List<OrderTable> orderTables = new ArrayList<>();
         final OrderTable orderTable1 = saveAndGetOrderTable(1L, true);
-        final OrderTable orderTable2 = saveAndGetOrderTable(1L, true);
+        final OrderTable orderTable2 = saveAndGetOrderTable(2L, true);
         orderTables.add(orderTable1);
         orderTables.add(orderTable2);
 
-        final TableGroup tableGroup = tableGroupService.create(orderTables);
+        final TableGroup tableGroup = tableGroupService.create(new OrderTables(orderTables));
 
         tableGroupService.ungroup(tableGroup.getId());
 
+        final OrderTable actual1 = orderTableDao.findById(1L)
+                .orElseThrow(IllegalArgumentException::new);
+        final OrderTable actual2 = orderTableDao.findById(2L)
+                .orElseThrow(IllegalArgumentException::new);
+
         assertAll(
-                () -> assertThat(orderTable1.getTableGroupId()).isNull(),
-                () -> assertThat(orderTable2.getTableGroupId()).isNull()
+                () -> assertThat(actual1.getTableGroupId()).isNull(),
+                () -> assertThat(actual2.getTableGroupId()).isNull()
         );
     }
 
@@ -74,10 +80,10 @@ class TableGroupServiceTest extends ServiceTest {
         orderTables.add(orderTable1);
         orderTables.add(orderTable2);
 
-        final TableGroup tableGroup = tableGroupService.create(orderTables);
-        final List<OrderTable> orderTablesInGroup = tableGroup.getOrderTables();
+        final TableGroup tableGroup = tableGroupService.create(new OrderTables(orderTables));
+        final List<OrderTable> orderTablesInGroup = tableGroup.getAllOrderTables();
 
-        saveAndGetOrderInOrderTable(1L,  orderTablesInGroup.get(0), OrderStatus.COOKING.name());
+        saveAndGetOrderInOrderTable(1L, orderTablesInGroup.get(0), OrderStatus.COOKING.name());
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);

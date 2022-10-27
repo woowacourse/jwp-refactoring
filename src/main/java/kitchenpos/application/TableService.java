@@ -48,19 +48,26 @@ public class TableService {
 
     @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
+        validateGuestCounts(numberOfGuests);
 
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
+        validateEmptyTable(savedOrderTable);
+
+        savedOrderTable.setNumberOfGuests(numberOfGuests);
+        orderTableDao.update(savedOrderTable);
+        return savedOrderTable;
+    }
+
+    private void validateGuestCounts(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateEmptyTable(final OrderTable savedOrderTable) {
         if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
-        orderTableDao.update(savedOrderTable);
-        return savedOrderTable;
     }
 }

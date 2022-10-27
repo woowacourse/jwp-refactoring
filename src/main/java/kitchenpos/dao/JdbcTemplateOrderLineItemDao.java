@@ -52,14 +52,6 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    @Override
-    public List<OrderLineItem> findAllByOrderId(final Long orderId) {
-        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE order_id = (:orderId)";
-        final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("orderId", orderId);
-        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
-    }
-
     private OrderLineItem select(final Long id) {
         final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE seq = (:seq)";
         final SqlParameterSource parameters = new MapSqlParameterSource()

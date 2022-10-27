@@ -25,6 +25,19 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
+    public boolean isGroupAble() {
+        return empty && Objects.isNull(tableGroupId);
+    }
+
+    public void changeGroupTable(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+    }
+
+    public void changeUngroupTable() {
+        this.tableGroupId = null;
+        this.empty = false;
+    }
+
     public OrderTable(final Long id, final boolean empty) {
         this(id, null, 0, empty);
     }
@@ -47,10 +60,6 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
     }
 
     public void setNumberOfGuests(final int numberOfGuests) {

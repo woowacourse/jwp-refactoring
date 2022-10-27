@@ -1,27 +1,29 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class TableGroup {
     private final Long id;
     private final LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
+    private OrderTables orderTables;
 
-    public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+    public TableGroup(final Long id, final LocalDateTime createdDate, final OrderTables orderTables) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = new ArrayList<>(orderTables);
+        this.orderTables = orderTables;
     }
 
-    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+    public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        this(id, createdDate, new OrderTables(orderTables));
+    }
+
+    public TableGroup(final LocalDateTime createdDate, final OrderTables orderTables) {
         this(null, createdDate, orderTables);
     }
 
-    public void addOrderTable(final OrderTable... orderTables) {
-        this.orderTables.addAll(Arrays.asList(orderTables));
+    public void changeAllOrderTables(final OrderTables orderTables) {
+        this.orderTables = orderTables;
     }
 
     public Long getId() {
@@ -32,11 +34,11 @@ public class TableGroup {
         return createdDate;
     }
 
-    public List<OrderTable> getOrderTables() {
+    public OrderTables getOrderTables() {
         return orderTables;
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+    public List<OrderTable> getAllOrderTables() {
+        return orderTables.getOrderTables();
     }
 }
