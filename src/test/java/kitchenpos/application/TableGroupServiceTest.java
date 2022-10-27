@@ -7,6 +7,8 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.OrderTableIdRequest;
+import kitchenpos.dto.TableGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static kitchenpos.fixture.MenuFixtures.createMenu;
-import static kitchenpos.fixture.MenuFixtures.후라이드치킨;
 import static kitchenpos.fixture.MenuGroupFixtures.한마리메뉴;
 import static kitchenpos.fixture.MenuProductFixtures.createMenuProduct;
 import static kitchenpos.fixture.OrderFixtures.createOrder;
@@ -25,7 +26,6 @@ import static kitchenpos.fixture.OrderLineItemFixtures.createOrderLineItem;
 import static kitchenpos.fixture.OrderTableFixtures.createOrderTable;
 import static kitchenpos.fixture.OrderTableFixtures.테이블_1번;
 import static kitchenpos.fixture.OrderTableFixtures.테이블_2번;
-import static kitchenpos.fixture.OrderTableFixtures.테이블_3번;
 import static kitchenpos.fixture.ProductFixtures.후라이드;
 import static kitchenpos.fixture.TableGroupFixtures.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -60,7 +60,10 @@ class TableGroupServiceTest {
     void createTableGroupSuccess() {
         OrderTable 테이블_1번 = tableService.create(테이블_1번());
         OrderTable 테이블_2번 = tableService.create(테이블_2번());
-        TableGroup actual = tableGroupService.create(createTableGroup(List.of(테이블_1번, 테이블_2번)));
+        List<OrderTableIdRequest> 테이블_그룹 = List.of(new OrderTableIdRequest(테이블_1번.getId()),
+                new OrderTableIdRequest(테이블_2번.getId()));
+
+        TableGroup actual = tableGroupService.create(createTableGroup(테이블_그룹));
 
         assertThat(actual.getOrderTables()).hasSize(2);
     }
@@ -68,7 +71,7 @@ class TableGroupServiceTest {
     @DisplayName("TableGroup이 비어있으면 예외를 던진다.")
     @Test
     void createTableGroupByEmpty() {
-        TableGroup tableGroup = createTableGroup(List.of());
+        TableGroupCreateRequest tableGroup = createTableGroup(List.of());
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -78,8 +81,9 @@ class TableGroupServiceTest {
     @Test
     void createTableGroupByOneSize() {
         OrderTable 테이블_1번 = tableService.create(테이블_1번());
+        List<OrderTableIdRequest> 테이블_그룹 = List.of(new OrderTableIdRequest(테이블_1번.getId()));
 
-        assertThatThrownBy(() -> tableGroupService.create(createTableGroup(List.of(테이블_1번))))
+        assertThatThrownBy(() -> tableGroupService.create(createTableGroup(테이블_그룹)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -88,9 +92,13 @@ class TableGroupServiceTest {
     void createTableGroupByRealNotSavedOrderTables() {
         OrderTable 테이블_1번 = tableService.create(테이블_1번());
         OrderTable 테이블_2번 = tableService.create(테이블_2번());
-        OrderTable 테이블_3번 = 테이블_3번();
+        Long 테이블_3번_빈값 = 0L;
 
-        assertThatThrownBy(() -> tableGroupService.create(createTableGroup(List.of(테이블_1번, 테이블_2번, 테이블_3번))))
+        List<OrderTableIdRequest> 테이블_그룹 = List.of(new OrderTableIdRequest(테이블_1번.getId()),
+                new OrderTableIdRequest(테이블_2번.getId()),
+                new OrderTableIdRequest(테이블_3번_빈값));
+
+        assertThatThrownBy(() -> tableGroupService.create(createTableGroup(테이블_그룹)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -101,8 +109,12 @@ class TableGroupServiceTest {
         OrderTable 테이블_2번 = tableService.create(테이블_2번());
         OrderTable 비어있지_않은_테이블 = tableService.create(createOrderTable(0, false));
 
+        List<OrderTableIdRequest> 테이블_그룹 = List.of(new OrderTableIdRequest(테이블_1번.getId()),
+                new OrderTableIdRequest(테이블_2번.getId()),
+                new OrderTableIdRequest(비어있지_않은_테이블.getId()));
+
         assertThatThrownBy(() -> tableGroupService.create(
-                createTableGroup(List.of(테이블_1번, 테이블_2번, 비어있지_않은_테이블))))
+                createTableGroup(테이블_그룹)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -112,7 +124,9 @@ class TableGroupServiceTest {
         // 테이블 그룹화
         OrderTable 테이블_1번 = tableService.create(테이블_1번());
         OrderTable 테이블_2번 = tableService.create(테이블_2번());
-        TableGroup tableGroup = tableGroupService.create(createTableGroup(List.of(테이블_1번, 테이블_2번)));
+        List<OrderTableIdRequest> 테이블_그룹 = List.of(new OrderTableIdRequest(테이블_1번.getId()),
+                new OrderTableIdRequest(테이블_2번.getId()));
+        TableGroup tableGroup = tableGroupService.create(createTableGroup(테이블_그룹));
 
         // 해제
         tableGroupService.ungroup(tableGroup.getId());
@@ -140,7 +154,9 @@ class TableGroupServiceTest {
         // 테이블 설정 및 그룹화
         OrderTable 테이블_1번 = tableService.create(테이블_1번());
         OrderTable 테이블_2번 = tableService.create(테이블_2번());
-        TableGroup tableGroup = tableGroupService.create(createTableGroup(List.of(테이블_1번, 테이블_2번)));
+        List<OrderTableIdRequest> 테이블_그룹 = List.of(new OrderTableIdRequest(테이블_1번.getId()),
+                new OrderTableIdRequest(테이블_2번.getId()));
+        TableGroup tableGroup = tableGroupService.create(createTableGroup(테이블_그룹));
 
         // 1번 테이블 주문
         OrderLineItem orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);

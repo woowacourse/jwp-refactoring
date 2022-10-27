@@ -8,6 +8,8 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.OrderTableUpdateNumberOfGuestsRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,7 +26,8 @@ import static kitchenpos.fixture.MenuGroupFixtures.한마리메뉴;
 import static kitchenpos.fixture.MenuProductFixtures.createMenuProduct;
 import static kitchenpos.fixture.OrderFixtures.createOrder;
 import static kitchenpos.fixture.OrderLineItemFixtures.createOrderLineItem;
-import static kitchenpos.fixture.OrderTableFixtures.createOrderTable;
+import static kitchenpos.fixture.OrderTableFixtures.createOrderTableUpdateEmptyRequest;
+import static kitchenpos.fixture.OrderTableFixtures.createOrderTableUpdateNumberOfGuestsRequest;
 import static kitchenpos.fixture.OrderTableFixtures.테이블_1번;
 import static kitchenpos.fixture.OrderTableFixtures.테이블_2번;
 import static kitchenpos.fixture.OrderTableFixtures.테이블_3번;
@@ -38,18 +41,16 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class TableServiceTest {
 
     private final TableService tableService;
-    private final TableGroupService tableGroupService;
     private final MenuGroupService menuGroupService;
     private final ProductService productService;
     private final MenuService menuService;
     private final OrderService orderService;
 
     @Autowired
-    public TableServiceTest(final TableService tableService, final TableGroupService tableGroupService,
-                            final MenuGroupService menuGroupService, final ProductService productService,
-                            final MenuService menuService, final OrderService orderService) {
+    public TableServiceTest(final TableService tableService, final MenuGroupService menuGroupService,
+                            final ProductService productService, final MenuService menuService,
+                            final OrderService orderService) {
         this.tableService = tableService;
-        this.tableGroupService = tableGroupService;
         this.menuGroupService = menuGroupService;
         this.productService = productService;
         this.menuService = menuService;
@@ -59,7 +60,7 @@ class TableServiceTest {
     @DisplayName("orderTable을 생성한다.")
     @Test
     void createOrderTableSuccess() {
-        OrderTable 테이블_1번 = 테이블_1번();
+        OrderTableCreateRequest 테이블_1번 = 테이블_1번();
 
         OrderTable actual = tableService.create(테이블_1번);
 
@@ -93,7 +94,7 @@ class TableServiceTest {
 
         // 테이블 설정
         OrderTable 테이블_1번 = tableService.create(테이블_1번());
-        tableService.changeEmpty(테이블_1번.getId(), createOrderTable(0, false));
+        tableService.changeEmpty(테이블_1번.getId(), createOrderTableUpdateEmptyRequest(false));
 
         // 주문
         OrderLineItem orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
@@ -104,7 +105,7 @@ class TableServiceTest {
         orderService.changeOrderStatus(order.getId(), changedOrder);
 
         // empty 변경
-        OrderTable actual = tableService.changeEmpty(테이블_1번.getId(), createOrderTable(0, false));
+        OrderTable actual = tableService.changeEmpty(테이블_1번.getId(), createOrderTableUpdateEmptyRequest(false));
 
         assertAll(() -> {
             assertThat(actual.getNumberOfGuests()).isEqualTo(테이블_1번.getNumberOfGuests());
@@ -118,7 +119,7 @@ class TableServiceTest {
     void numberOfGuestsUnderZero(final int numberOfGuests) {
         OrderTable 테이블_1번 = tableService.create(테이블_1번());
 
-        OrderTable actual = createOrderTable(numberOfGuests, false);
+        OrderTableUpdateNumberOfGuestsRequest actual = createOrderTableUpdateNumberOfGuestsRequest(numberOfGuests);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(테이블_1번.getId(), actual))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -129,7 +130,8 @@ class TableServiceTest {
     void savedOrderTableIsEmpty() {
         OrderTable 테이블_1번 = tableService.create(테이블_1번());
 
-        OrderTable actual = createOrderTable(2, false);
+
+        OrderTableUpdateNumberOfGuestsRequest actual = createOrderTableUpdateNumberOfGuestsRequest(2);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(테이블_1번.getId(), actual))
                 .isInstanceOf(IllegalArgumentException.class);

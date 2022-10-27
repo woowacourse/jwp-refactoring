@@ -1,24 +1,33 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.OrderTableUpdateEmptyRequest;
+import kitchenpos.dto.OrderTableUpdateNumberOfGuestsRequest;
 
 public class OrderTableFixtures {
-    public static OrderTable createOrderTable(final int numberOfGuests, final boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+
+    public static OrderTableCreateRequest createOrderTable(final int numberOfGuests, final boolean empty) {
+        return new OrderTableCreateRequest(numberOfGuests, empty);
     }
 
-    public static OrderTable 테이블_1번() {
+    public static OrderTableUpdateEmptyRequest createOrderTableUpdateEmptyRequest(final boolean empty) {
+        return new OrderTableUpdateEmptyRequest(empty);
+    }
+
+    public static OrderTableUpdateNumberOfGuestsRequest createOrderTableUpdateNumberOfGuestsRequest(
+            final int numberOfGuests) {
+        return new OrderTableUpdateNumberOfGuestsRequest(numberOfGuests);
+    }
+
+    public static OrderTableCreateRequest 테이블_1번() {
         return createOrderTable(0, true);
     }
 
-    public static OrderTable 테이블_2번() {
+    public static OrderTableCreateRequest 테이블_2번() {
         return createOrderTable(0, true);
     }
 
-    public static OrderTable 테이블_3번() {
+    public static OrderTableCreateRequest 테이블_3번() {
         return createOrderTable(0, true);
     }
 }

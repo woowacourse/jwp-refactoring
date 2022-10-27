@@ -1,10 +1,33 @@
 package kitchenpos.domain;
 
 public class OrderTable {
+
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
+
+    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+        validateNumberOfGuests(numberOfGuests);
+        this.id = id;
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
+    public OrderTable(final Long id) {
+        this(id, null, 0, true);
+    }
+
+    public OrderTable(final int numberOfGuests, final boolean empty) {
+        this(null, null, numberOfGuests, empty);
+    }
+
+    private void validateNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
 
     public Long getId() {
         return id;
