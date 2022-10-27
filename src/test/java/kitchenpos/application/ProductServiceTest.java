@@ -55,7 +55,8 @@ class ProductServiceTest {
                 assertAll(
                         () -> assertThat(actual.getId()).isNotNull(),
                         () -> assertThat(actual.getName()).isEqualTo("상품"),
-                        () -> assertThat(actual.getPrice().getValue()).isEqualByComparingTo(new BigDecimal(10000))
+                        () -> assertThat(actual.getProductPrice().getValue()).isEqualByComparingTo(
+                                new BigDecimal(10000))
                 );
             }
         }

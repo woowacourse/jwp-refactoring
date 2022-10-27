@@ -2,14 +2,13 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.request.MenuCreateRequest;
 import kitchenpos.application.request.MenuProductRequest;
-import kitchenpos.domain.Menu;
+import kitchenpos.domain.menu.Menu;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -89,7 +88,7 @@ public class MenuServiceTest {
             void 예외가_발생한다() {
                 assertThatThrownBy(() -> menuService.create(request))
                         .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("가격이 총 합계 금액보다 클 수 없습니다.");
+                        .hasMessage("Menu 가격은 Product 가격의 합을 초과할 수 없습니다.");
             }
         }
 
@@ -106,10 +105,8 @@ public class MenuServiceTest {
                 assertAll(
                         () -> assertThat(actual.getId()).isNotNull(),
                         () -> assertThat(actual.getName()).isEqualTo("메뉴"),
-                        () -> assertThat(actual.getPrice()).isEqualByComparingTo(new BigDecimal(32000)),
-                        () -> assertThat(actual.getMenuGroupId()).isEqualTo(1L),
-                        () -> assertThat(actual.getMenuProducts()).extracting("productId", "quantity")
-                                .containsExactly(tuple(1L, 1L), tuple(2L, 1L))
+                        () -> assertThat(actual.getMenuPrice().getValue()).isEqualByComparingTo(new BigDecimal(32000)),
+                        () -> assertThat(actual.getMenuGroupId()).isEqualTo(1L)
                 );
             }
         }

@@ -8,15 +8,15 @@ import lombok.Getter;
 
 @Embeddable
 @Getter
-public class Price {
+public class ProductPrice {
 
     @Column(name = "price", nullable = false, precision = 19, scale = 2)
     private BigDecimal value;
 
-    protected Price() {
+    protected ProductPrice() {
     }
 
-    public Price(final BigDecimal value) {
+    public ProductPrice(final BigDecimal value) {
         validate(value);
         this.value = value;
     }
@@ -27,8 +27,8 @@ public class Price {
         }
     }
 
-    public BigDecimal multiply(final long number) {
-        return value.multiply(BigDecimal.valueOf(number));
+    public BigDecimal multiply(final long quantity) {
+        return value.multiply(BigDecimal.valueOf(quantity));
     }
 
     @Override
@@ -39,8 +39,8 @@ public class Price {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Price price = (Price) o;
-        return Objects.equals(value, price.value);
+        ProductPrice productPrice = (ProductPrice) o;
+        return Objects.equals(value, productPrice.value);
     }
 
     @Override
