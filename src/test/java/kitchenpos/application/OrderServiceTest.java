@@ -17,14 +17,12 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.support.cleaner.ApplicationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -39,9 +37,6 @@ class OrderServiceTest {
 
     @Autowired
     private OrderDao orderDao;
-
-    @Autowired
-    private TableGroupDao tableGroupDao;
 
     @Autowired
     private OrderTableDao orderTableDao;
@@ -211,7 +206,6 @@ class OrderServiceTest {
     }
 
     private OrderTable createOrderTable(final boolean empty) {
-        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
-        return orderTableDao.save(new OrderTable(tableGroup.getId(), 10, empty));
+        return orderTableDao.save(new OrderTable(10, empty));
     }
 }

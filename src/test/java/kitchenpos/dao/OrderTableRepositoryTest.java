@@ -24,8 +24,7 @@ class OrderTableRepositoryTest {
     @Test
     @DisplayName("OrderTable을 저장한다.")
     void save() {
-        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
-        OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 10, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(10, true));
 
         assertThat(orderTable).isEqualTo(orderTableRepository.findById(orderTable.getId()).orElseThrow());
     }
@@ -33,9 +32,8 @@ class OrderTableRepositoryTest {
     @Test
     @DisplayName("모든 OrderTable을 조회한다.")
     void findAll() {
-        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
-        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(tableGroup.getId(), 10, false));
-        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(tableGroup.getId(), 5, false));
+        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(10, true));
+        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(5, true));
 
         List<OrderTable> orderTables = orderTableRepository.findAll();
         assertThat(orderTables).containsExactly(orderTable1, orderTable2);
@@ -44,9 +42,8 @@ class OrderTableRepositoryTest {
     @Test
     @DisplayName("Id에 포함되는 모든 OrderTable을 조회한다.")
     void findAllByIdIn() {
-        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
-        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(tableGroup.getId(), 10, false));
-        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(tableGroup.getId(), 5, false));
+        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(10, true));
+        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(5, true));
         List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(List.of(orderTable1.getId(), orderTable2.getId()));
 
         assertThat(orderTables).containsExactly(orderTable1, orderTable2);
@@ -55,9 +52,9 @@ class OrderTableRepositoryTest {
     @Test
     @DisplayName("TableGroup 내 모든 OrderTable을 조회한다.")
     void findAllByTableGroupId() {
-        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
-        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(tableGroup.getId(), 10, false));
-        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(tableGroup.getId(), 5, false));
+        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(10, true));
+        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(5, true));
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
         List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
 
         assertThat(orderTables).containsExactly(orderTable1, orderTable2);

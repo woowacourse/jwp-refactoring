@@ -43,6 +43,10 @@ public class OrderTable {
     protected OrderTable() {
     }
 
+    public boolean isUsing() {
+        return !empty || Objects.nonNull(tableGroupId);
+    }
+
     public Long getId() {
         return id;
     }

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -28,7 +28,7 @@ class TableServiceTest {
     private TableService tableService;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
     private OrderTableDao orderTableDao;
@@ -75,10 +75,11 @@ class TableServiceTest {
         @Test
         @DisplayName("OrderTable이 테이블 그룹에 속해있지 않을 경우 예외가 발생한다.")
         void orderTableNotInTableGroupFailed() {
-            TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
-            OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 10, true));
+            OrderTable orderTable1 = orderTableDao.save(new OrderTable(10, true));
+            OrderTable orderTable2 = orderTableDao.save(new OrderTable(10, true));
+            tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), orderTable1))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("이미 테이블 그룹에 속해있습니다.");
         }

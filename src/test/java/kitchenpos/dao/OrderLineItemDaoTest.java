@@ -17,24 +17,28 @@ import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 class OrderLineItemDaoTest extends DaoTest {
 
     private OrderLineItemDao orderLineItemDao;
     private OrderDao orderDao;
     private OrderTableDao orderTableDao;
-    private TableGroupDao tableGroupDao;
-    private MenuGroupDao menuGroupDao;
-    private MenuDao menuDao;
+
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
 
     @BeforeEach
     void setUp() {
         orderLineItemDao = new JdbcTemplateOrderLineItemDao(dataSource);
         orderDao = new JdbcTemplateOrderDao(dataSource);
         orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
-        tableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
-        menuGroupDao = new JdbcTemplateMenuGroupDao(dataSource);
-        menuDao = new JdbcTemplateMenuDao(dataSource);
     }
 
     @Test
@@ -74,13 +78,14 @@ class OrderLineItemDaoTest extends DaoTest {
     }
 
     private Menu createMenu() {
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(MENU_GROUP_NAME1));
-        return menuDao.save(new Menu(MENU1_NAME, MENU1_PRICE, menuGroup.getId()));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP_NAME1));
+        return menuRepository.save(new Menu(MENU1_NAME, MENU1_PRICE, menuGroup.getId()));
     }
 
     private Order createOrder() {
-        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
-        OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 10, false));
-        return orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
+        OrderTable orderTable1 = orderTableDao.save(new OrderTable(10, true));
+        OrderTable orderTable2 = orderTableDao.save(new OrderTable(10, true));
+        tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
+        return orderDao.save(new Order(orderTable1.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
     }
 }
