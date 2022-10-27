@@ -12,7 +12,6 @@ public class ProductFixture {
 
     public static Product generateProduct(final String productName, final int productPrice) {
         return new Product(productName, BigDecimal.valueOf(productPrice));
-
     }
 
     public static Product generateProductWithId(final String productName, final int productPrice, final Long id) {
