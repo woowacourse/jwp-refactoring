@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Menu {
 
@@ -22,6 +23,14 @@ public class Menu {
 
     public void addMenuProducts(final List<MenuProduct> menuProducts) {
         this.menuProducts.addAll(menuProducts);
+    }
+
+    public boolean isBiggerPrice(final BigDecimal value) {
+        return price.compareTo(value) > 0;
+    }
+
+    public boolean isInvalidPrice() {
+        return Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0;
     }
 
     public Long getId() {

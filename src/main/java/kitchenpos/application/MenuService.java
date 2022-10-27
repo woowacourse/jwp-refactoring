@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -39,24 +38,13 @@ public class MenuService {
 
     @Transactional
     public Menu create(final Menu menu) {
-        validateInvalidPrice(menu.getPrice());
+        validateInvalidPrice(menu);
         validateExistsMenuGroupId(menu);
 
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
 
-        BigDecimal totalSum = BigDecimal.ZERO;
-        final List<Long> productIds = toProductIds(menuProducts);
-        final Map<Long, Product> products = findProducts(productIds);
-
-        for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = products.get(menuProduct.getProductId());
-            final BigDecimal multiplePrice = product.multiplePrice(menuProduct.getQuantity());
-            totalSum = totalSum.add(multiplePrice);
-        }
-
-        if (menu.getPrice().compareTo(totalSum) > 0) {
-            throw new IllegalArgumentException();
-        }
+        BigDecimal totalSum = calculateTotalSum(menuProducts);
+        validateMenuPriceBiggerThanSum(menu, totalSum);
 
         final Menu savedMenu = menuDao.save(menu);
         final List<MenuProduct> savedMenuProducts = updateMenuProducts(menuProducts, savedMenu.getId());
@@ -65,8 +53,8 @@ public class MenuService {
         return savedMenu;
     }
 
-    private void validateInvalidPrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+    private void validateInvalidPrice(final Menu menu) {
+        if (menu.isInvalidPrice()) {
             throw new IllegalArgumentException();
         }
     }
@@ -77,12 +65,6 @@ public class MenuService {
         }
     }
 
-    private List<Long> toProductIds(final List<MenuProduct> menuProducts) {
-        return menuProducts.stream()
-                .map(MenuProduct::getProductId)
-                .collect(Collectors.toList());
-    }
-
     private List<MenuProduct> updateMenuProducts(final List<MenuProduct> menuProducts, final Long menuId) {
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
@@ -90,6 +72,31 @@ public class MenuService {
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
         return savedMenuProducts;
+    }
+
+    private void validateMenuPriceBiggerThanSum(final Menu menu, final BigDecimal totalSum) {
+        if (menu.isBiggerPrice(totalSum)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private BigDecimal calculateTotalSum(final List<MenuProduct> menuProducts) {
+        final List<Long> productIds = toProductIds(menuProducts);
+        final Map<Long, Product> products = findProducts(productIds);
+
+        BigDecimal totalSum = BigDecimal.ZERO;
+        for (final MenuProduct menuProduct : menuProducts) {
+            final Product product = products.get(menuProduct.getProductId());
+            final BigDecimal multiplePrice = product.multiplePrice(menuProduct.getQuantity());
+            totalSum = totalSum.add(multiplePrice);
+        }
+        return totalSum;
+    }
+
+    private List<Long> toProductIds(final List<MenuProduct> menuProducts) {
+        return menuProducts.stream()
+                .map(MenuProduct::getProductId)
+                .collect(Collectors.toList());
     }
 
     private Map<Long, Product> findProducts(final List<Long> productIds) {
