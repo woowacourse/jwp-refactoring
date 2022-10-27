@@ -17,23 +17,24 @@ import kitchenpos.fixtures.OrderTableFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
-@JdbcTest
+@DataJpaTest
 class OrderLineItemDaoTest {
 
     private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
     private final OrderDao orderDao;
-    private final MenuDao menuDao;
+
+    @Autowired
+    private MenuRepository menuRepository;
 
     @Autowired
     private OrderLineItemDaoTest(final DataSource dataSource) {
         this.orderLineItemDao = new JdbcTemplateOrderLineItemDao(dataSource);
         this.orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
         this.orderDao = new JdbcTemplateOrderDao(dataSource);
-        this.menuDao = new JdbcTemplateMenuDao(dataSource);
     }
 
     @Test
@@ -47,7 +48,7 @@ class OrderLineItemDaoTest {
         final Order savedOrder = orderDao.save(order);
 
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
-        final Menu savedMenu = menuDao.save(menu);
+        final Menu savedMenu = menuRepository.save(menu);
 
         final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder.getId(), savedMenu.getId(), 2);
 
@@ -71,7 +72,7 @@ class OrderLineItemDaoTest {
         orderTableDao.save(orderTable);
 
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
-        final Menu savedMenu = menuDao.save(menu);
+        final Menu savedMenu = menuRepository.save(menu);
 
         final OrderLineItem orderLineItem = new OrderLineItem(null, -1L, savedMenu.getId(), 2);
 
@@ -108,7 +109,7 @@ class OrderLineItemDaoTest {
         final Order savedOrder = orderDao.save(order);
 
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
-        final Menu savedMenu = menuDao.save(menu);
+        final Menu savedMenu = menuRepository.save(menu);
 
         final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder.getId(), savedMenu.getId(), 2);
         final OrderLineItem saved = orderLineItemDao.save(orderLineItem);
@@ -143,7 +144,7 @@ class OrderLineItemDaoTest {
         final Order savedOrder = orderDao.save(order);
 
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
-        final Menu savedMenu = menuDao.save(menu);
+        final Menu savedMenu = menuRepository.save(menu);
 
         final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder.getId(), savedMenu.getId(), 2);
         final OrderLineItem saved = orderLineItemDao.save(orderLineItem);
@@ -170,7 +171,7 @@ class OrderLineItemDaoTest {
         final Order savedOrder = orderDao.save(order);
 
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
-        final Menu savedMenu = menuDao.save(menu);
+        final Menu savedMenu = menuRepository.save(menu);
 
         final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder.getId(), savedMenu.getId(), 2);
         final OrderLineItem saved = orderLineItemDao.save(orderLineItem);

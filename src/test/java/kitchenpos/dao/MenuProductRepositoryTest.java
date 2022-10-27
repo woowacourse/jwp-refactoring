@@ -15,20 +15,21 @@ import kitchenpos.fixtures.ProductFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
-@JdbcTest
-class MenuProductDaoTest {
+@DataJpaTest
+class MenuProductRepositoryTest {
 
-    private final MenuProductDao menuProductDao;
-    private final MenuDao menuDao;
+    @Autowired
+    private MenuProductRepository menuProductRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
     private final ProductDao productDao;
 
     @Autowired
-    private MenuProductDaoTest(final DataSource dataSource) {
-        this.menuProductDao = new JdbcTemplateMenuProductDao(dataSource);
-        this.menuDao = new JdbcTemplateMenuDao(dataSource);
+    private MenuProductRepositoryTest(final DataSource dataSource) {
         this.productDao = new JdbcTemplateProductDao(dataSource);
     }
 
@@ -37,20 +38,20 @@ class MenuProductDaoTest {
     void save() {
         // given
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
-        final Menu savedMenu = menuDao.save(menu);
+        final Menu savedMenu = menuRepository.save(menu);
 
         final Product product = ProductFixtures.CHICKEN.create();
         final Product savedProduct = productDao.save(product);
 
-        final MenuProduct menuProduct = new MenuProduct(null, savedMenu.getId(), savedProduct.getId(), 2);
+        final MenuProduct menuProduct = new MenuProduct(null, savedMenu, savedProduct.getId(), 2);
 
         // when
-        final MenuProduct saved = menuProductDao.save(menuProduct);
+        final MenuProduct saved = menuProductRepository.save(menuProduct);
 
         // then
         assertAll(
                 () -> assertThat(saved.getSeq()).isNotNull(),
-                () -> assertThat(saved.getMenuId()).isEqualTo(savedMenu.getId()),
+                () -> assertThat(saved.getMenu()).isEqualTo(savedMenu),
                 () -> assertThat(saved.getProductId()).isEqualTo(savedProduct.getId()),
                 () -> assertThat(saved.getQuantity()).isEqualTo(2)
         );
@@ -63,10 +64,10 @@ class MenuProductDaoTest {
         final Product product = ProductFixtures.CHICKEN.create();
         final Product savedProduct = productDao.save(product);
 
-        final MenuProduct menuProduct = new MenuProduct(null, -1L, savedProduct.getId(), 2);
+        final MenuProduct menuProduct = new MenuProduct(null, null, savedProduct.getId(), 2);
 
         // when, then
-        assertThatThrownBy(() -> menuProductDao.save(menuProduct))
+        assertThatThrownBy(() -> menuProductRepository.save(menuProduct))
                 .isExactlyInstanceOf(DataIntegrityViolationException.class);
     }
 
@@ -75,12 +76,12 @@ class MenuProductDaoTest {
     void saveExceptionNotExistProduct() {
         // given
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
-        final Menu savedMenu = menuDao.save(menu);
+        final Menu savedMenu = menuRepository.save(menu);
 
-        final MenuProduct menuProduct = new MenuProduct(null, savedMenu.getId(), -1L, 2);
+        final MenuProduct menuProduct = new MenuProduct(null, savedMenu, -1L, 2);
 
         // when, then
-        assertThatThrownBy(() -> menuProductDao.save(menuProduct))
+        assertThatThrownBy(() -> menuProductRepository.save(menuProduct))
                 .isExactlyInstanceOf(DataIntegrityViolationException.class);
     }
 
@@ -89,16 +90,16 @@ class MenuProductDaoTest {
     void findById() {
         // given
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
-        final Menu savedMenu = menuDao.save(menu);
+        final Menu savedMenu = menuRepository.save(menu);
 
         final Product product = ProductFixtures.CHICKEN.create();
         final Product savedProduct = productDao.save(product);
 
-        final MenuProduct menuProduct = new MenuProduct(null, savedMenu.getId(), savedProduct.getId(), 2);
-        final MenuProduct saved = menuProductDao.save(menuProduct);
+        final MenuProduct menuProduct = new MenuProduct(null, savedMenu, savedProduct.getId(), 2);
+        final MenuProduct saved = menuProductRepository.save(menuProduct);
 
         // when
-        final MenuProduct foundMenuProduct = menuProductDao.findById(saved.getSeq())
+        final MenuProduct foundMenuProduct = menuProductRepository.findById(saved.getSeq())
                 .get();
 
         // then
@@ -110,7 +111,7 @@ class MenuProductDaoTest {
     @DisplayName("id로 메뉴 상품을 조회할 때 결과가 없다면 Optional.empty를 반환한다")
     void findByIdNotExist() {
         // when
-        final Optional<MenuProduct> menuProduct = menuProductDao.findById(-1L);
+        final Optional<MenuProduct> menuProduct = menuProductRepository.findById(-1L);
 
         // then
         assertThat(menuProduct).isEmpty();
@@ -121,24 +122,24 @@ class MenuProductDaoTest {
     void findAllByMenuId() {
         // given
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
-        final Menu savedMenu = menuDao.save(menu);
+        final Menu savedMenu = menuRepository.save(menu);
 
         final Product product = ProductFixtures.CHICKEN.create();
         final Product savedProduct = productDao.save(product);
 
-        final MenuProduct menuProduct = new MenuProduct(null, savedMenu.getId(), savedProduct.getId(), 2);
-        final MenuProduct savedMenuProduct = menuProductDao.save(menuProduct);
+        final MenuProduct menuProduct = new MenuProduct(null, savedMenu, savedProduct.getId(), 2);
+        final MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
 
         // when
-        final List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(savedMenu.getId());
+        final List<MenuProduct> menuProducts = menuProductRepository.findAllByMenuId(savedMenu.getId());
 
         // then
         assertAll(
                 () -> assertThat(menuProducts).hasSizeGreaterThanOrEqualTo(1),
                 () -> assertThat(menuProducts).extracting("seq")
                         .contains(savedMenuProduct.getSeq()),
-                () -> assertThat(menuProducts).extracting("menuId")
-                        .containsOnly(savedMenu.getId())
+                () -> assertThat(menuProducts).extracting("menu")
+                        .containsOnly(savedMenu)
         );
     }
 }

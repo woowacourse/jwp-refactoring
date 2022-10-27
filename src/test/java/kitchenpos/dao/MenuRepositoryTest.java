@@ -7,22 +7,17 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import javax.sql.DataSource;
 import kitchenpos.domain.Menu;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@JdbcTest
-class MenuDaoTest {
-
-    private final MenuDao menuDao;
+@DataJpaTest
+class MenuRepositoryTest {
 
     @Autowired
-    private MenuDaoTest(final DataSource dataSource) {
-        this.menuDao = new JdbcTemplateMenuDao(dataSource);
-    }
+    private MenuRepository menuRepository;
 
     @Test
     @DisplayName("메뉴를 저장한다")
@@ -31,7 +26,7 @@ class MenuDaoTest {
         final Menu menu = new Menu(null, "치킨치킨", new BigDecimal(3000), 1L);
 
         // when
-        final Menu saved = menuDao.save(menu);
+        final Menu saved = menuRepository.save(menu);
 
         // then
         assertAll(
@@ -47,10 +42,10 @@ class MenuDaoTest {
     void findById() {
         // given
         final Menu menu = new Menu(null, "치킨치킨", new BigDecimal(3000), 1L);
-        final Menu saved = menuDao.save(menu);
+        final Menu saved = menuRepository.save(menu);
 
         // when
-        final Menu foundMenu = menuDao.findById(saved.getId())
+        final Menu foundMenu = menuRepository.findById(saved.getId())
                 .get();
 
         // then
@@ -62,7 +57,7 @@ class MenuDaoTest {
     @DisplayName("id로 메뉴를 조회할 때 결과가 없다면 Optional.empty를 반환한다")
     void findByIdNotExist() {
         // when
-        final Optional<Menu> menu = menuDao.findById(-1L);
+        final Optional<Menu> menu = menuRepository.findById(-1L);
 
         // then
         assertThat(menu).isEmpty();
@@ -73,10 +68,10 @@ class MenuDaoTest {
     void findByAll() {
         // given
         final Menu menu = new Menu(null, "치킨치킨", new BigDecimal(3000), 1L);
-        final Menu saved = menuDao.save(menu);
+        final Menu saved = menuRepository.save(menu);
 
         // when
-        final List<Menu> menus = menuDao.findAll();
+        final List<Menu> menus = menuRepository.findAll();
 
         // then
         assertAll(
@@ -91,10 +86,10 @@ class MenuDaoTest {
     void countByIdIn() {
         // given
         final Menu menu = new Menu(null, "치킨치킨", new BigDecimal(3000), 1L);
-        final Menu saved = menuDao.save(menu);
+        final Menu saved = menuRepository.save(menu);
 
         // when
-        final long count = menuDao.countByIdIn(Collections.singletonList(saved.getId()));
+        final long count = menuRepository.countByIdIn(Collections.singletonList(saved.getId()));
 
         // then
         assertThat(count).isEqualTo(1);

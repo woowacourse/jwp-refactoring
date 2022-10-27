@@ -7,8 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import javax.transaction.Transactional;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuProductDao;
+import kitchenpos.dao.MenuRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.exception.IllegalPriceException;
@@ -30,10 +29,7 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private MenuDao menuDao;
-
-    @Autowired
-    private MenuProductDao menuProductDao;
+    private MenuRepository menuRepository;
 
     @Test
     @DisplayName("메뉴를 생성한다")
@@ -47,7 +43,7 @@ class MenuServiceTest {
         final Menu saved = menuService.create(menu);
 
         // then
-        final MenuProduct actual = MenuProductFixtures.create(saved.getId(), 1L, 2);
+        final MenuProduct actual = MenuProductFixtures.create(saved, 1L, 2);
 
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
@@ -55,7 +51,7 @@ class MenuServiceTest {
                 () -> assertThat(saved.getPrice()).isEqualByComparingTo(new BigDecimal("30000")),
                 () -> assertThat(saved.getMenuGroupId()).isEqualTo(1L),
                 () -> assertThat(saved.getMenuProducts()).usingElementComparatorOnFields(
-                                "menuId", "productId", "quantity")
+                                "menu", "productId", "quantity")
                         .hasSize(1)
                         .containsExactly(actual)
         );
@@ -101,7 +97,7 @@ class MenuServiceTest {
     @DisplayName("존재하지 않는 상품으로 메뉴를 생성하면 예외가 발생한다")
     void createExceptionWrongMenuProducts() {
         // given
-        final MenuProduct menuProduct = MenuProductFixtures.create(1L, -1L, 2);
+        final MenuProduct menuProduct = MenuProductFixtures.create(null, -1L, 2);
 
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO
                 .createWithMenuProducts(menuProduct);
@@ -115,7 +111,7 @@ class MenuServiceTest {
     @DisplayName("메뉴 가격이 메뉴 상품들의 가격합보다 크거나 같게 생성하면 예외가 발생한다")
     void createExceptionWrongPriceWithMenuProductsPriceSum() {
         // given
-        final MenuProduct menuProduct = MenuProductFixtures.create(1L, 1L, 2);
+        final MenuProduct menuProduct = MenuProductFixtures.create(null, 1L, 2);
 
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO
                 .createWithPriceAndMenuProducts(new BigDecimal(50000), menuProduct);
@@ -131,7 +127,7 @@ class MenuServiceTest {
         // given
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO
                 .create();
-        final Menu saved = menuDao.save(menu);
+        final Menu saved = menuRepository.save(menu);
 
         // when
         final List<Menu> menus = menuService.list();

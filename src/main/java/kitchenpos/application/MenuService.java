@@ -3,9 +3,9 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
+import kitchenpos.dao.MenuProductRepository;
+import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
@@ -17,20 +17,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
-    private final MenuDao menuDao;
+    private final MenuRepository menuRepository;
     private final MenuGroupDao menuGroupDao;
-    private final MenuProductDao menuProductDao;
+    private final MenuProductRepository menuProductRepository;
     private final ProductDao productDao;
 
     public MenuService(
-            final MenuDao menuDao,
+            final MenuRepository menuRepository,
             final MenuGroupDao menuGroupDao,
-            final MenuProductDao menuProductDao,
+            final MenuProductRepository menuProductRepository,
             final ProductDao productDao
     ) {
-        this.menuDao = menuDao;
+        this.menuRepository = menuRepository;
         this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
+        this.menuProductRepository = menuProductRepository;
         this.productDao = productDao;
     }
 
@@ -41,9 +41,9 @@ public class MenuService {
         }
 
         validateMenuPrice(menu);
-        final Menu savedMenu = menuDao.save(menu);
+        final Menu savedMenu = menuRepository.save(menu);
 
-        final List<MenuProduct> savedMenuProducts = saveMenuProducts(menu.getMenuProducts(), savedMenu.getId());
+        final List<MenuProduct> savedMenuProducts = saveMenuProducts(menu.getMenuProducts(), savedMenu);
 
         savedMenu.updateMenuProducts(savedMenuProducts);
         return savedMenu;
@@ -59,20 +59,16 @@ public class MenuService {
         menu.validatePrice(sum);
     }
 
-    private List<MenuProduct> saveMenuProducts(final List<MenuProduct> menuProducts, final Long menuId) {
+    private List<MenuProduct> saveMenuProducts(final List<MenuProduct> menuProducts, final Menu menu) {
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.updateMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
+            menuProduct.updateMenu(menu);
+            savedMenuProducts.add(menuProductRepository.save(menuProduct));
         }
         return savedMenuProducts;
     }
 
     public List<Menu> list() {
-        final List<Menu> menus = menuDao.findAll();
-        for (final Menu menu : menus) {
-            menu.updateMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
-        return menus;
+        return menuRepository.findAll();
     }
 }
