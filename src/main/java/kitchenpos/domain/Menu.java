@@ -51,7 +51,6 @@ public class Menu {
 
     public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         validatePrice(price);
-        validatePriceAndMenuProductPrice(price, menuProducts);
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
@@ -64,16 +63,12 @@ public class Menu {
         }
     }
 
-    private void validatePriceAndMenuProductPrice(final BigDecimal price, final List<MenuProduct> menuProducts) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            final BigDecimal productPrice = menuProduct.getProduct()
-                    .getPrice();
-            sum = sum.add(productPrice.multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
+    public boolean isPriceGreaterThanMenuProductsPrice() {
+        final BigDecimal sum = menuProducts.stream()
+                .map(menuProduct -> menuProduct.getProduct().getPrice()
+                        .multiply(BigDecimal.valueOf(menuProduct.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return price.compareTo(sum) > 0;
     }
 
     public Long getId() {

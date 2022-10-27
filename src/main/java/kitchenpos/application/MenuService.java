@@ -36,17 +36,11 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
-        final List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProductRequests();
-        final List<Long> productIds = menuProductRequests.stream()
-                .map(MenuProductRequest::getProductId)
-                .collect(Collectors.toList());
-        final List<Product> products = productDao.findByIds(productIds);
-
+        final List<Product> products = getProducts(menuRequest);
         final Menu menu = menuRequest.toEntity(products);
 
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
+        validateMenuGroupExist(menu.getMenuGroupId());
+        validateMenuPrice(menu);
 
         final Menu savedMenu = menuDao.save(menu);
 
@@ -56,6 +50,26 @@ public class MenuService {
         }
 
         return MenuResponse.of(savedMenu);
+    }
+
+    private List<Product> getProducts(MenuRequest menuRequest) {
+        final List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProductRequests();
+        final List<Long> productIds = menuProductRequests.stream()
+                .map(MenuProductRequest::getProductId)
+                .collect(Collectors.toList());
+        return productDao.findByIds(productIds);
+    }
+
+    private void validateMenuGroupExist(final Long menuGroupId) {
+        if (!menuGroupDao.existsById(menuGroupId)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private static void validateMenuPrice(final Menu menu) {
+        if (menu.isPriceGreaterThanMenuProductsPrice()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Transactional(readOnly = true)
