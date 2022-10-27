@@ -17,6 +17,14 @@ public class OrderLineItem {
         this(null, null, menuId, quantity);
     }
 
+    public void addQuantity() {
+        this.quantity++;
+    }
+
+    public boolean isSameMenu(final Long menuId) {
+        return this.menuId.equals(menuId);
+    }
+
     public Long getSeq() {
         return seq;
     }

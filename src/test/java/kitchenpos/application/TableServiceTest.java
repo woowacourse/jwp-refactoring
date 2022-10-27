@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +43,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     @DisplayName("조리 상태인 테이블은 빈 테이블이 될 수 없다.")
     void changeEmptyWithCookingStatus() {
-        주문_요청한다(손님있는_테이블, 파스타한상);
+        주문_요청한다(손님있는_테이블, 파스타한상.getId());
 
         assertThatThrownBy(() -> tableService.changeEmpty(손님있는_테이블.getId(), 손님있는_테이블))
                 .isInstanceOf(IllegalArgumentException.class);

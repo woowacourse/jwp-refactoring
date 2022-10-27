@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +11,7 @@ import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.table.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
@@ -81,7 +80,7 @@ public abstract class ServiceTest {
         빈_테이블2 = 테이블_등록();
         손님있는_식사중_테이블 = 손님_채운_테이블_생성(3);
         손님있는_테이블 = 손님_채운_테이블_생성(4);
-        식사중인_주문 = 주문_요청한다(손님있는_식사중_테이블, 파스타한상);
+        식사중인_주문 = 주문_요청한다(손님있는_식사중_테이블, 파스타한상.getId());
         식사중인_주문 = 주문을_식사_상태로_만든다(식사중인_주문);
     }
 
@@ -180,19 +179,9 @@ public abstract class ServiceTest {
         tableGroupService.ungroup(tableGroup.getId());
     }
 
-    public Order 주문_요청한다(final OrderTable orderTable, final Menu... menus) {
-        final Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderLineItems(makeOrderLineItems(menus));
+    public Order 주문_요청한다(final OrderTable orderTable, final Long... menuIds) {
+        final Order order = Order.create(orderTable.getId(), List.of(menuIds));
         return orderService.create(order);
-    }
-
-    private List<OrderLineItem> makeOrderLineItems(final Menu[] menus) {
-        return Arrays.stream(menus)
-                .map(menu -> new OrderLineItem(menu.getId(), DEFAULT_ORDER_LINE_QUANTITY))
-                .collect(Collectors.toUnmodifiableList());
     }
 
     public List<Order> 모든_주문_조회() {

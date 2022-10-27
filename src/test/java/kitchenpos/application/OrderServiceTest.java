@@ -10,7 +10,7 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ class OrderServiceTest extends ServiceTest {
     void createNoExistMenu() {
         final Menu notExistMenu = new Menu(-1L, "없는메뉴", BigDecimal.valueOf(999_999L), -1L);
 
-        assertThatThrownBy(() -> 주문_요청한다(손님있는_테이블, notExistMenu))
+        assertThatThrownBy(() -> 주문_요청한다(손님있는_테이블, notExistMenu.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -37,14 +37,14 @@ class OrderServiceTest extends ServiceTest {
     void createNoExistTable() {
         final OrderTable notExistTable = new OrderTable();
 
-        assertThatThrownBy(() -> 주문_요청한다(notExistTable, 파스타한상))
+        assertThatThrownBy(() -> 주문_요청한다(notExistTable, 파스타한상.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("주문을 저장한다.")
     void create() {
-        final Order order = 주문_요청한다(손님있는_테이블, 파스타한상);
+        final Order order = 주문_요청한다(손님있는_테이블, 파스타한상.getId());
 
         final List<OrderLineItem> savedOrderLineItems = order.getOrderLineItems();
 
@@ -58,7 +58,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     @DisplayName("주문을 식사 상태로 변경한다.")
     void changeOrderStatusMeal() {
-        final Order order = 주문_요청한다(손님있는_테이블, 파스타한상);
+        final Order order = 주문_요청한다(손님있는_테이블, 파스타한상.getId());
 
         final Order mealOrder = 주문을_식사_상태로_만든다(order);
 
@@ -68,7 +68,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     @DisplayName("주문을 완료 상태로 변경한다.")
     void changeOrderStatusComplete() {
-        final Order order = 주문_요청한다(손님있는_테이블, 파스타한상);
+        final Order order = 주문_요청한다(손님있는_테이블, 파스타한상.getId());
 
         final Order completedOrder = 주문을_완료_상태로_만든다(order);
 
@@ -78,7 +78,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     @DisplayName("주문의 상태가 완료상태면 상태를 변경할 수 없다.")
     void changeOrderStatusFail() {
-        final Order order = 주문_요청한다(손님있는_테이블, 파스타한상);
+        final Order order = 주문_요청한다(손님있는_테이블, 파스타한상.getId());
 
         final Order completedOrder = 주문을_완료_상태로_만든다(order);
 
