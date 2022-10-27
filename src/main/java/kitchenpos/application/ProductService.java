@@ -1,8 +1,6 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
@@ -17,14 +15,10 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final Product product) {
-        final BigDecimal price = product.getPrice();
+    public Product create(final Product productRequest) {
+        Product product = new Product(productRequest.getName(), productRequest.getPrice());
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("상품의 가격은 비어있거나 0보다 작을 수 없습니다.");
-        }
-
-        return productDao.save(product);
+        return productDao.save(productRequest);
     }
 
     public List<Product> list() {
