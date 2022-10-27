@@ -15,13 +15,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.MenuRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -47,7 +47,7 @@ class TableServiceTest {
     private OrderDao orderDao;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @DisplayName("주문 테이블을 생성한다.")
     @Test
@@ -116,7 +116,7 @@ class TableServiceTest {
     @ParameterizedTest
     void changeEmpty_false_if_orderTableStatus_is_COOKING_or_MEAL(String status) {
         // given
-        Menu menu = menuDao.save(createMenu("후라이드+후라이드", 19_000L, 1L,
+        Menu menu = menuRepository.save(createMenu("후라이드+후라이드", 19_000L, 1L,
                 Collections.singletonList(createMenuProduct(1L, 2))));
         OrderTable orderTable = tableDao.save(createOrderTable(4, true));
         orderDao.save(createOrder(orderTable.getId(), status, LocalDateTime.now(),

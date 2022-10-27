@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -24,6 +23,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.repository.MenuRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ class OrderServiceTest {
     private OrderDao orderDao;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
     private OrderTableDao tableDao;
@@ -54,7 +54,7 @@ class OrderServiceTest {
     void create_success() {
         // given
         MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
-        Menu menu = menuDao.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
+        Menu menu = menuRepository.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
                 Collections.singletonList(createMenuProduct(1L, 2))));
         OrderTable orderTable = tableDao.save(createOrderTable());
         Order order = createOrder(orderTable.getId(), Collections.singletonList(createOrderLineItem(menu.getId(), 1)));
@@ -97,7 +97,7 @@ class OrderServiceTest {
     void create_fail_if_not_exist_orderTable() {
         // given
         MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
-        Menu menu = menuDao.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
+        Menu menu = menuRepository.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
                 Collections.singletonList(createMenuProduct(1L, 2))));
         Order order = createOrder(9999999L, Collections.singletonList(createOrderLineItem(menu.getId(), 1)));
 
@@ -112,7 +112,7 @@ class OrderServiceTest {
         // given
         OrderTable orderTable = tableDao.save(new OrderTable());
         MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
-        Menu menu = menuDao.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
+        Menu menu = menuRepository.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
                 Collections.singletonList(createMenuProduct(1L, 2))));
         Order order = createOrder(orderTable.getId(),
                 Arrays.asList(createOrderLineItem(menu.getId(), 1), createOrderLineItem(menu.getId(), 1)));
@@ -128,7 +128,7 @@ class OrderServiceTest {
         // given
         OrderTable orderTable = tableDao.save(createOrderTable(false));
         MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
-        Menu menu = menuDao.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
+        Menu menu = menuRepository.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
                 Collections.singletonList(createMenuProduct(1L, 2))));
         Order order = createOrder(orderTable.getId(),
                 Arrays.asList(createOrderLineItem(menu.getId(), 1), createOrderLineItem(menu.getId(), 1)));
@@ -143,7 +143,7 @@ class OrderServiceTest {
     void list_success() {
         // given
         MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
-        Menu menu = menuDao.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
+        Menu menu = menuRepository.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
                 Collections.singletonList(createMenuProduct(1L, 2))));
         OrderTable orderTable = tableDao.save(createOrderTable());
         Order order = orderDao.save(createOrder(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
@@ -164,7 +164,7 @@ class OrderServiceTest {
     void changeOrderStatus_success() {
         // given
         MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
-        Menu menu = menuDao.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
+        Menu menu = menuRepository.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
                 Collections.singletonList(createMenuProduct(1L, 2))));
         OrderTable orderTable = tableDao.save(createOrderTable());
         Order order = createOrder(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
@@ -186,7 +186,7 @@ class OrderServiceTest {
     void changeOrderStatus_fail_if_exist_orderStatus_is_COMPLETION() {
         // given
         MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
-        Menu menu = menuDao.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
+        Menu menu = menuRepository.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
                 Collections.singletonList(createMenuProduct(1L, 2))));
         OrderTable orderTable = tableDao.save(createOrderTable());
         Order order = createOrder(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(),

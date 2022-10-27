@@ -11,10 +11,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.repository.MenuRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
     private MenuGroupDao menuGroupDao;
@@ -46,7 +46,7 @@ class MenuServiceTest {
         Menu savedMenu = menuService.create(menu);
 
         // then
-        Menu dbMenu = menuDao.findById(savedMenu.getId())
+        Menu dbMenu = menuRepository.findById(savedMenu.getId())
                 .orElseThrow(NoSuchElementException::new);
         assertAll(
                 () -> assertThat(dbMenu.getName()).isEqualTo(menu.getName()),
@@ -110,7 +110,7 @@ class MenuServiceTest {
     void list_success() {
         // given
         MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
-        Menu menu = menuDao.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
+        Menu menu = menuRepository.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
                 Collections.singletonList(createMenuProduct(1L, 2))));
 
         // when
