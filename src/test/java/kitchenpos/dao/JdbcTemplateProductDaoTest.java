@@ -28,6 +28,6 @@ class JdbcTemplateProductDaoTest extends JdbcTemplateTest{
     @DisplayName("목록을 조회한다.")
     void list() {
         final List<Product> actual = productDao.findAll();
-        assertThat(actual.size()).isEqualTo(6);
+        assertThat(actual).hasSize(6);
     }
 }

@@ -37,7 +37,7 @@ class JdbcTemplateOrderLineItemDaoTest extends JdbcTemplateTest{
         final List<OrderLineItem> actual = orderLineItemDao.findAll();
 
         // then
-        assertThat(actual.size()).isEqualTo(1);
+        assertThat(actual).hasSize(1);
     }
 
     private OrderLineItem saveOrderLineItem() {

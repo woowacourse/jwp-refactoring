@@ -41,6 +41,6 @@ class JdbcTemplateMenuGroupDaoTest extends JdbcTemplateTest{
     @DisplayName("목록을 조회한다.")
     void list() {
         final List<MenuGroup> actual = menuGroupDao.findAll();
-        assertThat(actual.size()).isEqualTo(4);
+        assertThat(actual).hasSize(4);
     }
 }

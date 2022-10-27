@@ -73,6 +73,6 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest {
         final List<Order> actual = orderDao.findAll();
 
         // then
-        assertThat(actual.size()).isEqualTo(1);
+        assertThat(actual).hasSize(1);
     }
 }

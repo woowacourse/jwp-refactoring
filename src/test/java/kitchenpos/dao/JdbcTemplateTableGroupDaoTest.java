@@ -34,6 +34,6 @@ class JdbcTemplateTableGroupDaoTest extends JdbcTemplateTest{
         final List<TableGroup> actual = tableGroupDao.findAll();
 
         // then
-        assertThat(actual.size()).isEqualTo(1);
+        assertThat(actual).hasSize(1);
     }
 }

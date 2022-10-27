@@ -32,6 +32,6 @@ class JdbcTemplateOrderTableDaoTest extends JdbcTemplateTest{
     @DisplayName("목록을 조회한다.")
     void list() {
         final List<OrderTable> actual = orderTableDao.findAll();
-        assertThat(actual.size()).isEqualTo(8);
+        assertThat(actual).hasSize(8);
     }
 }
