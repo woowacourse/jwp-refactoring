@@ -8,6 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +24,7 @@ class ProductServiceTest extends ServiceTest {
         @Test
         @DisplayName("상품을 생성한다.")
         void create() {
-            final Product product = 상품_생성("상품명", 10000);
+            final Product product = 상품_생성("상품명", BigDecimal.valueOf(10000));
 
             final Product actual = 상품_등록(product);
 
@@ -47,7 +48,7 @@ class ProductServiceTest extends ServiceTest {
         @Test
         @DisplayName("가격이 음수이면 예외를 발생시킨다.")
         void create_negativePrice() {
-            final Product product = 상품_생성("상품명", -10000);
+            final Product product = 상품_생성("상품명", BigDecimal.valueOf(-10000));
 
             assertThatThrownBy(() -> 상품_등록(product))
                     .isInstanceOf(IllegalArgumentException.class);
