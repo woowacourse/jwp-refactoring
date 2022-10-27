@@ -11,6 +11,10 @@ public class OrderTable {
     public OrderTable() {
     }
 
+    public OrderTable(final int numberOfGuests, final boolean empty) {
+        this(null, null, numberOfGuests, empty);
+    }
+
     public OrderTable(final Long id, final int numberOfGuests, final boolean empty) {
         this(id, null, numberOfGuests, empty);
     }
