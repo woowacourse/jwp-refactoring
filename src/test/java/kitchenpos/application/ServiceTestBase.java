@@ -134,10 +134,7 @@ public class ServiceTestBase {
     }
 
     public OrderLineItem 주문_항목(final Long menuId) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(1);
-        return orderLineItem;
+        return new OrderLineItem(null, null, menuId, 1);
     }
 
     public TableGroup 단체_지정_생성() {
