@@ -6,14 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.MenuGroupFakeDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends FakeSpringContext {
 
-    private final MenuGroupService menuGroupService = new MenuGroupService(new MenuGroupFakeDao());
+    private final MenuGroupService menuGroupService = new MenuGroupService(menuGroupDao);
 
     @DisplayName("메뉴 그룹 등록")
     @Test
@@ -28,11 +27,8 @@ class MenuGroupServiceTest {
     @DisplayName("모든 메뉴 그룹 조회")
     @Test
     void list() {
-        final var korean = menuGroup("한식");
-        final var japanese = menuGroup("일식");
-
-        menuGroupService.create(korean);
-        menuGroupService.create(japanese);
+        final var korean = menuGroupDao.save(menuGroup("한식"));
+        final var japanese = menuGroupDao.save(menuGroup("일식"));
 
         final var result = menuGroupService.list();
         final var foundKorean = findMenuGroupInList(result, korean);

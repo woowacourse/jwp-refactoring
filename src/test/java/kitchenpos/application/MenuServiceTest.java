@@ -12,12 +12,6 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.MenuFakeDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuGroupFakeDao;
-import kitchenpos.dao.MenuProductFakeDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.ProductFakeDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
@@ -25,13 +19,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class MenuServiceTest {
-
-    private final ProductDao productDao = new ProductFakeDao();
-    private final MenuGroupDao menuGroupDao = new MenuGroupFakeDao();
+class MenuServiceTest extends FakeSpringContext {
 
     private final MenuService menuService = new MenuService(
-            new MenuFakeDao(), menuGroupDao, new MenuProductFakeDao(), productDao);
+            menuDao, menuGroupDao, menuProductDao, productDao);
 
     @DisplayName("create 메서드는")
     @Nested
@@ -142,11 +133,8 @@ class MenuServiceTest {
         @DisplayName("등록된 모든 메뉴를 조회한다")
         @Test
         void findAllMenus() {
-            final var pizzaAndCoke = menu("피자와 콜라", italian, List.of(pizza, coke));
-            final var pastaAndCoke = menu("파스타와 콜라", italian, List.of(pasta, coke));
-
-            menuService.create(pizzaAndCoke);
-            menuService.create(pastaAndCoke);
+            final var pizzaAndCoke = menuDao.save(menu("피자와 콜라", italian, List.of(pizza, coke)));
+            final var pastaAndCoke = menuDao.save(menu("파스타와 콜라", italian, List.of(pasta, coke)));
 
             final var result = menuService.list();
             final var foundPizzaAndCokeMenu = findMenuInList(result, pizzaAndCoke);

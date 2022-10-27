@@ -11,32 +11,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuFakeDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuGroupFakeDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderFakeDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.OrderTableFakeDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.ProductFakeDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.dao.TableGroupFakeDao;
 import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class TableGroupServiceTest {
-
-    private final OrderTableDao orderTableDao = new OrderTableFakeDao();
-    private final ProductDao productDao = new ProductFakeDao();
-    private final MenuGroupDao menuGroupDao = new MenuGroupFakeDao();
-    private final MenuDao menuDao = new MenuFakeDao();
-    private final OrderDao orderDao = new OrderFakeDao();
-    private final TableGroupDao tableGroupDao = new TableGroupFakeDao();
+class TableGroupServiceTest extends FakeSpringContext {
 
     private final TableGroupService tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
 
@@ -94,10 +74,11 @@ class TableGroupServiceTest {
         final var coupleTable = orderTableDao.save(emptyTable(2));
         final var tripleTable = orderTableDao.save(emptyTable(3));
 
-        final var otherTableGroup = tableGroup(singleTable, coupleTable);
-        tableGroupService.create(otherTableGroup);
+        final var otherGroup = tableGroupDao.save(tableGroup(singleTable, coupleTable));
+        singleTable.setTableGroupId(otherGroup.getId());
+        orderTableDao.save(singleTable);
 
-        final var tableGroup = tableGroup(coupleTable, tripleTable);
+        final var tableGroup = tableGroup(singleTable, tripleTable);
 
         assertThatThrownBy(
                 () -> tableGroupService.create(tableGroup)
@@ -110,10 +91,13 @@ class TableGroupServiceTest {
         final var singleTable = orderTableDao.save(emptyTable(1));
         final var doubleTable = orderTableDao.save(emptyTable(2));
 
-        final var tableGroup = tableGroup(singleTable, doubleTable);
+        final var tableGroup = tableGroupDao.save(tableGroup(singleTable, doubleTable));
+        singleTable.setTableGroupId(tableGroup.getId());
+        doubleTable.setTableGroupId(tableGroup.getId());
+        orderTableDao.save(singleTable);
+        orderTableDao.save(doubleTable);
 
-        final var grouped = tableGroupService.create(tableGroup);
-        tableGroupService.ungroup(grouped.getId());
+        tableGroupService.ungroup(tableGroup.getId());
 
         final var ungroupedTables = orderTableDao.findAllByIdIn(
                 List.of(singleTable.getId(), doubleTable.getId()));
@@ -137,21 +121,17 @@ class TableGroupServiceTest {
         final var singleTable = orderTableDao.save(emptyTable(1));
         final var doubleTable = orderTableDao.save(emptyTable(2));
 
-        final var orderInMeal = order(singleTable, pizzaMenu);
-        orderInMeal.setOrderedTime(LocalDateTime.now());
-        orderInMeal.setOrderStatus(OrderStatus.MEAL.name());
-        orderDao.save(orderInMeal);
+        orderDao.save(order(singleTable, OrderStatus.MEAL, pizzaMenu));
+        orderDao.save(order(doubleTable, OrderStatus.COMPLETION, cokeMenu));
 
-        final var orderInCompletion = order(doubleTable, cokeMenu);
-        orderInCompletion.setOrderedTime(LocalDateTime.now());
-        orderInCompletion.setOrderStatus(OrderStatus.COMPLETION.name());
-        orderDao.save(orderInCompletion);
-
-        final var tableGroup = tableGroup(singleTable, doubleTable);
-        final var savedTableGroup = tableGroupService.create(tableGroup);
+        final var tableGroup = tableGroupDao.save(tableGroup(singleTable, doubleTable));
+        singleTable.setTableGroupId(tableGroup.getId());
+        doubleTable.setTableGroupId(tableGroup.getId());
+        orderTableDao.save(singleTable);
+        orderTableDao.save(doubleTable);
 
         assertThatThrownBy(
-                () -> tableGroupService.ungroup(savedTableGroup.getId())
+                () -> tableGroupService.ungroup(tableGroup.getId())
         ).isInstanceOf(IllegalArgumentException.class);
     }
 }

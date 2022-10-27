@@ -8,15 +8,14 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.ProductFakeDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class ProductServiceTest {
+class ProductServiceTest extends FakeSpringContext {
 
-    private final ProductService productService = new ProductService(new ProductFakeDao());
+    private final ProductService productService = new ProductService(productDao);
 
     @DisplayName("create 메서드는")
     @Nested
@@ -77,8 +76,8 @@ class ProductServiceTest {
             final var coke = product("콜라", 1000);
             final var rice = product("공기밥", 1500);
 
-            productService.create(coke);
-            productService.create(rice);
+            productDao.save(coke);
+            productDao.save(rice);
 
             final var result = productService.list();
             final var foundCoke = findProductInList(result, coke);

@@ -11,31 +11,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuFakeDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuGroupFakeDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderFakeDao;
-import kitchenpos.dao.OrderLineItemFakeDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.OrderTableFakeDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.ProductFakeDao;
 import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class OrderServiceTest {
-
-    private final ProductDao productDao = new ProductFakeDao();
-    private final MenuGroupDao menuGroupDao = new MenuGroupFakeDao();
-    private final MenuDao menuDao = new MenuFakeDao();
-    private final OrderDao orderDao = new OrderFakeDao();
-    private final OrderTableDao orderTableDao = new OrderTableFakeDao();
+class OrderServiceTest extends FakeSpringContext {
 
     private final OrderService orderService = new OrderService(
-            menuDao, orderDao, new OrderLineItemFakeDao(), orderTableDao);
+            menuDao, orderDao, orderLineItemDao, orderTableDao);
 
     @DisplayName("주문 등록")
     @Test
@@ -113,14 +96,13 @@ class OrderServiceTest {
 
         final var table = orderTableDao.save(notEmptyTable(2));
 
-        final var saved = orderService.create(order(table, pizzaMenu));
-        final var changed = order(table, pizzaMenu);
-        changed.setOrderStatus(OrderStatus.MEAL.name());
+        final var order = orderDao.save(order(table, pizzaMenu));
+        final var updatedOrder = order(table, OrderStatus.MEAL, pizzaMenu);
 
-        final var result = orderService.changeOrderStatus(saved.getId(), changed);
+        final var result = orderService.changeOrderStatus(order.getId(), updatedOrder);
         assertAll(
-                () -> assertThat(result.getId()).isEqualTo(saved.getId()),
-                () -> assertThat(result.getOrderStatus()).isEqualTo(changed.getOrderStatus())
+                () -> assertThat(result.getId()).isEqualTo(order.getId()),
+                () -> assertThat(result.getOrderStatus()).isEqualTo(updatedOrder.getOrderStatus())
         );
     }
 
@@ -133,15 +115,11 @@ class OrderServiceTest {
 
         final var table = orderTableDao.save(notEmptyTable(2));
 
-        final var order = order(table, pizzaMenu);
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
-        orderDao.save(order);
-
-        final var changed = order(table, pizzaMenu);
-        changed.setOrderStatus(OrderStatus.MEAL.name());
+        final var order = orderDao.save(order(table, OrderStatus.COMPLETION, pizzaMenu));
+        final var updatedOrder = order(table, OrderStatus.MEAL, pizzaMenu);
 
         assertThatThrownBy(
-                () -> orderService.changeOrderStatus(order.getId(), changed)
+                () -> orderService.changeOrderStatus(order.getId(), updatedOrder)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 }
