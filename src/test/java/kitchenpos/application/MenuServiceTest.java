@@ -40,11 +40,7 @@ public class MenuServiceTest {
         @Test
         void createMenu() {
             final MenuProduct menuProduct = 메뉴_상품_생성(통구이_상품.getId(), 5L);
-            final Menu menu = new Menu();
-            menu.setName("두마리메뉴");
-            menu.setPrice(BigDecimal.valueOf(500));
-            menu.setMenuGroupId(신메뉴_그룹.getId());
-            menu.setMenuProducts(List.of(menuProduct));
+            final Menu menu = new Menu("두마리메뉴", BigDecimal.valueOf(500), 신메뉴_그룹.getId(), List.of(menuProduct));
 
             final Menu actual = sut.create(menu);
 
@@ -60,7 +56,7 @@ public class MenuServiceTest {
         @Test
         void createMenuWithNullPrice() {
             final MenuProduct menuProduct = 메뉴_상품_생성(후라이드_상품.getId(), 5L);
-            final Menu menu = 메뉴_생성("두마리메뉴", null, 두마리메뉴_그룹.getId(), List.of(menuProduct));
+            final Menu menu = new Menu("두마리메뉴", null, 두마리메뉴_그룹.getId(), List.of(menuProduct));
 
             assertThatThrownBy(() -> sut.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
