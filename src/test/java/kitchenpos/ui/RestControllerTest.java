@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.MenuService;
 import kitchenpos.application.ProductService;
+import kitchenpos.application.TableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -11,7 +12,8 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(controllers = {MenuGroupRestController.class, MenuRestController.class, ProductRestController.class},
+@WebMvcTest(controllers = {MenuGroupRestController.class, MenuRestController.class, ProductRestController.class,
+        TableRestController.class},
         includeFilters = @Filter(type = FilterType.REGEX, pattern = "kitchenpos.ui.mapper.*"))
 public class RestControllerTest {
 
@@ -25,4 +27,6 @@ public class RestControllerTest {
     protected MenuService menuService;
     @MockBean
     protected ProductService productService;
+    @MockBean
+    protected TableService tableService;
 }
