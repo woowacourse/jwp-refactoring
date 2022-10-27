@@ -7,7 +7,7 @@ public class TableGroup {
     private Long id;
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
-
+    
     public Long getId() {
         return id;
     }
