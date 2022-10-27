@@ -90,10 +90,14 @@ public class ServiceTest {
         return tableGroup;
     }
 
+    protected OrderTable getOrderTable() {
+        return getOrderTable(null);
+    }
+
     protected OrderTable getOrderTable(final Long tableGroupId) {
         final OrderTable orderTable = new OrderTable();
         orderTable.setTableGroupId(tableGroupId);
-        orderTable.setEmpty(false);
+        orderTable.setEmpty(true);
         orderTable.setNumberOfGuests(1);
         return orderTable;
     }

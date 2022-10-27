@@ -1,5 +1,6 @@
 package kitchenpos.dao;
 
+import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -7,16 +8,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 import kitchenpos.domain.Order;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-class JdbcTemplateOrderDaoTest extends JdbcTemplateTest{
+class JdbcTemplateOrderDaoTest extends JdbcTemplateTest {
 
     private OrderDao orderDao;
 
@@ -32,13 +31,12 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest{
         assertThat(savedOrder.getId()).isNotNull();
     }
 
-    @ParameterizedTest(name = "해당 주문의 주문테이블 상태 {2} 이(가) {3} 에 속하면 true 를 반환한다.")
-    @MethodSource("invalidParams")
-    void existsByOrderTableIdInAndOrderStatusIn(final Order order,
-                                                final List<String> orderStatuses,
-                                                final String testOrderStatus,
-                                                final String testOrderStatuses) {
+    @ParameterizedTest(name = "해당 주문의 주문테이블 상태 {0} 가 COOKING, MEAL에 속하면 true 를 반환한다.")
+    @ValueSource(strings = {"COOKING", "MEAL"})
+    void existsByOrderTableIdInAndOrderStatusIn(final String orderStatus) {
         // given
+        final List<String> orderStatuses = Arrays.asList(COOKING.name(), MEAL.name());
+        final Order order = new Order(1L, orderStatus, LocalDateTime.now());
         orderDao.save(order);
 
         // when
@@ -49,16 +47,19 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest{
         assertThat(actual).isTrue();
     }
 
-    private static Stream<Arguments> invalidParams() {
-        return Stream.of(
-                Arguments.of(new Order(1L, COOKING.name(), LocalDateTime.now()),
-                        Arrays.asList(COOKING.name(), MEAL.name()),
-                        COOKING.name(),
-                        "COOKING, MEAL"),
-                Arguments.of(new Order(1L, MEAL.name(), LocalDateTime.now()),
-                        Arrays.asList(COOKING.name(), MEAL.name()),
-                        MEAL.name(),
-                        "COOKING, MEAL")
-        );
+    @Test
+    @DisplayName("해당 주문의 주문테이블 상태가 {COOKING, MEAL} 에 속하지 않으면 true 를 반환한다.")
+    void existsByOrderTableIdInAndInvalidOrderStatusIn() {
+        // given
+        final List<String> orderStatuses = Arrays.asList(COOKING.name(), MEAL.name());
+        final Order order = new Order(1L, COMPLETION.name(), LocalDateTime.now());
+        orderDao.save(order);
+
+        // when
+        final boolean actual = orderDao.existsByOrderTableIdInAndOrderStatusIn(Arrays.asList(order.getOrderTableId()),
+                orderStatuses);
+
+        // then
+        assertThat(actual).isFalse();
     }
 }
