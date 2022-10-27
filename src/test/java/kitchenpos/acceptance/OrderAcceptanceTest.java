@@ -28,26 +28,26 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     @DisplayName("주문 목록을 조회한다.")
     @Test
     void findProducts() {
-        long tableId1 = createTable(new OrderTable(null, 7, false));
-        long tableId2 = createTable(new OrderTable(null, 2, false));
+        Long tableId1 = createTable(new OrderTable(null, 7, false));
+        Long tableId2 = createTable(new OrderTable(null, 2, false));
 
-        long menuGroupId = MenuGroupAcceptanceTest.createMenuGroup("라라 메뉴");
+        Long menuGroupId = MenuGroupAcceptanceTest.createMenuGroup("라라 메뉴");
 
-        long productId1 = ProductAcceptanceTest.createProduct("후라이드", 9_000);
-        long productId2 = ProductAcceptanceTest.createProduct("돼지국밥", 7_000);
-        long productId3 = ProductAcceptanceTest.createProduct("피자", 12_000);
+        Long productId1 = ProductAcceptanceTest.createProduct("후라이드", 9_000);
+        Long productId2 = ProductAcceptanceTest.createProduct("돼지국밥", 7_000);
+        Long productId3 = ProductAcceptanceTest.createProduct("피자", 12_000);
 
         MenuProduct menuProduct1 = new MenuProduct(productId1, 1);
         MenuProduct menuProduct2 = new MenuProduct(productId2, 1);
         MenuProduct menuProduct3 = new MenuProduct(productId3, 1);
 
-        long menuId1 = createMenu(
+        Long menuId1 = createMenu(
                 new Menu("해장 세트", BigDecimal.valueOf(15_000), menuGroupId, List.of(menuProduct1, menuProduct2)));
-        long menuId2 = createMenu(
+        Long menuId2 = createMenu(
                 new Menu("아재 세트", BigDecimal.valueOf(13_000), menuGroupId, List.of(menuProduct3, menuProduct2)));
 
-        long orderId1 = createOrder(tableId1, List.of(menuId1));
-        long orderId2 = createOrder(tableId2, List.of(menuId1, menuId2));
+        Long orderId1 = createOrder(tableId1, List.of(menuId1));
+        Long orderId2 = createOrder(tableId2, List.of(menuId1, menuId2));
 
         List<Order> orders = getOrders();
 
@@ -58,7 +58,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                 );
     }
 
-    private long createOrder(long tableId, List<Long> menuIds) {
+    private Long createOrder(long tableId, List<Long> menuIds) {
         List<OrderLineItem> orderLineItems = menuIds.stream()
                 .map(id -> new OrderLineItem(null, id, 3))
                 .collect(Collectors.toList());
@@ -87,40 +87,39 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     @ParameterizedTest
     @ValueSource(strings = {"MEAL", "COMPLETION"})
     void changeOrderStatus(String orderStatus) {
-        long tableId = createTable(new OrderTable(null, 7, false));
+        Long tableId = createTable(new OrderTable(null, 7, false));
 
-        long menuGroupId = MenuGroupAcceptanceTest.createMenuGroup("라라 메뉴");
+        Long menuGroupId = MenuGroupAcceptanceTest.createMenuGroup("라라 메뉴");
 
-        long productId1 = ProductAcceptanceTest.createProduct("후라이드", 9000);
-        long productId2 = ProductAcceptanceTest.createProduct("돼지국밥", 7000);
+        Long productId1 = ProductAcceptanceTest.createProduct("후라이드", 9000);
+        Long productId2 = ProductAcceptanceTest.createProduct("돼지국밥", 7000);
 
         MenuProduct menuProduct1 = new MenuProduct(productId1, 1);
         MenuProduct menuProduct2 = new MenuProduct(productId2, 1);
 
-        long menuId = createMenu(
+        Long menuId = createMenu(
                 new Menu("해장 세트", BigDecimal.valueOf(15_000), menuGroupId, List.of(menuProduct1, menuProduct2)));
 
-        long orderId = createOrder(tableId, List.of(menuId));
+        Long orderId = createOrder(tableId, List.of(menuId));
 
-        Long updatedOrderId = updateOrderStatus(orderId, orderStatus);
+        updateOrderStatus(orderId, orderStatus);
 
         List<Order> orders = getOrders();
         Order order = orders.stream()
-                .filter(o -> updatedOrderId.equals(o.getId()))
+                .filter(o -> orderId.equals(o.getId()))
                 .findFirst()
                 .orElseThrow();
 
         assertThat(order.getOrderStatus()).isEqualTo(orderStatus);
     }
 
-    private Long updateOrderStatus(Long orderId, String orderStatus) {
-        return RestAssured.given().log().all()
+    private void updateOrderStatus(Long orderId, String orderStatus) {
+        RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .body(Map.of("orderStatus", orderStatus))
                 .when().log().all()
                 .put("/api/orders/" + orderId + "/order-status")
                 .then().log().all()
-                .statusCode(HttpStatus.OK.value())
-                .extract().jsonPath().getLong("id");
+                .statusCode(HttpStatus.OK.value());
     }
 }

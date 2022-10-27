@@ -1,20 +1,16 @@
-package kitchenpos.domain;
+package kitchenpos.application.dto;
 
-public class MenuGroup {
+public class MenuGroupResponse {
 
     private Long id;
     private String name;
 
-    public MenuGroup() {
+    public MenuGroupResponse() {
     }
 
-    public MenuGroup(Long id, String name) {
+    public MenuGroupResponse(Long id, String name) {
         this.id = id;
         this.name = name;
-    }
-
-    public MenuGroup(String name) {
-        this(null, name);
     }
 
     public Long getId() {
