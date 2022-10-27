@@ -6,7 +6,6 @@ import static kitchenpos.fixture.OrderFactory.order;
 import static kitchenpos.fixture.OrderTableFactory.emptyTable;
 import static kitchenpos.fixture.OrderTableFactory.notEmptyTable;
 import static kitchenpos.fixture.ProductFactory.product;
-import static kitchenpos.fixture.TableGroupFactory.tableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -65,22 +64,6 @@ class TableServiceTest extends FakeSpringContext {
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("단체 지정된 주문 테이블의 빈 테이블 여부 상태 변경 시 예외 발생")
-    @Test
-    void changeEmpty_hasTableGroup_throwsException() {
-        final var table = orderTableDao.save(notEmptyTable(2));
-        final var tableGroup = tableGroupDao.save(tableGroup(table));
-        table.setTableGroupId(tableGroup.getId());
-        orderTableDao.save(table);
-
-        final var updatedTable = notEmptyTable(2);
-        updatedTable.setTableGroupId(tableGroup.getId());
-
-        assertThatThrownBy(
-                () -> tableService.changeEmpty(table.getId(), updatedTable)
-        ).isInstanceOf(IllegalArgumentException.class);
-    }
-    
     @DisplayName("등록된 주문 테이블의 고객 수 변경")
     @Test
     void changeNumberOfGuests() {
@@ -93,18 +76,6 @@ class TableServiceTest extends FakeSpringContext {
                 () -> assertThat(result.getId()).isEqualTo(table.getId()),
                 () -> assertThat(result.getNumberOfGuests()).isEqualTo(table.getNumberOfGuests())
         );
-    }
-
-    @DisplayName("등록된 주문 테이블의 고객 수를 0 미만으로 변경 시 예외 발생")
-    @Test
-    void changeNumberOfGuests_toUnderZero_throwsException() {
-        final var table = orderTableDao.save(notEmptyTable(2));
-
-        final var updatedTable = notEmptyTable(-1);
-
-        assertThatThrownBy(
-                () -> tableService.changeNumberOfGuests(table.getId(), updatedTable)
-        ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("등록된 주문 테이블의 상태가 빈 테이블 일 때, 고객 수 변경 시 예외 발생")
