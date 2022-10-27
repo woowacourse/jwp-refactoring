@@ -17,6 +17,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.dto.response.MenusResponse;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -94,10 +95,10 @@ class MenuServiceTest extends ServiceTest {
         final MenuResponse expected = MenuResponse.of(savedMenu);
 
         // when
-        final List<MenuResponse> actual = menuService.list();
+        final MenusResponse menusResponse = menuService.list();
 
         // then
-        assertThat(actual).usingRecursiveFieldByFieldElementComparator()
+        assertThat(menusResponse.getMenus()).usingRecursiveFieldByFieldElementComparator()
                 .usingComparatorForType(Comparator.comparingInt(BigDecimal::intValue), BigDecimal.class)
                 .containsOnly(expected);
     }

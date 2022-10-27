@@ -12,6 +12,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.dto.response.MenusResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,15 +74,13 @@ public class MenuService {
     }
 
     @Transactional(readOnly = true)
-    public List<MenuResponse> list() {
+    public MenusResponse list() {
         final List<Menu> menus = menuDao.findAll();
 
         for (final Menu menu : menus) {
             menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
         }
 
-        return menus.stream()
-                .map(MenuResponse::of)
-                .collect(Collectors.toList());
+        return MenusResponse.of(menus);
     }
 }
