@@ -42,10 +42,7 @@ public class ServiceTest {
     }
 
     protected Product createProduct(final String name, final Long price) {
-        final Product product = new Product();
-        product.setName(name);
-        product.setPrice(new BigDecimal(price));
-        return product;
+        return new Product(name, new BigDecimal(price));
     }
 
     protected Menu createMenu(final String name, final Long price, final Long menuGroupId) {

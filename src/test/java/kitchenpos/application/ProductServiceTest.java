@@ -5,7 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductRequest;
+import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,15 +26,15 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        final Product productRequest = createProductRequest("후라이드", 17_000L);
+        final ProductRequest productRequest = createProductRequest("후라이드", 17_000L);
 
         // when
-        final Product savedProduct = productService.create(productRequest);
+        final ProductResponse response = productService.create(productRequest);
 
         // then
         assertAll(
-                () -> assertThat(savedProduct.getId()).isNotNull(),
-                () -> assertThat(savedProduct.getName()).isEqualTo("후라이드")
+                () -> assertThat(response.getId()).isNotNull(),
+                () -> assertThat(response.getName()).isEqualTo("후라이드")
         );
     }
 
@@ -41,7 +42,7 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void create_throwException_ifPriceIsNull() {
         // given
-        final Product productRequest = createProductRequest("후라이드", null);
+        final ProductRequest productRequest = createProductRequest("후라이드", null);
 
         // when, then
         assertThatThrownBy(() -> productService.create(productRequest))
@@ -53,7 +54,7 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void create_throwException_ifPriceNotPositive() {
         // given
-        final Product productRequest = createProductRequest("후라이드", -1L);
+        final ProductRequest productRequest = createProductRequest("후라이드", -1L);
 
         // when, then
         assertThatThrownBy(() -> productService.create(productRequest))
@@ -71,13 +72,10 @@ class ProductServiceTest extends ServiceTest {
         assertThat(productService.findAll()).hasSize(1);
     }
 
-    private Product createProductRequest(final String name, final Long price) {
-        final Product productRequest = new Product();
-        productRequest.setName(name);
-
-        if (price != null) {
-            productRequest.setPrice(new BigDecimal(price));
+    private ProductRequest createProductRequest(final String name, final Long price) {
+        if (price == null) {
+            return new ProductRequest(name, null);
         }
-        return productRequest;
+        return new ProductRequest(name, new BigDecimal(price));
     }
 }
