@@ -37,18 +37,18 @@ class ProductRestControllerTest extends ControllerTest {
                 .andExpect(header().string("Location", "/api/products/" + 1L));
     }
 
-//    @Test
-//    void 이름이_없으면_BAD_REQUEST를_응답한다() throws Exception {
-//        // given
-//        final var request = new ProductCreateRequest(
-//                null,
-//                뿌링클.getPrice().intValue()
-//        );
-//
-//        // when
-//        final var response = SimpleMockMvc.post(mockMvc, "/api/products", request);
-//
-//        // then
-//        response.andExpect(status().isBadRequest());
-//    }
+    @Test
+    void 필요한_요청정보가_누락되면_BAD_REQUEST를_응답한다() throws Exception {
+        // given
+        final var request = new ProductCreateRequest(
+                null,
+                뿌링클.getPrice().intValue()
+        );
+
+        // when
+        final var response = SimpleMockMvc.post(mockMvc, "/api/products", request);
+
+        // then
+        response.andExpect(status().isBadRequest());
+    }
 }

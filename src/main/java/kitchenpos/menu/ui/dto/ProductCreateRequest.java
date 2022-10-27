@@ -1,6 +1,6 @@
 package kitchenpos.menu.ui.dto;
 
-import com.sun.istack.NotNull;
+import javax.validation.constraints.NotNull;
 import kitchenpos.menu.domain.Name;
 import kitchenpos.menu.domain.Price;
 import kitchenpos.menu.domain.Product;

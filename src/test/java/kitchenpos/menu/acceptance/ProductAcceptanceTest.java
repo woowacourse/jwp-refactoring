@@ -37,21 +37,6 @@ public class ProductAcceptanceTest extends AcceptanceTest {
         );
     }
 
-//    @Test
-//    void 상품_생성_요청시_이름이_없으면_BAD_REQUEST를_응답한다() {
-//        // given
-//        final var request = new ProductCreateRequest(
-//                null,
-//                뿌링클.getPrice().intValue()
-//        );
-//
-//        // when
-//        final var response = 상품_생성_요청(request);
-//
-//        // then
-//        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-//    }
-
     @Test
     void 상품_목록_조회를_요청한다() {
         // given
