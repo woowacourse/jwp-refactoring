@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import kitchenpos.application.request.OrderTableCreateRequest;
 import kitchenpos.application.request.OrderTableUpdateRequest;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.ordertable.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -74,10 +74,11 @@ class TableServiceTest {
 
             @Test
             void 예외가_발생한다() {
-                final OrderTable orderTable = orderTableDao.save(new OrderTable(1L, 5, false));
+                final OrderTable orderTable = orderTableRepository.save(new OrderTable(1L, 5, false));
 
-                assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), null))
-                        .isInstanceOf(IllegalArgumentException.class)
+                assertThatThrownBy(
+                        () -> tableService.changeEmpty(orderTable.getId(), new OrderTableUpdateRequest(5, false)))
+                        .isInstanceOf(IllegalStateException.class)
                         .hasMessage("해당 OrderTable이 이미 TableGroup에 속해있습니다.");
             }
         }
@@ -89,7 +90,7 @@ class TableServiceTest {
             void 예외가_발생한다() {
                 orderRepository.save(new Order(1L, COOKING));
 
-                assertThatThrownBy(() -> tableService.changeEmpty(1L, null))
+                assertThatThrownBy(() -> tableService.changeEmpty(1L, new OrderTableUpdateRequest(5, false)))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("해당 OrderTable의 Order중 아직 완료되지 않은 것이 존재합니다.");
             }

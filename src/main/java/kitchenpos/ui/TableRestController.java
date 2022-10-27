@@ -5,7 +5,7 @@ import java.util.List;
 import kitchenpos.application.TableService;
 import kitchenpos.application.request.OrderTableCreateRequest;
 import kitchenpos.application.request.OrderTableUpdateRequest;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.ordertable.OrderTable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

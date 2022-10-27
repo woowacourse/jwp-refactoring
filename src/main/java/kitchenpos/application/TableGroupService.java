@@ -1,14 +1,12 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -16,13 +14,13 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class TableGroupService {
     private final OrderRepository orderRepository;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
     private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableDao orderTableDao,
+    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
                              final TableGroupDao tableGroupDao) {
         this.orderRepository = orderRepository;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
         this.tableGroupDao = tableGroupDao;
     }
 
@@ -38,50 +36,50 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-
-        if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException("입력받은 OrderTable 중 존재하지 않는 것이 있습니다.");
-        }
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException("입력받은 OrderTable 중 상태가 empty가 아니거나 tableGroup이 이미 존재하는 것이 있습니다.");
-            }
-        }
-
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
+//        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+//
+//        if (orderTables.size() != savedOrderTables.size()) {
+//            throw new IllegalArgumentException("입력받은 OrderTable 중 존재하지 않는 것이 있습니다.");
+//        }
+//
+//        for (final OrderTable savedOrderTable : savedOrderTables) {
+//            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
+//                throw new IllegalArgumentException("입력받은 OrderTable 중 상태가 empty가 아니거나 tableGroup이 이미 존재하는 것이 있습니다.");
+//            }
+//        }
+//
+//        tableGroup.setCreatedDate(LocalDateTime.now());
+//
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-
-        final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
-            savedOrderTable.setEmpty(false);
-            orderTableDao.save(savedOrderTable);
-        }
-        savedTableGroup.setOrderTables(savedOrderTables);
+//
+//        final Long tableGroupId = savedTableGroup.getId();
+//        for (final OrderTable savedOrderTable : savedOrderTables) {
+//            savedOrderTable.setTableGroupId(tableGroupId);
+//            savedOrderTable.setEmpty(false);
+//            orderTableDao.save(savedOrderTable);
+//        }
+//        savedTableGroup.setOrderTables(savedOrderTables);
 
         return savedTableGroup;
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
-
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
-//        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-//                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-//            throw new IllegalArgumentException("해당 TableGroup의 Order 중 완료되지 않은 것이 존재합니다.");
+//        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+//
+//        final List<Long> orderTableIds = orderTables.stream()
+//                .map(OrderTable::getId)
+//                .collect(Collectors.toList());
+//
+////        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
+////                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+////            throw new IllegalArgumentException("해당 TableGroup의 Order 중 완료되지 않은 것이 존재합니다.");
+////        }
+//
+//        for (final OrderTable orderTable : orderTables) {
+//            orderTable.setTableGroupId(null);
+//            orderTable.setEmpty(false);
+//            orderTableDao.save(orderTable);
 //        }
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
-            orderTableDao.save(orderTable);
-        }
     }
 }

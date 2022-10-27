@@ -13,8 +13,8 @@ import kitchenpos.application.request.OrderCreateRequest;
 import kitchenpos.application.request.OrderLineItemRequest;
 import kitchenpos.application.request.OrderTableUpdateRequest;
 import kitchenpos.application.request.OrderUpdateRequest;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.ordertable.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 

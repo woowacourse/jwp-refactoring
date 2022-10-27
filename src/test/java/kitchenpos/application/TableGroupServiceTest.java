@@ -9,7 +9,7 @@
 //import java.time.LocalDateTime;
 //import java.util.List;
 //import kitchenpos.application.request.OrderTableCreateRequest;
-//import kitchenpos.domain.OrderTable;
+//import kitchenpos.domain.ordertable.OrderTable;
 //import kitchenpos.domain.TableGroup;
 //import kitchenpos.domain.order.Order;
 //import org.junit.jupiter.api.BeforeEach;

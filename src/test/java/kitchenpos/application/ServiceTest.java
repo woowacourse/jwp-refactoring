@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.ordertable.OrderTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +33,7 @@ public class ServiceTest {
     protected OrderRepository orderRepository;
 
     @Autowired
-    protected OrderTableDao orderTableDao;
+    protected OrderTableRepository orderTableRepository;
 
     @Autowired
     protected TableGroupDao tableGroupDao;
