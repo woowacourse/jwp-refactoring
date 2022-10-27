@@ -6,7 +6,7 @@
         - Request에서는 도메인의 모든 필드를 사용하지 않음.
     - 목록
         - [x] MenuGroupRestController
-        - [ ] MenuRestController
+        - [x] MenuRestController
         - [ ] OrderRestController
         - [x] ProductRestController
         - [ ] TableGroupRestController

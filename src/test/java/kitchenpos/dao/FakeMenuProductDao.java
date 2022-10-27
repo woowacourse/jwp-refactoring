@@ -9,17 +9,19 @@ import kitchenpos.domain.MenuProduct;
 public class FakeMenuProductDao implements MenuProductDao {
 
     private final List<MenuProduct> IN_MEMORY_MENU_PRODUCT;
+    private Long seq;
 
     public FakeMenuProductDao() {
         IN_MEMORY_MENU_PRODUCT = new ArrayList<>();
+        seq = 1L;
     }
 
     @Override
     public MenuProduct save(MenuProduct entity) {
-        IN_MEMORY_MENU_PRODUCT.add(entity);
-        Long seq = (long) IN_MEMORY_MENU_PRODUCT.size();
-        entity.setSeq(seq);
-        return entity;
+        MenuProduct menuProduct = new MenuProduct(seq++, entity.getProductId(), entity.getMenuId(),
+                entity.getQuantity());
+        IN_MEMORY_MENU_PRODUCT.add(menuProduct);
+        return menuProduct;
     }
 
     @Override

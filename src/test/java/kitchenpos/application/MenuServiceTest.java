@@ -1,11 +1,10 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFixture.generateMenu;
+import static kitchenpos.fixture.MenuFixture.generateMenuRequest;
 import static kitchenpos.fixture.MenuGroupFixture.generateMenuGroup;
 import static kitchenpos.fixture.MenuGroupFixture.generateMenuGroupWithId;
 import static kitchenpos.fixture.MenuProductFixture.generateMemberProduct;
-import static kitchenpos.fixture.ProductFixture.generateProduct;
-import static kitchenpos.fixture.ProductFixture.generateProductWithId;
+import static kitchenpos.fixture.MenuProductFixture.generateMemberProductRequest;
 import static kitchenpos.fixture.ProductFixture.맛초킹;
 import static kitchenpos.fixture.ProductFixture.맛초킹_저장안됨;
 import static kitchenpos.fixture.ProductFixture.뿌링클;
@@ -28,6 +27,8 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuProductRequest;
+import kitchenpos.dto.MenuRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -60,13 +61,15 @@ public class MenuServiceTest {
         MenuGroup 세트메뉴 = generateMenuGroup("세트메뉴");
         MenuGroup 세트메뉴_1L = menuGroupDao.save(세트메뉴);
 
-        List<MenuProduct> menuProducts = new ArrayList<>();
+        List<MenuProductRequest> menuProducts = new ArrayList<>();
+        MenuProductRequest 사이다_두개_REQUEST = generateMemberProductRequest(사이다_1L, 2);
+        MenuProductRequest 뿌링클_한개_REQUEST = generateMemberProductRequest(뿌링클_2L, 1);
         MenuProduct 사이다_두개 = menuProductDao.save(generateMemberProduct(사이다_1L, 2));
         MenuProduct 뿌링클_한개 = menuProductDao.save(generateMemberProduct(뿌링클_2L, 1));
-        menuProducts.add(사이다_두개);
-        menuProducts.add(뿌링클_한개);
+        menuProducts.add(사이다_두개_REQUEST);
+        menuProducts.add(뿌링클_한개_REQUEST);
 
-        Menu 뿌링클_음료두개_세트 = generateMenu("뿌링클 음료두개 세트", BigDecimal.valueOf(21000), 세트메뉴_1L, menuProducts);
+        MenuRequest 뿌링클_음료두개_세트 = generateMenuRequest("뿌링클 음료두개 세트", BigDecimal.valueOf(21000), 세트메뉴_1L, menuProducts);
         // when
         Menu createdMenu = menuService.create(뿌링클_음료두개_세트);
 
@@ -84,16 +87,19 @@ public class MenuServiceTest {
         MenuGroup 세트메뉴 = generateMenuGroup("세트메뉴");
         MenuGroup 세트메뉴_1L = menuGroupDao.save(세트메뉴);
 
-        List<MenuProduct> menuProducts = new ArrayList<>();
+        List<MenuProductRequest> menuProducts = new ArrayList<>();
+        MenuProductRequest 사이다_두개_REQUEST = generateMemberProductRequest(사이다_1L, 2);
+        MenuProductRequest 뿌링클_한개_REQUEST = generateMemberProductRequest(뿌링클_2L, 1);
         MenuProduct 사이다_두개 = menuProductDao.save(generateMemberProduct(사이다_1L, 2));
         MenuProduct 뿌링클_한개 = menuProductDao.save(generateMemberProduct(뿌링클_2L, 1));
-        menuProducts.add(사이다_두개);
-        menuProducts.add(뿌링클_한개);
+        menuProducts.add(사이다_두개_REQUEST);
+        menuProducts.add(뿌링클_한개_REQUEST);
 
-        Menu 뿌링클_음료두개_세트 = generateMenu("뿌링클 음료두개 세트", null, 세트메뉴_1L, menuProducts);
+        MenuRequest 뿌링클_음료두개_세트 = generateMenuRequest("뿌링클 음료두개 세트", null, 세트메뉴_1L, menuProducts);
         // when & then
         assertThatThrownBy(() -> menuService.create(뿌링클_음료두개_세트))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격은 공백이거나 0원보다 작을 수 없습니다.");
     }
 
     @Test
@@ -106,13 +112,15 @@ public class MenuServiceTest {
         MenuGroup 세트메뉴 = generateMenuGroup("세트메뉴");
         MenuGroup 세트메뉴_1L = menuGroupDao.save(세트메뉴);
 
-        List<MenuProduct> menuProducts = new ArrayList<>();
+        List<MenuProductRequest> menuProducts = new ArrayList<>();
+        MenuProductRequest 사이다_두개_REQUEST = generateMemberProductRequest(사이다_1L, 2);
+        MenuProductRequest 뿌링클_한개_REQUEST = generateMemberProductRequest(뿌링클_2L, 1);
         MenuProduct 사이다_두개 = menuProductDao.save(generateMemberProduct(사이다_1L, 2));
         MenuProduct 뿌링클_한개 = menuProductDao.save(generateMemberProduct(뿌링클_2L, 1));
-        menuProducts.add(사이다_두개);
-        menuProducts.add(뿌링클_한개);
+        menuProducts.add(사이다_두개_REQUEST);
+        menuProducts.add(뿌링클_한개_REQUEST);
 
-        Menu 뿌링클_음료두개_세트 = generateMenu("뿌링클 음료두개 세트", BigDecimal.valueOf(-1), 세트메뉴_1L, menuProducts);
+        MenuRequest 뿌링클_음료두개_세트 = generateMenuRequest("뿌링클 음료두개 세트", BigDecimal.valueOf(-1), 세트메뉴_1L, menuProducts);
         // when & then
         assertThatThrownBy(() -> menuService.create(뿌링클_음료두개_세트))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -129,13 +137,15 @@ public class MenuServiceTest {
         MenuGroup 할인메뉴 = generateMenuGroupWithId("할인메뉴", -1L);
         menuGroupDao.save(세트메뉴);
 
-        List<MenuProduct> menuProducts = new ArrayList<>();
+        List<MenuProductRequest> menuProducts = new ArrayList<>();
+        MenuProductRequest 사이다_두개_REQUEST = generateMemberProductRequest(사이다_1L, 2);
+        MenuProductRequest 뿌링클_한개_REQUEST = generateMemberProductRequest(뿌링클_2L, 1);
         MenuProduct 사이다_두개 = menuProductDao.save(generateMemberProduct(사이다_1L, 2));
         MenuProduct 뿌링클_한개 = menuProductDao.save(generateMemberProduct(뿌링클_2L, 1));
-        menuProducts.add(사이다_두개);
-        menuProducts.add(뿌링클_한개);
+        menuProducts.add(사이다_두개_REQUEST);
+        menuProducts.add(뿌링클_한개_REQUEST);
 
-        Menu 뿌링클_음료두개_세트 = generateMenu("뿌링클 음료두개 세트", BigDecimal.valueOf(-1), 할인메뉴, menuProducts);
+        MenuRequest 뿌링클_음료두개_세트 = generateMenuRequest("뿌링클 음료두개 세트", BigDecimal.valueOf(21000), 할인메뉴, menuProducts);
         // when & then
         assertThatThrownBy(() -> menuService.create(뿌링클_음료두개_세트))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -151,13 +161,14 @@ public class MenuServiceTest {
         MenuGroup 세트메뉴 = generateMenuGroup("세트메뉴");
         MenuGroup 세트메뉴_1L = menuGroupDao.save(세트메뉴);
 
-        List<MenuProduct> menuProducts = new ArrayList<>();
+        List<MenuProductRequest> menuProducts = new ArrayList<>();
+        MenuProductRequest 사이다_두개_REQUEST = generateMemberProductRequest(사이다_1L, 2);
+        MenuProductRequest 맛초킹_저장안됨_한개_REQUEST = generateMemberProductRequest(맛초킹_저장안됨, 1);
         MenuProduct 사이다_두개 = menuProductDao.save(generateMemberProduct(사이다_1L, 2));
-        MenuProduct 맛초킹_저장안됨_한개 = menuProductDao.save(generateMemberProduct(맛초킹_저장안됨, 1));
-        menuProducts.add(사이다_두개);
-        menuProducts.add(맛초킹_저장안됨_한개);
+        menuProducts.add(사이다_두개_REQUEST);
+        menuProducts.add(맛초킹_저장안됨_한개_REQUEST);
 
-        Menu 맛초킹_음료두개_세트 = generateMenu("뿌링클 음료두개 세트", BigDecimal.valueOf(21000), 세트메뉴_1L, menuProducts);
+        MenuRequest 맛초킹_음료두개_세트 = generateMenuRequest("맛초킹 음료두개 세트", BigDecimal.valueOf(21000), 세트메뉴_1L, menuProducts);
         // when & then
         assertThatThrownBy(() -> menuService.create(맛초킹_음료두개_세트))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -173,13 +184,15 @@ public class MenuServiceTest {
         MenuGroup 세트메뉴 = generateMenuGroup("세트메뉴");
         MenuGroup 세트메뉴_1L = menuGroupDao.save(세트메뉴);
 
-        List<MenuProduct> menuProducts = new ArrayList<>();
+        List<MenuProductRequest> menuProducts = new ArrayList<>();
+        MenuProductRequest 사이다_두개_REQUEST = generateMemberProductRequest(사이다_1L, 2);
+        MenuProductRequest 뿌링클_한개_REQUEST = generateMemberProductRequest(뿌링클_2L, 1);
         MenuProduct 사이다_두개 = menuProductDao.save(generateMemberProduct(사이다_1L, 2));
         MenuProduct 뿌링클_한개 = menuProductDao.save(generateMemberProduct(뿌링클_2L, 1));
-        menuProducts.add(사이다_두개);
-        menuProducts.add(뿌링클_한개);
+        menuProducts.add(사이다_두개_REQUEST);
+        menuProducts.add(뿌링클_한개_REQUEST);
 
-        Menu 뿌링클_음료두개_세트 = generateMenu("뿌링클 음료두개 세트", BigDecimal.valueOf(22000), 세트메뉴_1L, menuProducts);
+        MenuRequest 뿌링클_음료두개_세트 = generateMenuRequest("뿌링클 음료두개 세트", BigDecimal.valueOf(22000), 세트메뉴_1L, menuProducts);
         // when & then
         assertThatThrownBy(() -> menuService.create(뿌링클_음료두개_세트))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -195,23 +208,27 @@ public class MenuServiceTest {
         MenuGroup 세트메뉴 = generateMenuGroup("세트메뉴");
         MenuGroup 세트메뉴_1L = menuGroupDao.save(세트메뉴);
 
-        List<MenuProduct> menuProducts = new ArrayList<>();
+        List<MenuProductRequest> menuProducts1 = new ArrayList<>();
+        MenuProductRequest 사이다_두개_REQUEST = generateMemberProductRequest(사이다_1L, 2);
+        MenuProductRequest 뿌링클_한개_REQUEST = generateMemberProductRequest(뿌링클_2L, 1);
         MenuProduct 사이다_두개 = menuProductDao.save(generateMemberProduct(사이다_1L, 2));
         MenuProduct 뿌링클_한개 = menuProductDao.save(generateMemberProduct(뿌링클_2L, 1));
-        menuProducts.add(사이다_두개);
-        menuProducts.add(뿌링클_한개);
+        menuProducts1.add(사이다_두개_REQUEST);
+        menuProducts1.add(뿌링클_한개_REQUEST);
 
         Product 맛초킹_3L = productDao.save(맛초킹);
 
-        List<MenuProduct> menuProducts2 = new ArrayList<>();
+        List<MenuProductRequest> menuProducts2 = new ArrayList<>();
+        MenuProductRequest 사이다_세개_REQUEST = generateMemberProductRequest(사이다_1L, 3);
+        MenuProductRequest 맛초킹_한개_REQUEST = generateMemberProductRequest(맛초킹_3L, 1);
         MenuProduct 사이다_세개 = menuProductDao.save(generateMemberProduct(사이다_1L, 3));
         MenuProduct 맛초킹_한개 = menuProductDao.save(generateMemberProduct(맛초킹_3L, 1));
 
-        menuProducts2.add(사이다_세개);
-        menuProducts2.add(맛초킹_한개);
+        menuProducts2.add(사이다_세개_REQUEST);
+        menuProducts2.add(맛초킹_한개_REQUEST);
 
-        Menu 뿌링클_음료두개_세트 = generateMenu("뿌링클 음료두개 세트", BigDecimal.valueOf(21000), 세트메뉴_1L, menuProducts);
-        Menu 맛초킹_음료세개_세트 = generateMenu("맛쵸킹 음료세개 세트", BigDecimal.valueOf(21000), 세트메뉴_1L, menuProducts2);
+        MenuRequest 뿌링클_음료두개_세트 = generateMenuRequest("뿌링클 음료두개 세트", BigDecimal.valueOf(21000), 세트메뉴_1L, menuProducts1);
+        MenuRequest 맛초킹_음료세개_세트 = generateMenuRequest("맛쵸킹 음료세개 세트", BigDecimal.valueOf(21000), 세트메뉴_1L, menuProducts2);
         menuService.create(뿌링클_음료두개_세트);
         menuService.create(맛초킹_음료세개_세트);
 
