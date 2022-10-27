@@ -10,27 +10,18 @@ public class MenuGroupFixture {
     public static MenuGroup 한마리메뉴_1L = generateWithId("한마리메뉴", 1L);
 
     public static MenuGroup generateMenuGroup(final String menuGroupName) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(menuGroupName);
-        return menuGroup;
+        return new MenuGroup(menuGroupName);
     }
 
     public static MenuGroup generateMenuGroupWithId(final String menuGroupName, final Long id) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(menuGroupName);
-        menuGroup.setId(id);
-        return menuGroup;
+        return new MenuGroup(id, menuGroupName);
     }
 
     private static MenuGroup generate(final String menuGroupName) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(menuGroupName);
-        return menuGroup;
+        return new MenuGroup(menuGroupName);
     }
 
     private static MenuGroup generateWithId(final String menuGroupName, Long id) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(menuGroupName);
-        return menuGroup;
+        return new MenuGroup(id, menuGroupName);
     }
 }
