@@ -74,7 +74,7 @@ class TableServiceTest {
     @ParameterizedTest
     void changeEmptyFailureWhenOrderStatusIsCookingOrMeal(OrderStatus orderStatus) {
         OrderTable orderTable = orderTableDao.save(new OrderTable(0, true));
-        orderDao.save(new Order(orderTable.getId(), orderStatus.name(), LocalDateTime.now()));
+        orderDao.save(new Order(orderTable.getId(), orderStatus, LocalDateTime.now()));
 
         assertThatThrownBy(
                 () -> tableService.changeEmpty(orderTable.getId(), new OrderTable(0, true))

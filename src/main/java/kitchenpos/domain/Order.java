@@ -3,32 +3,45 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import org.springframework.util.CollectionUtils;
 
 public class Order {
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
-    public Order(){}
+    public Order() {
+    }
 
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+    public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this(null, orderTableId, orderStatus, orderedTime, Collections.emptyList());
     }
 
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime,
+    public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
+    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+    }
+
+    public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        validateEmptyOrderLineItems(orderLineItems);
+        this.orderLineItems = orderLineItems;
+    }
+
+    private void validateEmptyOrderLineItems(List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException("[ERROR] 주문 항목들이 빈 값이면 안됩니다.");
+        }
     }
 
     public Long getId() {
@@ -47,11 +60,11 @@ public class Order {
         this.orderTableId = orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void setOrderStatus(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 
@@ -65,9 +78,5 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 }

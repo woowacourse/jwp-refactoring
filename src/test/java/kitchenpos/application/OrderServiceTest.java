@@ -10,6 +10,7 @@ import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -33,6 +34,9 @@ class OrderServiceTest {
     private OrderTableDao orderTableDao;
 
     @Autowired
+    private OrderLineItemDao orderLineItemDao;
+
+    @Autowired
     private MenuDao menuDao;
 
     @Autowired
@@ -49,18 +53,19 @@ class OrderServiceTest {
         Menu menu = createMenu();
         orderRequest = createOrderRequest(menu.getId(), OrderStatus.MEAL);
         savedOrder = orderDao.save(orderRequest);
-    }
-
-    private Order createOrderRequest(Long menuId, OrderStatus orderStatus) {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 1, false));
-
-        return new Order(orderTable.getId(), orderStatus.name(), LocalDateTime.now(),
-                List.of(new OrderLineItem(null, menuId, 1)));
+        orderLineItemDao.save(new OrderLineItem(savedOrder.getId(), menu.getId(), 3L));
     }
 
     private Menu createMenu() {
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("A그룹"));
         return menuDao.save(new Menu("신메뉴", BigDecimal.ONE, menuGroup.getId(), List.of()));
+    }
+
+    private Order createOrderRequest(Long menuId, OrderStatus orderStatus) {
+        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 1, false));
+
+        return new Order(orderTable.getId(), orderStatus, LocalDateTime.now(),
+                List.of(new OrderLineItem(null, menuId, 1)));
     }
 
     @DisplayName("주문을 생성한다.")
@@ -78,7 +83,7 @@ class OrderServiceTest {
         final List<OrderLineItem> emptyOrderLineItem = Collections.emptyList();
 
         assertThatThrownBy(() -> orderService.create(
-                new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), emptyOrderLineItem)));
+                new Order(orderTable.getId(), OrderStatus.MEAL, LocalDateTime.now(), emptyOrderLineItem)));
     }
 
     @DisplayName("주문 항목의 메뉴가 디비안에 없으면 예외가 발생한다")
@@ -96,7 +101,7 @@ class OrderServiceTest {
         Menu menu = createMenu();
         final Long emptyOrderTableId = null;
 
-        Order order = new Order(emptyOrderTableId, OrderStatus.MEAL.name(), LocalDateTime.now(),
+        Order order = new Order(emptyOrderTableId, OrderStatus.MEAL, LocalDateTime.now(),
                 List.of(new OrderLineItem(null, menu.getId(), 1)));
 
         assertThatThrownBy(() -> orderService.create(order))
@@ -112,12 +117,12 @@ class OrderServiceTest {
     @DisplayName("주문의 상태를 바꾼다.")
     @Test
     void changeOrderStatus() {
-        Order order = new Order(1L, OrderStatus.COOKING.name(), LocalDateTime.now());
+        Order order = orderService.create(orderRequest);
 
         orderService.changeOrderStatus(savedOrder.getId(), order);
         Order findOrder = orderDao.findById(savedOrder.getId()).get();
 
-        assertThat(findOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        assertThat(findOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
     }
 
     @DisplayName("기존의 주문 상태가 COMPLETION일 때, 주문 상태를 바꾸려고 하면 예외가 발생한다")

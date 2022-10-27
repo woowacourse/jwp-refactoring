@@ -113,8 +113,8 @@ class TableGroupServiceTest {
     @MethodSource
     @ParameterizedTest
     void ungroupFailureWhenOrderStatusIsCookingOrMeal(OrderStatus orderStatus) {
-        orderDao.save(new Order(orderTable1.getId(), orderStatus.name(), LocalDateTime.now()));
-        orderDao.save(new Order(orderTable2.getId(), orderStatus.name(), LocalDateTime.now()));
+        orderDao.save(new Order(orderTable1.getId(), orderStatus, LocalDateTime.now()));
+        orderDao.save(new Order(orderTable2.getId(), orderStatus, LocalDateTime.now()));
 
         TableGroup tableGroup = tableGroupService.create(
                 new TableGroup(1L, LocalDateTime.now(), List.of(orderTable1, orderTable2)));
