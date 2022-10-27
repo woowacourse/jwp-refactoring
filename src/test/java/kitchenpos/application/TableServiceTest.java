@@ -3,11 +3,12 @@ package kitchenpos.application;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderLineItemCreateRequest;
 import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableUpdateNumberOfGuestsRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -97,12 +98,13 @@ class TableServiceTest {
         tableService.changeEmpty(테이블_1번.getId(), createOrderTableUpdateEmptyRequest(false));
 
         // 주문
-        OrderLineItem orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
+        OrderLineItemCreateRequest orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
         Order order = orderService.create(createOrder(테이블_1번.getId(), List.of(orderLineItem)));
 
         // 계산완료
-        Order changedOrder = createOrder(테이블_1번.getId(), OrderStatus.COMPLETION, List.of(orderLineItem));
-        orderService.changeOrderStatus(order.getId(), changedOrder);
+        OrderCreateRequest changedOrder = createOrder(테이블_1번.getId(), OrderStatus.COMPLETION.name(),
+                List.of(orderLineItem));
+        orderService.changeOrderStatus(order.getId(), changedOrder.toEntity());
 
         // empty 변경
         OrderTable actual = tableService.changeEmpty(테이블_1번.getId(), createOrderTableUpdateEmptyRequest(false));

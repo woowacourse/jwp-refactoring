@@ -3,11 +3,12 @@ package kitchenpos.application;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderLineItemCreateRequest;
 import kitchenpos.fixture.OrderTableFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -66,7 +67,7 @@ class OrderServiceTest {
         tableService.changeEmpty(orderTable.getId(), OrderTableFixtures.createOrderTableUpdateEmptyRequest(false));
 
         // 주문: 1번 테이블 / 후라이드 치킨 1개
-        OrderLineItem orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
+        OrderLineItemCreateRequest orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
         Order actual = orderService.create(createOrder(orderTable.getId(), List.of(orderLineItem)));
 
         assertAll(
@@ -80,7 +81,7 @@ class OrderServiceTest {
     @Test
     void createOrderByorderLineItemsIsEmpty() {
         OrderTable orderTable = tableService.create(테이블_1번());
-        Order order = createOrder(orderTable.getId(), List.of());
+        OrderCreateRequest order = createOrder(orderTable.getId(), List.of());
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -101,7 +102,7 @@ class OrderServiceTest {
         tableService.changeEmpty(orderTable.getId(), OrderTableFixtures.createOrderTableUpdateEmptyRequest(false));
 
         // 주문할 메뉴
-        OrderLineItem orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
+        OrderLineItemCreateRequest orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
 
         // 다른 개수
         assertThatThrownBy(() -> orderService.create(createOrder(
@@ -122,7 +123,7 @@ class OrderServiceTest {
         Menu 메뉴_후라이드치킨 = menuService.create(request);
 
         // 주문할 메뉴
-        OrderLineItem orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
+        OrderLineItemCreateRequest orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
 
         // 없는 테이블이 주문
         assertThatThrownBy(() -> orderService.create(createOrder(0L, List.of(orderLineItem))))
@@ -146,7 +147,7 @@ class OrderServiceTest {
         tableService.changeEmpty(테이블_2번.getId(), OrderTableFixtures.createOrderTableUpdateEmptyRequest(false));
 
         // 주문할 메뉴
-        OrderLineItem orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
+        OrderLineItemCreateRequest orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
 
         // 주문
         orderService.create(createOrder(테이블_1번.getId(), List.of(orderLineItem)));
@@ -171,12 +172,13 @@ class OrderServiceTest {
         tableService.changeEmpty(orderTable.getId(), OrderTableFixtures.createOrderTableUpdateEmptyRequest(false));
 
         // 주문
-        OrderLineItem orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
+        OrderLineItemCreateRequest orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
         Order order = orderService.create(createOrder(orderTable.getId(), List.of(orderLineItem)));
 
         // 상태를 식사로 변경
-        Order changedOrder = createOrder(orderTable.getId(), OrderStatus.MEAL, List.of(orderLineItem));
-        Order actual = orderService.changeOrderStatus(order.getId(), changedOrder);
+        OrderCreateRequest changedOrder = createOrder(orderTable.getId(), OrderStatus.MEAL.name(),
+                List.of(orderLineItem));
+        Order actual = orderService.changeOrderStatus(order.getId(), changedOrder.toEntity());
 
         assertAll(
                 () -> assertThat(actual.getOrderTableId()).isEqualTo(orderTable.getId()),
@@ -200,12 +202,12 @@ class OrderServiceTest {
         tableService.changeEmpty(orderTable.getId(), OrderTableFixtures.createOrderTableUpdateEmptyRequest(false));
 
         // 주문
-        OrderLineItem orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
+        OrderLineItemCreateRequest orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
         Order order = orderService.create(createOrder(orderTable.getId(), List.of(orderLineItem)));
 
         // 계산완료로 변경
-        Order changedOrder = createOrder(orderTable.getId(), OrderStatus.COMPLETION, List.of(orderLineItem));
-        Order actual = orderService.changeOrderStatus(order.getId(), changedOrder);
+        OrderCreateRequest changedOrder = createOrder(orderTable.getId(), OrderStatus.COMPLETION.name(), List.of(orderLineItem));
+        Order actual = orderService.changeOrderStatus(order.getId(), changedOrder.toEntity());
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), actual))
                 .isInstanceOf(IllegalArgumentException.class);

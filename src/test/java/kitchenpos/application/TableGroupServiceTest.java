@@ -7,6 +7,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.OrderLineItemCreateRequest;
 import kitchenpos.dto.OrderTableIdRequest;
 import kitchenpos.dto.TableGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -159,7 +160,7 @@ class TableGroupServiceTest {
         TableGroup tableGroup = tableGroupService.create(createTableGroup(테이블_그룹));
 
         // 1번 테이블 주문
-        OrderLineItem orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
+        OrderLineItemCreateRequest orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
         orderService.create(createOrder(테이블_1번.getId(), List.of(orderLineItem)));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

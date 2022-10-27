@@ -6,8 +6,10 @@ import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -19,6 +21,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class OrderService {
     private final MenuDao menuDao;
     private final OrderDao orderDao;
@@ -38,44 +41,17 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
-
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
-
-        order.setId(null);
-
-        final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-
-        final Order savedOrder = orderDao.save(order);
-
+    public Order create(final OrderCreateRequest request) {
+        validateNotDuplicateMenuId(request.getOrderLineItems());
+        validateTableNotEmpty(request.getOrderTableId());
+        final Order savedOrder = orderDao.save(request.toEntity());
         final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
+        for (final OrderLineItem orderLineItem : request.getOrderLineItems()) {
             orderLineItem.setOrderId(orderId);
             savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
         }
         savedOrder.setOrderLineItems(savedOrderLineItems);
-
         return savedOrder;
     }
 
@@ -106,5 +82,23 @@ public class OrderService {
         savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
 
         return savedOrder;
+    }
+
+    private void validateNotDuplicateMenuId(final List<OrderLineItem> orderLineItems) {
+        final OrderLineItems items = new OrderLineItems(orderLineItems);
+        final List<Long> menuIds = items.getMenuIds();
+
+        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateTableNotEmpty(final Long orderTableId) {
+        final OrderTable orderTable = orderTableDao.findById(orderTableId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
     }
 }
