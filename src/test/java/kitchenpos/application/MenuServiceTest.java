@@ -71,7 +71,7 @@ public class MenuServiceTest {
         final MenuProduct menuProduct1 = new MenuProduct(7L, 3);
         final MenuProduct menuProduct2 = new MenuProduct(2L, 3);
         final List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
-        final Menu menu = new Menu("메뉴1", BigDecimal.valueOf(1000), 5L, menuProducts);
+        final Menu menu = new Menu("메뉴1", BigDecimal.valueOf(1000), 1L, menuProducts);
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
