@@ -47,9 +47,7 @@ public class DataSupport {
     private OrderLineItemDao orderLineItemDao;
 
     public Product saveProduct(final String name, final int price) {
-        final Product product = new Product();
-        product.setName(name);
-        product.setPrice(new BigDecimal(price));
+        final Product product = Product.ofNew(name, new BigDecimal(price));
         return productDao.save(product);
     }
 

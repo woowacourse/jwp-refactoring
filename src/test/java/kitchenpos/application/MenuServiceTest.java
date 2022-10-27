@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Menu;
@@ -58,8 +59,7 @@ class MenuServiceTest {
     @Test
     void create_throwsException_ifProductNotFound() {
         // given
-        final Product unsavedProduct = new Product();
-        unsavedProduct.setId(0L);
+        final Product unsavedProduct = new Product(0L, "없는 메뉴", new BigDecimal(0));
         final List<Product> unsavedProducts = Arrays.asList(unsavedProduct);
 
         // when, then
