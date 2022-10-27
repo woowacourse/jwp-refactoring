@@ -9,12 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import kitchenpos.Application;
+import kitchenpos.application.dto.request.OrderCommand;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.common.DataClearExtension;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroupDto;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.ProductDto;
 import kitchenpos.domain.TableGroup;
@@ -182,9 +184,7 @@ public class AcceptanceTest {
     }
 
     protected long 주문을_생성한다(long table, List<OrderLineItem> orderLineItems) {
-        Order order = new Order();
-        order.setOrderTableId(table);
-        order.setOrderLineItems(orderLineItems);
+        OrderCommand order = new OrderCommand(table, orderLineItems);
 
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -197,8 +197,7 @@ public class AcceptanceTest {
     }
 
     protected Order 주문_상태를_변경한다(long 주문, String status) {
-        Order order = new Order();
-        order.setOrderStatus(status);
+        Order order = new Order(status);
 
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
