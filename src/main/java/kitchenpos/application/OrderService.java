@@ -1,9 +1,7 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -11,7 +9,6 @@ import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +45,7 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
         validateIsEmpty(orderTable);
 
-        final Order savedOrder = orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now()));
+        final Order savedOrder = orderDao.save(Order.create(orderTable.getId()));
         setOrderItemsInOrder(orderLineItems, savedOrder, savedOrder.getId());
 
         return savedOrder;
@@ -98,7 +95,7 @@ public class OrderService {
     }
 
     private void validateCompletionStatus(Order savedOrder) {
-        if(savedOrder.isCompletionStatus()){
+        if (savedOrder.isCompletionStatus()) {
             throw new IllegalArgumentException("[ERROR] 주문이 완료된 상태에서는 상태를 못 바꿉니다.");
         }
     }

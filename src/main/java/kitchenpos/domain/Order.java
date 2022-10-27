@@ -16,6 +16,10 @@ public class Order {
     public Order() {
     }
 
+    public static Order create(Long orderTableId) {
+        return new Order(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), Collections.emptyList());
+    }
+
     public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this(null, orderTableId, orderStatus, orderedTime, Collections.emptyList());
     }
@@ -27,11 +31,18 @@ public class Order {
 
     public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
+        validateNull(orderStatus, orderedTime);
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+    }
+
+    private void validateNull(OrderStatus orderStatus, LocalDateTime orderedTime) {
+        if (Objects.isNull(orderedTime) || Objects.isNull(orderStatus)) {
+            throw new IllegalArgumentException("[ERROR] 주문 시간이나 주문 상태는 빈 값이면 안됩니다.");
+        }
     }
 
     public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
