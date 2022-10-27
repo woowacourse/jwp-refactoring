@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.OrderLineItemRepository;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -36,7 +36,7 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
@@ -48,7 +48,7 @@ class OrderServiceTest {
     private MenuRepository menuRepository;
 
     @Autowired
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Nested
     @DisplayName("Order를 생성할 때 ")
@@ -172,10 +172,10 @@ class OrderServiceTest {
             Menu menu = createMenu(MENU1_NAME, MENU1_PRICE);
             OrderTable orderTable = createOrderTable(false);
 
-            Order order = orderDao.save(
+            Order order = orderRepository.save(
                     new Order(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now()));
-            orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 1));
-            orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 2));
+            orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 1));
+            orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 2));
 
             assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(),
                     new Order(null, OrderStatus.COMPLETION.name(), LocalDateTime.now())))
@@ -189,9 +189,10 @@ class OrderServiceTest {
             Menu menu = createMenu(MENU1_NAME, MENU1_PRICE);
             OrderTable orderTable = createOrderTable(false);
 
-            Order order = orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
-            orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 1));
-            orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 2));
+            Order order = orderRepository.save(
+                    new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
+            orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 1));
+            orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 2));
 
             Order changedOrder = orderService.changeOrderStatus(order.getId(),
                     new Order(null, OrderStatus.MEAL.name(), null));

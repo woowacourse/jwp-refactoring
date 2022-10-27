@@ -5,12 +5,35 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "orders")
 public class Order {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "order_table_id", length = 20, nullable = false)
     private Long orderTableId;
+
+    @Column(name = "order_status", nullable = false)
     private String orderStatus;
+
+    @Column(name = "ordered_time", nullable = false)
     private LocalDateTime orderedTime;
+
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "order_id")
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
@@ -30,7 +53,7 @@ public class Order {
         this(null, orderTableId, orderStatus, orderedTime, Collections.emptyList());
     }
 
-    private Order() {
+    protected Order() {
     }
 
     public Long getId() {

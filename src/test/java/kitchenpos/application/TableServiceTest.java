@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
@@ -34,7 +34,7 @@ class TableServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Test
     @DisplayName("OrderTable을 생성한다.")
@@ -89,7 +89,7 @@ class TableServiceTest {
         @DisplayName("OrderTable의 주문 상태가 COMPLETION이 아닐 경우 예외가 발생한다.")
         void orderTableOrdersNotCompletionFailed(final OrderStatus orderStatus) {
             OrderTable orderTable = tableService.create(new OrderTable(10, true));
-            orderDao.save(new Order(orderTable.getId(), orderStatus.name(), LocalDateTime.now()));
+            orderRepository.save(new Order(orderTable.getId(), orderStatus.name(), LocalDateTime.now()));
 
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTable))
                     .isInstanceOf(IllegalArgumentException.class)

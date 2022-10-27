@@ -53,6 +53,6 @@ class MenuRepositoryTest {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP_NAME1));
 
         Menu menu = menuRepository.save(new Menu(MENU1_NAME, MENU1_PRICE, menuGroup.getId()));
-        assertThat(menuRepository.countByIdIn(List.of(menu.getMenuGroupId()))).isEqualTo(1);
+        assertThat(menuRepository.countByIdIn(List.of(menu.getId()))).isEqualTo(1);
     }
 }

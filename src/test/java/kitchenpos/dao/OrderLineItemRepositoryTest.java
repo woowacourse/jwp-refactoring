@@ -14,15 +14,19 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-class OrderLineItemDaoTest extends DaoTest {
+@DataJpaTest
+class OrderLineItemRepositoryTest {
 
-    private OrderLineItemDao orderLineItemDao;
-    private OrderDao orderDao;
+    @Autowired
+    private OrderLineItemRepository orderLineItemRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
@@ -36,20 +40,14 @@ class OrderLineItemDaoTest extends DaoTest {
     @Autowired
     private MenuRepository menuRepository;
 
-    @BeforeEach
-    void setUp() {
-        orderLineItemDao = new JdbcTemplateOrderLineItemDao(dataSource);
-        orderDao = new JdbcTemplateOrderDao(dataSource);
-    }
-
     @Test
     @DisplayName("OrderLineItem을 저장한다.")
     void save() {
         Menu menu = createMenu();
         Order order = createOrder();
 
-        OrderLineItem orderLineItem = orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 1));
-        assertThat(orderLineItem).isEqualTo(orderLineItemDao.findById(orderLineItem.getSeq()).orElseThrow());
+        OrderLineItem orderLineItem = orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 1));
+        assertThat(orderLineItem).isEqualTo(orderLineItemRepository.findById(orderLineItem.getSeq()).orElseThrow());
     }
 
     @Test
@@ -58,10 +56,10 @@ class OrderLineItemDaoTest extends DaoTest {
         Menu menu = createMenu();
         Order order = createOrder();
 
-        OrderLineItem orderLineItem1 = orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 1));
-        OrderLineItem orderLineItem2 = orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 2));
+        OrderLineItem orderLineItem1 = orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 1));
+        OrderLineItem orderLineItem2 = orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 2));
 
-        List<OrderLineItem> orderLineItems = orderLineItemDao.findAll();
+        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAll();
         assertThat(orderLineItems).contains(orderLineItem1, orderLineItem2);
     }
 
@@ -71,10 +69,10 @@ class OrderLineItemDaoTest extends DaoTest {
         Menu menu = createMenu();
         Order order = createOrder();
 
-        OrderLineItem orderLineItem1 = orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 1));
-        OrderLineItem orderLineItem2 = orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 2));
+        OrderLineItem orderLineItem1 = orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 1));
+        OrderLineItem orderLineItem2 = orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 2));
 
-        List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(order.getId());
+        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(order.getId());
         assertThat(orderLineItems).containsExactly(orderLineItem1, orderLineItem2);
     }
 
@@ -87,6 +85,6 @@ class OrderLineItemDaoTest extends DaoTest {
         OrderTable orderTable1 = orderTableRepository.save(new OrderTable(10, true));
         OrderTable orderTable2 = orderTableRepository.save(new OrderTable(10, true));
         tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
-        return orderDao.save(new Order(orderTable1.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
+        return orderRepository.save(new Order(orderTable1.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
     }
 }

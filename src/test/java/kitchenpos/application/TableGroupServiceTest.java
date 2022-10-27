@@ -8,13 +8,12 @@ import java.util.List;
 import kitchenpos.application.dto.request.OrderTableCommand;
 import kitchenpos.application.dto.request.TableGroupCommand;
 import kitchenpos.application.dto.response.TableGroupResponse;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.support.cleaner.ApplicationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -36,7 +35,7 @@ class TableGroupServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Nested
     @DisplayName("TableGroup을 생성할 때 ")
@@ -81,7 +80,7 @@ class TableGroupServiceTest {
                     List.of(new OrderTableCommand(orderTable1.getId()), new OrderTableCommand(orderTable2.getId())));
             TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupCommand);
 
-            orderDao.save(new Order(orderTable1.getId(), orderStatus.name(), LocalDateTime.now()));
+            orderRepository.save(new Order(orderTable1.getId(), orderStatus.name(), LocalDateTime.now()));
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.id()))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("주문 그룹을 분리할 수 없습니다.");
@@ -97,7 +96,7 @@ class TableGroupServiceTest {
                     List.of(new OrderTableCommand(orderTable1.getId()), new OrderTableCommand(orderTable2.getId())));
             TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupCommand);
 
-            orderDao.save(new Order(orderTable1.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now()));
+            orderRepository.save(new Order(orderTable1.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now()));
             tableGroupService.ungroup(tableGroupResponse.id());
 
             assertThat(orderTableRepository.findAllByTableGroupId(tableGroupResponse.id())).isEmpty();
