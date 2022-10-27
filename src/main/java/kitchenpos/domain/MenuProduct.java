@@ -6,11 +6,6 @@ public class MenuProduct {
     private Long productId;
     private long quantity;
 
-    public MenuProduct(Long productId, long quantity) {
-        this.productId = productId;
-        this.quantity = quantity;
-    }
-
     public MenuProduct(Long menuId, Long productId, long quantity) {
         this.menuId = menuId;
         this.productId = productId;

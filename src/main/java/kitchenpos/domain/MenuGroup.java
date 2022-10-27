@@ -4,9 +4,6 @@ public class MenuGroup {
     private Long id;
     private String name;
 
-    public MenuGroup() {
-    }
-
     public MenuGroup(String name) {
         validateName(name);
         this.name = name;
