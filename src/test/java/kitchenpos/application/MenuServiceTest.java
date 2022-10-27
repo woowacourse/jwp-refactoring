@@ -6,6 +6,10 @@ import static kitchenpos.fixture.MenuGroupFixture.generateMenuGroupWithId;
 import static kitchenpos.fixture.MenuProductFixture.generateMemberProduct;
 import static kitchenpos.fixture.ProductFixture.generateProduct;
 import static kitchenpos.fixture.ProductFixture.generateProductWithId;
+import static kitchenpos.fixture.ProductFixture.맛초킹;
+import static kitchenpos.fixture.ProductFixture.맛초킹_저장안됨;
+import static kitchenpos.fixture.ProductFixture.뿌링클;
+import static kitchenpos.fixture.ProductFixture.사이다;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -50,8 +54,6 @@ public class MenuServiceTest {
     @DisplayName("메뉴를 생성한다.")
     void create() {
         // given
-        Product 사이다 = generateProduct("사이다", 1000);
-        Product 뿌링클 = generateProduct("뿌링클", 19000);
         Product 사이다_1L = productDao.save(사이다);
         Product 뿌링클_2L = productDao.save(뿌링클);
 
@@ -76,8 +78,6 @@ public class MenuServiceTest {
     @DisplayName("메뉴를 생성 시 가격이 null이라면 예외를 반환한다.")
     void create_WhenNullPrice() {
         // given
-        Product 사이다 = generateProduct("사이다", 1000);
-        Product 뿌링클 = generateProduct("뿌링클", 19000);
         Product 사이다_1L = productDao.save(사이다);
         Product 뿌링클_2L = productDao.save(뿌링클);
 
@@ -100,8 +100,6 @@ public class MenuServiceTest {
     @DisplayName("메뉴를 생성 시 가격이 0보다 작다면 예외를 반환한다.")
     void create_WhenPriceUnderZero() {
         // given
-        Product 사이다 = generateProduct("사이다", 1000);
-        Product 뿌링클 = generateProduct("뿌링클", 19000);
         Product 사이다_1L = productDao.save(사이다);
         Product 뿌링클_2L = productDao.save(뿌링클);
 
@@ -124,8 +122,6 @@ public class MenuServiceTest {
     @DisplayName("메뉴 생성 시 존재하지 않는 MenuGroup이라면 예외를 반환한다.")
     void create_WhenNotExistMenuGroup() {
         // given
-        Product 사이다 = generateProduct("사이다", 1000);
-        Product 뿌링클 = generateProduct("뿌링클", 19000);
         Product 사이다_1L = productDao.save(사이다);
         Product 뿌링클_2L = productDao.save(뿌링클);
 
@@ -149,9 +145,6 @@ public class MenuServiceTest {
     @DisplayName("메뉴 생성 시 존재하지 않는 Product라면 예외를 반환한다.")
     void create_WhenNotExistProduct() {
         // given
-        Product 사이다 = generateProduct("사이다", 1000);
-        Product 뿌링클 = generateProduct("뿌링클", 19000);
-        Product 맛초킹_저장안됨 = generateProductWithId("맛초킹", 19000, -1L);
         Product 사이다_1L = productDao.save(사이다);
         Product 뿌링클_2L = productDao.save(뿌링클);
 
@@ -174,8 +167,6 @@ public class MenuServiceTest {
     @DisplayName("메뉴 생성 시 Product의 수량 * 합보다 가격이 비싸면 예외를 반환한다.")
     void create_WhenMoreThanSumPrice() {
         // given
-        Product 사이다 = generateProduct("사이다", 1000);
-        Product 뿌링클 = generateProduct("뿌링클", 19000);
         Product 사이다_1L = productDao.save(사이다);
         Product 뿌링클_2L = productDao.save(뿌링클);
 
@@ -198,8 +189,6 @@ public class MenuServiceTest {
     @DisplayName("메뉴 목록을 조회한다.")
     void list() {
         // given
-        Product 사이다 = generateProduct("사이다", 1000);
-        Product 뿌링클 = generateProduct("뿌링클", 19000);
         Product 사이다_1L = productDao.save(사이다);
         Product 뿌링클_2L = productDao.save(뿌링클);
 
@@ -212,7 +201,6 @@ public class MenuServiceTest {
         menuProducts.add(사이다_두개);
         menuProducts.add(뿌링클_한개);
 
-        Product 맛초킹 = generateProduct("맛초킹", 19000);
         Product 맛초킹_3L = productDao.save(맛초킹);
 
         List<MenuProduct> menuProducts2 = new ArrayList<>();
