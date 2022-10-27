@@ -1,8 +1,8 @@
 package kitchenpos.fixture;
 
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderTableUpdateEmptyRequest;
-import kitchenpos.dto.OrderTableUpdateNumberOfGuestsRequest;
+import kitchenpos.dto.request.OrderTableUpdateEmptyRequest;
+import kitchenpos.dto.request.OrderTableUpdateNumberOfGuestsRequest;
 
 public class TableFixture extends DomainCreator {
 
