@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Menu;
@@ -76,8 +77,7 @@ class OrderServiceTest {
     @Test
     void create_throwsException_ifMenuNotFound() {
         // given
-        final Menu unsavedMenu = new Menu();
-        unsavedMenu.setId(0L);
+        final Menu unsavedMenu = new Menu(0L, "없는 메뉴", new BigDecimal(0), 0L);
 
         // when, then
         final OrderRequest request = RequestBuilder.ofOrder(unsavedMenu, savedUnEmptyTable);

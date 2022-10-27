@@ -52,8 +52,7 @@ public class DataSupport {
     }
 
     public MenuGroup saveMenuGroup(final String name) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
+        final MenuGroup menuGroup = MenuGroup.ofNew(name);
         return menuGroupDao.save(menuGroup);
     }
 
@@ -61,10 +60,7 @@ public class DataSupport {
                          final int price,
                          final Long menuGroupId,
                          final MenuProduct... menuProducts) {
-        final Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(new BigDecimal(price));
-        menu.setMenuGroupId(menuGroupId);
+        final Menu menu = Menu.ofNew(name, new BigDecimal(price), menuGroupId);
         final Menu savedMenu = menuDao.save(menu);
 
         final List<MenuProduct> savedMenuProducts = Arrays.stream(menuProducts)
@@ -73,7 +69,8 @@ public class DataSupport {
                     return menuProductDao.save(menuProduct);
                 })
                 .collect(Collectors.toList());
-        savedMenu.setMenuProducts(savedMenuProducts);
+        savedMenu.addMenuProducts(savedMenuProducts);
+
         return savedMenu;
     }
 

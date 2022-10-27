@@ -22,15 +22,12 @@ public class MenuRequest {
     }
 
     public Menu toEntity() {
-        final Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
+        final Menu menu = Menu.ofNew(name, price, menuGroupId);
 
         final List<MenuProduct> menuProductEntities = menuProducts.stream()
                 .map(MenuProductRequest::toEntity)
                 .collect(Collectors.toList());
-        menu.setMenuProducts(menuProductEntities);
+        menu.addMenuProducts(menuProductEntities);
 
         return menu;
     }
