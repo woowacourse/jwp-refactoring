@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.request.MenuGroupCreateRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +19,7 @@ class MenuGroupServiceTest extends ServiceTest {
         final MenuGroupCreateRequest request = createMenuGroupCreateRequest(menuName);
 
         // when
-        final MenuGroup actual = menuGroupService.create(request);
+        final MenuGroupResponse actual = menuGroupService.create(request);
 
         // then
         assertAll(
@@ -35,7 +35,7 @@ class MenuGroupServiceTest extends ServiceTest {
         saveAndGetMenuGroup();
 
         // when
-        final List<MenuGroup> actual = menuGroupService.list();
+        final List<MenuGroupResponse> actual = menuGroupService.list();
 
         // then
         assertThat(actual).hasSize(1);
