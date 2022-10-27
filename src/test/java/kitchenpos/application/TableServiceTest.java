@@ -86,6 +86,23 @@ class TableServiceTest extends ServiceTest{
     }
 
     @Test
+    @DisplayName("주문 테이블이 비어있을 경우 테이블의 guest 수를 변경하면 예외가 발생한다.")
+    void changeNumberOfGuestsWithEmptyOrderTable() {
+        // given
+        final OrderTable orderTable = getOrderTable();
+        orderTable.setId(1L);
+        given(orderTableDao.findById(any())).willReturn(Optional.of(orderTable));
+
+        // when
+        final OrderTable updateOrderTable = getOrderTable();
+        updateOrderTable.setNumberOfGuests(10);
+
+        // then
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), updateOrderTable))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     @DisplayName("테이블의 손님 수를 0으로 바꾼다.")
     void changeNumberOfGuestsZero() {
         // given
