@@ -1,6 +1,6 @@
 package kitchenpos.domain;
 
-import static kitchenpos.OrderFixtures.*;
+import static kitchenpos.OrderFixtures.createOrder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -14,36 +14,18 @@ class OrderTest {
     @Test
     void constructOrder() {
         // given
-        long orderTableId = 1L;
         String orderStatus = OrderStatus.COOKING.name();
         LocalDateTime orderedTime = LocalDateTime.now();
         List<OrderLineItem> orderLineItems = List.of();
         // when
-        Order order = new Order(orderTableId, orderStatus, orderedTime, orderLineItems);
+        Order order = new Order(
+                OrderTableFixtures.createOrderTable(1L, null, 2, false),
+                orderStatus,
+                orderedTime,
+                orderLineItems
+        );
         // then
         assertThat(order).isNotNull();
-    }
-
-    @Test
-    void changeOrderTable() {
-        // given
-        Order order = createOrder();
-        long orderTableId = 10L;
-        OrderTable orderTable = OrderTableFixtures.createOrderTable(orderTableId, null, 2, false);
-        // when
-        order.changeTable(orderTable);
-        // then
-        assertThat(order.getOrderTableId()).isEqualTo(orderTableId);
-    }
-
-    @Test
-    void changeOrderTableWithEmptyOrderTable() {
-        // given
-        Order order = createOrder();
-        OrderTable orderTable = OrderTableFixtures.createOrderTable();
-        // when
-        assertThatThrownBy(() -> order.changeTable(orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

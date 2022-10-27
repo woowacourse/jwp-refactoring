@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderTable;
 
 public class OrderRequest {
 
@@ -22,9 +23,9 @@ public class OrderRequest {
         this.orderLineItemRequests = orderLineItemRequests;
     }
 
-    public Order toOrder(String orderStatus, LocalDateTime now) {
+    public Order toOrder(OrderTable orderTable, String orderStatus, LocalDateTime now) {
         return new Order(
-                orderTableId,
+                orderTable,
                 orderStatus,
                 now,
                 orderLineItemRequests.stream()

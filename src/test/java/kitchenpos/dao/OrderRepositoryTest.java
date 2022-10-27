@@ -5,8 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.OrderFixtures;
+import kitchenpos.OrderTableFixtures;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.support.RepositoryTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +27,7 @@ class OrderRepositoryTest {
     @Test
     void save() {
         // given
-        Order order = new Order(1L, "COOKING", LocalDateTime.now(), List.of(new OrderLineItem(null, 1L, 2)));
+        Order order = OrderFixtures.createOrder();
         // when
         Order savedOrder = orderRepository.save(order);
         // then
@@ -34,7 +37,7 @@ class OrderRepositoryTest {
     @Test
     void findById() {
         // given
-        Order order = new Order(1L, "COOKING", LocalDateTime.now(), List.of(new OrderLineItem(null, 1L, 2)));
+        Order order = OrderFixtures.createOrder();
         Order savedOrder = orderRepository.save(order);
 
         // when
@@ -47,7 +50,7 @@ class OrderRepositoryTest {
     @Test
     void findAll() {
         // given
-        Order order = new Order(1L, "COOKING", LocalDateTime.now(), List.of(new OrderLineItem(null, 1L, 2)));
+        Order order = OrderFixtures.createOrder();
         orderRepository.save(order);
 
         // when
@@ -60,12 +63,10 @@ class OrderRepositoryTest {
     @Test
     void existsByOrderTableIdAndOrderStatusIn() {
         // given
-        long orderTableId = 1L;
-        String orderStatus = "COOKING";
-
-        Order order = new Order(orderTableId, orderStatus, LocalDateTime.now(),
-                List.of(new OrderLineItem(null, 1L, 2)));
+        Order order = OrderFixtures.createOrder();
         orderRepository.save(order);
+        long orderTableId = order.getOrderTable().getId();
+        String orderStatus = "COOKING";
 
         // when
         boolean exists = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(orderStatus));
@@ -77,21 +78,17 @@ class OrderRepositoryTest {
     @Test
     void existsByOrderTableIdInAndOrderStatusIn() {
         // given
-        long orderTableIdA = 1L;
-        String orderStatusA = "COOKING";
-        long orderTableIdB = 1L;
-        String orderStatusB = "MEAL";
+        OrderTable orderTableA = OrderTableFixtures.createOrderTable(1L, null, 2, false);
+        OrderTable orderTableB = OrderTableFixtures.createOrderTable(2L, null, 4, false);
+        Order orderA = OrderFixtures.createOrder(orderTableA);
+        Order orderB = OrderFixtures.createOrder(orderTableB);
 
-        Order orderA = new Order(orderTableIdA, orderStatusA, LocalDateTime.now(),
-                List.of(new OrderLineItem(null, 1L, 2)));
-        Order orderB = new Order(orderTableIdB, orderStatusB, LocalDateTime.now(),
-                List.of(new OrderLineItem(null, 1L, 2)));
         orderRepository.save(orderA);
         orderRepository.save(orderB);
 
         // when
         boolean exists = orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                List.of(orderTableIdA, orderTableIdB), List.of(orderStatusA)
+                List.of(orderTableA.getId(), orderTableB.getId()), List.of(orderA.getOrderStatus())
         );
 
         // then

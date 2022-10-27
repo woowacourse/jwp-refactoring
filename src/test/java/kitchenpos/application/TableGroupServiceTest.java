@@ -112,9 +112,9 @@ class TableGroupServiceTest {
         // given
         TableGroup savedTableGroup = tableGroupRepository.save(createTableGroup());
         int any = 0;
-        Long orderTableId = savedTableGroup.getOrderTables().get(any).getId();
+        OrderTable orderTable = savedTableGroup.getOrderTables().get(any);
 
-        Order order = new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), null);
+        Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), null);
         orderRepository.save(order);
 
         // when & then

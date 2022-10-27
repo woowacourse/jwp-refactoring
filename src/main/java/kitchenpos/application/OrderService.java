@@ -40,7 +40,9 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderRequest request) {
-        Order order = request.toOrder(OrderStatus.COOKING.name(), LocalDateTime.now());
+        OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
+                .orElseThrow(IllegalArgumentException::new);
+        Order order = request.toOrder(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
 
         List<OrderLineItemRequest> itemRequests = request.getOrderLineItemRequests();
         if (CollectionUtils.isEmpty(itemRequests)) {
@@ -51,9 +53,9 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-        order.changeTable(orderTable);
+//        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
+//                .orElseThrow(IllegalArgumentException::new);
+//        order.changeTable(orderTable);
 
         return OrderResponse.from(orderRepository.save(order));
     }

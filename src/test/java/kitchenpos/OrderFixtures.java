@@ -10,6 +10,7 @@ import kitchenpos.application.dto.request.OrderStatusChangeRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 
 public class OrderFixtures {
 
@@ -20,8 +21,16 @@ public class OrderFixtures {
         return createOrder(OrderStatus.COOKING.name());
     }
 
+    public static Order createOrder(OrderTable orderTable) {
+        return createOrder(orderTable, OrderStatus.COOKING.name());
+    }
+
     public static Order createOrder(String orderStatus) {
-        return new Order(1L, orderStatus, LocalDateTime.now(), List.of(new OrderLineItem(null, 1L, 2)));
+        return createOrder(OrderTableFixtures.createOrderTable(1L, null, 2, false), orderStatus);
+    }
+
+    public static Order createOrder(OrderTable orderTable, String orderStatus) {
+        return new Order(orderTable, orderStatus, LocalDateTime.now(), List.of(new OrderLineItem(null, 1L, 2)));
     }
 
     public static OrderResponse createOrderResponse() {

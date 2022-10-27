@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.OrderFixtures;
 import kitchenpos.TableGroupFixtures;
 import kitchenpos.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
@@ -85,11 +86,10 @@ class TableServiceTest {
     @Test
     void changeEmptyWithCookingStatus() {
         // given
-        long orderTableId = 1L;
-        Order order = new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), null);
+        Order order = OrderFixtures.createOrder();
         orderRepository.save(order);
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, false))
+        assertThatThrownBy(() -> tableService.changeEmpty(order.getOrderTable().getId(), false))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
