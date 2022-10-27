@@ -1,0 +1,17 @@
+package kitchenpos.ui.dto.request;
+
+public class ChangeOrderStatusRequest {
+
+    private String orderStatus;
+
+    private ChangeOrderStatusRequest() {
+    }
+
+    public ChangeOrderStatusRequest(String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+}
