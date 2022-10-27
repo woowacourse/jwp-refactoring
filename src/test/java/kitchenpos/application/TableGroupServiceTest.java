@@ -11,7 +11,9 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.request.TableGroupCreateRequest;
+import kitchenpos.ui.dto.response.OrderTableResponse;
+import kitchenpos.ui.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -31,15 +33,15 @@ class TableGroupServiceTest extends ServiceTest {
             final OrderTable orderTable1 = saveOrderTable(1, true);
             final OrderTable orderTable2 = saveOrderTable(2, true);
 
-            final TableGroup expected = new TableGroup();
-            expected.setOrderTables(List.of(orderTable1, orderTable2));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(orderTable1.getId(), orderTable2.getId()));
 
             // when
-            final TableGroup actual = tableGroupService.create(expected);
+            final TableGroupResponse actual = tableGroupService.create(request);
 
             // then
-            assertThat(actual.getOrderTables()).extracting(OrderTable::getTableGroupId, OrderTable::isEmpty,
-                            OrderTable::getId)
+            assertThat(actual.getOrderTables()).extracting(OrderTableResponse::getTableGroupId,
+                            OrderTableResponse::isEmpty, OrderTableResponse::getId)
                     .containsExactly(
                             tuple(actual.getId(), false, orderTable1.getId()),
                             tuple(actual.getId(), false, orderTable2.getId())
@@ -51,12 +53,10 @@ class TableGroupServiceTest extends ServiceTest {
         void create_orderTableLessThenTwo_success() {
             // given
             final OrderTable orderTable = saveOrderTable(1, true);
-
-            final TableGroup expected = new TableGroup();
-            expected.setOrderTables(List.of(orderTable));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(orderTable.getId()));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(expected))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -64,15 +64,11 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("모든 주문 테이블이 존재해야 한다.")
         void create_notExistOrderTable_success() {
             // given
-            final OrderTable orderTable1 = saveOrderTable(1, true);
-            final OrderTable orderTable2 = saveOrderTable(2, true);
-            orderTable2.setId(999L);
-
-            final TableGroup expected = new TableGroup();
-            expected.setOrderTables(List.of(orderTable1, orderTable2));
+            final OrderTable orderTable = saveOrderTable(1, true);
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(orderTable.getId(), 999L));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(expected))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -83,11 +79,11 @@ class TableGroupServiceTest extends ServiceTest {
             final OrderTable orderTable1 = saveOrderTable(1, true);
             final OrderTable orderTable2 = saveOrderTable(2, false);
 
-            final TableGroup expected = new TableGroup();
-            expected.setOrderTables(List.of(orderTable1, orderTable2));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(orderTable1.getId(), orderTable2.getId()));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(expected))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -101,11 +97,11 @@ class TableGroupServiceTest extends ServiceTest {
 
             saveTableGroup(orderTable2, orderTable3);
 
-            final TableGroup expected = new TableGroup();
-            expected.setOrderTables(List.of(orderTable1, orderTable2));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(orderTable1.getId(), orderTable2.getId()));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(expected))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
