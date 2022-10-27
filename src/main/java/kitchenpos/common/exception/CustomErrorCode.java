@@ -12,6 +12,8 @@ public enum CustomErrorCode {
 
     MENU_GROUP_NOT_FOUND_ERROR("존재하지 않는 메뉴 그룹입니다."),
 
+    REQUEST_PROPERTY_INVALID_ERROR("잘못된 요청 정보입니다."),
+
     APPLICATION_ERROR("처리하지 못한 에러입니다.")
     ;
 
@@ -19,5 +21,9 @@ public enum CustomErrorCode {
 
     CustomErrorCode(final String message) {
         this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }

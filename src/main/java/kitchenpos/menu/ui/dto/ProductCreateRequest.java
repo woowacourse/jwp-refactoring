@@ -13,7 +13,7 @@ public class ProductCreateRequest {
     @NotNull
     private Integer price;
 
-    public ProductCreateRequest() {
+    private ProductCreateRequest() {
     }
 
     public ProductCreateRequest(final String name, final Integer price) {
