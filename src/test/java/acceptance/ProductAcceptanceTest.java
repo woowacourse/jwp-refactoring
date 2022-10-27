@@ -15,7 +15,8 @@ import common.AcceptanceTest;
 import io.restassured.RestAssured;
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.ui.request.ProductRequest;
+import kitchenpos.ui.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -26,11 +27,11 @@ class ProductAcceptanceTest extends AcceptanceTest {
     @Test
     void findProducts() {
         // act
-        List<Product> products = getProducts();
+        List<ProductResponse> products = getProducts();
 
         // assert
         assertThat(products)
-                .extracting(Product::getId, Product::getName, p -> p.getPrice().intValueExact())
+                .extracting(ProductResponse::getId, ProductResponse::getName, p -> p.getPrice().intValueExact())
                 .hasSize(6)
                 .containsExactlyInAnyOrder(
                         tuple(후라이드_상품.id(), 후라이드_상품.이름(), 후라이드_상품.가격()),
@@ -46,42 +47,40 @@ class ProductAcceptanceTest extends AcceptanceTest {
     @Test
     void saveProduct() {
         // arrange
-        Product product = createProduct("옛날치킨", 10000);
+        ProductResponse product = createProduct("옛날치킨", 10000);
 
         // act
-        List<Product> products = getProducts();
+        List<ProductResponse> products = getProducts();
 
         // assert
         assertThat(products)
-                .extracting(Product::getId, Product::getName, p -> p.getPrice().intValueExact())
+                .extracting(ProductResponse::getId, ProductResponse::getName, p -> p.getPrice().intValueExact())
                 .hasSize(7)
                 .contains(
                         tuple(product.getId(), product.getName(), product.getPrice().intValueExact())
                 );
     }
 
-    private Product createProduct(final String name, final int price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
+    private ProductResponse createProduct(final String name, final int price) {
+        ProductRequest productRequest = new ProductRequest(name, BigDecimal.valueOf(price));
 
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(product)
+                .body(productRequest)
                 .when().log().all()
                 .post("/api/products")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract()
-                .as(Product.class);
+                .as(ProductResponse.class);
     }
 
-    private List<Product> getProducts() {
+    private List<ProductResponse> getProducts() {
         return RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/products")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .extract().body().jsonPath().getList(".", Product.class);
+                .extract().body().jsonPath().getList(".", ProductResponse.class);
     }
 }
