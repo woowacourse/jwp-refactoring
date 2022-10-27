@@ -34,6 +34,18 @@ public class Order {
         this.orderLineItems.addAll(Arrays.asList(orderLineItems));
     }
 
+    public void changeAllOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        this.orderLineItems = new ArrayList<>(orderLineItems);
+    }
+
+    public boolean isCompletionOrder() {
+        return orderStatus.equals(OrderStatus.COMPLETION.name());
+    }
+
+    public void changeOrderStatus(final String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
     public Long getId() {
         return id;
     }
@@ -60,9 +72,5 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 }

@@ -4,41 +4,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
-@Sql("/schema.sql")
-class MenuGroupServiceTest {
-
-    @Autowired
-    private MenuGroupService menuGroupService;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
+class MenuGroupServiceTest extends ServiceTest {
     @Test
     @DisplayName("메뉴 그룹을 생성한다")
     void create() {
-        final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
-        final MenuGroup createMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroup menuGroup = saveAndGetMenuGroup(1L);
 
-        assertThat(createMenuGroup.getName())
-                .isEqualTo("메뉴 그룹");
+        final MenuGroup actual = menuGroupService.create(menuGroup);
+
+        assertThat(actual.getName()).isEqualTo("애기메뉴목록");
     }
 
     @Test
     @DisplayName("메뉴 그룹 전체를 조회한다")
     void list() {
-        final MenuGroup menuGroup = new MenuGroup(1L, "메뉴그룹");
-        menuGroupDao.save(menuGroup);
+        saveAndGetMenuGroup(1L);
 
         final List<MenuGroup> actual = menuGroupService.list();
 

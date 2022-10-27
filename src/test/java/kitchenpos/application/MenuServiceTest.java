@@ -7,102 +7,66 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
-@Sql("/schema.sql")
-class MenuServiceTest {
-
-    @Autowired
-    private MenuService menuService;
-
-    @Autowired
-    private MenuDao menuDao;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private ProductDao productDao;
-
-    private List<MenuProduct> menuProducts;
-    private MenuProduct menuProduct;
-    private Menu menu;
-
-    @BeforeEach
-    void setUp() {
-        final Product product = new Product(1L, "피자", BigDecimal.valueOf(20_000L));
-        productDao.save(product);
-
-        menuProducts = new ArrayList<>();
-        menuProduct = new MenuProduct(1L, 1L, 1L, 5);
-        menuProducts.add(menuProduct);
-
-        menu = new Menu(1L, "애기메뉴", BigDecimal.valueOf(20_000L), 1L, new ArrayList<>());
-
-        final MenuGroup menuGroup = new MenuGroup(1L, "애기메뉴들");
-        menuGroupDao.save(menuGroup);
-    }
-
+class MenuServiceTest extends ServiceTest {
     @Test
     @DisplayName("메뉴를 생성한다")
     void create() {
-        menuProducts.add(menuProduct);
-        menu.setMenuProducts(menuProducts);
-        final Menu createMenu = menuService.create("애기메뉴", BigDecimal.valueOf(2_000L), 1L, menuProducts);
+        saveAndGetProduct(1L);
+        final Menu menu = saveAndGetMenu(1L);
+        menu.addMenuProduct(saveAndGetMenuProduct(1L, 1L, 1L));
 
-        assertThat(createMenu.getName())
-                .isEqualTo("애기메뉴");
+        final Menu actual =
+                menuService.create(menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menu.getMenuProducts());
+
+        assertThat(actual.getName()).isEqualTo("피자세트메뉴");
     }
 
     @Test
     @DisplayName("메뉴 가격이 0 미만이면 예외를 반환한다")
     void create_priceException() {
-        assertThatThrownBy(() -> menu.changePrice(BigDecimal.valueOf(-1L)))
+        saveAndGetProduct(1L);
+        final Menu menu = saveAndGetMenu(1L);
+        menu.addMenuProduct(saveAndGetMenuProduct(1L, 1L, 1L));
+
+        assertThatThrownBy(() -> menuService.create(
+                menu.getName(), BigDecimal.valueOf(-1L), menu.getMenuGroupId(), menu.getMenuProducts())
+        )
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("메뉴 가격이 상품 가격의 합보다 크면 예외를 반환한다")
     void create_priceExpensiveException() {
-        menu.changePrice(BigDecimal.valueOf(999999999L));
-        menuProducts.add(menuProduct);
-        menu.setMenuProducts(menuProducts);
+        final Menu actual = createMenuRequest(BigDecimal.valueOf(999999999L), 1L);
 
-        assertThatThrownBy(() -> menuService.create("애기메뉴", BigDecimal.valueOf(20_000L), 1L, new ArrayList<>()))
+        assertThatThrownBy(() -> menuService.create(
+                actual.getName(), actual.getPrice(), actual.getMenuGroupId(), actual.getMenuProducts())
+        )
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("메뉴에 포함된 상품이 존재하지 않는 상품이면 예외를 반환한다")
     void create_notExistProductException() {
-        menu.setMenuGroupId(1000L);
-        menu.changePrice(BigDecimal.valueOf(999999999L));
-        menuProducts.add(menuProduct);
-        menu.setMenuProducts(menuProducts);
+        final Menu actual = createMenuRequestNotExistProduct(BigDecimal.valueOf(15_000L), 1L);
 
-        assertThatThrownBy(() -> menuService.create("애기메뉴", BigDecimal.valueOf(20_000L), 1L, new ArrayList<>()))
+        assertThatThrownBy(() -> menuService.create(
+                actual.getName(), actual.getPrice(), actual.getMenuGroupId(), actual.getMenuProducts())
+        )
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("메뉴 전체를 조회한다")
     void list() {
-        menuDao.save(menu);
+        saveAndGetMenu(1L);
 
         final List<Menu> actual = menuService.list();
 
@@ -112,5 +76,26 @@ class MenuServiceTest {
                         .extracting("id")
                         .containsExactly(1L)
         );
+    }
+
+    private Menu createMenuRequest(final BigDecimal price, final Long menuId) {
+        final MenuGroup menuGroup = saveAndGetMenuGroup(1L);
+        final Menu menu = new Menu(menuId, "치킨메뉴", price, menuGroup.getId(), new ArrayList<>());
+
+        final Product product = saveAndGetProduct(1L);
+        final MenuProduct menuProduct = saveAndGetMenuProduct(1L, menu.getId(), product.getId());
+        menu.addMenuProduct(menuProduct);
+
+        return menuDao.save(menu);
+    }
+
+    private Menu createMenuRequestNotExistProduct(final BigDecimal price, final Long menuId) {
+        final MenuGroup menuGroup = saveAndGetMenuGroup(1L);
+        final Menu menu = new Menu(menuId, "치킨메뉴", price, menuGroup.getId(), new ArrayList<>());
+
+        final MenuProduct menuProduct = saveAndGetMenuProduct(1L, menu.getId(), 999999999L);
+        menu.addMenuProduct(menuProduct);
+
+        return menuDao.save(menu);
     }
 }
