@@ -1,17 +1,20 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuFactory.MENU_QUANTITY;
+import static kitchenpos.fixture.MenuFactory.menu;
 import static kitchenpos.fixture.ProductFactory.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -41,19 +44,19 @@ class MenuServiceTest {
         private final Product pizza = productDao.save(product("피자", 10_000));
         private final Product coke = productDao.save(product("콜라", 1_000));
 
-        private final MenuProduct pizzaInMenu = new MenuProduct(pizza.getId(), 1);
-        private final MenuProduct cokeInMenu = new MenuProduct(coke.getId(), 1);
-
         private final MenuGroup italian = menuGroupDao.save(new MenuGroup("양식"));
 
         @DisplayName("메뉴를 등록하고, 등록된 메뉴를 반환한다")
         @Test
         void saveMenu() {
-            final var menu = new Menu("피자와 콜라", new BigDecimal(10_500), italian.getId(),
-                    List.of(pizzaInMenu, cokeInMenu));
+            final var menu = menu("피자와 콜라", italian, List.of(pizza, coke));
             final var result = menuService.create(menu);
 
-            assertThat(result).isEqualTo(menu);
+            assertAll(
+                    () -> assertThat(result.getName()).isEqualTo(menu.getName()),
+                    () -> assertThat(result.getMenuGroupId()).isEqualTo(menu.getMenuGroupId()),
+                    () -> assertThat(result.getPrice().compareTo(menu.getPrice())).isEqualTo(0)
+            );
         }
 
         @DisplayName("가격이 null이면")
@@ -65,8 +68,7 @@ class MenuServiceTest {
             @DisplayName("예외를 던진다")
             @Test
             void throwsException() {
-                final var invalidMenu = new Menu("피자와 콜라", invalidPrice, italian.getId(),
-                        List.of(pizzaInMenu, cokeInMenu));
+                final var invalidMenu = menu("피자와 콜라", invalidPrice, italian, List.of(pizza, coke));
 
                 assertThatThrownBy(
                         () -> menuService.create(invalidMenu)
@@ -83,8 +85,7 @@ class MenuServiceTest {
             @DisplayName("예외를 던진다")
             @Test
             void throwsException() {
-                final var invalidMenu = new Menu("피자와 콜라", invalidPrice, italian.getId(),
-                        List.of(pizzaInMenu, cokeInMenu));
+                final var invalidMenu = menu("피자와 콜라", invalidPrice, italian, List.of(pizza, coke));
 
                 assertThatThrownBy(
                         () -> menuService.create(invalidMenu)
@@ -96,10 +97,8 @@ class MenuServiceTest {
         @Nested
         class priceOverTotalOfMenuProducts {
 
-            private final BigDecimal pizzaTotalPrice = pizza.getPrice()
-                    .multiply(new BigDecimal(pizzaInMenu.getQuantity()));
-            private final BigDecimal cokeTotalPrice = coke.getPrice()
-                    .multiply(new BigDecimal(cokeInMenu.getQuantity()));
+            private final BigDecimal pizzaTotalPrice = pizza.getPrice().multiply(new BigDecimal(MENU_QUANTITY));
+            private final BigDecimal cokeTotalPrice = coke.getPrice().multiply(new BigDecimal(MENU_QUANTITY));
 
             private final BigDecimal invalidPrice = pizzaTotalPrice.add(cokeTotalPrice)
                     .add(new BigDecimal(1));
@@ -107,8 +106,7 @@ class MenuServiceTest {
             @DisplayName("에외를 던진다")
             @Test
             void throwsException() {
-                final var invalidMenu = new Menu("피자와 콜라", invalidPrice, italian.getId(),
-                        List.of(pizzaInMenu, cokeInMenu));
+                final var invalidMenu = menu("피자와 콜라", invalidPrice, italian, List.of(pizza, coke));
 
                 assertThatThrownBy(
                         () -> menuService.create(invalidMenu)
@@ -125,8 +123,8 @@ class MenuServiceTest {
             @DisplayName("예외를 던진다")
             @Test
             void throwsException() {
-                final var menu = new Menu("피자와 콜라", new BigDecimal(10_500), notExistMenuGroupId,
-                        List.of(pizzaInMenu, cokeInMenu));
+                final var menu = menu("피자와 콜라", italian, List.of(pizza, coke));
+                menu.setMenuGroupId(notExistMenuGroupId);
 
                 assertThatThrownBy(
                         () -> menuService.create(menu)
@@ -143,26 +141,33 @@ class MenuServiceTest {
         private final Product pasta = productDao.save(product("파스타", 9_000));
         private final Product coke = productDao.save(product("콜라", 1_000));
 
-        private final MenuProduct pizzaInMenu = new MenuProduct(pizza.getId(), 1);
-        private final MenuProduct pastaInMenu = new MenuProduct(pasta.getId(), 1);
-        private final MenuProduct cokeInPizzaMenu = new MenuProduct(coke.getId(), 1);
-        private final MenuProduct cokeInPastaMenu = new MenuProduct(coke.getId(), 1);
-
         private final MenuGroup italian = menuGroupDao.save(new MenuGroup("양식"));
 
         @DisplayName("등록된 모든 메뉴를 조회한다")
         @Test
         void findAllMenus() {
-            final var pizzaAndCoke = new Menu("피자와 콜라", new BigDecimal(10_500), italian.getId(),
-                    List.of(pizzaInMenu, cokeInPizzaMenu));
-            final var pastaAndCoke = new Menu("파스타와 콜라", new BigDecimal(9_500), italian.getId(),
-                    List.of(pastaInMenu, cokeInPastaMenu));
+            final var pizzaAndCoke = menu("피자와 콜라", italian, List.of(pizza, coke));
+            final var pastaAndCoke = menu("파스타와 콜라", italian, List.of(pasta, coke));
 
             menuService.create(pizzaAndCoke);
             menuService.create(pastaAndCoke);
 
             final var result = menuService.list();
-            assertThat(result).contains(pizzaAndCoke, pastaAndCoke);
+            final var foundPizzaAndCokeMenu = findMenuInList(result, pizzaAndCoke);
+            final var foundPastaAndCokeMenu = findMenuInList(result, pastaAndCoke);
+
+            assertAll(
+                    () -> assertThat(foundPizzaAndCokeMenu).isPresent(),
+                    () -> assertThat(foundPastaAndCokeMenu).isPresent()
+            );
+        }
+
+        private Optional<Menu> findMenuInList(final List<Menu> result, final Menu target) {
+            return result.stream()
+                    .filter(menu -> menu.getName().equals(target.getName())
+                            && menu.getMenuGroupId().equals(target.getMenuGroupId())
+                            && menu.getPrice().compareTo(target.getPrice()) == 0)
+                    .findAny();
         }
     }
 

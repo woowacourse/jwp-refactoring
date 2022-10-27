@@ -1,20 +1,18 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuFactory.menu;
 import static kitchenpos.fixture.ProductFactory.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -50,14 +48,10 @@ class OrderServiceTest {
         final var pizza = productDao.save(product("피자", 10_000));
         final var coke = productDao.save(product("콜라", 1_000));
 
-        final var pizzaInMenu = new MenuProduct(pizza.getId(), 1);
-        final var cokeInMenu = new MenuProduct(coke.getId(), 2);
-
         final var italian = menuGroupDao.save(new MenuGroup("양식"));
-        final var pizzaMenu = menuDao.save(
-                new Menu("싼 피자", new BigDecimal(9_000), italian.getId(), List.of(pizzaInMenu)));
-        final var cokeMenu = menuDao.save(
-                new Menu("싼 콜라", new BigDecimal(900), italian.getId(), List.of(cokeInMenu)));
+
+        final var pizzaMenu = menuDao.save(menu("피자파티", italian, List.of(pizza)));
+        final var cokeMenu = menuDao.save(menu("콜라파티", italian, List.of(coke)));
 
         final var pizzaOrderItem = new OrderLineItem(pizzaMenu.getId(), 2);
         final var cokeOrderItem = new OrderLineItem(cokeMenu.getId(), 2);
@@ -86,11 +80,8 @@ class OrderServiceTest {
     @Test
     void create_duplicatedMenuInOrderLineItems_throwsException() {
         final var pizza = productDao.save(product("피자", 10_000));
-        final var pizzaInMenu = new MenuProduct(pizza.getId(), 1);
-
         final var italian = menuGroupDao.save(new MenuGroup("양식"));
-        final var pizzaMenu = menuDao.save(
-                new Menu("싼 피자", new BigDecimal(9_000), italian.getId(), List.of(pizzaInMenu)));
+        final var pizzaMenu = menuDao.save(menu("피자파티", italian, List.of(pizza)));
 
         final var onePizzaOrderItem = new OrderLineItem(pizzaMenu.getId(), 1);
         final var twoPizzasOrderItem = new OrderLineItem(pizzaMenu.getId(), 2);
@@ -108,11 +99,8 @@ class OrderServiceTest {
     @Test
     void create_orderTableIsEmptyTrue_throwsException() {
         final var pizza = productDao.save(product("피자", 10_000));
-        final var pizzaInMenu = new MenuProduct(pizza.getId(), 1);
-
         final var italian = menuGroupDao.save(new MenuGroup("양식"));
-        final var pizzaMenu = menuDao.save(
-                new Menu("싼 피자", new BigDecimal(9_000), italian.getId(), List.of(pizzaInMenu)));
+        final var pizzaMenu = menuDao.save(menu("피자파티", italian, List.of(pizza)));
 
         final var orderItem = new OrderLineItem(pizzaMenu.getId(), 1);
 
@@ -131,11 +119,8 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus() {
         final var pizza = productDao.save(product("피자", 10_000));
-        final var pizzaInMenu = new MenuProduct(pizza.getId(), 1);
-
         final var italian = menuGroupDao.save(new MenuGroup("양식"));
-        final var pizzaMenu = menuDao.save(
-                new Menu("싼 피자", new BigDecimal(9_000), italian.getId(), List.of(pizzaInMenu)));
+        final var pizzaMenu = menuDao.save(menu("피자파티", italian, List.of(pizza)));
 
         final var orderItem = new OrderLineItem(pizzaMenu.getId(), 1);
 
@@ -156,11 +141,8 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus_orderStatusIsCompletion_throwsException() {
         final var pizza = productDao.save(product("피자", 10_000));
-        final var pizzaInMenu = new MenuProduct(pizza.getId(), 1);
-
         final var italian = menuGroupDao.save(new MenuGroup("양식"));
-        final var pizzaMenu = menuDao.save(
-                new Menu("싼 피자", new BigDecimal(9_000), italian.getId(), List.of(pizzaInMenu)));
+        final var pizzaMenu = menuDao.save(menu("피자파티", italian, List.of(pizza)));
 
         final var orderItem = new OrderLineItem(pizzaMenu.getId(), 1);
 

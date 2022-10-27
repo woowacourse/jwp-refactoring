@@ -1,20 +1,18 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuFactory.menu;
 import static kitchenpos.fixture.ProductFactory.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -76,11 +74,8 @@ class TableServiceTest {
     void changeEmpty_orderStatusIsNotCompletion_throwsException() {
 
         final var pizza = productDao.save(product("피자", 10_000));
-        final var pizzaInMenu = new MenuProduct(pizza.getId(), 1);
-
         final var italian = menuGroupDao.save(new MenuGroup("양식"));
-        final var pizzaMenu = menuDao.save(
-                new Menu("싼 피자", new BigDecimal(9_000), italian.getId(), List.of(pizzaInMenu)));
+        final var pizzaMenu = menuDao.save(menu("피자파티", italian, List.of(pizza)));
 
         final var orderItem = new OrderLineItem(pizzaMenu.getId(), 1);
 
