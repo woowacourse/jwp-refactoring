@@ -2,6 +2,7 @@ package kitchenpos;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderTable;
@@ -16,12 +17,8 @@ public class DomainFixtures {
         return new Product("맛있는 라면", new BigDecimal(1300));
     }
 
-    public static Menu 라면_메뉴() {
-        Menu menu = new Menu();
-        menu.setName("라면");
-        menu.setPrice(new BigDecimal(1200));
-        menu.setMenuProducts(new ArrayList<>());
-        return menu;
+    public static MenuRequest 라면_메뉴() {
+        return new MenuRequest("라면", new BigDecimal(1200), 1L, new ArrayList<>());
     }
 
     public static MenuGroup 면_메뉴_그룹() {

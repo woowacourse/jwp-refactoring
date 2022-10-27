@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -36,11 +37,11 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         MenuGroup 메뉴_그룹 = testRestTemplate.postForObject("http://localhost:" + port + "/api/menu-groups",
                 면_메뉴_그룹(), MenuGroup.class);
 
-        MenuProduct menuProduct = new MenuProduct(null, 라면_제품.getId(), 1);
+        MenuProduct menuProduct = new MenuProduct(null, 라면_제품, 1);
         List<MenuProduct> 메뉴_그룹들 = new ArrayList<>();
         메뉴_그룹들.add(menuProduct);
 
-        Menu 라면_메뉴 = 라면_메뉴();
+        MenuRequest 라면_메뉴 = 라면_메뉴();
         라면_메뉴.setMenuGroupId(메뉴_그룹.getId());
         라면_메뉴.setMenuProducts(메뉴_그룹들);
 

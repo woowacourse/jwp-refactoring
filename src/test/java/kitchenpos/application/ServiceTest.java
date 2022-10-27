@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -40,10 +40,10 @@ public class ServiceTest {
 
     protected Menu 메뉴를_생성한다(String name) {
         Product product = productService.create(new Product("맛있는 라면", new BigDecimal(1300)));
-        List<MenuProduct> menuProducts = Arrays.asList(new MenuProduct(null, product.getId(), 1));
+        List<MenuProduct> menuProducts = Arrays.asList(new MenuProduct(null, product, 1));
 
         MenuGroup menuGroup = menuGroupService.create(new MenuGroup("면"));
-        Menu ramen = menuService.create(new Menu(name, new BigDecimal(1200), menuGroup.getId(), menuProducts));
+        Menu ramen = menuService.create(new MenuRequest(name, new BigDecimal(1200), menuGroup.getId(), menuProducts));
         menuProducts.get(0).setMenuId(ramen.getId());
 
         return ramen;

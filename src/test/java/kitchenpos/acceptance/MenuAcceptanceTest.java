@@ -5,10 +5,10 @@ import static kitchenpos.DomainFixtures.맛있는_라면;
 import static kitchenpos.DomainFixtures.면_메뉴_그룹;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -20,7 +20,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
 
     private Product 라면_제품;
     private MenuGroup 메뉴_그룹;
-    private Menu 라면_메뉴;
+    private MenuRequest 라면_메뉴;
 
     @BeforeEach
     void setData() {
@@ -30,9 +30,8 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         메뉴_그룹 = testRestTemplate.postForObject("http://localhost:" + port + "/api/menu-groups",
                 면_메뉴_그룹(), MenuGroup.class);
 
-        MenuProduct menuProduct = new MenuProduct(null, 라면_제품.getId(), 1);
-        List<MenuProduct> 메뉴_그룹들 = new ArrayList<>();
-        메뉴_그룹들.add(menuProduct);
+        MenuProduct menuProduct = new MenuProduct(null, 라면_제품, 1);
+        List<MenuProduct> 메뉴_그룹들 = Arrays.asList(menuProduct);
 
         라면_메뉴 = 라면_메뉴();
         라면_메뉴.setMenuGroupId(메뉴_그룹.getId());
