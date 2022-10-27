@@ -8,6 +8,9 @@ public class Product {
     private String name;
     private BigDecimal price;
 
+    protected Product() {
+    }
+
     public Product(final String name, final BigDecimal price) {
         this(null, name, price);
     }
