@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuGroupFactory.createMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -25,8 +26,7 @@ class MenuGroupServiceTest {
     @DisplayName("MenuGroup을 생성한다")
     void delegateSaveAndReturnSavedEntity() {
         // given
-        MenuGroup expected = new MenuGroup();
-        expected.setName("추천메뉴");
+        MenuGroup expected = createMenuGroup();
 
         // when
         MenuGroup actual = sut.create(expected);

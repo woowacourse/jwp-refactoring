@@ -1,5 +1,6 @@
 package kitchenpos.dao;
 
+import static kitchenpos.fixture.MenuGroupFactory.createMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -29,8 +30,7 @@ class MenuGroupDaoTest {
     @DisplayName("MenuGroup을 저장하고 저장된 MenuGroup을 반환한다")
     void save() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("치킨");
+        MenuGroup menuGroup = createMenuGroup();
 
         // when
         MenuGroup savedMenuGroup = sut.save(menuGroup);
@@ -53,9 +53,7 @@ class MenuGroupDaoTest {
         // given
         List<MenuGroup> previouslySaved = sut.findAll();
 
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("치킨");
-        sut.save(menuGroup);
+        sut.save(createMenuGroup());
 
         // when
         List<MenuGroup> actual = sut.findAll();
@@ -68,9 +66,7 @@ class MenuGroupDaoTest {
     @DisplayName("입력된 id에 해당하는 MenuGroup이 있으면 참을 반환한다")
     void returnTrue_WhenExist() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("치킨");
-        Long menuGroupId = sut.save(menuGroup).getId();
+        Long menuGroupId = sut.save(createMenuGroup()).getId();
 
         // when
         boolean actual = sut.existsById(menuGroupId);

@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
-import static kitchenpos.fixture.ProductBuilder.*;
+import static kitchenpos.fixture.MenuGroupFactory.createMenuGroup;
+import static kitchenpos.fixture.ProductBuilder.aProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
@@ -8,10 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
-import kitchenpos.fixture.ProductBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -86,9 +84,7 @@ class MenuProductDaoTest {
     @DisplayName("입력받은 Menu Id와 연관된 MenuProduct 목록을 조회한다")
     void findAllByMenuId() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("치킨");
-        Long menuGroupId = menuGroupDao.save(menuGroup).getId();
+        Long menuGroupId = menuGroupDao.save(createMenuGroup()).getId();
 
         Menu menu = new Menu();
         menu.setName("강정치킨");

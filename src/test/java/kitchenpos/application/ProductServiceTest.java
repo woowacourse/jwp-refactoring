@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.ProductBuilder.*;
+import static kitchenpos.fixture.ProductBuilder.aProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import kitchenpos.fixture.ProductBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

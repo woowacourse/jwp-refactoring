@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuGroupFactory.createMenuGroup;
 import static kitchenpos.fixture.ProductBuilder.aProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -12,7 +13,6 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -87,9 +87,7 @@ class MenuServiceTest {
     @DisplayName("Menu에 포함된 Product가 존재하지 않으면 Menu를 생성할 수 없다")
     void throwException_WhenGivenNonExistMenuProductId() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("치킨");
-        Long menuGroupId = menuGroupDao.save(menuGroup).getId();
+        Long menuGroupId = menuGroupDao.save(createMenuGroup()).getId();
 
         Menu menu = new Menu();
         menu.setName("강정치킨");
@@ -143,9 +141,7 @@ class MenuServiceTest {
         // given
         Long productId = productDao.save(aProduct().build()).getId();
 
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("치킨");
-        Long menuGroupId = menuGroupDao.save(menuGroup).getId();
+        Long menuGroupId = menuGroupDao.save(createMenuGroup()).getId();
 
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(productId);
