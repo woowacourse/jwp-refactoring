@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.OrderFixture.createRequestOrderStatus;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -115,7 +114,7 @@ class OrderServiceTest extends ServiceTest {
     void changeOrderStatus(final OrderStatus status) {
         // given
         final Order order = saveAndGetOrder();
-        final OrderUpdateStatusRequest request = createRequestOrderStatus(status);
+        final OrderUpdateStatusRequest request = createOrderUpdateStatusRequest(status);
 
         // when
         final OrderResponse actual = orderService.changeOrderStatus(order.getId(), request);
@@ -129,7 +128,8 @@ class OrderServiceTest extends ServiceTest {
     void changeOrderStatus_status_completion_throwException() {
         // given
         final Order order = saveAndGetOrder(OrderStatus.COMPLETION.name());
-        final OrderUpdateStatusRequest request = createRequestOrderStatus(OrderStatus.COMPLETION);
+        final OrderUpdateStatusRequest request = createOrderUpdateStatusRequest(
+            OrderStatus.COMPLETION);
 
         // when & when
         assertThatThrownBy(

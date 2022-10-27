@@ -36,7 +36,6 @@ public class OrderCreateRequest {
             null,
             orderTableId,
             OrderStatus.COOKING.name(),
-            LocalDateTime.now(),
-            getOrderLineItems());
+            LocalDateTime.now());
     }
 }

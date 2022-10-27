@@ -1,17 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.DomainCreator.createMenu;
-import static kitchenpos.fixture.DomainCreator.createMenuGroup;
-import static kitchenpos.fixture.DomainCreator.createMenuProduct;
-import static kitchenpos.fixture.DomainCreator.createOrder;
-import static kitchenpos.fixture.DomainCreator.createOrderLineItem;
-import static kitchenpos.fixture.DomainCreator.createOrderTable;
-import static kitchenpos.fixture.DomainCreator.createProduct;
-import static kitchenpos.fixture.DomainCreator.createTableGroup;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -37,6 +27,9 @@ import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.dto.request.OrderTableCreateRequest;
 import kitchenpos.dto.request.OrderTableIdRequest;
+import kitchenpos.dto.request.OrderTableUpdateEmptyRequest;
+import kitchenpos.dto.request.OrderTableUpdateNumberOfGuestsRequest;
+import kitchenpos.dto.request.OrderUpdateStatusRequest;
 import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,94 +82,58 @@ public class ServiceTest {
     @Autowired
     protected TableGroupService tableGroupService;
 
-    protected MenuGroup saveMenuGroup(final MenuGroup menuGroup) {
-        return menuGroupDao.save(menuGroup);
-    }
-
-    protected Menu saveMenu(final Menu menu) {
-        return menuDao.save(menu);
-    }
-
-    protected OrderLineItem saveOrderLineItem(final OrderLineItem orderLineItem) {
-        return orderLineItemDao.save(orderLineItem);
-    }
-
-    protected Product saveProduct(final Product product) {
-        return productDao.save(product);
-    }
-
-    protected MenuProduct saveMenuProduct(final MenuProduct menuProduct) {
-        return menuProductDao.save(menuProduct);
-    }
-
-    protected OrderTable saveOrderTable(final OrderTable orderTable) {
-        return orderTableDao.save(orderTable);
-    }
-
-    protected Order saveOrder(final Order order) {
-        return orderDao.save(order);
-    }
-
     protected TableGroup saveAndGetTableGroup() {
-        return tableGroupDao.save(createTableGroup(null, new ArrayList<>()));
+        return tableGroupDao.save(new TableGroup(null, LocalDateTime.now()));
     }
 
     protected OrderTable saveAndGetOrderTable() {
-        return saveOrderTable(createOrderTable(null, null, 1, true));
+        return saveAndGetOrderTable(true);
     }
 
     protected OrderTable saveAndGetOrderTable(final boolean empty) {
-        return saveOrderTable(createOrderTable(null, null, 1, empty));
+        return orderTableDao.save(new OrderTable(null, null, 1, empty));
     }
 
     protected Menu saveAndGetMenu(final Long menuGroupId) {
-        return saveMenu(createMenu(null, "후라이드치킨", BigDecimal.valueOf(16_000L), menuGroupId,
-            new ArrayList<>()));
+        final Menu menu = menuDao.save(new Menu(
+            null, "후라이드치킨", BigDecimal.valueOf(16_000L), menuGroupId));
+
+        final Product product = saveAndGetProduct();
+        saveAndGetMenuProduct(menu.getId(), product.getId());
+
+        return menu;
     }
 
     protected MenuGroup saveAndGetMenuGroup() {
-        return saveMenuGroup(createMenuGroup(null, "한마리메뉴"));
+        return menuGroupDao.save(new MenuGroup(null, "한마리메뉴"));
     }
 
     protected Product saveAndGetProduct() {
-        return saveProduct(createProduct(null, "후라이드", BigDecimal.valueOf(16_000L)));
+        return productDao.save(new Product(null, "후라이드", BigDecimal.valueOf(16_000L)));
     }
 
     protected MenuProduct saveAndGetMenuProduct(final Long menuId, final Long productId) {
-        return saveMenuProduct(createMenuProduct(null, menuId, productId, 1));
+        return menuProductDao.save(new MenuProduct(null, menuId, productId, 1));
     }
 
     private OrderLineItem saveAndGetOrderLineItem(final Long menuId, final Long orderId) {
-        return saveOrderLineItem(createOrderLineItem(null, orderId, menuId, 1));
+        return orderLineItemDao.save(new OrderLineItem(null, orderId, menuId, 1));
     }
 
     protected Order saveAndGetOrder() {
-        final MenuGroup menuGroup = saveAndGetMenuGroup();
-        final Menu menu = saveAndGetMenu(menuGroup.getId());
-
-        final Product product = saveAndGetProduct();
-        final MenuProduct menuProduct = saveAndGetMenuProduct(menu.getId(), product.getId());
-        menu.setMenuProducts(List.of(menuProduct));
-        menuDao.save(menu);
-
-        final TableGroup tableGroup = saveAndGetTableGroup();
-        final OrderTable orderTable = saveAndGetOrderTable();
-        tableGroup.setOrderTables(List.of(orderTable));
-        tableGroupDao.save(tableGroup);
-
-        final Order order = saveOrder(createOrder(
-            null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
-            new ArrayList<>()));
-        final OrderLineItem orderLineItem = saveAndGetOrderLineItem(menu.getId(), order.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
-        orderDao.save(order);
-
-        return orderDao.save(order);
+        return saveAndGetOrder(OrderStatus.COOKING.name());
     }
 
     protected Order saveAndGetOrder(final String status) {
-        final Order order = saveAndGetOrder();
-        order.updateOrderStatus(status);
+        final MenuGroup menuGroup = saveAndGetMenuGroup();
+        final Menu menu = saveAndGetMenu(menuGroup.getId());
+
+        final OrderTable orderTable = saveAndGetOrderTable();
+        saveAndGetTableGroup();
+
+        final Order order = orderDao.save(new Order(
+            null, orderTable.getId(), status, LocalDateTime.now()));
+        saveAndGetOrderLineItem(menu.getId(), order.getId());
 
         return orderDao.save(order);
     }
@@ -220,6 +177,16 @@ public class ServiceTest {
         return new OrderTableCreateRequest(numberOfGuests, empty);
     }
 
+    protected OrderTableUpdateEmptyRequest createOrderTableUpdateRequest(
+        final boolean empty) {
+        return new OrderTableUpdateEmptyRequest(empty);
+    }
+
+    protected OrderTableUpdateNumberOfGuestsRequest createOrderTableUpdateRequest(
+        final int numberOfGuests) {
+        return new OrderTableUpdateNumberOfGuestsRequest(numberOfGuests);
+    }
+
     protected OrderLineItemCreateRequest createOrderLineItemCreateRequest(
         final Long menuId, final int quantity) {
         return new OrderLineItemCreateRequest(menuId, quantity);
@@ -228,5 +195,10 @@ public class ServiceTest {
     protected OrderCreateRequest createOrderCreateRequest(
         final Long orderTableId, final List<OrderLineItemCreateRequest> orderLineItem) {
         return new OrderCreateRequest(orderTableId, orderLineItem);
+    }
+
+    protected OrderUpdateStatusRequest createOrderUpdateStatusRequest(
+        final OrderStatus orderStatus) {
+        return new OrderUpdateStatusRequest(orderStatus.name());
     }
 }

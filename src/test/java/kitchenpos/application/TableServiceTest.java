@@ -1,7 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.TableFixture.createRequestEmpty;
-import static kitchenpos.fixture.TableFixture.createRequestNumberOfGuests;
 import static kitchenpos.fixture.TableFixture.빈_테이블_1번;
 import static kitchenpos.fixture.TableFixture.사용중인_테이블_1번;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,7 +48,7 @@ class TableServiceTest extends ServiceTest {
     void changeEmpty() {
         // given
         final OrderTable table = orderTableDao.save(빈_테이블_1번);
-        final OrderTableUpdateEmptyRequest request = createRequestEmpty(false);
+        final OrderTableUpdateEmptyRequest request = createOrderTableUpdateRequest(false);
 
         // when
         final OrderTableResponse actual = tableService.changeEmpty(table.getId(), request);
@@ -70,7 +68,7 @@ class TableServiceTest extends ServiceTest {
         table.setTableGroupId(tableGroup.getId());
         orderTableDao.save(table);
 
-        final OrderTableUpdateEmptyRequest request = createRequestEmpty(false);
+        final OrderTableUpdateEmptyRequest request = createOrderTableUpdateRequest(false);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), request))
@@ -82,7 +80,8 @@ class TableServiceTest extends ServiceTest {
     void changeNumberOfGuests() {
         // given
         final OrderTable table = orderTableDao.save(사용중인_테이블_1번);
-        final OrderTableUpdateNumberOfGuestsRequest request = createRequestNumberOfGuests(100);
+        final OrderTableUpdateNumberOfGuestsRequest request =
+            createOrderTableUpdateRequest(100);
 
         // when
         final OrderTableResponse actual = tableService.changeNumberOfGuests(table.getId(), request);

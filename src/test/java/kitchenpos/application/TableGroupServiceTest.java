@@ -2,10 +2,10 @@ package kitchenpos.application;
 
 import static kitchenpos.fixture.TableFixture.빈_테이블_1번;
 import static kitchenpos.fixture.TableFixture.빈_테이블_2번;
-import static kitchenpos.fixture.TableGroupFixture.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -50,8 +50,8 @@ class TableGroupServiceTest extends ServiceTest {
         final OrderTable orderTable1 = orderTableDao.save(빈_테이블_1번);
         final OrderTable orderTable2 = orderTableDao.save(빈_테이블_2번);
 
-        final TableGroup tableGroup = tableGroupDao.save(
-            createTableGroup(null, List.of(orderTable1, orderTable2)));
+        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(
+            null, LocalDateTime.now()));
         updateOrderTable(orderTable1, tableGroup);
         updateOrderTable(orderTable2, tableGroup);
 

@@ -24,6 +24,6 @@ public class TableGroupCreateRequest {
     }
 
     public TableGroup toEntity() {
-        return new TableGroup(LocalDateTime.now(), getOrderTables());
+        return new TableGroup(null, LocalDateTime.now());
     }
 }
