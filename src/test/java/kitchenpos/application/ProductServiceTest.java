@@ -41,8 +41,7 @@ class ProductServiceTest {
         @Test
         void throwExceptionWhenWithNullPrice() {
             BigDecimal price = null;
-            Product product = ProductFixture.양념치킨.toProduct();
-            product.setPrice(price);
+            Product product = ProductFixture.양념치킨.toProduct(price);
 
             assertThatThrownBy(() -> productService.create(product))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -52,8 +51,7 @@ class ProductServiceTest {
         @Test
         void throwExceptionWhenWithNegativePrice() {
             BigDecimal price = new BigDecimal(-1);
-            Product product = ProductFixture.양념치킨.toProduct();
-            product.setPrice(price);
+            Product product = ProductFixture.양념치킨.toProduct(price);
 
             assertThatThrownBy(() -> productService.create(product))
                     .isInstanceOf(IllegalArgumentException.class);

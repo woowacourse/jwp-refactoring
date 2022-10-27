@@ -22,4 +22,8 @@ public enum ProductFixture {
     public Product toProduct() {
         return new Product(name, price);
     }
+
+    public Product toProduct(BigDecimal price) {
+        return new Product(name, price);
+    }
 }
