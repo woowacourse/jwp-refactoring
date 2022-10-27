@@ -8,6 +8,7 @@ import static kitchenpos.application.fixture.OrderTableFixture.forUpdateEmpty;
 import static kitchenpos.application.fixture.OrderTableFixture.forUpdateGuestNumber;
 import static kitchenpos.application.fixture.ProductFixture.탕수육;
 import static kitchenpos.application.fixture.TableGroupFixture.createTableGroup;
+import static kitchenpos.application.fixture.dto.OrderTableDtoFixture.createOrderTableRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -16,6 +17,8 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,16 +30,16 @@ public class TableServiceTest extends ServiceTest {
     @DisplayName("주문테이블을 등록한다.")
     void create() {
         // given
-        final OrderTable table = createOrderTable(3, false);
+        final OrderTableRequest request = createOrderTableRequest(3, false);
 
         // when
-        final OrderTable createdTable = tableService.create(table);
-        final Long createdTableId = createdTable.getId();
+        final OrderTableResponse actual = tableService.create(request);
+        final Long actualId = actual.getId();
 
         // then
         assertAll(
-                () -> assertThat(createdTableId).isNotNull(),
-                () -> assertThat(orderTableDao.findById(createdTableId)).isPresent()
+                () -> assertThat(actualId).isNotNull(),
+                () -> assertThat(orderTableDao.findById(actualId)).isPresent()
         );
     }
 

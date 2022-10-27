@@ -1,15 +1,16 @@
 package kitchenpos.application;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TableService {
@@ -22,11 +23,12 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
+    public OrderTableResponse create(final OrderTableRequest request) {
+        final OrderTable orderTable = request.toEntity();
+        final OrderTable savedTable = orderTableDao.save(orderTable);
 
-        return orderTableDao.save(orderTable);
+        return new OrderTableResponse(savedTable.getId(), savedTable.getTableGroupId(), savedTable.getNumberOfGuests(),
+                savedTable.isEmpty());
     }
 
     public List<OrderTable> list() {
