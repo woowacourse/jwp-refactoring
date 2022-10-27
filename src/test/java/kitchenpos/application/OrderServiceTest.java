@@ -12,34 +12,30 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuFakeDao;
 import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupFakeDao;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderFakeDao;
+import kitchenpos.dao.OrderLineItemFakeDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableFakeDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductFakeDao;
 import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
 class OrderServiceTest {
 
-    @Autowired
-    private OrderService orderService;
+    private final ProductDao productDao = new ProductFakeDao();
+    private final MenuGroupDao menuGroupDao = new MenuGroupFakeDao();
+    private final MenuDao menuDao = new MenuFakeDao();
+    private final OrderDao orderDao = new OrderFakeDao();
+    private final OrderTableDao orderTableDao = new OrderTableFakeDao();
 
-    @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private MenuDao menuDao;
-
-    @Autowired
-    private OrderTableDao orderTableDao;
+    private final OrderService orderService = new OrderService(
+            menuDao, orderDao, new OrderLineItemFakeDao(), orderTableDao);
 
     @DisplayName("주문 등록")
     @Test
@@ -139,7 +135,7 @@ class OrderServiceTest {
 
         final var order = order(table, pizzaMenu);
         order.setOrderStatus(OrderStatus.COMPLETION.name());
-        orderService.create(order);
+        orderDao.save(order);
 
         final var changed = order(table, pizzaMenu);
         changed.setOrderStatus(OrderStatus.MEAL.name());

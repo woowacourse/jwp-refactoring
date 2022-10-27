@@ -14,39 +14,31 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuFakeDao;
 import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupFakeDao;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderFakeDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableFakeDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductFakeDao;
+import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.TableGroupFakeDao;
 import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
 class TableGroupServiceTest {
 
-    @Autowired
-    private TableGroupService tableGroupService;
+    private final OrderTableDao orderTableDao = new OrderTableFakeDao();
+    private final ProductDao productDao = new ProductFakeDao();
+    private final MenuGroupDao menuGroupDao = new MenuGroupFakeDao();
+    private final MenuDao menuDao = new MenuFakeDao();
+    private final OrderDao orderDao = new OrderFakeDao();
+    private final TableGroupDao tableGroupDao = new TableGroupFakeDao();
 
-    @Autowired
-    private OrderTableDao orderTableDao;
-
-    @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private MenuDao menuDao;
-
-    @Autowired
-    private OrderDao orderDao;
-
+    private final TableGroupService tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
 
     @DisplayName("테이블 그룹 등록")
     @Test
@@ -145,7 +137,7 @@ class TableGroupServiceTest {
         final var singleTable = orderTableDao.save(emptyTable(1));
         final var doubleTable = orderTableDao.save(emptyTable(2));
 
-        final var orderInMeal = order(doubleTable, pizzaMenu);
+        final var orderInMeal = order(singleTable, pizzaMenu);
         orderInMeal.setOrderedTime(LocalDateTime.now());
         orderInMeal.setOrderStatus(OrderStatus.MEAL.name());
         orderDao.save(orderInMeal);

@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.FakeProductDao;
+import kitchenpos.dao.ProductFakeDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 
 class ProductServiceTest {
 
-    private final ProductService productService = new ProductService(new FakeProductDao());
+    private final ProductService productService = new ProductService(new ProductFakeDao());
 
     @DisplayName("create 메서드는")
     @Nested

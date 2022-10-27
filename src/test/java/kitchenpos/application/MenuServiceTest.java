@@ -12,31 +12,26 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.dao.MenuFakeDao;
 import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupFakeDao;
+import kitchenpos.dao.MenuProductFakeDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductFakeDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-
-@SpringBootTest
-@Transactional
 class MenuServiceTest {
 
-    @Autowired
-    private MenuService menuService;
+    private final ProductDao productDao = new ProductFakeDao();
+    private final MenuGroupDao menuGroupDao = new MenuGroupFakeDao();
 
-    @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
+    private final MenuService menuService = new MenuService(
+            new MenuFakeDao(), menuGroupDao, new MenuProductFakeDao(), productDao);
 
     @DisplayName("create 메서드는")
     @Nested
