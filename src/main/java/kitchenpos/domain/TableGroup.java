@@ -23,19 +23,18 @@ public class TableGroup {
     protected TableGroup() {
     }
 
-    public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+    public TableGroup(Long id, LocalDateTime createdDate, OrderTables orderTables) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = new OrderTables(orderTables);
-    }
-
-    public TableGroup(Long id, LocalDateTime createdDate) {
-        this(id, createdDate, null);
-    }
-
-    public TableGroup(OrderTables orderTables) {
-        this.createdDate = LocalDateTime.now();
         this.orderTables = orderTables;
+    }
+
+    private TableGroup(OrderTables orderTables) {
+        this(null, LocalDateTime.now(), orderTables);
+    }
+
+    public static TableGroup group(List<OrderTable> orderTables) {
+        return new TableGroup(OrderTables.group(orderTables));
     }
 
     public Long getId() {

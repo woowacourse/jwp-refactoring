@@ -57,4 +57,14 @@ class OrderTableTest {
                 .isThrownBy(() -> orderTable.changeNumberOfGuests(3))
                 .withMessage("빈 테이블입니다.");
     }
+
+    @Test
+    @DisplayName("그룹을 해제한다.")
+    void ungroup() {
+        OrderTable orderTable = new OrderTable(1L, 2L, 2, true);
+        orderTable.unGroup();
+
+        assertThat(orderTable.getTableGroupId()).isNull();
+        assertThat(orderTable.isEmpty()).isFalse();
+    }
 }

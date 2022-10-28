@@ -91,8 +91,7 @@ class TableGroupServiceTest {
         void ungroup() {
             OrderTable orderTable1 = orderTableRepository.save(new OrderTable(2, true));
             OrderTable orderTable2 = orderTableRepository.save(new OrderTable(2, true));
-            TableGroup tableGroup = tableGroupRepository.save(
-                    new TableGroup(new OrderTables(List.of(orderTable1, orderTable2))));
+            TableGroup tableGroup = tableGroupRepository.save(TableGroup.group(List.of(orderTable1, orderTable2)));
 
             assertThatNoException()
                     .isThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()));

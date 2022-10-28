@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 
 @Entity
 public class OrderTable {
@@ -21,7 +20,7 @@ public class OrderTable {
     @Column(name = "empty", columnDefinition = "BIT(1)")
     private boolean empty;
 
-    @JoinColumn(name = "table_group_id")
+    @Column(name = "table_group_id")
     private Long tableGroupId;
 
     protected OrderTable() {
@@ -49,43 +48,6 @@ public class OrderTable {
         this.empty = orderAble.isEmptyTable();
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    public boolean isEmpty() {
-        return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
-    }
-
-    public void group(Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-        this.empty = false;
-    }
-
     public void changeNumberOfGuests(int numberOfGuests) {
         validate(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
@@ -98,5 +60,26 @@ public class OrderTable {
         if (empty) {
             throw new IllegalArgumentException("빈 테이블입니다.");
         }
+    }
+
+    public void unGroup() {
+        this.tableGroupId = null;
+        this.empty = false;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getTableGroupId() {
+        return tableGroupId;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 }
