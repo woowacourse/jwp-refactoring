@@ -18,4 +18,16 @@ public class MenuProductResponse {
         return new MenuProductResponse(menuProduct.getSeq(), menuProduct.getProduct().getId(),
                 menuProduct.getQuantity());
     }
+
+    public Long getSeq() {
+        return seq;
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public Long getQuantity() {
+        return quantity;
+    }
 }

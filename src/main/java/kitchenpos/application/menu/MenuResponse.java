@@ -37,6 +37,10 @@ public class MenuResponse {
         return id;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public BigDecimal getPrice() {
         return price;
     }

@@ -21,4 +21,20 @@ public class OrderLineItemResponse {
                 orderLineItem.getMenu().getId(),
                 orderLineItem.getQuantity());
     }
+
+    public Long getSeq() {
+        return seq;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public Long getMenuId() {
+        return menuId;
+    }
+
+    public long getQuantity() {
+        return quantity;
+    }
 }

@@ -33,4 +33,24 @@ public class ChangeOrderStatusResponse {
                 order.getOrderedTime(),
                 orderLineItemResponses);
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public OrderTableResponse getOrderTable() {
+        return orderTable;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
+    }
+
+    public List<OrderLineItemResponse> getOrderLineItems() {
+        return orderLineItems;
+    }
 }
