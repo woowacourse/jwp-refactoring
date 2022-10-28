@@ -19,7 +19,6 @@ import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import org.junit.jupiter.api.Assertions;
@@ -99,10 +98,7 @@ class OrderServiceTest {
                                                   final LocalDateTime orderedTime,
                                                   final List<OrderLineItem> orderLineItems) {
             return new OrderCreateRequest(
-                    id,
                     orderTableId,
-                    orderStatus.name(),
-                    orderedTime,
                     orderLineItems.stream()
                             .map(OrderLineItemDto::new)
                             .collect(Collectors.toList()));

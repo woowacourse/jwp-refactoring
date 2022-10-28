@@ -42,7 +42,7 @@ class TableServiceTest {
         @Test
         void order_table을_저장할_수_있다() {
             // given
-            OrderTableCreateRequest request = new OrderTableCreateRequest(1L, 11L, 3, true);
+            OrderTableCreateRequest request = new OrderTableCreateRequest(3, true);
             when(orderTableRepository.save(any(OrderTable.class))).thenReturn(request.toOrderTable());
 
             // when

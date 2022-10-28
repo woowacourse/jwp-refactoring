@@ -4,16 +4,16 @@ import kitchenpos.domain.OrderTable;
 
 public class OrderTableIdDto {
 
-    private Long orderTableId;
+    private Long id;
 
     public OrderTableIdDto() {
     }
 
     public OrderTableIdDto(final OrderTable orderTable) {
-        this.orderTableId = orderTable.getId();
+        this.id = orderTable.getId();
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public Long getId() {
+        return id;
     }
 }

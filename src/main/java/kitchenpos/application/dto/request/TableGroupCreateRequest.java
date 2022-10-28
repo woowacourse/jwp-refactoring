@@ -6,33 +6,20 @@ import kitchenpos.domain.TableGroup;
 
 public class TableGroupCreateRequest {
 
-    private Long id;
-    private LocalDateTime createdDate;
-    private List<OrderTableIdDto> orderTableIdsDto;
+    private List<OrderTableIdDto> orderTables;
 
     public TableGroupCreateRequest() {
     }
 
-    public TableGroupCreateRequest(final Long id, final LocalDateTime createdDate,
-                                   final List<OrderTableIdDto> orderTableIdsDto) {
-        this.id = id;
-        this.createdDate = createdDate;
-        this.orderTableIdsDto = orderTableIdsDto;
+    public TableGroupCreateRequest(final List<OrderTableIdDto> orderTables) {
+        this.orderTables = orderTables;
     }
 
     public TableGroup toTableGroup(final LocalDateTime createdDate) {
         return new TableGroup(null, createdDate);
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public List<OrderTableIdDto> getOrderTableIdsDto() {
-        return orderTableIdsDto;
+    public List<OrderTableIdDto> getOrderTables() {
+        return orderTables;
     }
 }

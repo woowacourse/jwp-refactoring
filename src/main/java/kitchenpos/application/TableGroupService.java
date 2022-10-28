@@ -36,7 +36,7 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByOrderTableIdsIn(
-                extractOrderTableIds(request.getOrderTableIdsDto()));
+                extractOrderTableIds(request.getOrderTables()));
         validateEmptyOrderTable(orderTables);
 
         final TableGroup savedTableGroup = tableGroupRepository.save(request.toTableGroup(LocalDateTime.now()));
@@ -76,7 +76,7 @@ public class TableGroupService {
 
     private List<Long> extractOrderTableIds(final List<OrderTableIdDto> orderTableIdsDto) {
         final List<Long> orderTableIds = orderTableIdsDto.stream()
-                .map(OrderTableIdDto::getOrderTableId)
+                .map(OrderTableIdDto::getId)
                 .collect(Collectors.toList());
 
         validateOrderTableSize(orderTableIds);

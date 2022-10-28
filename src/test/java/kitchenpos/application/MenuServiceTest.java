@@ -6,7 +6,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -161,7 +160,6 @@ class MenuServiceTest {
     private MenuCreateRequest 메뉴_생성_dto를_만든다(final BigDecimal price, final Long menuGroupId,
                                              final List<MenuProduct> menuProducts) {
         return new MenuCreateRequest(
-                1L,
                 "pasta",
                 price,
                 menuGroupId,

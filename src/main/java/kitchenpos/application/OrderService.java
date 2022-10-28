@@ -29,7 +29,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
-        final List<OrderLineItem> orderLineItems = extractOrderLineItemFrom(request.getOrderLineItemsDto());
+        final List<OrderLineItem> orderLineItems = extractOrderLineItemFrom(request.getOrderLineItems());
         validateOrderLineItemsCount(orderLineItems);
         final Order savedOrder = orderRepository.save(request.toOrder(
                 request.getOrderTableId(),

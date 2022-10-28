@@ -33,7 +33,7 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuCreateRequest menuCreateRequest) {
         validateExistMenuGroup(menuCreateRequest.getMenuGroupId());
-        BigDecimal sum = calculateSum(extractMenuProductsFrom(menuCreateRequest.getMenuProductsDto()));
+        BigDecimal sum = calculateSum(extractMenuProductsFrom(menuCreateRequest.getMenuProducts()));
         validateSum(menuCreateRequest.getPrice(), sum);
         return saveMenu(menuCreateRequest);
     }

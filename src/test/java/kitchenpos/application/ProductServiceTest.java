@@ -46,10 +46,7 @@ class ProductServiceTest {
             ProductResponse response = productService.create(request);
 
             // then
-            Assertions.assertAll(
-                    () -> assertThat(response.getId()).isEqualTo(1L),
-                    () -> assertThat(response.getName()).isEqualTo("pasta")
-            );
+            assertThat(response.getName()).isEqualTo("pasta");
         }
 
         @Test
@@ -70,7 +67,7 @@ class ProductServiceTest {
         }
 
         private ProductCreateRequest 상품_생성_dto를_만든다(final Long id, final String name, final BigDecimal price) {
-            return new ProductCreateRequest(id, name, price);
+            return new ProductCreateRequest(name, price);
         }
     }
 

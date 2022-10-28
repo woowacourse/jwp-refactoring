@@ -121,7 +121,7 @@ class TableGroupServiceTest {
 
         private TableGroupCreateRequest 테이블_그룹_생성_dto를_만든다(final Long id, final LocalDateTime createdDate,
                                                            final List<OrderTable> orderTables) {
-            return new TableGroupCreateRequest(id, createdDate, orderTables.stream()
+            return new TableGroupCreateRequest(orderTables.stream()
                     .map(OrderTableIdDto::new)
                     .collect(Collectors.toList()));
         }

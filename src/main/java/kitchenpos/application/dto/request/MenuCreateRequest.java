@@ -8,29 +8,22 @@ import kitchenpos.domain.MenuProduct;
 
 public class MenuCreateRequest {
 
-    private Long id;
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-    private List<MenuProductDto> menuProductsDto;
+    private List<MenuProductDto> menuProducts;
 
     public MenuCreateRequest() {
     }
 
-    public MenuCreateRequest(final Long id,
-                             final String name,
+    public MenuCreateRequest(final String name,
                              final BigDecimal price,
                              final Long menuGroupId,
-                             final List<MenuProductDto> menuProductsDto) {
-        this.id = id;
+                             final List<MenuProductDto> menuProducts) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProductsDto = menuProductsDto;
-    }
-
-    public Long getId() {
-        return id;
+        this.menuProducts = menuProducts;
     }
 
     public String getName() {
@@ -45,13 +38,12 @@ public class MenuCreateRequest {
         return menuGroupId;
     }
 
-    public List<MenuProductDto> getMenuProductsDto() {
-        return menuProductsDto;
+    public List<MenuProductDto> getMenuProducts() {
+        return menuProducts;
     }
 
     public Menu toMenu() {
         return new Menu(
-                this.id,
                 this.name,
                 this.price,
                 this.menuGroupId,
@@ -59,7 +51,7 @@ public class MenuCreateRequest {
     }
 
     private List<MenuProduct> toMenuProducts() {
-        return this.menuProductsDto.stream()
+        return this.menuProducts.stream()
                 .map(MenuProductDto::toMenuProduct)
                 .collect(Collectors.toList());
     }

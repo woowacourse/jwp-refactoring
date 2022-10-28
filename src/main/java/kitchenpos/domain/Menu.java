@@ -28,6 +28,13 @@ public class Menu {
     public Menu() {
     }
 
+    public Menu(final String name,
+                final BigDecimal price,
+                final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroupId, menuProducts);
+    }
+
     public Menu(final Long id,
                 final String name,
                 final BigDecimal price,

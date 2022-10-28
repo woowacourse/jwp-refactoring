@@ -5,25 +5,19 @@ import kitchenpos.domain.Product;
 
 public class ProductCreateRequest {
 
-    private Long id;
     private String name;
     private BigDecimal price;
 
     public ProductCreateRequest() {
     }
 
-    public ProductCreateRequest(final Long id, final String name, final BigDecimal price) {
-        this.id = id;
+    public ProductCreateRequest(final String name, final BigDecimal price) {
         this.name = name;
         this.price = price;
     }
 
     public Product toProduct() {
-        return new Product(id, name, price);
-    }
-
-    public Long getId() {
-        return id;
+        return new Product(name, price);
     }
 
     public String getName() {
