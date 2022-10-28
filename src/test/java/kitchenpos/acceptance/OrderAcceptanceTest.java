@@ -29,7 +29,7 @@ class OrderAcceptanceTest extends AcceptanceTest {
     @Test
     void create() {
         // given
-        final OrderTable orderTable = new OrderTable(1, false);
+        final OrderTable orderTable = OrderTable.of(1, false);
         final OrderTable savedOrderTable = saveOrderTable(orderTable);
         final OrderLineItem orderLineItem = createOrderLineItem();
 
@@ -93,7 +93,7 @@ class OrderAcceptanceTest extends AcceptanceTest {
     @Test
     void changeOrderStatus() {
         // given
-        final OrderTable orderTable = new OrderTable(1, false);
+        final OrderTable orderTable = OrderTable.of(1, false);
         final OrderTable savedOrderTable = saveOrderTable(orderTable);
         final OrderLineItem orderLineItem = createOrderLineItem();
 
@@ -140,7 +140,7 @@ class OrderAcceptanceTest extends AcceptanceTest {
     }
 
     private OrderTable saveOrderTable(final int numberOfGuests, final boolean empty) {
-        final OrderTable orderTable = new OrderTable(numberOfGuests, empty);
+        final OrderTable orderTable = OrderTable.of(numberOfGuests, empty);
 
         return RestAssured.given().log().all()
                 .contentType(APPLICATION_JSON_VALUE)

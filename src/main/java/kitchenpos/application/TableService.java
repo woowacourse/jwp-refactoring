@@ -4,7 +4,6 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.domain.OrderStatus;
@@ -46,39 +45,22 @@ public class TableService {
         final OrderTable foundOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(foundOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException("테이블 상태 변경을 위해선 테이블이 그룹으로 묶여있으면 안됩니다.");
-        }
-
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException("조리중이거나 식사중인 상태이면 테이블을 비울 수 없습니다.");
         }
 
-        foundOrderTable.setEmpty(request.isEmpty());
+        foundOrderTable.changeEmptyStatus(request.isEmpty());
 
-        final OrderTable savedOrderTable = orderTableRepository.save(foundOrderTable);
-        return new OrderTableResponse(savedOrderTable);
+        return new OrderTableResponse(foundOrderTable);
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest request) {
-        final int numberOfGuests = request.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("음수로 주문 테이블의 손님 수를 변경할 수 없습니다.");
-        }
-
         final OrderTable foundOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
+        foundOrderTable.updateNumberOfGuests(request.getNumberOfGuests());
 
-        if (foundOrderTable.isEmpty()) {
-            throw new IllegalArgumentException("테이블이 비어있는 상태일 수 없습니다.");
-        }
-
-        foundOrderTable.setNumberOfGuests(numberOfGuests);
-
-        final OrderTable savedOrderTable = orderTableRepository.save(foundOrderTable);
-        return new OrderTableResponse(savedOrderTable);
+        return new OrderTableResponse(foundOrderTable);
     }
 }

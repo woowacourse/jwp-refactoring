@@ -193,8 +193,8 @@ class OrderServiceTest {
     @Test
     void list() {
         // given
-        final OrderTable orderTable = new OrderTable(1, false);
-        final OrderTable anotherOrderTable = new OrderTable(1, false);
+        final OrderTable orderTable = OrderTable.of(1, false);
+        final OrderTable anotherOrderTable = OrderTable.of(1, false);
 
         final OrderRequest orderRequest1 = createdOrderRequest(orderTable, createOrderLineItemRequest());
         final OrderRequest orderRequest2 = createdOrderRequest(anotherOrderTable, createOrderLineItemRequest());
