@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderTableRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +40,15 @@ public class TableRestControllerTest {
     void create() throws Exception {
         // given
         final OrderTable orderTable = ORDER_TABLE1.create();
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(orderTable.getNumberOfGuests(),
+                orderTable.isEmpty());
 
-        given(tableService.create(any(OrderTable.class))).willReturn(orderTable);
+        given(tableService.create(any(OrderTableRequest.class))).willReturn(orderTable);
 
         // when
         final ResultActions resultActions = mockMvc.perform(post("/api/tables")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(orderTable)))
+                        .content(objectMapper.writeValueAsString(orderTableRequest)))
                 .andDo(print());
 
         // then
