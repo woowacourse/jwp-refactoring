@@ -208,7 +208,7 @@ class OrderServiceTest extends ServiceTest {
             OrderLineItem orderLineItem2 = new OrderLineItem();
             orderLineItem2.setMenuId(menu2.getId());
             orderLineItem2.setQuantity(2);
-            OrderTable orderTable = tableService.create(saveOrderTable(2, true));
+            OrderTable orderTable = saveOrderTable(2, true);
 
             Order order = new Order();
             order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));

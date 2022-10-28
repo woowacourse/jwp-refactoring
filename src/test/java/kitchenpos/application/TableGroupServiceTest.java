@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.TableFixture.createOrderTable;
+import static kitchenpos.fixture.TableFixture.createOrderTableRequest;
 import static kitchenpos.fixture.TableFixture.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -62,7 +62,7 @@ class TableGroupServiceTest extends ServiceTest {
         void orderTable_NotExist_ExceptionThrown() {
             // given
             OrderTable orderTable1 = saveOrderTable(2, true);
-            OrderTable orderTable2 = createOrderTable(4, true);
+            OrderTable orderTable2 = createOrderTableRequest(4, true).toEntity();
             TableGroup tableGroup = createTableGroup(orderTable1, orderTable2);
 
             // when & then

@@ -9,7 +9,7 @@ public class TableGroup {
     private List<OrderTable> orderTables;
 
     public TableGroup(final Long id, final LocalDateTime createdDate) {
-        new TableGroup(id, createdDate, null);
+        this(id, createdDate, null);
     }
 
     public TableGroup(final List<OrderTable> orderTables) {
