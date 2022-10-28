@@ -6,6 +6,7 @@ import static kitchenpos.DomainFixture.createOrderTable;
 import static kitchenpos.DomainFixture.createTableGroup;
 import static kitchenpos.DomainFixture.forUpdateEmpty;
 import static kitchenpos.DomainFixture.forUpdateGuestNumber;
+import static kitchenpos.DomainFixture.forUpdateStatus;
 import static kitchenpos.DomainFixture.메뉴그룹1;
 import static kitchenpos.DomainFixture.피자;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -80,7 +81,7 @@ public class TableServiceTest extends ServiceTest {
         // given
         final OrderTable table = 주문테이블등록(createOrderTable(3, true));
         final OrderTable table2 = 주문테이블등록(createOrderTable(3, true));
-        테이블그룹등록(createTableGroup(table, table2));
+        tableGroupService.create(createTableGroup(table, table2));
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), forUpdateEmpty(false)))
@@ -96,7 +97,8 @@ public class TableServiceTest extends ServiceTest {
         final Menu menu = 메뉴등록(createMenu("양념치킨메뉴", 10_000, 메뉴그룹등록(메뉴그룹1), 상품등록(피자)));
 
         final Order order = 주문등록(createOrder(table, menu));
-        주문상태변경(order, orderStatus);
+        orderService.changeOrderStatus(order.getId(), forUpdateStatus(orderStatus.name()));
+//        주문상태변경(order, orderStatus);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), forUpdateEmpty(true)))

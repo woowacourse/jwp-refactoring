@@ -134,7 +134,7 @@ public class OrderServiceTest extends ServiceTest {
         final Menu menu = 메뉴등록(createMenu("양념치킨메뉴", 10_000, 메뉴그룹등록(메뉴그룹1), 상품등록(피자)));
 
         final Order order = 주문등록(createOrder(table, menu));
-        주문상태변경(order, OrderStatus.COMPLETION);
+        orderService.changeOrderStatus(order.getId(), forUpdateStatus(OrderStatus.COMPLETION.name()));
 
         // when & then
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), forUpdateStatus("COOKING")))

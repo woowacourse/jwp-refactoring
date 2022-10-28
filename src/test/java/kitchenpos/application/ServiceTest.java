@@ -76,7 +76,7 @@ public abstract class ServiceTest {
     }
 
     protected Menu 메뉴등록(final Menu menu) {
-        return menuService.create(menu);
+        return menuDao.save(menu);
     }
 
     protected OrderTable 주문테이블등록(final OrderTable orderTable) {
@@ -84,14 +84,10 @@ public abstract class ServiceTest {
     }
 
     protected TableGroup 테이블그룹등록(final TableGroup tableGroup) {
-        return tableGroupService.create(tableGroup);
+        return tableGroupDao.save(tableGroup);
     }
 
     protected Order 주문등록(final Order order) {
-        return orderService.create(order);
-    }
-
-    protected void 주문상태변경(final Order order, final OrderStatus orderStatus) {
-        orderService.changeOrderStatus(order.getId(), forUpdateStatus(orderStatus.name()));
+        return orderDao.save(order);
     }
 }

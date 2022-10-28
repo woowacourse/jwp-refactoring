@@ -62,7 +62,7 @@ public class TableGroupServiceTest extends ServiceTest {
         // given
         final OrderTable groupedTable1 = 주문테이블등록(createOrderTable(3, true));
         final OrderTable groupedTable2 = 주문테이블등록(createOrderTable(3, true));
-        테이블그룹등록(createTableGroup(groupedTable1, groupedTable2));
+        tableGroupService.create(createTableGroup(groupedTable1, groupedTable2));
 
         final OrderTable table = 주문테이블등록(createOrderTable(5, true));
 
