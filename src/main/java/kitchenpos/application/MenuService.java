@@ -41,10 +41,10 @@ public class MenuService {
     private void validateMenuPrice(BigDecimal menuPrice, List<MenuProductCreateRequest> menuProductsRequest) {
         BigDecimal sum = BigDecimal.ZERO;
         for (MenuProductCreateRequest menuProductRequest : menuProductsRequest) {
-            Product product = productRepository.findById(menuProductRequest.getProductId()); // TODO: 쿼리 개선
+            Product product = productRepository.findById(menuProductRequest.getProductId());
             sum = sum.add(product.calculatePrice(menuProductRequest.getQuantity()));
         }
-        validateMenuPriceLessThanTotalProductPrice(menuPrice, sum); // TODO: 값 객체
+        validateMenuPriceLessThanTotalProductPrice(menuPrice, sum);
     }
 
     private void validateMenuPriceLessThanTotalProductPrice(BigDecimal menuPrice, BigDecimal productsSum) {
