@@ -8,9 +8,9 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.exception.NotFoundMenuGroupException;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
-@Repository
+@Component
 public class MenuRepository {
 
     private final MenuDao menuDao;

@@ -7,9 +7,9 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.exception.NotFoundOrderTableException;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
-@Repository
+@Component
 public class TableGroupRepository {
 
     private final OrderTableDao orderTableDao;

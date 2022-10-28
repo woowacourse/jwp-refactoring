@@ -4,9 +4,9 @@ import java.util.List;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.exception.NotFoundOrderTableException;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
-@Repository
+@Component
 public class TableRepository {
 
     private final OrderTableDao orderTableDao;

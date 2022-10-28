@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.exception.AlreadyGroupedException;
 
 public class TableGroup {
     private final Long id;
@@ -32,7 +33,7 @@ public class TableGroup {
 
     private void validateOrderTable(OrderTable orderTable) {
         if (orderTable.isNotPossibleTableGrouping()) {
-            throw new IllegalArgumentException();
+            throw new AlreadyGroupedException();
         }
     }
 

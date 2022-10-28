@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.util.Objects;
 import kitchenpos.exception.GuestSizeException;
+import kitchenpos.exception.TableGroupNotNullException;
 
 public class OrderTable {
     private final Long id;
@@ -26,7 +27,7 @@ public class OrderTable {
 
     public void changeEmpty(boolean empty) {
         if (Objects.nonNull(this.tableGroupId)) {
-            throw new IllegalArgumentException();
+            throw new TableGroupNotNullException();
         }
         this.empty = empty;
     }

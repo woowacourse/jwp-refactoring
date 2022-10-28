@@ -11,9 +11,9 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.exception.NotFoundOrderException;
 import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.exception.OrderTableEmptyException;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
-@Repository
+@Component
 public class OrderRepository {
 
     private final OrderDao orderDao;
