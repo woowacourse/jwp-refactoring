@@ -37,7 +37,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void 메뉴를_생성할때_메뉴그룹아이디_예외를_발생한다() {
         MenuCreateRequest menuCreateRequest
-                = new MenuCreateRequest("", BigDecimal.valueOf(-1), 0L, Collections.emptyList());
+                = new MenuCreateRequest("", BigDecimal.valueOf(0), 0L, Collections.emptyList());
 
         assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                 .isInstanceOf(NotFoundMenuGroupException.class);
