@@ -28,7 +28,7 @@ public class Menu {
     private Long menuGroupId;
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
-    private List<MenuProduct> menuProducts;
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
     }
@@ -38,10 +38,8 @@ public class Menu {
     }
 
     public Menu(Long id, String name, Price price, Long menuGroupId) {
+        this(name, price, menuGroupId);
         this.id = id;
-        this.name = name;
-        this.price = price;
-        this.menuGroupId = menuGroupId;
     }
 
     public Menu(String name, Price price, Long menuGroupId) {
@@ -49,13 +47,17 @@ public class Menu {
     }
 
     public Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.updateMenu(this);
-        }
+        injectMenu(menuProducts);
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
+
+    private void injectMenu(final List<MenuProduct> menuProducts) {
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.updateMenu(this);
+        }
     }
 
     public boolean isPriceGreaterThanMenuProductsPrice() {
