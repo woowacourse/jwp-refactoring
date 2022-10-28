@@ -17,4 +17,8 @@ public class ProductFixture {
     public static ProductRequest createProductRequest(final int price) {
         return new ProductRequest("간장 치킨", BigDecimal.valueOf(price));
     }
+
+    public static ProductRequest createProductRequest(final String name, final int price) {
+        return new ProductRequest(name, BigDecimal.valueOf(price));
+    }
 }
