@@ -12,10 +12,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import kitchenpos.application.dto.OrderLineItemRequest;
+import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -60,14 +60,14 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     }
 
     private Long createOrder(long tableId, List<Long> menuIds) {
-        List<OrderLineItem> orderLineItems = menuIds.stream()
-                .map(id -> new OrderLineItem(null, id, 3))
+        List<OrderLineItemRequest> orderLineItems = menuIds.stream()
+                .map(id -> new OrderLineItemRequest(id, 3))
                 .collect(Collectors.toList());
-        Order order = new Order(tableId, null, null, orderLineItems);
+        OrderRequest orderRequest = new OrderRequest(tableId, orderLineItems);
 
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(order)
+                .body(orderRequest)
                 .when().log().all()
                 .post("/api/orders")
                 .then().log().all()

@@ -7,11 +7,11 @@ public class Order {
 
     private final Long id;
     private final Long orderTableId;
-    private final String orderStatus;
+    private final OrderStatus orderStatus;
     private final LocalDateTime orderedTime;
     private final List<OrderLineItem> orderLineItems;
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
+    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
@@ -20,16 +20,16 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this(id, orderTableId, orderStatus, orderedTime, List.of());
     }
 
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
+    public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        this(null, orderTableId, orderStatus, orderedTime, List.of());
     }
 
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
-        this(null, orderTableId, orderStatus, orderedTime, List.of());
+    public boolean isCompleted() {
+        return orderStatus.isCompletion();
     }
 
     public Long getId() {
@@ -40,7 +40,7 @@ public class Order {
         return orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 

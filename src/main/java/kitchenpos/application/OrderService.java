@@ -2,11 +2,13 @@ package kitchenpos.application;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.application.dto.OrderStatusRequest;
+import kitchenpos.common.exception.InvalidMenuException;
+import kitchenpos.common.exception.InvalidOrderException;
+import kitchenpos.common.exception.InvalidTableException;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -40,43 +42,66 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(OrderRequest orderRequest) {
-        List<OrderLineItemRequest> orderLineItemRequests = orderRequest.getOrderLineItems();
+        validateOrderRequest(orderRequest);
 
+        OrderTable orderTable = getOrderTable(orderRequest.getOrderTableId());
+        validateOrderTable(orderTable);
+
+        Order order = orderDao.save(
+                new Order(orderRequest.getOrderTableId(), OrderStatus.COOKING, LocalDateTime.now()));
+
+        List<OrderLineItem> orderLineItems = getOrderLineItems(order, orderRequest.getOrderLineItems());
+
+        return mapToOrderResponse(order, orderLineItems);
+    }
+
+    private void validateOrderRequest(OrderRequest orderRequest) {
+        List<OrderLineItemRequest> orderLineItems = orderRequest.getOrderLineItems();
+        validateOrderLineItem(orderLineItems);
+        validateMenu(orderLineItems);
+    }
+
+    private void validateOrderLineItem(List<OrderLineItemRequest> orderLineItemRequests) {
         if (CollectionUtils.isEmpty(orderLineItemRequests)) {
-            throw new IllegalArgumentException();
+            throw new InvalidOrderException("주문 항목이 비어있습니다.");
         }
+    }
 
+    private void validateMenu(List<OrderLineItemRequest> orderLineItemRequests) {
         List<Long> menuIds = orderLineItemRequests.stream()
                 .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());
 
         if (orderLineItemRequests.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new InvalidMenuException("메뉴가 존재하지 않습니다.");
         }
+    }
 
-        OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+    private OrderTable getOrderTable(Long orderId) {
+        return orderTableDao.findById(orderId)
+                .orElseThrow(() -> new InvalidTableException("테이블이 존재하지 않습니다."));
+    }
 
+    private void validateOrderTable(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new InvalidTableException("빈 테이블입니다.");
         }
+    }
 
-        Order order = orderDao.save(
-                new Order(orderRequest.getOrderTableId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
-
-        List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
+    private List<OrderLineItem> getOrderLineItems(Order order, List<OrderLineItemRequest> orderLineItems) {
+        return orderLineItems
+                .stream()
                 .map(orderLineItemRequest -> {
                     OrderLineItem orderLineItem = new OrderLineItem(order.getId(), orderLineItemRequest.getMenuId(),
                             orderLineItemRequest.getQuantity());
                     return orderLineItemDao.save(orderLineItem);
                 })
                 .collect(Collectors.toList());
-
-        return mapToOrderResponse(order, orderLineItems);
     }
 
     private OrderResponse mapToOrderResponse(Order order, List<OrderLineItem> orderLineItems) {
-        return new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus(), order.getOrderedTime(),
+        return new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus().name(),
+                order.getOrderedTime(),
                 mapToOrderLineItemResponses(orderLineItems));
     }
 
@@ -99,14 +124,21 @@ public class OrderService {
 
     @Transactional
     public void changeOrderStatus(Long orderId, OrderStatusRequest orderRequest) {
-        Order order = orderDao.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+        OrderStatus orderStatus = OrderStatus.find(orderRequest.getOrderStatus());
+        Order order = getOrder(orderId);
+        validateOrder(order);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), order.getOrderStatus())) {
-            throw new IllegalArgumentException();
+        orderDao.save(new Order(order.getId(), order.getOrderTableId(), orderStatus, order.getOrderedTime()));
+    }
+
+    private void validateOrder(Order order) {
+        if (order.isCompleted()) {
+            throw new InvalidOrderException("주문이 완료 상태입니다.");
         }
+    }
 
-        OrderStatus orderStatus = OrderStatus.valueOf(orderRequest.getOrderStatus());
-        orderDao.save(new Order(order.getId(), order.getOrderTableId(), orderStatus.name(), order.getOrderedTime()));
+    private Order getOrder(Long orderId) {
+        return orderDao.findById(orderId)
+                .orElseThrow(() -> new InvalidOrderException("주문이 존재하지 않습니다."));
     }
 }
