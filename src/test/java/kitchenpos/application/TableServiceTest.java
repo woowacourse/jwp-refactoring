@@ -11,6 +11,7 @@ import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -21,11 +22,9 @@ class TableServiceTest {
     class CreateTest extends ServiceTest {
         @Test
         void create_success() {
-            OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(false);
-            orderTable.setNumberOfGuests(5);
+            final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
 
-            OrderTable savedTable = tableService.create(orderTable);
+            OrderTable savedTable = tableService.create(orderTableRequest);
 
             assertThat(savedTable.getNumberOfGuests()).isEqualTo(5);
         }
@@ -57,7 +56,8 @@ class TableServiceTest {
 
         @Test
         void changeEmpty_fail_when_orderTableId_not_exist() {
-            savedOrderTable = tableService.create(orderTable);
+            final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
+            savedOrderTable = tableService.create(orderTableRequest);
 
             assertThatThrownBy(() -> tableService.changeEmpty(100L, orderTable))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -80,7 +80,8 @@ class TableServiceTest {
 
         @Test
         void changeEmpty_fail_when_orderStatus_in_COOKING() {
-            savedOrderTable = tableService.create(orderTable);
+            final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
+            savedOrderTable = tableService.create(orderTableRequest);
 
             Order order = new Order();
             order.setOrderStatus(COOKING.name());
@@ -96,7 +97,8 @@ class TableServiceTest {
 
         @Test
         void changeEmpty_fail_when_orderStatus_in_MEAL() {
-            savedOrderTable = tableService.create(orderTable);
+            final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
+            savedOrderTable = tableService.create(orderTableRequest);
 
             Order order = new Order();
             order.setOrderStatus(MEAL.name());
@@ -112,7 +114,8 @@ class TableServiceTest {
 
         @Test
         void changeEmpty_success() {
-            savedOrderTable = tableService.create(orderTable);
+            final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
+            savedOrderTable = tableService.create(orderTableRequest);
             orderTable.setEmpty(true);
 
             OrderTable changedTable = tableService.changeEmpty(savedOrderTable.getId(), this.orderTable);
@@ -136,7 +139,8 @@ class TableServiceTest {
 
         @Test
         void changeNumberOfGuests_fail_when_smaller_than_zero() {
-            savedOrderTable = tableService.create(orderTable);
+            final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
+            savedOrderTable = tableService.create(orderTableRequest);
 
             orderTable.setNumberOfGuests(-1);
 
@@ -153,7 +157,8 @@ class TableServiceTest {
         @Test
         void changeNumberOfGuests_fail_when_orderTable_is_empty() {
             orderTable.setEmpty(true);
-            savedOrderTable = tableService.create(orderTable);
+            final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
+            savedOrderTable = tableService.create(orderTableRequest);
 
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -161,7 +166,8 @@ class TableServiceTest {
 
         @Test
         void changeNumberOfGuests_success() {
-            savedOrderTable = tableService.create(orderTable);
+            final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
+            savedOrderTable = tableService.create(orderTableRequest);
             orderTable.setNumberOfGuests(10);
 
             OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(), this.orderTable);

@@ -4,6 +4,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,9 +23,10 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
+    public OrderTable create(final OrderTableRequest orderTableRequest) {
+        final OrderTable orderTable = new OrderTable(null, null,
+                orderTableRequest.getNumberOfGuests(),
+                orderTableRequest.isEmpty());
 
         return orderTableDao.save(orderTable);
     }
