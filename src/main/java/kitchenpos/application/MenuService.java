@@ -17,6 +17,7 @@ import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.repository.MenuRepository;
 
 @Service
+@Transactional
 public class MenuService {
 
     private final MenuRepository menuRepository;
@@ -29,7 +30,6 @@ public class MenuService {
         this.productDao = productDao;
     }
 
-    @Transactional
     public MenuResponse create(MenuRequest request) {
         Menu menu = request.toMenu();
         validateIsExistMenuGroup(menu);
@@ -55,6 +55,7 @@ public class MenuService {
         menu.validatePriceIsCheaperThanSum(sum);
     }
 
+    @Transactional(readOnly = true)
     public List<MenuResponse> list() {
         List<Menu> menus = menuRepository.findAll();
         return menus.stream()

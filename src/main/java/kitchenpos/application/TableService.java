@@ -18,6 +18,7 @@ import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 
 @Service
+@Transactional
 public class TableService {
 
     private final OrderDao orderDao;
@@ -28,7 +29,6 @@ public class TableService {
         this.orderTableDao = orderTableDao;
     }
 
-    @Transactional
     public OrderTableResponse create(OrderTableRequest request) {
         OrderTable orderTable = request.toOrderTable();
 
@@ -36,6 +36,7 @@ public class TableService {
         return new OrderTableResponse(savedOrderTable);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTableResponse> list() {
         List<OrderTable> orderTables = orderTableDao.findAll();
         return orderTables.stream()
@@ -43,7 +44,6 @@ public class TableService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public OrderTableResponse changeEmpty(Long orderTableId, ChangeOrderTableEmptyRequest request) {
         OrderTable orderTable = findOrderTable(orderTableId);
 
@@ -56,6 +56,12 @@ public class TableService {
         return new OrderTableResponse(savedOrderTable);
     }
 
+    private void validateNotBelongToTableGroup(OrderTable orderTable) {
+        if (Objects.nonNull(orderTable.getTableGroupId())) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     private void validateTableCanChangeEmpty(Long orderTableId) {
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
@@ -63,13 +69,6 @@ public class TableService {
         }
     }
 
-    private void validateNotBelongToTableGroup(OrderTable orderTable) {
-        if (Objects.nonNull(orderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    @Transactional
     public OrderTableResponse changeNumberOfGuests(Long orderTableId, ChangeNumOfTableGuestsRequest request) {
         OrderTable orderTable = findOrderTable(orderTableId);
         validateOrderTableIsNotEmpty(orderTable);
@@ -80,14 +79,14 @@ public class TableService {
         return new OrderTableResponse(savedOrderTable);
     }
 
-    private static void validateOrderTableIsNotEmpty(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     private OrderTable findOrderTable(Long orderTableId) {
         return orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
+    }
+
+    private void validateOrderTableIsNotEmpty(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
     }
 }

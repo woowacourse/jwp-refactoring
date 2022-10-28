@@ -21,6 +21,7 @@ import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.repository.OrderRepository;
 
 @Service
+@Transactional
 public class OrderService {
 
     private final MenuDao menuDao;
@@ -38,7 +39,6 @@ public class OrderService {
         this.orderTableDao = orderTableDao;
     }
 
-    @Transactional
     public OrderResponse create(OrderRequest request) {
         Order order = request.toOrder();
         validateOrderItemSize(order.getOrderLineItems());
@@ -70,6 +70,7 @@ public class OrderService {
         }
     }
 
+    @Transactional(readOnly = true)
     public List<OrderResponse> list() {
         List<Order> orders = orderRepository.findAll();
         return orders.stream()
@@ -77,7 +78,6 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public OrderResponse changeOrderStatus(Long orderId, OrderStatusUpdateRequest request) {
         Order savedOrder = validateExistOrder(orderId);
 

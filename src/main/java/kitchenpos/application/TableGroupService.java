@@ -19,6 +19,7 @@ import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
 
 @Service
+@Transactional
 public class TableGroupService {
 
     private final OrderDao orderDao;
@@ -31,7 +32,6 @@ public class TableGroupService {
         this.tableGroupDao = tableGroupDao;
     }
 
-    @Transactional
     public TableGroupResponse create(TableGroupRequest request) {
         List<Long> orderTableIds = request.getOrderTableIds();
         validateOrderTableSize(orderTableIds);
@@ -77,7 +77,6 @@ public class TableGroupService {
         }
     }
 
-    @Transactional
     public void ungroup(Long tableGroupId) {
         List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
 
