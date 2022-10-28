@@ -16,13 +16,13 @@ public class TableValidator {
         this.orderDao = orderDao;
     }
 
-    public void validateChangeEmpty(OrderTable savedOrderTable) {
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
+    public void validateChangeEmpty(OrderTable orderTable) {
+        if (Objects.nonNull(orderTable.getTableGroupId())) {
             throw new IllegalArgumentException("이미 단체지정이 되어있습니다.");
         }
 
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                savedOrderTable.getId(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+                orderTable.getId(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException("조리중이거나 식사 상태입니다.");
         }
     }
@@ -34,6 +34,5 @@ public class TableValidator {
         if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException("빈 테이블입니다.");
         }
-
     }
 }
