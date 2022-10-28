@@ -27,7 +27,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse create(final OrderTableCreateRequest request) {
-        return toResponse(orderTableRepository.save(
+        return OrderTableResponse.from(orderTableRepository.save(
                 OrderTable.of(
                         request.getNumberOfGuests(),
                         request.isEmpty()
@@ -38,7 +38,7 @@ public class TableService {
     public List<OrderTableResponse> list() {
         return orderTableRepository.findAll()
                 .stream()
-                .map(this::toResponse)
+                .map(OrderTableResponse::from)
                 .collect(Collectors.toList());
     }
 
@@ -51,7 +51,7 @@ public class TableService {
         final OrderTable updatedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new)
                 .changeEmpty(request.isEmpty());
-        return toResponse(orderTableRepository.save(updatedOrderTable));
+        return OrderTableResponse.from(orderTableRepository.save(updatedOrderTable));
     }
 
     private boolean hasNotCompletedOrder(final Long orderTableId) {
@@ -66,15 +66,6 @@ public class TableService {
         final OrderTable updatedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new)
                 .changeNumberOfGuests(request.getNumberOfGuests());
-        return toResponse(orderTableRepository.save(updatedOrderTable));
-    }
-
-    private OrderTableResponse toResponse(final OrderTable orderTable) {
-        return new OrderTableResponse(
-                orderTable.getId(),
-                orderTable.getTableGroupId(),
-                orderTable.getNumberOfGuests(),
-                orderTable.isEmpty()
-        );
+        return OrderTableResponse.from(orderTableRepository.save(updatedOrderTable));
     }
 }

@@ -13,7 +13,6 @@ import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
 import kitchenpos.ui.dto.request.MenuProductRequest;
 import kitchenpos.ui.dto.response.MenuResponse;
-import kitchenpos.ui.dto.response.MenuResponse.MenuProductResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,28 +60,13 @@ public class MenuService {
                 .collect(Collectors.toList());
         final Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), menuProducts);
 
-        return toResponse(menuRepository.save(menu));
+        return MenuResponse.from(menuRepository.save(menu));
     }
 
     public List<MenuResponse> list() {
         return menuRepository.findAll()
                 .stream()
-                .map(this::toResponse)
+                .map(MenuResponse::from)
                 .collect(Collectors.toList());
-    }
-
-    private MenuResponse toResponse(final Menu menu) {
-        final List<MenuProductResponse> menuProductResponses = menu.getMenuProducts()
-                .stream()
-                .map(it -> new MenuProductResponse(it.getSeq(), menu.getId(), it.getProductId(), it.getQuantity()))
-                .collect(Collectors.toList());
-
-        return new MenuResponse(
-                menu.getId(),
-                menu.getName(),
-                menu.getPrice(),
-                menu.getMenuGroupId(),
-                menuProductResponses
-        );
     }
 }

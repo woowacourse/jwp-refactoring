@@ -47,7 +47,7 @@ public class TableGroupService {
         final List<OrderTableResponse> orderTableResponses = tableGroup.getOrderTables()
                 .stream()
                 .map(orderTableRepository::save)
-                .map(this::toOrderTableResponse)
+                .map(OrderTableResponse::from)
                 .collect(Collectors.toList());
 
         return new TableGroupResponse(tableGroup.getId(), tableGroup.getCreatedDate(), orderTableResponses);
@@ -72,13 +72,5 @@ public class TableGroupService {
 
         return orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()));
-    }
-
-    private OrderTableResponse toOrderTableResponse(final OrderTable orderTable) {
-        return new OrderTableResponse(
-                orderTable.getId(),
-                orderTable.getTableGroupId(),
-                orderTable.getNumberOfGuests(),
-                orderTable.isEmpty());
     }
 }

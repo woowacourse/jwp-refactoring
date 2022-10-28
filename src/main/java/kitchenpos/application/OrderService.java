@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -16,7 +15,6 @@ import kitchenpos.ui.dto.request.ChangeOrderStatusRequest;
 import kitchenpos.ui.dto.request.OrderCreateRequest;
 import kitchenpos.ui.dto.request.OrderLineItemRequest;
 import kitchenpos.ui.dto.response.OrderResponse;
-import kitchenpos.ui.dto.response.OrderResponse.OrderLineItemResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -39,7 +37,6 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
-
         if (CollectionUtils.isEmpty(request.getOrderLineItems())) {
             throw new IllegalArgumentException();
         }
@@ -68,31 +65,17 @@ public class OrderService {
                 OrderStatus.COOKING.name(),
                 LocalDateTime.now(),
                 orderLineItems);
-        final Order savedOrder = orderRepository.save(order);
-        final Long orderId = savedOrder.getId();
-        final List<OrderLineItemResponse> orderLineItemResponses = savedOrder.getOrderLineItems()
-                .stream()
-                .map(it -> new OrderLineItemResponse(it.getSeq(), orderId, it.getMenuId(), it.getQuantity()))
-                .collect(Collectors.toList());
 
-        return new OrderResponse(savedOrder.getId(), savedOrder.getOrderTableId(),
-                savedOrder.getOrderStatus(),
-                savedOrder.getOrderedTime(), orderLineItemResponses);
+        return OrderResponse.from(
+                orderRepository.save(order)
+        );
     }
 
     public List<OrderResponse> list() {
-        final List<Order> orders = orderRepository.findAll();
-        final List<OrderResponse> responses = new ArrayList<>();
-        for (final Order order : orders) {
-            final List<OrderLineItemResponse> orderLineItemResponses = order.getOrderLineItems()
-                    .stream()
-                    .map(it -> new OrderLineItemResponse(it.getSeq(), order.getId(), it.getMenuId(), it.getQuantity()))
-                    .collect(Collectors.toList());
-            final OrderResponse orderResponse = new OrderResponse(order.getId(), order.getOrderTableId(),
-                    order.getOrderStatus(), order.getOrderedTime(), orderLineItemResponses);
-            responses.add(orderResponse);
-        }
-        return responses;
+        return orderRepository.findAll()
+                .stream()
+                .map(OrderResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -104,17 +87,9 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
-        final Order updatedOrder = savedOrder.changeOrderStatus(orderStatus.name());
-
-        orderRepository.save(updatedOrder);
-
-        final List<OrderLineItemResponse> orderLineItemResponses = updatedOrder.getOrderLineItems()
-                .stream()
-                .map(it -> new OrderLineItemResponse(it.getSeq(), updatedOrder.getId(), it.getMenuId(),
-                        it.getQuantity()))
-                .collect(Collectors.toList());
-        return new OrderResponse(updatedOrder.getId(), updatedOrder.getOrderTableId(), updatedOrder.getOrderStatus(),
-                updatedOrder.getOrderedTime(), orderLineItemResponses);
+        final Order updatedOrder = savedOrder.changeOrderStatus(request.getOrderStatus());
+        return OrderResponse.from(
+                orderRepository.save(updatedOrder)
+        );
     }
 }

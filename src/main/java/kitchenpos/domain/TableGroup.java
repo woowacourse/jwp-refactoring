@@ -27,7 +27,7 @@ public class TableGroup {
     public TableGroup addOrderTables(final List<OrderTable> orderTables) {
         verifyOrderTableSize(orderTables);
         orderTables.forEach(OrderTable::verifyCanGroup);
-        
+
         final List<OrderTable> groupedOrderTables = orderTables.stream()
                 .map(it -> it.group(id))
                 .collect(Collectors.toList());

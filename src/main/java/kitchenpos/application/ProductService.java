@@ -21,7 +21,7 @@ public class ProductService {
 
     @Transactional
     public ProductResponse create(final ProductCreateRequest request) {
-        return toResponse(productRepository.save(
+        return ProductResponse.from(productRepository.save(
                 Product.of(
                         request.getName(),
                         request.getPrice()
@@ -32,15 +32,7 @@ public class ProductService {
     public List<ProductResponse> list() {
         return productRepository.findAll()
                 .stream()
-                .map(this::toResponse)
+                .map(ProductResponse::from)
                 .collect(Collectors.toList());
-    }
-
-    private ProductResponse toResponse(final Product product) {
-        return new ProductResponse(
-                product.getId(),
-                product.getName(),
-                product.getPrice()
-        );
     }
 }
