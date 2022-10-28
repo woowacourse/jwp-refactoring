@@ -81,9 +81,4 @@ public class Order {
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
     }
-
-    public boolean canChangeStatus() {
-        //고치기
-        return true;
-    }
 }
