@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -21,11 +23,11 @@ class MenuGroupServiceTest extends ServiceTest {
         @Nested
         class 정상적인_요청일_경우 {
             private final String name = "햄버거 세트";
-            private final MenuGroup menuGroup = new MenuGroup(name);
+            private final MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest(name);
 
             @Test
             void 메뉴_그룹을_추가한다() {
-                MenuGroup actual = menuGroupService.create(menuGroup);
+                MenuGroupResponse actual = menuGroupService.create(menuGroupCreateRequest);
 
                 assertAll(() -> {
                     assertThat(actual.getId()).isNotNull();

@@ -9,7 +9,9 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
 import kitchenpos.dto.request.ProductCreateRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -29,11 +31,12 @@ class MenuServiceTest extends ServiceTest {
 
             private final String name = "햄버거";
             private final BigDecimal price = BigDecimal.valueOf(5000);
-            private final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("햄버거 세트"));
+            private final MenuGroupResponse menuGroupResponse = menuGroupService.create(
+                    new MenuGroupCreateRequest("햄버거 세트"));
             private final ProductResponse productResponse = productService.create(
                     new ProductCreateRequest(name, price));
             private final MenuProduct menuProduct = new MenuProduct(productResponse.getId(), 1);
-            private final Menu menu = new Menu(name, price, menuGroup.getId(), List.of(menuProduct));
+            private final Menu menu = new Menu(name, price, menuGroupResponse.getId(), List.of(menuProduct));
 
             @Test
             void 메뉴를_추가한다() {
@@ -51,11 +54,12 @@ class MenuServiceTest extends ServiceTest {
 
             private final String name = "햄버거";
             private final BigDecimal price = null;
-            private final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("햄버거 세트"));
+            private final MenuGroupResponse menuGroupResponse = menuGroupService.create(
+                    new MenuGroupCreateRequest("햄버거 세트"));
             private final ProductResponse productResponse = productService.create(
                     new ProductCreateRequest(name, BigDecimal.valueOf(5000)));
             private final MenuProduct menuProduct = new MenuProduct(productResponse.getId(), 1);
-            private final Menu menu = new Menu(name, price, menuGroup.getId(), List.of(menuProduct));
+            private final Menu menu = new Menu(name, price, menuGroupResponse.getId(), List.of(menuProduct));
 
             @Test
             void 예외가_발생한다() {
@@ -70,11 +74,12 @@ class MenuServiceTest extends ServiceTest {
 
             private final String name = "햄버거";
             private final BigDecimal price = BigDecimal.valueOf(-1);
-            private final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("햄버거 세트"));
+            private final MenuGroupResponse menuGroupResponse = menuGroupService.create(
+                    new MenuGroupCreateRequest("햄버거 세트"));
             private final ProductResponse productResponse = productService.create(
                     new ProductCreateRequest(name, BigDecimal.valueOf(5000)));
             private final MenuProduct menuProduct = new MenuProduct(productResponse.getId(), 1);
-            private final Menu menu = new Menu(name, price, menuGroup.getId(), List.of(menuProduct));
+            private final Menu menu = new Menu(name, price, menuGroupResponse.getId(), List.of(menuProduct));
 
             @Test
             void 예외가_발생한다() {
@@ -107,11 +112,12 @@ class MenuServiceTest extends ServiceTest {
 
             private final String name = "햄버거";
             private final BigDecimal price = BigDecimal.valueOf(5000);
-            private final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("햄버거 세트"));
+            private final MenuGroupResponse menuGroupResponse = menuGroupService.create(
+                    new MenuGroupCreateRequest("햄버거 세트"));
             private final ProductResponse productResponse = productService.create(
                     new ProductCreateRequest(name, BigDecimal.valueOf(4999)));
             private final MenuProduct menuProduct = new MenuProduct(productResponse.getId(), 1);
-            private final Menu menu = new Menu(name, price, menuGroup.getId(), List.of(menuProduct));
+            private final Menu menu = new Menu(name, price, menuGroupResponse.getId(), List.of(menuProduct));
 
             @Test
             void 예외가_발생한다() {
