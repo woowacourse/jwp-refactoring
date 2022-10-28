@@ -14,10 +14,10 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.request.MenuProductDto;
 import kitchenpos.application.dto.response.MenuResponse;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
@@ -33,16 +33,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class MenuServiceTest {
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuDao;
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupDao;
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productDao;
 
     @Mock
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductDao;
 
     @InjectMocks
     private MenuService menuService;
