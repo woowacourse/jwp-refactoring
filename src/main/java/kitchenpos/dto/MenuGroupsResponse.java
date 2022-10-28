@@ -8,7 +8,7 @@ public class MenuGroupsResponse {
 
     private List<MenuGroupResponse> menuGroups;
 
-    public MenuGroupsResponse(List<MenuGroupResponse> menuGroups) {
+    private MenuGroupsResponse(List<MenuGroupResponse> menuGroups) {
         this.menuGroups = menuGroups;
     }
 

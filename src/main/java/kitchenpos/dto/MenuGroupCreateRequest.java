@@ -6,7 +6,7 @@ public class MenuGroupCreateRequest {
 
     private String name;
 
-    public MenuGroupCreateRequest() {
+    private MenuGroupCreateRequest() {
     }
 
     public MenuGroupCreateRequest(String name) {

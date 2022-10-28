@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
@@ -48,6 +49,9 @@ public abstract class ServiceTest {
     @Autowired
     MenuGroupDao menuGroupDao;
 
+    @Autowired
+    MenuDao menuDao;
+
     protected MenuProduct 메뉴_상품을_생성한다(String productName, int productPrice, Long quantity) {
         return 메뉴_상품을_생성한다(null, productName, productPrice, quantity);
     }
@@ -82,7 +86,7 @@ public abstract class ServiceTest {
         Menu menu = new Menu(
                 menuName, BigDecimal.valueOf(menuProducts.size() * 5000L), menuGroup.getId(), menuProducts);
 
-        return menuService.create(menu);
+        return menuDao.save(menu);
     }
 
     protected OrderTable 테이블을_저장한다(int numberOfGuests) {

@@ -16,7 +16,7 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this.menuProducts = menuProducts; // TODO: 불변으로
     }
 
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
@@ -43,11 +43,7 @@ public class Menu {
         return menuGroupId;
     }
 
-    public void addMenuProduct(MenuProduct menuProduct) {
-        menuProducts.add(menuProduct);
-    }
-
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+        return new ArrayList<>(menuProducts);
     }
 }
