@@ -47,7 +47,11 @@ public class OrderLineItem {
     }
 
     public void updateOrder(final Order order) {
+        if (this.order != null) {
+            this.order.getOrderLineItems().remove(this);
+        }
         this.order = order;
+        this.order.getOrderLineItems().add(this);
     }
 
     public Menu getMenu() {
