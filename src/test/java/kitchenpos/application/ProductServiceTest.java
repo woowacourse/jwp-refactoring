@@ -1,13 +1,18 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dto.product.ProductCreateRequest;
 import kitchenpos.dto.product.ProductResponse;
 import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ServiceTest
@@ -34,6 +39,18 @@ class ProductServiceTest {
         );
     }
 
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"-1"})
+    void 상품_등록_시_상품_가격이_null이거나_0_이하라면_예외를_던진다(BigDecimal price) {
+        // given
+        ProductCreateRequest productCreateRequest = new ProductCreateRequest("강정치킨", price);
+
+        // when & then
+        assertThatThrownBy(() -> productService.create(productCreateRequest))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
     @Test
     void 상품_목록들을_조회한다() {
         // given
@@ -47,6 +64,6 @@ class ProductServiceTest {
     }
 
     public ProductCreateRequest 강정치킨_생성_요청() {
-        return new ProductCreateRequest("강정치킨", 17000);
+        return new ProductCreateRequest("강정치킨", BigDecimal.valueOf(17000));
     }
 }

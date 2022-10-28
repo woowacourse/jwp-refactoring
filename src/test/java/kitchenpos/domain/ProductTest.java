@@ -16,14 +16,14 @@ class ProductTest {
     @NullSource
     @ValueSource(strings = {"-1"})
     void 상품의_가격이_null이거나_0보다_작은_경우_상품을_생성할_수_없다(BigDecimal price) {
-        assertThatThrownBy(() -> new Product(null, "치킨", price))
+        assertThatThrownBy(() -> new Product("치킨", price))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 상품의_가격이_0보다_큰_경우_상품을_생성할_수_있다() {
         // given
-        assertThatCode(() -> new Product("치킨", 1))
+        assertThatCode(() -> new Product("치킨", BigDecimal.valueOf(1)))
                 .doesNotThrowAnyException();
     }
 }

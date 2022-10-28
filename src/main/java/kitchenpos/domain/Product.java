@@ -1,28 +1,24 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 public class Product {
     private final Long id;
     private final String name;
-    private final BigDecimal price;
+    private final Price price;
 
-    public Product(String name, int price) {
-        this(null, name, BigDecimal.valueOf(price));
+    public Product(String name, BigDecimal price) {
+        this(null, name, new Price(price));
     }
 
-    public Product(Long id, String name, BigDecimal price) {
-        validatePrice(price);
+    public Product(Long id, String name, Price price) {
         this.id = id;
         this.name = name;
         this.price = price;
     }
 
-    private void validatePrice(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
+    public BigDecimal multiplyPrice(long count) {
+        return price.multiply(count);
     }
 
     public Long getId() {
@@ -34,6 +30,6 @@ public class Product {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 }
