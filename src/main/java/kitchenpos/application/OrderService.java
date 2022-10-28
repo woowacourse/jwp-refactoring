@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
@@ -65,12 +64,9 @@ public class OrderService {
         final Order savedOrder = orderRepository.save(order);
 
         final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
-            final OrderLineItem orderLineItem = new OrderLineItem(orderId, orderLineItemRequest.getMenuId(),
-                    orderLineItemRequest.getQuantity());
-            savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
-        }
+        final List<OrderLineItem> savedOrderLineItems = orderLineItemRequests.stream()
+                .map(orderLineItemRequest -> saveOrderLineItem(orderId, orderLineItemRequest))
+                .collect(Collectors.toList());
         return OrderResponse.of(savedOrder, savedOrderLineItems);
     }
 
@@ -94,5 +90,11 @@ public class OrderService {
         final List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(orderId);
 
         return OrderResponse.of(savedOrder, orderLineItems);
+    }
+
+    private OrderLineItem saveOrderLineItem(final Long orderId, final OrderLineItemRequest orderLineItemRequest) {
+        final OrderLineItem orderLineItem = new OrderLineItem(orderId, orderLineItemRequest.getMenuId(),
+                orderLineItemRequest.getQuantity());
+        return orderLineItemRepository.save(orderLineItem);
     }
 }

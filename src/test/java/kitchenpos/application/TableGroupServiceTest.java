@@ -132,7 +132,7 @@ class TableGroupServiceTest extends ServiceTest {
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("이미 주문이 진행 중입니다.");
+                .hasMessage("식사가 완료되지 않았습니다.");
     }
 
     private TableGroupRequest createTableGroupRequest(final List<TableForGroupingRequest> orderTableRequests) {

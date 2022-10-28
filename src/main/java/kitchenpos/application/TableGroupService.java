@@ -60,12 +60,7 @@ public class TableGroupService {
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
 
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-
-        final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.changeTableGroupId(tableGroupId);
-            savedOrderTable.changeEmpty(false);
-        }
+        savedOrderTables.forEach(orderTable -> orderTable.group(savedTableGroup.getId()));
 
         return TableGroupResponse.of(savedTableGroup, savedOrderTables);
     }
@@ -80,12 +75,9 @@ public class TableGroupService {
 
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("이미 주문이 진행 중입니다.");
+            throw new IllegalArgumentException("식사가 완료되지 않았습니다.");
         }
 
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.changeTableGroupId(null);
-            orderTable.changeEmpty(false);
-        }
+        orderTables.forEach(OrderTable::ungroup);
     }
 }

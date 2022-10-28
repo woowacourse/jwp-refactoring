@@ -52,7 +52,7 @@ public class TableService {
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("이미 주문이 들어간 테이블입니다.");
+            throw new IllegalArgumentException("아직 식사가 완료되지 않은 테이블입나다.");
         }
 
         orderTable.changeEmpty(request.isEmpty());

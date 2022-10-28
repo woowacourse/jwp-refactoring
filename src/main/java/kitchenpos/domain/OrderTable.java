@@ -40,7 +40,17 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    private void validateNumberOfGuestsNegative(int numberOfGuests) {
+    public void group(final Long tableGroupId) {
+        changeTableGroupId(tableGroupId);
+        changeEmpty(false);
+    }
+
+    public void ungroup() {
+        changeTableGroupId(null);
+        changeEmpty(false);
+    }
+
+    private void validateNumberOfGuestsNegative(final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException("손님의 인원은 음수가 될 수 없습니다.");
         }

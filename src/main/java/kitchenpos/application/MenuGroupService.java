@@ -20,9 +20,6 @@ public class MenuGroupService {
 
     @Transactional
     public MenuGroupResponse create(final MenuGroupRequest request) {
-        if (request.getName() == null) {
-            throw new IllegalArgumentException("이름은 null일 수 없습니다.");
-        }
         final MenuGroup menuGroup = new MenuGroup(request.getName());
         final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
         return MenuGroupResponse.from(savedMenuGroup);

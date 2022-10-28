@@ -117,7 +117,7 @@ class TableServiceTest extends ServiceTest {
         assertThatThrownBy(
                 () -> tableService.changeEmpty(orderTable.getId(), createChangeEmptyRequest(true)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("이미 주문이 들어간 테이블입니다.");
+                .hasMessage("아직 식사가 완료되지 않은 테이블입나다.");
     }
 
     @DisplayName("방문한 손님 수를 변경한다.")

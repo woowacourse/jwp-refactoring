@@ -26,9 +26,10 @@ public class MenuService {
     private final MenuProductRepository menuProductRepository;
     private final ProductRepository productRepository;
 
-    public MenuService(MenuRepository menuRepository, MenuGroupRepository menuGroupRepository,
-                       MenuProductRepository menuProductRepository,
-                       ProductRepository productRepository) {
+    public MenuService(final MenuRepository menuRepository,
+                       final MenuGroupRepository menuGroupRepository,
+                       final MenuProductRepository menuProductRepository,
+                       final ProductRepository productRepository) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.menuProductRepository = menuProductRepository;
@@ -44,26 +45,16 @@ public class MenuService {
 
         final Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId());
         final Menu savedMenu = menuRepository.save(menu);
-        final Long menuId = savedMenu.getId();
-        final List<MenuProduct> menuProducts = menuProductRequests.stream()
-                .map(menuProductRequest -> new MenuProduct(menuId, menuProductRequest.getProductId(),
-                        menuProductRequest.getQuantity()))
-                .map(menuProductRepository::save)
-                .collect(Collectors.toList());
-        return MenuResponse.of(savedMenu, menuProducts);
+        final List<MenuProduct> savedMenuProducts = saveMenuProduct(menuProductRequests, savedMenu.getId());
+        return MenuResponse.of(savedMenu, savedMenuProducts);
     }
 
     public List<MenuResponse> findAll() {
         final List<Menu> menus = menuRepository.findAll();
 
-        final ArrayList<MenuResponse> menuResponses = new ArrayList<>();
-        for (final Menu menu : menus) {
-            final MenuResponse menuResponse = MenuResponse
-                    .of(menu, menuProductRepository.findAllByMenuId(menu.getId()));
-            menuResponses.add(menuResponse);
-        }
-
-        return menuResponses;
+        return menus.stream()
+                .map(menu -> MenuResponse.of(menu, menuProductRepository.findAllByMenuId(menu.getId())))
+                .collect(Collectors.toList());
     }
 
     private void validateMenuGroupExist(final Long menuGroupId) {
@@ -84,5 +75,20 @@ public class MenuService {
         if (menuPrice.compareTo(sum) > 0) {
             throw new IllegalArgumentException("메뉴의 가격은 메뉴 상품들의 총액보다 비쌀 수 없습니다.");
         }
+    }
+
+    private List<MenuProduct> saveMenuProduct(final List<MenuProductRequest> menuProductRequests, final Long menuId) {
+        final List<MenuProduct> menuProducts = menuProductRequests.stream()
+                .map(menuProductRequest -> new MenuProduct(menuId, menuProductRequest.getProductId(),
+                        menuProductRequest.getQuantity()))
+                .collect(Collectors.toList());
+
+        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
+        for (MenuProduct menuProduct : menuProducts) {
+            final MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
+            savedMenuProducts.add(savedMenuProduct);
+        }
+
+        return savedMenuProducts;
     }
 }
