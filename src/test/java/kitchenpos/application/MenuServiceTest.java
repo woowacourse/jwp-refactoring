@@ -68,7 +68,7 @@ class MenuServiceTest {
         // given
         long invalidProductId = 999L;
         MenuCreateRequest request = MenuFixtures.createMenuCreateRequest(
-                List.of(MenuFixtures.createMenuProductCreateRequest(null, invalidProductId, 3))
+                List.of(MenuFixtures.createMenuProductCreateRequest(invalidProductId, 3))
         );
 
         // when & then

@@ -23,12 +23,9 @@ public class Menu {
     private BigDecimal price;
     private Long menuGroupId;
 
-    @OneToMany(mappedBy = "menuId")
-    /*
-    todo : apply this instead, and remove menuId in MenuProduct
+//    @OneToMany(mappedBy = "menuId")
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "menu_id")
-    */
+    @JoinColumn(name = "menu_id", nullable = false, updatable = false)
     private List<MenuProduct> menuProducts;
 
     protected Menu() {

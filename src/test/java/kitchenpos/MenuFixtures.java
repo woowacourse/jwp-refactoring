@@ -45,11 +45,11 @@ public class MenuFixtures {
     }
 
     public static MenuProduct createMenuProduct() {
-        return createMenuProduct(MENU_ID, ProductFixtures.createProduct(), QUANTITY);
+        return createMenuProduct(ProductFixtures.createProduct(), QUANTITY);
     }
 
-    public static MenuProduct createMenuProduct(long menuId, Product product, int quantity) {
-        return new MenuProduct(menuId, product, quantity);
+    public static MenuProduct createMenuProduct(Product product, int quantity) {
+        return new MenuProduct(product, quantity);
     }
 
     public static MenuCreateRequest createMenuCreateRequest() {
@@ -57,7 +57,7 @@ public class MenuFixtures {
                 "메뉴",
                 BigDecimal.valueOf(30000),
                 1L,
-                List.of(new MenuProductCreateRequest(null, 1L, 2))
+                List.of(new MenuProductCreateRequest(1L, 2))
         );
     }
 
@@ -83,11 +83,11 @@ public class MenuFixtures {
     }
 
     public static MenuProductCreateRequest createMenuProductCreateRequest() {
-        return createMenuProductCreateRequest(MENU_ID, PRODUCT_ID, QUANTITY);
+        return createMenuProductCreateRequest(PRODUCT_ID, QUANTITY);
     }
 
-    public static MenuProductCreateRequest createMenuProductCreateRequest(Long menuId, Long productId, int quantity) {
-        return new MenuProductCreateRequest(menuId, productId, quantity);
+    public static MenuProductCreateRequest createMenuProductCreateRequest(Long productId, int quantity) {
+        return new MenuProductCreateRequest(productId, quantity);
     }
 
     public static MenuResponse createMenuResponse() {

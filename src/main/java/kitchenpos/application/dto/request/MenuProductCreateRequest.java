@@ -4,26 +4,20 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 
 public class MenuProductCreateRequest {
-    private final Long menuId;
     private final Long productId;
     private final long quantity;
 
     private MenuProductCreateRequest() {
-        this(null, null, 0L);
+        this(null, 0L);
     }
 
-    public MenuProductCreateRequest(Long menuId, Long productId, long quantity) {
-        this.menuId = menuId;
+    public MenuProductCreateRequest(Long productId, long quantity) {
         this.productId = productId;
         this.quantity = quantity;
     }
 
     public MenuProduct toMenuProduct(Product product) {
-        return new MenuProduct(menuId, product, quantity);
-    }
-
-    public Long getMenuId() {
-        return menuId;
+        return new MenuProduct(product, quantity);
     }
 
     public Long getProductId() {

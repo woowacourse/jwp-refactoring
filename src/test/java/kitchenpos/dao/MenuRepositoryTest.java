@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityManager;
 import kitchenpos.MenuFixtures;
 import kitchenpos.domain.Menu;
 import kitchenpos.support.RepositoryTest;
@@ -35,6 +36,7 @@ class MenuRepositoryTest {
         // given
         Menu menu = MenuFixtures.createMenu();
         Menu savedMenu = menuRepository.save(menu);
+
         // when
         Optional<Menu> foundMenu = menuRepository.findById(savedMenu.getId());
 
