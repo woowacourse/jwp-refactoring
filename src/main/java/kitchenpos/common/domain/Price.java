@@ -33,6 +33,17 @@ public class Price {
         return value == null || value.intValue() < MINIMUM_PRICE;
     }
 
+    public Price sum(Price price) {
+        return Price.from(value.add(price.value));
+    }
+    public Price multiply(Long quantity) {
+        return Price.from(value.intValue() * quantity.intValue());
+    }
+
+    public boolean isThanExpensive(Price menuProductsPrice) {
+        return this.value.intValue() > menuProductsPrice.value.intValue();
+    }
+
     public BigDecimal getValue() {
         return value;
     }
