@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.springframework.util.CollectionUtils;
 
 @Entity
 @Table(name = "orders")
@@ -33,22 +34,37 @@ public class Order {
 
     public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
+        mapOrderLineItems(orderLineItems);
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        mapOrderLineItems(orderLineItems);
     }
 
     private void mapOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        validateItemExists(orderLineItems);
         this.orderLineItems = orderLineItems;
         for (OrderLineItem orderLineItem : orderLineItems) {
             orderLineItem.mapOrder(this);
         }
     }
 
-    public void changeOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
+    private void validateItemExists(final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void changeOrderStatus(final String orderStatusName) {
+        validateNotCompleted();
+        OrderStatus.valueOf(orderStatusName);
+        this.orderStatus = orderStatusName;
+    }
+
+    private void validateNotCompleted() {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {

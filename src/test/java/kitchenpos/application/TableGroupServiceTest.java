@@ -1,17 +1,24 @@
 package kitchenpos.application;
 
 import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.support.TestFixtureFactory.메뉴_그룹을_생성한다;
+import static kitchenpos.support.TestFixtureFactory.메뉴를_생성한다;
 import static kitchenpos.support.TestFixtureFactory.주문_테이블을_생성한다;
+import static kitchenpos.support.TestFixtureFactory.주문_항목을_생성한다;
 import static kitchenpos.support.TestFixtureFactory.주문을_생성한다;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.TransactionalTest;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.dto.response.TableGroupCreateResponse;
@@ -25,6 +32,10 @@ class TableGroupServiceTest {
     private OrderTableRepository orderTableRepository;
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+    @Autowired
+    private MenuRepository menuRepository;
     @Autowired
     private TableGroupService tableGroupService;
 
@@ -95,7 +106,13 @@ class TableGroupServiceTest {
         OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 2, true));
         Long tableGroupId = tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()))
                 .getId();
-        orderRepository.save(주문을_생성한다(orderTable1.getId(), COOKING.name(), LocalDateTime.now(), List.of()));
+        Long menuGroupId = menuGroupRepository.save(메뉴_그룹을_생성한다("메뉴 그룹"))
+                .getId();
+        Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, List.of()))
+                .getId();
+        OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
+        orderRepository.save(
+                주문을_생성한다(orderTable1.getId(), COOKING.name(), LocalDateTime.now(), List.of(orderLineItem)));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId)).isInstanceOf(IllegalArgumentException.class);
     }
