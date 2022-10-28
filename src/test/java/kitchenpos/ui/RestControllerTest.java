@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(controllers = {MenuGroupRestController.class, MenuRestController.class, ProductRestController.class,
         TableRestController.class, TableGroupRestController.class},
-        includeFilters = @Filter(type = FilterType.REGEX, pattern = "kitchenpos.ui.mapper.*"))
+        includeFilters = @Filter(type = FilterType.REGEX, pattern = "kitchenpos.dto.mapper.*"))
 public class RestControllerTest {
 
     @Autowired

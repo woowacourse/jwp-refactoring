@@ -3,11 +3,11 @@ package kitchenpos.application;
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.ui.dto.request.MenuGroupCreateRequest;
-import kitchenpos.ui.dto.response.MenuGroupCreateResponse;
-import kitchenpos.ui.dto.response.MenuGroupResponse;
-import kitchenpos.ui.mapper.MenuGroupDtoMapper;
-import kitchenpos.ui.mapper.MenuGroupMapper;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
+import kitchenpos.dto.response.MenuGroupCreateResponse;
+import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.dto.mapper.MenuGroupDtoMapper;
+import kitchenpos.dto.mapper.MenuGroupMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
