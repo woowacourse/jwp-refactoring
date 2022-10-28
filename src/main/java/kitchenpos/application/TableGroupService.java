@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
+import kitchenpos.application.request.TableGroupCreateRequest;
+import kitchenpos.application.request.TableGroupCreateRequest.OrderTableGroupRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -13,7 +13,6 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
@@ -28,42 +27,12 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+    public TableGroup create(final TableGroupCreateRequest request) {
+        final List<Long> orderTableIds = mapToIds(request);
+        TableGroup tableGroup = new TableGroup(orderTableDao.findAllByIdIn(orderTableIds));
+        tableGroup.validateOrderTableSize(orderTableIds.size());
 
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException("주문 테이블이 최소 2개 이상이어야 단체 지정(grouping)이 가능합니다.");
-        }
-
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-
-        if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException("실제 주문 테이블 정보와 일치하지 않습니다.");
-        }
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException("주문 테이블이 비어있지 않거나 이미 단체지정되어있습니다.");
-            }
-        }
-
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-
-        final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
-            savedOrderTable.setEmpty(false);
-            orderTableDao.save(savedOrderTable);
-        }
-        savedTableGroup.setOrderTables(savedOrderTables);
-
-        return savedTableGroup;
+        return tableGroupDao.save(tableGroup);
     }
 
     @Transactional
@@ -84,5 +53,12 @@ public class TableGroupService {
             orderTable.setEmpty(false);
             orderTableDao.save(orderTable);
         }
+    }
+
+    private static List<Long> mapToIds(final TableGroupCreateRequest request) {
+        return request.getOrderTables()
+                .stream()
+                .map(OrderTableGroupRequest::getId)
+                .collect(Collectors.toList());
     }
 }
