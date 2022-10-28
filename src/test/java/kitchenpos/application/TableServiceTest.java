@@ -18,7 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @DisplayName("테이블 관련 기능에서")
 @SpringBootTest
 @ExtendWith(DataClearExtension.class)
-class TableRestServiceTest {
+class TableServiceTest {
 
     @Autowired
     private TableService tableService;

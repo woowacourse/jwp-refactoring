@@ -9,7 +9,6 @@ import kitchenpos.common.DataClearExtension;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,9 +23,6 @@ class TableGroupServiceTest {
 
     @Autowired
     private TableGroupService tableGroupService;
-
-    @Autowired
-    private TableGroupRepository tableGroupRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
@@ -67,6 +63,17 @@ class TableGroupServiceTest {
             assertThatThrownBy(() -> tableGroupService.create(new TableGroupCommand(orderTableIds)))
                     .hasMessage("빈 주문 테이블이어야 합니다.");
         }
+
+        @Test
+        @DisplayName("정상적으로 생성한다.")
+        void invalidSize() {
+            OrderTable orderTable1 = orderTableRepository.save(new OrderTable(2, true));
+            OrderTable orderTable2 = orderTableRepository.save(new OrderTable(2, true));
+            List<Long> orderTableIds = List.of(orderTable1.getId(), orderTable2.getId(), orderTable2.getId() + 1L);
+
+            assertThatThrownBy(() -> tableGroupService.create(new TableGroupCommand(orderTableIds)))
+                    .hasMessage("주문 테이블의 수가 다릅니다.");
+        }
     }
 
     @Nested
@@ -83,6 +90,4 @@ class TableGroupServiceTest {
 //            assertThatCode(() -> tableGroupController.ungroup(tableGroup.getId()));
 //        }
     }
-
-
 }
