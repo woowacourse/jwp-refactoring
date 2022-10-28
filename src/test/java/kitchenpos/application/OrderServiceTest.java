@@ -138,11 +138,11 @@ class OrderServiceTest extends ServiceTest {
         final Order savedOrder = 주문을_저장한다(ORDER_COOKING_1.주문항목_없이_생성(orderTableId));
 
         // when
-        final Order changedOrderStatus = orderService.changeOrderStatus(savedOrder.getId(),
+        final OrderResponse orderResponse = orderService.changeOrderStatus(savedOrder.getId(),
                 new OrderStatusRequest(COMPLETION.name()));
 
         // then
-        assertThat(changedOrderStatus.getOrderStatus()).isEqualTo(COMPLETION);
+        assertThat(orderResponse.getOrderStatus()).isEqualTo(COMPLETION.name());
     }
 
     @Test
