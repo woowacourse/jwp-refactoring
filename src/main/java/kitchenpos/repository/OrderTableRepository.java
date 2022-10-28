@@ -6,6 +6,11 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface OrderTableRepository extends CrudRepository<OrderTable, Long> {
 
+    default OrderTable getOrderTable(final Long id) {
+        return findById(id)
+                .orElseThrow(IllegalArgumentException::new);
+    }
+
     @Override
     List<OrderTable> findAll();
 

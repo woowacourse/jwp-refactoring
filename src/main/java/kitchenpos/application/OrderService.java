@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -32,22 +31,23 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
-        request.verify();
-        final List<Long> menuIds = request.getMenuIds();
-        if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+        verifyRequest(request);
         final Order order = orderRepository.save(
                 Order.ofCooking(
-                        orderTable,
+                        orderTableRepository.getOrderTable(request.getOrderTableId()),
                         LocalDateTime.now(),
                         request.getOrderLineItemEntities()
                 )
         );
         return OrderResponse.from(order);
+    }
+
+    private void verifyRequest(final OrderCreateRequest request) {
+        request.verify();
+        final List<Long> menuIds = request.getMenuIds();
+        if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public List<OrderResponse> list() {
@@ -59,8 +59,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final ChangeOrderStatusRequest request) {
-        final Order order = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new)
+        final Order order = orderRepository.getOrder(orderId)
                 .changeOrderStatus(request.getOrderStatus());
         return OrderResponse.from(
                 orderRepository.save(order)
