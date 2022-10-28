@@ -30,7 +30,7 @@ public class TableServiceTest {
     @Test
     void create() {
         preprocessWhenCreate(new OrderTable(3, false));
-        OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(3L, false);
+        OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(3, false);
 
         OrderTable orderTable = tableService.create(orderTableCreateRequest);
 
@@ -50,7 +50,7 @@ public class TableServiceTest {
     @DisplayName("인원이 음수인 테이블을 생성한다")
     @Test
     void create_numberOfGuestsNegative() {
-        OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(-1L, false);
+        OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(-1, false);
 
         assertThatThrownBy(() -> tableService.create(orderTableCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -117,7 +117,7 @@ public class TableServiceTest {
     @Test
     void changeNumberOfGuests() {
         preprocessWhenCreate(new OrderTable(2L, null, 2, false));
-        OrderTableUpdateGuestsRequest orderTableUpdateGuestsRequest = new OrderTableUpdateGuestsRequest(10L);
+        OrderTableUpdateGuestsRequest orderTableUpdateGuestsRequest = new OrderTableUpdateGuestsRequest(10);
 
         OrderTable orderTable = tableService.changeNumberOfGuests(2L, orderTableUpdateGuestsRequest);
 
@@ -127,7 +127,7 @@ public class TableServiceTest {
     @Test
     void changeNumberOfGuests_EmptyFalse() {
         preprocessWhenCreate(new OrderTable(2L, null, 2, true));
-        OrderTableUpdateGuestsRequest orderTableUpdateGuestsRequest = new OrderTableUpdateGuestsRequest(10L);
+        OrderTableUpdateGuestsRequest orderTableUpdateGuestsRequest = new OrderTableUpdateGuestsRequest(10);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTableUpdateGuestsRequest))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -136,7 +136,7 @@ public class TableServiceTest {
     @Test
     void changeNumberOfGuests_numberOfGuestNegative() {
         preprocessWhenCreate(new OrderTable(2L, null, 2, false));
-        OrderTableUpdateGuestsRequest orderTableUpdateGuestsRequest = new OrderTableUpdateGuestsRequest(-1L);
+        OrderTableUpdateGuestsRequest orderTableUpdateGuestsRequest = new OrderTableUpdateGuestsRequest(-1);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(2L, orderTableUpdateGuestsRequest))
                 .isInstanceOf(IllegalArgumentException.class);

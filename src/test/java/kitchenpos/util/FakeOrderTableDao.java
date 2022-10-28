@@ -15,9 +15,10 @@ public class FakeOrderTableDao implements OrderTableDao {
     @Override
     public OrderTable save(OrderTable entity) {
         if (entity.getId() == null) {
-            entity.setId(++id);
-            repository.put(entity.getId(), entity);
-            return entity;
+            OrderTable addEntity = new OrderTable(++id, entity.getTableGroupId(),
+                    entity.getNumberOfGuests(), entity.isEmpty());
+            repository.put(addEntity.getId(), addEntity);
+            return addEntity;
         }
         repository.put(entity.getId(), entity);
         return entity;

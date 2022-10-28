@@ -2,15 +2,15 @@ package kitchenpos.dto;
 
 public class OrderTableCreateRequest {
 
-    private final Long numberOfGuests;
+    private final Integer numberOfGuests;
     private final boolean empty;
 
-    public OrderTableCreateRequest(Long numberOfGuests, boolean empty) {
+    public OrderTableCreateRequest(Integer numberOfGuests, boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public Long getNumberOfGuests() {
+    public Integer getNumberOfGuests() {
         return numberOfGuests;
     }
 
