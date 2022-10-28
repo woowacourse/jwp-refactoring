@@ -1,11 +1,9 @@
 package kitchenpos.application;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderLineItemRepository;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
@@ -21,18 +19,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderLineItemRepository orderLineItemRepository,
             final OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -46,12 +41,9 @@ public class OrderService {
         orderTable.validateOrderable();
 
         final Order newOrder = new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
-        final Order savedOrder = orderRepository.save(newOrder);
+        updateOrderLineItems(order.getOrderLineItems(), newOrder);
 
-        final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(order.getOrderLineItems(), savedOrder);
-
-        savedOrder.updateOrderLineItems(savedOrderLineItems);
-        return savedOrder;
+        return orderRepository.save(newOrder);
     }
 
     private void validateOrderLineItemMatchMenu(final Order order) {
@@ -62,21 +54,15 @@ public class OrderService {
         order.validateOrderLineItemSize(menuRepository.countByIdIn(menuIds));
     }
 
-    private List<OrderLineItem> saveOrderLineItems(final List<OrderLineItem> orderLineItems, final Order order) {
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
+    private void updateOrderLineItems(final List<OrderLineItem> orderLineItems, final Order order) {
         for (final OrderLineItem orderLineItem : orderLineItems) {
             orderLineItem.updateOrder(order);
-            savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
         }
-        return savedOrderLineItems;
+        order.updateOrderLineItems(orderLineItems);
     }
 
     public List<Order> list() {
-        final List<Order> orders = orderRepository.findAll();
-        for (final Order order : orders) {
-            order.updateOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
-        }
-        return orders;
+        return orderRepository.findAll();
     }
 
     @Transactional
@@ -85,7 +71,6 @@ public class OrderService {
                 .orElseThrow(NotFoundOrderException::new);
 
         savedOrder.updateOrderStatus(OrderStatus.valueOf(order.getOrderStatus()).name());
-        savedOrder.updateOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
         return savedOrder;
     }
 }
