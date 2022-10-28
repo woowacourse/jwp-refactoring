@@ -1,5 +1,7 @@
 package kitchenpos.ui.dto.request;
 
+import kitchenpos.domain.MenuGroup;
+
 public class MenuGroupCreateRequest {
 
     private String name;
@@ -11,7 +13,7 @@ public class MenuGroupCreateRequest {
         this.name = name;
     }
 
-    public String getName() {
-        return name;
+    public MenuGroup toEntity() {
+        return new MenuGroup(name);
     }
 }
