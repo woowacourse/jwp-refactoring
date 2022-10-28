@@ -148,11 +148,11 @@ class OrderServiceTest {
         orderRepository.save(new Order(orderTable.getId()));
         orderRepository.save(new Order(orderTable.getId()));
 
-        List<Order> orders = orderService.list();
+        List<OrderResponse> orders = orderService.list();
 
         assertThat(orders).hasSize(3);
     }
-//
+
 //    @Nested
 //    @DisplayName("주문의 상태를 변경할 때")
 //    class ChangeStatus {
@@ -160,10 +160,9 @@ class OrderServiceTest {
 //        @Test
 //        @DisplayName("식사 상태로 변경한다.")
 //        void changeOrderStatus() {
-//            Order order = createOrder(createOrderTable(2, false).getId(), List.of(getOrderLineItem()));
-//            order.setOrderStatus("MEAL");
-//
-//            ResponseEntity<Order> response = orderRestController.changeOrderStatus(order.getId(), order);
+//            OrderTable orderTable = orderTableRepository.save(new OrderTable(2, true));
+//            Order savedOrder = orderRepository.save(new Order(orderTable.getId()));
+//            )
 //
 //            assertThat(response.getBody().getOrderStatus()).isEqualTo("MEAL");
 //            assertThat(response.getStatusCodeValue()).isEqualTo(HttpStatus.OK.value());

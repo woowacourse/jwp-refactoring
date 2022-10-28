@@ -66,8 +66,10 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
     }
 
-    public List<Order> list() {
-        return orderRepository.findAll();
+    public List<OrderResponse> list() {
+        return orderRepository.findAll().stream()
+                .map(OrderResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional
