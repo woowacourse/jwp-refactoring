@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -74,7 +75,7 @@ class TableServiceTest extends ServiceTest {
     void 주문상태가_조리중이거나_식사중_상태이면_테이블을_비어있음_상태로_변경할_수_없다(final String status) {
         // given
         final OrderTable savedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성());
-        주문을_저장한다(new Order(savedOrderTable.getId(), status, LocalDateTime.now()));
+        주문을_저장한다(new Order(savedOrderTable.getId(), OrderStatus.valueOf(status), LocalDateTime.now()));
 
         final OrderTable updateFor = new OrderTable(null, savedOrderTable.getNumberOfGuests(), true);
 

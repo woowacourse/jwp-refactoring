@@ -25,7 +25,7 @@ public class Order {
     private Long orderTableId;
 
     @Column(name = "order_status")
-    private String orderStatus;
+    private OrderStatus orderStatus;
 
     @Column(name = "ordered_time")
     private LocalDateTime orderedTime;
@@ -41,21 +41,23 @@ public class Order {
     }
 
     public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        this(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+        this(orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
-    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
+    public Order(final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
         this(null, orderTableId, orderStatus, orderedTime);
     }
 
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
+    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus,
+                 final LocalDateTime orderedTime) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
 
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
+                 List<OrderLineItem> orderLineItems) {
         validateOrderLineItemsEmpty(orderLineItems);
         for (OrderLineItem orderLineItem : orderLineItems) {
             orderLineItem.setOrder(this);
@@ -88,11 +90,11 @@ public class Order {
         this.orderTableId = orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void updateOrderStatus(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 
@@ -118,5 +120,9 @@ public class Order {
 
     public boolean isOrderLineItemsSizeEqualTo(final int size) {
         return this.orderLineItems.size() == size;
+    }
+
+    public boolean isCompletion() {
+        return this.orderStatus == OrderStatus.COMPLETION;
     }
 }

@@ -14,7 +14,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import kitchenpos.domain.Menu;
@@ -22,6 +21,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.dto.request.OrderMenuRequest;
 import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.request.OrderStatusRequest;
 import kitchenpos.dto.response.OrderLineItemResponse;
 import kitchenpos.dto.response.OrderResponse;
 import org.junit.jupiter.api.Test;
@@ -137,13 +137,12 @@ class OrderServiceTest extends ServiceTest {
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성()).getId();
         final Order savedOrder = 주문을_저장한다(ORDER_COOKING_1.주문항목_없이_생성(orderTableId));
 
-        final Order updateFor = new Order(savedOrder.getOrderTableId(), COMPLETION.name(), savedOrder.getOrderedTime());
-
         // when
-        final Order changedOrderStatus = orderService.changeOrderStatus(savedOrder.getId(), updateFor);
+        final Order changedOrderStatus = orderService.changeOrderStatus(savedOrder.getId(),
+                new OrderStatusRequest(COMPLETION.name()));
 
         // then
-        assertThat(changedOrderStatus.getOrderStatus()).isEqualTo(COMPLETION.name());
+        assertThat(changedOrderStatus.getOrderStatus()).isEqualTo(COMPLETION);
     }
 
     @Test
@@ -151,10 +150,9 @@ class OrderServiceTest extends ServiceTest {
         // given
         final long notExistOrderId = Long.MAX_VALUE;
 
-        final Order updateFor = new Order(1L, COMPLETION.name(), LocalDateTime.now());
-
         // when
-        assertThatThrownBy(() -> orderService.changeOrderStatus(notExistOrderId, updateFor))
+        assertThatThrownBy(
+                () -> orderService.changeOrderStatus(notExistOrderId, new OrderStatusRequest(COMPLETION.name())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -164,10 +162,9 @@ class OrderServiceTest extends ServiceTest {
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성()).getId();
         final Order savedOrder = 주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(orderTableId));
 
-        final Order updateFor = new Order(savedOrder.getOrderTableId(), MEAL.name(), savedOrder.getOrderedTime());
-
         // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), updateFor))
+        assertThatThrownBy(
+                () -> orderService.changeOrderStatus(savedOrder.getId(), new OrderStatusRequest(MEAL.name())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

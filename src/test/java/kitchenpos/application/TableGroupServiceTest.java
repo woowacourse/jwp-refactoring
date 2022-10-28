@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
@@ -108,7 +109,7 @@ class TableGroupServiceTest extends ServiceTest {
         final Long tableGroupId = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성()).getId();
         final OrderTable alreadySavedOrderTable1 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroupId));
         final OrderTable alreadySavedOrderTable2 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroupId));
-        주문을_저장한다(new Order(alreadySavedOrderTable1.getId(), status, LocalDateTime.now()));
+        주문을_저장한다(new Order(alreadySavedOrderTable1.getId(), OrderStatus.valueOf(status), LocalDateTime.now()));
         주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(alreadySavedOrderTable2.getId()));
 
         // when, then

@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -13,6 +12,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderMenuRequest;
 import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.request.OrderStatusRequest;
 import kitchenpos.dto.response.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,21 +79,18 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public Order changeOrderStatus(final Long orderId, final OrderStatusRequest orderStatusRequest) {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
+        validateOrderCompletion(savedOrder);
+        savedOrder.updateOrderStatus(OrderStatus.valueOf(orderStatusRequest.getOrderStatus()));
+        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
+        return savedOrder;
+    }
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+    private static void validateOrderCompletion(final Order savedOrder) {
+        if (savedOrder.isCompletion()) {
             throw new IllegalArgumentException();
         }
-
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
-
-        orderDao.save(savedOrder);
-
-        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
-
-        return savedOrder;
     }
 }
