@@ -4,8 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import kitchenpos.application.dto.request.OrderCreateRequest;
+import kitchenpos.application.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.application.dto.request.OrderStatusRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -13,6 +17,12 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.exception.CompletedOrderStatusChangeException;
+import kitchenpos.exception.NotContainsOrderLineItemException;
+import kitchenpos.exception.OrderLineItemMenuException;
+import kitchenpos.exception.OrderNotFoundException;
+import kitchenpos.exception.OrderTableEmptyException;
+import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderFixture;
@@ -36,34 +46,22 @@ class OrderServiceTest extends ServiceTestEnvironment {
         final OrderTable orderTable = OrderTableFixture.create(false, 2);
         final OrderTable savedTable = serviceDependencies.save(orderTable);
 
-        final Product product1 = ProductFixture.createWithPrice(1000L);
-        final Product product2 = ProductFixture.createWithPrice(1000L);
-        final Product savedProduct1 = serviceDependencies.save(product1);
-        final Product savedProduct2 = serviceDependencies.save(product2);
+        final Menu savedMenu1 = saveValidMenu();
 
-        final MenuGroup menuGroup1 = MenuGroupFixture.createDefaultWithoutId();
-        final MenuGroup savedMenuGroup1 = serviceDependencies.save(menuGroup1);
-
-        final Menu menu1 = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L, savedProduct1, savedProduct2);
-        final Menu savedMenu1 = serviceDependencies.save(menu1);
-
-        final OrderLineItem orderLineItem1 = OrderLineItemFixture.create(savedMenu1);
-        final Order order = OrderFixture.create(savedTable, OrderStatus.COMPLETION, orderLineItem1);
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedTable.getId(), Arrays.asList(
+                new OrderLineItemCreateRequest(savedMenu1.getId(), 1L)
+        ));
 
         // when
-        final Order actual = orderService.create(order);
+        final Order actual = orderService.create(orderCreateRequest);
 
         // then
         assertAll(
-                () -> assertThat(actual.getId())
-                        .isPositive(),
-                () -> assertThat(actual)
-                        .usingRecursiveComparison()
-                        .ignoringFields("id", "orderLineItems")
-                        .isEqualTo(order),
-                () -> assertThat(actual.getOrderLineItems())
-                        .usingElementComparatorIgnoringFields("seq")
-                        .containsExactly(orderLineItem1)
+                () -> assertThat(actual.getId()).isPositive(),
+                () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
+                () -> assertThat(actual.getOrderedTime()).isNotNull(),
+                () -> assertThat(actual.getOrderTable()).usingRecursiveComparison().isEqualTo(savedTable),
+                () -> assertThat(actual.getOrderLineItems()).hasSize(1)
         );
     }
 
@@ -71,24 +69,14 @@ class OrderServiceTest extends ServiceTestEnvironment {
     @DisplayName("주문하려는 주문 테이블이 등록되어 있어야 한다.")
     void create_exceptionOrderTableNotExists() {
         // given
-        final OrderTable orderTable = OrderTableFixture.create(false, 2);
-        final Product product1 = ProductFixture.createWithPrice(1000L);
-        final Product product2 = ProductFixture.createWithPrice(1000L);
-        final Product savedProduct1 = serviceDependencies.save(product1);
-        final Product savedProduct2 = serviceDependencies.save(product2);
+        final Menu savedMenu = saveValidMenu();
 
-        final MenuGroup menuGroup1 = MenuGroupFixture.createDefaultWithoutId();
-        final MenuGroup savedMenuGroup1 = serviceDependencies.save(menuGroup1);
-
-        final Menu menu1 = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L, savedProduct1, savedProduct2);
-        final Menu savedMenu1 = serviceDependencies.save(menu1);
-
-        final OrderLineItem orderLineItem1 = OrderLineItemFixture.create(savedMenu1);
-        final Order order = OrderFixture.create(orderTable, OrderStatus.COMPLETION, orderLineItem1);
+        OrderCreateRequest request = new OrderCreateRequest(-1L,
+                Arrays.asList(new OrderLineItemCreateRequest(savedMenu.getId(), 1L)));
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(request))
+                .isExactlyInstanceOf(OrderTableNotFoundException.class);
     }
 
     @Test
@@ -98,22 +86,13 @@ class OrderServiceTest extends ServiceTestEnvironment {
         final OrderTable orderTable = OrderTableFixture.create(true, 2);
         final OrderTable savedTable = serviceDependencies.save(orderTable);
 
-        final Product product1 = ProductFixture.createWithPrice(1000L);
-        final Product product2 = ProductFixture.createWithPrice(1000L);
-        final Product savedProduct1 = serviceDependencies.save(product1);
-        final Product savedProduct2 = serviceDependencies.save(product2);
-
-        final MenuGroup menuGroup1 = MenuGroupFixture.createDefaultWithoutId();
-        final MenuGroup savedMenuGroup1 = serviceDependencies.save(menuGroup1);
-
-        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L, savedProduct1, savedProduct2);
-        final Menu savedMenu = serviceDependencies.save(menu);
-        final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu);
-        final Order order = OrderFixture.create(savedTable, OrderStatus.COMPLETION, orderLineItem);
+        final Menu savedMenu = saveValidMenu();
+        final OrderCreateRequest request = new OrderCreateRequest(savedTable.getId(),
+                Arrays.asList(new OrderLineItemCreateRequest(savedMenu.getId(), 1L)));
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(request))
+                .isExactlyInstanceOf(OrderTableEmptyException.class);
     }
 
     @Test
@@ -123,11 +102,11 @@ class OrderServiceTest extends ServiceTestEnvironment {
         final OrderTable orderTable = OrderTableFixture.create(false, 2);
         final OrderTable savedTable = serviceDependencies.save(orderTable);
 
-        final Order order = OrderFixture.create(savedTable, OrderStatus.COMPLETION);
+        OrderCreateRequest request = new OrderCreateRequest(savedTable.getId(), new ArrayList<>());
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(request))
+                .isExactlyInstanceOf(NotContainsOrderLineItemException.class);
     }
 
     @Test
@@ -136,25 +115,14 @@ class OrderServiceTest extends ServiceTestEnvironment {
         // given
         final OrderTable orderTable = OrderTableFixture.create(false, 2);
         final OrderTable savedTable = serviceDependencies.save(orderTable);
-
-        final Order order = OrderFixture.create(savedTable, OrderStatus.COMPLETION);
-
-        final Product product1 = ProductFixture.createWithPrice(1000L);
-        final Product product2 = ProductFixture.createWithPrice(1000L);
-        final Product savedProduct1 = serviceDependencies.save(product1);
-        final Product savedProduct2 = serviceDependencies.save(product2);
-
-        final MenuGroup menuGroup1 = MenuGroupFixture.createDefaultWithoutId();
-        final MenuGroup savedMenuGroup1 = serviceDependencies.save(menuGroup1);
-
-        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L, savedProduct1, savedProduct2);
-
-        final OrderLineItem orderLineItem = OrderLineItemFixture.create(menu);
-        OrderFixture.create(savedTable, OrderStatus.COMPLETION, orderLineItem);
+        final Menu savedMenu = saveValidMenu();
+        final OrderCreateRequest request = new OrderCreateRequest(savedTable.getId(),
+                Arrays.asList(new OrderLineItemCreateRequest(-1L, 1L),
+                        new OrderLineItemCreateRequest(-1L, 1L)));
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(request))
+                .isExactlyInstanceOf(OrderLineItemMenuException.class);
     }
 
     @Test
@@ -163,12 +131,14 @@ class OrderServiceTest extends ServiceTestEnvironment {
         // given
         final OrderTable orderTable = OrderTableFixture.create(false, 2);
         final OrderTable savedTable = serviceDependencies.save(orderTable);
-
-        final Order order = OrderFixture.create(savedTable, OrderStatus.COMPLETION);
+        final Menu savedMenu = saveValidMenu();
+        final OrderCreateRequest request = new OrderCreateRequest(savedTable.getId(), Arrays.asList(
+                new OrderLineItemCreateRequest(savedMenu.getId(), 1L),
+                new OrderLineItemCreateRequest(savedMenu.getId(), 1L)));
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(request))
+                .isExactlyInstanceOf(OrderLineItemMenuException.class);
     }
 
     @Test
@@ -177,31 +147,17 @@ class OrderServiceTest extends ServiceTestEnvironment {
         // given
         final OrderTable orderTable = OrderTableFixture.create(false, 2);
         final OrderTable savedTable = serviceDependencies.save(orderTable);
-
-        final Product product1 = ProductFixture.createWithPrice(1000L);
-        final Product product2 = ProductFixture.createWithPrice(1000L);
-        final Product savedProduct1 = serviceDependencies.save(product1);
-        final Product savedProduct2 = serviceDependencies.save(product2);
-
-        final MenuGroup menuGroup1 = MenuGroupFixture.createDefaultWithoutId();
-        final MenuGroup savedMenuGroup1 = serviceDependencies.save(menuGroup1);
-
-        final Menu menu1 = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L, savedProduct1, savedProduct2);
-        final Menu savedMenu1 = serviceDependencies.save(menu1);
-
-        final Order order = OrderFixture.create(savedTable, OrderStatus.COMPLETION);
+        final Menu savedMenu = saveValidMenu();
+        final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu.getId());
+        final Order order = OrderFixture.create(savedTable, OrderStatus.COMPLETION, orderLineItem);
         final Order savedOrder = serviceDependencies.save(order);
-        final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu1, savedOrder);
-        final OrderLineItem savedOrderLineItem = serviceDependencies.save(orderLineItem);
-        savedOrder.setOrderLineItems(Collections.singletonList(savedOrderLineItem));
-        final Order expect = serviceDependencies.save(savedOrder);
 
         // when
         final List<Order> actual = orderService.list();
 
         // then
         assertThat(actual).usingRecursiveFieldByFieldElementComparator()
-                .contains(expect);
+                .contains(savedOrder);
     }
 
     @Test
@@ -210,17 +166,17 @@ class OrderServiceTest extends ServiceTestEnvironment {
         // given
         final OrderTable orderTable = OrderTableFixture.create(false, 2);
         final OrderTable savedTable = serviceDependencies.save(orderTable);
-
-        final Order order = OrderFixture.create(savedTable, OrderStatus.MEAL);
-
+        final Menu savedMenu = saveValidMenu();
+        final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu.getId(), null);
+        final Order order = OrderFixture.create(savedTable, OrderStatus.COOKING, orderLineItem);
         final Order savedOrder = serviceDependencies.save(order);
 
         // when
         final Order actual = orderService.changeOrderStatus(savedOrder.getId(),
-                OrderFixture.create(null, OrderStatus.COMPLETION));
+                new OrderStatusRequest(OrderStatus.COMPLETION.name()));
 
         // then
-        assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
+        assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION);
     }
 
     @Test
@@ -229,17 +185,15 @@ class OrderServiceTest extends ServiceTestEnvironment {
         // given
         final OrderTable orderTable = OrderTableFixture.create(false, 2);
         final OrderTable savedTable = serviceDependencies.save(orderTable);
-
-        final Order order = OrderFixture.create(savedTable, OrderStatus.COOKING);
-
+        final Menu savedMenu = saveValidMenu();
+        final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu.getId(), null);
+        final Order order = OrderFixture.create(savedTable, OrderStatus.COMPLETION, orderLineItem);
         final Order savedOrder = serviceDependencies.save(order);
-        orderService.changeOrderStatus(savedOrder.getId(),
-                OrderFixture.create(null, OrderStatus.COMPLETION));
 
         // when, then
         assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(),
-                OrderFixture.create(null, OrderStatus.COOKING)))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                new OrderStatusRequest(OrderStatus.COOKING.name())))
+                .isExactlyInstanceOf(CompletedOrderStatusChangeException.class);
     }
 
     @Test
@@ -250,7 +204,19 @@ class OrderServiceTest extends ServiceTestEnvironment {
 
         // when, then
         assertThatThrownBy(() -> orderService.changeOrderStatus(notExistsId,
-                OrderFixture.create(null, OrderStatus.COOKING)))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                new OrderStatusRequest(OrderStatus.COOKING.name())))
+                .isExactlyInstanceOf(OrderNotFoundException.class); }
+
+    private Menu saveValidMenu() {
+        final Product product1 = ProductFixture.createWithPrice(1000L);
+        final Product product2 = ProductFixture.createWithPrice(1000L);
+        final Product savedProduct1 = serviceDependencies.save(product1);
+        final Product savedProduct2 = serviceDependencies.save(product2);
+
+        final MenuGroup menuGroup1 = MenuGroupFixture.createDefaultWithoutId();
+        final MenuGroup savedMenuGroup1 = serviceDependencies.save(menuGroup1);
+
+        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L, savedProduct1, savedProduct2);
+        return serviceDependencies.save(menu);
     }
 }

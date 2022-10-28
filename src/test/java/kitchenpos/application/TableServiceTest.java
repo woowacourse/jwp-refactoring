@@ -131,7 +131,7 @@ class TableServiceTest extends ServiceTestEnvironment {
         final Menu menu = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L, savedProduct1, savedProduct2);
         final Menu savedMenu = serviceDependencies.save(menu);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu);
+        final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu.getId());
         final Order order = OrderFixture.create(savedTable, orderStatus, orderLineItem);
         serviceDependencies.save(order);
 

@@ -1,6 +1,5 @@
 package kitchenpos.fixture;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -11,6 +10,7 @@ import kitchenpos.domain.MenuProductRepository;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
@@ -26,12 +26,12 @@ public class ServiceDependencies {
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
     private final OrderLineItemDao orderLineItemDao;
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
 
     public ServiceDependencies(final ProductRepository productRepository, final MenuGroupRepository menuGroupRepository,
                                final MenuRepository menuRepository, final MenuProductRepository menuProductRepository,
                                final OrderTableDao orderTableDao, final TableGroupDao tableGroupDao,
-                               final OrderLineItemDao orderLineItemDao, final OrderDao orderDao) {
+                               final OrderLineItemDao orderLineItemDao, final OrderRepository orderRepository) {
         this.productRepository = productRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.menuRepository = menuRepository;
@@ -39,7 +39,7 @@ public class ServiceDependencies {
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
         this.orderLineItemDao = orderLineItemDao;
-        this.orderDao = orderDao;
+        this.orderRepository = orderRepository;
     }
 
     public MenuGroup save(final MenuGroup menuGroup) {
@@ -63,7 +63,7 @@ public class ServiceDependencies {
     }
 
     public Order save(final Order order) {
-        return orderDao.save(order);
+        return orderRepository.save(order);
     }
 
     public OrderLineItem save(final OrderLineItem orderLineItem) {

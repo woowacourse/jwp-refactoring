@@ -14,7 +14,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.exception.InvalidMenuPriceException;
 import kitchenpos.exception.MenuGroupNotFoundException;
-import kitchenpos.exception.NotSavedProductException;
+import kitchenpos.exception.ProductNotFoundException;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.ProductFixture;
@@ -122,7 +122,7 @@ class MenuServiceTest extends ServiceTestEnvironment {
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuCreateRequest))
-                .isExactlyInstanceOf(NotSavedProductException.class);
+                .isExactlyInstanceOf(ProductNotFoundException.class);
     }
 
     @Test

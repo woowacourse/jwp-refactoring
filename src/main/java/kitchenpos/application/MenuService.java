@@ -12,7 +12,7 @@ import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import kitchenpos.exception.MenuGroupNotFoundException;
-import kitchenpos.exception.NotSavedProductException;
+import kitchenpos.exception.ProductNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,7 +54,7 @@ public class MenuService {
 
     private Product getProduct(final MenuProductCreateRequest request) {
         return productRepository.findById(request.getProductId())
-                .orElseThrow(NotSavedProductException::new);
+                .orElseThrow(ProductNotFoundException::new);
     }
 
 
