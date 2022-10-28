@@ -22,7 +22,7 @@ public class OrderLineItem {
     private Menu menu;
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "orders_id")
     private Order order;
 
     protected OrderLineItem() {
