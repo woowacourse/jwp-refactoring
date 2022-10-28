@@ -1,18 +1,22 @@
 package kitchenpos.table.application;
 
+import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.OrderStatus.MEAL;
+
+import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.table.application.dto.OrderTableResponse;
+import kitchenpos.table.application.dto.OrderTableSaveRequest;
 import kitchenpos.table.domain.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TableService {
+
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
 
@@ -22,53 +26,48 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-
-        return orderTableDao.save(orderTable);
+    public OrderTableResponse create(OrderTableSaveRequest request) {
+        OrderTable orderTable = orderTableDao.save(request.toEntity());
+        return OrderTableResponse.toResponse(orderTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableDao.findAll();
-    }
-
-    @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setEmpty(orderTable.isEmpty());
-
-        return orderTableDao.save(savedOrderTable);
+    public List<OrderTableResponse> list() {
+        return orderTableDao.findAll().stream()
+            .map(OrderTableResponse::toResponse)
+            .collect(Collectors.toUnmodifiableList());
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+    public OrderTableResponse changeEmpty(Long orderTableId, Boolean empty) {
+        OrderTable orderTable = findOrderTable(orderTableId);
+        validateChangeEmpty(orderTable);
+        orderTable.changeEmpty(empty);
 
-        if (numberOfGuests < 0) {
+        orderTableDao.save(orderTable);
+        return OrderTableResponse.toResponse(orderTable);
+    }
+
+    private void validateChangeEmpty(OrderTable orderTable) {
+        if (shouldNotChangeEmpty(orderTable)) {
             throw new IllegalArgumentException();
         }
+    }
 
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+    private boolean shouldNotChangeEmpty(OrderTable orderTable) {
+        return orderDao.existsByOrderTableIdAndOrderStatusIn(orderTable.getId(), List.of(COOKING.name(), MEAL.name()));
+    }
 
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+    @Transactional
+    public OrderTableResponse changeNumberOfGuests(Long orderTableId, int numberOfGuests) {
+        OrderTable orderTable = findOrderTable(orderTableId);
+        orderTable.changeNumberOfGuests(numberOfGuests);
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
+        orderTableDao.save(orderTable);
+        return OrderTableResponse.toResponse(orderTable);
+    }
 
-        return orderTableDao.save(savedOrderTable);
+    private OrderTable findOrderTable(Long oderTableId) {
+        return orderTableDao.findById(oderTableId)
+            .orElseThrow(IllegalArgumentException::new);
     }
 }

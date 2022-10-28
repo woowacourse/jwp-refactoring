@@ -19,26 +19,14 @@ public enum OrderTableFixture {
     }
 
     public OrderTable getOrderTable() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+        return new OrderTable(null, numberOfGuests, empty);
     }
 
     public OrderTable getOrderTable(Long tableGroupId) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+        return new OrderTable(tableGroupId, numberOfGuests, empty);
     }
 
     public OrderTable getOrderTable(Long id, Long tableGroupId) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 }
