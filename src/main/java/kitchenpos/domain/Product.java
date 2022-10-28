@@ -15,8 +15,9 @@ import org.springframework.util.StringUtils;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", columnDefinition = "bigint(20)")
     private Long id;
-    @Column(name = "name", length = 255, nullable = false, unique = true)
+    @Column(name = "name", length = 255, nullable = false)
     private String name;
     @Column(name = "price", nullable = false)
     private BigDecimal price;
