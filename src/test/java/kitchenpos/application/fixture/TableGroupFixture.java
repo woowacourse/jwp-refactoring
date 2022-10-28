@@ -15,9 +15,5 @@ public class TableGroupFixture {
     public static final TableGroup UNSAVED_TABLE_GROUP_INVALID_TOO_LITTLE_TABLE = new TableGroup(List.of(SAVED_ORDER_TABLE_EMPTY_FIRST));
     public static final TableGroup UNSAVED_TABLE_GROUP = new TableGroup(List.of(SAVED_ORDER_TABLE_EMPTY_FIRST, SAVED_ORDER_TABLE_EMPTY_SECOND));
 
-    public static final TableGroup SAVED_TABLE_GROUP = new TableGroup(List.of(SAVED_ORDER_TABLE_NOT_EMPTY_FIRST, SAVED_ORDER_TABLE_NOT_EMPTY_SECOND));
-
-    static {
-        SAVED_TABLE_GROUP.setId(1L);
-    }
+    public static final TableGroup SAVED_TABLE_GROUP = new TableGroup(1L, null, List.of(SAVED_ORDER_TABLE_NOT_EMPTY_FIRST, SAVED_ORDER_TABLE_NOT_EMPTY_SECOND));
 }
