@@ -4,7 +4,7 @@ import static kitchenpos.Fixture.메뉴집합;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.application.dto.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,7 +18,7 @@ class MenuGroupServiceTest extends ServiceTest {
 
     @Test
     void 메뉴집합을_생성한다() {
-        MenuGroup actual = menuGroupService.create(메뉴집합());
+        MenuGroupResponse actual = menuGroupService.create(메뉴집합());
         assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
     }
 
@@ -26,7 +26,7 @@ class MenuGroupServiceTest extends ServiceTest {
     void 메뉴집합을_모두_조회한다() {
         메뉴집합_생성();
 
-        List<MenuGroup> menuGroups = menuGroupService.list();
+        List<MenuGroupResponse> menuGroups = menuGroupService.list();
 
         assertThat(menuGroups).hasSizeGreaterThanOrEqualTo(1);
     }
