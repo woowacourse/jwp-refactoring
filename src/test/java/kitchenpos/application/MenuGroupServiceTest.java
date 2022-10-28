@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupRequest;
 
 @SpringBootTest
 @Transactional
@@ -23,10 +24,10 @@ class MenuGroupServiceTest {
     @DisplayName("MenuGroup을 생성한다.")
     void create() {
         //given
-        MenuGroup menuGroup = new MenuGroup("test");
+        MenuGroupRequest menuGroupRequest = new MenuGroupRequest("test");
 
         //when
-        MenuGroup saved = menuGroupService.create(menuGroup);
+        MenuGroup saved = menuGroupService.create(menuGroupRequest);
 
         //then
         assertThat(saved.getId()).isNotNull();
@@ -39,8 +40,8 @@ class MenuGroupServiceTest {
         List<MenuGroup> menus = menuGroupService.list();
 
         //when
-        MenuGroup menuGroup = new MenuGroup("test");
-        menuGroupService.create(menuGroup);
+        MenuGroupRequest menuGroupRequest = new MenuGroupRequest("test");
+        menuGroupService.create(menuGroupRequest);
 
         //then
         assertThat(menuGroupService.list()).hasSize(menus.size() + 1);

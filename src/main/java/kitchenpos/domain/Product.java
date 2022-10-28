@@ -19,8 +19,15 @@ public class Product {
     }
 
     public Product(String name, BigDecimal price) {
+        validatePrice(price);
         this.name = name;
         this.price = price;
+    }
+
+    private void validatePrice(BigDecimal price) {
+        if(price.intValue() < 0){
+            throw new IllegalArgumentException("가격은 음수일 수 없습니다.");
+        }
     }
 
     public Long getId() {

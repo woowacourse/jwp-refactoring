@@ -13,6 +13,7 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class OrderTableService {
 
     private final OrderTableRepository orderTableRepository;

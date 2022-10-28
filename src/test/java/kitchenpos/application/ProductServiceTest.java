@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductRequest;
 
 @SpringBootTest
 @Transactional
@@ -25,31 +25,20 @@ class ProductServiceTest {
     @DisplayName("상품을 생성한다.")
     void create() {
         //given
-        Product product = new Product("test", BigDecimal.valueOf(100));
+        ProductRequest productRequest = new ProductRequest("test", 100);
 
         //when, then
-        assertDoesNotThrow(() -> productService.create(product));
-    }
-
-    @Test
-    @DisplayName("가격이 null이라면 예외를 발생시킨다.")
-    void createwithNullPriceError() {
-        //given
-        Product product = new Product("test", null);
-
-        //when, then
-        assertThatThrownBy(() -> productService.create(product))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertDoesNotThrow(() -> productService.create(productRequest));
     }
 
     @Test
     @DisplayName("가격이 음수라면 예외를 발생시킨다.")
-    void createwithNeagativePriceError() {
+    void createWithNegativePriceError() {
         //given
-        Product product = new Product("test", BigDecimal.valueOf(-1));
+        ProductRequest productRequest = new ProductRequest("test", -1);
 
         //when, then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(productRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -60,8 +49,8 @@ class ProductServiceTest {
         List<Product> products = productService.list();
 
         //when
-        Product product = new Product("test", BigDecimal.valueOf(1000));
-        productService.create(product);
+        ProductRequest productRequest = new ProductRequest("test", 10);
+        productService.create(productRequest);
 
         //then
         assertThat(productService.list()).hasSize(products.size() + 1);

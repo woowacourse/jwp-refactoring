@@ -50,10 +50,6 @@ public class Menu {
         this.menuProducts.addAll(menuProducts);
     }
 
-    public boolean checkPrice(BigDecimal price) {
-        return this.price.compareTo(price) > 0;
-    }
-
     public Long getId() {
         return id;
     }
@@ -73,7 +69,6 @@ public class Menu {
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
-
 
     private void validatePrice(BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {

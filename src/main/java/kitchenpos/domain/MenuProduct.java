@@ -49,6 +49,10 @@ public class MenuProduct {
         return product;
     }
 
+    public Menu getMenu() {
+        return menu;
+    }
+
     private void validQuantity(long quantity) {
         if (quantity <= 0) {
             throw new IllegalArgumentException("0 이하의 양을 등록할 수 없습니다.");

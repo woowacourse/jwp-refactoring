@@ -6,11 +6,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.repository.MenuGroupRepository;
 
 @Service
 @Transactional(readOnly = true)
 public class MenuGroupService {
+
     private final MenuGroupRepository menuGroupRepository;
 
     public MenuGroupService(MenuGroupRepository menuGroupRepository) {
@@ -18,7 +20,8 @@ public class MenuGroupService {
     }
 
     @Transactional
-    public MenuGroup create(final MenuGroup menuGroup) {
+    public MenuGroup create(final MenuGroupRequest menuGroupRequest) {
+        MenuGroup menuGroup = new MenuGroup(menuGroupRequest.getName());
         return menuGroupRepository.save(menuGroup);
     }
 
