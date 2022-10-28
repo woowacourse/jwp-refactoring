@@ -50,7 +50,8 @@ public class MenuService {
     }
 
     private MenuProduct toMenuProduct(final MenuProductCreateRequest request) {
-        Product product = productRepository.getById(request.getProductId());
+        Product product = productRepository.findById(request.getProductId())
+                .orElseThrow(IllegalArgumentException::new);
         return new MenuProduct(product, request.getQuantity());
     }
 

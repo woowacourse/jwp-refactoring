@@ -51,7 +51,8 @@ public class OrderService {
     }
 
     private OrderLineItem toOrderLineItem(final OrderLineItemRequest orderLineItemRequest) {
-        Menu menu = menuRepository.getById(orderLineItemRequest.getMenuId());
+        Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
+                .orElseThrow(IllegalArgumentException::new);
         return new OrderLineItem(menu, orderLineItemRequest.getQuantity());
     }
 
@@ -72,7 +73,8 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderUpdateRequest request) {
-        Order order = orderRepository.getById(orderId);
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(IllegalArgumentException::new);
         order.changeStatus(request.getOrderStatus());
         return OrderResponse.of(order);
     }

@@ -14,22 +14,16 @@ class ProductTest {
     @DisplayName("상품 가격이 0원 보다 작으면 예외가 발생한다.")
     @Test
     void 상품_가격이_0원_보다_작으면_예외가_발생한다() {
-        // given
-        Product 야채곱창 = 상품_생성(야채곱창_이름, 잘못된_가격);
-
         // when & then
-        assertThatThrownBy(야채곱창::validateCorrectPrice)
+        assertThatThrownBy(() -> 상품_생성(야채곱창_이름, 잘못된_가격))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("상품 가격이 null 이면 예외가 발생한다.")
     @Test
     void 상품_가격이_null_이면_예외가_발생한다() {
-        // given
-        Product 야채곱창 = 상품_생성(야채곱창_이름, null);
-
         // when & then
-        assertThatThrownBy(야채곱창::validateCorrectPrice)
+        assertThatThrownBy(() -> 상품_생성(야채곱창_이름, null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

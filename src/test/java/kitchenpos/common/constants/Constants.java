@@ -9,7 +9,7 @@ public class Constants {
     public static Long 잘못된_아이디 = -1L;
 
     public static long 야채곱창_수량 = 1;
-    public static int 메뉴_상품_수량 = 1;
+    public static long 메뉴_상품_수량 = 1;
 
     public static BigDecimal 데시멀_야채곱창_가격 = BigDecimal.valueOf(10000);
     public static BigDecimal 잘못된_가격 = BigDecimal.valueOf(-1);
