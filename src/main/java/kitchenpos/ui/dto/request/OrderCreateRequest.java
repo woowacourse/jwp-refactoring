@@ -37,4 +37,10 @@ public class OrderCreateRequest {
                 .map(OrderLineItemRequest::toEntity)
                 .collect(Collectors.toList());
     }
+
+    public List<Long> getMenuIds() {
+        return orderLineItems.stream()
+                .map(OrderLineItemRequest::getMenuId)
+                .collect(Collectors.toList());
+    }
 }

@@ -1,5 +1,7 @@
 package kitchenpos.ui.dto.request;
 
+import kitchenpos.domain.OrderTable;
+
 public class OrderTableCreateRequest {
 
     private int numberOfGuests;
@@ -11,6 +13,10 @@ public class OrderTableCreateRequest {
     public OrderTableCreateRequest(final int numberOfGuests, final boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public OrderTable toEntity() {
+        return OrderTable.of(numberOfGuests, empty);
     }
 
     public int getNumberOfGuests() {

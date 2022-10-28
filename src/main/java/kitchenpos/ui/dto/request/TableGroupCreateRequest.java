@@ -2,6 +2,7 @@ package kitchenpos.ui.dto.request;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.util.CollectionUtils;
 
 public class TableGroupCreateRequest {
 
@@ -16,7 +17,15 @@ public class TableGroupCreateRequest {
                 .collect(Collectors.toList());
     }
 
-    public List<OrderTableIdRequest> getOrderTables() {
-        return orderTables;
+    public void verify() {
+        if (CollectionUtils.isEmpty(orderTables)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public List<Long> getOrderTableIds() {
+        return orderTables.stream()
+                .map(OrderTableIdRequest::getId)
+                .collect(Collectors.toList());
     }
 }

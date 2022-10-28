@@ -10,7 +10,6 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.ui.dto.request.ChangeOrderStatusRequest;
 import kitchenpos.ui.dto.request.OrderCreateRequest;
-import kitchenpos.ui.dto.request.OrderLineItemRequest;
 import kitchenpos.ui.dto.response.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,25 +33,21 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
         request.verify();
-        final List<Long> menuIds = request.getOrderLineItems()
-                .stream()
-                .map(OrderLineItemRequest::getMenuId)
-                .collect(Collectors.toList());
-
+        final List<Long> menuIds = request.getMenuIds();
         if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
 
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
-
-        final Order order = Order.ofCooking(orderTable,
-                LocalDateTime.now(),
-                request.getOrderLineItemEntities());
-
-        return OrderResponse.from(
-                orderRepository.save(order)
+        final Order order = orderRepository.save(
+                Order.ofCooking(
+                        orderTable,
+                        LocalDateTime.now(),
+                        request.getOrderLineItemEntities()
+                )
         );
+        return OrderResponse.from(order);
     }
 
     public List<OrderResponse> list() {

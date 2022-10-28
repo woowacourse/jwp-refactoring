@@ -10,7 +10,6 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
-import kitchenpos.ui.dto.request.OrderTableIdRequest;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
 import kitchenpos.ui.dto.response.OrderTableResponse;
 import kitchenpos.ui.dto.response.TableGroupResponse;
@@ -35,15 +34,11 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
-        final List<Long> orderTableIds = request.getOrderTables()
-                .stream()
-                .map(OrderTableIdRequest::getId)
-                .collect(Collectors.toList());
-
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        request.verify();
+        final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(request.getOrderTableIds());
 
         final TableGroup tableGroup = tableGroupRepository.save(TableGroup.from(LocalDateTime.now()))
-                .addOrderTables(savedOrderTables);
+                .addOrderTables(orderTables);
         final List<OrderTableResponse> orderTableResponses = tableGroup.getOrderTables()
                 .stream()
                 .map(orderTableRepository::save)
