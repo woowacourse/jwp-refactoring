@@ -1,6 +1,9 @@
 package kitchenpos.dao;
 
+import static kitchenpos.support.MenuFixture.MENU_PRICE_10000;
+import static kitchenpos.support.MenuGroupFixture.MENU_GROUP_1;
 import static kitchenpos.support.OrderFixture.ORDER_COOKING_1;
+import static kitchenpos.support.OrderLineItemFixture.ORDER_LINE_ITEM_1;
 import static kitchenpos.support.OrderTableFixture.ORDER_TABLE_NOT_EMPTY_1;
 import static kitchenpos.support.TableGroupFixture.TABLE_GROUP_NOW;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +22,9 @@ class OrderDaoTest extends JdbcDaoTest {
         // given
         final Long tableGroupId = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성()).getId();
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성(tableGroupId)).getId();
-        final Order order = ORDER_COOKING_1.주문항목_없이_생성(orderTableId);
+        final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
+        final Long menuId = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId)).getId();
+        final Order order = ORDER_COOKING_1.생성(orderTableId, List.of(ORDER_LINE_ITEM_1.생성(menuId)));
 
         // when
         final Order savedOrder = orderDao.save(order);
@@ -33,7 +38,8 @@ class OrderDaoTest extends JdbcDaoTest {
         // given
         final Long tableGroupId = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성()).getId();
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성(tableGroupId)).getId();
-        final Order savedOrder = 주문을_저장한다(ORDER_COOKING_1.주문항목_없이_생성(orderTableId, LocalDateTime.of(2022, 10, 24, 10, 10)));
+        final LocalDateTime localDateTime = LocalDateTime.of(2022, 10, 24, 10, 10);
+        final Order savedOrder = 주문을_저장한다(ORDER_COOKING_1.주문항목_없이_생성(orderTableId, localDateTime));
 
         // when
         final Order foundOrder = orderDao.findById(savedOrder.getId())

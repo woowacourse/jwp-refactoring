@@ -31,7 +31,7 @@ public class Order {
     private LocalDateTime orderedTime;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
     }
@@ -45,7 +45,7 @@ public class Order {
     }
 
     public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
-        this(orderTableId, orderStatus, orderedTime, new ArrayList<>());
+        this(null, orderTableId, orderStatus, orderedTime);
     }
 
     public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
@@ -56,6 +56,7 @@ public class Order {
     }
 
     public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+        validateOrderLineItemsEmpty(orderLineItems);
         for (OrderLineItem orderLineItem : orderLineItems) {
             orderLineItem.setOrder(this);
         }
@@ -63,6 +64,12 @@ public class Order {
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+    }
+
+    private static void validateOrderLineItemsEmpty(final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {

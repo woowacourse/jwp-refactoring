@@ -38,15 +38,8 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
-        final List<Long> menuIds = orderRequest.getOrderMenus()
-                .stream()
-                .map(OrderMenuRequest::getMenuId)
-                .collect(Collectors.toList());
-        final List<Menu> menus = menuDao.findByIdIn(menuIds);
-        final Order order = orderRequest.toEntity(menus);
-
-        validateOrderLineItemsEmpty(order);
-        validateMenusExist(menuIds, order);
+        final Order order = convertToOrder(orderRequest);
+        validateMenusExist(orderRequest.getOrderMenus().size(), order);
 
         final OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
@@ -55,20 +48,23 @@ public class OrderService {
         return OrderResponse.of(order);
     }
 
+    private Order convertToOrder(final OrderRequest orderRequest) {
+        final List<Long> menuIds = orderRequest.getOrderMenus()
+                .stream()
+                .map(OrderMenuRequest::getMenuId)
+                .collect(Collectors.toList());
+        final List<Menu> menus = menuDao.findByIdIn(menuIds);
+        return orderRequest.toEntity(menus);
+    }
+
     private static void validateEmpty(final OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
     }
 
-    private void validateMenusExist(final List<Long> menuIds, final Order order) {
-        if (!order.isOrderLineItemsSizeEqualTo(menuIds.size())) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateOrderLineItemsEmpty(final Order order) {
-        if (order.isOrderLineItemEmpty()) {
+    private void validateMenusExist(final int menusSize, final Order order) {
+        if (!order.isOrderLineItemsSizeEqualTo(menusSize)) {
             throw new IllegalArgumentException();
         }
     }
