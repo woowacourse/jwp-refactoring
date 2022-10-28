@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -23,26 +22,6 @@ class ProductServiceTest {
 
             // then
             assertThat(extract).isNotNull();
-        }
-
-        @Test
-        void 요청에서_가격이_음수일_경우_예외가_발생한다() {
-            // given
-            final Product product = new Product("짜장면", BigDecimal.valueOf(-1));
-
-            // when & then
-            assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 요청에서_가격이_NULL_일_경우_예외가_발생한다() {
-            // given
-            final Product product = new Product("짜장면", null);
-
-            // when & then
-            assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
