@@ -63,19 +63,19 @@ class TableServiceTest {
     @Test
     void changeEmpty() {
         //given
-        boolean expected = false;
         given(orderTableDao.findById(anyLong()))
                 .willReturn(Optional.of(ORDER_TABLE));
         given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
                 .willReturn(false);
         given(orderTableDao.save(any(OrderTable.class)))
-                .willReturn(new OrderTable(ORDER_TABLE.getId(), ORDER_TABLE.getNumberOfGuests(), expected));
+                .willReturn(new OrderTable(ORDER_TABLE.getId(), ORDER_TABLE.getNumberOfGuests(), false));
 
         //when
-        OrderTableChangeEmptyRequest dto = new OrderTableChangeEmptyRequest(expected);
+        OrderTableChangeEmptyRequest dto = new OrderTableChangeEmptyRequest(false);
         OrderTable changedOrderTable = tableService.changeEmpty(1L, dto);
 
         //then
+        boolean expected = false;
         assertThat(changedOrderTable.isEmpty()).isEqualTo(expected);
     }
 

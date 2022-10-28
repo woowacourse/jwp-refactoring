@@ -1,5 +1,9 @@
 package kitchenpos.application;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderTableIdRequestDto;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -10,13 +14,6 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.TableGroupCreateRequestDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class TableGroupService {
@@ -40,17 +37,8 @@ public class TableGroupService {
         tableGroup.validateIsEqualToOrderTablesSize(orderTables.size());
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
-        changeOrderTableFull(savedOrderTables, tableGroup);
+        mergeOrderTables(savedOrderTables, tableGroup);
         return savedTableGroup;
-    }
-
-    private void changeOrderTableFull(List<OrderTable> savedOrderTables, TableGroup tableGroup) {
-        final Long tableGroupId = tableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.doTabling(tableGroupId);
-            orderTableDao.save(savedOrderTable);
-        }
-        tableGroup.setOrderTables(savedOrderTables);
     }
 
     private List<Long> getRequestOrderTablesIds(List<OrderTableIdRequestDto> orderTables) {
@@ -59,19 +47,35 @@ public class TableGroupService {
                 .collect(Collectors.toList());
     }
 
+    private void mergeOrderTables(List<OrderTable> savedOrderTables, TableGroup tableGroup) {
+        final Long tableGroupId = tableGroup.getId();
+        for (final OrderTable savedOrderTable : savedOrderTables) {
+            savedOrderTable.doTabling(tableGroupId);
+            orderTableDao.save(savedOrderTable);
+        }
+        tableGroup.setOrderTables(savedOrderTables);
+    }
+
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
-
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
+        final List<Long> orderTableIds = getOrderTablesIds(orderTables);
 
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 상태가 요리중이거나 먹는중 상태면 테이블을 분리할 수 없습니다.");
         }
 
+        splitOrderTables(orderTables);
+    }
+
+    private List<Long> getOrderTablesIds(List<OrderTable> orderTables) {
+        return orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+    }
+
+    private void splitOrderTables(List<OrderTable> orderTables) {
         for (final OrderTable orderTable : orderTables) {
             orderTable.setTableGroupId(null);
             orderTable.setEmpty(false);
