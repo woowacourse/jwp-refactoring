@@ -78,4 +78,16 @@ class OrderTableTest {
         assertThatThrownBy(() -> UNSAVED_ORDER_TABLE_EMPTY.changeNumberOfGuests(3))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @DisplayName("테이블을 group에서 해제한다.")
+    @Test
+    void exitFromGroup() {
+        UNSAVED_ORDER_TABLE_EMPTY.setTableGroupId(0L);
+        UNSAVED_ORDER_TABLE_EMPTY.setEmpty(true);
+
+        UNSAVED_ORDER_TABLE_EMPTY.exitFromGroup();
+
+        assertThat(UNSAVED_ORDER_TABLE_EMPTY.getTableGroupId()).isNull();
+        assertThat(UNSAVED_ORDER_TABLE_EMPTY.isEmpty()).isFalse();
+    }
 }

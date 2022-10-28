@@ -96,4 +96,9 @@ public class OrderTable {
         }
         this.numberOfGuests = numberOfGuests;
     }
+
+    public void exitFromGroup() {
+        this.tableGroupId = null;
+        this.empty = false;
+    }
 }
