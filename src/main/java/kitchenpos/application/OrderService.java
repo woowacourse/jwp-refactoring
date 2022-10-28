@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderRequest;
-import kitchenpos.application.dto.request.SavedOrderRequest;
+import kitchenpos.application.dto.request.OrderChangeRequest;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -96,7 +96,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse changeOrderStatus(final Long orderId, final SavedOrderRequest request) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderChangeRequest request) {
         final Order order = convertToOrder(request);
 
         final Order savedOrder = orderDao.findById(orderId)
@@ -123,7 +123,7 @@ public class OrderService {
         return order;
     }
 
-    private Order convertToOrder(final SavedOrderRequest request) {
+    private Order convertToOrder(final OrderChangeRequest request) {
         final Order order = new Order();
         order.setOrderStatus(request.getOrderStatus());
         return order;

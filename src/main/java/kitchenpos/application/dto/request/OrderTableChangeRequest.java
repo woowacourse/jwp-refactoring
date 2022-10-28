@@ -1,15 +1,15 @@
 package kitchenpos.application.dto.request;
 
-public class SavedOrderTableRequest {
+public class OrderTableChangeRequest {
 
     private Long id;
     private int numberOfGuests;
     private boolean empty;
 
-    private SavedOrderTableRequest() {
+    private OrderTableChangeRequest() {
     }
 
-    public SavedOrderTableRequest(final Long id, final int numberOfGuests, final boolean empty) {
+    public OrderTableChangeRequest(final Long id, final int numberOfGuests, final boolean empty) {
         this.id = id;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;

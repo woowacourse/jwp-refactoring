@@ -1,13 +1,13 @@
 package kitchenpos.application.dto.request;
 
-public class SavedOrderRequest {
+public class OrderChangeRequest {
 
     private String orderStatus;
 
-    private SavedOrderRequest() {
+    private OrderChangeRequest() {
     }
 
-    public SavedOrderRequest(final String orderStatus) {
+    public OrderChangeRequest(final String orderStatus) {
         this.orderStatus = orderStatus;
     }
 

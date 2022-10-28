@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.OrderService;
 import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderRequest;
-import kitchenpos.application.dto.request.SavedOrderRequest;
+import kitchenpos.application.dto.request.OrderChangeRequest;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.domain.OrderStatus;
 
@@ -88,7 +88,7 @@ class OrderRestControllerTest {
     void changeOrderStatus() throws Exception {
         final long orderId = 1L;
 
-        final SavedOrderRequest request = new SavedOrderRequest(OrderStatus.MEAL.name());
+        final OrderChangeRequest request = new OrderChangeRequest(OrderStatus.MEAL.name());
         final String body = objectMapper.writeValueAsString(request);
 
         final OrderResponse response = new OrderResponse(

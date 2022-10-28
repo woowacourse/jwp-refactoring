@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kitchenpos.application.TableGroupService;
-import kitchenpos.application.dto.request.SavedOrderTableRequest;
+import kitchenpos.application.dto.request.OrderTableChangeRequest;
 import kitchenpos.application.dto.request.TableGroupRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.application.dto.response.TableGroupResponse;
@@ -41,8 +41,8 @@ class TableGroupRestControllerTest {
     @DisplayName("테이블 그룹을 생성한다")
     @Test
     void create() throws Exception {
-        final SavedOrderTableRequest orderTableRequest1 = new SavedOrderTableRequest(1L, 1, false);
-        final SavedOrderTableRequest orderTableRequest2 = new SavedOrderTableRequest(2L, 1, false);
+        final OrderTableChangeRequest orderTableRequest1 = new OrderTableChangeRequest(1L, 1, false);
+        final OrderTableChangeRequest orderTableRequest2 = new OrderTableChangeRequest(2L, 1, false);
         final TableGroupRequest request = new TableGroupRequest(List.of(orderTableRequest1, orderTableRequest2));
         final String body = objectMapper.writeValueAsString(request);
 

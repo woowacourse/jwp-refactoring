@@ -6,10 +6,7 @@ import static kitchenpos.domain.fixture.MenuProductFixture.상품_하나;
 import static kitchenpos.domain.fixture.OrderFixture.완료된_주문;
 import static kitchenpos.domain.fixture.OrderFixture.요리중인_주문;
 import static kitchenpos.domain.fixture.OrderFixture.주문_1번;
-import static kitchenpos.domain.fixture.OrderFixture.주문_1번의_주문_항목들은;
-import static kitchenpos.domain.fixture.OrderLineItemFixture.주문_항목_1번;
 import static kitchenpos.domain.fixture.OrderTableFixture.비어있는_테이블;
-import static kitchenpos.domain.fixture.OrderTableFixture.새로운_테이블;
 import static kitchenpos.domain.fixture.ProductFixture.후라이드_치킨;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -24,7 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderRequest;
-import kitchenpos.application.dto.request.SavedOrderRequest;
+import kitchenpos.application.dto.request.OrderChangeRequest;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -154,7 +151,7 @@ class OrderServiceTest {
     void changeOrderStatus() {
         final Order order = 요리중인_주문(저장된_주문_테이블.getId());
         final Order savedOrder = orderDao.save(order);
-        final SavedOrderRequest newOrder = new SavedOrderRequest(OrderStatus.COMPLETION.name());
+        final OrderChangeRequest newOrder = new OrderChangeRequest(OrderStatus.COMPLETION.name());
 
         final OrderResponse response = orderService.changeOrderStatus(savedOrder.getId(), newOrder);
 
@@ -166,7 +163,7 @@ class OrderServiceTest {
     void changeOrderStatusOrderIsNotExist() {
         final long notSavedOrderId = 0L;
 
-        final SavedOrderRequest request = new SavedOrderRequest(OrderStatus.COMPLETION.name());
+        final OrderChangeRequest request = new OrderChangeRequest(OrderStatus.COMPLETION.name());
         assertThatThrownBy(() -> orderService.changeOrderStatus(notSavedOrderId, request))
             .isInstanceOf(IllegalArgumentException.class);
     }
@@ -177,7 +174,7 @@ class OrderServiceTest {
         final Order order = 완료된_주문(저장된_주문_테이블.getId());
         final Order savedOrder = orderDao.save(order);
 
-        final SavedOrderRequest request = new SavedOrderRequest(OrderStatus.COMPLETION.name());
+        final OrderChangeRequest request = new OrderChangeRequest(OrderStatus.COMPLETION.name());
         assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), request))
             .isInstanceOf(IllegalArgumentException.class);
     }

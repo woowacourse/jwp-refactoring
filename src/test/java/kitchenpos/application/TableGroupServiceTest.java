@@ -17,7 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.application.dto.request.SavedOrderTableRequest;
+import kitchenpos.application.dto.request.OrderTableChangeRequest;
 import kitchenpos.application.dto.request.TableGroupRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
@@ -54,14 +54,15 @@ class TableGroupServiceTest {
         final OrderTable saved1 = orderTableDao.save(비어있는_테이블());
         final OrderTable saved2 = orderTableDao.save(비어있는_테이블());
 
-        final SavedOrderTableRequest savedOrderTableRequest1 = new SavedOrderTableRequest(
+        final OrderTableChangeRequest orderTableChangeRequest1 = new OrderTableChangeRequest(
             saved1.getId(), saved1.getNumberOfGuests(), saved1.isEmpty()
         );
-        final SavedOrderTableRequest savedOrderTableRequest2 = new SavedOrderTableRequest(
+        final OrderTableChangeRequest orderTableChangeRequest2 = new OrderTableChangeRequest(
             saved2.getId(), saved2.getNumberOfGuests(), saved2.isEmpty()
         );
 
-        final TableGroupRequest request = new TableGroupRequest(List.of(savedOrderTableRequest1, savedOrderTableRequest2));
+        final TableGroupRequest request = new TableGroupRequest(List.of(orderTableChangeRequest1,
+            orderTableChangeRequest2));
 
         final TableGroupResponse response = tableGroupService.create(request);
 
@@ -84,18 +85,18 @@ class TableGroupServiceTest {
         final OrderTable notSaved2 = 새로운_테이블();
         final OrderTable notSaved3 = 새로운_테이블();
 
-        final SavedOrderTableRequest notSavedOrderTableRequest1 = new SavedOrderTableRequest(
+        final OrderTableChangeRequest notOrderTableChangeRequest1 = new OrderTableChangeRequest(
             notSaved1.getId(), notSaved1.getNumberOfGuests(), notSaved1.isEmpty()
         );
-        final SavedOrderTableRequest notSavedOrderTableRequest2 = new SavedOrderTableRequest(
+        final OrderTableChangeRequest notOrderTableChangeRequest2 = new OrderTableChangeRequest(
             notSaved2.getId(), notSaved2.getNumberOfGuests(), notSaved2.isEmpty()
         );
-        final SavedOrderTableRequest notSavedOrderTableRequest3 = new SavedOrderTableRequest(
+        final OrderTableChangeRequest notOrderTableChangeRequest3 = new OrderTableChangeRequest(
             notSaved3.getId(), notSaved3.getNumberOfGuests(), notSaved3.isEmpty()
         );
 
         final TableGroupRequest request = new TableGroupRequest(
-            List.of(notSavedOrderTableRequest1, notSavedOrderTableRequest2, notSavedOrderTableRequest3)
+            List.of(notOrderTableChangeRequest1, notOrderTableChangeRequest2, notOrderTableChangeRequest3)
         );
 
         assertThatThrownBy(() -> tableGroupService.create(request))
@@ -108,14 +109,15 @@ class TableGroupServiceTest {
         final OrderTable saved1 = orderTableDao.save(비어있지_않는_테이블());
         final OrderTable saved2 = orderTableDao.save(새로운_테이블());
 
-        final SavedOrderTableRequest savedOrderTableRequest1 = new SavedOrderTableRequest(
+        final OrderTableChangeRequest orderTableChangeRequest1 = new OrderTableChangeRequest(
             saved1.getId(), saved1.getNumberOfGuests(), saved1.isEmpty()
         );
-        final SavedOrderTableRequest savedOrderTableRequest2 = new SavedOrderTableRequest(
+        final OrderTableChangeRequest orderTableChangeRequest2 = new OrderTableChangeRequest(
             saved2.getId(), saved2.getNumberOfGuests(), saved2.isEmpty()
         );
 
-        final TableGroupRequest request = new TableGroupRequest(List.of(savedOrderTableRequest1, savedOrderTableRequest2));
+        final TableGroupRequest request = new TableGroupRequest(List.of(orderTableChangeRequest1,
+            orderTableChangeRequest2));
 
         assertThatThrownBy(() -> tableGroupService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
@@ -127,14 +129,15 @@ class TableGroupServiceTest {
         final OrderTable saved1 = orderTableDao.save(새로운_테이블(null));
         final OrderTable saved2 = orderTableDao.save(새로운_테이블());
 
-        final SavedOrderTableRequest savedOrderTableRequest1 = new SavedOrderTableRequest(
+        final OrderTableChangeRequest orderTableChangeRequest1 = new OrderTableChangeRequest(
             saved1.getId(), saved1.getNumberOfGuests(), saved1.isEmpty()
         );
-        final SavedOrderTableRequest savedOrderTableRequest2 = new SavedOrderTableRequest(
+        final OrderTableChangeRequest orderTableChangeRequest2 = new OrderTableChangeRequest(
             saved2.getId(), saved2.getNumberOfGuests(), saved2.isEmpty()
         );
 
-        final TableGroupRequest request = new TableGroupRequest(List.of(savedOrderTableRequest1, savedOrderTableRequest2));
+        final TableGroupRequest request = new TableGroupRequest(List.of(orderTableChangeRequest1,
+            orderTableChangeRequest2));
 
         assertThatThrownBy(() -> tableGroupService.create(request))
             .isInstanceOf(IllegalArgumentException.class);

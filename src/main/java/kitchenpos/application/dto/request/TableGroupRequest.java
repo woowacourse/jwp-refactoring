@@ -4,16 +4,16 @@ import java.util.List;
 
 public class TableGroupRequest {
 
-    private List<SavedOrderTableRequest> orderTables;
+    private List<OrderTableChangeRequest> orderTables;
 
     private TableGroupRequest() {
     }
 
-    public TableGroupRequest(final List<SavedOrderTableRequest> orderTables) {
+    public TableGroupRequest(final List<OrderTableChangeRequest> orderTables) {
         this.orderTables = orderTables;
     }
 
-    public List<SavedOrderTableRequest> getOrderTables() {
+    public List<OrderTableChangeRequest> getOrderTables() {
         return orderTables;
     }
 }

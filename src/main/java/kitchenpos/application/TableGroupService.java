@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.request.SavedOrderTableRequest;
+import kitchenpos.application.dto.request.OrderTableChangeRequest;
 import kitchenpos.application.dto.request.TableGroupRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.application.dto.response.TableGroupResponse;
@@ -99,13 +99,13 @@ public class TableGroupService {
         return tableGroup;
     }
 
-    private List<OrderTable> convertToOrderTables(final List<SavedOrderTableRequest> requests) {
+    private List<OrderTable> convertToOrderTables(final List<OrderTableChangeRequest> requests) {
         return requests.stream()
             .map(this::convertToOrderTable)
             .collect(Collectors.toUnmodifiableList());
     }
 
-    private OrderTable convertToOrderTable(final SavedOrderTableRequest request) {
+    private OrderTable convertToOrderTable(final OrderTableChangeRequest request) {
         final OrderTable orderTable = new OrderTable();
         orderTable.setId(request.getId());
         orderTable.setNumberOfGuests(request.getNumberOfGuests());
