@@ -1,10 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.fixture.ProductFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,7 +44,7 @@ class MenuServiceTest {
     @DisplayName("menu를 생성한다.")
     @Test
     void createMenuSuccess() {
-        Product 후라이드 = productService.create(후라이드());
+        ProductResponse 후라이드 = productService.create(후라이드());
         MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         MenuCreateRequest 메뉴_후라이드치킨 = 후라이드치킨(한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));
@@ -63,7 +62,7 @@ class MenuServiceTest {
     @DisplayName("price가 null인 경우 예외를 던진다.")
     @Test
     void createMenuByPriceNull() {
-        Product 후라이드 = productService.create(후라이드());
+        ProductResponse 후라이드 = productService.create(후라이드());
         MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         MenuCreateRequest 메뉴_후라이드치킨 = createMenu("후라이드치킨", null, 한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));
@@ -76,7 +75,7 @@ class MenuServiceTest {
     @ParameterizedTest
     @ValueSource(ints = {Integer.MIN_VALUE, -1})
     void createMenuByPriceNegative(final int price) {
-        Product 후라이드 = productService.create(후라이드());
+        ProductResponse 후라이드 = productService.create(후라이드());
         MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         MenuCreateRequest 메뉴_후라이드치킨 = createMenu("후라이드치킨", BigDecimal.valueOf(price), 한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));
@@ -88,7 +87,7 @@ class MenuServiceTest {
     @DisplayName("존재하지 않는 menuGroupId인 경우 예외를 던진다.")
     @Test
     void createMenuByNonExistMenuGroupId() {
-        Product 후라이드 = productService.create(후라이드());
+        ProductResponse 후라이드 = productService.create(후라이드());
         MenuCreateRequest 없는그룹_후라이드치킨 = 후라이드치킨(0L,
                 List.of(createMenuProduct(후라이드.getId(), 1)));
 
@@ -99,7 +98,7 @@ class MenuServiceTest {
     @DisplayName("product의 price 합이 menu price보다 큰 경우 예외를 던진다.")
     @Test
     void createMenuByOverProductPrice() {
-        Product 후라이드 = productService.create(후라이드());
+        ProductResponse 후라이드 = productService.create(후라이드());
         MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         MenuCreateRequest 메뉴_후라이드치킨 = createMenu("후라이드치킨", BigDecimal.valueOf(20000), 한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));
@@ -111,8 +110,8 @@ class MenuServiceTest {
     @DisplayName("menu 전체 조회한다.")
     @Test
     void findAllMenu() {
-        Product 후라이드 = productService.create(후라이드());
-        Product 양념치킨 = productService.create(ProductFixtures.양념치킨());
+        ProductResponse 후라이드 = productService.create(후라이드());
+        ProductResponse 양념치킨 = productService.create(ProductFixtures.양념치킨());
         MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         // 메뉴
         MenuCreateRequest 메뉴_후라이드치킨 = createMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(),

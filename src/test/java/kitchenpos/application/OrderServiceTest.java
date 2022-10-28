@@ -1,15 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.fixture.OrderTableFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,7 +56,7 @@ class OrderServiceTest {
     @Test
     void createOrderSuccess() {
         // 메뉴 설정
-        Product 후라이드 = productService.create(후라이드());
+        ProductResponse 후라이드 = productService.create(후라이드());
         MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         MenuCreateRequest request = createMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));
@@ -92,7 +91,7 @@ class OrderServiceTest {
     @Test
     void createOrderByNotEqualSize() {
         // 메뉴 설정
-        Product 후라이드 = productService.create(후라이드());
+        ProductResponse 후라이드 = productService.create(후라이드());
         MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         MenuCreateRequest request = createMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));
@@ -117,7 +116,7 @@ class OrderServiceTest {
     @Test
     void createOrderByOrderTableIsEmpty() {
         // 메뉴 설정
-        Product 후라이드 = productService.create(후라이드());
+        ProductResponse 후라이드 = productService.create(후라이드());
         MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         MenuCreateRequest request = createMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));
@@ -135,7 +134,7 @@ class OrderServiceTest {
     @Test
     void findAllOrder() {
         // 메뉴 설정
-        Product 후라이드 = productService.create(후라이드());
+        ProductResponse 후라이드 = productService.create(후라이드());
         MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         MenuCreateRequest request = createMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));
@@ -162,7 +161,7 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus() {
         // 메뉴 설정
-        Product 후라이드 = productService.create(후라이드());
+        ProductResponse 후라이드 = productService.create(후라이드());
         MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         MenuCreateRequest request = createMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));
@@ -192,7 +191,7 @@ class OrderServiceTest {
     @Test
     void changeOrderStatusToCompletion() {
         // 메뉴 설정
-        Product 후라이드 = productService.create(후라이드());
+        ProductResponse 후라이드 = productService.create(후라이드());
         MenuGroupResponse 한마리메뉴 = menuGroupService.create(한마리메뉴());
         MenuCreateRequest request = createMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(),
                 List.of(createMenuProduct(후라이드.getId(), 1)));

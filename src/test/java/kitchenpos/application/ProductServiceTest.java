@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductCreateRequest;
+import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,7 +36,7 @@ class ProductServiceTest {
     @Test
     void createProductSuccess() {
         ProductCreateRequest 후라이드 = 후라이드();
-        Product actual = productService.create(후라이드);
+        ProductResponse actual = productService.create(후라이드);
 
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
@@ -67,9 +67,9 @@ class ProductServiceTest {
     @DisplayName("product를 전체 조회한다.")
     @Test
     void findAllProduct() {
-        Product 통구이 = productService.create(통구이());
-        Product 간장치킨 = productService.create(간장치킨());
-        List<Product> products = productService.list();
+        ProductResponse 통구이 = productService.create(통구이());
+        ProductResponse 간장치킨 = productService.create(간장치킨());
+        List<ProductResponse> products = productService.list();
 
         assertAll(
                 () -> assertThat(products).hasSize(2),
