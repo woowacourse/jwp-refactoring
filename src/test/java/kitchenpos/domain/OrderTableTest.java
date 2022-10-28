@@ -30,4 +30,28 @@ class OrderTableTest {
         assertDoesNotThrow(orderTable::validateEmpty);
     }
 
+    @DisplayName("상태를 바꿀 때 단체 테이블에 속해있으면 예외를 발생한다.")
+    @Test
+    void isInGroupWhenChangeEmpty() {
+        // given
+        OrderTable orderTable = new OrderTable(1L, 2, false);
+
+        // when & then
+        assertThatThrownBy(() -> orderTable.changeEmpty(true))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("TableGroupId가 있습니다.");
+    }
+
+    @DisplayName("손님의 수가 0 미만이면 예외를 발생한다")
+    @Test
+    void numberOfGuestsUnder0ThrowException() {
+        // given
+        OrderTable orderTable = new OrderTable(1L, 2, false);
+
+        // when & then
+        assertThatThrownBy(() -> orderTable.changeNumberOfGuest(-1))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("손님의 수는 0 이상이어야합니다.");
+    }
+
 }

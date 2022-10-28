@@ -16,7 +16,6 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -209,12 +208,5 @@ class OrderServiceTest extends ServiceTestBase {
 
     private OrderStatusRequest createOrderStatusRequest(OrderStatus orderStatus) {
         return new OrderStatusRequest(orderStatus.name());
-    }
-
-    private Order 주문_생성_및_저장(final OrderTable orderTable, final Menu menu, final long quantity) {
-        List<OrderLineItem> orderLineItems = Collections.singletonList(createOrderLineItem(menu.getId(), quantity));
-        Order order = createOrder(orderTable.getId(), orderLineItems);
-
-        return orderRepository.save(order);
     }
 }

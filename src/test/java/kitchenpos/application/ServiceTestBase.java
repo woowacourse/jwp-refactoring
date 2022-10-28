@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
@@ -27,6 +28,8 @@ import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.OrderTableEmptyStatusRequest;
+import kitchenpos.dto.OrderTableGuestRequest;
 import kitchenpos.dto.ProductRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -101,8 +104,16 @@ public abstract class ServiceTestBase {
         return orderTable;
     }
 
-    protected OrderTableCreateRequest createOrderTableCreateRequest(int guest) {
+    protected OrderTableCreateRequest createOrderTableCreateRequest(final int guest) {
         return new OrderTableCreateRequest(guest, guest == 0);
+    }
+
+    protected OrderTableEmptyStatusRequest createOrderTableEmptyStatusRequest(final boolean empty) {
+        return new OrderTableEmptyStatusRequest(empty);
+    }
+
+    protected OrderTableGuestRequest createOrderTableGuestRequest(final int guest) {
+        return new OrderTableGuestRequest(guest);
     }
 
     protected Order 주문_생성(final OrderTable orderTable) {
@@ -147,5 +158,13 @@ public abstract class ServiceTestBase {
 
     protected OrderLineItemRequest createOrderLineItemRequest(final Long menuId, final long quantity) {
         return new OrderLineItemRequest(menuId, quantity);
+    }
+
+
+    protected Order 주문_생성_및_저장(final OrderTable orderTable, final Menu menu, final long quantity) {
+        List<OrderLineItem> orderLineItems = Collections.singletonList(createOrderLineItem(menu.getId(), quantity));
+        Order order = createOrder(orderTable.getId(), orderLineItems);
+
+        return orderRepository.save(order);
     }
 }

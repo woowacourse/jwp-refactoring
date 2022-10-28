@@ -9,7 +9,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.application.fixture.MenuFixture;
@@ -17,12 +16,13 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.OrderTableEmptyStatusRequest;
+import kitchenpos.dto.OrderTableGuestRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -107,12 +107,11 @@ class TableServiceTest extends ServiceTestBase {
     @Test
     void changeEmptyWithNotExistedTable() {
         // given
-        OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setEmpty(false);
+        OrderTableEmptyStatusRequest emptyStatusRequest = createOrderTableEmptyStatusRequest(false);
 
         // when & then
         assertThatThrownBy(
-                () -> tableService.changeEmpty(1L, newOrderTable)
+                () -> tableService.changeEmpty(1L, emptyStatusRequest)
         ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("존재하지 않는 order table 입니다.");
     }
@@ -125,12 +124,11 @@ class TableServiceTest extends ServiceTestBase {
         TableGroup tableGroup = tableGroupDao.save(단체_지정_생성(orderTable1));
         orderTable1.setTableGroupId(tableGroup.getId());
         OrderTable savedTable = orderTableDao.save(orderTable1);
-        OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setEmpty(false);
+        OrderTableEmptyStatusRequest emptyStatusRequest = createOrderTableEmptyStatusRequest(false);
 
         // when & then
         assertThatThrownBy(
-                () -> tableService.changeEmpty(savedTable.getId(), newOrderTable)
+                () -> tableService.changeEmpty(savedTable.getId(), emptyStatusRequest)
         ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("TableGroupId가 있습니다.");
     }
@@ -142,16 +140,13 @@ class TableServiceTest extends ServiceTestBase {
         OrderTable orderTable1 = 빈_주문_테이블_생성();
         OrderTable savedTable = orderTableDao.save(orderTable1);
 
-        Order order1 = 주문_생성_및_저장(savedTable);
-        OrderLineItem orderLineItem1 = 주문_항목_생성(order1, friedChicken, 1);
-        orderLineItemDao.save(orderLineItem1);
+        Order order1 = 주문_생성_및_저장(savedTable, friedChicken, 1);
 
-        OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setEmpty(false);
+        OrderTableEmptyStatusRequest emptyStatusRequest = createOrderTableEmptyStatusRequest(false);
 
         // when & then
         assertThatThrownBy(
-                () -> tableService.changeEmpty(savedTable.getId(), newOrderTable)
+                () -> tableService.changeEmpty(savedTable.getId(), emptyStatusRequest)
         ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("주문이 진행 중입니다.");
     }
@@ -160,21 +155,15 @@ class TableServiceTest extends ServiceTestBase {
     @Test
     void updateEmpty() {
         // given
-        OrderTable orderTable1 = 빈_주문_테이블_생성();
-        OrderTable savedTable = orderTableDao.save(orderTable1);
+        OrderTable savedTable = orderTableDao.save(빈_주문_테이블_생성());
+        Order order1 = 주문_생성_및_저장(savedTable, friedChicken, 1);
+        order1.changeOrderStatus(OrderStatus.COMPLETION.name());
+        orderRepository.save(order1);
 
-        Order order1 = 주문_생성(savedTable);
-        order1.setOrderedTime(LocalDateTime.now());
-        order1.setOrderStatus(OrderStatus.COMPLETION.name());
-        Order savedOrder = jdbcTemplateOrderDao.save(order1);
-        OrderLineItem orderLineItem1 = 주문_항목_생성(savedOrder, friedChicken, 1);
-        orderLineItemDao.save(orderLineItem1);
-
-        OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setEmpty(false);
+        OrderTableEmptyStatusRequest emptyStatusRequest = createOrderTableEmptyStatusRequest(false);
 
         // when
-        OrderTable orderTable = tableService.changeEmpty(savedTable.getId(), newOrderTable);
+        OrderTable orderTable = tableService.changeEmpty(savedTable.getId(), emptyStatusRequest);
 
         //then
         assertThat(orderTable.isEmpty()).isFalse();
@@ -184,15 +173,14 @@ class TableServiceTest extends ServiceTestBase {
     @Test
     void changeMinusGuest() {
         // given
-        OrderTable orderTable1 = 빈_주문_테이블_생성();
+        OrderTable orderTable1 = 주문_테이블_생성();
         OrderTable savedTable = orderTableDao.save(orderTable1);
 
-        OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setNumberOfGuests(-1);
+        OrderTableGuestRequest guestNumberRequest = createOrderTableGuestRequest(-1);
 
         // when & then
         assertThatThrownBy(
-                () -> tableService.changeNumberOfGuests(savedTable.getId(), newOrderTable)
+                () -> tableService.changeNumberOfGuests(savedTable.getId(), guestNumberRequest)
         ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("손님의 수는 0 이상이어야합니다.");
     }
@@ -201,12 +189,11 @@ class TableServiceTest extends ServiceTestBase {
     @Test
     void changeNotExistedOrderTable() {
         // given
-        OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setNumberOfGuests(2);
+        OrderTableGuestRequest guestNumberRequest = createOrderTableGuestRequest(2);
 
         // when & then
         assertThatThrownBy(
-                () -> tableService.changeNumberOfGuests(0L, newOrderTable)
+                () -> tableService.changeNumberOfGuests(0L, guestNumberRequest)
         ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("존재하지 않는 order table 입니다.");
     }
@@ -218,14 +205,13 @@ class TableServiceTest extends ServiceTestBase {
         OrderTable orderTable1 = 빈_주문_테이블_생성();
         OrderTable savedTable = orderTableDao.save(orderTable1);
 
-        OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setNumberOfGuests(2);
+        OrderTableGuestRequest guestNumberRequest = createOrderTableGuestRequest(2);
 
         // when & then
         assertThatThrownBy(
-                () -> tableService.changeNumberOfGuests(savedTable.getId(), newOrderTable)
+                () -> tableService.changeNumberOfGuests(savedTable.getId(), guestNumberRequest)
         ).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("빈 주문 테이블의 손님의 수를 업데이트 할 수 없습니다.");
+                .hasMessageContaining("빈 주문 테이블입니다.");
     }
 
     @DisplayName("손님의 수를 정상적으로 업데이트한다.")
@@ -233,22 +219,12 @@ class TableServiceTest extends ServiceTestBase {
     void changeNumberOfGuests() {
         // given
         OrderTable orderTable = orderTableDao.save(주문_테이블_생성());
-
-        OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setNumberOfGuests(4);
+        OrderTableGuestRequest guestNumberRequest = createOrderTableGuestRequest(4);
 
         // when
-        OrderTable savedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable);
+        OrderTable savedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(), guestNumberRequest);
 
         //then
         assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(4);
-    }
-
-    private Order 주문_생성_및_저장(final OrderTable orderTable) {
-        Order order = 주문_생성(orderTable);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-
-        return jdbcTemplateOrderDao.save(order);
     }
 }
