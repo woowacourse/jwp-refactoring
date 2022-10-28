@@ -23,14 +23,19 @@ public class MenuGroupService {
 
     @Transactional
     public MenuGroupResponse create(final MenuGroupCreateRequest request) {
-        final MenuGroup menuGroup = new MenuGroup(request.getName());
-        final MenuGroup saved = menuGroupRepository.save(menuGroup);
-        return new MenuGroupResponse(saved.getId(), saved.getName());
+        final MenuGroup menuGroup = menuGroupRepository.save(
+                new MenuGroup(request.getName())
+        );
+        return toResponse(menuGroup);
     }
 
     public List<MenuGroupResponse> list() {
         return stream(menuGroupRepository.findAll().spliterator(), false)
-                .map(it -> new MenuGroupResponse(it.getId(), it.getName()))
+                .map(this::toResponse)
                 .collect(Collectors.toList());
+    }
+
+    private MenuGroupResponse toResponse(final MenuGroup menuGroup) {
+        return new MenuGroupResponse(menuGroup.getId(), menuGroup.getName());
     }
 }
