@@ -129,50 +129,39 @@ class TableServiceTest {
     @Nested
     class ChangeNumberOfGuestsTest extends ServiceTest {
 
-        private OrderTable orderTable;
-        private OrderTable savedOrderTable;
-
-        @BeforeEach
-        void setup() {
-            orderTable = new OrderTable();
-            orderTable.setNumberOfGuests(5);
-            orderTable.setEmpty(false);
-        }
-
         @Test
         void changeNumberOfGuests_fail_when_smaller_than_zero() {
             final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
-            savedOrderTable = tableService.create(orderTableRequest);
+            OrderTable savedOrderTable = tableService.create(orderTableRequest);
 
-            orderTable.setNumberOfGuests(-1);
-
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable))
+            assertThatThrownBy(
+                    () -> tableService.changeNumberOfGuests(savedOrderTable.getId(), new OrderTableRequest(-1)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void changeNumberOfGuests_fail_when_orderTable_not_exist() {
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1000L, orderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1000L, new OrderTableRequest(6)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void changeNumberOfGuests_fail_when_orderTable_is_empty() {
-            orderTable.setEmpty(true);
             final OrderTableRequest orderTableRequest = new OrderTableRequest(5, true);
-            savedOrderTable = tableService.create(orderTableRequest);
+            final OrderTable savedOrderTable = tableService.create(orderTableRequest);
 
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable))
+            assertThatThrownBy(
+                    () -> tableService.changeNumberOfGuests(savedOrderTable.getId(), new OrderTableRequest(6)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void changeNumberOfGuests_success() {
             final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
-            savedOrderTable = tableService.create(orderTableRequest);
-            orderTable.setNumberOfGuests(10);
+            final OrderTable savedOrderTable = tableService.create(orderTableRequest);
 
-            OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(), this.orderTable);
+            OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(),
+                    new OrderTableRequest(10));
 
             assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(10);
         }
