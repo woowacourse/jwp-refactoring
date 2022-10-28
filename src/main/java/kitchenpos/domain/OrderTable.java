@@ -60,7 +60,7 @@ public class OrderTable {
         return tableGroup != null;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void updateEmpty(final boolean empty) {
         this.empty = empty;
     }
 
@@ -83,5 +83,11 @@ public class OrderTable {
         }
         this.tableGroup = tableGroup;
         tableGroup.getOrderTables().add(this);
+    }
+
+    public void validateEmptyUpdatable() {
+        if (tableGroup != null) {
+            throw new IllegalArgumentException();
+        }
     }
 }

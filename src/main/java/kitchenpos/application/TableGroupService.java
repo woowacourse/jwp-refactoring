@@ -62,7 +62,7 @@ public class TableGroupService {
 
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
         savedTableGroup.getOrderTables()
-                .forEach(it -> it.setEmpty(false));
+                .forEach(it -> it.updateEmpty(false));
 
         return new TableGroupResponse(
                 savedTableGroup.getId(),

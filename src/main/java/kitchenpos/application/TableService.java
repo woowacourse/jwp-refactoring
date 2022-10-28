@@ -29,47 +29,26 @@ public class TableService {
         final OrderTable orderTable = new OrderTable(request.getNumberOfGuests());
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        return new TableResponse(
-                savedOrderTable.getId(),
-                savedOrderTable.getTableGroupIdOrElseNull(),
-                savedOrderTable.getNumberOfGuests(),
-                savedOrderTable.isEmpty()
-        );
+        return generateTableResponse(savedOrderTable);
     }
 
     public List<TableResponse> list() {
         final List<OrderTable> orderTables = orderTableRepository.findAll();
 
         return orderTables.stream()
-                .map(it -> new TableResponse(
-                        it.getId(),
-                        it.getTableGroupIdOrElseNull(),
-                        it.getNumberOfGuests(),
-                        it.isEmpty()
-                )).collect(Collectors.toList());
+                .map(TableService::generateTableResponse)
+                .collect(Collectors.toList());
     }
 
     @Transactional
     public TableResponse changeEmpty(final Long orderTableId, final TableUpdateEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
+        savedOrderTable.validateEmptyUpdatable();
+        validateMealFinished(orderTableId);
+        savedOrderTable.updateEmpty(request.isEmpty());
 
-        if (savedOrderTable.isTableGroupMapped()) {
-            throw new IllegalArgumentException();
-        }
-
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
-        savedOrderTable.setEmpty(request.isEmpty());
-
-        return new TableResponse(
-                savedOrderTable.getId(),
-                savedOrderTable.getTableGroupIdOrElseNull(),
-                savedOrderTable.getNumberOfGuests(),
-                savedOrderTable.isEmpty()
-        );
+        return generateTableResponse(savedOrderTable);
     }
 
     @Transactional
@@ -80,9 +59,13 @@ public class TableService {
         validateNotEmpty(savedOrderTable);
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
 
+        return generateTableResponse(savedOrderTable);
+    }
+
+    private static TableResponse generateTableResponse(final OrderTable savedOrderTable) {
         return new TableResponse(
                 savedOrderTable.getId(),
-                savedOrderTable.getTableGroup().getId(),
+                savedOrderTable.getTableGroupIdOrElseNull(),
                 savedOrderTable.getNumberOfGuests(),
                 savedOrderTable.isEmpty()
         );
@@ -90,6 +73,13 @@ public class TableService {
 
     private void validateNotEmpty(final OrderTable savedOrderTable) {
         if (savedOrderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateMealFinished(final Long orderTableId) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
+                orderTableId, List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
     }
