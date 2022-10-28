@@ -22,10 +22,6 @@ public class OrderTable {
         return Objects.nonNull(this.tableGroupId);
     }
 
-    public boolean hasNegativeNumberOfGuests() {
-        return this.numberOfGuests < 0;
-    }
-
     public Long getId() {
         return id;
     }
