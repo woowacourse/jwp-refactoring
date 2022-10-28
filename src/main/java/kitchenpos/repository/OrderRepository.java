@@ -25,7 +25,7 @@ public class OrderRepository {
         final var savedOrderLineItems = order.getOrderLineItems()
                 .stream()
                 .map(orderLineItem -> {
-                    orderLineItem.setOrderId(order.getId());
+                    orderLineItem.setOrderId(savedOrder.getId());
                     return orderLineItemDao.save(orderLineItem);
                 })
                 .collect(Collectors.toList());

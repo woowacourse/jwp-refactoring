@@ -15,7 +15,6 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.fixture.MenuFactory;
 import kitchenpos.fixture.ProductFactory;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +42,6 @@ class OrderRestControllerTest {
     @Autowired
     private OrderTableDao orderTableDao;
 
-    @Disabled
     @DisplayName("주문 등록")
     @Test
     void create() {
