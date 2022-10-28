@@ -109,10 +109,6 @@ class OrderServiceTest {
         }
     }
 
-    private OrderTable order_table을_생성한다(final long tableGroupId, final int numberOfGuests, final boolean empty) {
-        return new OrderTable(tableGroupId, numberOfGuests, empty);
-    }
-
     @Nested
     class list는 {
 
@@ -122,8 +118,8 @@ class OrderServiceTest {
         @Test
         void order_목록을_조회할_수_있다() {
             // given
-            Order order1 = new Order(1L, COOKING, LocalDateTime.now(), orderLineItems);
-            when(orderRepository.findAllWithOrderLineItems()).thenReturn(Arrays.asList(order1));
+            Order order = new Order(1L, COOKING, LocalDateTime.now(), orderLineItems);
+            when(orderRepository.findAllWithOrderLineItems()).thenReturn(Arrays.asList(order));
 
             // when
             List<OrderResponse> responses = orderService.list();

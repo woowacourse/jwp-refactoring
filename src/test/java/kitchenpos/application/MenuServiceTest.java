@@ -74,7 +74,8 @@ class MenuServiceTest {
 
         @Test
         void price가_null이면_예외를_반환한다() {
-            MenuCreateRequest request = 메뉴_생성_dto를_만든다(null, menuGroupId, menuProducts);
+            BigDecimal nullPrice = null;
+            MenuCreateRequest request = 메뉴_생성_dto를_만든다(nullPrice, menuGroupId, menuProducts);
             assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -83,7 +84,7 @@ class MenuServiceTest {
         void price가_음수면_예외를_반환한다() {
             // given
             BigDecimal negativePrice = BigDecimal.valueOf(-1000);
-            MenuCreateRequest request = 메뉴_생성_dto를_만든다(negativePrice, null, new ArrayList<>());
+            MenuCreateRequest request = 메뉴_생성_dto를_만든다(negativePrice, menuGroupId, menuProducts);
 
             // when & then
             assertThatThrownBy(() -> menuService.create(request))
@@ -94,7 +95,7 @@ class MenuServiceTest {
         void menu_group이_존재하지_않으면_예외를_반환한다() {
             // given
             Long notExistMenuGroupId = 101L;
-            MenuCreateRequest request = 메뉴_생성_dto를_만든다(price, notExistMenuGroupId, new ArrayList<>());
+            MenuCreateRequest request = 메뉴_생성_dto를_만든다(price, notExistMenuGroupId, menuProducts);
             when(menuGroupRepository.existsById(notExistMenuGroupId)).thenReturn(false);
 
             // when & then
@@ -105,7 +106,7 @@ class MenuServiceTest {
         @Test
         void 가격_총합이_0이하이면_예외를_반환한다() {
             // given
-            MenuCreateRequest request = 메뉴_생성_dto를_만든다(price, menuGroupId, new ArrayList<>());
+            MenuCreateRequest request = 메뉴_생성_dto를_만든다(price, menuGroupId, menuProducts);
             when(menuGroupRepository.existsById(menuGroupId)).thenReturn(true);
 
             // when & then

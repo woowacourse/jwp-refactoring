@@ -54,7 +54,8 @@ class ProductServiceTest {
 
         @Test
         void price가_null이면_예외를_반환한다() {
-            ProductCreateRequest request = 상품_생성_dto를_만든다(id, name, null);
+            BigDecimal nullPrice = null;
+            ProductCreateRequest request = 상품_생성_dto를_만든다(id, name, nullPrice);
             assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -76,17 +77,16 @@ class ProductServiceTest {
     @Nested
     class list는 {
 
-    }
+        @Test
+        void 상품_목록을_조회할_수_있다() {
+            Product product = new Product(1L, "pasta", BigDecimal.valueOf(13000));
+            when(productRepository.findAll()).thenReturn(Arrays.asList(product));
+            List<ProductResponse> responses = productService.list();
 
-    @Test
-    void 상품_목록을_조회할_수_있다() {
-        Product product = new Product(1L, "pasta", BigDecimal.valueOf(13000));
-        when(productRepository.findAll()).thenReturn(Arrays.asList(product));
-        List<ProductResponse> responses = productService.list();
-
-        assertThat(responses).hasSize(1)
-                .usingRecursiveComparison()
-                .ignoringFields("price")
-                .isEqualTo(Arrays.asList(product));
+            assertThat(responses).hasSize(1)
+                    .usingRecursiveComparison()
+                    .ignoringFields("price")
+                    .isEqualTo(Arrays.asList(product));
+        }
     }
 }

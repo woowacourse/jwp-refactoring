@@ -59,7 +59,8 @@ class TableGroupServiceTest {
 
         @Test
         void order_table이_비어있으면_예외를_반환한다() {
-            TableGroupCreateRequest request = 테이블_그룹_생성_dto를_만든다(id, createdDate, new ArrayList<>());
+            ArrayList<OrderTable> emptyOrderTable = new ArrayList<>();
+            TableGroupCreateRequest request = 테이블_그룹_생성_dto를_만든다(id, createdDate, emptyOrderTable);
             assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
