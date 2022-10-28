@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
+import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.exception.NotConvertableStatusException;
@@ -34,7 +34,7 @@ class OrderServiceTest extends ServiceTest {
     void 주문을_생성한다() {
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(),
-                Collections.singletonList(new OrderLineItemDto(1L, 1)));
+                List.of(new OrderLineItemDto(1L, 1)));
 
         Order savedOrder = orderService.create(orderCreateRequest);
 
@@ -45,7 +45,7 @@ class OrderServiceTest extends ServiceTest {
     void 주문을_생성할때_orderLineItems가_비었으면_예외를_발생한다() {
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(),
-                Collections.emptyList());
+                List.of());
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                 .isInstanceOf(OrderMenusCountException.class);
@@ -55,7 +55,7 @@ class OrderServiceTest extends ServiceTest {
     void 주문을_생성할때_메뉴의수가_다르면_예외를_발생한다() {
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(),
-                Collections.singletonList(new OrderLineItemDto(0L, 1)));
+                List.of(new OrderLineItemDto(0L, 1)));
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                 .isInstanceOf(NotFoundMenuException.class);
@@ -64,7 +64,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문을_생성할때_orderTableId가_존재하지않으면_예외를_발생한다() {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(0L,
-                Collections.singletonList(new OrderLineItemDto(1L, 1)));
+                List.of(new OrderLineItemDto(1L, 1)));
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                 .isInstanceOf(NotFoundOrderTableException.class);

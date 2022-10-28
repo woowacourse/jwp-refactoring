@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.util.Collections;
+import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.exception.MenuPriceException;
 import kitchenpos.exception.NotFoundMenuGroupException;
@@ -18,7 +18,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void 메뉴를_생성한다() {
         MenuCreateRequest menuCreateRequest
-                = new MenuCreateRequest("", BigDecimal.valueOf(0), 1L, Collections.emptyList());
+                = new MenuCreateRequest("", BigDecimal.valueOf(0), 1L, List.of());
 
         Menu savedMenu = menuService.create(menuCreateRequest);
 
@@ -28,7 +28,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void 메뉴를_생성할때_price_예외를_발생한다() {
         MenuCreateRequest menuCreateRequest
-                = new MenuCreateRequest("", BigDecimal.valueOf(-1), 1L, Collections.emptyList());
+                = new MenuCreateRequest("", BigDecimal.valueOf(-1), 1L, List.of());
 
         assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                 .isInstanceOf(MenuPriceException.class);
@@ -37,7 +37,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void 메뉴를_생성할때_메뉴그룹아이디_예외를_발생한다() {
         MenuCreateRequest menuCreateRequest
-                = new MenuCreateRequest("", BigDecimal.valueOf(0), 0L, Collections.emptyList());
+                = new MenuCreateRequest("", BigDecimal.valueOf(0), 0L, List.of());
 
         assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                 .isInstanceOf(NotFoundMenuGroupException.class);
@@ -46,7 +46,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void 메뉴를_생성할때_product총가격보다_menu가격이높으면_예외를_발생한다() {
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest("", BigDecimal.valueOf(MAX_VALUE), 1L,
-                Collections.singletonList(new MenuProductDto(1L, 1)));
+                List.of(new MenuProductDto(1L, 1)));
 
         assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                 .isInstanceOf(MenuPriceException.class);

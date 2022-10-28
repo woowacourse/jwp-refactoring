@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.List;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.exception.NotFoundOrderTableException;
@@ -43,7 +43,7 @@ class TableGroupServiceTest extends ServiceTest {
     void 테이블그룹을_생성할때_주문테이블_수가_2개미만이면_예외를_발생한다() {
         OrderTable saved = orderTableDao.save(orderTable);
 
-        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(Collections.singletonList(
+        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(
                 new OrderTableIdDto(saved.getId())
         ));
 
