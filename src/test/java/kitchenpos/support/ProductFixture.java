@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductRequest;
 
-public class ProductFixture {
+public abstract class ProductFixture {
 
     public static Product createProduct(final String name) {
         return new Product(name, BigDecimal.valueOf(20_000));
@@ -21,6 +21,10 @@ public class ProductFixture {
     public static WrapProductRequest createProductRequest(final String name, final int price) {
         return new WrapProductRequest(name, BigDecimal.valueOf(price));
     }
+
+    public static final WrapProductRequest 후라이드_치킨 = createProductRequest("후라이드 치킨", 16_000);
+    public static final WrapProductRequest 간장_치킨 = createProductRequest("간장 치킨", 17_000);
+    public static final WrapProductRequest 양념_치킨 = createProductRequest("양념 치킨", 17_000);
 
     public static class WrapProductRequest extends ProductRequest {
 

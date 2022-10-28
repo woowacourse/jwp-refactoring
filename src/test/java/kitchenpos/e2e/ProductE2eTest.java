@@ -1,6 +1,6 @@
 package kitchenpos.e2e;
 
-import static kitchenpos.e2e.E2eTest.AssertionPair.pair;
+import static kitchenpos.e2e.E2eTest.AssertionPair.row;
 import static kitchenpos.support.ProductFixture.createProductRequest;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -27,7 +27,7 @@ class ProductE2eTest extends E2eTest {
 
         // then
         assertAll(
-                상태코드_검증(HttpStatus.CREATED, 응답),
+                HTTP_STATUS_검증(HttpStatus.CREATED, 응답),
                 NOT_NULL_검증(저장된_상품),
                 단일_검증(저장된_상품.name(), "양념 치킨"),
                 단일_검증(저장된_상품.intPrice(), 10_000)
@@ -52,9 +52,9 @@ class ProductE2eTest extends E2eTest {
         // then
         assertAll(
                 리스트_검증(list,
-                        pair("id", 1, 2),
-                        pair("name", 양념_치킨.name(), 간장_치킨.name()),
-                        pair("price", 양념_치킨.doublePrice(), 간장_치킨.doublePrice())
+                        row("id", 1, 2),
+                        row("name", 양념_치킨.name(), 간장_치킨.name()),
+                        row("price", 양념_치킨.doublePrice(), 간장_치킨.doublePrice())
                 )
         );
     }
