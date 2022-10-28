@@ -5,7 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.ProductCreateRequestFixture;
 import kitchenpos.SpringServiceTest;
+import kitchenpos.application.request.ProductCreateRequest;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,11 +22,9 @@ class ProductServiceTest {
 
             private final BigDecimal NULL_PRICE = null;
 
-            private final Product product = new Product("후라이드", NULL_PRICE);
-
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> productService.create(product))
+                assertThatThrownBy(() -> productService.create(ProductCreateRequestFixture.createRequest(NULL_PRICE)))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("가격은 양의 정수만 들어올 수 있습니다.");
             }
@@ -35,11 +35,9 @@ class ProductServiceTest {
 
             private final BigDecimal MINUS_PRICE = BigDecimal.valueOf(-1);
 
-            private final Product product = new Product("후라이드", MINUS_PRICE);
-
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> productService.create(product))
+                assertThatThrownBy(() -> productService.create(ProductCreateRequestFixture.createRequest(MINUS_PRICE)))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("가격은 양의 정수만 들어올 수 있습니다.");
             }
@@ -48,11 +46,11 @@ class ProductServiceTest {
         @Nested
         class 상품을_정상적으로_생성가능한_경우 extends SpringServiceTest {
 
-            private final Product product = new Product("후라이드", BigDecimal.valueOf(16000));
+            private final ProductCreateRequest request = ProductCreateRequestFixture.createRequest("후라이드", BigDecimal.valueOf(16000));
 
             @Test
             void 저장된_상품이_반환된다() {
-                Product actual = productService.create(product);
+                Product actual = productService.create(request);
                 assertThat(actual).isNotNull();
             }
         }
