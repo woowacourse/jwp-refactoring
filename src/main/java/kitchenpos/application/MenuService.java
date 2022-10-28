@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -60,38 +59,30 @@ public class MenuService {
         final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
                 .map(it -> new MenuProduct(it.getProductId(), it.getQuantity()))
                 .collect(Collectors.toList());
-
         final Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), menuProducts);
-        final Menu savedMenu = menuRepository.save(menu);
 
-        final List<MenuProductResponse> menuProductResponses = savedMenu.getMenuProducts()
-                .stream()
-                .map(it -> new MenuProductResponse(it.getSeq(), savedMenu.getId(), it.getProductId(), it.getQuantity()))
-                .collect(Collectors.toList());
-
-        return new MenuResponse(
-                savedMenu.getId(),
-                savedMenu.getName(),
-                savedMenu.getPrice(),
-                savedMenu.getMenuGroupId(),
-                menuProductResponses
-        );
+        return toResponse(menuRepository.save(menu));
     }
 
     public List<MenuResponse> list() {
-        final Iterable<Menu> menus = menuRepository.findAll();
+        return menuRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
 
-        final List<MenuResponse> menuResponses = new ArrayList<>();
-        for (final Menu menu : menus) {
-            final List<MenuProductResponse> menuProductResponses = menu.getMenuProducts()
-                    .stream()
-                    .map(it -> new MenuProductResponse(it.getSeq(), menu.getId(), it.getProductId(),
-                            it.getQuantity()))
-                    .collect(Collectors.toList());
-            final MenuResponse menuResponse = new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(),
-                    menu.getMenuGroupId(), menuProductResponses);
-            menuResponses.add(menuResponse);
-        }
-        return menuResponses;
+    private MenuResponse toResponse(final Menu menu) {
+        final List<MenuProductResponse> menuProductResponses = menu.getMenuProducts()
+                .stream()
+                .map(it -> new MenuProductResponse(it.getSeq(), menu.getId(), it.getProductId(), it.getQuantity()))
+                .collect(Collectors.toList());
+
+        return new MenuResponse(
+                menu.getId(),
+                menu.getName(),
+                menu.getPrice(),
+                menu.getMenuGroupId(),
+                menuProductResponses
+        );
     }
 }

@@ -8,6 +8,9 @@ import org.springframework.data.repository.query.Param;
 
 public interface MenuRepository extends CrudRepository<Menu, Long> {
 
+    @Override
+    List<Menu> findAll();
+
     @Query("SELECT COUNT(*) FROM menu WHERE id IN (:ids)")
     long countByIdIn(@Param("ids") List<Long> menuIds);
 }
