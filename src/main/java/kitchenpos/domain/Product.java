@@ -40,4 +40,8 @@ public class Product {
             throw new IllegalArgumentException("product의 가격은 0원 이상이어야 합니다.");
         }
     }
+
+    public BigDecimal getCalculatedPrice(final long quantity) {
+        return price.multiply(BigDecimal.valueOf(quantity));
+    }
 }

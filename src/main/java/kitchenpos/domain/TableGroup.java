@@ -14,6 +14,10 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
+    public TableGroup() {
+        this(null, LocalDateTime.now(), null);
+    }
+
     public static TableGroup of(final Long id, final LocalDateTime createdDate) {
         return new TableGroup(id, createdDate, null);
     }

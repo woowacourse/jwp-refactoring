@@ -93,7 +93,7 @@ class TableServiceTest {
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, changeOrderTable))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Guest는 0명 이하일 수 없습니다.");
+                .hasMessage("Guest는 0명 미만일 수 없습니다.");
     }
 
     @Test
