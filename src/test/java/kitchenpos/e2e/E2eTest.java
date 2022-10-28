@@ -6,10 +6,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.support.DbTableCleaner;
 import org.assertj.core.api.ListAssert;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +24,13 @@ import org.springframework.http.MediaType;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class E2eTest {
+
+
+    public static final String PRODUCT_URL = "/api/products";
+
+    public static final String MENU_URL = "/api/menus";
+
+    public static final String MENU_GROUP_URL = "/api/menu-groups";
 
     @LocalServerPort
     private int port;
@@ -52,7 +57,7 @@ public abstract class E2eTest {
     }
 
 
-    protected ExtractableResponse<Response> POST_요청(final String path, final ProductRequest requestBody) {
+    protected ExtractableResponse<Response> POST_요청(final String path, final Object requestBody) {
 
         return RestAssured.given().log().all()
                 .body(requestBody)
@@ -68,14 +73,24 @@ public abstract class E2eTest {
         return () -> assertThat(productResponse.getId()).isNotNull();
     }
 
-    protected Executable 상태코드_검증(final HttpStatus httpStatus, final ExtractableResponse<Response> response) {
+    protected Executable HTTP_STATUS_검증(final HttpStatus httpStatus, final ExtractableResponse<Response> response) {
 
         return () -> assertThat(response.statusCode()).isEqualTo(httpStatus.value());
     }
 
-    protected <T> Executable 단일_검증(final Object actual, final T expected) {
+    protected <T> Executable NOT_NULL_검증(final T actual) {
+
+        return () -> assertThat(actual).isNotNull();
+    }
+
+    protected <T> Executable 단일_검증(final T actual, final T expected) {
 
         return () -> assertThat(actual).isEqualTo(expected);
+    }
+
+    protected <T> Executable 단일_검증(final T actual, final String fieldName, final AssertionPair pair) {
+
+        return 리스트_검증(List.of(actual), fieldName, pair);
     }
 
     protected Executable 리스트_검증(final List list, final String filedName, final Object... expectedFields) {
@@ -83,12 +98,28 @@ public abstract class E2eTest {
         return () -> assertThat(list).extracting(filedName).containsExactlyInAnyOrder(expectedFields);
     }
 
-    protected Executable[] 리스트_검증(final List list, final AssertionPair... pairs) {
+    /**
+     *
+     * assertThat 안에 사용하기 위한 구문
+     * <p/>
+     * 아래와 같은 문장들을 만들어 줍니다
+     * <pre>
+     * () -> listAssert.extracting("필드명").containsExactlyInAnyOrder(값_1, 값_2),
+     * () -> listAssert.extracting("필드명2").containsExactlyInAnyOrder(값_4),
+     * ...
+     * </pre>
+     * 뎁스가 한 단계 에서만 허용이 됩니다.
+     * <p/>
+     * 예를 들어 menu.menuProducts[0].name 등의 사용은 불가
+     *<p/>
+     * 추후 B/DFS로 검증 로직을 수정할 수 있음
+     */
+    protected Executable[] 리스트_검증(final List actualList, final AssertionPair... pairs) {
 
-        final ListAssert listAssert = assertThat(list);
+        final ListAssert listAssert = assertThat(actualList);
 
         return stream(pairs)
-                .map(map -> map.toExecutable(listAssert))
+                .map(pair -> pair.toExecutable(listAssert))
                 .toArray(Executable[]::new);
     }
 
@@ -103,7 +134,7 @@ public abstract class E2eTest {
             this.expected = expected;
         }
 
-        public static AssertionPair pair(final String key, final Object... expected) {
+        public static AssertionPair row(final String key, final Object... expected) {
 
             return new AssertionPair(key, expected);
         }
