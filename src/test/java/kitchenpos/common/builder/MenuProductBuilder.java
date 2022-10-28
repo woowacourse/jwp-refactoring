@@ -1,11 +1,12 @@
 package kitchenpos.common.builder;
 
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 
 public class MenuProductBuilder {
 
     private Long menuId;
-    private Long productId;
+    private Product product;
     private long quantity;
 
     public MenuProductBuilder menuId(final Long menuId) {
@@ -13,8 +14,8 @@ public class MenuProductBuilder {
         return this;
     }
 
-    public MenuProductBuilder productId(final Long productId) {
-        this.productId = productId;
+    public MenuProductBuilder product(final Product product) {
+        this.product = product;
         return this;
     }
 
@@ -24,6 +25,6 @@ public class MenuProductBuilder {
     }
 
     public MenuProduct build() {
-        return new MenuProduct(productId, quantity);
+        return new MenuProduct(product, quantity);
     }
 }

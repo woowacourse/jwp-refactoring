@@ -221,7 +221,7 @@ class OrderServiceTest extends ServiceTest {
 
     private MenuProduct 메뉴_상품_생성(final Product 야채곱창, final int quantity) {
         return new MenuProductBuilder()
-                .productId(야채곱창.getId())
+                .product(야채곱창)
                 .quantity(quantity)
                 .build();
     }
