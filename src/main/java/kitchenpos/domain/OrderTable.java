@@ -1,10 +1,13 @@
 package kitchenpos.domain;
 
 public class OrderTable {
-    private final Long id;
+    private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
+
+    public OrderTable() {
+    }
 
     public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         validateNumberOfGuests(numberOfGuests);

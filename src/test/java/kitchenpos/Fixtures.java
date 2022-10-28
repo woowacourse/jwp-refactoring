@@ -2,10 +2,13 @@ package kitchenpos;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -15,6 +18,12 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderRequest;
+import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.ProductRequest;
+import kitchenpos.dto.TableGroupRequest;
 import org.assertj.core.api.ListAssert;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -30,6 +39,10 @@ public class Fixtures {
 
     public static Product 상품_후라이드() {
         return new Product(1L, "후라이드", BigDecimal.valueOf(16000));
+    }
+
+    public static ProductRequest 상품_요청_변환(Product product) {
+        return new ProductRequest(product.getName(),product.getPrice());
     }
 
     public static Menu 메뉴_후라이드치킨() {
@@ -57,12 +70,24 @@ public class Fixtures {
         return new OrderTable(id, null, 0, false);
     }
 
-    public static OrderTable 빈테이블_ofId(long id) {
-        return new OrderTable(id, null, 0, false);
+    public static OrderTableCreateRequest 빈테이블생성요청() {
+        return new OrderTableCreateRequest(0, false);
+    }
+
+    public OrderTableRequest 주문요청변환(OrderTable 빈테이블_1) {
+        return new OrderTableRequest(빈테이블_1.getId());
     }
 
     public static OrderTable 테이블_1() {
         return new OrderTable(1L, null, 0, false);
+    }
+
+    public static OrderTable 테이블() {
+        return new OrderTable(null, null, 0, false);
+    }
+
+    public static OrderTable 빈테이블() {
+        return new OrderTable(null, null, 0, true);
     }
 
     public static OrderTable 빈테이블_1() {
@@ -73,6 +98,13 @@ public class Fixtures {
         return new OrderTable(2L, null, 0, true);
     }
 
+    public static TableGroupRequest 테이블그룹요청(List<OrderTableRequest> tables) {
+        return new TableGroupRequest(1L, LocalDateTime.now(), tables);
+    }
+
+    public static TableGroupRequest 테이블그룹요청2(List<OrderTableRequest> tables) {
+        return new TableGroupRequest(2L, LocalDateTime.now(), tables);
+    }
     public static TableGroup 테이블그룹(List<OrderTable> tables) {
         return new TableGroup(1L, LocalDateTime.now(), tables);
     }
@@ -134,6 +166,27 @@ public class Fixtures {
             assertThat(list.get(i)).usingRecursiveComparison()
                     .ignoringFields(ignore)
                     .isEqualTo(values.get(i));
+        }
+    }
+
+    public OrderRequest 주문요청_변환(Order order) {
+        return new OrderRequest(order.getOrderTableId(), toOrderLineItemRequest(order));
+    }
+
+    private List<OrderLineItemRequest> toOrderLineItemRequest(Order savedOrder) {
+        return savedOrder.getOrderLineItems().stream()
+                .map(orderLineItem -> new OrderLineItemRequest(orderLineItem.getSeq(), orderLineItem.getOrderId(),
+                        orderLineItem.getMenuId(), orderLineItem.getQuantity())).collect(
+                        Collectors.toList());
+    }
+
+    public static <D, T> T 변환(D inputObj, Class<T> outputClass) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String value = objectMapper.writeValueAsString(inputObj);
+            return objectMapper.readValue(value, outputClass);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 }

@@ -5,7 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,20 +17,20 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블을 생성할 수 있다.")
     @Test
     void create() {
-        OrderTable 테이블_3 = tableService.create(빈테이블_ofId(3L));
+        OrderTableResponse 테이블_1 = tableService.create(new OrderTableCreateRequest(0, true));
 
-        List<OrderTable> 테이블_목록 = tableService.list();
+        List<OrderTableResponse> 테이블_목록 = tableService.list();
 
-        검증_필드비교_값포함(테이블_목록, 테이블_3);
+        검증_필드비교_값포함(테이블_목록, 테이블_1);
     }
 
     @DisplayName("테이블 목록을 조회할 수 있다")
     @Test
     void list() {
-        OrderTable 테이블_1 = tableService.create(빈테이블_ofId(1L));
-        OrderTable 테이블_2 = tableService.create(빈테이블_ofId(2L));
+        OrderTableResponse 테이블_1 = tableService.create(빈테이블생성요청());
+        OrderTableResponse 테이블_2 = tableService.create(빈테이블생성요청());
 
-        List<OrderTable> 테이블_목록 = tableService.list();
+        List<OrderTableResponse> 테이블_목록 = tableService.list();
 
         검증_필드비교_동일_목록(테이블_목록, List.of(테이블_1, 테이블_2));
     }
@@ -36,9 +38,9 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블의 빈 상태 여부를 변경할 수 있다.")
     @Test
     void changeEmpty() {
-        OrderTable 테이블_1 = tableService.create(테이블_1());
+        OrderTableResponse 테이블_1 = tableService.create(빈테이블생성요청());
 
-        OrderTable 테이블_빈_여부_변경 = 테이블_빈_여부_변경(테이블_1, false);
+        OrderTableResponse 테이블_빈_여부_변경 = 테이블_빈_여부_변경(테이블_1.getId(), false);
 
         assertThat(테이블_빈_여부_변경.isEmpty())
                 .isFalse();
@@ -48,11 +50,8 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeEmpty_noTable() {
         long 없는_테이블_ID = 100L;
-        OrderTable 테이블_1 = new OrderTable(없는_테이블_ID, null, 0, true);
 
-        테이블_1.updateEmpty(false);
-
-        assertThatThrownBy(() -> tableService.changeEmpty(테이블_1.getId(), 테이블_1))
+        assertThatThrownBy(() -> 테이블_빈_여부_변경(없는_테이블_ID, false))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("해당 아이디의 테이블은 존재하지 않는다.");
     }
@@ -60,12 +59,16 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블은 단체지정이 없어야 한다.")
     @Test
     void changeEmpty_noTableGroup() {
-        OrderTable 빈테이블_1 = tableService.create(빈테이블_1());
-        OrderTable 빈테이블_2 = tableService.create(빈테이블_2());
-        TableGroup 테이블그룹_1 = tableGroupDao.save(테이블그룹(List.of(빈테이블_1, 빈테이블_2)));
-        OrderTable 단체지정_테이블_1 = orderTableDao.save(테이블_1(테이블그룹_1.getId()));
+        OrderTable 빈테이블_1 = orderTableDao.save(빈테이블());
+        OrderTable 빈테이블_2 = orderTableDao.save(빈테이블());
+        Long 테이블그룹Id = tableGroupService.create(테이블그룹요청(List.of(
+                주문요청변환(빈테이블_1),
+                주문요청변환(빈테이블_2)
+        ))).getId();
 
-        assertThatThrownBy(() -> tableService.changeEmpty(단체지정_테이블_1.getId(), 단체지정_테이블_1))
+        OrderTable 단체지정_테이블_1 = orderTableDao.save(테이블_1(테이블그룹Id));
+
+        assertThatThrownBy(() -> 테이블_빈_여부_변경(단체지정_테이블_1.getId(), false))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블은 단체지정이 없어야 한다.");
     }
@@ -76,10 +79,10 @@ class TableServiceTest extends ServiceTest {
         menuGroupDao.save(메뉴그룹_한마리메뉴());
         productDao.save(상품_후라이드());
         menuDao.save(메뉴_후라이드치킨());
-        OrderTable 테이블_1 = tableService.create(테이블_1());
-        orderService.create(주문(테이블_1.getId()));
+        OrderTable 테이블_1 = orderTableDao.save(테이블());
+        orderService.create(주문요청_변환(주문_테이블1()));
 
-        assertThatThrownBy(() -> tableService.changeEmpty(테이블_1.getId(), 테이블_1))
+        assertThatThrownBy(() -> 테이블_빈_여부_변경(테이블_1.getId(), true))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블의 주문이 있다면 COMPLETION 상태여야 한다.");
     }
@@ -88,7 +91,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeNumberOfGuests() {
         int 손님수 = 100;
-        OrderTable 테이블_손님수_변경 = 테이블_손님수_변경(tableService.create(테이블_1()), 손님수);
+        OrderTable 테이블_손님수_변경 = 테이블_손님수_변경(orderTableDao.save(테이블()), 손님수);
 
         OrderTable 저장된_테이블_1 = orderTableDao.findById(테이블_손님수_변경.getId())
                 .orElseThrow();
@@ -100,7 +103,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블은 차있어야 한다.")
     @Test
     void changeNumberOfGuests_noFillTable() {
-        OrderTable 빈테이블_1 = tableService.create(빈테이블_1());
+        OrderTable 빈테이블_1 = orderTableDao.save(빈테이블());
 
         assertThatThrownBy(() -> 테이블_손님수_변경(빈테이블_1, 100))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -110,7 +113,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블 고객 수는 0 이상이어야 한다.")
     @Test
     void changeNumberOfGuests_zeroCustomer() {
-        OrderTable 테이블_1 = tableService.create(테이블_1());
+        OrderTable 테이블_1 = orderTableDao.save(테이블());
         int 음수_손님수 = -1;
 
         assertThatThrownBy(() -> 테이블_손님수_변경(테이블_1, 음수_손님수))
@@ -123,8 +126,7 @@ class TableServiceTest extends ServiceTest {
         return tableService.changeNumberOfGuests(table.getId(), table);
     }
 
-    private OrderTable 테이블_빈_여부_변경(OrderTable table, boolean empty) {
-        table.updateEmpty(empty);
-        return tableService.changeEmpty(table.getId(), table);
+    private OrderTableResponse 테이블_빈_여부_변경(Long id, boolean empty) {
+        return tableService.changeEmpty(id, new OrderTableChangeEmptyRequest(empty));
     }
 }

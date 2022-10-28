@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import javax.sql.DataSource;
-import kitchenpos.DatabaseCleanner;
+import kitchenpos.DatabaseCleaner;
 import kitchenpos.Fixtures;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -13,10 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public abstract class ServiceTest extends Fixtures {
 
     @Autowired
@@ -59,10 +57,10 @@ public abstract class ServiceTest extends Fixtures {
     DataSource dataSource;
 
     @Autowired
-    DatabaseCleanner databaseCleanner;
+    DatabaseCleaner databaseCleaner;
 
     @BeforeEach
     void setup() {
-        databaseCleanner.clear();
+        databaseCleaner.clear();
     }
 }
