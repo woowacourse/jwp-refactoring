@@ -21,7 +21,8 @@ import org.springframework.test.web.servlet.ResultActions;
 @WebMvcTest(MenuRestController.class)
 class MenuRestControllerTest extends ControllerTest {
 
-    private final String defaultMenuUrl = "/api/menus";
+    private static final String MENU_URL = "/api/menus";
+
     private final MenuResponse menuResponse = new MenuResponse(1L, "pasta", BigDecimal.valueOf(13000), 1L,
             new ArrayList<>());
 
@@ -34,7 +35,7 @@ class MenuRestControllerTest extends ControllerTest {
         when(menuService.create(any(MenuCreateRequest.class))).thenReturn(menuResponse);
 
         // when
-        ResultActions response = postRequestWithJson(defaultMenuUrl, new MenuCreateRequest());
+        ResultActions response = postRequestWithJson(MENU_URL, new MenuCreateRequest());
 
         // then
         response.andExpect(status().isCreated())
@@ -48,7 +49,7 @@ class MenuRestControllerTest extends ControllerTest {
         when(menuService.list()).thenReturn(menuResponses);
 
         // when
-        ResultActions response = getRequest(defaultMenuUrl);
+        ResultActions response = getRequest(MENU_URL);
 
         // then
         response.andExpect(status().isOk())

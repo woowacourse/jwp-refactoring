@@ -20,7 +20,8 @@ import org.springframework.test.web.servlet.ResultActions;
 @WebMvcTest(MenuGroupRestController.class)
 class MenuGroupRestControllerTest extends ControllerTest {
 
-    private final String defaultMenuGroupUrl = "/api/menu-groups";
+    private static final String MENU_GROUP_URL = "/api/menu-groups";
+
     private final MenuGroupResponse menuGroupResponse = new MenuGroupResponse(1L, "set-menu");
 
     @Autowired
@@ -32,7 +33,7 @@ class MenuGroupRestControllerTest extends ControllerTest {
         given(menuGroupService.create(any(MenuGroupCreateRequest.class))).willReturn(menuGroupResponse);
 
         // when
-        ResultActions response = postRequestWithJson(defaultMenuGroupUrl, new MenuGroupCreateRequest());
+        ResultActions response = postRequestWithJson(MENU_GROUP_URL, new MenuGroupCreateRequest());
 
         // then
         response.andExpect(status().isCreated())
@@ -47,7 +48,7 @@ class MenuGroupRestControllerTest extends ControllerTest {
         when(menuGroupService.list()).thenReturn(menuGroupResponses);
 
         // when
-        ResultActions response = getRequest(defaultMenuGroupUrl);
+        ResultActions response = getRequest(MENU_GROUP_URL);
 
         // then
         response.andExpect(status().isOk())

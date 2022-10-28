@@ -60,7 +60,6 @@ class JdbcTemplateOrderRepositoryTest {
         // when
         savedOrder.changeOrderStatus(MEAL);
         entityManager.flush();
-//        Order updatedOrder = orderRepository.save(savedOrder);
 
         // then
         Assertions.assertAll(

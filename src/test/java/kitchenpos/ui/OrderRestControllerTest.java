@@ -22,7 +22,8 @@ import org.springframework.test.web.servlet.ResultActions;
 @WebMvcTest(OrderRestController.class)
 class OrderRestControllerTest extends ControllerTest {
 
-    private final String defaultOrderUrl = "/api/orders";
+    private static final String ORDER_URL = "/api/orders";
+
     private final OrderResponse orderResponse = new OrderResponse(1L, 11L, "COOKING", LocalDateTime.now(),
             new ArrayList<>());
 
@@ -35,7 +36,7 @@ class OrderRestControllerTest extends ControllerTest {
         when(orderService.create(any(OrderCreateRequest.class))).thenReturn(orderResponse);
 
         // when
-        ResultActions response = postRequestWithJson(defaultOrderUrl, new OrderCreateRequest());
+        ResultActions response = postRequestWithJson(ORDER_URL, new OrderCreateRequest());
 
         // then
         response.andExpect(status().isCreated())
@@ -49,7 +50,7 @@ class OrderRestControllerTest extends ControllerTest {
         when(orderService.list()).thenReturn(orderResponses);
 
         // when
-        ResultActions response = getRequest(defaultOrderUrl);
+        ResultActions response = getRequest(ORDER_URL);
 
         // then
         response.andExpect(status().isOk())
@@ -62,7 +63,7 @@ class OrderRestControllerTest extends ControllerTest {
         when(orderService.changeOrderStatus(any(Long.class), any(OrderChangeRequest.class))).thenReturn(orderResponse);
 
         // when
-        ResultActions response = putRequestWithJson(defaultOrderUrl + "/1/order-status", new OrderChangeRequest());
+        ResultActions response = putRequestWithJson(ORDER_URL + "/1/order-status", new OrderChangeRequest());
 
         // then
         response.andExpect(status().isOk())

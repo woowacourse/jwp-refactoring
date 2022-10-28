@@ -20,7 +20,8 @@ import org.springframework.test.web.servlet.ResultActions;
 @WebMvcTest(TableGroupRestController.class)
 class TableGroupRestControllerTest extends ControllerTest {
 
-    private final String defaultTableGroupUrl = "/api/table-groups";
+    private static final String TABLE_GROUP_URL = "/api/table-groups";
+
     private final TableGroupResponse tableGroupResponse = new TableGroupResponse(1L, LocalDateTime.now(),
             new ArrayList<>());
     @Autowired
@@ -32,17 +33,17 @@ class TableGroupRestControllerTest extends ControllerTest {
         when(tableGroupService.create(any(TableGroupCreateRequest.class))).thenReturn(tableGroupResponse);
 
         // when
-        ResultActions response = postRequestWithJson(defaultTableGroupUrl, new TableGroupCreateRequest());
+        ResultActions response = postRequestWithJson(TABLE_GROUP_URL, new TableGroupCreateRequest());
 
         // then
         response.andExpect(status().isCreated())
-                .andExpect(header().string("location", defaultTableGroupUrl + "/" + tableGroupResponse.getId()))
+                .andExpect(header().string("location", TABLE_GROUP_URL + "/" + tableGroupResponse.getId()))
                 .andExpect(content().string(objectMapper.writeValueAsString(tableGroupResponse)));
     }
 
     @Test
     void table_group을_취소할_수_있다() throws Exception {
-        ResultActions response = deleteRequest(defaultTableGroupUrl + "/1");
+        ResultActions response = deleteRequest(TABLE_GROUP_URL + "/1");
         response.andExpect(status().isNoContent());
     }
 }

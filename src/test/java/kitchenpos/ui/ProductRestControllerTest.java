@@ -20,7 +20,8 @@ import org.springframework.test.web.servlet.ResultActions;
 @WebMvcTest(ProductRestController.class)
 class ProductRestControllerTest extends ControllerTest {
 
-    private final String defaultProductUrl = "/api/products";
+    private static final String PRODUCT_URL = "/api/products";
+
     private final ProductResponse productResponse = new ProductResponse(1L, "pasta", BigDecimal.valueOf(13000));
 
     @Autowired
@@ -32,7 +33,7 @@ class ProductRestControllerTest extends ControllerTest {
         when(productService.create(any(ProductCreateRequest.class))).thenReturn(productResponse);
 
         // when
-        ResultActions response = postRequestWithJson(defaultProductUrl, new ProductCreateRequest());
+        ResultActions response = postRequestWithJson(PRODUCT_URL, new ProductCreateRequest());
 
         // then
         response.andExpect(status().isCreated())
@@ -46,7 +47,7 @@ class ProductRestControllerTest extends ControllerTest {
         when(productService.list()).thenReturn(productResponses);
 
         // when
-        ResultActions response = getRequest(defaultProductUrl);
+        ResultActions response = getRequest(PRODUCT_URL);
 
         // then
         response.andExpect(status().isOk())
