@@ -6,13 +6,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.dto.MenuCreateRequest;
 import kitchenpos.application.dto.MenuGroupRequest;
 import kitchenpos.application.dto.MenuGroupResponse;
+import kitchenpos.application.dto.MenuProductCreateRequest;
+import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.application.dto.ProductCreateRequest;
 import kitchenpos.application.dto.ProductResponse;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -26,11 +26,11 @@ class MenuServiceTest {
             // given
             final MenuGroupResponse menuGroup = menuGroupService.create(new MenuGroupRequest("1인 메뉴"));
             final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 1000));
-            final Menu menu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
-            menu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
+            final MenuCreateRequest menu = new MenuCreateRequest("짜장면", BigDecimal.valueOf(1000), menuGroup.getId(),
+                List.of(new MenuProductCreateRequest(product.getId(), 1)));
 
             // when
-            final Menu extract = menuService.create(menu);
+            final MenuResponse extract = menuService.create(menu);
 
             // then
             assertThat(extract).isNotNull();
@@ -41,8 +41,8 @@ class MenuServiceTest {
             // given
             final MenuGroupResponse menuGroup = menuGroupService.create(new MenuGroupRequest("1인 메뉴"));
             final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 1000));
-            final Menu menu = new Menu("짜장면", BigDecimal.valueOf(-1), menuGroup.getId());
-            menu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
+            final MenuCreateRequest menu = new MenuCreateRequest("짜장면", BigDecimal.valueOf(-1), menuGroup.getId(),
+                List.of(new MenuProductCreateRequest(product.getId(), 1)));
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -54,8 +54,8 @@ class MenuServiceTest {
             // given
             final MenuGroupResponse menuGroup = menuGroupService.create(new MenuGroupRequest("1인 메뉴"));
             final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 1000));
-            final Menu menu = new Menu("짜장면", null, menuGroup.getId());
-            menu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
+            final MenuCreateRequest menu = new MenuCreateRequest("짜장면", null, menuGroup.getId(),
+                List.of(new MenuProductCreateRequest(product.getId(), 1)));
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -66,9 +66,9 @@ class MenuServiceTest {
         void 요청에서_메뉴를_추가할때_메뉴의_상품_번호가_존재하지_않는_번호일_경우_예외가_발생한다() {
             // given
             final MenuGroupResponse menuGroup = menuGroupService.create(new MenuGroupRequest("1인 메뉴"));
-            final Menu menu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
             final Long notRegisterProductId = 100L;
-            menu.addMenuProducts(List.of(new MenuProduct(1L, null, notRegisterProductId, 1)));
+            final MenuCreateRequest menu = new MenuCreateRequest("짜장면", null, menuGroup.getId(),
+                List.of(new MenuProductCreateRequest(notRegisterProductId, 1)));
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -79,8 +79,8 @@ class MenuServiceTest {
         void 요청에서_추가한_메뉴가_메뉴_그룹에_속해있지_않은경우_예외가_발생한다() {
             // given
             final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 1000));
-            final Menu menu = new Menu("짜장면", BigDecimal.valueOf(1000), null);
-            menu.addMenuProducts(List.of(new MenuProduct(1L, menu.getId(), product.getId(), 1)));
+            final MenuCreateRequest menu = new MenuCreateRequest("짜장면", null, null,
+                List.of(new MenuProductCreateRequest(product.getId(), 1)));
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -92,8 +92,8 @@ class MenuServiceTest {
             // given
             final MenuGroupResponse menuGroup = menuGroupService.create(new MenuGroupRequest("1인 메뉴"));
             final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 0));
-            final Menu menu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
-            menu.addMenuProducts(List.of(new MenuProduct(1L, menu.getId(), product.getId(), 1)));
+            final MenuCreateRequest menu = new MenuCreateRequest("짜장면", BigDecimal.valueOf(1000), menuGroup.getId(),
+                List.of(new MenuProductCreateRequest(product.getId(), 1)));
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))

@@ -12,7 +12,7 @@ import static kitchenpos.support.fixture.ProductFixtures.후라이드상품;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.Menu;
+import kitchenpos.application.dto.MenuResponse;
 import org.junit.jupiter.api.Test;
 
 public class MenuAcceptanceTest extends AcceptanceTest {
@@ -32,7 +32,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         메뉴를_생성한다("반반치킨", 15000, 한마리_메뉴_그룹, List.of(반반치킨_상품), 1);
 
         // when
-        List<Menu> extract = 메뉴를_조회한다();
+        List<MenuResponse> extract = 메뉴를_조회한다();
 
         // then
         assertThat(extract).hasSize(3);
