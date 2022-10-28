@@ -44,4 +44,13 @@ public class TableGroup {
     public void setOrderTables(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
     }
+
+    @Override
+    public String toString() {
+        return "TableGroup{" +
+                "id=" + id +
+                ", createdDate=" + createdDate +
+                ", orderTables=" + orderTables +
+                '}';
+    }
 }
