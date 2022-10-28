@@ -24,6 +24,7 @@ import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
+    // todo : 지금 OrderService 가 너무 많은 연관 관계를 맺고 있다.
     private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
@@ -45,6 +46,7 @@ public class OrderService {
     public Order create(final Order order) {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
+        // :todo  OrderLineItem 책임
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
         }
@@ -53,6 +55,7 @@ public class OrderService {
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
 
+        // :todo  OrderLineItem 책임
         if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
             throw new CustomIllegalArgumentException(NOT_FOUND_MENU_EXCEPTION);
         }
@@ -62,12 +65,16 @@ public class OrderService {
         final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
                 .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION));
 
+        // : todo OrderTable 책임
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
+        // : todo 생성하는 시점에 데이터를 주입할 수는 없었나.
         order.setOrderTableId(orderTable.getId());
+        // : todo 외부에서 상태가 변경되는걸 드러내도 되는가
         order.setOrderStatus(OrderStatus.COOKING.name());
+        // : todo 시간 주입을 이렇게 받아도 되는가
         order.setOrderedTime(LocalDateTime.now());
 
         final Order savedOrder = orderDao.save(order);
@@ -92,16 +99,17 @@ public class OrderService {
 
         return orders;
     }
-
+    // todo Transactional 최상단으로 올리기
     @Transactional
     public Order changeOrderStatus(final Long orderId, final Order order) {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
+        // :todo Order 책임
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
             throw new CustomIllegalArgumentException(INVALID_CHANGE_ORDER_STATUS_EXCEPTION);
         }
-
+        // : todo Status 변경해주는데 왜 Order 자체를 넘겨 받아서 꺼내쓰고 있는지 ?
         final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
         savedOrder.setOrderStatus(orderStatus.name());
 
