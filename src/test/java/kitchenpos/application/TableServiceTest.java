@@ -22,6 +22,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -86,14 +87,14 @@ class TableServiceTest extends ServiceTestBase {
         assertThat(orderTables).hasSize(3);
     }
 
-    @DisplayName("Table을 등록한다.")
+    @DisplayName("빈 주문 테이블을 등록한다.")
     @Test
     void create() {
         // given
-        OrderTable orderTable1 = 빈_주문_테이블_생성();
+        OrderTableCreateRequest orderTableRequest = createOrderTableCreateRequest(0);
 
         // when
-        OrderTable savedTable = tableService.create(orderTable1);
+        OrderTable savedTable = tableService.create(orderTableRequest);
 
         //then
         assertAll(

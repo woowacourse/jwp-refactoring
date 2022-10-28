@@ -26,6 +26,7 @@ import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.ProductRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -98,6 +99,10 @@ public abstract class ServiceTestBase {
         orderTable.setNumberOfGuests(0);
 
         return orderTable;
+    }
+
+    protected OrderTableCreateRequest createOrderTableCreateRequest(int guest) {
+        return new OrderTableCreateRequest(guest, guest == 0);
     }
 
     protected Order 주문_생성(final OrderTable orderTable) {
