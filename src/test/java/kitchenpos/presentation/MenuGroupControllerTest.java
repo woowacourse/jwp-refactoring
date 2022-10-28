@@ -43,7 +43,7 @@ public class MenuGroupControllerTest extends ControllerTest {
     }
 
     @Test
-    @DisplayName("메뉴를 조회한다.")
+    @DisplayName("메뉴 그룹을 조회한다.")
     void list() throws Exception {
         // given
         given(menuGroupService.list())

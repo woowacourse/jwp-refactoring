@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.fixture.OrderFixture.forUpdateStatus;
+import static kitchenpos.application.fixture.dto.OrderDtoFixture.forUpdateStatus;
 
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -10,17 +10,16 @@ import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.request.TableGroupRequest;
-import kitchenpos.dto.response.TableGroupResponse;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,11 +90,11 @@ public abstract class ServiceTest {
         return tableGroupService.create(tableGroup);
     }
 
-    protected Order 주문등록(final Order order) {
+    protected OrderResponse 주문등록(final OrderRequest order) {
         return orderService.create(order);
     }
 
-    protected void 주문상태변경(final Order order, final OrderStatus orderStatus) {
-        orderService.changeOrderStatus(order.getId(), forUpdateStatus(orderStatus));
+    protected void 주문상태변경(final Long orderId, final OrderStatus orderStatus) {
+        orderService.changeOrderStatus(orderId, forUpdateStatus(orderStatus));
     }
 }
