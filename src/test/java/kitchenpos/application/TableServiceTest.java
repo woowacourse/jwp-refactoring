@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.exception.GuestSizeException;
+import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.ui.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.request.OrderTableCreateRequest;
@@ -44,7 +46,7 @@ class TableServiceTest {
         OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(true);
 
         assertThatThrownBy(() -> tableService.changeEmpty(0L, request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NotFoundOrderTableException.class);
     }
 
     @Test
@@ -68,7 +70,7 @@ class TableServiceTest {
                 = new OrderTableChangeNumberOfGuestsRequest(-1);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(GuestSizeException.class);
     }
 
     @Test
@@ -77,7 +79,7 @@ class TableServiceTest {
                 = new OrderTableChangeNumberOfGuestsRequest(10);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NotFoundOrderTableException.class);
     }
 
     @Test
@@ -88,8 +90,7 @@ class TableServiceTest {
         OrderTableChangeNumberOfGuestsRequest request
                 = new OrderTableChangeNumberOfGuestsRequest(10);
 
-
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(GuestSizeException.class);
     }
 }

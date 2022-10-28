@@ -12,6 +12,11 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.exception.NotConvertableStatusException;
+import kitchenpos.exception.NotFoundMenuException;
+import kitchenpos.exception.NotFoundOrderException;
+import kitchenpos.exception.NotFoundOrderTableException;
+import kitchenpos.exception.OrderMenusCountException;
 import kitchenpos.ui.dto.OrderLineItemDto;
 import kitchenpos.ui.dto.request.ChangeOrderStatusRequest;
 import kitchenpos.ui.dto.request.OrderCreateRequest;
@@ -49,7 +54,7 @@ class OrderServiceTest {
                 Collections.emptyList());
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderMenusCountException.class);
     }
 
     @Test
@@ -59,7 +64,7 @@ class OrderServiceTest {
                 Collections.singletonList(new OrderLineItemDto(0L, 1)));
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NotFoundMenuException.class);
     }
 
     @Test
@@ -68,7 +73,7 @@ class OrderServiceTest {
                 Collections.singletonList(new OrderLineItemDto(1L, 1)));
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NotFoundOrderTableException.class);
     }
 
     @Test
@@ -96,7 +101,7 @@ class OrderServiceTest {
         ChangeOrderStatusRequest changeOrderStatusRequest = new ChangeOrderStatusRequest(MEAL.name());
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(0L, changeOrderStatusRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NotFoundOrderException.class);
     }
 
     @Test
@@ -106,7 +111,7 @@ class OrderServiceTest {
         ChangeOrderStatusRequest changeOrderStatusRequest = new ChangeOrderStatusRequest(MEAL.name());
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), changeOrderStatusRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NotConvertableStatusException.class);
     }
 
     private OrderTable createOrderTable(boolean isEmpty) {

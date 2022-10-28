@@ -13,6 +13,12 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.exception.NotConvertableStatusException;
+import kitchenpos.exception.NotFoundMenuException;
+import kitchenpos.exception.NotFoundOrderException;
+import kitchenpos.exception.NotFoundOrderTableException;
+import kitchenpos.exception.OrderMenusCountException;
+import kitchenpos.exception.OrderTableEmptyException;
 import kitchenpos.ui.dto.OrderLineItemDto;
 import kitchenpos.ui.dto.request.ChangeOrderStatusRequest;
 import kitchenpos.ui.dto.request.OrderCreateRequest;
@@ -63,16 +69,18 @@ public class OrderService {
 
     private void validateOrderTable(Long orderTableId) {
         OrderTable orderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(NotFoundOrderTableException::new);
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new OrderTableEmptyException();
         }
     }
 
     private void validateOrderLineItems(List<Long> menuIds) {
-        if (CollectionUtils.isEmpty(menuIds)
-                || (menuIds.size() != menuDao.countByIdIn(menuIds))) {
-            throw new IllegalArgumentException();
+        if (CollectionUtils.isEmpty(menuIds)) {
+            throw new OrderMenusCountException();
+        }
+        if (menuIds.size() != menuDao.countByIdIn(menuIds)) {
+            throw new NotFoundMenuException();
         }
     }
 
@@ -116,12 +124,12 @@ public class OrderService {
 
     private Order findOrder(Long orderId) {
         return orderDao.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(NotFoundOrderException::new);
     }
 
     private void validateOrderStatus(Order savedOrder) {
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
+            throw new NotConvertableStatusException();
         }
     }
 }

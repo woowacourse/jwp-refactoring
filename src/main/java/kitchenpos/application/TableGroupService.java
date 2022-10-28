@@ -10,6 +10,9 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.exception.NotFoundOrderTableException;
+import kitchenpos.exception.OrderTableGroupingSizeException;
+import kitchenpos.exception.OrderTableUnableUngroupingStatusException;
 import kitchenpos.ui.dto.OrderTableIdDto;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
 import org.springframework.stereotype.Service;
@@ -50,10 +53,10 @@ public class TableGroupService {
 
     private void validateOrderTablesSize(List<Long> orderTableIds, List<OrderTable> savedOrderTables) {
         if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new OrderTableGroupingSizeException();
         }
         if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
+            throw new NotFoundOrderTableException();
         }
     }
 
@@ -84,7 +87,7 @@ public class TableGroupService {
     private void validateOrderTablesStatus(List<Long> orderTableIds) {
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new OrderTableUnableUngroupingStatusException();
         }
     }
 }

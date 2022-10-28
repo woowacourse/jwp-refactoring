@@ -6,6 +6,8 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.exception.NotFoundOrderTableException;
+import kitchenpos.exception.OrderTableConvertEmptyStatusException;
 import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.ui.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.request.OrderTableCreateRequest;
@@ -47,7 +49,7 @@ public class TableService {
     private void validateOrderTableStatus(Long orderTableId) {
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new OrderTableConvertEmptyStatusException();
         }
     }
 
@@ -62,6 +64,6 @@ public class TableService {
 
     private OrderTable findOrderTable(Long orderTableId) {
         return orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(NotFoundOrderTableException::new);
     }
 }

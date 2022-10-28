@@ -10,6 +10,8 @@ import java.util.Collections;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.exception.MenuPriceException;
+import kitchenpos.exception.NotFoundMenuGroupException;
 import kitchenpos.ui.dto.MenuProductDto;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
 import org.junit.jupiter.api.Test;
@@ -41,7 +43,7 @@ class MenuServiceTest {
                 = new MenuCreateRequest("", BigDecimal.valueOf(-1), 1L, Collections.emptyList());
 
         assertThatThrownBy(() -> menuService.create(menuCreateRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(MenuPriceException.class);
     }
 
     @Test
@@ -50,7 +52,7 @@ class MenuServiceTest {
                 = new MenuCreateRequest("", BigDecimal.valueOf(-1), 0L, Collections.emptyList());
 
         assertThatThrownBy(() -> menuService.create(menuCreateRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NotFoundMenuGroupException.class);
     }
 
     @Test
@@ -59,7 +61,7 @@ class MenuServiceTest {
                 Collections.singletonList(new MenuProductDto(1L, 1)));
 
         assertThatThrownBy(() -> menuService.create(menuCreateRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(MenuPriceException.class);
     }
 
     @Test

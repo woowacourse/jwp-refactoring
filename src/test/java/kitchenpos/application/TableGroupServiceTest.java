@@ -10,6 +10,8 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.exception.NotFoundOrderTableException;
+import kitchenpos.exception.OrderTableGroupingSizeException;
 import kitchenpos.ui.dto.OrderTableIdDto;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
 import org.junit.jupiter.api.Test;
@@ -52,7 +54,7 @@ class TableGroupServiceTest {
         ));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableGroupingSizeException.class);
     }
 
     @Test
@@ -60,12 +62,13 @@ class TableGroupServiceTest {
         OrderTable saved1 = orderTableDao.save(createOrderTable(true));
         orderTableDao.save(createOrderTable(true));
 
-        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(Collections.singletonList(
-                new OrderTableIdDto(saved1.getId())
+        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(Arrays.asList(
+                new OrderTableIdDto(saved1.getId()),
+                new OrderTableIdDto(0L)
         ));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NotFoundOrderTableException.class);
     }
 
     @Test

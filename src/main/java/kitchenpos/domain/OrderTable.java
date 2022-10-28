@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.Objects;
+import kitchenpos.exception.GuestSizeException;
 
 public class OrderTable {
     private final Long id;
@@ -28,7 +29,7 @@ public class OrderTable {
 
     public void changeNumberOfGuests(int numberOfGuests) {
         if (numberOfGuests < 0 || isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new GuestSizeException();
         }
         this.numberOfGuests = numberOfGuests;
     }
