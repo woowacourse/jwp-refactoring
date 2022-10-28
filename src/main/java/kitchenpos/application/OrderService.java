@@ -42,41 +42,41 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
-        validateNotDuplicateMenuId(request.getOrderLineItems());
-        validateTableNotEmpty(request.getOrderTableId());
+        validateOrder(request);
         final Order savedOrder = orderDao.save(request.toEntity());
         final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : request.getOrderLineItems()) {
-            orderLineItem.setOrderId(orderId);
-            savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
-        }
+        final List<OrderLineItem> savedOrderLineItems = getOrderLineItems(request, orderId);
+
         return OrderResponse.of(savedOrder, savedOrderLineItems);
     }
 
     public List<OrderResponse> list() {
-        final List<Order> orders = orderDao.findAll();
-        return orders.stream()
+        return orderDao.findAll()
+                .stream()
                 .map(it -> OrderResponse.of(it, orderLineItemDao.findAllByOrderId(it.getId())))
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final Order order) {
-        final Order savedOrder = orderDao.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+        final Order savedOrder = orderDao.findById(orderId).orElseThrow(IllegalArgumentException::new);
+        validateStatusCompletion(savedOrder);
+        savedOrder.setOrderStatus(order.getOrderStatus());
+        orderDao.save(savedOrder);
+        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
 
+        return OrderResponse.of(orderDao.save(savedOrder), orderLineItemDao.findAllByOrderId(orderId));
+    }
+
+    private void validateStatusCompletion(final Order savedOrder) {
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException();
         }
-        savedOrder.setOrderStatus(order.getOrderStatus());
+    }
 
-        orderDao.save(savedOrder);
-
-        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
-
-        return OrderResponse.of(
-                orderDao.save(savedOrder), orderLineItemDao.findAllByOrderId(orderId));
+    private void validateOrder(final OrderCreateRequest request) {
+        validateNotDuplicateMenuId(request.getOrderLineItems());
+        validateTableNotEmpty(request.getOrderTableId());
     }
 
     private void validateNotDuplicateMenuId(final List<OrderLineItem> orderLineItems) {
@@ -95,5 +95,14 @@ public class OrderService {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
+    }
+
+    private List<OrderLineItem> getOrderLineItems(OrderCreateRequest request, Long orderId) {
+        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
+        for (final OrderLineItem orderLineItem : request.getOrderLineItems()) {
+            orderLineItem.setOrderId(orderId);
+            savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
+        }
+        return savedOrderLineItems;
     }
 }

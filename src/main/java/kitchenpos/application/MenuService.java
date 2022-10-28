@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class MenuService {
+
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
     private final MenuProductDao menuProductDao;
@@ -39,25 +40,24 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
-        validateMenuGroupId(request.getMenuGroupId());
-        validatePrice(request.getPrice());
-        validateTotalPrice(request.getPrice(), request.getMenuProducts());
-        final List<MenuProduct> menuProducts = request.getMenuProducts();
+        validateCreateMenu(request);
         final Menu savedMenu = menuDao.save(request.toEntity());
-        final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
-        }
+        final List<MenuProduct> savedMenuProducts = getMenuProducts(request.getMenuProducts(), savedMenu.getId());
+
         return MenuResponse.of(savedMenu, savedMenuProducts);
     }
 
     public List<MenuResponse> list() {
-        final List<Menu> menus = menuDao.findAll();
-        return menus.stream()
+        return menuDao.findAll()
+                .stream()
                 .map(it -> MenuResponse.of(it, menuProductDao.findAllByMenuId(it.getId())))
                 .collect(Collectors.toList());
+    }
+
+    private void validateCreateMenu(final MenuCreateRequest request) {
+        validateMenuGroupId(request.getMenuGroupId());
+        validatePrice(request.getPrice());
+        validateTotalPrice(request.getPrice(), request.getMenuProducts());
     }
 
     private void validateMenuGroupId(final Long id) {
@@ -66,11 +66,11 @@ public class MenuService {
         }
     }
 
-    private void validatePrice(BigDecimal price) {
+    private void validatePrice(final BigDecimal price) {
         new Price(price);
     }
 
-    private void validateTotalPrice(BigDecimal price, List<MenuProduct> menuProducts) {
+    private void validateTotalPrice(final BigDecimal price, final List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = productDao.findById(menuProduct.getProductId())
@@ -83,5 +83,14 @@ public class MenuService {
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
+    }
+
+    private List<MenuProduct> getMenuProducts(final List<MenuProduct> menuProducts, final Long menuId) {
+        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
+        for (final MenuProduct menuProduct : menuProducts) {
+            menuProduct.setMenuId(menuId);
+            savedMenuProducts.add(menuProductDao.save(menuProduct));
+        }
+        return savedMenuProducts;
     }
 }

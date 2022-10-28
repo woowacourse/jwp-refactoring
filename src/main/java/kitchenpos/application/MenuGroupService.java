@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 public class MenuGroupService {
+
     private final MenuGroupDao menuGroupDao;
 
     public MenuGroupService(final MenuGroupDao menuGroupDao) {

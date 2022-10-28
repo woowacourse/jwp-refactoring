@@ -42,11 +42,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableUpdateEmptyRequest request) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-        validateNotGrouping(savedOrderTable);
-        validateCompletion(orderTableId);
-        savedOrderTable.setEmpty(request.isEmpty());
+        final OrderTable savedOrderTable = getOrderTable(orderTableId, request);
         final OrderTable updatedOrderTable = orderTableDao.save(savedOrderTable);
 
         return OrderTableResponse.from(updatedOrderTable);
@@ -56,21 +52,34 @@ public class TableService {
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
                                                    final OrderTableUpdateNumberOfGuestsRequest request) {
         final int numberOfGuests = request.getNumberOfGuests();
-
         validateNumberOfGuests(numberOfGuests);
+        final OrderTable savedOrderTable = getOrderTable(orderTableId, numberOfGuests);
+        final OrderTable updatedOrderTable = orderTableDao.save(savedOrderTable);
+
+        return OrderTableResponse.from(updatedOrderTable);
+    }
+
+    private OrderTable getOrderTable(final Long orderTableId, final int numberOfGuests) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         validateNotEmpty(savedOrderTable);
         savedOrderTable.setNumberOfGuests(numberOfGuests);
-        final OrderTable updatedOrderTable = orderTableDao.save(savedOrderTable);
-
-        return OrderTableResponse.from(updatedOrderTable);
+        return savedOrderTable;
     }
 
     private void validateNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }
+    }
+
+    private OrderTable getOrderTable(final Long orderTableId, final OrderTableUpdateEmptyRequest request) {
+        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+                .orElseThrow(IllegalArgumentException::new);
+        validateNotGrouping(savedOrderTable);
+        validateCompletion(orderTableId);
+        savedOrderTable.setEmpty(request.isEmpty());
+        return savedOrderTable;
     }
 
     private void validateNotGrouping(final OrderTable savedOrderTable) {
