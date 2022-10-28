@@ -55,8 +55,6 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        //order.setId(null);
-
         final Order order = new Order(orderTableRepository.findById(orderRequest.getOrderTableId()).get(),
                 orderRequest.getOrderStatus(), orderRequest.getOrderedTime());
 

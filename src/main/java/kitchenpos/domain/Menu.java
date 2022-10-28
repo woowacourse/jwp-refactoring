@@ -32,7 +32,7 @@ public class Menu {
         this(null, name, price, menuGroupId, menuProducts, products);
     }
 
-    private Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts,
+    public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts,
                 List<Product> products) {
         validatePrice(price);
         validatePriceWithProducts(price, menuProducts, products);
@@ -45,9 +45,6 @@ public class Menu {
 
     private void validatePriceWithProducts(final BigDecimal price, List<MenuProduct> menuProducts,
                                            List<Product> products) {
-//        final List<Product> products = menuProducts.stream()
-//                .map(MenuProduct::getProductId)
-//                .collect(Collectors.toList());
 
         final List<Long> productIds = menuProducts.stream()
                 .map(MenuProduct::getProductId)
@@ -55,13 +52,6 @@ public class Menu {
 
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
-
-//            menuProducts.stream()
-//                    .filter(productIdProducts -> productIdProducts.getProductId()
-//                            .equals(menuProduct.getProductId()))
-//                    .findAny()
-//                    .orElseThrow(() -> new IllegalArgumentException("product를 찾을 수 없습니다."));
-
             final Long productId = productIds.stream()
                     .filter(id -> id.equals(menuProduct.getProductId()))
                     .findAny()
@@ -88,10 +78,6 @@ public class Menu {
         if (price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("메뉴 가격이 0보다 작으면 예외가 발생한다.");
         }
-    }
-
-    public void addMenuProduct(MenuProduct menuProduct) {
-        this.menuProducts.add(menuProduct);
     }
 
     public Long getId() {

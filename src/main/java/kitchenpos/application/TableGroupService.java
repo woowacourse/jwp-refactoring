@@ -33,8 +33,6 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final TableGroupRequest tableGroupRequest) {
-        //new TableGroup(tableGroupRequest.getCreatedDate(), tableGroupRequest.getOrderTables());
-
         final List<OrderTable> orderTables = tableGroupRequest.getOrderTables()
                 .stream()
                 .map(it -> orderTableRepository.findById(it).get())
@@ -61,14 +59,11 @@ public class TableGroupService {
         }
 
         final TableGroup tableGroup = new TableGroup(tableGroupRequest.getCreatedDate(), orderTables);
-
         tableGroup.setCreatedDate(LocalDateTime.now());
 
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        final Long tableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
-//            savedOrderTable.setTableGroupId(tableGroupId);
             savedOrderTable.setTableGroup(savedTableGroup);
             savedOrderTable.setEmpty(false);
             orderTableRepository.save(savedOrderTable);
