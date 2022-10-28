@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.util.List;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +26,7 @@ class ProductServiceTest {
     @DisplayName("가격은 null일 수 없다")
     void throwException_WhenPriceNull() {
         // given
-        ProductRequest request = aProductRequest()
+        var request = aProductRequest()
                 .withPrice(null)
                 .build();
 
@@ -42,7 +40,7 @@ class ProductServiceTest {
     @DisplayName("가격은 음수일 수 없다")
     void throwException_WhenPriceNegative() {
         // given
-        ProductRequest request = aProductRequest()
+        var request = aProductRequest()
                 .withPrice(BigDecimal.valueOf(-1L))
                 .build();
 
@@ -56,9 +54,9 @@ class ProductServiceTest {
     @DisplayName("Product를 생성한다")
     void delegateSaveAndReturnSavedEntity() {
         // given
-        ProductRequest request = aProductRequest().build();
+        var request = aProductRequest().build();
         // when
-        ProductResponse response = sut.create(request);
+        var response = sut.create(request);
 
         // then
         assertThat(response.getId()).isNotNull();
@@ -69,9 +67,9 @@ class ProductServiceTest {
     @Test
     @DisplayName("Product 목록을 조회한다")
     void returnAllSavedEntities() {
-        List<Product> expected = productRepository.findAll();
+        var expected = productRepository.findAll();
 
-        List<ProductResponse> actual = sut.list();
+        var actual = sut.list();
 
         assertThat(actual)
                 .usingRecursiveComparison()
