@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 @Service
+@Transactional
 public class TableGroupService {
 
     private final OrderDao orderDao;
@@ -32,7 +33,6 @@ public class TableGroupService {
         this.tableGroupDao = tableGroupDao;
     }
 
-    @Transactional
     public TableGroupResponse create(TableGroupRequest tableGroupRequest) {
         List<TableGroupOrderTableRequest> orderTableRequests = tableGroupRequest.getOrderTables();
 
@@ -75,7 +75,6 @@ public class TableGroupService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public void ungroup(Long tableGroupId) {
         List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
 

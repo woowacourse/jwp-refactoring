@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 @Service
+@Transactional
 public class OrderService {
 
     private final MenuDao menuDao;
@@ -37,7 +38,6 @@ public class OrderService {
         this.orderTableDao = orderTableDao;
     }
 
-    @Transactional
     public OrderResponse create(OrderRequest orderRequest) {
         List<OrderLineItemRequest> orderLineItemRequests = orderRequest.getOrderLineItems();
 
@@ -86,6 +86,7 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<OrderResponse> list() {
         List<Order> orders = orderDao.findAll();
 
@@ -96,7 +97,6 @@ public class OrderService {
                 }).collect(Collectors.toList());
     }
 
-    @Transactional
     public void changeOrderStatus(Long orderId, OrderStatusRequest orderRequest) {
         Order order = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);

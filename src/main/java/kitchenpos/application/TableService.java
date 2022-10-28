@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class TableService {
 
     private final OrderDao orderDao;
@@ -25,7 +26,6 @@ public class TableService {
         this.orderTableDao = orderTableDao;
     }
 
-    @Transactional
     public OrderTableResponse create(OrderTableRequest orderTableRequest) {
         OrderTable orderTable = orderTableDao.save(new OrderTable(null, orderTableRequest.getNumberOfGuests(),
                 orderTableRequest.isEmpty()));
@@ -38,7 +38,6 @@ public class TableService {
         return orderTableDao.findAll();
     }
 
-    @Transactional
     public void changeEmpty(Long orderTableId, TableEmptyRequest tableEmptyRequest) {
         OrderTable orderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
@@ -57,7 +56,6 @@ public class TableService {
                         tableEmptyRequest.getEmpty()));
     }
 
-    @Transactional
     public void changeNumberOfGuests(Long orderTableId,
                                      TableNumberOfGuestsRequest tableNumberOfGuestsRequest) {
         int numberOfGuests = tableNumberOfGuestsRequest.getNumberOfGuests();

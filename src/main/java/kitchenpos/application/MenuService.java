@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class MenuService {
 
     private final MenuDao menuDao;
@@ -34,7 +35,6 @@ public class MenuService {
         this.productDao = productDao;
     }
 
-    @Transactional
     public MenuResponse create(MenuRequest menuRequest) {
         BigDecimal price = menuRequest.getPrice();
 
@@ -81,6 +81,7 @@ public class MenuService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<MenuResponse> list() {
         List<Menu> menus = menuDao.findAll();
 
