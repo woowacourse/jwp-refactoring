@@ -6,12 +6,13 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.TableResponse;
+import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.TableGroupResponse;
+import kitchenpos.dto.TableIdRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,20 +25,21 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 입력받은_테이블로_그룹을_저장한다() {
             // given
-            OrderTable orderTable1 = 빈_테이블을_저장한다();
-            OrderTable orderTable2 = 빈_테이블을_저장한다();
+            TableIdRequest tableIdRequest1 = new TableIdRequest(빈_테이블을_저장한다().getId());
+            TableIdRequest tableIdRequest2 = new TableIdRequest(빈_테이블을_저장한다().getId());
 
-            TableGroup tableGroup = new TableGroup(null, List.of(orderTable1, orderTable2));
+            TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(tableIdRequest1, tableIdRequest2));
 
             // when
-            TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+            TableGroupResponse savedTableGroup = tableGroupService.create(request);
 
             // then
-            List<OrderTable> orderTables = savedTableGroup.getOrderTables();
+            List<OrderTable> updatedTables = orderTableDao.findAllByIdIn(
+                    List.of(tableIdRequest1.getId(), tableIdRequest2.getId()));
 
             Assertions.assertAll(() -> {
                 assertThat(savedTableGroup.getId()).isNotNull();
-                assertThat(orderTables).extracting(OrderTable::getTableGroupId, OrderTable::isEmpty)
+                assertThat(updatedTables).extracting(OrderTable::getTableGroupId, OrderTable::isEmpty)
                         .containsOnly(tuple(savedTableGroup.getId(), false));
             });
         }
@@ -45,66 +47,65 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 그룹화하려는_테이블의_수가_2보다_작다면_예외가_발생한다() {
             // given
-            OrderTable orderTable1 = 빈_테이블을_저장한다();
+            TableIdRequest tableIdRequest = new TableIdRequest(빈_테이블을_저장한다().getId());
 
-            TableGroup tableGroup = new TableGroup(null, List.of(orderTable1));
+            TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(tableIdRequest));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 그룹화하려는_테이블_리스트가_비어있다면_예외가_발생한다() {
             // given
-            TableGroup tableGroup = new TableGroup(null, Collections.emptyList());
+            TableGroupCreateRequest request = new TableGroupCreateRequest(Collections.emptyList());
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 그룹화하려는_테이블이_존재하지_않는다면_예외가_발생한다() {
             // given
-            OrderTable orderTable1 = 빈_테이블을_저장한다();
-            OrderTable orderTable2 = new OrderTable(0, true);
+            TableIdRequest tableIdRequest1 = new TableIdRequest(빈_테이블을_저장한다().getId());
+            TableIdRequest tableIdRequest2 = new TableIdRequest(0L);
 
-            TableGroup tableGroup = new TableGroup(null, List.of(orderTable1, orderTable2));
+            TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(tableIdRequest1, tableIdRequest2));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 그룹화하려는_테이블이_비어있지_않다면_예외가_발생한다() {
             // given
-            OrderTable orderTable1 = 빈_테이블을_저장한다();
-            OrderTable orderTable2 = 테이블을_저장한다(4);
+            TableIdRequest tableIdRequest1 = new TableIdRequest(빈_테이블을_저장한다().getId());
+            TableIdRequest tableIdRequest2 = new TableIdRequest(테이블을_저장한다(4).getId());
 
-            TableGroup tableGroup = new TableGroup(null, List.of(orderTable1, orderTable2));
+            TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(tableIdRequest1, tableIdRequest2));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 그룹화하려는_테이블이_이미_다른_테이블_그룹에_속해있다면_예외가_발생한다() {
             // given
-            OrderTable orderTable1 = 빈_테이블을_저장한다();
-            OrderTable orderTable2 = 빈_테이블을_저장한다();
+            TableGroup savedTableGroup = tableGroupDao.save(테이블_그룹을_저장한다());
+            OrderTable orderTableWithTableGroupId = orderTableDao.save(
+                    new OrderTable(savedTableGroup.getId(), 0, true));
 
-            TableGroup tableGroup = new TableGroup(null, List.of(orderTable1, orderTable2));
+            TableIdRequest tableIdRequest1 = new TableIdRequest(orderTableWithTableGroupId.getId());
+            TableIdRequest tableIdRequest2 = new TableIdRequest(빈_테이블을_저장한다().getId());
 
-            tableGroupService.create(tableGroup);
-
-            OrderTable orderTable3 = 빈_테이블을_저장한다();
-            TableGroup newTableGroup = new TableGroup(null, List.of(orderTable2, orderTable3));
+            TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(tableIdRequest1, tableIdRequest2));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(newTableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -123,14 +124,8 @@ class TableGroupServiceTest extends ServiceTest {
             tableGroupService.ungroup(savedTableGroup.getId());
 
             // then
-            List<Long> findTableGroupIds = tableService.list()
-                    .stream()
-                    .filter(table -> table.getId().equals(savedOrderTable1.getId()) ||
-                            table.getId().equals(savedOrderTable2.getId()))
-                    .map(TableResponse::getTableGroupId)
-                    .collect(Collectors.toList());
-
-            assertThat(findTableGroupIds).containsOnly((Long) null);
+            List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(savedTableGroup.getId());
+            assertThat(orderTables).isEmpty();
         }
 
         @Test
@@ -140,9 +135,11 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable savedOrderTable2 = 빈_테이블을_저장한다();
             TableGroup savedTableGroup = 테이블_그룹을_저장한다(savedOrderTable1, savedOrderTable2);
 
-            Order savedOrder = 주문을_저장한다(savedOrderTable1);
-            Order order = new Order(null, OrderStatus.COOKING.name(), null, Collections.emptyList());
-            orderService.changeOrderStatus(savedOrder.getId(), order);
+            OrderTable orderTableWithGuest = orderTableDao.save(new OrderTable(savedOrderTable1.getId(), 3, false));
+            Order savedOrder = 주문을_저장한다(orderTableWithGuest);
+            Order orderWithCookingStatus = new Order(savedOrder.getOrderTableId(), OrderStatus.COOKING.name(),
+                    savedOrder.getOrderedTime(), savedOrder.getOrderLineItems());
+            orderDao.save(orderWithCookingStatus);
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))

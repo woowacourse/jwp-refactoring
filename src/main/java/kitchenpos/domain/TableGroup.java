@@ -12,7 +12,7 @@ public class TableGroup {
     public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
+        this.orderTables = new ArrayList<>(orderTables);
     }
 
     public TableGroup(Long id, LocalDateTime createdDate) {
@@ -32,6 +32,6 @@ public class TableGroup {
     }
 
     public List<OrderTable> getOrderTables() {
-        return orderTables;
+        return new ArrayList<>(orderTables);
     }
 }

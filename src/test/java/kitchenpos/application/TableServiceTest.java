@@ -10,6 +10,7 @@ import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableCreateRequest;
 import kitchenpos.dto.TableEmptyUpdateRequest;
 import kitchenpos.dto.TableGuestUpdateRequest;
@@ -92,14 +93,13 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 테이블_그룹_id를_가지고_있다면_예외가_발생한다() {
             // given
-            OrderTable savedOrderTable1 = 빈_테이블을_저장한다();
-            OrderTable savedOrderTable2 = 빈_테이블을_저장한다();
-            테이블_그룹을_저장한다(savedOrderTable1, savedOrderTable2);
+            TableGroup savedTableGroup = tableGroupDao.save(테이블_그룹을_저장한다());
+            OrderTable orderTableWithTableGroup = orderTableDao.save(new OrderTable(savedTableGroup.getId(), 0, true));
 
             TableEmptyUpdateRequest request = new TableEmptyUpdateRequest(false);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable1.getId(), request))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTableWithTableGroup.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 

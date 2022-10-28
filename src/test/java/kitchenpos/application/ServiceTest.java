@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
@@ -8,6 +9,7 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -56,6 +58,9 @@ public abstract class ServiceTest {
 
     @Autowired
     OrderTableDao orderTableDao;
+
+    @Autowired
+    TableGroupDao tableGroupDao;
 
     @Autowired
     OrderDao orderDao;
@@ -108,8 +113,8 @@ public abstract class ServiceTest {
     }
 
     protected TableGroup 테이블_그룹을_저장한다(OrderTable... orderTables) {
-        TableGroup tableGroup = new TableGroup(null, List.of(orderTables));
-        return tableGroupService.create(tableGroup);
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTables));
+        return tableGroupDao.save(tableGroup);
     }
 
     protected Order 주문을_저장한다() {
