@@ -39,11 +39,10 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        // todo : order in order table ?
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
+//        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
+//                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+//            throw new IllegalArgumentException();
+//        }
         savedOrderTable.changeEmpty(empty);
         return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
     }

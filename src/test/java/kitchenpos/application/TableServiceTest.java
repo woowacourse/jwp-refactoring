@@ -90,7 +90,7 @@ class TableServiceTest {
         orderRepository.save(order);
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(order.getOrderTable().getId(), false))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalStateException.class);
     }
 
     @Test

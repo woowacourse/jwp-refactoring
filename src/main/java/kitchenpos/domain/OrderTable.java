@@ -57,8 +57,15 @@ public class OrderTable {
     }
 
     public void changeEmpty(boolean empty) {
+        validateOrderCompleted();
         validateTableGroupNull();
         this.empty = empty;
+    }
+
+    private void validateOrderCompleted() {
+        if (getOrders().stream().anyMatch(order -> !order.isCompleted())) {
+            throw new IllegalStateException("완료되지 않은 주문이 있습니다.");
+        }
     }
 
     private void validateTableGroupNull() {
@@ -105,12 +112,6 @@ public class OrderTable {
         validateOrderCompleted();
         this.tableGroup = null;
         this.empty = false;
-    }
-
-    private void validateOrderCompleted() {
-        if (getOrders().stream().anyMatch(order -> !order.isCompleted())) {
-            throw new IllegalStateException("완료되지 않은 주문이 있습니다.");
-        }
     }
 
     public Long getId() {
