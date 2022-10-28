@@ -25,12 +25,10 @@ public class MenuService {
     private final MenuProductDao menuProductDao;
     private final ProductDao productDao;
 
-    public MenuService(
-            final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao,
-            final MenuProductDao menuProductDao,
-            final ProductDao productDao
-    ) {
+    public MenuService(final MenuDao menuDao,
+                       final MenuGroupDao menuGroupDao,
+                       final MenuProductDao menuProductDao,
+                       final ProductDao productDao) {
         this.menuDao = menuDao;
         this.menuGroupDao = menuGroupDao;
         this.menuProductDao = menuProductDao;
@@ -39,25 +37,12 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
-        Menu menu = new Menu(menuRequest.getId(), menuRequest.getName(), menuRequest.getPrice(), menuRequest.getMenuGroupId(),
-                toMenuProduct(menuRequest.getMenuProducts()));
+        Menu menu = toMenu(menuRequest);
 
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException("메뉴 그룹은 DB에 등록되어야 한다.");
-        }
+        validateMenuGroup(menu);
 
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
-
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
-                    .orElseThrow(() -> new IllegalArgumentException("메뉴 속 상품들은 모두 DB에 등록되어야 한다"));
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        if (menu.getPrice().compareTo(sum) > 0) {
-            throw new IllegalArgumentException("메뉴 가격은 내부 모든 상품가격보다 낮아야 한다.");
-        }
+        validateDiscount(menu);
 
         final Menu savedMenu = menuDao.save(menu);
 
@@ -67,15 +52,51 @@ public class MenuService {
             menuProduct.updateMenuId(menuId);
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
+
         savedMenu.updateMenuProducts(savedMenuProducts);
         List<MenuProductResponse> menuProductResponses = toMenuProductResponses(savedMenuProducts);
         return toMenuResponse(savedMenu, menuProductResponses);
     }
 
-    private List<MenuProduct> toMenuProduct(List<MenuProductRequest> savedMenuProducts) {
+    private void validateDiscount(Menu menu) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (final MenuProduct menuProduct : menu.getMenuProducts()) {
+            final Product product = productDao.findById(menuProduct.getProductId())
+                    .orElseThrow(() -> new IllegalArgumentException("메뉴 속 상품들은 모두 DB에 등록되어야 한다"));
+            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+        }
+
+        if (menu.getPrice().compareTo(sum) > 0) {
+            throw new IllegalArgumentException("메뉴 가격은 내부 모든 상품가격보다 낮아야 한다.");
+        }
+    }
+
+    private Product getProduct(MenuProduct menuProduct) {
+        return productDao.findById(menuProduct.getProductId())
+                .orElseThrow(() -> new IllegalArgumentException("메뉴 속 상품들은 모두 DB에 등록되어야 한다"));
+    }
+
+    private void validateMenuGroup(Menu menu) {
+        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
+            throw new IllegalArgumentException("메뉴 그룹은 DB에 등록되어야 한다.");
+        }
+    }
+
+    private Menu toMenu(MenuRequest menuRequest) {
+        return new Menu(menuRequest.getId(), menuRequest.getName(), menuRequest.getPrice(),
+                menuRequest.getMenuGroupId(),
+                toMenuProducts(menuRequest.getMenuProducts()));
+    }
+
+    private List<MenuProduct> toMenuProducts(List<MenuProductRequest> savedMenuProducts) {
         return savedMenuProducts.stream()
-                .map(mp -> new MenuProduct(mp.getSeq(), mp.getMenuId(), mp.getProductId(), mp.getQuantity()))
+                .map(this::toMenuProduct)
                 .collect(Collectors.toList());
+    }
+
+    private MenuProduct toMenuProduct(MenuProductRequest mp) {
+        Long productId = mp.getProductId();
+        return new MenuProduct(mp.getSeq(), mp.getMenuId(), productId, mp.getQuantity());
     }
 
     private List<MenuProductResponse> toMenuProductResponses(List<MenuProduct> savedMenuProducts) {

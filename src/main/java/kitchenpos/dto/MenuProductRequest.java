@@ -31,14 +31,4 @@ public class MenuProductRequest {
     public long getQuantity() {
         return quantity;
     }
-
-    @Override
-    public String toString() {
-        return "MenuProductRequest{" +
-                "seq=" + seq +
-                ", menuId=" + menuId +
-                ", productId=" + productId +
-                ", quantity=" + quantity +
-                '}';
-    }
 }
