@@ -6,24 +6,26 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.RepositoryTest;
 import kitchenpos.application.request.OrderLineItemRequest;
 import kitchenpos.application.request.OrderRequest;
 import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.application.response.OrderTableResponse;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.MenuRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-@RepositoryTest
+@SpringBootTest
+@Transactional
 class TableServiceTest {
 
     private static final long SEQUENCE = 1L;
@@ -39,7 +41,7 @@ class TableServiceTest {
     private OrderDao orderDao;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
     private OrderTableDao orderTableDao;
@@ -53,7 +55,7 @@ class TableServiceTest {
     @BeforeEach
     void setUp() {
         sut = new TableService(orderDao, orderTableDao);
-        orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+        orderService = new OrderService(menuRepository, orderDao, orderLineItemDao, orderTableDao);
     }
 
     @DisplayName("새로운 주문 테이블을 생성할 수 있다.")

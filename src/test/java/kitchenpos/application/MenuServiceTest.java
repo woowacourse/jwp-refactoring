@@ -9,18 +9,20 @@ import java.util.List;
 import kitchenpos.application.request.MenuProductRequest;
 import kitchenpos.application.request.MenuRequest;
 import kitchenpos.application.response.MenuResponse;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
+@Transactional
 class MenuServiceTest {
 
     private static final long MENU_ID = 1L;
@@ -30,7 +32,7 @@ class MenuServiceTest {
     private MenuService sut;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
     private MenuGroupDao menuGroupDao;
@@ -43,7 +45,7 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new MenuService(menuDao, menuGroupDao, menuProductDao, productRepository);
+        sut = new MenuService(menuRepository, menuGroupDao, menuProductDao, productRepository);
     }
 
     @DisplayName("새로운 메뉴를 등록할 수 있다.")
@@ -59,7 +61,7 @@ class MenuServiceTest {
         // then
         assertThat(response).isNotNull();
         assertThat(response.getId()).isNotNull();
-        final Menu foundMenu = menuDao.findById(response.getId()).get();
+        final Menu foundMenu = menuRepository.findById(response.getId()).get();
         assertThat(foundMenu)
                 .usingRecursiveComparison()
                 .ignoringFields("id", "menuProducts")
