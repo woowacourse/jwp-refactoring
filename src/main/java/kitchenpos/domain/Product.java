@@ -7,40 +7,26 @@ public class Product {
     private String name;
     private Price price;
 
-    @Deprecated
-    public Product() {
+    public Product(Long id, String name, long price) {
+        this.id = id;
+        this.name = name;
+        this.price = new Price(price);
     }
 
     public Product(String name, long price) {
-        this.name = name;
-        this.price = new Price(price);
+        this(null, name, price);
     }
 
     public Long getId() {
         return id;
     }
 
-    @Deprecated
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
 
-    @Deprecated
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public long getPrice() {
         return price.getValue();
-    }
-
-    @Deprecated
-    public void setPrice(final long price) {
-        this.price = new Price(price);
     }
 
     @Override
