@@ -2,6 +2,8 @@ package kitchenpos.domain.ordertable;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -25,38 +27,54 @@ public class TableGroup {
     @Column(name = "createdDate")
     private LocalDateTime createdDate;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "tableGroup")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
 
     public TableGroup() {
     }
 
-    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        this.createdDate = createdDate;
+    public TableGroup(final List<OrderTable> orderTables) {
+        validateOrderTables(orderTables);
         this.orderTables = orderTables;
+        for (OrderTable orderTable : orderTables) {
+            orderTable.changeTableGroup(this);
+        }
+    }
+
+    private void validateOrderTables(final List<OrderTable> orderTables) {
+        if (orderTables.size() < 2) {
+            throw new IllegalArgumentException("그룹으로 지정할 테이블은 2개 이상이어야 합니다.");
+        }
+
+        for (final OrderTable orderTable : orderTables) {
+            validateOrderTable(orderTable);
+        }
+    }
+
+    private static void validateOrderTable(final OrderTable orderTable) {
+        if (!orderTable.isEmpty()) {
+            throw new IllegalArgumentException("그룹으로 지정할 테이블이 비어있지 않습니다.");
+        }
+        if (Objects.nonNull(orderTable.getTableGroup())) {
+            throw new IllegalArgumentException("그룹으로 지정할 테이블이 이미 그룹으로 지정되어 있습니다.");
+        }
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
     }
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+    public void ungroup() {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.ungroup();
+        }
     }
 }

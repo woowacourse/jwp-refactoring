@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.order.Order;
@@ -15,6 +14,8 @@ import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
 import kitchenpos.domain.ordertable.TableGroup;
 import kitchenpos.domain.ordertable.TableGroupRepository;
+import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.TableGroupRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -39,13 +40,17 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, 1, true));
         OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 2, true));
 
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
+        TableGroupRequest request = new TableGroupRequest(
+                List.of(new OrderTableRequest(orderTable1.getId()), new OrderTableRequest(orderTable2.getId())));
 
-        TableGroup actual = tableGroupService.create(tableGroup);
+        TableGroup actual = tableGroupService.create(request);
 
         assertAll(() -> {
             assertThat(actual.getId()).isNotNull();
-            assertThat(actual.getOrderTables()).hasSize(2);
+            assertThat(actual.getCreatedDate()).isNotNull();
+            assertThat(actual.getOrderTables()).hasSize(2)
+                    .extracting("tableGroup")
+                    .isNotNull();
         });
     }
 
@@ -53,9 +58,9 @@ class TableGroupServiceTest extends ServiceTest {
     void 단체로_지정할_테이블이_한_개_이하인_경우_지정할_수_없다() {
         OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, 1, true));
 
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1));
+        TableGroupRequest request = new TableGroupRequest(List.of(new OrderTableRequest(orderTable1.getId())));
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -63,40 +68,34 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, 1, false));
         OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 2, true));
 
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
+        TableGroupRequest request = new TableGroupRequest(
+                List.of(new OrderTableRequest(orderTable1.getId()), new OrderTableRequest(orderTable2.getId())));
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 단체로_지정할_테이블_중_이미_단체로_지정된_테이블이_존재하는_경우_지정할_수_없다() {
-        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, 1, true));
-        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 2, true));
+        OrderTable alreadyGroupedOrderTable1 = new OrderTable(null, 1, true);
+        OrderTable alreadyGroupedOrderTable2 = new OrderTable(null, 2, true);
 
-        TableGroup tableGroup1 = tableGroupRepository.save(
-                new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
+        tableGroupRepository.save(new TableGroup(List.of(alreadyGroupedOrderTable1, alreadyGroupedOrderTable2)));
 
-        OrderTable orderTable3 = orderTableRepository.save(new OrderTable(tableGroup1, 1, true));
-        OrderTable orderTable4 = orderTableRepository.save(new OrderTable(null, 1, true));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 1, true));
 
-        TableGroup tableGroup2 = new TableGroup(LocalDateTime.now(), List.of(orderTable3, orderTable4));
+        TableGroupRequest request = new TableGroupRequest(
+                List.of(new OrderTableRequest(alreadyGroupedOrderTable1.getId()),
+                        new OrderTableRequest(orderTable.getId())));
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup2)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 테이블_단체_지정을_취소할_수_있다() {
-        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, 1, true));
-        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 2, true));
+        OrderTable orderTable1 = new OrderTable(null, 1, true);
+        OrderTable orderTable2 = new OrderTable(null, 2, true);
 
-        TableGroup tableGroup = tableGroupRepository.save(
-                new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
-        orderTableRepository.save(
-                new OrderTable(orderTable1.getId(), tableGroup, orderTable1.getNumberOfGuests(),
-                        orderTable1.isEmpty()));
-        orderTableRepository.save(
-                new OrderTable(orderTable2.getId(), tableGroup, orderTable2.getNumberOfGuests(),
-                        orderTable2.isEmpty()));
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(List.of(orderTable1, orderTable2)));
 
         tableGroupService.ungroup(tableGroup.getId());
 
@@ -114,17 +113,10 @@ class TableGroupServiceTest extends ServiceTest {
     @ParameterizedTest
     @EnumSource(mode = EXCLUDE, names = {"COMPLETION"})
     void 단체_지정을_취소할_테이블들의_주문이_모두_완료_상태가_아닌_경우_취소할_수_없다(OrderStatus orderStatus) {
-        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, 1, true));
-        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 2, true));
+        OrderTable orderTable1 = new OrderTable(null, 1, true);
+        OrderTable orderTable2 = new OrderTable(null, 2, true);
 
-        TableGroup tableGroup = tableGroupRepository.save(
-                new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
-        orderTableRepository.save(
-                new OrderTable(orderTable1.getId(), tableGroup, orderTable1.getNumberOfGuests(),
-                        orderTable1.isEmpty()));
-        orderTableRepository.save(
-                new OrderTable(orderTable2.getId(), tableGroup, orderTable2.getNumberOfGuests(),
-                        orderTable2.isEmpty()));
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(List.of(orderTable1, orderTable2)));
 
         orderRepository.save(new Order(orderTable1, orderStatus, new ArrayList<>()));
 
