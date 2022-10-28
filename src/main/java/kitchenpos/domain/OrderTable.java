@@ -8,49 +8,63 @@ public class OrderTable {
     private int numberOfGuests;
     private boolean empty;
 
-    @Deprecated
-    public OrderTable() {
-    }
-
-    public OrderTable(int numberOfGuests, boolean empty) {
+    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+        this.id = id;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    @Deprecated
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    @Deprecated
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    @Deprecated
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
+    public OrderTable(int numberOfGuests, boolean empty) {
+        this(null, null, numberOfGuests, empty);
     }
 
     public boolean isEmpty() {
         return empty;
     }
 
-    @Deprecated
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
+    public void changeEmpty(boolean isEmpty) {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
+        this.empty = isEmpty;
+    }
+
+    public void changeNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public void exitFromGroup() {
+        this.tableGroupId = null;
+        this.empty = false;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getTableGroupId() {
+        return tableGroupId;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public void joinGroup(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+        this.empty = false;
+    }
+
+    public void initialize() {
+        this.id = null;
+        this.tableGroupId = null;
     }
 
     @Override
@@ -78,27 +92,5 @@ public class OrderTable {
                 ", numberOfGuests=" + numberOfGuests +
                 ", empty=" + empty +
                 '}';
-    }
-
-    public void changeEmpty(boolean isEmpty) {
-        if (Objects.nonNull(tableGroupId)) {
-            throw new IllegalArgumentException();
-        }
-        this.empty = isEmpty;
-    }
-
-    public void changeNumberOfGuests(int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-        if (empty) {
-            throw new IllegalArgumentException();
-        }
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    public void exitFromGroup() {
-        this.tableGroupId = null;
-        this.empty = false;
     }
 }
