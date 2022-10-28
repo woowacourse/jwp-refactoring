@@ -89,8 +89,7 @@ class OrderServiceTest {
     @Test
     void create_throwsException_ifTableNotFound() {
         // given
-        final OrderTable unsavedTable = new OrderTable();
-        unsavedTable.setId(0L);
+        final OrderTable unsavedTable = new OrderTable(0L, null, 0, true);
 
         // when, then
         final OrderRequest request = RequestBuilder.ofOrder(savedMenu, unsavedTable);

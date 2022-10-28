@@ -81,17 +81,14 @@ public class DataSupport {
     }
 
     public OrderTable saveOrderTable(final int numberOfGuests, final boolean empty) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
+        final OrderTable orderTable = OrderTable.ofNew(numberOfGuests, empty);
         return orderTableDao.save(orderTable);
     }
 
     public OrderTable saveOrderTableWithGroup(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
+        final OrderTable orderTable = OrderTable.ofNew(numberOfGuests, empty);
+        orderTable.joinGroup(tableGroupId);
+
         return orderTableDao.save(orderTable);
     }
 

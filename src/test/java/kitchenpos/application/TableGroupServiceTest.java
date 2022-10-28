@@ -45,8 +45,7 @@ class TableGroupServiceTest {
     void create_throwsException_ifTableNotFound() {
         // given
         final OrderTable savedOrderTable = dataSupport.saveOrderTable(0, true);
-        final OrderTable unsavedOrderTable = new OrderTable();
-        unsavedOrderTable.setTableGroupId(0L);
+        final OrderTable unsavedOrderTable = new OrderTable(0L, null, 0, true);
 
         // when, then
         final TableGroupRequest request = RequestBuilder.ofTableGroup(savedOrderTable, unsavedOrderTable);
