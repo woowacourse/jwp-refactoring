@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.Product;
-import kitchenpos.dto.product.CreateProductRequest;
+import kitchenpos.dto.request.product.CreateProductRequest;
 
 class ProductServiceTest extends ServiceTest {
 

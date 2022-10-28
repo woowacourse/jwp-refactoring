@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Test;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.menu.CreateMenuProductRequest;
-import kitchenpos.dto.menu.CreateMenuRequest;
+import kitchenpos.dto.request.menu.CreateMenuProductRequest;
+import kitchenpos.dto.request.menu.CreateMenuRequest;
 
 class MenuServiceTest extends ServiceTest {
 

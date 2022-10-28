@@ -8,9 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.table.ChangeOrderTableEmptyRequest;
-import kitchenpos.dto.table.ChangeOrderTableNumberOfGuestRequest;
-import kitchenpos.dto.table.CreateOrderTableRequest;
+import kitchenpos.dto.request.table.ChangeOrderTableEmptyRequest;
+import kitchenpos.dto.request.table.ChangeOrderTableNumberOfGuestRequest;
+import kitchenpos.dto.request.table.CreateOrderTableRequest;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 

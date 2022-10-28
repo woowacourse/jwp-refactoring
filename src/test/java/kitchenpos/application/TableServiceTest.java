@@ -17,9 +17,9 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.table.ChangeOrderTableEmptyRequest;
-import kitchenpos.dto.table.ChangeOrderTableNumberOfGuestRequest;
-import kitchenpos.dto.table.CreateOrderTableRequest;
+import kitchenpos.dto.request.table.ChangeOrderTableEmptyRequest;
+import kitchenpos.dto.request.table.ChangeOrderTableNumberOfGuestRequest;
+import kitchenpos.dto.request.table.CreateOrderTableRequest;
 
 class TableServiceTest extends ServiceTest {
 

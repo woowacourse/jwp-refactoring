@@ -18,8 +18,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.tableGroup.AddOrderTableToTableGroupRequest;
-import kitchenpos.dto.tableGroup.CreateTableGroupRequest;
+import kitchenpos.dto.request.tableGroup.AddOrderTableToTableGroupRequest;
+import kitchenpos.dto.request.tableGroup.CreateTableGroupRequest;
 
 class TableGroupServiceTest extends ServiceTest {
 

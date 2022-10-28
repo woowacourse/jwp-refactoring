@@ -1,4 +1,4 @@
-package kitchenpos.dto.tableGroup;
+package kitchenpos.dto.request.tableGroup;
 
 import java.util.List;
 

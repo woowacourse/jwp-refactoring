@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.menuGroup.CreateMenuGroupRequest;
+import kitchenpos.dto.request.menuGroup.CreateMenuGroupRequest;
 
 class MenuGroupServiceTest extends ServiceTest {
 

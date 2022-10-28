@@ -15,9 +15,9 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.order.ChangeOrderStatusRequest;
-import kitchenpos.dto.order.CreateOrderLineItemRequest;
-import kitchenpos.dto.order.CreateOrderRequest;
+import kitchenpos.dto.request.order.ChangeOrderStatusRequest;
+import kitchenpos.dto.request.order.CreateOrderLineItemRequest;
+import kitchenpos.dto.request.order.CreateOrderRequest;
 
 class OrderServiceTest extends ServiceTest {
 
