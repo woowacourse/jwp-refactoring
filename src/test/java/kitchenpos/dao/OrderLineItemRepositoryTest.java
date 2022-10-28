@@ -3,16 +3,22 @@ package kitchenpos.dao;
 import static kitchenpos.support.fixtures.DomainFixtures.MENU1_NAME;
 import static kitchenpos.support.fixtures.DomainFixtures.MENU1_PRICE;
 import static kitchenpos.support.fixtures.DomainFixtures.MENU_GROUP_NAME1;
+import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT1_NAME;
+import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT1_PRICE;
+import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT2_NAME;
+import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT2_PRICE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,6 +45,9 @@ class OrderLineItemRepositoryTest {
 
     @Autowired
     private MenuRepository menuRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Test
     @DisplayName("OrderLineItem을 저장한다.")
@@ -79,7 +88,12 @@ class OrderLineItemRepositoryTest {
 
     private Menu createMenu() {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP_NAME1));
-        return menuRepository.save(new Menu(MENU1_NAME, MENU1_PRICE, menuGroup.getId()));
+        Product product1 = productRepository.save(new Product(PRODUCT1_NAME, PRODUCT1_PRICE));
+        Product product2 = productRepository.save(new Product(PRODUCT2_NAME, PRODUCT2_PRICE));
+
+        List<MenuProduct> menuProducts = List.of(new MenuProduct(null, product1.getId(), 1),
+                new MenuProduct(null, product2.getId(), 1));
+        return menuRepository.save(new Menu(MENU1_NAME, MENU1_PRICE, menuGroup.getId(), menuProducts));
     }
 
     private Order createOrder(final List<OrderLineItem> orderLineItems) {

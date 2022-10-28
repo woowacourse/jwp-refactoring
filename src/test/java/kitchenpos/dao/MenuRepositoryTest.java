@@ -36,14 +36,14 @@ class MenuRepositoryTest {
         Product product = productRepository.save(new Product(PRODUCT1_NAME, PRODUCT1_PRICE));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP_NAME1));
 
-        Menu menu = new Menu(MENU1_NAME, MENU1_PRICE, menuGroup.getId());
+        List<MenuProduct> menuProducts = List.of(new MenuProduct(null, product.getId(), 1));
+        Menu menu = new Menu(MENU1_NAME, MENU1_PRICE, menuGroup.getId(), menuProducts);
         menuRepository.save(menu);
-        menu.addMenuProducts(List.of(new MenuProduct(null, product.getId(), 1)));
 
         List<Menu> menus = menuRepository.findAll();
         assertAll(
                 () -> assertThat(menus).hasSize(1),
-                () -> assertThat(menus.get(0).getMenuProducts().size()).isEqualTo(1)
+                () -> assertThat(menus.get(0).getMenuProducts()).hasSize(1)
         );
     }
 
@@ -51,8 +51,10 @@ class MenuRepositoryTest {
     @DisplayName("숫자를 센다.")
     void countByIdIn() {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP_NAME1));
+        Product product = productRepository.save(new Product(PRODUCT1_NAME, PRODUCT1_PRICE));
 
-        Menu menu = menuRepository.save(new Menu(MENU1_NAME, MENU1_PRICE, menuGroup.getId()));
+        List<MenuProduct> menuProducts = List.of(new MenuProduct(null, product.getId(), 1));
+        Menu menu = menuRepository.save(new Menu(MENU1_NAME, MENU1_PRICE, menuGroup.getId(), menuProducts));
         assertThat(menuRepository.countByIdIn(List.of(menu.getId()))).isEqualTo(1);
     }
 }

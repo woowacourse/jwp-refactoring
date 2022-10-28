@@ -5,6 +5,10 @@ import static kitchenpos.support.fixtures.DomainFixtures.MENU1_PRICE;
 import static kitchenpos.support.fixtures.DomainFixtures.MENU2_NAME;
 import static kitchenpos.support.fixtures.DomainFixtures.MENU2_PRICE;
 import static kitchenpos.support.fixtures.DomainFixtures.MENU_GROUP_NAME1;
+import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT1_NAME;
+import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT1_PRICE;
+import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT2_NAME;
+import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT2_PRICE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -19,15 +23,17 @@ import kitchenpos.application.dto.request.OrderStatusCommand;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderLineItemRepository;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.support.cleaner.ApplicationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -53,7 +59,7 @@ class OrderServiceTest {
     private MenuRepository menuRepository;
 
     @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
+    private ProductRepository productRepository;
 
     @Nested
     @DisplayName("Order를 생성할 때 ")
@@ -201,7 +207,12 @@ class OrderServiceTest {
 
     private Menu createMenu(final String name, final BigDecimal price) {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP_NAME1));
-        return menuRepository.save(new Menu(name, price, menuGroup.getId()));
+        Product product1 = productRepository.save(new Product(PRODUCT1_NAME, PRODUCT1_PRICE));
+        Product product2 = productRepository.save(new Product(PRODUCT2_NAME, PRODUCT2_PRICE));
+
+        List<MenuProduct> menuProducts = List.of(new MenuProduct(null, product1.getId(), 1),
+                new MenuProduct(null, product2.getId(), 1));
+        return menuRepository.save(new Menu(name, price, menuGroup.getId(), menuProducts));
     }
 
     private OrderTable createOrderTable(final boolean empty) {

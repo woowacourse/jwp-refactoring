@@ -29,18 +29,6 @@ public class MenuProducts {
         return values.size();
     }
 
-    public void belongsTo(final Long menuId) {
-        for (MenuProduct value : values) {
-            value.belongsTo(menuId);
-        }
-    }
-
-    public List<Long> getProductIds() {
-        return values.stream()
-                .map(MenuProduct::getProductId)
-                .toList();
-    }
-
     public List<MenuProduct> getValues() {
         return values;
     }

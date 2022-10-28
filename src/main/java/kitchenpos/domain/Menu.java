@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Embedded;
@@ -27,13 +26,16 @@ public class Menu {
     @Embedded
     private MenuProducts menuProducts;
 
-    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
-                final MenuProducts menuProducts) {
+    public Menu(final Long id,
+                final String name,
+                final BigDecimal price,
+                final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = new Price(price);
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this.menuProducts = new MenuProducts(menuProducts);
     }
 
     public static Menu create(final String name,
@@ -42,27 +44,15 @@ public class Menu {
                               final List<MenuProduct> menuProducts,
                               final MenuValidator menuValidator) {
         menuValidator.validate(menuGroupId, menuProducts, price);
-        return new Menu(null, name, price, menuGroupId, new MenuProducts(menuProducts));
+        return new Menu(null, name, price, menuGroupId, menuProducts);
     }
 
-    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
-        this(id, name, price, menuGroupId, new MenuProducts(Collections.emptyList()));
-    }
-
-    public Menu(final String name, final BigDecimal price, final Long menuGroupId) {
-        this(null, name, price, menuGroupId, new MenuProducts(Collections.emptyList()));
+    public Menu(final String name, final BigDecimal price, final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroupId, menuProducts);
     }
 
     protected Menu() {
-    }
-
-    public void addMenuProducts(final MenuProducts menuProducts) {
-        menuProducts.belongsTo(id);
-        this.menuProducts.addAll(menuProducts);
-    }
-
-    public void addMenuProducts(final List<MenuProduct> rawMenuProducts) {
-        addMenuProducts(new MenuProducts(rawMenuProducts));
     }
 
     public Long getId() {
