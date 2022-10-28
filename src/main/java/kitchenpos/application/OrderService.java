@@ -132,6 +132,7 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+    @Deprecated
     @Transactional
     public Order changeOrderStatus(final Long orderId, final Order order) {
         final Order savedOrder = orderDao.findById(orderId)
@@ -149,5 +150,23 @@ public class OrderService {
         savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
 
         return savedOrder;
+    }
+
+    @Transactional
+    public OrderDto changeOrderStatus(final Long orderId, final String orderStatus) {
+        final Order savedOrder = orderDao.findById(orderId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        if (savedOrder.isInCompletionStatus()) {
+            throw new IllegalArgumentException();
+        }
+
+        final Order order = orderDao.save(new Order(savedOrder.getId(),
+                savedOrder.getOrderTableId(),
+                OrderStatus.valueOf(orderStatus),
+                savedOrder.getOrderedTime(),
+                orderLineItemDao.findAllByOrderId(orderId)));
+
+        return OrderDto.from(order);
     }
 }

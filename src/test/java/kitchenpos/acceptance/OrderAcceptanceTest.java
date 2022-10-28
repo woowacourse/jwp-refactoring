@@ -50,11 +50,11 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     @Test
     void changeOrderStatus() {
         final Order order = order().getResponseBodyAsObject(Order.class);
-        final Order result = OrderHttpCommunication.changeOrderStatus(order.getId(),
+        final OrderResponse result = OrderHttpCommunication.changeOrderStatus(order.getId(),
                         Map.of("orderStatus", "MEAL"))
-                .getResponseBodyAsObject(Order.class);
+                .getResponseBodyAsObject(OrderResponse.class);
 
-        assertThat(result.getOrderStatus()).isEqualTo("MEAL");
+        assertThat(result.getOrderStatus().name()).isEqualTo("MEAL");
     }
 
     private HttpCommunication order() {

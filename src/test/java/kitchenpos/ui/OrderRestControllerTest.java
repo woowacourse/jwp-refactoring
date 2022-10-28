@@ -3,6 +3,7 @@ package kitchenpos.ui;
 import static javax.management.openmbean.SimpleType.STRING;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
@@ -101,9 +102,9 @@ class OrderRestControllerTest extends ControllerTest {
     @DisplayName("주문 상태를 변경한다.")
     @Test
     void changeOrderStatus() throws Exception {
-        when(orderService.changeOrderStatus(anyLong(), any(Order.class))).thenReturn(DomainFixture.getOrder());
+        when(orderService.changeOrderStatus(anyLong(), anyString())).thenReturn(DtoFixture.getOrderDto());
 
-        final ResultActions resultActions = mockMvc.perform(put("/api/orders/1/order-status")
+        final ResultActions resultActions = mockMvc.perform(put("/api/v2/orders/1/order-status")
                         .content(objectMapper.writeValueAsString(Map.of("orderStatus", "COOKING")))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())

@@ -17,7 +17,7 @@ public class OrderHttpCommunication {
     }
 
     public static HttpCommunication changeOrderStatus(final Long orderId, final Map<String, Object> requestBody) {
-        final String requestUrl = String.format("/api/orders/%s/order-status", orderId);
+        final String requestUrl = String.format("/api/v2/orders/%s/order-status", orderId);
         return HttpCommunication.request()
                 .update(requestUrl, requestBody)
                 .build();
