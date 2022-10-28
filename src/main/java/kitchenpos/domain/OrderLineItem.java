@@ -13,8 +13,15 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
-    public OrderLineItem(Long orderId, Long menuId, long quantity) {
-        this(null, orderId, menuId, quantity);
+    public OrderLineItem(Long menuId, long quantity) {
+        this(null, null, menuId, quantity);
+    }
+
+    public OrderLineItem(Long orderId, OrderLineItem orderLineItem) {
+        this.seq = null;
+        this.orderId = orderId;
+        this.menuId = orderLineItem.menuId;
+        this.quantity = orderLineItem.quantity;
     }
 
     public Long getSeq() {

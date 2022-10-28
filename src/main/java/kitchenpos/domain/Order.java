@@ -2,11 +2,13 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import kitchenpos.exception.NotConvertableStatusException;
 
 public class Order {
     private final Long id;
     private final Long orderTableId;
-    private final String orderStatus;
+    private String orderStatus;
     private final LocalDateTime orderedTime;
     private final List<OrderLineItem> orderLineItems;
 
@@ -25,6 +27,21 @@ public class Order {
 
     public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
         this(null, orderTableId, orderStatus, orderedTime, null);
+    }
+
+    public Order(Order order, List<OrderLineItem> orderLineItems) {
+        this.id = order.id;
+        this.orderTableId = order.orderTableId;
+        this.orderStatus = order.orderStatus;
+        this.orderedTime = order.orderedTime;
+        this.orderLineItems = orderLineItems;
+    }
+
+    public void changeOrderStatus(String orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+            throw new NotConvertableStatusException();
+        }
+        this.orderStatus = orderStatus;
     }
 
     public Long getId() {
