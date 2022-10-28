@@ -22,7 +22,7 @@ public class JdbcTemplateMenuDao implements MenuDao {
             rs.getLong("id"),
             rs.getString("name"),
             rs.getBigDecimal("price"),
-            toMenuGroup(rs.getLong("menu_group_id"), rs.getString("name"))
+            toMenuGroup(rs.getLong("menu_group_id"), rs.getString(5))
     ));
 
 
@@ -58,7 +58,7 @@ public class JdbcTemplateMenuDao implements MenuDao {
 
     @Override
     public List<Menu> findAll() {
-        final String sql = "SELECT m.id, m.name, m.price, m.menu_group_id FROM menu m "
+        final String sql = "SELECT m.id, m.name, m.price, m.menu_group_id, mg.name FROM menu m "
                 + "JOIN menu_group mg on m.menu_group_id = mg.id";
         return jdbcTemplate.query(sql, ROW_MAPPER);
     }
@@ -72,7 +72,7 @@ public class JdbcTemplateMenuDao implements MenuDao {
     }
 
     private Menu select(final Long id) {
-        final String sql = "SELECT m.id, m.name, m.price, m.menu_group_id FROM menu m "
+        final String sql = "SELECT m.id, m.name, m.price, m.menu_group_id, mg.name FROM menu m "
                 + "JOIN menu_group mg on m.menu_group_id = mg.id WHERE m.id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
