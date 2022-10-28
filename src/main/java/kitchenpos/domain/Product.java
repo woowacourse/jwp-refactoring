@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -24,10 +25,10 @@ public class Product {
     protected Product() {
     }
 
-    public Product(final Long id, final String name, final Price price) {
+    public Product(final Long id, final String name, final BigDecimal price) {
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
     }
 
     public Long getId() {

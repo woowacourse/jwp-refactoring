@@ -11,11 +11,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.mapper.ProductMapper;
 import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.dto.response.MenuResponse;
-import kitchenpos.dto.mapper.ProductMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -29,7 +28,7 @@ class ProductRestControllerTest extends RestControllerTest {
     @Test
     void 상품_생성에_성공한다() throws Exception {
         ProductCreateRequest productCreateRequest = new ProductCreateRequest("상품", BigDecimal.valueOf(1_000));
-        Product expectedProduct = new Product(1L, "상품", new Price(BigDecimal.valueOf(1_000)));
+        Product expectedProduct = new Product(1L, "상품", BigDecimal.valueOf(1_000));
 
         when(productService.create(productMapper.toProduct(productCreateRequest))).thenReturn(expectedProduct);
 
@@ -43,7 +42,7 @@ class ProductRestControllerTest extends RestControllerTest {
 
     @Test
     void 상품_목록_조회에_성공한다() throws Exception {
-        Product expectedProduct = new Product(1L, "상품", new Price(BigDecimal.valueOf(1_000)));
+        Product expectedProduct = new Product(1L, "상품", BigDecimal.valueOf(1_000));
 
         when(productService.list()).thenReturn(List.of(expectedProduct));
 

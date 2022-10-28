@@ -9,6 +9,5 @@ import org.mapstruct.Mapping;
 public interface ProductMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "price", expression = "java(new Price(productCreateRequest.getPrice()))")
     Product toProduct(ProductCreateRequest productCreateRequest);
 }

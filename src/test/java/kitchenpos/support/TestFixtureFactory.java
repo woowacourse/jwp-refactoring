@@ -19,7 +19,7 @@ public class TestFixtureFactory {
     }
 
     public static Product 상품을_생성한다(final String name, final BigDecimal price) {
-        return new Product(null, name, new Price(price));
+        return new Product(null, name, price);
     }
 
     public static MenuGroup 메뉴_그룹을_생성한다(final String name) {
