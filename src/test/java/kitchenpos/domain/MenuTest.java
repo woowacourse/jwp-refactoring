@@ -8,22 +8,11 @@ import org.junit.jupiter.api.Test;
 
 class MenuTest {
     @Test
-    void create() {
+    void 생성() {
         assertThatThrownBy(() ->
                 new Menu(
                         "후라이드",
                         BigDecimal.valueOf(1100L),
-                        1L,
-                        Arrays.asList(new MenuProduct(1L, 1, BigDecimal.valueOf(1000L))))
-        ).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void create_price() {
-        assertThatThrownBy(() ->
-                new Menu(
-                        "후라이드",
-                        BigDecimal.valueOf(-1L),
                         1L,
                         Arrays.asList(new MenuProduct(1L, 1, BigDecimal.valueOf(1000L))))
         ).isInstanceOf(IllegalArgumentException.class);

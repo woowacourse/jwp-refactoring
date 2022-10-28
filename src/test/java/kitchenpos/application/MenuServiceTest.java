@@ -3,7 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import kitchenpos.domain.Menu;
+import kitchenpos.ui.dto.MenuRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,29 +22,9 @@ class MenuServiceTest extends ServiceTest {
     private MenuService menuService;
 
     @Test
-    void 메뉴의_가격이_0이하면_예외를_반환한다() {
-        // given
-        final Menu 세트A = new Menu("세트A", BigDecimal.ZERO, 1L, null);
-
-        // when then
-        assertThatThrownBy(() -> menuService.create(세트A))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 메뉴의_가격이_Null_이면_예외를_반환한다() {
-        // given
-        final Menu 세트A = new Menu("세트A", null, 1L, null);
-
-        // when then
-        assertThatThrownBy(() -> menuService.create(세트A))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     void 메뉴그룹이_존재하지_않으면_예외를_반환한다() {
         //given
-        final Menu 세트A = new Menu("세트A", BigDecimal.valueOf(1000), 1L, null);
+        final MenuRequest 세트A = new MenuRequest("세트A", BigDecimal.valueOf(1000), 1L, null);
         메뉴그룹에서_없는_메뉴로_세팅한다();
 
         // when then
@@ -55,7 +35,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void 메뉴가_존재하지_않으면_예외를_반환한다() {
         //given
-        final Menu 세트A = get세트A();
+        final MenuRequest 세트A = new MenuRequest("세트A", BigDecimal.valueOf(1000), 1L, null);
         메뉴그룹에서_있는_메뉴로_세팅한다();
         없는_상품으로_세팅한다();
 
