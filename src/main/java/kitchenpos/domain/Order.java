@@ -1,9 +1,10 @@
 package kitchenpos.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.util.CollectionUtils;
 
 public class Order {
     private Long id;
@@ -20,11 +21,18 @@ public class Order {
                  final OrderStatus orderStatus,
                  final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
+        validateOrderLineItems(orderLineItems);
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+    }
+
+    private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Order(final Long orderTableId,
@@ -34,9 +42,19 @@ public class Order {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
+    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, null, null, orderLineItems);
+    }
+
     @JsonIgnore
     public boolean isInCompletionStatus() {
         return orderStatus.isCompletion();
+    }
+
+    public List<Long> getOrderLineItemsMenuId() {
+        return orderLineItems.stream()
+                .map(OrderLineItem::getMenuId)
+                .collect(Collectors.toList());
     }
 
     public Long getId() {
@@ -57,6 +75,10 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
+    }
+
+    public Order saveOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
     @Deprecated

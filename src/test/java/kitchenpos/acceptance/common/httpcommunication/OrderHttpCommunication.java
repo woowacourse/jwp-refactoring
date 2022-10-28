@@ -6,7 +6,7 @@ public class OrderHttpCommunication {
 
     public static HttpCommunication create(final Map<String, Object> requestBody) {
         return HttpCommunication.request()
-                .create("/api/orders", requestBody)
+                .create("/api/v2/orders", requestBody)
                 .build();
     }
 

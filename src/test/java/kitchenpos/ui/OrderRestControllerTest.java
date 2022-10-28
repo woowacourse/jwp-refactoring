@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 import java.util.Map;
+import kitchenpos.application.dto.OrderCreationDto;
 import kitchenpos.common.fixture.RequestBody;
 import kitchenpos.application.OrderService;
 import kitchenpos.common.ControllerTest;
@@ -38,9 +39,9 @@ class OrderRestControllerTest extends ControllerTest {
     @DisplayName("주문을 생성한다.")
     @Test
     void createOrder() throws Exception {
-        when(orderService.create(any(Order.class))).thenReturn(DomainFixture.getOrder());
+        when(orderService.create(any(OrderCreationDto.class))).thenReturn(DtoFixture.getOrderDto());
 
-        final ResultActions resultActions = mockMvc.perform(post("/api/orders")
+        final ResultActions resultActions = mockMvc.perform(post("/api/v2/orders")
                         .content(objectMapper.writeValueAsString(RequestBody.getOrder(1L, 1L)))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())

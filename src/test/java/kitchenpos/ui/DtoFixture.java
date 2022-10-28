@@ -1,15 +1,21 @@
 package kitchenpos.ui;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.dto.MenuDto;
 import kitchenpos.application.dto.MenuGroupDto;
+import kitchenpos.application.dto.OrderDto;
+import kitchenpos.application.dto.OrderLineItemDto;
 import kitchenpos.application.dto.OrderTableCreationDto;
 import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.application.dto.ProductDto;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 
@@ -35,5 +41,11 @@ public class DtoFixture {
     public static OrderTableDto getOrderTableDto(final boolean isEmpty) {
         final OrderTable orderTable = new OrderTable(1L, null, 0, isEmpty);
         return OrderTableDto.from(orderTable);
+    }
+
+    public static OrderDto getOrderDto() {
+        final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1);
+        final Order order = new Order(1L, 2L, OrderStatus.COOKING, LocalDateTime.now(), List.of(orderLineItem));
+        return OrderDto.from(order);
     }
 }
