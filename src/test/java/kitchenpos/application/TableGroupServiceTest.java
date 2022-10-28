@@ -33,7 +33,7 @@ class TableGroupServiceTest {
             void 예외가_발생한다() {
                 assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                         .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("주문 테이블 2개 이상인 경우 단체 지정이 가능합니다.");
+                        .hasMessage("주문 테이블이 최소 2개 이상이어야 단체 지정(grouping)이 가능합니다.");
             }
         }
 
@@ -47,7 +47,7 @@ class TableGroupServiceTest {
             void 예외가_발생한다() {
                 assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                         .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("주문 테이블 2개 이상인 경우 단체 지정이 가능합니다.");
+                        .hasMessage("주문 테이블이 최소 2개 이상이어야 단체 지정(grouping)이 가능합니다.");
             }
         }
 

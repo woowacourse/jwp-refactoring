@@ -32,7 +32,7 @@ public class TableGroupService {
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException("주문 테이블 2개 이상인 경우 단체 지정이 가능합니다.");
+            throw new IllegalArgumentException("주문 테이블이 최소 2개 이상이어야 단체 지정(grouping)이 가능합니다.");
         }
 
         final List<Long> orderTableIds = orderTables.stream()
