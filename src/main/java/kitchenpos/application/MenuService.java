@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Price;
@@ -12,6 +13,7 @@ import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
+import kitchenpos.ui.dto.request.MenuProductCreateRequest;
 import kitchenpos.ui.dto.response.MenuCreateResponse;
 import kitchenpos.ui.dto.response.MenuResponse;
 import kitchenpos.ui.mapper.MenuDtoMapper;
@@ -49,13 +51,14 @@ public class MenuService {
 
         Menu menu = menuMapper.toMenu(menuCreateRequest);
 
-        List<MenuProduct> menuProducts = menu.getMenuProducts();
+        List<MenuProduct> menuProducts = menuCreateRequest.getMenuProducts()
+                .stream()
+                .map(request -> createMenuProduct(request, menu))
+                .collect(Collectors.toList());
 
         Price sum = new Price(BigDecimal.ZERO);
         for (MenuProduct menuProduct : menuProducts) {
-            Product product = productRepository.findById(menuProduct.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(menuProduct.getQuantity()));
+            sum = sum.add(menuProduct.getPrice().multiply(menuProduct.getQuantity()));
         }
 
         if (menu.getPrice().getValue().compareTo(sum.getValue()) > 0) {
@@ -72,6 +75,12 @@ public class MenuService {
         savedMenu.setMenuProducts(savedMenuProducts);
 
         return menuDtoMapper.toMenuCreateResponse(savedMenu);
+    }
+
+    private MenuProduct createMenuProduct(final MenuProductCreateRequest menuProductCreateRequest, final Menu menu) {
+        Product product = productRepository.findById(menuProductCreateRequest.getProductId())
+                .orElseThrow(IllegalArgumentException::new);
+        return new MenuProduct(null, menu, product.getId(), menuProductCreateRequest.getQuantity(), product.getPrice());
     }
 
     public List<MenuResponse> list() {

@@ -14,6 +14,7 @@ import java.util.Optional;
 import kitchenpos.TransactionalTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,20 +27,19 @@ class MenuProductRepositoryTest {
     @Autowired
     private MenuRepository menuRepository;
     @Autowired
-    private ProductRepository productDao;
+    private ProductRepository productRepository;
     @Autowired
-    private MenuProductRepository menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @Test
     void 메뉴_상품을_저장하면_seq가_채워진다() {
         Long menuGroupId = menuGroupRepository.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
         Menu menu = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, new ArrayList<>()));
-        Long productId = productDao.save(상품을_생성한다("상품", BigDecimal.ZERO))
-                .getId();
-        MenuProduct menuProduct = 메뉴_상품을_생성한다(menu, productId, 1);
+        Product product = productRepository.save(상품을_생성한다("상품", BigDecimal.ZERO));
+        MenuProduct menuProduct = 메뉴_상품을_생성한다(menu, product.getId(), 1, product.getPrice());
 
-        MenuProduct savedMenuProduct = menuProductDao.save(menuProduct);
+        MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
 
         assertAll(
                 () -> assertThat(savedMenuProduct.getSeq()).isNotNull(),
@@ -54,11 +54,10 @@ class MenuProductRepositoryTest {
         Long menuGroupId = menuGroupRepository.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
         Menu menu = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, new ArrayList<>()));
-        Long productId = productDao.save(상품을_생성한다("상품", BigDecimal.ZERO))
-                .getId();
-        MenuProduct menuProduct = menuProductDao.save(메뉴_상품을_생성한다(menu, productId, 1));
+        Product product = productRepository.save(상품을_생성한다("상품", BigDecimal.ZERO));
+        MenuProduct menuProduct = menuProductRepository.save(메뉴_상품을_생성한다(menu, product.getId(), 1, product.getPrice()));
 
-        MenuProduct actual = menuProductDao.findById(menuProduct.getSeq())
+        MenuProduct actual = menuProductRepository.findById(menuProduct.getSeq())
                 .orElseGet(Assertions::fail);
 
         assertThat(actual).usingRecursiveComparison()
@@ -67,7 +66,7 @@ class MenuProductRepositoryTest {
 
     @Test
     void 없는_메뉴_상품_id로_조회하면_Optional_empty를_반환한다() {
-        Optional<MenuProduct> actual = menuProductDao.findById(0L);
+        Optional<MenuProduct> actual = menuProductRepository.findById(0L);
 
         assertThat(actual).isEmpty();
     }
@@ -78,14 +77,14 @@ class MenuProductRepositoryTest {
                 .getId();
         Menu menu1 = menuRepository.save(메뉴를_생성한다("메뉴1", BigDecimal.ZERO, menuGroupId, new ArrayList<>()));
         Menu menu2 = menuRepository.save(메뉴를_생성한다("메뉴2", BigDecimal.ZERO, menuGroupId, new ArrayList<>()));
-        Long productId1 = productDao.save(상품을_생성한다("상품1", BigDecimal.ZERO))
-                .getId();
-        Long productId2 = productDao.save(상품을_생성한다("상품2", BigDecimal.ZERO))
-                .getId();
-        MenuProduct menuProduct1 = menuProductDao.save(메뉴_상품을_생성한다(menu1, productId1, 1));
-        MenuProduct menuProduct2 = menuProductDao.save(메뉴_상품을_생성한다(menu2, productId2, 2));
+        Product product1 = productRepository.save(상품을_생성한다("상품1", BigDecimal.ZERO));
+        Product product2 = productRepository.save(상품을_생성한다("상품2", BigDecimal.ZERO));
+        MenuProduct menuProduct1 = menuProductRepository.save(
+                메뉴_상품을_생성한다(menu1, product1.getId(), 1, product1.getPrice()));
+        MenuProduct menuProduct2 = menuProductRepository.save(
+                메뉴_상품을_생성한다(menu2, product2.getId(), 2, product2.getPrice()));
 
-        List<MenuProduct> actual = menuProductDao.findAll();
+        List<MenuProduct> actual = menuProductRepository.findAll();
 
         assertThat(actual).hasSize(2)
                 .usingFieldByFieldElementComparator()
@@ -98,14 +97,13 @@ class MenuProductRepositoryTest {
                 .getId();
         Menu menu1 = menuRepository.save(메뉴를_생성한다("메뉴1", BigDecimal.ZERO, menuGroupId, new ArrayList<>()));
         Menu menu2 = menuRepository.save(메뉴를_생성한다("메뉴2", BigDecimal.ZERO, menuGroupId, new ArrayList<>()));
-        Long productId1 = productDao.save(상품을_생성한다("상품1", BigDecimal.ZERO))
-                .getId();
-        Long productId2 = productDao.save(상품을_생성한다("상품2", BigDecimal.ZERO))
-                .getId();
-        MenuProduct menuProduct1 = menuProductDao.save(메뉴_상품을_생성한다(menu1, productId1, 1));
-        menuProductDao.save(메뉴_상품을_생성한다(menu2, productId2, 2));
+        Product product1 = productRepository.save(상품을_생성한다("상품1", BigDecimal.ZERO));
+        Product product2 = productRepository.save(상품을_생성한다("상품2", BigDecimal.ZERO));
+        MenuProduct menuProduct1 = menuProductRepository.save(
+                메뉴_상품을_생성한다(menu1, product1.getId(), 1, product1.getPrice()));
+        menuProductRepository.save(메뉴_상품을_생성한다(menu2, product2.getId(), 2, product2.getPrice()));
 
-        List<MenuProduct> actual = menuProductDao.findAllByMenu(menu1);
+        List<MenuProduct> actual = menuProductRepository.findAllByMenu(menu1);
 
         assertThat(actual).hasSize(1)
                 .usingFieldByFieldElementComparator()
