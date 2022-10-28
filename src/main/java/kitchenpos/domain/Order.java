@@ -58,6 +58,17 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
+    public static Order of(final OrderTable orderTable,
+                           final OrderStatus orderStatus,
+                           final LocalDateTime localDateTime,
+                           final List<OrderLineItem> orderLineItems) {
+        orderTable.validateNotEmpty();
+        final Order order = new Order(orderTable, orderStatus, localDateTime);
+        orderLineItems.forEach(it -> it.mapOrder(order));
+
+        return order;
+    }
+
     public Long getId() {
         return id;
     }

@@ -57,10 +57,6 @@ public class OrderTable {
         return empty;
     }
 
-    public boolean isTableGroupMapped() {
-        return tableGroup != null;
-    }
-
     public void updateEmpty(final boolean empty) {
         this.empty = empty;
     }
@@ -102,5 +98,11 @@ public class OrderTable {
 
     public void updateToUsed() {
         empty = false;
+    }
+
+    public void validateNotEmpty() {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
     }
 }
