@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductService {
+
     private final ProductRepository productRepository;
 
     public ProductService(final ProductRepository productRepository) {
@@ -22,6 +23,7 @@ public class ProductService {
         return ProductResponse.from(productRepository.save(request.toProduct()));
     }
 
+    @Transactional(readOnly = true)
     public List<ProductResponse> list() {
         List<Product> products = productRepository.findAll();
         return products.stream()

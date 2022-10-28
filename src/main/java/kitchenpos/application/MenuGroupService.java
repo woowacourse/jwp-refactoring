@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuGroupService {
+
     private final MenuGroupRepository menuGroupRepository;
 
     public MenuGroupService(final MenuGroupRepository menuGroupRepository) {
@@ -23,6 +24,7 @@ public class MenuGroupService {
         return MenuGroupResponse.from(savedMenuGroup);
     }
 
+    @Transactional(readOnly = true)
     public List<MenuGroupResponse> list() {
         List<MenuGroup> menuGroups = menuGroupRepository.findAll();
         return menuGroups.stream()

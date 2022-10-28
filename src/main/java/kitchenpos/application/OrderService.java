@@ -1,36 +1,28 @@
 package kitchenpos.application;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.OrderChangeRequest;
 import kitchenpos.application.dto.request.OrderCreateRequest;
 import kitchenpos.application.dto.request.OrderLineItemDto;
 import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderLineItemRepository;
-import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
+
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
 
-    public OrderService(
-            final MenuRepository menuRepository,
-            final OrderRepository orderRepository
-    ) {
+    public OrderService(final MenuRepository menuRepository,
+                        final OrderRepository orderRepository) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
     }
@@ -56,6 +48,7 @@ public class OrderService {
         }
     }
 
+    @Transactional(readOnly = true)
     public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAllWithOrderLineItems();
         return orders.stream()
@@ -70,7 +63,7 @@ public class OrderService {
 
         final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
         savedOrder.changeOrderStatus(orderStatus);
-
+        orderRepository.save(savedOrder);
         return OrderResponse.from(savedOrder);
     }
 
