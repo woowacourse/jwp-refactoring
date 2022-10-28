@@ -17,14 +17,14 @@ import org.springframework.stereotype.Repository;
 public class JdbcTemplateMenuGroupDao implements MenuGroupDao {
     private static final String TABLE_NAME = "menu_group";
     private static final String KEY_COLUMN_NAME = "id";
+    private static final RowMapper<MenuGroup> ROW_MAPPER = ((rs, rowNum) -> new MenuGroup(
+            rs.getLong("id"),
+            rs.getString("name")
+    ));
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    private final RowMapper<MenuGroup> ROW_MAPPER = ((rs, rowNum) -> new MenuGroup(
-            rs.getLong("id"),
-            rs.getString("name")
-    ));
 
     public JdbcTemplateMenuGroupDao(final DataSource dataSource) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);

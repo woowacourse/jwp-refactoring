@@ -18,7 +18,7 @@ import org.springframework.stereotype.Repository;
 public class JdbcTemplateMenuDao implements MenuDao {
     private static final String TABLE_NAME = "menu";
     private static final String KEY_COLUMN_NAME = "id";
-    private final RowMapper<Menu> ROW_MAPPER = ((rs, rowNum) -> new Menu(
+    private static final RowMapper<Menu> ROW_MAPPER = ((rs, rowNum) -> new Menu(
             rs.getLong("id"),
             rs.getString("name"),
             rs.getBigDecimal("price"),
@@ -26,7 +26,7 @@ public class JdbcTemplateMenuDao implements MenuDao {
     ));
 
 
-    private MenuGroup toMenuGroup(final Long id, final String name) {
+    private static MenuGroup toMenuGroup(final Long id, final String name) {
         return new MenuGroup(id, name);
     }
 
