@@ -30,6 +30,7 @@ public class OrderTable {
     }
 
     public void changeEmpty(boolean empty) {
+        validateExistTableGroupId();
         this.empty = empty;
     }
 
@@ -45,7 +46,7 @@ public class OrderTable {
 
     public void validateExistTableGroupId() {
         if (tableGroupId != null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블 그룹을 가지고 있을 경우 상태를 변경할 수 없습니다.");
         }
     }
 
