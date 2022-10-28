@@ -15,6 +15,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -104,12 +105,12 @@ class TableGroupServiceTest extends ServiceTest {
         tableGroupService.ungroup(tableGroup.getId());
 
         // then
-        final List<OrderTable> orderTables = tableService.list();
+        final List<OrderTableResponse> orderTableResponses = tableService.list();
         assertAll(
-                () -> assertThat(orderTables)
-                        .extracting("tableGroup")
+                () -> assertThat(orderTableResponses)
+                        .extracting("tableGroupId")
                         .containsExactly(null, null),
-                () -> assertThat(orderTables)
+                () -> assertThat(orderTableResponses)
                         .extracting("empty")
                         .containsExactly(false, false)
         );
