@@ -14,15 +14,10 @@ public enum MenuGroupFixture {
     }
 
     public MenuGroup getMenuGroup() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        return menuGroup;
+        return new MenuGroup(name);
     }
 
     public MenuGroup getMenuGroup(Long id) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(id);
-        menuGroup.setName(name);
-        return menuGroup;
+        return new MenuGroup(id, name);
     }
 }
