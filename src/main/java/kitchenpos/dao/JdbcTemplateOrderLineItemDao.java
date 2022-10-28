@@ -68,11 +68,8 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
     }
 
     private OrderLineItem toEntity(final ResultSet resultSet) throws SQLException {
-        final OrderLineItem entity = new OrderLineItem();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setOrderId(resultSet.getLong("order_id"));
-        entity.setMenuId(resultSet.getLong("menu_id"));
-        entity.setQuantity(resultSet.getLong("quantity"));
+        final OrderLineItem entity = new OrderLineItem(resultSet.getLong(KEY_COLUMN_NAME), resultSet.getLong("order_id"),
+                resultSet.getLong("menu_id"), resultSet.getLong("quantity"));
         return entity;
     }
 }
