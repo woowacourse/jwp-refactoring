@@ -38,6 +38,12 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void ungroup() {
+        validateUngroup();
+        tableGroupId = null;
+        empty = false;
+    }
+
     public void updateNumberOfGuests(final int numberOfGuests) {
         validateNumberOfGuests(numberOfGuests);
         validateEmpty();
@@ -104,12 +110,6 @@ public class OrderTable {
 
     public List<Order> getOrders() {
         return orders;
-    }
-
-    public void ungroup() {
-        validateUngroup();
-        tableGroupId = null;
-        empty = false;
     }
 
     private void validateUngroup() {

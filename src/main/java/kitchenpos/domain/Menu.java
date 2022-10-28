@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,10 +16,6 @@ public class Menu {
         this(null, name, price, menuGroupId, menuProducts);
     }
 
-    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
-        this(id, name, price, menuGroupId, Collections.emptyList());
-    }
-
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
         validatePrice(price, menuProducts);
@@ -29,6 +24,12 @@ public class Menu {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
+
+    public void updateMenuIdOfMenuProducts() {
+        for (final MenuProduct menuProduct : menuProducts) {
+            menuProduct.setMenuId(id);
+        }
     }
 
     private void validatePrice(final BigDecimal price, final List<MenuProduct> menuProducts) {
@@ -40,12 +41,6 @@ public class Menu {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         if (!menuProducts.isEmpty() && price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
-        }
-    }
-
-    public void updateMenuIdOfMenuProducts() {
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(id);
         }
     }
 
@@ -67,9 +62,5 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
     }
 }

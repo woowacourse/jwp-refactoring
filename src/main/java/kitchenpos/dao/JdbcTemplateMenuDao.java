@@ -2,6 +2,7 @@ package kitchenpos.dao;
 
 import java.math.BigDecimal;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -51,7 +52,7 @@ public class JdbcTemplateMenuDao implements MenuDao {
     @Override
     public List<Menu> findAll() {
         final String sql = "SELECT id, name, price, menu_group_id FROM menu ";
-        return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
+        return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toMenu(resultSet));
     }
 
     @Override
@@ -66,14 +67,28 @@ public class JdbcTemplateMenuDao implements MenuDao {
         final String sql = "SELECT id, name, price, menu_group_id FROM menu WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
-        return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+        return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toMenu(resultSet));
     }
 
-    private Menu toEntity(final ResultSet resultSet) throws SQLException {
+    public List<MenuProduct> findAllMenuProductsByMenuId(final Long menuId) {
+        final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product WHERE menu_id = (:menuId)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("menuId", menuId);
+        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toMenuProduct(menuId, resultSet));
+    }
+
+    private Menu toMenu(final ResultSet resultSet) throws SQLException {
         Long id = resultSet.getLong("id");
         String name = resultSet.getString("name");
         BigDecimal price = resultSet.getBigDecimal("price");
         long menuGroupId = resultSet.getLong("menu_group_id");
-        return new Menu(id, name, price, menuGroupId);
+        return new Menu(id, name, price, menuGroupId, findAllMenuProductsByMenuId(id));
+    }
+
+    private MenuProduct toMenuProduct(final Long menuId, final ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getLong(KEY_COLUMN_NAME);
+        Long productId = resultSet.getLong("product_id");
+        Long quantity = resultSet.getLong("quantity");
+        return new MenuProduct(id, menuId, productId, quantity);
     }
 }

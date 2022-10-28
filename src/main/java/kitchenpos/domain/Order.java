@@ -16,10 +16,6 @@ public class Order {
     public Order() {
     }
 
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
-        this(id, orderTableId, orderStatus, orderedTime, Collections.emptyList());
-    }
-
     public Order(final Long orderTableId, final String orderStatus, final List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, orderStatus, LocalDateTime.now(), orderLineItems);
     }
