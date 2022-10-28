@@ -77,21 +77,6 @@ class OrderServiceTest {
                 .isEqualTo(response);
     }
 
-    @DisplayName("주문을 할 때 하나 이상의 메뉴를 주문해야한다.")
-    @Test
-    void createOrderWithOneMenu() {
-        // given
-        final OrderTableRequest orderTableRequest = new OrderTableRequest(null, 1, false);
-        final OrderTableResponse orderTableResponse = tableService.create(orderTableRequest);
-
-        final OrderRequest request = new OrderRequest(orderTableResponse.getId(), null, LocalDateTime.now(),
-                List.of());
-
-        // when & then
-        assertThatThrownBy(() -> sut.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("주문한 메뉴 항목 개수와 실제 메뉴의 수가 일치해야한다.")
     @Test
     void orderLineItemSizeEqualToMenuSize() {
