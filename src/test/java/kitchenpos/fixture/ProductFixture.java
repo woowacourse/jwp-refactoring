@@ -3,6 +3,7 @@ package kitchenpos.fixture;
 import java.math.BigDecimal;
 
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 public enum ProductFixture {
@@ -19,11 +20,11 @@ public enum ProductFixture {
         this.price = price;
     }
 
-    public Product toProduct() {
-        return new Product(name, price);
+    public ProductRequest toRequest() {
+        return new ProductRequest(name, price);
     }
 
-    public Product toProduct(BigDecimal price) {
+    public Product toProduct() {
         return new Product(name, price);
     }
 }

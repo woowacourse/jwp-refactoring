@@ -10,7 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductRequest;
+import kitchenpos.dto.ProductResponse;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.support.SpringBootNestedTest;
 
@@ -29,9 +30,9 @@ class ProductServiceTest {
         @DisplayName("상품을 생성하면 ID가 할당된 Product객체가 반환된다")
         @Test
         void create() {
-            Product product = ProductFixture.양념치킨.toProduct();
+            ProductRequest request = ProductFixture.양념치킨.toRequest();
 
-            Product actual = productService.create(product);
+            ProductResponse actual = productService.create(request);
             assertThat(actual.getId()).isNotNull();
         }
 
@@ -40,10 +41,10 @@ class ProductServiceTest {
         void list() {
             int numOfProducts = 6;
             for (int i = 0; i < numOfProducts; i++) {
-                productService.create(ProductFixture.양념치킨.toProduct());
+                productService.create(ProductFixture.양념치킨.toRequest());
             }
 
-            List<Product> products = productService.list();
+            List<ProductResponse> products = productService.list();
 
             assertThat(products).hasSize(numOfProducts);
         }
