@@ -4,7 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 @Entity
@@ -12,10 +11,7 @@ public class MenuProduct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long seq;
-
-    @ManyToOne
-    private Menu menu;
+    private Long id;
 
     @OneToOne
     private Product product;
@@ -24,18 +20,13 @@ public class MenuProduct {
 
     public MenuProduct() {}
 
-    public MenuProduct(Menu menu, Product product, long quantity) {
-        this.menu = menu;
+    public MenuProduct(Product product, long quantity) {
         this.product = product;
         this.quantity = quantity;
     }
 
-    public Long getSeq() {
-        return seq;
-    }
-
-    public Menu getMenu() {
-        return menu;
+    public Long getId() {
+        return id;
     }
 
     public Product getProduct() {
