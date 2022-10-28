@@ -44,7 +44,7 @@ class OrderServiceTest extends ServiceTestEnvironment {
         final MenuGroup menuGroup1 = MenuGroupFixture.createDefaultWithoutId();
         final MenuGroup savedMenuGroup1 = serviceDependencies.save(menuGroup1);
 
-        final Menu menu1 = MenuFixture.createWithPrice(savedMenuGroup1, 2000L, savedProduct1, savedProduct2);
+        final Menu menu1 = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L, savedProduct1, savedProduct2);
         final Menu savedMenu1 = serviceDependencies.save(menu1);
 
         final OrderLineItem orderLineItem1 = OrderLineItemFixture.create(savedMenu1);
@@ -80,7 +80,7 @@ class OrderServiceTest extends ServiceTestEnvironment {
         final MenuGroup menuGroup1 = MenuGroupFixture.createDefaultWithoutId();
         final MenuGroup savedMenuGroup1 = serviceDependencies.save(menuGroup1);
 
-        final Menu menu1 = MenuFixture.createWithPrice(savedMenuGroup1, 2000L, savedProduct1, savedProduct2);
+        final Menu menu1 = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L, savedProduct1, savedProduct2);
         final Menu savedMenu1 = serviceDependencies.save(menu1);
 
         final OrderLineItem orderLineItem1 = OrderLineItemFixture.create(savedMenu1);
@@ -106,7 +106,7 @@ class OrderServiceTest extends ServiceTestEnvironment {
         final MenuGroup menuGroup1 = MenuGroupFixture.createDefaultWithoutId();
         final MenuGroup savedMenuGroup1 = serviceDependencies.save(menuGroup1);
 
-        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup1, 2000L, savedProduct1, savedProduct2);
+        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L, savedProduct1, savedProduct2);
         final Menu savedMenu = serviceDependencies.save(menu);
         final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu);
         final Order order = OrderFixture.create(savedTable, OrderStatus.COMPLETION, orderLineItem);
@@ -147,7 +147,7 @@ class OrderServiceTest extends ServiceTestEnvironment {
         final MenuGroup menuGroup1 = MenuGroupFixture.createDefaultWithoutId();
         final MenuGroup savedMenuGroup1 = serviceDependencies.save(menuGroup1);
 
-        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup1, 2000L, savedProduct1, savedProduct2);
+        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L, savedProduct1, savedProduct2);
 
         final OrderLineItem orderLineItem = OrderLineItemFixture.create(menu);
         OrderFixture.create(savedTable, OrderStatus.COMPLETION, orderLineItem);
@@ -186,7 +186,7 @@ class OrderServiceTest extends ServiceTestEnvironment {
         final MenuGroup menuGroup1 = MenuGroupFixture.createDefaultWithoutId();
         final MenuGroup savedMenuGroup1 = serviceDependencies.save(menuGroup1);
 
-        final Menu menu1 = MenuFixture.createWithPrice(savedMenuGroup1, 2000L, savedProduct1, savedProduct2);
+        final Menu menu1 = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L, savedProduct1, savedProduct2);
         final Menu savedMenu1 = serviceDependencies.save(menu1);
 
         final Order order = OrderFixture.create(savedTable, OrderStatus.COMPLETION);

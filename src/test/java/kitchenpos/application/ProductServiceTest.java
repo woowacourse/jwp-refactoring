@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
-import kitchenpos.application.dto.ProductCreateRequest;
+import kitchenpos.application.dto.request.ProductCreateRequest;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.DisplayName;

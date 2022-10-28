@@ -10,11 +10,21 @@ public class ProductFixture {
     }
 
     public static Product createWithPrice(final Long priceValue) {
+        BigDecimal price = getPrice(priceValue);
+        return new Product(null, "name", price);
+    }
+
+    private static BigDecimal getPrice(final Long priceValue) {
         BigDecimal price = null;
         if (priceValue != null) {
             price = BigDecimal.valueOf(priceValue);
         }
-        return new Product(null, "name", price);
+        return price;
+    }
+
+    public static Product createWithIdAndPrice(final Long id, final Long priceValue) {
+        final BigDecimal price = getPrice(priceValue);
+        return new Product(id, "name", price);
     }
 
     public static Product requestCreate(final int port) {

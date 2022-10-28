@@ -4,8 +4,12 @@ import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupFixture {
 
+    public static MenuGroup createWithId(final Long id) {
+        return new MenuGroup(id, "name");
+    }
+
     public static MenuGroup createDefaultWithoutId() {
-        return new MenuGroup(null, "name");
+        return createWithId(null);
     }
 
     public static MenuGroup createDefaultWithNotSavedId() {

@@ -5,18 +5,24 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
+import kitchenpos.application.dto.request.MenuCreateRequest;
+import kitchenpos.application.dto.request.MenuProductCreateRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.exception.InvalidMenuPriceException;
+import kitchenpos.exception.MenuGroupNotFoundException;
+import kitchenpos.exception.NotSavedProductException;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class MenuServiceTest extends ServiceTestEnvironment {
@@ -36,16 +42,19 @@ class MenuServiceTest extends ServiceTestEnvironment {
         final MenuGroup menuGroup = MenuGroupFixture.createDefaultWithoutId();
         final MenuGroup savedMenuGroup = serviceDependencies.save(menuGroup);
 
-        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup, 2000L, savedProduct1, savedProduct2);
+        final List<MenuProductCreateRequest> menuProducts = Arrays.asList(new MenuProductCreateRequest(1L, 1L),
+                 new MenuProductCreateRequest(2L, 1L));
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("name", BigDecimal.valueOf(2000L), savedMenuGroup.getId(),
+                menuProducts);
+        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup.getId(), 2000L, savedProduct1, savedProduct2);
 
         // when
-        final Menu actual = menuService.create(menu);
+        final Menu actual = menuService.create(menuCreateRequest);
 
         // then
         assertAll(
-                () -> assertThat(actual.getMenuProducts())
-                        .usingElementComparatorIgnoringFields("seq")
-                        .containsExactlyElementsOf(menu.getMenuProducts()),
+                () -> assertThat(actual.getMenuProducts()).extracting("seq")
+                        .containsExactlyElementsOf(Arrays.asList(1L, 2L)),
                 () -> assertThat(actual).usingRecursiveComparison()
                         .ignoringFields("id", "menuProducts")
                         .withComparatorForType(BigDecimal::compareTo, BigDecimal.class)
@@ -55,9 +64,9 @@ class MenuServiceTest extends ServiceTestEnvironment {
 
     @ParameterizedTest
     @NullSource
-    @ValueSource(longs = {-1})
+    @CsvSource(value = {"-1"})
     @DisplayName("메뉴의 가격이 Null이거나 음수 일 수 없다.")
-    void create_exceptionWhenPrizeIsNullOrNegative(final Long price) {
+    void create_exceptionWhenPrizeIsNullOrNegative(final BigDecimal price) {
         // given
         final Product product1 = ProductFixture.createWithPrice(1000L);
         final Product product2 = ProductFixture.createWithPrice(1000L);
@@ -67,11 +76,14 @@ class MenuServiceTest extends ServiceTestEnvironment {
         final MenuGroup menuGroup = MenuGroupFixture.createDefaultWithoutId();
         final MenuGroup savedMenuGroup = serviceDependencies.save(menuGroup);
 
-        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup, price, savedProduct1, savedProduct2);
+        final List<MenuProductCreateRequest> menuProducts = Arrays.asList(new MenuProductCreateRequest(1L, 1L),
+                new MenuProductCreateRequest(2L, 1L));
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("name", price, savedMenuGroup.getId(),
+                menuProducts);
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
+                .isExactlyInstanceOf(InvalidMenuPriceException.class);
     }
 
 
@@ -86,27 +98,31 @@ class MenuServiceTest extends ServiceTestEnvironment {
 
         final MenuGroup notSavedMenuGroup = MenuGroupFixture.createDefaultWithNotSavedId();
 
-        final Menu menu = MenuFixture.createWithPrice(notSavedMenuGroup, 1000L, savedProduct1, savedProduct2);
+        final List<MenuProductCreateRequest> menuProducts = Arrays.asList(new MenuProductCreateRequest(1L, 1L),
+                new MenuProductCreateRequest(2L, 1L));
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("name", BigDecimal.valueOf(2000L), notSavedMenuGroup.getId(),
+                menuProducts);
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
+                .isExactlyInstanceOf(MenuGroupNotFoundException.class);
     }
 
     @Test
     @DisplayName("메뉴의 메뉴 상품들의 상품이 등록되어 있어야 한다.")
     void create_exceptionWhenMenuProductNotExists() {
         // given
-        final Product product1 = ProductFixture.createWithPrice(1000L);
-        final Product product2 = ProductFixture.createWithPrice(1000L);
+        final MenuGroup menuGroup = MenuGroupFixture.createDefaultWithoutId();
+        final MenuGroup savedMenuGroup = serviceDependencies.save(menuGroup);
 
-        final MenuGroup menuGroup = MenuGroupFixture.createDefaultWithNotSavedId();
-
-        final Menu menu = MenuFixture.createWithPrice(menuGroup, 1000L, product1, product2);
+        final List<MenuProductCreateRequest> menuProducts = Arrays.asList(new MenuProductCreateRequest(-1L, 1L),
+                new MenuProductCreateRequest(-2L, 1L));
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("name", BigDecimal.valueOf(2000L), savedMenuGroup.getId(),
+                menuProducts);
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
+                .isExactlyInstanceOf(NotSavedProductException.class);
     }
 
     @Test
@@ -121,11 +137,14 @@ class MenuServiceTest extends ServiceTestEnvironment {
         final MenuGroup menuGroup = MenuGroupFixture.createDefaultWithoutId();
         final MenuGroup savedMenuGroup = serviceDependencies.save(menuGroup);
 
-        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup, 2001L, savedProduct1, savedProduct2);
+        final List<MenuProductCreateRequest> menuProducts = Arrays.asList(new MenuProductCreateRequest(1L, 1L),
+                new MenuProductCreateRequest(2L, 1L));
+        MenuCreateRequest request = new MenuCreateRequest("name", BigDecimal.valueOf(2001L), savedMenuGroup.getId(),
+                menuProducts);
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(request))
+                .isExactlyInstanceOf(InvalidMenuPriceException.class);
     }
 
     @Test
@@ -139,7 +158,7 @@ class MenuServiceTest extends ServiceTestEnvironment {
         final MenuGroup menuGroup = MenuGroupFixture.createDefaultWithoutId();
         final MenuGroup savedMenuGroup = serviceDependencies.save(menuGroup);
 
-        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup, 2000L, savedProduct1, savedProduct2);
+        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup.getId(), 2000L, savedProduct1, savedProduct2);
         final Menu savedMenu = serviceDependencies.save(menu);
 
         // when
@@ -147,7 +166,7 @@ class MenuServiceTest extends ServiceTestEnvironment {
 
         // then
         assertThat(actual)
-                .usingElementComparatorIgnoringFields("menuProducts")
-                .containsExactly(savedMenu);
+                .extracting("id")
+                .containsExactly(1L);
     }
 }
