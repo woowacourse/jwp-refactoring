@@ -102,7 +102,8 @@ public class TableGroupServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(new TableGroupRequest(orderTableRequests)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블의 수는 최소 2개 이상이어야합니다.");
     }
 
     @Test
@@ -155,8 +156,6 @@ public class TableGroupServiceTest {
                 .map(orderTable -> new OrderTableRequest(orderTable.getId()))
                 .collect(Collectors.toList());
 
-        TableGroupRequest tableGroupRequest = new TableGroupRequest(orderTableRequests);
-
         // when
         tableGroupService.ungroup(tableGroup.getId());
 
@@ -164,6 +163,4 @@ public class TableGroupServiceTest {
         List<OrderTable> orderTablesInTableGroup = orderTableDao.findAllByTableGroupId(tableGroup.getId());
         assertThat(orderTablesInTableGroup.size()).isEqualTo(0);
     }
-
-    // TODO: ungroup 예외 상황 테스트
 }

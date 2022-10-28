@@ -82,7 +82,6 @@ public class TableServiceTest {
         assertThat(changeOrderTable.isEmpty()).isEqualTo(false);
     }
 
-    // TODO: 테이블 그룹이 등록 되어있을 때 변경 불가 테스트 추가
     @Test
     @DisplayName("주문 테이블 상태를 변경 시 주문 상태가 cooking이나 meal이면 예외를 반환한다.")
     void changeEmpty_WhenOrderStatusCooking() {

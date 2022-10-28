@@ -32,8 +32,8 @@
             - Order 메서드 추가
                 - changeOrderStatus()
                 - addOrderLineItem()
-        - [ ] ProductService
-        - [ ] TableGroupService
+        - [x] ProductService
+        - [x] TableGroupService
         - [ ] TableService
             - OrderTable 메서드 추가
                 - changeNumberOfGuest()
