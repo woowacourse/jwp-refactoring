@@ -5,21 +5,17 @@ import kitchenpos.domain.OrderLineItem;
 
 public class OrderLineItemResponse {
 
-    private Long seq;
-    private Long orderId;
     private Long menuId;
     private long quantity;
 
-    public OrderLineItemResponse(final OrderLineItem orderLineItem) {
-        this(orderLineItem.getSeq(), orderLineItem.getOrderId(), orderLineItem.getMenuId(), orderLineItem.getQuantity());
-    }
-
     @JsonCreator
-    public OrderLineItemResponse(final Long seq, final Long orderId, final Long menuId, final long quantity) {
-        this.seq = seq;
-        this.orderId = orderId;
+    public OrderLineItemResponse(final Long menuId, final long quantity) {
         this.menuId = menuId;
         this.quantity = quantity;
+    }
+
+    public OrderLineItemResponse(final OrderLineItem orderLineItem) {
+        this(orderLineItem.getMenu().getId(), orderLineItem.getQuantity());
     }
 
     public long getQuantity() {

@@ -11,8 +11,9 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.application.request.OrderLineItemRequest;
+import kitchenpos.application.request.OrderRequest;
+import kitchenpos.application.response.OrderResponse;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,28 +32,27 @@ class OrderAcceptanceTest extends AcceptanceTest {
         // given
         final OrderTable orderTable = OrderTable.of(1, false);
         final OrderTable savedOrderTable = saveOrderTable(orderTable);
-        final OrderLineItem orderLineItem = createOrderLineItem();
 
-        final Order order = new Order(savedOrderTable.getId(), "COOKING", LocalDateTime.now(), List.of(orderLineItem));
+        final OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), "COOKING", LocalDateTime.now(),
+                List.of(createOrderLineItem()));
 
         // when
-        final Order response = RestAssured.given().log().all()
+        final OrderResponse response = RestAssured.given().log().all()
                 .contentType(APPLICATION_JSON_VALUE)
-                .body(order)
+                .body(orderRequest)
                 .when().log().all()
                 .post("/api/orders")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
-                .extract().as(Order.class);
+                .extract().as(OrderResponse.class);
 
         // then
         assertThat(response).isNotNull();
         assertThat(response.getId()).isNotNull();
         assertThat(response.getOrderStatus()).isEqualTo(COOKING.name());
         assertThat(response)
-                .usingRecursiveComparison()
-                .ignoringFields("id", "orderLineItems", "orderedTime")
-                .isEqualTo(order);
+                .extracting(OrderResponse::getOrderTableId, OrderResponse::getOrderStatus)
+                .containsExactly(orderRequest.getOrderTableId(), orderRequest.getOrderStatus());
     }
 
     @DisplayName("주문 목록을 조회할 수 있다.")
@@ -62,11 +62,13 @@ class OrderAcceptanceTest extends AcceptanceTest {
         final OrderTable orderTable = saveOrderTable(1, false);
         final OrderTable anotherOrderTable = saveOrderTable(1, false);
 
-        final Order order1 = new Order(orderTable.getId(), "COOKING", LocalDateTime.now(), List.of(createOrderLineItem()));
-        final Order order2 = new Order(anotherOrderTable.getId(), "COOKING", LocalDateTime.now(), List.of(createOrderLineItem()));
+        final OrderRequest orderRequest1 = new OrderRequest(orderTable.getId(), "COOKING", LocalDateTime.now(),
+                List.of(createOrderLineItem()));
+        final OrderRequest orderRequest2 = new OrderRequest(anotherOrderTable.getId(), "COOKING", LocalDateTime.now(),
+                List.of(createOrderLineItem()));
 
-        final Order savedOrder1 = saveOrder(order1);
-        final Order savedOrder2 = saveOrder(order2);
+        final OrderResponse savedOrder1 = saveOrder(orderRequest1);
+        final OrderResponse savedOrder2 = saveOrder(orderRequest2);
 
         // when
         final ExtractableResponse<Response> response = RestAssured.given().log().all()
@@ -76,34 +78,34 @@ class OrderAcceptanceTest extends AcceptanceTest {
                 .statusCode(HttpStatus.OK.value())
                 .extract();
 
-        final List<Order> orders = getOrders(response);
+        final List<OrderResponse> orders = getOrders(response);
 
         // then
         assertThat(orders)
                 .hasSize(2)
                 .filteredOn(it -> it.getId() != null)
-                .extracting(Order::getId, Order::getOrderTableId, Order::getOrderStatus)
+                .extracting(OrderResponse::getId, OrderResponse::getOrderTableId, OrderResponse::getOrderStatus)
                 .containsExactlyInAnyOrder(
                         tuple(savedOrder1.getId(), savedOrder1.getOrderTableId(), savedOrder1.getOrderStatus()),
                         tuple(savedOrder2.getId(), savedOrder2.getOrderTableId(), savedOrder2.getOrderStatus())
                 );
     }
 
-    @DisplayName("특정 주문의 주문 상태를 조회할 수 있다.")
+    @DisplayName("특정 주문의 주문 상태를 변경할 수 있다.")
     @Test
     void changeOrderStatus() {
         // given
         final OrderTable orderTable = OrderTable.of(1, false);
         final OrderTable savedOrderTable = saveOrderTable(orderTable);
-        final OrderLineItem orderLineItem = createOrderLineItem();
 
-        final Order order = new Order(savedOrderTable.getId(), "COOKING", LocalDateTime.now(), List.of(orderLineItem));
-        final Order savedOrder = saveOrder(order);
-        final Order changeOrder = new Order(savedOrderTable.getId(), "COMPLETION", LocalDateTime.now(),
-                List.of(orderLineItem));
+        final OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), "COOKING", LocalDateTime.now(),
+                List.of(createOrderLineItem()));
+        final OrderResponse savedOrder = saveOrder(orderRequest);
+        final OrderRequest changeOrder = new OrderRequest(savedOrderTable.getId(), "COMPLETION", LocalDateTime.now(),
+                List.of(createOrderLineItem()));
 
         // when
-        final Order response = RestAssured.given().log().all()
+        final OrderResponse response = RestAssured.given().log().all()
                 .contentType(APPLICATION_JSON_VALUE)
                 .pathParam("orderId", savedOrder.getId())
                 .body(changeOrder)
@@ -111,7 +113,7 @@ class OrderAcceptanceTest extends AcceptanceTest {
                 .put("/api/orders/{orderId}/order-status")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .extract().as(Order.class);
+                .extract().as(OrderResponse.class);
 
         // then
         assertThat(response.getOrderStatus()).isEqualTo(COMPLETION.name());
@@ -128,15 +130,15 @@ class OrderAcceptanceTest extends AcceptanceTest {
                 .extract().as(OrderTable.class);
     }
 
-    private static Order saveOrder(final Order order) {
+    private static OrderResponse saveOrder(final OrderRequest request) {
         return RestAssured.given().log().all()
                 .contentType(APPLICATION_JSON_VALUE)
-                .body(order)
+                .body(request)
                 .when().log().all()
                 .post("/api/orders")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
-                .extract().as(Order.class);
+                .extract().as(OrderResponse.class);
     }
 
     private OrderTable saveOrderTable(final int numberOfGuests, final boolean empty) {
@@ -152,11 +154,11 @@ class OrderAcceptanceTest extends AcceptanceTest {
                 .extract().as(OrderTable.class);
     }
 
-    private static List<Order> getOrders(final ExtractableResponse<Response> response) {
-        return response.jsonPath().getList(".", Order.class);
+    private static List<OrderResponse> getOrders(final ExtractableResponse<Response> response) {
+        return response.jsonPath().getList(".", OrderResponse.class);
     }
 
-    private OrderLineItem createOrderLineItem() {
-        return new OrderLineItem(SEQUENCE, ORDER_ID, MENU_ID, QUANTITY);
+    private OrderLineItemRequest createOrderLineItem() {
+        return new OrderLineItemRequest(SEQUENCE, ORDER_ID, MENU_ID, QUANTITY);
     }
 }

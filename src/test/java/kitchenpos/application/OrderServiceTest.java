@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static java.util.stream.Collectors.toList;
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,11 +14,11 @@ import kitchenpos.application.request.OrderRequest;
 import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.application.response.OrderResponse;
 import kitchenpos.application.response.OrderTableResponse;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,14 +44,11 @@ class OrderServiceTest {
     private OrderRepository orderRepository;
 
     @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
-
-    @Autowired
     private OrderTableRepository orderTableRepository;
 
     @BeforeEach
     void setUp() {
-        sut = new OrderService(menuRepository, orderRepository, orderLineItemRepository, orderTableRepository);
+        sut = new OrderService(menuRepository, orderRepository, orderTableRepository);
         tableService = new TableService(orderTableRepository);
     }
 
@@ -169,26 +165,6 @@ class OrderServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("주문의 상태가 이미 계산 완료이면 주문 상태를 변경할 수 없다.")
-    @Test
-    void canNotChangeOrderStatusWhenAlreadyCompletion() {
-        // given
-        final OrderTableRequest orderTableRequest = new OrderTableRequest(null, 1, false);
-        final OrderTableResponse orderTableResponse = tableService.create(orderTableRequest);
-        final OrderLineItemRequest orderLineItemRequest = createOrderLineItemRequest();
-
-        final OrderLineItem orderLineItem = toOrderLineItem(orderLineItemRequest);
-        final Order order = new Order(orderTableResponse.getId(), "COMPLETION", LocalDateTime.now(),
-                List.of(orderLineItem));
-        final Order savedOrder = orderRepository.save(order);
-        final OrderRequest changeOrderRequest = new OrderRequest(order.getOrderTableId(), order.getOrderStatus(),
-                order.getOrderedTime(), getOrderLineItemRequestsFromOrder(savedOrder));
-
-        // when & then
-        assertThatThrownBy(() -> sut.changeOrderStatus(savedOrder.getId(), changeOrderRequest))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("주문의 전체 정보를 조회할 수 있다.")
     @Test
     void list() {
@@ -216,20 +192,9 @@ class OrderServiceTest {
                 );
     }
 
-    private static List<OrderLineItemRequest> getOrderLineItemRequestsFromOrder(final Order order) {
-        if (order.getOrderLineItems() == null) {
-            return List.of();
-        }
-
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
-        return orderLineItems.stream()
-                .map(OrderLineItemRequest::new)
-                .collect(toList());
-    }
-
-    private static OrderLineItem toOrderLineItem(final OrderLineItemRequest orderLineItemRequest) {
-        return new OrderLineItem(orderLineItemRequest.getSeq(), orderLineItemRequest.getOrderId(),
-                orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity());
+    private OrderLineItem toOrderLineItem(final OrderLineItemRequest orderLineItemRequest) {
+        final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId()).get();
+        return new OrderLineItem(menu, orderLineItemRequest.getQuantity());
     }
 
     private OrderLineItemRequest createOrderLineItemRequest() {

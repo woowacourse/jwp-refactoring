@@ -3,94 +3,58 @@ package kitchenpos.application;
 import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.application.request.OrderLineItemRequest;
 import kitchenpos.application.request.OrderRequest;
 import kitchenpos.application.response.OrderResponse;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
 
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderLineItemRepository orderLineItemRepository,
             final OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public OrderResponse create(final OrderRequest request) {
-        final Order order = new Order(request.getOrderTableId(), request.getOrderStatus(), request.getOrderedTime(),
-                getOrderLineItems(request));
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+        validateSavedMenuSize(request);
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("한 가지 이상의 주문 항목을 포함해야합니다.");
-        }
-
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(toList());
-
-        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException("주문한 메뉴 항목 개수와 실제 메뉴의 수가 일치하지 않습니다.");
-        }
-
-        order.setId(null);
-
-        final OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
+        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("주문 테이블이 비어있으면 주문을 생성할 수 없다.");
         }
 
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-
+        final Order order = Order.of(request.getOrderTableId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
+                getOrderLineItems(request));
         final Order savedOrder = orderRepository.save(order);
-
-        final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(orderId);
-            savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
-        }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
 
         return OrderResponse.from(savedOrder);
     }
 
     public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
-
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
-        }
 
         return orders.stream()
                 .map(OrderResponse::from)
@@ -102,24 +66,32 @@ public class OrderService {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException("이미 계산 완료 상태이므로 주문 상태 변경이 불가합니다.");
-        }
-
         final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
-
-        orderRepository.save(savedOrder);
-
-        savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
+        savedOrder.changeOrderStatus(orderStatus.name());
 
         return OrderResponse.from(savedOrder);
     }
 
-    private static List<OrderLineItem> getOrderLineItems(final OrderRequest request) {
+    private List<OrderLineItem> getOrderLineItems(final OrderRequest request) {
         final List<OrderLineItemRequest> orderLineItems = request.getOrderLineItems();
         return orderLineItems.stream()
-                .map(it -> new OrderLineItem(it.getSeq(), it.getOrderId(), it.getMenuId(), it.getQuantity()))
+                .map(it -> new OrderLineItem(findMenu(it.getMenuId()), it.getQuantity()))
                 .collect(toList());
+    }
+
+    private void validateSavedMenuSize(final OrderRequest request) {
+        final List<Long> menuIds = request.getOrderLineItems()
+                .stream()
+                .map(OrderLineItemRequest::getMenuId)
+                .collect(toList());
+
+        if (request.getOrderLineItems().size() != menuRepository.countByIdIn(menuIds)) {
+            throw new IllegalArgumentException("주문한 메뉴 항목 개수와 실제 메뉴의 수가 일치하지 않습니다.");
+        }
+    }
+
+    private Menu findMenu(Long id) {
+        return menuRepository.findById(id)
+                .orElseThrow(IllegalArgumentException::new);
     }
 }

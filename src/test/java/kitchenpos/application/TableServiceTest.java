@@ -10,7 +10,6 @@ import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,11 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @RepositoryTest
 class TableServiceTest {
-
-    private static final long SEQUENCE = 1L;
-    private static final long ORDER_ID = 1L;
-    private static final long MENU_ID = 1L;
-    private static final long QUANTITY = 1L;
 
     private TableService sut;
     private OrderService orderService;
@@ -38,13 +32,10 @@ class TableServiceTest {
     @Autowired
     private OrderTableRepository orderTableRepository;
 
-    @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
-
     @BeforeEach
     void setUp() {
         sut = new TableService(orderTableRepository);
-        orderService = new OrderService(menuRepository, orderRepository, orderLineItemRepository, orderTableRepository);
+        orderService = new OrderService(menuRepository, orderRepository, orderTableRepository);
     }
 
     @DisplayName("새로운 주문 테이블을 생성할 수 있다.")
