@@ -59,9 +59,8 @@ public class MenuService {
                     .collect(Collectors.toMap(Product::getId, Product::getPrice));
 
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (Long menuProductsId : groupByMenuProductsId.keySet()) {
-            savedMenuProducts.add(new MenuProduct(menuProductsId, groupByMenuProductsId.get(menuProductsId)));
-        }
+        groupByMenuProductsId.keySet()
+                .forEach(each -> savedMenuProducts.add(new MenuProduct(each, groupByMenuProductsId.get(each))));
 
         MenuProducts menuProducts = new MenuProducts(savedMenuProducts, new ArrayList<>(groupedPriceByProductId.keySet()));
 
@@ -69,15 +68,12 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-
         final Menu savedMenu = menuDao.save(new Menu(
                 menuCreateRequest.getName(), menuCreateRequest.getPrice(), menuCreateRequest.getMenuGroupId()));
 
         final Long menuId = savedMenu.getId();
-        for (final MenuProduct menuProduct : savedMenuProducts) {
-            menuProduct.setMenuId(menuId);
-            menuProductDao.save(menuProduct);
-        }
+        List<MenuProduct> results = menuProducts.changeMenuId(menuId).getMenuProducts();
+        results.forEach(menuProductDao::save);
         savedMenu.setMenuProducts(savedMenuProducts);
 
         return savedMenu;

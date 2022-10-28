@@ -14,9 +14,10 @@ public class FakeMenuProductDao implements MenuProductDao {
     @Override
     public MenuProduct save(MenuProduct entity) {
         if (entity.getSeq() == null) {
-            entity.setSeq(++id);
-            repository.put(entity.getSeq(), entity);
-            return entity;
+            MenuProduct addEntity = new MenuProduct(
+                    ++id, entity.getMenuId(), entity.getProductId(), entity.getQuantity());
+            repository.put(addEntity.getSeq(), addEntity);
+            return addEntity;
         }
         return repository.computeIfAbsent(entity.getSeq(), (id) -> entity);
     }

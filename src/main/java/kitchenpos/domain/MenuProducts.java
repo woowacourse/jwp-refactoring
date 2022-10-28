@@ -43,6 +43,16 @@ public class MenuProducts {
                 .sum();
     }
 
+    public MenuProducts changeMenuId(Long menuId) {
+        List<MenuProduct> changedMenuProducts = this.menuProducts.stream()
+                .map(each -> each.changeMenuId(menuId))
+                .collect(Collectors.toUnmodifiableList());
+        List<Long> productIds = changedMenuProducts.stream()
+                .map(MenuProduct::getProductId)
+                .collect(Collectors.toUnmodifiableList());
+        return new MenuProducts(changedMenuProducts, productIds);
+    }
+
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
