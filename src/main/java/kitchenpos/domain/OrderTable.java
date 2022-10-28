@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -39,6 +40,10 @@ public class OrderTable {
 
     public OrderTable(TableGroup tableGroup,  int numberOfGuests, boolean empty) {
         this(null, tableGroup, numberOfGuests, empty);
+    }
+
+    public boolean isNonNullTableGroup() {
+        return Objects.nonNull(getTableGroup());
     }
 
     public Long getId() {

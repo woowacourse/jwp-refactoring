@@ -58,11 +58,10 @@ public class MenuService {
     }
 
     private List<Product> mapToProducts(MenuRequest menuRequest) {
-        final List<Product> products = menuRequest.getMenuProducts()
+        return menuRequest.getMenuProducts()
                 .stream()
-                .map(mp -> productRepository.findById(mp.getProductId()).get())
+                .map(mp -> productRepository.findById(mp.getProductId()).orElseThrow(IllegalArgumentException::new))
                 .collect(Collectors.toList());
-        return products;
     }
 
     public List<Menu> list() {
