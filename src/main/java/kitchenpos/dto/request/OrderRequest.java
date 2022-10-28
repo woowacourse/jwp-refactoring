@@ -19,14 +19,11 @@ public class OrderRequest {
     }
 
     public Order toEntity() {
-        final Order order = new Order();
         final List<OrderLineItem> items = this.orderLineItems.stream()
                 .map(OrderLineItemRequest::toEntity)
                 .collect(Collectors.toList());
-        order.setOrderTableId(orderTableId);
-        order.setOrderLineItems(items);
 
-        return order;
+        return new Order(orderTableId, items);
     }
 
     public Long getOrderTableId() {

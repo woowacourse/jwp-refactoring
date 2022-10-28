@@ -1,6 +1,7 @@
 package kitchenpos.application.fixture;
 
 import java.util.ArrayList;
+import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -12,22 +13,14 @@ public class OrderFixture {
     private static final int QUANTITY = 1;
 
     public static Order createOrder(final OrderTable orderTable, final Menu... menus) {
-        final Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
-        setOrderLineItems(order, menus);
-
-        return order;
+        return new Order(orderTable.getId(), createOrderLineItems(menus));
     }
 
-    private static void setOrderLineItems(final Order order, final Menu[] menus) {
-        final ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
+    private static List<OrderLineItem> createOrderLineItems(final Menu[] menus) {
+        final List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (final Menu menu : menus) {
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(menu.getId());
-            orderLineItem.setQuantity(QUANTITY);
-
-            orderLineItems.add(orderLineItem);
+            orderLineItems.add(new OrderLineItem(menu.getId(), QUANTITY));
         }
-        order.setOrderLineItems(orderLineItems);
+        return orderLineItems;
     }
 }

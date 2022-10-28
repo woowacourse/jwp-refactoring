@@ -15,18 +15,15 @@ public class MenuProductRequest {
         this.quantity = quantity;
     }
 
+    public MenuProduct toEntity() {
+        return new MenuProduct(productId, quantity);
+    }
+
     public Long getProductId() {
         return productId;
     }
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public MenuProduct toEntity() {
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
     }
 }

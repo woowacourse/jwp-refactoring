@@ -9,9 +9,6 @@ public class MenuGroupFixture {
     public static MenuGroup 메뉴그룹C = createMenuGroup("메뉴그룹C");
 
     public static MenuGroup createMenuGroup(final String name) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-
-        return menuGroup;
+        return new MenuGroup(name);
     }
 }

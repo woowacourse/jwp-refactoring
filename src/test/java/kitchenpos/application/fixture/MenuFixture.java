@@ -15,25 +15,16 @@ public class MenuFixture {
 
     public static Menu createMenu(final String name, final long price, final MenuGroup menuGroup,
                                   final Product... products) {
-        final Menu menu = new Menu();
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setName(name);
-        menu.setPrice(BigDecimal.valueOf(price));
-        setMenuProducts(menu, products);
-
-        return menu;
+        return new Menu(name, BigDecimal.valueOf(price), menuGroup.getId(), createMenuProducts(products));
     }
 
-    private static void setMenuProducts(final Menu menu, final Product[] products) {
+    private static List<MenuProduct> createMenuProducts(final Product[] products) {
         final List<MenuProduct> menuProducts = new ArrayList<>();
         for (final Product product : products) {
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProductId(product.getId());
-            menuProduct.setQuantity(QUANTITY);
-
+            final MenuProduct menuProduct = new MenuProduct(product.getId(), QUANTITY);
             menuProducts.add(menuProduct);
         }
 
-        menu.setMenuProducts(menuProducts);
+        return menuProducts;
     }
 }

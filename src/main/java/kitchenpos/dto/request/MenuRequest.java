@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 
 public class MenuRequest {
 
@@ -23,6 +24,14 @@ public class MenuRequest {
         this.menuProducts = menuProducts;
     }
 
+    public Menu toEntity() {
+        final List<MenuProduct> menuProducts = this.menuProducts.stream()
+                .map(MenuProductRequest::toEntity)
+                .collect(Collectors.toList());
+
+        return new Menu(name, price, menuGroupId, menuProducts);
+    }
+
     public String getName() {
         return name;
     }
@@ -37,17 +46,5 @@ public class MenuRequest {
 
     public List<MenuProductRequest> getMenuProducts() {
         return menuProducts;
-    }
-
-    public Menu toEntity() {
-        final Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts.stream()
-                .map(MenuProductRequest::toEntity)
-                .collect(Collectors.toList()));
-
-        return menu;
     }
 }
