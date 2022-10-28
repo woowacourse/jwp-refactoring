@@ -184,7 +184,7 @@ class TableGroupServiceTest extends ServiceTest {
     private List<MenuProduct> createMenuProducts(Long... productIds) {
         List<MenuProduct> menuProducts = new ArrayList<>();
         for (Long productId : productIds) {
-            menuProducts.add(new MenuProduct(productId, 1L));
+            menuProducts.add(new MenuProduct(productId, 1L, BigDecimal.valueOf(10000)));
         }
         return menuProducts;
     }
