@@ -1,6 +1,7 @@
 package kitchenpos;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Menu;
@@ -51,28 +52,19 @@ public class DomainFixture {
     }
 
     public static TableGroup createTableGroup(final OrderTable... orderTables) {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(orderTables));
-        return tableGroup;
+        return TableGroup.ofNullId(LocalDateTime.now(), List.of(orderTables));
     }
 
     public static OrderTable createOrderTable(final int numberOfGuests, final boolean isEmpty) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(isEmpty);
-        return orderTable;
+        return OrderTable.ofNullId(null, numberOfGuests, isEmpty);
     }
 
     public static OrderTable forUpdateEmpty(final boolean isEmpty) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(isEmpty);
-        return orderTable;
+        return OrderTable.ofNullId(null, 0, isEmpty);
     }
 
     public static OrderTable forUpdateGuestNumber(final int numberOfGuests) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        return orderTable;
+        return OrderTable.ofNullId(null, numberOfGuests, false);
     }
 
     public static Order createOrder(final OrderTable orderTable, final Menu... menus) {

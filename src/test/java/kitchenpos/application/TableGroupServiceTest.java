@@ -45,7 +45,6 @@ public class TableGroupServiceTest extends ServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-
     @Test
     @DisplayName("create -> 두 개 미만의 테이블인 경우 예외가 발생한다")
     void create_underTwoTables_throwException() {

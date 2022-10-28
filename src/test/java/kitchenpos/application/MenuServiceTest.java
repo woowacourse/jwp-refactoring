@@ -44,7 +44,7 @@ public class MenuServiceTest extends ServiceTest {
         // given
         final MenuGroup notRegisteredMenuGroup = 메뉴그룹1;
         final Product product = 상품등록(피자);
-        final Menu menu = createMenu("양념치킨메뉴", 10_000, notRegisteredMenuGroup, product);
+        final Menu menu = createMenu("양념치킨메뉴", 1_000, notRegisteredMenuGroup, product);
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
