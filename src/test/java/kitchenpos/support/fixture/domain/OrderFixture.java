@@ -1,7 +1,7 @@
 package kitchenpos.support.fixture.domain;
 
 import java.time.LocalDateTime;
-import kitchenpos.domain.Order;
+import kitchenpos.order.domain.Order;
 
 public enum OrderFixture {
 

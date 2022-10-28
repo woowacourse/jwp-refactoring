@@ -1,6 +1,6 @@
 package kitchenpos.support.fixture.domain;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuGroup;
 
 public enum MenuGroupFixture {
 

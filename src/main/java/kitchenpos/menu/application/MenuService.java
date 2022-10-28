@@ -1,14 +1,14 @@
-package kitchenpos.application;
+package kitchenpos.menu.application;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.menu.domain.dao.MenuDao;
+import kitchenpos.menu.domain.dao.MenuGroupDao;
+import kitchenpos.menu.domain.dao.MenuProductDao;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.dao.ProductDao;
 import org.springframework.stereotype.Service;

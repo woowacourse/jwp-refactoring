@@ -9,11 +9,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import kitchenpos.NestedApplicationTest;
-import kitchenpos.dao.JdbcTemplateMenuDao;
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.domain.dao.JdbcTemplateMenuDao;
+import kitchenpos.menu.domain.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.product.domain.dao.JdbcTemplateProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.product.domain.Product;
 import kitchenpos.support.fixture.domain.MenuGroupFixture;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,10 +1,10 @@
 package kitchenpos.table.application;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.MEAL;
 
 import java.util.List;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.order.domain.dao.OrderDao;
 import kitchenpos.table.application.dto.TableGroupResponse;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTables;
