@@ -65,6 +65,7 @@ public class OrderServiceTest {
         this.menuProductDao = new FakeMenuProductDao();
         this.productDao = new FakeProductDao();
         this.orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+        
         Product 사이다_1L = productDao.save(사이다);
         Product 뿌링클_2L = productDao.save(뿌링클);
 

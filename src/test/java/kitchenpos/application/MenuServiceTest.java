@@ -146,6 +146,7 @@ public class MenuServiceTest {
         menuProducts.add(뿌링클_한개_REQUEST);
 
         MenuRequest 뿌링클_음료두개_세트 = generateMenuRequest("뿌링클 음료두개 세트", BigDecimal.valueOf(21000), 할인메뉴, menuProducts);
+        
         // when & then
         assertThatThrownBy(() -> menuService.create(뿌링클_음료두개_세트))
                 .isInstanceOf(IllegalArgumentException.class);
