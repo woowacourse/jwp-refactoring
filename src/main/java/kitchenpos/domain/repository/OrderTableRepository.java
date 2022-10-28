@@ -1,6 +1,7 @@
 package kitchenpos.domain.repository;
 
 import java.util.List;
+import java.util.Optional;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Component;
@@ -20,5 +21,10 @@ public class OrderTableRepository {
 
     public void update(OrderTable orderTable) {
         orderTableDao.save(orderTable);
+    }
+
+    public OrderTable findById(Long id) {
+        return orderTableDao.findById(id)
+                .orElseThrow(IllegalArgumentException::new);
     }
 }
