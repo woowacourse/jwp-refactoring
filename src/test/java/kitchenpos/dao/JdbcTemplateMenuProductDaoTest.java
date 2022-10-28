@@ -114,8 +114,11 @@ class JdbcTemplateMenuProductDaoTest {
                 assert savedMenuProducts.containsKey(id);
 
                 final var actual = menuProductDao.findById(id);
-                assertThat(actual).isPresent();
-                assertEquals(actual.get(), savedMenuProducts.get(id));
+                final var expected = savedMenuProducts.get(id);
+
+                assertThat(actual).hasValueSatisfying(menuProduct ->
+                        assertEquals(menuProduct, expected)
+                );
             }
 
             @ParameterizedTest(name = "fail")

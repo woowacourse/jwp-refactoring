@@ -74,8 +74,11 @@ class JdbcTemplateProductDaoTest {
                 assert savedProducts.containsKey(id);
 
                 final var actual = productDao.findById(id);
-                assertThat(actual).isPresent();
-                assertEquals(actual.get(), savedProducts.get(id));
+                final var expected = savedProducts.get(id);
+
+                assertThat(actual).hasValueSatisfying(product ->
+                        assertEquals(product, expected)
+                );
             }
 
             @ParameterizedTest(name = "fail")

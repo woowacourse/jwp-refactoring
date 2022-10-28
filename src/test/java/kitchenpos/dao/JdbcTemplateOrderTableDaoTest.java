@@ -126,8 +126,11 @@ class JdbcTemplateOrderTableDaoTest {
                 assert savedOrderTables.containsKey(id);
 
                 final var actual = orderTableDao.findById(id);
-                assertThat(actual).isPresent();
-                assertEquals(actual.get(), savedOrderTables.get(id));
+                final var expected = savedOrderTables.get(id);
+
+                assertThat(actual).hasValueSatisfying(orderTable ->
+                        assertEquals(orderTable, expected)
+                );
             }
 
             @ParameterizedTest(name = "fail")

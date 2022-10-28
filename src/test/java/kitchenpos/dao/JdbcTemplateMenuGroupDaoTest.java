@@ -59,6 +59,7 @@ class JdbcTemplateMenuGroupDaoTest {
         void list() {
             final var actual = menuGroupDao.findAll();
             final var expected = DaoUtils.asList(savedMenuGroups);
+
             DaoUtils.assertAllEquals(actual, expected, JdbcTemplateMenuGroupDaoTest.this::assertEquals);
         }
 
@@ -71,8 +72,11 @@ class JdbcTemplateMenuGroupDaoTest {
                 assert savedMenuGroups.containsKey(id);
 
                 final var actual = menuGroupDao.findById(id);
-                assertThat(actual).isPresent();
-                assertEquals(actual.get(), savedMenuGroups.get(id));
+                final var expected = savedMenuGroups.get(id);
+
+                assertThat(actual).hasValueSatisfying(menuGroups ->
+                        assertEquals(menuGroups, expected)
+                );
             }
 
             @ParameterizedTest(name = "fail")
