@@ -2,12 +2,12 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,26 +20,22 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
+    private final MenuGroupRepository menuGroupRepository;
     private final MenuProductDao menuProductDao;
     private final ProductDao productDao;
 
-    public MenuService(
-            final MenuRepository menuRepository, final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao,
-            final MenuProductDao menuProductDao,
-            final ProductDao productDao
-    ) {
+    public MenuService(MenuRepository menuRepository, MenuDao menuDao, MenuGroupRepository menuGroupRepository,
+                       MenuProductDao menuProductDao, ProductDao productDao) {
         this.menuRepository = menuRepository;
         this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
+        this.menuGroupRepository = menuGroupRepository;
         this.menuProductDao = menuProductDao;
         this.productDao = productDao;
     }
 
     @Transactional
     public Menu create(final MenuRequest menuRequest) {
-        if (!menuGroupDao.existsById(menuRequest.getMenuGroupId())) {
+        if (!menuGroupRepository.existsById(menuRequest.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
 
