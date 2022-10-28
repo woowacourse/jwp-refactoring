@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.DomainFixture.getProduct;
+import static kitchenpos.DomainFixture.getProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 

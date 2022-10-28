@@ -8,7 +8,16 @@ public class MenuProduct {
     private Long menuId;
     private final Long productId;
     private final long quantity;
+
     private BigDecimal price;
+
+    public MenuProduct(final Long menuId, final MenuProduct menuProduct) {
+        this(null, menuId, menuProduct.productId, menuProduct.getQuantity());
+    }
+
+    public MenuProduct(final Long menuId, final Long productId, final long quantity) {
+        this(null, menuId, productId, quantity);
+    }
 
     public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity) {
         this.seq = seq;
@@ -17,7 +26,7 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public MenuProduct(Long productId, long quantity, BigDecimal price) {
+    public MenuProduct(final Long productId, final long quantity, final BigDecimal price) {
         this.productId = productId;
         this.quantity = quantity;
         this.price = price;
@@ -35,15 +44,15 @@ public class MenuProduct {
         return menuId;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
     public Long getProductId() {
         return productId;
     }
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public void setMenuId(Long menuId) {
+        this.menuId = menuId;
     }
 }

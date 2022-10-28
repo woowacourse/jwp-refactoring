@@ -25,7 +25,7 @@ class MenuTest {
 
     @DisplayName("메뉴의 가격이 총 가격보다 크면 예외를 반환한다.")
     @Test
-    void create_exception_() {
+    void create_exception_priceIsGreaterThanAmount() {
         assertThatThrownBy(() -> new Menu(
                 "마이쮸 포도맛",
                 BigDecimal.valueOf(2000),

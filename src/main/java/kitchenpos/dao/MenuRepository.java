@@ -9,16 +9,17 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class MenuRepository {
 
-    private final JdbcTemplateMenuDao menuDao;
-    private final JdbcTemplateMenuProductDao menuProductDao;
+    private final MenuDao menuDao;
+    private final MenuProductDao menuProductDao;
 
-    public MenuRepository(final JdbcTemplateMenuDao menuDao, final JdbcTemplateMenuProductDao menuProductDao) {
+    public MenuRepository(final MenuDao menuDao, final MenuProductDao menuProductDao) {
         this.menuDao = menuDao;
         this.menuProductDao = menuProductDao;
     }
 
     public Menu save(final Menu entity) {
         final Menu savedMenu = menuDao.save(entity);
+
         for (final MenuProduct menuProduct : entity.getMenuProducts()) {
             menuProduct.setMenuId(savedMenu.getId());
             savedMenu.addMenuProduct(menuProductDao.save(menuProduct));

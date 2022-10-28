@@ -13,6 +13,10 @@ public class Menu {
     private final Long menuGroupId;
     private final List<MenuProduct> menuProducts;
 
+    public Menu(final Menu menu, final List<MenuProduct> menuProducts) {
+        this(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProducts);
+    }
+
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
         this.id = id;
         this.name = name;

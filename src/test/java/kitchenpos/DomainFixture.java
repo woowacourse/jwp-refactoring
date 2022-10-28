@@ -1,20 +1,14 @@
-package kitchenpos.application;
+package kitchenpos;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 
 public class DomainFixture {
-
-    public static Menu getMenu(final Long menuGroupId, final List<MenuProduct> menuProducts) {
-        return new Menu("마이쮸 포도맛", BigDecimal.valueOf(800), menuGroupId, menuProducts);
-    }
 
     public static Product getProduct() {
         return new Product("마이쮸", BigDecimal.valueOf(800));
@@ -33,13 +27,12 @@ public class DomainFixture {
     }
 
     public static Order getOrder(final Long orderTableId, final Long menuId) {
-        final Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderLineItems(getOrderLineItems(menuId, 1));
-        return order;
+        return new Order(
+                orderTableId,
+                getOrderLineItems(menuId, 1));
     }
 
-    private static List<OrderLineItem> getOrderLineItems(final Long menuId, final long quantity) {
+    public static List<OrderLineItem> getOrderLineItems(final Long menuId, final long quantity) {
         return List.of(new OrderLineItem(null, null, menuId, quantity));
     }
 }

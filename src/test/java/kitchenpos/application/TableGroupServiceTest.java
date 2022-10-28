@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.DomainFixture.getEmptyTable;
-import static kitchenpos.application.DomainFixture.getMenu;
-import static kitchenpos.application.DomainFixture.getMenuGroup;
-import static kitchenpos.application.DomainFixture.getNotEmptyTable;
-import static kitchenpos.application.DomainFixture.getOrder;
+import static kitchenpos.DomainFixture.getEmptyTable;
+import static kitchenpos.DomainFixture.getMenuGroup;
+import static kitchenpos.DomainFixture.getNotEmptyTable;
+import static kitchenpos.DomainFixture.getOrder;
+import static kitchenpos.DtoFixture.getMenuCreateRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -117,7 +117,7 @@ class TableGroupServiceTest extends ServiceTest {
         final OrderTable table1 = 테이블_등록(getEmptyTable());
         final OrderTable table2 = 테이블_등록(getEmptyTable());
         final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroup());
-        final Menu menu = 메뉴_등록(getMenu(menuGroup.getId(), createMenuProducts()));
+        final Menu menu = 메뉴_등록(getMenuCreateRequest(menuGroup.getId(), createMenuProductDtos()));
 
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(table1, table2));

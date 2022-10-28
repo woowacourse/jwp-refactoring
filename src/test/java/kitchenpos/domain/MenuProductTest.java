@@ -6,9 +6,11 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 
 class MenuProductTest {
+
     @Test
     void amount() {
-        MenuProduct menuProduct = new MenuProduct(1L, 10, BigDecimal.valueOf(1000L));
+        final MenuProduct menuProduct = new MenuProduct(1L, 10, BigDecimal.valueOf(1000L));
+
         assertThat(menuProduct.getAmount()).isEqualTo(BigDecimal.valueOf(10000L));
     }
 }

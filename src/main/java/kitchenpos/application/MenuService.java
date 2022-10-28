@@ -8,6 +8,8 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.request.MenuCreateRequest;
+import kitchenpos.ui.request.MenuProductDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,17 +21,17 @@ public class MenuService {
     private final ProductDao productDao;
 
     public MenuService(
-            final MenuRepository menuDao,
+            final MenuRepository menuRepository,
             final MenuGroupDao menuGroupDao,
             final ProductDao productDao
     ) {
-        this.menuRepository = menuDao;
+        this.menuRepository = menuRepository;
         this.menuGroupDao = menuGroupDao;
         this.productDao = productDao;
     }
 
     @Transactional
-    public Menu create(final Menu request) {
+    public Menu create(final MenuCreateRequest request) {
         if (!menuGroupDao.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
@@ -44,17 +46,18 @@ public class MenuService {
         );
     }
 
-    private List<MenuProduct> mapToMenuProducts(final List<MenuProduct> requests) {
+    private List<MenuProduct> mapToMenuProducts(final List<MenuProductDto> requests) {
         return requests.stream()
                 .map(request -> {
-                    final Product product = getProduct(request);
-                    return new MenuProduct(product.getId(), request.getQuantity(), product.getPrice());
+                    final Product product = getProduct(request.getProductId());
+                    return request.toEntity(product);
                 })
                 .collect(Collectors.toList());
     }
 
-    private Product getProduct(MenuProduct it) {
-        return productDao.findById(it.getProductId()).orElseThrow(IllegalArgumentException::new);
+    private Product getProduct(final Long productId) {
+        return productDao.findById(productId)
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     public List<Menu> list() {

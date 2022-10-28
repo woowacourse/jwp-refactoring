@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.DomainFixture.getProduct;
+import static kitchenpos.DomainFixture.getProduct;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -12,6 +12,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.request.MenuCreateRequest;
+import kitchenpos.ui.request.MenuProductDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,8 +51,8 @@ public abstract class ServiceTest {
         return menuGroupService.create(menuGroup);
     }
 
-    protected Menu 메뉴_등록(final Menu menu) {
-        return menuService.create(menu);
+    protected Menu 메뉴_등록(final MenuCreateRequest request) {
+        return menuService.create(request);
     }
 
     protected OrderTable 테이블_등록(final OrderTable table) {
@@ -68,5 +70,10 @@ public abstract class ServiceTest {
     protected List<MenuProduct> createMenuProducts() {
         final Product product = 상품_등록(getProduct());
         return List.of(new MenuProduct(product.getId(), 1, BigDecimal.valueOf(800L)));
+    }
+
+    protected List<MenuProductDto> createMenuProductDtos() {
+        final Product product = 상품_등록(getProduct());
+        return List.of(new MenuProductDto(product.getId(), 1));
     }
 }
