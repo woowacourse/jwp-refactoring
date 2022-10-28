@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import kitchenpos.common.DataClearExtension;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,9 @@ class TableGroupServiceTest {
 
     @Autowired
     private TableGroupService tableGroupService;
+
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
@@ -80,14 +85,15 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹을 해제할 때")
     class UnGroup {
 
-//        @Test
-//        @DisplayName("테이블 그룹을 해제한다.")
-//        void ungroup() {
-//            OrderTable orderTable1 = createOrderTable(2, true);
-//            OrderTable orderTable2 = createOrderTable(2, true);
-//            TableGroup tableGroup = createTableGroup(List.of(orderTable1, orderTable2));
-//
-//            assertThatCode(() -> tableGroupController.ungroup(tableGroup.getId()));
-//        }
+        @Test
+        @DisplayName("테이블 그룹을 해제한다.")
+        void ungroup() {
+            OrderTable orderTable1 = orderTableRepository.save(new OrderTable(2, true));
+            OrderTable orderTable2 = orderTableRepository.save(new OrderTable(2, true));
+            TableGroup tableGroup = tableGroupRepository.save(new TableGroup(List.of(orderTable1, orderTable2)));
+
+            assertThatNoException()
+                    .isThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()));
+        }
     }
 }
