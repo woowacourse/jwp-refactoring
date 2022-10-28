@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
@@ -19,7 +18,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.ui.dto.OrderCreateRequest;
-import kitchenpos.ui.dto.OrderLineItemDto;
+import kitchenpos.ui.dto.OrderUpdateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -112,9 +111,10 @@ class OrderServiceTest extends ServiceTestBase {
 
         OrderStatus changedStatus = OrderStatus.COOKING;
         savedOrder.changeOrderStatus(changedStatus);
+        OrderUpdateRequest orderUpdateRequest = new OrderUpdateRequest(changedStatus.name());
 
         // when
-        orderService.changeOrderStatus(savedOrder.getId(), changedStatus);
+        orderService.changeOrderStatus(savedOrder.getId(), orderUpdateRequest);
 
         // then
         Optional<Order> actual = orderDao.findById(savedOrder.getId());
@@ -128,9 +128,10 @@ class OrderServiceTest extends ServiceTestBase {
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
         Order order = 주문(orderTableId, orderLineItems);
         orderService.create(toRequest(order));
+        OrderUpdateRequest orderUpdateRequest = new OrderUpdateRequest(OrderStatus.COOKING.name());
 
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(100L, order.getOrderStatus()))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(100L, orderUpdateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -145,7 +146,8 @@ class OrderServiceTest extends ServiceTestBase {
         orderDao.save(savedOrder);
 
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), savedOrder.getOrderStatus()))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(),
+                new OrderUpdateRequest(OrderStatus.COMPLETION.name())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
