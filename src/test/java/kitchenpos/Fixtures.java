@@ -18,6 +18,8 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.MenuProductRequest;
+import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderTableCreateRequest;
@@ -45,8 +47,23 @@ public class Fixtures {
         return new ProductRequest(product.getName(),product.getPrice());
     }
 
+    public static MenuRequest 메뉴요청_후라이드치킨() {
+        return new MenuRequest(1L, "후라이드치킨", BigDecimal.valueOf(16000),
+                메뉴그룹_한마리메뉴().getId(),
+                List.of(메뉴상품요청_후라이드()));
+    }
+
+    public static MenuProductRequest 메뉴상품요청_후라이드() {
+        return new MenuProductRequest(1L, 1L, 상품_후라이드().getId(), 1);
+    }
+
+    public static MenuProduct 메뉴상품_후라이드() {
+        return new MenuProduct(1L, 1L, 상품_후라이드().getId(), 1);
+    }
+
+
     public static Menu 메뉴_후라이드치킨() {
-        return new Menu(1L, "후라이드치킨", BigDecimal.valueOf(16000),
+        return new Menu(null, "후라이드치킨", BigDecimal.valueOf(16000),
                 메뉴그룹_한마리메뉴().getId(),
                 List.of(메뉴상품_후라이드()));
     }
@@ -55,10 +72,6 @@ public class Fixtures {
         return new Menu(1L, "후라이드치킨", BigDecimal.valueOf(16000),
                 메뉴그룹_한마리메뉴().getId(),
                 Arrays.asList(menuProducts));
-    }
-
-    public static MenuProduct 메뉴상품_후라이드() {
-        return new MenuProduct(1L, 1L, 상품_후라이드().getId(), 1);
     }
 
 

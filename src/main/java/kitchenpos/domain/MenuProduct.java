@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.math.BigDecimal;
+
 public class MenuProduct {
     private final Long seq;
     private Long menuId;
@@ -31,5 +33,9 @@ public class MenuProduct {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public BigDecimal getSum(Product product) {
+        return BigDecimal.valueOf(quantity).multiply(product.getPrice());
     }
 }
