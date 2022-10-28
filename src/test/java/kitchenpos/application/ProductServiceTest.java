@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.dto.ProductRequest;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
 import org.junit.jupiter.api.Test;
@@ -21,9 +22,9 @@ class ProductServiceTest extends ServiceTest {
 
     @Test
     void 상품을_생성할_수_있다() {
-        Product product = new Product("제품1", new BigDecimal(10000));
+        ProductRequest request = new ProductRequest("제품1", new BigDecimal(10000));
 
-        Product actual = productService.create(product);
+        Product actual = productService.create(request);
 
         assertAll(() -> {
             assertThat(actual.getId()).isNotNull();
@@ -34,9 +35,9 @@ class ProductServiceTest extends ServiceTest {
 
     @Test
     void 상품의_가격이_음수인_경우_상품을_생성할_수_없다() {
-        Product product = new Product("제품1", new BigDecimal(-1));
+        ProductRequest request = new ProductRequest("제품1", new BigDecimal(-1));
 
-        assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> productService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

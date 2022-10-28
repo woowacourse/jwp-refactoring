@@ -23,8 +23,15 @@ public class Product {
     }
 
     public Product(final String name, final BigDecimal price) {
+        validatePrice(price);
         this.name = name;
         this.price = price;
+    }
+
+    private void validatePrice(final BigDecimal price) {
+        if (price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("상품의 가격은 음수일 수 없습니다.");
+        }
     }
 
     public Long getId() {
