@@ -37,17 +37,17 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu menu) {
-        validateInvalidPrice(menu);
-        validateExistsMenuGroupId(menu);
+    public Menu create(final Menu request) {
+        validateInvalidPrice(request);
+        validateExistsMenuGroupId(request);
 
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
+        final List<MenuProduct> menuProductRequests = request.getMenuProducts();
 
-        BigDecimal totalSum = calculateTotalSum(menuProducts);
-        validateMenuPriceBiggerThanSum(menu, totalSum);
+        BigDecimal totalSum = calculateTotalSum(menuProductRequests);
+        validateMenuPriceBiggerThanSum(request, totalSum);
 
-        final Menu savedMenu = menuDao.save(menu);
-        final List<MenuProduct> savedMenuProducts = updateMenuProducts(menuProducts, savedMenu.getId());
+        final Menu savedMenu = menuDao.save(request);
+        final List<MenuProduct> savedMenuProducts = updateMenuProducts(menuProductRequests, savedMenu.getId());
         savedMenu.addMenuProducts(savedMenuProducts);
 
         return savedMenu;

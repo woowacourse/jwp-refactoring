@@ -20,12 +20,12 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final Product product) {
-        if (product.isValidPrice()) {
+    public Product create(final Product request) {
+        if (request.isValidPrice()) {
             throw new IllegalArgumentException();
         }
 
-        return productDao.save(product);
+        return productDao.save(request);
     }
 
     public List<Product> list() {
