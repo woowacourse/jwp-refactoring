@@ -14,10 +14,7 @@ public class OrderTable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "tableGroupId")
-    private Long tableGroupId;
-
-    @Column(name = "numberOfGuests")
+    @Column(name = "number_of_guests")
     private int numberOfGuests;
 
     @Column(name = "empty")
@@ -47,14 +44,6 @@ public class OrderTable {
         this.id = id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
@@ -69,5 +58,13 @@ public class OrderTable {
 
     public void setEmpty(final boolean empty) {
         this.empty = empty;
+    }
+
+    public OrderTable changeToUse() {
+        if (!this.empty) {
+            throw new IllegalArgumentException();
+        }
+        this.empty = false;
+        return this;
     }
 }

@@ -2,17 +2,34 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
+@Entity
 public class TableGroup {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "created_date")
     private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
+
+    @Embedded
+    private OrderTables orderTables;
 
     public TableGroup() {
+        this.createdDate = LocalDateTime.now();
     }
 
     public TableGroup(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+        this.createdDate = LocalDateTime.now();
+        this.orderTables = new OrderTables(orderTables);
     }
 
     public Long getId() {
@@ -32,10 +49,6 @@ public class TableGroup {
     }
 
     public List<OrderTable> getOrderTables() {
-        return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+        return orderTables.getOrderTables();
     }
 }
