@@ -45,7 +45,7 @@ class OrderTableTest {
     @DisplayName("특정한 수의 고객이 테이블을 이용한다.")
     @Test
     void acceptGuests_withNumberOfGuests() {
-        final OrderTable orderTable = OrderTable.ofNew(0, true);
+        final OrderTable orderTable = OrderTable.ofNew(0, false);
         final int numberOfGuests = 2;
         orderTable.acceptGuests(numberOfGuests);
 

@@ -1,6 +1,10 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 public class OrderTable {
+
+    private static final int MIN_NUMBER_OF_GUESTS = 0;
 
     private final Long id;
     private Long tableGroupId;
@@ -29,16 +33,38 @@ public class OrderTable {
     }
 
     public void acceptGuests(final int numberOfGuests) {
+        checkGuests(numberOfGuests);
+        checkEmpty();
         acceptGuests();
         this.numberOfGuests = numberOfGuests;
     }
 
     public void acceptGuests() {
+        checkGroup();
         this.empty = false;
     }
 
     public void clear() {
+        checkGroup();
         this.empty = true;
+    }
+
+    private void checkGuests(final int numberOfGuests) {
+        if (numberOfGuests < MIN_NUMBER_OF_GUESTS) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void checkGroup() {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void checkEmpty() {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
