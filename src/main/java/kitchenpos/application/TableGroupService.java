@@ -11,6 +11,9 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableResponse;
+import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -29,8 +32,11 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+    public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
+        final List<OrderTable> orderTables = tableGroupRequest.getOrderTables().stream()
+                .map(orderTableRequest -> orderTableDao.findById(orderTableRequest.getId())
+                        .orElseThrow(() -> new IllegalArgumentException("등록되는 모든 테이블들은 존재해야 한다.")))
+                .collect(Collectors.toList());
 
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException("등록되는 테이블 수가 2 이상이어야 한다.");
@@ -55,7 +61,7 @@ public class TableGroupService {
             }
         }
 
-        TableGroup timeSetTable = new TableGroup(null, LocalDateTime.now(), tableGroup.getOrderTables());
+        TableGroup timeSetTable = new TableGroup(null, LocalDateTime.now(), orderTables);
 
         final TableGroup savedTableGroup = tableGroupDao.save(timeSetTable);
 
@@ -67,7 +73,23 @@ public class TableGroupService {
         }
         savedTableGroup.updateOrderTables(savedOrderTables);
 
-        return savedTableGroup;
+        return toTableGroupResponse(savedOrderTables, savedTableGroup);
+    }
+
+    private TableGroupResponse toTableGroupResponse(List<OrderTable> savedOrderTables, TableGroup savedTableGroup) {
+        return new TableGroupResponse(savedTableGroup.getId(), savedTableGroup.getCreatedDate(),
+                getOrderTableResponses(savedOrderTables));
+    }
+
+    private List<OrderTableResponse> getOrderTableResponses(List<OrderTable> savedOrderTables) {
+        return savedOrderTables.stream()
+                .map(this::toOrderTableResponse)
+                .collect(Collectors.toList());
+    }
+
+    private OrderTableResponse toOrderTableResponse(OrderTable orderTable) {
+        return new OrderTableResponse(orderTable.getId(), orderTable.getTableGroupId(),
+                orderTable.getNumberOfGuests(), orderTable.isEmpty());
     }
 
     @Transactional

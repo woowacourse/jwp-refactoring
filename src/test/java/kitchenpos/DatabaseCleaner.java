@@ -8,10 +8,9 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-public class DatabaseCleanner implements InitializingBean {
+public class DatabaseCleaner implements InitializingBean {
     @Autowired
     private DataSource dataSource;
 
@@ -35,7 +34,6 @@ public class DatabaseCleanner implements InitializingBean {
         }
     }
 
-    @Transactional
     public void clear() {
         try (final var connection = dataSource.getConnection();
              final var statement = connection.createStatement()) {

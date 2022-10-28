@@ -78,7 +78,8 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
-        return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+        return jdbcTemplate.queryForObject(sql, parameters,
+                (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     private void update(final OrderTable entity) {

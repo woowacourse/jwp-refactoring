@@ -248,7 +248,9 @@ Content-Type: application/json
 
 #### 개인
 
-- [ ] 도메인과 Dto 분리
+- [ ] 트랜잭션 readonly 설정
+- [x] 도메인과 Dto 분리
+- [ ] 서비스 로직을 도메인으로 이동
 - [x] 도메인 세터 삭제 및 생성자 수정
 
 ### 테스트

@@ -3,10 +3,14 @@ package kitchenpos.application;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,18 +25,30 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
+    public OrderTableResponse create(final OrderTableCreateRequest orderTable) {
         OrderTable nullTable = new OrderTable(null, null,
                 orderTable.getNumberOfGuests(), orderTable.isEmpty());
-        return orderTableDao.save(nullTable);
+        return toOrderTableResponse(orderTableDao.save(nullTable));
     }
 
-    public List<OrderTable> list() {
-        return orderTableDao.findAll();
+    private OrderTableResponse toOrderTableResponse(OrderTable orderTable) {
+        return new OrderTableResponse(orderTable.getId(), orderTable.getTableGroupId(),
+                orderTable.getNumberOfGuests(), orderTable.isEmpty());
+    }
+
+
+    public List<OrderTableResponse> list() {
+        return toOrderTableResponses(orderTableDao.findAll());
+    }
+
+    private List<OrderTableResponse> toOrderTableResponses(List<OrderTable> savedOrderTables) {
+        return savedOrderTables.stream()
+                .map(this::toOrderTableResponse)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest orderTable) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 아이디의 테이블은 존재하지 않는다."));
 
@@ -47,7 +63,7 @@ public class TableService {
 
         savedOrderTable.updateEmpty(orderTable.isEmpty());
 
-        return orderTableDao.save(savedOrderTable);
+        return toOrderTableResponse(orderTableDao.save(savedOrderTable));
     }
 
     @Transactional
