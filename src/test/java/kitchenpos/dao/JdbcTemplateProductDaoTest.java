@@ -10,7 +10,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.sql.DataSource;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -61,14 +60,9 @@ class JdbcTemplateProductDaoTest {
 
         @Test
         void findAll() {
-            final List<Product> actual = productDao.findAll();
-            assertAllMatches(actual, asList(savedProducts));
-        }
-
-        private List<Product> asList(final Map<Long, Product> products) {
-            return products.values()
-                    .stream()
-                    .collect(Collectors.toUnmodifiableList());
+            final var actual = productDao.findAll();
+            final var expected = DaoUtils.asList(savedProducts);
+            DaoUtils.assertAllEquals(actual, expected, JdbcTemplateProductDaoTest.this::assertEquals);
         }
 
         @Nested
@@ -92,18 +86,6 @@ class JdbcTemplateProductDaoTest {
                 final var actual = productDao.findById(id);
                 assertThat(actual).isEmpty();
             }
-        }
-    }
-
-    private void assertAllMatches(final List<Product> actualList, final List<Product> expectedList) {
-        final var expectedSize = actualList.size();
-        assertThat(expectedList).hasSize(expectedSize);
-
-        for (int i = 0; i < expectedSize; i++) {
-            final var actual = actualList.get(i);
-            final var expected = expectedList.get(i);
-
-            assertEquals(actual, expected);
         }
     }
 
