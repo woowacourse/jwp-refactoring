@@ -77,8 +77,14 @@ public class MenuService {
         final List<Menu> menus = menuDao.findAll();
         return menus.stream()
                 .map(menu ->
-                        new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(),
-                                MenuProductResponse.from(menuProductDao.findAllByMenuId(menu.getId()))))
+                        new MenuResponse(
+                                menu.getId(),
+                                menu.getName(),
+                                menu.getPrice(),
+                                menu.getMenuGroupId(),
+                                MenuProductResponse.from(menuProductDao.findAllByMenuId(menu.getId()))
+                        )
+                )
                 .collect(Collectors.toList());
     }
 }

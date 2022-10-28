@@ -26,6 +26,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderResponse;
+import kitchenpos.dto.OrderUpdateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -132,11 +133,11 @@ class OrderServiceTest extends ServiceTest {
                 createOrderLineItem(menu.getId()));
         Order order = orderDao.save(newOrder);
         orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 10));
-        List<Order> orders = orderService.list();
+        List<OrderResponse> response = orderService.list();
 
         assertAll(
-                () -> assertThat(orders.size()).isEqualTo(1L),
-                () -> assertThat(orders.get(0).getOrderLineItems()).isNotEmpty()
+                () -> assertThat(response.size()).isEqualTo(1L),
+                () -> assertThat(response.get(0).getOrderLineItems()).isNotEmpty()
         );
     }
 
@@ -148,9 +149,9 @@ class OrderServiceTest extends ServiceTest {
         Order newOrder = new Order(orderTable.getId(), "COOKING", LocalDateTime.now(),
                 createOrderLineItem(menu.getId()));
         Order order = orderDao.save(newOrder);
-        Order changeOrder = createOrderWithMealStatus("MEAL");
+        OrderUpdateRequest request = new OrderUpdateRequest("MEAL");
 
-        orderService.changeOrderStatus(order.getId(), changeOrder);
+        orderService.changeOrderStatus(order.getId(), request);
         Order foundOrder = orderDao.findById(order.getId()).get();
 
         assertThat(foundOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
@@ -159,9 +160,9 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 수정 시 존재하지 않는 주문일 경우 예외가 발생한다.")
     @Test
     void changeOrderStatusWithInvalidOrder() {
-        Order changeOrder = createOrderWithMealStatus("MEAL");
+        OrderUpdateRequest request = new OrderUpdateRequest("MEAL");
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(9999L, changeOrder))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(9999L, request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -173,11 +174,11 @@ class OrderServiceTest extends ServiceTest {
         Order newOrder = new Order(orderTable.getId(), "COOKING", LocalDateTime.now(),
                 createOrderLineItem(menu.getId()));
         Order order = orderDao.save(newOrder);
-        Order changeOrder = createOrderWithMealStatus("COMPLETION");
+        OrderUpdateRequest request = new OrderUpdateRequest("COMPLETION");
 
-        orderService.changeOrderStatus(order.getId(), changeOrder);
+        orderService.changeOrderStatus(order.getId(), request);
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), changeOrder))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -215,11 +216,5 @@ class OrderServiceTest extends ServiceTest {
             menuProducts.add(new MenuProduct(productId, 1L, BigDecimal.valueOf(10000)));
         }
         return menuProducts;
-    }
-
-    private Order createOrderWithMealStatus(String orderStatus) {
-        Order changeOrder = new Order();
-        changeOrder.setOrderStatus(orderStatus);
-        return changeOrder;
     }
 }

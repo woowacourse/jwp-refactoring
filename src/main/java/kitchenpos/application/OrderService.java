@@ -3,7 +3,7 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -13,7 +13,9 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderLineItemResponse;
 import kitchenpos.dto.OrderResponse;
+import kitchenpos.dto.OrderUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,7 +58,7 @@ public class OrderService {
 
     private void checkExistMenuIn(Order order) {
         final long menuCount = menuDao.countByIdIn(order.getMenuIds());
-        if (!order.hasValidCount(menuCount)) {
+        if (!order.hasValidSize(menuCount)) {
             throw new IllegalArgumentException();
         }
     }
@@ -80,32 +82,36 @@ public class OrderService {
         return savedOrderLineItems;
     }
 
-    public List<Order> list() {
+    public List<OrderResponse> list() {
         final List<Order> orders = orderDao.findAll();
-
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
-        }
-
-        return orders;
+        return orders.stream()
+                .map(order -> new OrderResponse(
+                                order.getId(),
+                                order.getOrderTableId(),
+                                order.getOrderStatus(),
+                                order.getOrderedTime(),
+                                OrderLineItemResponse.from(orderLineItemDao.findAllByOrderId(order.getId()))
+                        )
+                )
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderUpdateRequest request) {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        if (savedOrder.hasStatus(OrderStatus.COMPLETION)) {
             throw new IllegalArgumentException();
         }
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
+        final OrderStatus orderStatus = OrderStatus.from(request.getOrderStatus());
         savedOrder.setOrderStatus(orderStatus.name());
 
         orderDao.save(savedOrder);
 
         savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
 
-        return savedOrder;
+        return OrderResponse.from(savedOrder);
     }
 }

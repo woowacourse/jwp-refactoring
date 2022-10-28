@@ -41,6 +41,14 @@ public class Order {
         this(null, orderTableId, null, null, orderLineItems);
     }
 
+    public boolean hasValidSize(long size) {
+        return orderLineItems.size() == size;
+    }
+
+    public boolean hasStatus(OrderStatus status) {
+        return orderStatus.equals(status.name());
+    }
+
     public Long getId() {
         return id;
     }
@@ -85,9 +93,5 @@ public class Order {
         return orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
-    }
-
-    public boolean hasValidCount(long menuCount) {
-        return orderLineItems.size() == menuCount;
     }
 }
