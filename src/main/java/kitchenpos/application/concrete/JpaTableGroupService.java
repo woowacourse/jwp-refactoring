@@ -1,6 +1,5 @@
 package kitchenpos.application.concrete;
 
-import com.sun.istack.NotNull;
 import java.util.Objects;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.domain.TableGroup;
@@ -39,7 +38,7 @@ public class JpaTableGroupService implements TableGroupService {
 
     @Transactional
     @Override
-    public void unGroup(@NotNull final Long tableGroupId) {
+    public void unGroup(final Long tableGroupId) {
         validateTableGroupId(tableGroupId);
 
         final var tableGroup = tableGroupRepository.findById(tableGroupId)
