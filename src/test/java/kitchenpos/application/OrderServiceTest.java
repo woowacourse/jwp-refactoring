@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -15,9 +16,9 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.order.CreateOrderRequest;
-import kitchenpos.dto.order.CreateOrderLineItemRequest;
 import kitchenpos.dto.order.ChangeOrderStatusRequest;
+import kitchenpos.dto.order.CreateOrderLineItemRequest;
+import kitchenpos.dto.order.CreateOrderRequest;
 
 class OrderServiceTest extends ServiceTest {
 
@@ -144,15 +145,14 @@ class OrderServiceTest extends ServiceTest {
     }
 
     private Menu createAndSaveMenu() {
-        MenuGroup menuGroup = new MenuGroup("menuGroup");
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
-        Menu menu = new Menu("menu", new BigDecimal(1000), savedMenuGroup.getId());
+        MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("menuGroup"));
+        Menu menu = new Menu("menu", new BigDecimal(0), savedMenuGroup, new HashMap<>());
 
         return menuDao.save(menu);
     }
 
     private OrderTable createAndSaveOrderTable() {
-        OrderTable orderTable = new OrderTable(10,false);
+        OrderTable orderTable = new OrderTable(10, false);
         return orderTableDao.save(orderTable);
     }
 

@@ -1,83 +1,62 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.menu.CreateMenuRequest;
-import kitchenpos.dto.menu.CreateMenuProductRequest;
 
 @Service
 public class MenuService {
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
-    private final MenuProductDao menuProductDao;
     private final ProductDao productDao;
 
     public MenuService(
         final MenuDao menuDao,
         final MenuGroupDao menuGroupDao,
-        final MenuProductDao menuProductDao,
         final ProductDao productDao
     ) {
         this.menuDao = menuDao;
         this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
         this.productDao = productDao;
     }
 
     @Transactional
     public Menu create(final CreateMenuRequest request) {
 
-        if (!menuGroupDao.existsById(request.getMenuGroupId())) {
-            throw new IllegalArgumentException("존재하지 않는 메뉴그룹입니다.");
-        }
+        final MenuGroup menuGroup = findMenuGroupById(request.getMenuGroupId());
 
-        final List<CreateMenuProductRequest> menuProducts = request.getMenuProducts();
+        final Map<Product, Long> menuProducts = request.getMenuProducts().stream()
+            .collect(Collectors.toMap(
+                menuProduct -> findProductById(menuProduct.getProductId()),
+                menuProduct -> menuProduct.getQuantity())
+            );
 
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final CreateMenuProductRequest menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 제품입니다."));
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        if (request.getPrice().compareTo(sum) > 0) {
-            throw new IllegalArgumentException("각 상품 가격의 합보다 큰 가격을 적용할 수 없습니다.");
-        }
-
-        final Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId());
-        final Menu savedMenu = menuDao.save(menu);
-
-        final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final CreateMenuProductRequest product : menuProducts) {
-            MenuProduct menuProduct = new MenuProduct(menuId, product.getProductId(), product.getQuantity());
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
-        }
-        savedMenu.setMenuProducts(savedMenuProducts);
-
-        return savedMenu;
+        final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup, menuProducts);
+        return menuDao.save(menu);
     }
 
     public List<Menu> list() {
-        final List<Menu> menus = menuDao.findAll();
+        return menuDao.findAll();
+    }
 
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
+    private MenuGroup findMenuGroupById(Long id) {
+        return menuGroupDao.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴그룹입니다."));
+    }
 
-        return menus;
+    private Product findProductById(Long id) {
+        return productDao.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 제품입니다."));
     }
 }

@@ -67,22 +67,6 @@ class MenuServiceTest extends ServiceTest {
                 .hasMessageContaining("존재하지 않는 제품입니다.");
         }
 
-        @Test
-        @DisplayName("각 상품의 합보다 가격이 큰 값일 경우 예외가 발생한다.")
-        void biggerThanProductPriceSum() {
-            // given
-            Product product = createAndSaveProduct();
-            MenuGroup menuGroup = createAndSaveMenuGroup();
-
-            CreateMenuRequest menu = createMenuCreateRequest(new BigDecimal(2000), menuGroup.getId(), product.getId(),
-                1L);
-
-            // when, then
-            assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("각 상품 가격의 합보다 큰 가격을 적용할 수 없습니다.");
-        }
-
     }
 
     @Nested
