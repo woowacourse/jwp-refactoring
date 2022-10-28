@@ -1,11 +1,23 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class Product {
+
     private Long id;
     private String name;
     private BigDecimal price;
+
+    public Product() {
+    }
+
+    public Product(final BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
+        this.price = price;
+    }
 
     public Long getId() {
         return id;

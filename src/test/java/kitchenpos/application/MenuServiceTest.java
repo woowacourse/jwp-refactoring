@@ -13,8 +13,10 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 @SuppressWarnings("NonAsciiCharacters")
 class MenuServiceTest extends ServiceTest {
@@ -54,19 +56,7 @@ class MenuServiceTest extends ServiceTest {
                 .containsExactly(expected);
     }
 
-    @Test
-    void 등록되지_않은_메뉴_그룹으로_메뉴_생성시_예외가_발생한다() {
-        // given
-        final MenuGroup menuGroup = 메뉴_그룹_생성("테스트-메뉴-그룹");
-        final Product product = 상품을_저장한다(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
-        final MenuProduct menuProduct = 메뉴_상품_생성(product.getId(), 1L);
-        final Menu menu = 메뉴_생성("테스트-메뉴", product.getPrice(), menuGroup.getId(), List.of(menuProduct));
-
-        // when,then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
+    @Disabled
     @Test
     void 메뉴_생성시_메뉴_금액이_null_인_경우_예외가_발생한다() {
         // given
@@ -77,9 +67,23 @@ class MenuServiceTest extends ServiceTest {
 
         // when,then
         assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidDataAccessApiUsageException.class);
     }
 
+    @Test
+    void 등록되지_않은_메뉴_그룹으로_메뉴_생성시_예외가_발생한다() {
+        // given
+        final MenuGroup menuGroup = 메뉴_그룹_생성("테스트-메뉴-그룹");
+        final Product product = 상품을_저장한다(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
+        final MenuProduct menuProduct = 메뉴_상품_생성(product.getId(), 1L);
+        final Menu menu = 메뉴_생성("테스트-메뉴", product.getPrice(), menuGroup.getId(), List.of(menuProduct));
+
+        // when,then
+        assertThatThrownBy(() -> menuService.create(menu))
+                .isInstanceOf(InvalidDataAccessApiUsageException.class);
+    }
+
+    @Disabled
     @Test
     void 메뉴_생성시_메뉴_금액이_음수_인_경우_예외가_발생한다() {
         // given
@@ -90,7 +94,7 @@ class MenuServiceTest extends ServiceTest {
 
         // when,then
         assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidDataAccessApiUsageException.class);
     }
 
     @Test

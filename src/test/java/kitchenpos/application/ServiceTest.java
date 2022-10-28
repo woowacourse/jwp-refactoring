@@ -4,12 +4,14 @@ import java.util.List;
 import javax.transaction.Transactional;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -40,6 +42,9 @@ public class ServiceTest {
     @Autowired
     private TableGroupDao tableGroupDao;
 
+    @Autowired
+    private MenuProductDao menuProductDao;
+
     protected MenuGroup 메뉴_그룹을_저장한다(final MenuGroup menuGroup) {
         return menuGroupDao.save(menuGroup);
     }
@@ -66,5 +71,9 @@ public class ServiceTest {
 
     protected List<OrderTable> 주문_테이블_전체를_조회한다() {
         return orderTableDao.findAll();
+    }
+
+    protected MenuProduct 메뉴_상품을_저장한다(final MenuProduct menuProduct) {
+        return menuProductDao.save(menuProduct);
     }
 }

@@ -2,13 +2,27 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import org.springframework.util.CollectionUtils;
 
 public class Order {
+
     private Long id;
     private Long orderTableId;
+    private OrderTable orderTable;
     private String orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
+
+    public Order() {
+    }
+
+    public Order(final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
+        this.orderLineItems = orderLineItems;
+    }
 
     public Long getId() {
         return id;
@@ -48,5 +62,17 @@ public class Order {
 
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
+    }
+
+    public boolean canChangeOrderStatus() {
+        return Objects.equals(OrderStatus.COMPLETION.name(), orderStatus);
+    }
+
+    public void setOrderTable(final OrderTable orderTable) {
+        this.orderTable = orderTable;
+    }
+
+    public boolean hasEmptyTable() {
+        return orderTable.isEmpty();
     }
 }
