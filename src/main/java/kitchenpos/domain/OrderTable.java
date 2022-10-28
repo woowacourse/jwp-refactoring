@@ -1,7 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.PersistenceCreator;
 
 public class OrderTable {
 
@@ -11,15 +11,10 @@ public class OrderTable {
     private final int numberOfGuests;
     private final boolean empty;
 
-    public OrderTable(final int numberOfGuests, final boolean empty) {
-        this(null, null, numberOfGuests, empty);
+    public static OrderTable of(final int numberOfGuests, final boolean empty) {
+        return new OrderTable(null, null, numberOfGuests, empty);
     }
 
-    public OrderTable(final Long id, final int numberOfGuests, final boolean empty) {
-        this(id, null, numberOfGuests, empty);
-    }
-
-    @PersistenceCreator
     public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
@@ -40,6 +35,12 @@ public class OrderTable {
     }
 
     public OrderTable changeNumberOfGuests(final int numberOfGuests) {
+        if (isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
         return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 
@@ -48,6 +49,13 @@ public class OrderTable {
     }
 
     public OrderTable changeEmpty(final boolean empty) {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
+    }
+
+    public OrderTable ungroup(final boolean empty) {
         return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 }

@@ -86,7 +86,7 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            final OrderTable updated = new OrderTable(orderTable.getId(), orderTable.getNumberOfGuests(), false);
+            final OrderTable updated = orderTable.ungroup(false);
             orderTableRepository.save(updated);
         }
     }

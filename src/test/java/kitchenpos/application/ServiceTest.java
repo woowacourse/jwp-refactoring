@@ -91,7 +91,7 @@ abstract class ServiceTest {
     }
 
     protected OrderTable saveOrderTable(final int numberOfGuests, final boolean empty) {
-        final OrderTable orderTable = new OrderTable(numberOfGuests, empty);
+        final OrderTable orderTable = OrderTable.of(numberOfGuests, empty);
         return orderTableRepository.save(orderTable);
     }
 
