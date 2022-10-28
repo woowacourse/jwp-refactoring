@@ -27,4 +27,12 @@ public class OrderTableRepository {
         return orderTableDao.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
     }
+
+    public OrderTable save(OrderTable orderTable) {
+        return orderTableDao.save(orderTable);
+    }
+
+    public List<OrderTable> findAll() {
+        return orderTableDao.findAll();
+    }
 }

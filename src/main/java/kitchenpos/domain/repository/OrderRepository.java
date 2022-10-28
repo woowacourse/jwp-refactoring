@@ -63,4 +63,12 @@ public class OrderRepository {
     public Order update(Order order) {
         return orderDao.save(order);
     }
+
+    public boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<String> orderStatus) {
+        return orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatus);
+    }
+
+    public boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<String> orderStatus) {
+        return orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatus);
+    }
 }
