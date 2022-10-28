@@ -43,20 +43,6 @@ public class Order {
         this.id = id;
     }
 
-    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        this(orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
-    }
-
-    public Order(final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
-        this(null, orderTableId, orderStatus, orderedTime);
-    }
-
-    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime) {
-        this(orderTableId, orderStatus, orderedTime, new ArrayList<>());
-        this.id = id;
-    }
-
     public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
         injectOrder(orderLineItems);

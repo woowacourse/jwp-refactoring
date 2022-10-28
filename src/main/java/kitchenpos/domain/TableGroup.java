@@ -31,17 +31,17 @@ public class TableGroup {
         this.id = id;
     }
 
-    public TableGroup(LocalDateTime createdDate) {
+    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        validateOrderTables(orderTables);
+        injectTableGroup(orderTables);
         this.createdDate = createdDate;
+        this.orderTables = orderTables;
     }
 
-    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
-        validateOrderTables(orderTables);
+    private void injectTableGroup(final List<OrderTable> orderTables) {
         for (OrderTable orderTable : orderTables) {
             orderTable.updateTableGroup(this);
         }
-        this.createdDate = createdDate;
-        this.orderTables = orderTables;
     }
 
     private void validateOrderTables(final List<OrderTable> orderTables) {

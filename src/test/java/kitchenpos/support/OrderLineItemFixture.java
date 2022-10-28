@@ -15,10 +15,10 @@ public enum OrderLineItemFixture {
     }
 
     public OrderLineItem 생성(final long menuId) {
-        return new OrderLineItem(null, new Menu(menuId), quantity);
+        return new OrderLineItem(null, null, new Menu(menuId), quantity);
     }
 
     public OrderLineItem 생성(final Order order, final Menu menu) {
-        return new OrderLineItem(order, menu, quantity);
+        return new OrderLineItem(null, order, menu, quantity);
     }
 }

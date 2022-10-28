@@ -4,6 +4,7 @@ import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -28,6 +29,6 @@ public enum OrderFixture {
     }
 
     public Order 주문항목_없이_생성(final long orderTableId) {
-        return new Order(orderTableId, this.orderStatus, this.orderedTime);
+        return new Order(orderTableId, this.orderStatus, this.orderedTime, new ArrayList<>());
     }
 }

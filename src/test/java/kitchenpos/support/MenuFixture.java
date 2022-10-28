@@ -1,6 +1,7 @@
 package kitchenpos.support;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
@@ -19,7 +20,7 @@ public enum MenuFixture {
     }
 
     public Menu 생성(final long menuGroupId) {
-        return new Menu(this.name, new Price(new BigDecimal(this.price)), menuGroupId);
+        return new Menu(this.name, new Price(new BigDecimal(this.price)), menuGroupId, new ArrayList<>());
     }
 
     public Menu 생성(final long menuGroupId, final List<MenuProduct> menuProducts) {

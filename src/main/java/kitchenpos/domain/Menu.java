@@ -37,15 +37,6 @@ public class Menu {
         this.id = id;
     }
 
-    public Menu(Long id, String name, Price price, Long menuGroupId) {
-        this(name, price, menuGroupId);
-        this.id = id;
-    }
-
-    public Menu(String name, Price price, Long menuGroupId) {
-        this(name, price, menuGroupId, new ArrayList<>());
-    }
-
     public Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
         injectMenu(menuProducts);
         this.name = name;
