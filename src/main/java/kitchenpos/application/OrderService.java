@@ -5,9 +5,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.*;
-import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderLineItemRequest;
-import kitchenpos.dto.OrderStatusUpdateRequest;
+import kitchenpos.dto.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -40,18 +38,7 @@ public class OrderService {
 
     @Transactional
     public Order create(OrderCreateRequest orderCreateRequest) {
-        Map<Long, Long> groupByMenuIds = orderCreateRequest.getOrderLineItems()
-                .stream()
-                .collect(Collectors.toMap(OrderLineItemRequest::getMenuId, OrderLineItemRequest::getQuantity));
-
-        if (CollectionUtils.isEmpty(groupByMenuIds.keySet())) {
-            throw new IllegalArgumentException();
-        }
-
-        if (groupByMenuIds.keySet().size() != menuDao.countByIdIn(groupByMenuIds.keySet()
-                .stream().collect(Collectors.toUnmodifiableList()))) {
-            throw new IllegalArgumentException();
-        }
+        OrderLineItems orderLineItems = generateOrderLineItems(orderCreateRequest);
 
         final OrderTable orderTable = orderTableDao.findById(orderCreateRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
@@ -63,14 +50,34 @@ public class OrderService {
         final Order savedOrder = orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now()));
 
 
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         final Long orderId = savedOrder.getId();
-        for (Long menuId : groupByMenuIds.keySet()) {
-            savedOrderLineItems.add(orderLineItemDao.save(new OrderLineItem(orderId, menuId, groupByMenuIds.get(menuId))));
-        }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
+        List<OrderLineItem> lastOrderLineItems = orderLineItems.changeOrderId(orderId).getOrderLineItems();
+        lastOrderLineItems.forEach(orderLineItemDao::save);
+        savedOrder.setOrderLineItems(lastOrderLineItems);
 
         return savedOrder;
+    }
+
+    private OrderLineItems generateOrderLineItems(OrderCreateRequest orderCreateRequest) {
+        validateExistMenu(orderCreateRequest);
+        Map<Long, Long> groupByMenuId = orderCreateRequest.getOrderLineItems().stream()
+                .collect(Collectors.toMap(OrderLineItemRequest::getMenuId, OrderLineItemRequest::getQuantity));
+
+        List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
+        groupByMenuId.keySet()
+                .forEach(each -> savedOrderLineItems.add(new OrderLineItem(each, groupByMenuId.get(each))));
+
+        return new OrderLineItems(savedOrderLineItems);
+    }
+
+    private void validateExistMenu(OrderCreateRequest orderCreateRequest) {
+        List<Long> existMenuIds = menuDao.findAll().stream()
+                .map(Menu::getId)
+                .collect(Collectors.toUnmodifiableList());
+        if (orderCreateRequest.getOrderLineItems().stream()
+                .anyMatch(each -> !existMenuIds.contains(each.getMenuId()))) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public List<Order> list() {

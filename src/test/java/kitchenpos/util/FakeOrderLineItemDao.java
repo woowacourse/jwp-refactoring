@@ -15,9 +15,10 @@ public class FakeOrderLineItemDao implements OrderLineItemDao {
     @Override
     public OrderLineItem save(OrderLineItem entity) {
         if (entity.getSeq() == null) {
-            entity.setSeq(++id);
-            repository.put(entity.getSeq(), entity);
-            return entity;
+            OrderLineItem addEntity = new OrderLineItem(
+                    ++id, entity.getOrderId(), entity.getMenuId(), entity.getQuantity());
+            repository.put(addEntity.getSeq(), addEntity);
+            return addEntity;
         }
         return repository.computeIfAbsent(entity.getSeq(), (id) -> entity);
     }

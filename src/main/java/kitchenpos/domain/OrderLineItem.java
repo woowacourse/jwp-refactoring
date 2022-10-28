@@ -9,48 +9,51 @@ public class OrderLineItem {
     private long quantity;
 
     public OrderLineItem(Long seq, Long orderId, Long menuId, long quantity) {
+        validateMenuId(menuId);
+        validateQuantity(quantity);
         this.seq = seq;
         this.orderId = orderId;
         this.menuId = menuId;
         this.quantity = quantity;
+    }
+
+    private void validateQuantity(long quantity) {
+        if (quantity < 1L) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateMenuId(Long menuId) {
+        if (menuId == null) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public OrderLineItem(Long orderId, Long menuId, long quantity) {
         this(null, orderId, menuId, quantity);
     }
 
-    public OrderLineItem() {
+    public OrderLineItem(Long menuId, long quantity) {
+        this(null, null, menuId, quantity);
+    }
+
+    public OrderLineItem changeOrderId(Long orderId) {
+        return new OrderLineItem(this.seq, orderId, this.menuId, this.quantity);
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
-
     public Long getOrderId() {
         return orderId;
-    }
-
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
     }
 
     public Long getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }
