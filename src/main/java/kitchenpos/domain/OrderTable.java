@@ -29,13 +29,17 @@ public class OrderTable {
     }
 
     public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
+        validateNumberOfGuests(numberOfGuests);
         this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    private void validateNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public OrderTable(TableGroup tableGroup,  int numberOfGuests, boolean empty) {
