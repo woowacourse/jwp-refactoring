@@ -13,7 +13,7 @@ public class Menu {
     private final Long menuGroupId;
     private final List<MenuProduct> menuProducts;
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    private Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         validatePrice(price);
         this.id = id;
         this.name = name;
@@ -26,10 +26,6 @@ public class Menu {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new InvalidMenuException("메뉴 금액이 잘못됐습니다.");
         }
-    }
-
-    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
     }
 
     public Menu(long id, String name, BigDecimal price, Long menuGroupId) {

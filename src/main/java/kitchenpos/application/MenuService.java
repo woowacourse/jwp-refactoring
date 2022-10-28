@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.MenuProductRequest;
 import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.common.exception.InvalidMenuGroupException;
+import kitchenpos.common.exception.InvalidProductException;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -73,7 +74,7 @@ public class MenuService {
 
     private Product getProduct(Long productId) {
         return productDao.findById(productId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new InvalidProductException("상품이 존재하지 않습니다."));
     }
 
     private MenuResponse mapToMenuResponse(Menu menu, List<MenuProduct> menuProducts) {

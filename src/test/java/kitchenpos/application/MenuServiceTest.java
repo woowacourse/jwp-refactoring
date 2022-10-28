@@ -26,8 +26,8 @@ public class MenuServiceTest extends ApplicationTest {
         MenuGroup menuGroup = 메뉴그룹_생성(new MenuGroup("메뉴그룹1"));
         MenuProduct menuProduct = new MenuProduct(product.getId(), 1, BigDecimal.valueOf(17_000));
 
-        Menu menu1 = 메뉴_생성(new Menu("해장 세트", BigDecimal.valueOf(15_000), menuGroup.getId(), List.of(menuProduct)));
-        Menu menu2 = 메뉴_생성(new Menu("아침 세트", BigDecimal.valueOf(9_000), menuGroup.getId(), List.of(menuProduct)));
+        Menu menu1 = 메뉴_생성(Menu.create("해장 세트", BigDecimal.valueOf(15_000), menuGroup.getId(), List.of(menuProduct)));
+        Menu menu2 = 메뉴_생성(Menu.create("아침 세트", BigDecimal.valueOf(9_000), menuGroup.getId(), List.of(menuProduct)));
 
         List<MenuResponse> menus = menuService.list();
 
