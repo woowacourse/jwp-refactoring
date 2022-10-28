@@ -14,10 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TableService {
+
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
 
@@ -28,14 +28,16 @@ public class TableService {
 
     @Transactional
     public TableResponse create(TableCreateRequest request) {
-        OrderTable savedOrderTable = orderTableDao.save(new OrderTable(request.getNumberOfGuests(), request.isEmpty()));
-
+        OrderTable savedOrderTable = orderTableDao.save(request.toEntity());
         return TableResponse.from(savedOrderTable);
     }
 
     public List<TableResponse> list() {
         List<OrderTable> orderTables = orderTableDao.findAll();
+        return toTableResponses(orderTables);
+    }
 
+    private List<TableResponse> toTableResponses(List<OrderTable> orderTables) {
         return orderTables.stream()
                 .map(TableResponse::from)
                 .collect(Collectors.toList());
@@ -46,35 +48,25 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
+        savedOrderTable.validateNotInTableGroup();
+        validateIsCompletedOrder(orderTableId);
         OrderTable updatedOrderTable = orderTableDao.save(request.toUpdateEntity(savedOrderTable));
 
         return TableResponse.from(updatedOrderTable);
     }
 
-    @Transactional
-    public TableResponse changeNumberOfGuests(Long orderTableId, TableGuestUpdateRequest request) {
-        final int numberOfGuests = request.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
+    private void validateIsCompletedOrder(Long orderTableId) {
+        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
+                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
+    }
 
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+    @Transactional
+    public TableResponse changeNumberOfGuests(Long orderTableId, TableGuestUpdateRequest request) {
+        OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        };
-
+        savedOrderTable.validateNotEmpty();
         OrderTable updatedOrderTable = orderTableDao.save(request.toUpdateEntity(savedOrderTable));
 
         return TableResponse.from(updatedOrderTable);

@@ -108,12 +108,12 @@ public abstract class ServiceTest {
     }
 
     protected OrderTable 테이블을_저장한다(int numberOfGuests) {
-        OrderTable orderTable = new OrderTable(numberOfGuests, false);
+        OrderTable orderTable = new OrderTable(null, numberOfGuests, false);
         return orderTableDao.save(orderTable);
     }
 
     protected OrderTable 빈_테이블을_저장한다() {
-        OrderTable orderTable = new OrderTable(0, true);
+        OrderTable orderTable = new OrderTable(null, 0, true);
         return orderTableDao.save(orderTable);
     }
 
