@@ -49,11 +49,11 @@ public class Order {
                 .collect(Collectors.toList());
     }
 
-    public void changeOrderStatus(final OrderStatus orderStatus) {
+    public String changeOrderStatus(final OrderStatus orderStatus) {
         if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
             throw new IllegalArgumentException("완료된 주문의 상태는 변경할 수 없습니다.");
         }
-        this.orderStatus = orderStatus.name();
+        return this.orderStatus = orderStatus.name();
     }
 
     public Long getId() {
