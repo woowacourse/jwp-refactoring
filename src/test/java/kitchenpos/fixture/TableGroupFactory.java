@@ -1,5 +1,6 @@
 package kitchenpos.fixture;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -7,6 +8,6 @@ import kitchenpos.domain.TableGroup;
 public class TableGroupFactory {
 
     public static TableGroup tableGroup(final OrderTable... orderTables) {
-        return new TableGroup(null, null, List.of(orderTables));
+        return new TableGroup(null, LocalDateTime.now(), List.of(orderTables));
     }
 }

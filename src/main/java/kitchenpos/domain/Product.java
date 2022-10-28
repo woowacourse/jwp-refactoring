@@ -8,6 +8,13 @@ public class Product {
     private String name;
     private Price price;
 
+    public Product() {
+    }
+
+    public Product(final String name, final BigDecimal price) {
+        this(null, name, price);
+    }
+
     public Product(final Long id, final String name, final BigDecimal price) {
         this.id = id;
         this.name = name;
@@ -30,7 +37,7 @@ public class Product {
         return name;
     }
 
-    public Price getPrice() {
-        return price;
+    public BigDecimal getPrice() {
+        return price.getPrice();
     }
 }

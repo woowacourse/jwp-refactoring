@@ -19,7 +19,7 @@ public class MenuFactory {
         for (Product product : products) {
             final var menuProduct = new MenuProduct(null, null, product.getId(), MENU_QUANTITY);
             menuProducts.add(menuProduct);
-            totalPrice += product.getPrice().getPrice().intValue() * menuProduct.getQuantity();
+            totalPrice += product.getPrice().intValue() * menuProduct.getQuantity();
         }
 
         return new Menu(null, name, new BigDecimal(totalPrice - 1), group.getId(), menuProducts);

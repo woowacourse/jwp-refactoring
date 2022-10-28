@@ -41,8 +41,8 @@ public class Menu {
         return name;
     }
 
-    public Price getPrice() {
-        return price;
+    public BigDecimal getPrice() {
+        return price.getPrice();
     }
 
     public Long getMenuGroupId() {

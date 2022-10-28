@@ -42,7 +42,7 @@ class MenuServiceTest extends FakeSpringContext {
             assertAll(
                     () -> assertThat(result.getName()).isEqualTo(menu.getName()),
                     () -> assertThat(result.getMenuGroupId()).isEqualTo(menu.getMenuGroupId()),
-                    () -> assertThat(result.getPrice().getPrice().compareTo(menu.getPrice().getPrice())).isEqualTo(0)
+                    () -> assertThat(result.getPrice().compareTo(menu.getPrice())).isEqualTo(0)
             );
         }
 
@@ -50,8 +50,8 @@ class MenuServiceTest extends FakeSpringContext {
         @Nested
         class priceOverTotalOfMenuProducts {
 
-            private final BigDecimal pizzaTotalPrice = pizza.getPrice().getPrice().multiply(new BigDecimal(MENU_QUANTITY));
-            private final BigDecimal cokeTotalPrice = coke.getPrice().getPrice().multiply(new BigDecimal(MENU_QUANTITY));
+            private final BigDecimal pizzaTotalPrice = pizza.getPrice().multiply(new BigDecimal(MENU_QUANTITY));
+            private final BigDecimal cokeTotalPrice = coke.getPrice().multiply(new BigDecimal(MENU_QUANTITY));
 
             private final BigDecimal invalidPrice = pizzaTotalPrice.add(cokeTotalPrice)
                     .add(new BigDecimal(1));
@@ -116,7 +116,7 @@ class MenuServiceTest extends FakeSpringContext {
             return result.stream()
                     .filter(menu -> menu.getName().equals(target.getName())
                             && menu.getMenuGroupId().equals(target.getMenuGroupId())
-                            && menu.getPrice().getPrice().compareTo(target.getPrice().getPrice()) == 0)
+                            && menu.getPrice().compareTo(target.getPrice()) == 0)
                     .findAny();
         }
     }
