@@ -39,19 +39,10 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("조리 혹은 식사중인 테이블이 있어 단체를 해제할 수 없습니다.");
-        }
+        validateCookingOrMeal(orderTables);
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
-            orderTableDao.save(orderTable);
+            orderTableDao.save(orderTable.emptyTable());
         }
     }
 
@@ -60,5 +51,15 @@ public class TableGroupService {
                 .stream()
                 .map(OrderTableGroupRequest::getId)
                 .collect(Collectors.toList());
+    }
+
+    private void validateCookingOrMeal(final List<OrderTable> orderTables) {
+        final List<Long> orderTableIds = orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
+                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            throw new IllegalArgumentException("조리 혹은 식사중인 테이블이 있어 단체를 해제할 수 없습니다.");
+        }
     }
 }

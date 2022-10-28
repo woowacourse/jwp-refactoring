@@ -122,12 +122,13 @@ class TableGroupServiceTest {
 
             @BeforeEach
             void setUp() {
-                tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
+                tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(),
+                        Arrays.asList(
+                                new OrderTable(1L, null, 0, true),
+                                new OrderTable(2L, null, 0, true)
+                        )))
                         .getId();
-                orderTableDao.save(new OrderTable(1L, tableGroupId, 0, false));
-                Long orderTableId = orderTableDao.save(new OrderTable(2L, tableGroupId, 0, false))
-                        .getId();
-                orderDao.save(new Order(orderTableId, COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
+                orderDao.save(new Order(1L, COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
             }
 
             @Test
@@ -145,12 +146,13 @@ class TableGroupServiceTest {
 
             @BeforeEach
             void setUp() {
-                tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
+                tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(),
+                                Arrays.asList(
+                                        new OrderTable(1L, null, 0, true),
+                                        new OrderTable(2L, null, 0, true)
+                                )))
                         .getId();
-                orderTableDao.save(new OrderTable(1L, tableGroupId, 0, false));
-                Long orderTableId = orderTableDao.save(new OrderTable(2L, tableGroupId, 0, false))
-                        .getId();
-                orderDao.save(new Order(orderTableId, MEAL.name(), LocalDateTime.now(), new ArrayList<>()));
+                orderDao.save(new Order(1L, MEAL.name(), LocalDateTime.now(), new ArrayList<>()));
             }
 
             @Test
@@ -170,8 +172,8 @@ class TableGroupServiceTest {
             void setUp() {
                 tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(),
                                 Arrays.asList(
-                                        orderTableDao.save(new OrderTable(1L, tableGroupId, 0, false)),
-                                        orderTableDao.save(new OrderTable(2L, tableGroupId, 0, false))
+                                        orderTableDao.save(new OrderTable(1L, tableGroupId, 0, true)),
+                                        orderTableDao.save(new OrderTable(2L, tableGroupId, 0, true))
                                 )))
                         .getId();
             }

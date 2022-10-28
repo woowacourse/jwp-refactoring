@@ -39,6 +39,10 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
+    public OrderTable emptyTable() {
+        return new OrderTable(id, null, numberOfGuests, false);
+    }
+
     public Long getId() {
         return id;
     }
