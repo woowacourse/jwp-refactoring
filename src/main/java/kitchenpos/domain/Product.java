@@ -38,7 +38,6 @@ public class Product {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
-
     }
 
     public Long getId() {

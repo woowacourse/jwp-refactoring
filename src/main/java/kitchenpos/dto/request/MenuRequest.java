@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 
 public class MenuRequest {
@@ -44,7 +45,7 @@ public class MenuRequest {
         final List<MenuProduct> menuProducts = this.menuProducts.stream()
                 .map(it -> new MenuProduct(null, findProduct(it.getProductId(), products), it.getQuantity()))
                 .collect(Collectors.toList());
-        return new Menu(name, price, menuGroupId, menuProducts);
+        return new Menu(name, new Price(price), menuGroupId, menuProducts);
     }
 
     private Product findProduct(final Long productId, final List<Product> products) {

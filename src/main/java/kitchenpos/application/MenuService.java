@@ -34,7 +34,7 @@ public class MenuService {
     public MenuResponse create(final MenuRequest menuRequest) {
         final Menu menu = convertToMenu(menuRequest);
 
-        validateMenuGroupExist(menu.getMenuGroupId());
+        validateMenuGroupExist(menuRequest.getMenuGroupId());
         validateMenuPrice(menu);
 
         final Menu savedMenu = menuDao.save(menu);

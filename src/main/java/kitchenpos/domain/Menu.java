@@ -3,9 +3,9 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,7 +21,8 @@ public class Menu {
 
     private String name;
 
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     @Column(name = "menu_group_id")
     private Long menuGroupId;
@@ -36,20 +37,18 @@ public class Menu {
         this.id = id;
     }
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
-        validatePrice(price);
+    public Menu(Long id, String name, Price price, Long menuGroupId) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
     }
 
-    public Menu(String name, BigDecimal price, Long menuGroupId) {
+    public Menu(String name, Price price, Long menuGroupId) {
         this(name, price, menuGroupId, new ArrayList<>());
     }
 
-    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        validatePrice(price);
+    public Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
         for (MenuProduct menuProduct : menuProducts) {
             menuProduct.setMenu(this);
         }
@@ -59,18 +58,12 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    private void validatePrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     public boolean isPriceGreaterThanMenuProductsPrice() {
         final BigDecimal sum = menuProducts.stream()
                 .map(menuProduct -> menuProduct.getProduct().getPrice()
                         .multiply(BigDecimal.valueOf(menuProduct.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        return price.compareTo(sum) > 0;
+        return price.isGreaterThan(sum);
     }
 
     public Long getId() {
@@ -81,7 +74,7 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 

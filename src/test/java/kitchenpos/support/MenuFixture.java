@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 
 public enum MenuFixture {
 
@@ -18,10 +19,10 @@ public enum MenuFixture {
     }
 
     public Menu 생성(final long menuGroupId) {
-        return new Menu(this.name, new BigDecimal(this.price), menuGroupId);
+        return new Menu(this.name, new Price(new BigDecimal(this.price)), menuGroupId);
     }
 
     public Menu 생성(final long menuGroupId, final List<MenuProduct> menuProducts) {
-        return new Menu(this.name, new BigDecimal(this.price), menuGroupId, menuProducts);
+        return new Menu(this.name, new Price(new BigDecimal(this.price)), menuGroupId, menuProducts);
     }
 }
