@@ -10,59 +10,44 @@ public class Menu {
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
-    @Deprecated
-    public Menu() {
-    }
-
-    public Menu(String name, long price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public Menu(Long id, String name, long price, Long menuGroupId,
+                List<MenuProduct> menuProducts) {
+        this.id = id;
         this.name = name;
         this.price = new Price(price);
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
     }
 
-    public Long getId() {
-        return id;
+    public Menu(Long id, String name, long price, Long menuGroupId) {
+        this(id, name, price, menuGroupId, null);
     }
 
-    @Deprecated
-    public void setId(final Long id) {
-        this.id = id;
+    public Menu(String name, long price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroupId, menuProducts);
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
         return name;
     }
 
-    @Deprecated
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public long getPrice() {
         return price.getValue();
-    }
-
-    @Deprecated
-    public void setPrice(final long price) {
-        this.price = new Price(price);
     }
 
     public Long getMenuGroupId() {
         return menuGroupId;
     }
 
-    @Deprecated
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
-    }
-
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
 
-    @Deprecated
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
+    public void setMenuProducts(List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
     }
 
