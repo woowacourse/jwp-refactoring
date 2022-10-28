@@ -15,7 +15,7 @@ public class Menu {
     private final BigDecimal price;
     private final Long menuGroupId;
 
-    @MappedCollection(idColumn = "MENU_ID", keyColumn = "SEQ")
+    @MappedCollection(idColumn = "MENU_ID")
     private final List<MenuProduct> menuProducts;
 
     public Menu(final String name, final BigDecimal price, final Long menuGroupId,
