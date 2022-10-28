@@ -3,6 +3,7 @@ package kitchenpos.application;
 
 import kitchenpos.menu.application.MenuGroupService;
 import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.application.dto.MenuGroupRequestDto;
 import kitchenpos.menu.application.dto.MenuRequestDto;
 import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.menu.domain.MenuGroup;
@@ -53,7 +54,7 @@ public class ServiceTest {
         return tableGroupService.create(tableGroup);
     }
 
-    protected MenuGroup 메뉴_그룹_등록(final MenuGroup menuGroup) {
+    protected MenuGroup 메뉴_그룹_등록(final MenuGroupRequestDto menuGroup) {
         return menuGroupService.create(menuGroup);
     }
 
