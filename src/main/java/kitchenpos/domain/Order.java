@@ -17,7 +17,7 @@ public class Order {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = new ArrayList<>(orderLineItems);
     }
 
     public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
@@ -45,6 +45,6 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return new ArrayList<>(orderLineItems);
     }
 }

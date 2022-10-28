@@ -7,6 +7,7 @@ import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
@@ -15,6 +16,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -61,6 +63,9 @@ public abstract class ServiceTest {
 
     @Autowired
     TableGroupDao tableGroupDao;
+
+    @Autowired
+    OrderLineItemDao orderLineItemDao;
 
     @Autowired
     OrderDao orderDao;
@@ -124,9 +129,13 @@ public abstract class ServiceTest {
     protected Order 주문을_저장한다(OrderTable orderTable) {
         Menu menu = 메뉴를_저장한다("메뉴");
         OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3L);
+        Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
+                List.of(orderLineItem));
 
-        Order order = new Order(orderTable.getId(), null, null, List.of(orderLineItem));
+        Order savedOrder = orderDao.save(order);
+        orderLineItemDao.save(
+                new OrderLineItem(savedOrder.getId(), orderLineItem.getMenuId(), orderLineItem.getQuantity()));
 
-        return orderService.create(order);
+        return savedOrder;
     }
 }
