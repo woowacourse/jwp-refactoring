@@ -9,6 +9,7 @@ import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.fixture.OrderTableFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,7 +69,7 @@ class OrderServiceTest {
 
         // 주문: 1번 테이블 / 후라이드 치킨 1개
         OrderLineItemCreateRequest orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
-        Order actual = orderService.create(createOrder(orderTable.getId(), List.of(orderLineItem)));
+        OrderResponse actual = orderService.create(createOrder(orderTable.getId(), List.of(orderLineItem)));
 
         assertAll(
                 () -> assertThat(actual.getOrderTableId()).isEqualTo(orderTable.getId()),
@@ -153,7 +154,7 @@ class OrderServiceTest {
         orderService.create(createOrder(테이블_1번.getId(), List.of(orderLineItem)));
         orderService.create(createOrder(테이블_2번.getId(), List.of(orderLineItem)));
 
-        List<Order> orders = orderService.list();
+        List<OrderResponse> orders = orderService.list();
         assertThat(orders).hasSize(2);
     }
 
@@ -173,12 +174,12 @@ class OrderServiceTest {
 
         // 주문
         OrderLineItemCreateRequest orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
-        Order order = orderService.create(createOrder(orderTable.getId(), List.of(orderLineItem)));
+        OrderResponse order = orderService.create(createOrder(orderTable.getId(), List.of(orderLineItem)));
 
         // 상태를 식사로 변경
         OrderCreateRequest changedOrder = createOrder(orderTable.getId(), OrderStatus.MEAL.name(),
                 List.of(orderLineItem));
-        Order actual = orderService.changeOrderStatus(order.getId(), changedOrder.toEntity());
+        OrderResponse actual = orderService.changeOrderStatus(order.getId(), changedOrder.toEntity());
 
         assertAll(
                 () -> assertThat(actual.getOrderTableId()).isEqualTo(orderTable.getId()),
@@ -203,13 +204,13 @@ class OrderServiceTest {
 
         // 주문
         OrderLineItemCreateRequest orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
-        Order order = orderService.create(createOrder(orderTable.getId(), List.of(orderLineItem)));
+        OrderResponse order = orderService.create(createOrder(orderTable.getId(), List.of(orderLineItem)));
 
         // 계산완료로 변경
         OrderCreateRequest changedOrder = createOrder(orderTable.getId(), OrderStatus.COMPLETION.name(), List.of(orderLineItem));
-        Order actual = orderService.changeOrderStatus(order.getId(), changedOrder.toEntity());
+        OrderResponse actual = orderService.changeOrderStatus(order.getId(), changedOrder.toEntity());
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), actual))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), actual.toEntity()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -14,7 +14,7 @@ public class MenuResponse {
     private final Long menuGroupId;
     private final List<MenuProduct> menuProducts;
 
-    public MenuResponse(final Long id, final String name, final BigDecimal price,
+    private MenuResponse(final Long id, final String name, final BigDecimal price,
                         final Long menuGroupId,
                         final List<MenuProduct> menuProducts) {
         this.id = id;

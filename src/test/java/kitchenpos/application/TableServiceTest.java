@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -11,6 +10,7 @@ import kitchenpos.dto.request.OrderTableCreateRequest;
 import kitchenpos.dto.request.OrderTableUpdateNumberOfGuestsRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.dto.response.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -99,7 +99,7 @@ class TableServiceTest {
 
         // 주문
         OrderLineItemCreateRequest orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);
-        Order order = orderService.create(createOrder(테이블_1번.getId(), List.of(orderLineItem)));
+        OrderResponse order = orderService.create(createOrder(테이블_1번.getId(), List.of(orderLineItem)));
 
         // 계산완료
         OrderCreateRequest changedOrder = createOrder(테이블_1번.getId(), OrderStatus.COMPLETION.name(),
