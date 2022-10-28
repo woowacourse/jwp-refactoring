@@ -1,5 +1,7 @@
 package kitchenpos.dao;
 
+import static kitchenpos.fixture.MenuFixture.getMenuGroupRequest;
+import static kitchenpos.fixture.MenuFixture.getMenuRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -23,8 +25,8 @@ class JdbcTemplateMenuDaoTest extends JdbcTemplateTest{
     @Test
     @DisplayName("데이터 베이스에 저장할 경우 id 값을 가진 엔티티로 반환한다.")
     void save() {
-        final MenuGroup menuGroup = menuGroupDao.save(추천메뉴());
-        final Menu menu = menuDao.save(후라이드후라이드(menuGroup.getId()));
+        final MenuGroup menuGroup = menuGroupDao.save(getMenuGroupRequest(1L));
+        final Menu menu = menuDao.save(getMenuRequest(menuGroup.getId()));
         assertThat(menu.getId()).isNotNull();
     }
 

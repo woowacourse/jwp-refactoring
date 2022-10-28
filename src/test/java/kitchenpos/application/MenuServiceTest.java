@@ -1,5 +1,9 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuFixture.getMenu;
+import static kitchenpos.fixture.MenuFixture.getMenuProduct;
+import static kitchenpos.fixture.MenuFixture.getMenuRequest;
+import static kitchenpos.fixture.ProductFixture.getProduct;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -25,13 +29,10 @@ class MenuServiceTest extends ServiceTest{
     @BeforeEach
     void setUp() {
         final Product product = getProduct();
-        product.setId(1L);
-        final Menu menu = getMenu(1L);
-        menu.setId(1L);
 
         given(menuGroupDao.existsById(1L)).willReturn(true);
         given(menuGroupDao.existsById(2L)).willReturn(false);
-        given(menuDao.save(any())).willReturn(menu);
+        given(menuDao.save(any())).willReturn(getMenu(1L));
         given(productDao.findById(1L)).willReturn(Optional.of(product));
     }
 
@@ -44,18 +45,18 @@ class MenuServiceTest extends ServiceTest{
 
         // when
         final List<MenuProduct> menuProducts = Arrays.asList(getMenuProduct(1L), getMenuProduct(2L));
-        final Menu menu = getMenu(21000, menuProducts);
+        final Menu menuRequest = getMenuRequest(21000, menuProducts);
 
         // then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @ParameterizedTest(name = "가격이 음수일 경우 메뉴를 생성하면 예외가 발생한다.")
     @ValueSource(ints = {-1000, -1})
     void createWithNegativePriceMenu(int price) {
-        final Menu menu = getMenu(price);
-        assertThatThrownBy(() -> menuService.create(menu))
+        final Menu menuRequest = getMenuRequest(price);
+        assertThatThrownBy(() -> menuService.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

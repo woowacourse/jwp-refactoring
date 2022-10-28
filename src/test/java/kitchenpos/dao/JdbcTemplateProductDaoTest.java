@@ -1,5 +1,6 @@
 package kitchenpos.dao;
 
+import static kitchenpos.fixture.ProductFixture.getProductRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -20,7 +21,7 @@ class JdbcTemplateProductDaoTest extends JdbcTemplateTest{
     @Test
     @DisplayName("데이터 베이스에 저장할 경우 id 값을 가진 엔티티로 반환한다.")
     void save() {
-        final Product savedProduct = productDao.save(후라이드());
+        final Product savedProduct = productDao.save(getProductRequest());
         assertThat(savedProduct.getId()).isNotNull();
     }
 
