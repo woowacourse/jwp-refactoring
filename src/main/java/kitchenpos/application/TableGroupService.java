@@ -11,7 +11,6 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
-import kitchenpos.ui.dto.response.OrderTableResponse;
 import kitchenpos.ui.dto.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,13 +38,9 @@ public class TableGroupService {
 
         final TableGroup tableGroup = tableGroupRepository.save(TableGroup.from(LocalDateTime.now()))
                 .addOrderTables(orderTables);
-        final List<OrderTableResponse> orderTableResponses = tableGroup.getOrderTables()
-                .stream()
-                .map(orderTableRepository::save)
-                .map(OrderTableResponse::from)
-                .collect(Collectors.toList());
+        orderTableRepository.saveAll(tableGroup.getOrderTables());
 
-        return new TableGroupResponse(tableGroup.getId(), tableGroup.getCreatedDate(), orderTableResponses);
+        return TableGroupResponse.from(tableGroup);
     }
 
     @Transactional
@@ -55,9 +50,10 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
 
-        orderTables.stream()
+        final List<OrderTable> ungroupedOrderTables = orderTables.stream()
                 .map(OrderTable::ungroup)
-                .forEach(orderTableRepository::save);
+                .collect(Collectors.toList());
+        orderTableRepository.saveAll(ungroupedOrderTables);
     }
 
     private boolean containNotCompletedOrder(final List<OrderTable> orderTables) {
