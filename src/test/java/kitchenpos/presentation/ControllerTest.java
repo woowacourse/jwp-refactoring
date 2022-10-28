@@ -2,10 +2,12 @@ package kitchenpos.presentation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.MenuGroupService;
+import kitchenpos.application.MenuService;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
 import kitchenpos.ui.MenuGroupRestController;
+import kitchenpos.ui.MenuRestController;
 import kitchenpos.ui.ProductRestController;
 import kitchenpos.ui.TableGroupRestController;
 import kitchenpos.ui.TableRestController;
@@ -18,7 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
         MenuGroupRestController.class,
         ProductRestController.class,
         TableRestController.class,
-        TableGroupRestController.class
+        TableGroupRestController.class,
+        MenuRestController.class
 })
 public abstract class ControllerTest {
 
@@ -30,6 +33,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected MenuGroupService menuGroupService;
+
+    @MockBean
+    protected MenuService menuService;
 
     @MockBean
     protected ProductService productService;

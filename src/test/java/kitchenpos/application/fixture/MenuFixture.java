@@ -13,7 +13,7 @@ public class MenuFixture {
     // 해당 픽스쳐를 이용해 만든 메뉴의 각 상품 개수는 모두 1개로 설정된다.
     private static final int QUANTITY = 1;
 
-    public static Menu createMenu(final String name, final int price, final MenuGroup menuGroup,
+    public static Menu createMenu(final String name, final long price, final MenuGroup menuGroup,
                                   final Product... products) {
         final Menu menu = new Menu();
         menu.setMenuGroupId(menuGroup.getId());

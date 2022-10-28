@@ -18,6 +18,9 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.response.MenuResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,7 +79,7 @@ public abstract class ServiceTest {
         return menuGroupDao.save(menuGroup);
     }
 
-    protected Menu 메뉴등록(final Menu menu) {
+    protected MenuResponse 메뉴등록(final MenuRequest menu) {
         return menuService.create(menu);
     }
 

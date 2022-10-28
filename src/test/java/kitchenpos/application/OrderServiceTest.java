@@ -9,6 +9,7 @@ import static kitchenpos.application.fixture.OrderTableFixture.createOrderTable;
 import static kitchenpos.application.fixture.ProductFixture.짜장면;
 import static kitchenpos.application.fixture.ProductFixture.탕수육;
 import static kitchenpos.application.fixture.dto.OrderTableDtoFixture.forUpdateEmpty;
+import static kitchenpos.application.fixture.dto.MenuDtoFixture.createMenuRequest;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,6 +21,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.response.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +32,7 @@ public class OrderServiceTest extends ServiceTest {
     void create() {
         // given
         final OrderTable table = 테이블등록(createOrderTable(3, false));
-        final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
+        final MenuResponse menu = 메뉴등록(createMenuRequest("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
 
         final Order order = createOrder(table, menu);
 
@@ -64,7 +66,7 @@ public class OrderServiceTest extends ServiceTest {
     void create_emptyTable_throwException() {
         // given
         final OrderTable table = 테이블등록(createOrderTable(3, false));
-        final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
+        final MenuResponse menu = 메뉴등록(createMenuRequest("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
 
         tableService.changeEmpty(table.getId(), forUpdateEmpty(true));
 
@@ -80,12 +82,12 @@ public class OrderServiceTest extends ServiceTest {
     void list() {
         // given
         final OrderTable table1 = 테이블등록(createOrderTable(3, false));
-        final Menu menu1 = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
+        final MenuResponse menu1 = 메뉴등록(createMenuRequest("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
 
         주문등록(createOrder(table1, menu1));
 
         final OrderTable table2 = 테이블등록(createOrderTable(3, false));
-        final Menu menu2 = 메뉴등록(createMenu("짜장면_메뉴", 8_000, 메뉴그룹등록(메뉴그룹B), 상품등록(짜장면)));
+        final MenuResponse menu2 = 메뉴등록(createMenuRequest("짜장면_메뉴", 8_000, 메뉴그룹등록(메뉴그룹B), 상품등록(짜장면)));
 
         주문등록(createOrder(table2, menu2));
 
@@ -101,7 +103,7 @@ public class OrderServiceTest extends ServiceTest {
     void changeOrderStatus() {
         // given
         final OrderTable table = 테이블등록(createOrderTable(3, false));
-        final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
+        final MenuResponse menu = 메뉴등록(createMenuRequest("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
 
         final Order order = 주문등록(createOrder(table, menu));
 
@@ -117,7 +119,7 @@ public class OrderServiceTest extends ServiceTest {
     void changeOrderStatus_noOrder_throwException() {
         // given
         final OrderTable table = 테이블등록(createOrderTable(3, false));
-        final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
+        final MenuResponse menu = 메뉴등록(createMenuRequest("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
 
         final Order notRegisteredOrder = createOrder(table, menu);
 
@@ -131,7 +133,7 @@ public class OrderServiceTest extends ServiceTest {
     void changeOrderStatus_alreadyCompletion_throwException() {
         // given
         final OrderTable table = 테이블등록(createOrderTable(3, false));
-        final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
+        final MenuResponse menu = 메뉴등록(createMenuRequest("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
 
         final Order order = 주문등록(createOrder(table, menu));
         주문상태변경(order, OrderStatus.COMPLETION);
@@ -146,7 +148,7 @@ public class OrderServiceTest extends ServiceTest {
     void changeOrderStatus_invalidOrderStatus_throwException() {
         // given
         final OrderTable table = 테이블등록(createOrderTable(3, false));
-        final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
+        final MenuResponse menu = 메뉴등록(createMenuRequest("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
 
         final Order order = 주문등록(createOrder(table, menu));
 
