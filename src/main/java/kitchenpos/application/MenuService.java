@@ -43,7 +43,7 @@ public class MenuService {
 
         menu.setIdToMenuProducts();
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
-        List<Product> products = findProducts(menuProducts);
+        List<Product> products = getProducts(menuProducts);
         menu.validatePriceUnderProductsSum(products);
 
         for (final MenuProduct menuProduct : menuProducts) {
@@ -59,7 +59,7 @@ public class MenuService {
         }
     }
 
-    private List<Product> findProducts(final List<MenuProduct> menuProducts) {
+    private List<Product> getProducts(final List<MenuProduct> menuProducts) {
         return menuProducts.stream()
             .map(menuProduct -> productDao.findById(menuProduct.getProductId())
                 .orElseThrow(IllegalArgumentException::new))

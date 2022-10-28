@@ -9,7 +9,6 @@ import kitchenpos.application.request.OrderRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 
 @Service
@@ -29,17 +28,18 @@ public class OrderService {
 
     @Transactional
     public Order create(final OrderRequest request) {
-        final List<OrderLineItem> orderLineItems = request.getOrderLineItems();
-
-        final OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
-            .orElseThrow(IllegalArgumentException::new);
-
+        final OrderTable orderTable = getOrderTable(request);
         validateOrderTableNotEmpty(orderTable);
 
-        final Order savedOrder = orderDao.save(new Order(orderTable.getId(), orderLineItems));
-
+        final Order savedOrder = orderDao.save(new Order(orderTable.getId(), request.getOrderLineItems()));
         savedOrder.setIdToOrderLineItems();
+
         return savedOrder;
+    }
+
+    private OrderTable getOrderTable(final OrderRequest request) {
+        return orderTableDao.findById(request.getOrderTableId())
+            .orElseThrow(IllegalArgumentException::new);
     }
 
     private void validateOrderTableNotEmpty(final OrderTable orderTable) {
@@ -54,10 +54,14 @@ public class OrderService {
 
     @Transactional
     public Order changeOrderStatus(final Long orderId, final OrderRequest request) {
-        final Order savedOrder = orderDao.findById(orderId)
-            .orElseThrow(IllegalArgumentException::new);
-
+        final Order savedOrder = getOrder(orderId);
         savedOrder.changeStatus(request.getOrderStatus());
+
         return savedOrder;
+    }
+
+    private Order getOrder(final Long orderId) {
+        return orderDao.findById(orderId)
+            .orElseThrow(IllegalArgumentException::new);
     }
 }

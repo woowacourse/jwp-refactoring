@@ -35,13 +35,16 @@ public class TableService {
 
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTableRequest request) {
-        final OrderTable orderTable = orderTableDao.findById(orderTableId)
-            .orElseThrow(IllegalArgumentException::new);
-
+        final OrderTable orderTable = getOrderTable(orderTableId);
         validateOrderTableCanChangeEmpty(orderTableId);
         orderTable.changeEmpty(request.getEmpty());
 
         return orderTable;
+    }
+
+    private OrderTable getOrderTable(final Long orderTableId) {
+        return orderTableDao.findById(orderTableId)
+            .orElseThrow(IllegalArgumentException::new);
     }
 
     private void validateOrderTableCanChangeEmpty(final Long orderTableId) {
@@ -53,10 +56,9 @@ public class TableService {
 
     @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTableRequest request) {
-        final OrderTable orderTable = orderTableDao.findById(orderTableId)
-            .orElseThrow(IllegalArgumentException::new);
-
+        final OrderTable orderTable = getOrderTable(orderTableId);
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
+
         return orderTable;
     }
 }

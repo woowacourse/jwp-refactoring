@@ -33,26 +33,36 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final TableGroupCreateRequest request) {
-        List<Long> orderTableIds = request.getOrderTables().stream()
-            .map(OrderTableCreateRequest::getId)
-            .collect(Collectors.toUnmodifiableList());
-
+        List<Long> orderTableIds = getOrderTableIds(request);
         List<OrderTable> orderTables = orderTableDao.findAllByIdIn(orderTableIds);
+
         return tableGroupDao.save(new TableGroup(orderTables));
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        TableGroup tableGroup = tableGroupDao.findById(tableGroupId)
-            .orElseThrow(() -> new IllegalArgumentException("table group not found"));
-
-        List<Long> orderTableIds = tableGroup.getOrderTables().stream()
-            .map(OrderTable::getId)
-            .collect(Collectors.toUnmodifiableList());
-
+        TableGroup tableGroup = getTableGroup(tableGroupId);
+        List<Long> orderTableIds = getOrderTableIds(tableGroup);
         validateOrdersNotCompletion(orderTableIds);
 
         tableGroup.ungroupOrderTables();
+    }
+
+    private TableGroup getTableGroup(final Long tableGroupId) {
+        return tableGroupDao.findById(tableGroupId)
+            .orElseThrow(() -> new IllegalArgumentException("table group not found"));
+    }
+
+    private List<Long> getOrderTableIds(final TableGroupCreateRequest request) {
+        return request.getOrderTables().stream()
+            .map(OrderTableCreateRequest::getId)
+            .collect(Collectors.toUnmodifiableList());
+    }
+
+    private List<Long> getOrderTableIds(final TableGroup tableGroup) {
+        return tableGroup.getOrderTables().stream()
+            .map(OrderTable::getId)
+            .collect(Collectors.toUnmodifiableList());
     }
 
     private void validateOrdersNotCompletion(final List<Long> orderTableIds) {
