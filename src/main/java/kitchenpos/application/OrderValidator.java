@@ -4,8 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.OrderCommand;
 import kitchenpos.application.dto.request.OrderLineItemCommand;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.MenuRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
