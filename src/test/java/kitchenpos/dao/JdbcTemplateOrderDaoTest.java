@@ -3,9 +3,9 @@ package kitchenpos.dao;
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.fixture.OrderFixture.getOrderRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Order;
@@ -27,7 +27,7 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest {
     @Test
     @DisplayName("데이터 베이스에 저장할 경우 id 값을 가진 엔티티로 반환한다.")
     void save() {
-        final Order savedOrder = orderDao.save(getOrder());
+        final Order savedOrder = orderDao.save(getOrderRequest());
         assertThat(savedOrder.getId()).isNotNull();
     }
 
@@ -36,11 +36,10 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest {
     void existsByOrderTableIdInAndOrderStatusIn(final String orderStatus) {
         // given
         final List<String> orderStatuses = Arrays.asList(COOKING.name(), MEAL.name());
-        final Order order = new Order(1L, orderStatus, LocalDateTime.now());
-        orderDao.save(order);
+        final Order savedOrder = orderDao.save(getOrderRequest(orderStatus));
 
         // when
-        final boolean actual = orderDao.existsByOrderTableIdInAndOrderStatusIn(Arrays.asList(order.getOrderTableId()),
+        final boolean actual = orderDao.existsByOrderTableIdInAndOrderStatusIn(Arrays.asList(savedOrder.getOrderTableId()),
                 orderStatuses);
 
         // then
@@ -52,11 +51,10 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest {
     void existsByOrderTableIdInAndInvalidOrderStatusIn() {
         // given
         final List<String> orderStatuses = Arrays.asList(COOKING.name(), MEAL.name());
-        final Order order = new Order(1L, COMPLETION.name(), LocalDateTime.now());
-        orderDao.save(order);
+        final Order savedOrder = orderDao.save(getOrderRequest(COMPLETION.name()));
 
         // when
-        final boolean actual = orderDao.existsByOrderTableIdInAndOrderStatusIn(Arrays.asList(order.getOrderTableId()),
+        final boolean actual = orderDao.existsByOrderTableIdInAndOrderStatusIn(Arrays.asList(savedOrder.getOrderTableId()),
                 orderStatuses);
 
         // then
@@ -67,7 +65,7 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest {
     @DisplayName("목록을 조회한다.")
     void list() {
         // given
-        orderDao.save(getOrder());
+        orderDao.save(getOrderRequest());
 
         // when
         final List<Order> actual = orderDao.findAll();

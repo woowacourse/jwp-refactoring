@@ -2,6 +2,11 @@ package kitchenpos.application;
 
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.fixture.OrderFixture.getOrder;
+import static kitchenpos.fixture.OrderFixture.getOrderLineItem;
+import static kitchenpos.fixture.OrderFixture.getOrderLineItemRequest;
+import static kitchenpos.fixture.OrderFixture.getOrderRequest;
+import static kitchenpos.fixture.TableFixture.getOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,9 +34,7 @@ class OrderServiceTest extends ServiceTest{
 
     @BeforeEach
     void setUp() {
-        final OrderTable orderTable = getOrderTable(1L);
-        orderTable.setId(1L);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = getOrderTable();
         order = getOrder();
         order.setOrderLineItems(Arrays.asList(getOrderLineItem(order.getId())));
         final OrderLineItem orderLineItem = getOrderLineItem(order.getId());
@@ -69,7 +72,7 @@ class OrderServiceTest extends ServiceTest{
         return Stream.of(
                 Arguments.of(new Order(1L, null),
                         "아이템 목록이 비어있을 경우"),
-                Arguments.of(new Order(1L, Arrays.asList(new OrderLineItem(), new OrderLineItem())),
+                Arguments.of(new Order(1L, Arrays.asList(getOrderLineItemRequest(), getOrderLineItemRequest())),
                         "주문 상품 목록에 등록되지 않은 메뉴가 존재할 경우")
         );
     }
@@ -78,13 +81,11 @@ class OrderServiceTest extends ServiceTest{
     @DisplayName("비어있는 주문 테이블로 주문을 생성할 경우 예외가 발생한다.")
     void createWithEmptyOrderTable() {
         // given
-        final OrderTable orderTable = getOrderTable();
-        orderTable.setId(1L);
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = getOrderTable(true);
         given(orderTableDao.findById(1L)).willReturn(Optional.of(orderTable));
 
         // when
-        order.setOrderTableId(1L);
+        order = getOrderRequest(1L);
 
         // when
         assertThatThrownBy(() -> orderService.create(order))
@@ -96,8 +97,7 @@ class OrderServiceTest extends ServiceTest{
     void changeOrderStatus() {
         // given
         final Order savedOrder = orderService.create(order);
-        final Order newStatusOrder = new Order();
-        newStatusOrder.setOrderStatus(COMPLETION.name());
+        final Order newStatusOrder = getOrderRequest(COMPLETION.name());
 
         // when
         final Order updateOrder = orderService.changeOrderStatus(savedOrder.getId(), newStatusOrder);
@@ -110,11 +110,8 @@ class OrderServiceTest extends ServiceTest{
     @DisplayName("COMPLETION 상태에서는 주문 상태를 변경할 수 없다.")
     void changeInvalidOrderStatus() {
         // given
-        final Order savedOrder = new Order();
-        savedOrder.setId(1L);
-        savedOrder.setOrderStatus(COMPLETION.name());
-        final Order newStatusOrder = new Order();
-        newStatusOrder.setOrderStatus(COOKING.name());
+        final Order savedOrder = getOrder(COMPLETION.name());
+        final Order newStatusOrder = getOrderRequest(COOKING.name());
         given(orderDao.findById(1L)).willReturn(Optional.of(savedOrder));
 
         // then
