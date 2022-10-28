@@ -83,6 +83,8 @@ public class OrderTable {
         this.empty = isEmpty;
     }
 
+
+
     @Override
     public String toString() {
         return "OrderTable{" +
@@ -100,5 +102,14 @@ public class OrderTable {
         }
 
         this.numberOfGuests = numberOfGuest;
+    }
+
+    void joinToGroup(final Long id) {
+        if (id == null || !empty || tableGroupId != null) {
+            throw new IllegalArgumentException();
+        }
+
+        tableGroupId = id;
+        empty = false;
     }
 }

@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -53,20 +52,6 @@ class OrderTableTest {
         assertThat(orderTable.isEmpty()).isTrue();
     }
 
-
-    /*
-    final int numberOfGuests = orderTable.getNumberOfGuests();
-
-
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-     */
     @DisplayName("방문 손님 수는 음수로 변경할 수 없다.")
     @Test
     void changeTableNumberOfGuestToNegative() {

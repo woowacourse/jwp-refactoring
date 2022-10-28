@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.request.OrderTableRequest;
+import kitchenpos.ui.request.TableGroupRequest;
+import kitchenpos.ui.request.TableIdRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,16 +92,11 @@ class TableRestControllerTest {
     }
 
     private void groupTables(long... tableIds) {
-        List<OrderTable> orderTables = Arrays.stream(tableIds)
-                .mapToObj(id -> {
-                    OrderTable orderTable = new OrderTable();
-                    orderTable.setId(id);
-                    return orderTable;
-                })
+        List<TableIdRequest> orderTables = Arrays.stream(tableIds)
+                .mapToObj(TableIdRequest::new)
                 .collect(Collectors.toList());
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
-        tableGroupRestController.create(tableGroup);
+        TableGroupRequest request = new TableGroupRequest(orderTables);
+        tableGroupRestController.create(request);
     }
 
     private void changeOrderTableStatus(long orderTableId, boolean isEmpty) {

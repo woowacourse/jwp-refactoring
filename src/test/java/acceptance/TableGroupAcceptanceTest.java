@@ -8,11 +8,12 @@ import common.AcceptanceTest;
 import io.restassured.RestAssured;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.request.TableGroupRequest;
+import kitchenpos.ui.request.TableIdRequest;
+import kitchenpos.ui.response.OrderTableIdResponse;
 import kitchenpos.ui.response.OrderTableResponse;
+import kitchenpos.ui.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -23,12 +24,12 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void createNewTableGroup() {
         // act
-        TableGroup tableGroup = groupTables(1L, 2L);
+        TableGroupResponse tableGroup = groupTables(1L, 2L);
 
         // assert
         assertThat(tableGroup.getId()).isNotNull();
         assertThat(tableGroup.getOrderTables())
-                .extracting(OrderTable::getId)
+                .extracting(OrderTableIdResponse::getId)
                 .contains(1L, 2L);
 
         List<OrderTableResponse> orderTables = getOrderTables();
@@ -53,7 +54,7 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void ungroupTables() {
         // arrange
-        TableGroup tableGroup = groupTables(1L, 2L);
+        TableGroupResponse tableGroup = groupTables(1L, 2L);
 
         // act
         ungroupTables(tableGroup.getId());
@@ -86,21 +87,20 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
                 .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
-    private TableGroup groupTables(long... ids) {
-        List<Map<String, Long>> orderTables = Arrays.stream(ids)
-                .mapToObj(id -> Map.of("id", id))
+    private TableGroupResponse groupTables(long... ids) {
+        List<TableIdRequest> orderTables = Arrays.stream(ids)
+                .mapToObj(TableIdRequest::new)
                 .collect(Collectors.toList());
-
-        Map<String, Object> body = Map.of("orderTables", orderTables);
+        TableGroupRequest request = new TableGroupRequest(orderTables);
 
         return RestAssured.given().log().all()
                 .contentType(APPLICATION_JSON_VALUE)
-                .body(body)
+                .body(request)
                 .when().log().all()
                 .post("/api/table-groups")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
-                .extract().as(TableGroup.class);
+                .extract().as(TableGroupResponse.class);
     }
 
     private List<OrderTableResponse> getOrderTables() {
