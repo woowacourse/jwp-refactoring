@@ -80,9 +80,9 @@ public class OrderServiceTest {
 
         @Test
         void create_success() {
-            OrderTable orderTable = new OrderTable();
-            orderTable.setNumberOfGuests(5);
-            orderTable.setEmpty(false);
+            OrderTable orderTable = new OrderTable(1L, 5, false);
+//            orderTable.setNumberOfGuests(5);
+//            orderTable.setEmpty(false);
             OrderTable savedOrderTable = orderTableDao.save(orderTable);
 //            order.setOrderTableId(savedOrderTable.getId());
 
@@ -124,9 +124,9 @@ public class OrderServiceTest {
 
         @Test
         void changeOrderStatus_success() {
-            OrderTable orderTable = new OrderTable();
-            orderTable.setNumberOfGuests(5);
-            orderTable.setEmpty(false);
+            OrderTable orderTable = new OrderTable(1L, 5, false);
+//            orderTable.setNumberOfGuests(5);
+//            orderTable.setEmpty(false);
             OrderTable savedOrderTable = orderTableDao.save(orderTable);
             order.setOrderTableId(savedOrderTable.getId());
 

@@ -34,9 +34,6 @@ class TableServiceTest {
     class ListTest extends ServiceTest {
         @Test
         void list_success() {
-            OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(false);
-            orderTable.setNumberOfGuests(5);
             assertThat(tableService.list()).hasSize(8);
         }
     }
@@ -49,9 +46,7 @@ class TableServiceTest {
 
         @BeforeEach
         void setup() {
-            orderTable = new OrderTable();
-            orderTable.setNumberOfGuests(5);
-            orderTable.setEmpty(false);
+            orderTable = new OrderTable(1L, 5, false);
         }
 
         @Test
@@ -67,12 +62,12 @@ class TableServiceTest {
 
         @Test
         void changeEmpty_fail_when_tableGroupId_exist() {
-            TableGroup tableGroup = new TableGroup( LocalDateTime.now(), List.of(orderTable));
+            TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable));
             TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
-            orderTable.setTableGroupId(savedTableGroup.getId());
+            OrderTable newOrderTable = new OrderTable(1L, savedTableGroup.getId(), 5, false);
 
-            savedOrderTable = orderTableDao.save(orderTable);
+            savedOrderTable = orderTableDao.save(newOrderTable);
 
             assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTableRequest(true)))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -116,7 +111,6 @@ class TableServiceTest {
         void changeEmpty_success() {
             final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
             savedOrderTable = tableService.create(orderTableRequest);
-            orderTable.setEmpty(true);
 
             OrderTable changedTable = tableService.changeEmpty(savedOrderTable.getId(), new OrderTableRequest(true));
 
