@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static kitchenpos.Fixture.ORDER_TABLE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import kitchenpos.application.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.application.dto.request.OrderTableChangeNumberOfGuestRequest;
 import kitchenpos.application.dto.request.OrderTableCreateRequest;
+import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
@@ -41,10 +43,15 @@ class TableServiceTest {
 
         //when
         OrderTableCreateRequest dto = new OrderTableCreateRequest(0, true);
-        OrderTable savedOrderTable = tableService.create(dto);
+        OrderTableResponse savedOrderTable = tableService.create(dto);
 
         //then
-        assertThat(savedOrderTable).isEqualTo(ORDER_TABLE);
+        assertAll(
+                () -> assertThat(savedOrderTable.getId()).isEqualTo(ORDER_TABLE.getId()),
+                () -> assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(ORDER_TABLE.getNumberOfGuests()),
+                () -> assertThat(savedOrderTable.getTableGroupId()).isEqualTo(ORDER_TABLE.getTableGroupId()),
+                () -> assertThat(savedOrderTable.isEmpty()).isEqualTo(ORDER_TABLE.isEmpty())
+        );
     }
 
     @Test
@@ -54,7 +61,7 @@ class TableServiceTest {
                 .willReturn(List.of(ORDER_TABLE));
 
         //when
-        List<OrderTable> orderTables = tableService.list();
+        List<OrderTableResponse> orderTables = tableService.list();
 
         //then
         assertThat(orderTables).hasSize(1);
@@ -72,7 +79,7 @@ class TableServiceTest {
 
         //when
         OrderTableChangeEmptyRequest dto = new OrderTableChangeEmptyRequest(false);
-        OrderTable changedOrderTable = tableService.changeEmpty(1L, dto);
+        OrderTableResponse changedOrderTable = tableService.changeEmpty(1L, dto);
 
         //then
         boolean expected = false;
@@ -91,7 +98,7 @@ class TableServiceTest {
         //when
         Long orderTableId = 1L;
         OrderTableChangeNumberOfGuestRequest dto = new OrderTableChangeNumberOfGuestRequest(4);
-        OrderTable savedOrderTable = tableService.changeNumberOfGuests(orderTableId, dto);
+        OrderTableResponse savedOrderTable = tableService.changeNumberOfGuests(orderTableId, dto);
 
         //then
         assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(expected);
