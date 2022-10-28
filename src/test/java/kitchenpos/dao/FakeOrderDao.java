@@ -8,17 +8,18 @@ import kitchenpos.domain.Order;
 public class FakeOrderDao implements OrderDao {
 
     private final List<Order> IN_MEMORY_ORDER;
+    private Long id;
 
     public FakeOrderDao() {
         IN_MEMORY_ORDER = new ArrayList<>();
+        id = 1L;
     }
 
     @Override
     public Order save(Order entity) {
-        IN_MEMORY_ORDER.add(entity);
-        Long id = (long) IN_MEMORY_ORDER.size();
-        entity.setId(id);
-        return entity;
+        Order order = new Order(id++, entity.getOrderTableId(), entity.getOrderStatus(), entity.getOrderedTime());
+        IN_MEMORY_ORDER.add(order);
+        return order;
     }
 
     @Override

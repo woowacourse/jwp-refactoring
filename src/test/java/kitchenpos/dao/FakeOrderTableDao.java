@@ -7,26 +7,28 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
 
 public class FakeOrderTableDao implements OrderTableDao {
-    private static Long id = 1L;
+
     private final List<OrderTable> IN_MEMORY_ORDER_TABLE;
+    private Long id;
 
     public FakeOrderTableDao() {
         IN_MEMORY_ORDER_TABLE = new ArrayList<>();
+        id = 1L;
     }
 
     @Override
     public OrderTable save(OrderTable entity) {
         if (entity.getId() == null) {
-            entity.setId(id++);
-            IN_MEMORY_ORDER_TABLE.add(entity);
-            return entity;
+            OrderTable orderTable = new OrderTable(id++,
+                    entity.getTableGroupId(),
+                    entity.getNumberOfGuests(),
+                    entity.isEmpty());
+            IN_MEMORY_ORDER_TABLE.add(orderTable);
+            return orderTable;
         }
-        Long id = entity.getId();
-        OrderTable originOriginTable = findById(id).get();
-        originOriginTable.setTableGroupId(entity.getTableGroupId());
-        originOriginTable.setEmpty(entity.isEmpty());
-        originOriginTable.setTableGroupId(entity.getTableGroupId());
-        return originOriginTable;
+        IN_MEMORY_ORDER_TABLE.remove(entity);
+        return new OrderTable(entity.getId(), entity.getTableGroupId(), entity.getNumberOfGuests(),
+                entity.isEmpty());
     }
 
     @Override
