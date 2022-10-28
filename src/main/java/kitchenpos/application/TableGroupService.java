@@ -1,17 +1,16 @@
 package kitchenpos.application;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.ui.dto.request.OrderTableIdRequest;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
 import kitchenpos.ui.dto.response.OrderTableResponse;
@@ -26,14 +25,14 @@ public class TableGroupService {
 
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
-    private final TableGroupDao tableGroupDao;
+    private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(final OrderRepository orderRepository,
                              final OrderTableRepository orderTableRepository,
-                             final TableGroupDao tableGroupDao) {
+                             final TableGroupRepository tableGroupRepository) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
-        this.tableGroupDao = tableGroupDao;
+        this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
@@ -50,7 +49,7 @@ public class TableGroupService {
 
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
-        if (orderTables.size() != savedOrderTables.size()) {
+        if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 
@@ -60,22 +59,16 @@ public class TableGroupService {
             }
         }
 
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        final Long tableGroupId = savedTableGroup.getId();
-
-        final List<OrderTable> updatedOrderTables = new ArrayList<>();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            final OrderTable orderTable = new OrderTable(savedOrderTable.getId(), tableGroupId,
-                    savedOrderTable.getNumberOfGuests(), false);
-            orderTableRepository.save(orderTable);
-            updatedOrderTables.add(orderTable);
-        }
-
-        final List<OrderTableResponse> orderTableResponses = updatedOrderTables.stream()
-                .map(it -> new OrderTableResponse(it.getId(), tableGroupId, it.getNumberOfGuests(), it.isEmpty()))
+        final List<OrderTable> updatedOrderTables = savedOrderTables.stream()
+                .map(it -> new OrderTable(it.getId(), savedTableGroup.getId(), it.getNumberOfGuests(), false))
                 .collect(Collectors.toList());
+        final List<OrderTableResponse> orderTableResponses = orderTableRepository.saveAll(updatedOrderTables)
+                .stream()
+                .map(it -> new OrderTableResponse(it.getId(), savedTableGroup.getId(), it.getNumberOfGuests(), it.isEmpty()))
+                .collect(Collectors.toList());;
         return new TableGroupResponse(savedTableGroup.getId(), savedTableGroup.getCreatedDate(), orderTableResponses);
     }
 

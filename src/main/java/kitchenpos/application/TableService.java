@@ -54,9 +54,9 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.changeEmpty(request.isEmpty());
+        final OrderTable updatedOrderTable = savedOrderTable.changeEmpty(request.isEmpty());
 
-        return toResponse(orderTableRepository.save(savedOrderTable));
+        return toResponse(orderTableRepository.save(updatedOrderTable));
     }
 
     @Transactional
@@ -74,9 +74,9 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.changeNumberOfGuests(numberOfGuests);
+        final OrderTable updatedOrderTable = savedOrderTable.changeNumberOfGuests(numberOfGuests);
 
-        return toResponse(orderTableRepository.save(savedOrderTable));
+        return toResponse(orderTableRepository.save(updatedOrderTable));
     }
 
     private OrderTableResponse toResponse(final OrderTable orderTable) {

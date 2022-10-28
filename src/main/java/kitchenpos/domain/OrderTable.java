@@ -6,10 +6,10 @@ import org.springframework.data.annotation.PersistenceCreator;
 public class OrderTable {
 
     @Id
-    private Long id;
-    private Long tableGroupId;
-    private int numberOfGuests;
-    private boolean empty;
+    private final Long id;
+    private final Long tableGroupId;
+    private final int numberOfGuests;
+    private final boolean empty;
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
         this(null, null, numberOfGuests, empty);
@@ -39,15 +39,15 @@ public class OrderTable {
         return numberOfGuests;
     }
 
-    public void changeNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
+    public OrderTable changeNumberOfGuests(final int numberOfGuests) {
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 
     public boolean isEmpty() {
         return empty;
     }
 
-    public void changeEmpty(final boolean empty) {
-        this.empty = empty;
+    public OrderTable changeEmpty(final boolean empty) {
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 }

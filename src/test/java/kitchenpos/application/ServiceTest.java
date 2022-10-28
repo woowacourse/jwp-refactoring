@@ -3,7 +3,6 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -17,6 +16,7 @@ import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +60,7 @@ abstract class ServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
     private OrderRepository orderRepository;
@@ -102,8 +102,8 @@ abstract class ServiceTest {
     }
 
     protected TableGroup saveTableGroup(final OrderTable... orderTables) {
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTables));
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         for (final OrderTable orderTable : orderTables) {
             final OrderTable saved = new OrderTable(orderTable.getId(), savedTableGroup.getId(),

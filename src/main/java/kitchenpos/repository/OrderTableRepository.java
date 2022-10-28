@@ -12,4 +12,7 @@ public interface OrderTableRepository extends CrudRepository<OrderTable, Long> {
     List<OrderTable> findAllByIdIn(List<Long> ids);
 
     List<OrderTable> findAllByTableGroupId(Long tableGroupId);
+
+    @Override
+    <S extends OrderTable> List<S> saveAll(Iterable<S> entities);
 }
