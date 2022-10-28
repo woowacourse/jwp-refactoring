@@ -1,5 +1,7 @@
 package kitchenpos.table.domain;
 
+import java.util.Objects;
+
 public class OrderTable {
     private Long id;
     private Long tableGroupId;
@@ -36,5 +38,26 @@ public class OrderTable {
 
     public void setEmpty(final boolean empty) {
         this.empty = empty;
+    }
+
+    public void occupyTableGroup(Long tableGroupId) {
+        shouldNotJoinTableGroup();
+        this.tableGroupId = tableGroupId;
+        this.empty = false;
+    }
+
+    public void unOccupyTableGroup() {
+        this.tableGroupId = null;
+        this.empty = false;
+    }
+
+    private void shouldNotJoinTableGroup() {
+        if (!canJoinWithTableGroupStatus()) {
+            throw new InvalidTableGroupJoinException();
+        }
+    }
+
+    private boolean canJoinWithTableGroupStatus() {
+        return (this.empty && Objects.isNull(this.tableGroupId));
     }
 }
