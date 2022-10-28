@@ -147,7 +147,7 @@ class JdbcTemplateOrderTableDaoTest {
     private void assertEquals(final OrderTable actual, final OrderTable expected) {
         assertThat(actual.getId()).isPositive();
         assertThat(actual.getNumberOfGuests()).isEqualTo(expected.getNumberOfGuests());
-        assertThat(actual.getTableGroupId()).isEqualByComparingTo(expected.getTableGroupId());
+        assertThat(actual.getTableGroupId()).isEqualTo(expected.getTableGroupId());
         assertThat(actual.isEmpty()).isEqualTo(expected.isEmpty());
     }
 }
