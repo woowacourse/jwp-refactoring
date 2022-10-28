@@ -37,12 +37,7 @@ public class TestFixtureFactory {
 
     public static Order 주문을_생성한다(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
                                  List<OrderLineItem> orderLineItems) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(orderedTime);
-        order.setOrderLineItems(orderLineItems);
-        return order;
+        return new Order(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
     public static OrderLineItem 주문_항목을_생성한다(final Order order, final Long menuId, final long quantity) {

@@ -1,14 +1,14 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.TestFixtureFactory.상품을_생성한다;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.TransactionalTest;
-import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductCreateRequest;
+import kitchenpos.dto.response.ProductCreateResponse;
+import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,32 +20,29 @@ class ProductServiceTest {
 
     @Test
     void 상품을_생성할_수_있다() {
-        Product product = 상품을_생성한다("상품", BigDecimal.ZERO);
+        ProductCreateRequest productCreateRequest = new ProductCreateRequest("상품", BigDecimal.ZERO);
 
-        Product savedProduct = productService.create(product);
+        ProductCreateResponse productCreateResponse = productService.create(productCreateRequest);
 
-        assertAll(
-                () -> assertThat(savedProduct.getId()).isNotNull(),
-                () -> assertThat(savedProduct.getName()).isEqualTo(product.getName()),
-                () -> assertThat(savedProduct.getPrice()).isEqualTo(product.getPrice())
-        );
+        assertThat(productCreateResponse.getId()).isNotNull();
     }
 
     @Test
     void 상품_가격이_0원_미만이면_예외를_반환한다() {
         assertThatThrownBy(
-                () -> productService.create(상품을_생성한다("상품", BigDecimal.valueOf(-1)))
+                () -> productService.create(new ProductCreateRequest("상품", BigDecimal.valueOf(-1)))
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 상품_목록을_조회할_수_있다() {
-        Product savedProduct = productService.create(상품을_생성한다("상품", BigDecimal.ZERO));
+        Long productId = productService.create(new ProductCreateRequest("상품", BigDecimal.ZERO))
+                .getId();
 
-        List<Product> products = productService.list();
+        List<ProductResponse> products = productService.list();
 
         assertThat(products).hasSize(1)
-                .usingFieldByFieldElementComparator()
-                .containsOnly(savedProduct);
+                .extracting("id")
+                .containsOnly(productId);
     }
 }

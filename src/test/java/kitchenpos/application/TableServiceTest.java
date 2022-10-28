@@ -87,7 +87,7 @@ class TableServiceTest {
     void 변경_대상_테이블의_주문_목록_중_식사_중인_주문이_있을_경우_예외를_반환한다() {
         Long orderTableId = tableService.create(new OrderTableCreateRequest(1, false))
                 .getId();
-        orderRepository.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null));
+        orderRepository.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), List.of()));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, true))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -97,7 +97,7 @@ class TableServiceTest {
     void 변경_대상_테이블의_주문_목록_중_조리_중인_주문이_있을_경우_예외를_반환한다() {
         Long orderTableId = tableService.create(new OrderTableCreateRequest(1, false))
                 .getId();
-        orderRepository.save(주문을_생성한다(orderTableId, MEAL.name(), LocalDateTime.now(), null));
+        orderRepository.save(주문을_생성한다(orderTableId, MEAL.name(), LocalDateTime.now(), List.of()));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, true))
                 .isInstanceOf(IllegalArgumentException.class);

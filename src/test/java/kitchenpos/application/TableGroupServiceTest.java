@@ -95,7 +95,7 @@ class TableGroupServiceTest {
         OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 2, true));
         Long tableGroupId = tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()))
                 .getId();
-        orderRepository.save(주문을_생성한다(orderTable1.getId(), COOKING.name(), LocalDateTime.now(), null));
+        orderRepository.save(주문을_생성한다(orderTable1.getId(), COOKING.name(), LocalDateTime.now(), List.of()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId)).isInstanceOf(IllegalArgumentException.class);
     }

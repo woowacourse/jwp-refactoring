@@ -31,19 +31,17 @@ public class OrderLineItem {
 
     public OrderLineItem(final Long seq, final Order order, final Long menuId, final long quantity) {
         this.seq = seq;
+        this.order = order;
         this.menuId = menuId;
         this.quantity = quantity;
-        mapOrder(order);
     }
 
-    private void mapOrder(final Order order) {
+    public void mapOrder(final Order order) {
         if (this.order != null) {
             this.order.getOrderLineItems()
                     .remove(this);
         }
         this.order = order;
-        order.getOrderLineItems()
-                .add(this);
     }
 
     public Long getSeq() {
