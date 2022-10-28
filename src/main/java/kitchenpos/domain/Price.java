@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+@Deprecated
 public class Price {
 
     private final long value;

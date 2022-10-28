@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.util.Objects;
 
+@Deprecated
 public class OrderLineItem {
     private Long id;
     private Long orderId;

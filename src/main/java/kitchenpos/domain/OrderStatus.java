@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+@Deprecated
 public enum OrderStatus {
     COOKING("COOKING"), MEAL("MEAL"), COMPLETION("COMPLETION");
 

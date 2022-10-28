@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.util.Objects;
 
+@Deprecated
 public class OrderTable {
     private Long id;
     private Long tableGroupId;

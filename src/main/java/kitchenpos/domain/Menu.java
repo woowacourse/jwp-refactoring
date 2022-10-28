@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.util.List;
 import java.util.Objects;
 
+@Deprecated
 public class Menu {
     private Long id;
     private String name;

@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.util.Objects;
 
+@Deprecated
 public class MenuProduct {
     private Long id;
     private Long menuId;

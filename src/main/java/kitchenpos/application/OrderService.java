@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 @Service
+@Deprecated
 public class OrderService {
     private final MenuDao menuDao;
     private final OrderDao orderDao;

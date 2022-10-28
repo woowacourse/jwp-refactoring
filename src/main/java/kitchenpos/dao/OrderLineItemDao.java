@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.OrderLineItem;
 
+@Deprecated
 public interface OrderLineItemDao {
     OrderLineItem save(OrderLineItem entity);
 

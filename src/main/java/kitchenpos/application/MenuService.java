@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Deprecated
 public class MenuService {
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.OrderTable;
 
+@Deprecated
 public interface OrderTableDao {
     OrderTable save(OrderTable entity);
 

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.MenuGroup;
 
+@Deprecated
 public interface MenuGroupDao {
     MenuGroup save(MenuGroup entity);
 

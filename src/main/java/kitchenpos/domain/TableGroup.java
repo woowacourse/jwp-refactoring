@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
+@Deprecated
 public class TableGroup {
     private Long id;
     private LocalDateTime createdDate;
