@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.MenuRequest;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
@@ -19,15 +18,13 @@ import java.util.List;
 public class MenuService {
 
     private final MenuRepository menuRepository;
-    private final MenuDao menuDao;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductDao menuProductDao;
     private final ProductRepository productRepository;
 
-    public MenuService(MenuRepository menuRepository, MenuDao menuDao, MenuGroupRepository menuGroupRepository,
+    public MenuService(MenuRepository menuRepository, MenuGroupRepository menuGroupRepository,
                        MenuProductDao menuProductDao, ProductRepository productRepository) {
         this.menuRepository = menuRepository;
-        this.menuDao = menuDao;
         this.menuGroupRepository = menuGroupRepository;
         this.menuProductDao = menuProductDao;
         this.productRepository = productRepository;
@@ -42,7 +39,7 @@ public class MenuService {
         Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuRequest.getMenuGroupId(),
                 menuRequest.getMenuProducts());
 
-        final Menu savedMenu = menuDao.save(menu);
+        final Menu savedMenu = menuRepository.save(menu);
 
         final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
@@ -65,7 +62,7 @@ public class MenuService {
     }
 
     public List<Menu> list() {
-        final List<Menu> menus = menuDao.findAll();
+        final List<Menu> menus = menuRepository.findAll();
 
         for (final Menu menu : menus) {
             menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
