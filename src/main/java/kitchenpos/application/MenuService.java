@@ -40,10 +40,9 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
         validateExistMenuGroupId(request.getMenuGroupId());
-        validatePrice(request.getPrice());
-        validateTotalPrice(request.getPrice(), request.getMenuProducts());
-
         final Menu menu = menuDao.save(request.toEntity());
+
+        validateTotalPrice(request.getPrice(), request.getMenuProducts());
         final List<MenuProduct> menuProducts = saveMenuProducts(
             request.getMenuProducts(), menu.getId());
 
@@ -57,10 +56,16 @@ public class MenuService {
             .collect(Collectors.toList());
     }
 
-    private List<MenuProduct> saveMenuProducts(final List<MenuProduct> menuProducts,
-        final Long menuId) {
+    private List<MenuProduct> saveMenuProducts(
+        final List<MenuProduct> menuProducts,
+        final Long menuId
+    ) {
         return menuProducts.stream()
-            .map(it -> new MenuProduct(null, menuId, it.getProductId(), it.getQuantity()))
+            .map(it -> menuProductDao.save(new MenuProduct(
+                menuId,
+                it.getProductId(),
+                it.getQuantity()
+            )))
             .map(menuProductDao::save)
             .collect(Collectors.toList());
     }

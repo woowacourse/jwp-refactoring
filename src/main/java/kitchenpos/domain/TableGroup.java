@@ -12,6 +12,10 @@ public class TableGroup {
         this.createdDate = createdDate;
     }
 
+    public TableGroup(final LocalDateTime createdDate) {
+        this(null, createdDate);
+    }
+
     public Long getId() {
         return id;
     }

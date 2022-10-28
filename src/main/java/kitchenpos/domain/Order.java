@@ -19,6 +19,14 @@ public class Order {
         this.orderedTime = orderedTime;
     }
 
+    public Order(
+        final Long orderTableId,
+        final String orderStatus,
+        final LocalDateTime orderedTime
+    ) {
+        this(null, orderTableId, orderStatus, orderedTime);
+    }
+
     public Long getId() {
         return id;
     }

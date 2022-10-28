@@ -1,21 +1,18 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 public class Menu {
 
     private final Long id;
     private final String name;
-    private final BigDecimal price;
+    private final Price price;
     private final Long menuGroupId;
 
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
-        validatePrice(price);
-
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
         this.menuGroupId = menuGroupId;
     }
 
@@ -32,16 +29,10 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.get();
     }
 
     public Long getMenuGroupId() {
         return menuGroupId;
-    }
-
-    private void validatePrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
     }
 }

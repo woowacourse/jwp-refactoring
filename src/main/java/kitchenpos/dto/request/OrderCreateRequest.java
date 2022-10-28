@@ -33,7 +33,6 @@ public class OrderCreateRequest {
 
     public Order toEntity() {
         return new Order(
-            null,
             orderTableId,
             OrderStatus.COOKING.name(),
             LocalDateTime.now());
