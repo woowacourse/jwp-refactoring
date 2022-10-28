@@ -16,10 +16,17 @@ public class OrderTable {
     }
 
     public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+        validateEmpty();
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    private void validateEmpty() {
+        if (isEmpty()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {

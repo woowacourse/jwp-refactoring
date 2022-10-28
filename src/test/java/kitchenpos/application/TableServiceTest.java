@@ -84,7 +84,7 @@ class TableServiceTest {
 
             Order order = new Order();
             order.setOrderStatus(COOKING.name());
-            order.setOrderLineItems(ORDER_LINE_ITEMS);
+            order.changeOrderLineItems(ORDER_LINE_ITEMS);
             order.setOrderTableId(savedOrderTable.getId());
             order.setOrderedTime(LocalDateTime.now());
 
@@ -100,7 +100,7 @@ class TableServiceTest {
 
             Order order = new Order();
             order.setOrderStatus(MEAL.name());
-            order.setOrderLineItems(ORDER_LINE_ITEMS);
+            order.changeOrderLineItems(ORDER_LINE_ITEMS);
             order.setOrderTableId(savedOrderTable.getId());
             order.setOrderedTime(LocalDateTime.now());
 
