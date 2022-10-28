@@ -12,7 +12,6 @@ import kitchenpos.application.request.TableGroupRequest;
 import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.application.response.TableGroupResponse;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,9 +26,6 @@ class TableGroupServiceTest {
     private TableService tableService;
 
     @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
     private OrderTableRepository orderTableRepository;
 
     @Autowired
@@ -38,7 +34,7 @@ class TableGroupServiceTest {
     @BeforeEach
     void setUp() {
         sut = new TableGroupService(orderTableRepository, tableGroupRepository);
-        tableService = new TableService(orderRepository, orderTableRepository);
+        tableService = new TableService(orderTableRepository);
     }
 
     @DisplayName("새로운 단체 지정(table group)을 생성할 수 있다.")

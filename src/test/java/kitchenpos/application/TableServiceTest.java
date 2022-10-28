@@ -43,7 +43,7 @@ class TableServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new TableService(orderRepository, orderTableRepository);
+        sut = new TableService(orderTableRepository);
         orderService = new OrderService(menuRepository, orderRepository, orderLineItemRepository, orderTableRepository);
     }
 

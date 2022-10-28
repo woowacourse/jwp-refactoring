@@ -53,7 +53,7 @@ class OrderServiceTest {
     @BeforeEach
     void setUp() {
         sut = new OrderService(menuRepository, orderRepository, orderLineItemRepository, orderTableRepository);
-        tableService = new TableService(orderRepository, orderTableRepository);
+        tableService = new TableService(orderTableRepository);
     }
 
     @DisplayName("주문을 등록할 수 있다. (주문을 하면 조리 상태가 된다.)")
