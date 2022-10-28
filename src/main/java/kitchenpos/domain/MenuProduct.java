@@ -7,7 +7,7 @@ public class MenuProduct {
     private Long seq;
     private Long menuId;
     private Long productId;
-    private BigDecimal price; // 메뉴상품의 가격은 상품을 조회하여 넣어주어야한다.
+    private BigDecimal price;
     private long quantity;
 
     public MenuProduct(final Long productId, final long quantity) {
