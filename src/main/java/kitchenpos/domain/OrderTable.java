@@ -44,10 +44,20 @@ public class OrderTable {
         }
     }
 
+    public void validateIsPossibleToMergeTable() {
+        if (!isEmpty() || Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public void changeNumberOfGuests(final int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
 
+    public void doTabling(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+        this.empty = false;
+    }
 
     public Long getId() {
         return id;

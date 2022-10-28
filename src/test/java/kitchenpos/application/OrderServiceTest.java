@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import static kitchenpos.Fixture.ORDER;
 import static kitchenpos.Fixture.ORDER_LINE_ITEM;
-import static kitchenpos.Fixture.ORDER_TABLE1;
+import static kitchenpos.Fixture.ORDER_TABLE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -48,7 +48,7 @@ class OrderServiceTest {
     void create() {
         //given
         given(menuDao.countByIdIn(anyList())).willReturn(1L);
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(ORDER_TABLE1));
+        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(ORDER_TABLE));
         given(orderDao.save(any(Order.class))).willReturn(ORDER);
         given(orderLineItemDao.save(any(OrderLineItem.class))).willReturn(ORDER_LINE_ITEM);
 
