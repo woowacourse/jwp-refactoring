@@ -1,14 +1,14 @@
 CREATE TABLE orders (
-                        order_id BIGINT(20) NOT NULL AUTO_INCREMENT,
+                        orders_id BIGINT(20) NOT NULL AUTO_INCREMENT,
                         order_table_id BIGINT(20) NOT NULL,
                         order_status VARCHAR(255) NOT NULL,
                         ordered_time DATETIME NOT NULL,
-                        PRIMARY KEY (order_id)
+                        PRIMARY KEY (orders_id)
 );
 
 CREATE TABLE order_line_item (
                                  order_line_item_id BIGINT(20) NOT NULL AUTO_INCREMENT,
-                                 order_id BIGINT(20) NOT NULL,
+                                 orders_id BIGINT(20) NOT NULL,
                                  menu_id BIGINT(20) NOT NULL,
                                  quantity BIGINT(20) NOT NULL,
                                  PRIMARY KEY (order_line_item_id)
@@ -17,7 +17,7 @@ CREATE TABLE order_line_item (
 CREATE TABLE menu (
                       menu_id BIGINT(20) NOT NULL AUTO_INCREMENT,
                       name VARCHAR(255) NOT NULL,
-                      price DECIMAL(19, 2) NOT NULL,
+                      price BIGINT(20) NOT NULL,
                       menu_group_id BIGINT(20) NOT NULL,
                       PRIMARY KEY (menu_id)
 );
@@ -53,7 +53,7 @@ CREATE TABLE table_group (
 CREATE TABLE product (
                          product_id BIGINT(20) NOT NULL AUTO_INCREMENT,
                          name VARCHAR(255) NOT NULL,
-                         price DECIMAL(19, 2) NOT NULL,
+                         price BIGINT(20) NOT NULL,
                          PRIMARY KEY (product_id)
 );
 
@@ -63,7 +63,7 @@ ALTER TABLE orders
 
 ALTER TABLE order_line_item
     ADD CONSTRAINT fk_order_line_item_orders
-        FOREIGN KEY (order_id) REFERENCES orders (order_id);
+        FOREIGN KEY (orders_id) REFERENCES orders (orders_id);
 
 ALTER TABLE order_line_item
     ADD CONSTRAINT fk_order_line_item_menu
