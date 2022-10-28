@@ -40,12 +40,12 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
-    public Long getId() {
-        return id;
+    public static OrderTable of(final int numberOfGuests, final boolean empty) {
+        return new OrderTable(null, null, numberOfGuests, empty);
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     public Long getTableGroupId() {
