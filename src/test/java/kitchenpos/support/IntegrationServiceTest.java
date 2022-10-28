@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * Dao로 추가한 테스트 케이스를 롤백하고자 할 경우 이 클래스를 상속해야 합니다.
 s */
+@SuppressWarnings("NonAsciiCharacters")
 @SpringBootTest
 @Transactional // Transaction Rollback in Test
 abstract public class IntegrationServiceTest {

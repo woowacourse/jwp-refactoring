@@ -49,7 +49,7 @@ class TableServiceTest extends IntegrationServiceTest {
     class changeEmpty_메서드는 {
 
         @Nested
-        class 존재하지않는_주문테이블_id가_입력된_경우 {
+        class 존재하지않는_주문테이블_ID가_입력된_경우 {
 
             private final long NOT_EXISTS_ID = -1L;
             private final OrderTable orderTable = new OrderTable(0, true);
