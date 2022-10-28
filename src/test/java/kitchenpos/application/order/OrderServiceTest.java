@@ -15,7 +15,6 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.support.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,7 +39,6 @@ class OrderServiceTest extends IntegrationTest {
     @Nested
     class CreateTest {
 
-        @Disabled
         @DisplayName("정상 작동")
         @Test
         void create() {
@@ -102,7 +100,6 @@ class OrderServiceTest extends IntegrationTest {
     @Nested
     class ChangeOrderStatusTest {
 
-        @Disabled
         @DisplayName("저장된 주문상태가 계산완료이면 예외가 발생한다.")
         @Test
         void changeOrderStatus_Exception_CompletionStatus() {
