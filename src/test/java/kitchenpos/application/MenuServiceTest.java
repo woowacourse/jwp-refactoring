@@ -66,30 +66,6 @@ class MenuServiceTest {
                 .isEqualTo(response);
     }
 
-    @DisplayName("메뉴의 가격은 음수일 수 없다.")
-    @Test
-    void createWithMinusPrice() {
-        // given
-        final MenuProductRequest menuProduct = createMenuProductRequest();
-        final MenuRequest request = new MenuRequest("후라이드치킨", BigDecimal.valueOf(-1), 2L, List.of(menuProduct));
-
-        // when & then
-        assertThatThrownBy(() -> sut.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("메뉴의 가격은 반드시 함께 등록되어야 한다.")
-    @Test
-    void createWithNullPrice() {
-        // given
-        final MenuProductRequest menuProduct = createMenuProductRequest();
-        final MenuRequest request = new MenuRequest("후라이드치킨", null, 2L, List.of(menuProduct));
-
-        // when & then
-        assertThatThrownBy(() -> sut.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("메뉴는 반드시 어느 메뉴 그룹에 속해있어야 한다.")
     @Test
     void createWithNonGroup() {

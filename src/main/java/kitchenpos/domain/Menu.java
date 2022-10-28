@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 public class Menu {
 
@@ -20,6 +21,14 @@ public class Menu {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
+
+    public static Menu of(final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("올바르지 않은 메뉴의 가격입니다.");
+        }
+
+        return new Menu(name, price, menuGroupId, menuProducts);
     }
 
     public Long getId() {

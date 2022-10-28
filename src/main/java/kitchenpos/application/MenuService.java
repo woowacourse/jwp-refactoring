@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.toList;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.application.request.MenuProductRequest;
 import kitchenpos.application.request.MenuRequest;
 import kitchenpos.application.response.MenuResponse;
@@ -41,13 +40,8 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest request) {
-        final Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(),
+        final Menu menu = Menu.of(request.getName(), request.getPrice(), request.getMenuGroupId(),
                 getMenuProducts(request));
-        final BigDecimal price = menu.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("올바르지 않은 메뉴의 가격입니다.");
-        }
 
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
             throw new IllegalArgumentException("어느 하나의 메뉴 그룹에는 속해야 합니다.");
@@ -61,6 +55,8 @@ public class MenuService {
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
+
+        final BigDecimal price = menu.getPrice();
 
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException("메뉴의 가격이 상품(product)의 금액 총합보다 크면 안됩니다.");
