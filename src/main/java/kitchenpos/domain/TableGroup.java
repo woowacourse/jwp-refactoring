@@ -22,6 +22,14 @@ public class TableGroup {
     @Transient
     private List<OrderTable> orderTables;
 
+    protected TableGroup() {
+    }
+
+    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        this.createdDate = createdDate;
+        this.orderTables = orderTables;
+    }
+
     public Long getId() {
         return id;
     }
