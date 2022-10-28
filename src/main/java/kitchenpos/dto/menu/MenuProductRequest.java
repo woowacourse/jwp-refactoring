@@ -14,15 +14,15 @@ public class MenuProductRequest {
         this.quantity = quantity;
     }
 
+    public MenuProduct from() {
+        return new MenuProduct(productId, quantity);
+    }
+
     public Long getProductId() {
         return productId;
     }
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public MenuProduct from() {
-        return new MenuProduct(null, productId, quantity);
     }
 }

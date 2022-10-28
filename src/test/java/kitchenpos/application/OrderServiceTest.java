@@ -241,7 +241,8 @@ class OrderServiceTest {
     }
 
     public MenuProduct 후라이드_세트_메뉴_상품() {
-        return new MenuProduct(null, 후라이드().getId(), 2);
+        final Product 후라이드 = 후라이드();
+        return new MenuProduct(후라이드.getId(), 2, 후라이드.getPrice());
     }
 
 
