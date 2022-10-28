@@ -93,7 +93,7 @@ public class ServiceTestBase {
         Product product = productDao.save(불맛_떡볶이.toEntity());
         List<MenuProduct> menuProducts = 메뉴_상품_목록_생성(product);
         Menu menu = 떡볶이.toEntity(menuGroup.getId(), menuProducts);
-        return menuService.create(menu);
+        return menuDao.save(menu);
     }
 
     public List<MenuProduct> 메뉴_상품_목록(final Product... products) {
