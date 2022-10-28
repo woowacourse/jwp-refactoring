@@ -146,9 +146,7 @@ public class ServiceTestBase {
     }
 
     public Order 주문(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        Order order = new Order(null, orderTableId, null, LocalDateTime.now());
-        order.addOrderLineItems(orderLineItems);
-        return order;
+        return new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
     public OrderLineItem 주문_항목(final Long menuId) {

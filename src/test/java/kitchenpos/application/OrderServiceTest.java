@@ -90,7 +90,7 @@ class OrderServiceTest extends ServiceTestBase {
         // given
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
         Order order = 주문(orderTableId, orderLineItems);
-        Order savedOrder = orderService.create(toRequest(order));
+        Order savedOrder = orderDao.save(order);
 
         // when
         List<Order> orders = orderService.list();
@@ -107,9 +107,9 @@ class OrderServiceTest extends ServiceTestBase {
         // given
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
         Order order = 주문(orderTableId, orderLineItems);
-        Order savedOrder = orderService.create(toRequest(order));
+        Order savedOrder = orderDao.save(order);
 
-        OrderStatus changedStatus = OrderStatus.COOKING;
+        OrderStatus changedStatus = OrderStatus.MEAL;
         savedOrder.changeOrderStatus(changedStatus);
         OrderUpdateRequest orderUpdateRequest = new OrderUpdateRequest(changedStatus.name());
 
@@ -127,7 +127,7 @@ class OrderServiceTest extends ServiceTestBase {
         // given
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
         Order order = 주문(orderTableId, orderLineItems);
-        orderService.create(toRequest(order));
+        orderDao.save(order);
         OrderUpdateRequest orderUpdateRequest = new OrderUpdateRequest(OrderStatus.COOKING.name());
 
         // when & then
@@ -141,7 +141,7 @@ class OrderServiceTest extends ServiceTestBase {
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
         Order order = 주문(orderTableId, orderLineItems);
 
-        Order savedOrder = orderService.create(toRequest(order));
+        Order savedOrder = orderDao.save(order);
         savedOrder.changeOrderStatus(OrderStatus.COMPLETION);
         orderDao.save(savedOrder);
 
@@ -158,6 +158,4 @@ class OrderServiceTest extends ServiceTestBase {
     private OrderLineItem 주문_항목() {
         return 주문_항목(menuId);
     }
-
-
 }
