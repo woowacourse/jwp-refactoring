@@ -9,9 +9,9 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
-import kitchenpos.application.dto.OrderTableChangeNumberOfGuestRequest;
-import kitchenpos.application.dto.OrderTableCreateRequestDto;
+import kitchenpos.application.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.application.dto.request.OrderTableChangeNumberOfGuestRequest;
+import kitchenpos.application.dto.request.OrderTableCreateRequestDto;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;

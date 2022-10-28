@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.OrderChangeRequestDto;
-import kitchenpos.application.dto.OrderCreateRequestDto;
+import kitchenpos.application.dto.request.OrderChangeRequest;
+import kitchenpos.application.dto.request.OrderCreateRequest;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -36,7 +36,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderCreateRequestDto dto) {
+    public Order create(final OrderCreateRequest dto) {
         final Long orderTableId = findOrderTableId(dto.getOrderTableId());
         final List<OrderLineItem> orderLineItems = getOrderLineItems(dto);
 
@@ -60,7 +60,7 @@ public class OrderService {
         return savedOrderLineItems;
     }
 
-    private List<OrderLineItem> getOrderLineItems(OrderCreateRequestDto dto) {
+    private List<OrderLineItem> getOrderLineItems(OrderCreateRequest dto) {
         final List<OrderLineItem> orderLineItems = dto.getOrderLineItems();
         final List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
@@ -88,7 +88,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderChangeRequestDto dto) {
+    public Order changeOrderStatus(final Long orderId, final OrderChangeRequest dto) {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
         savedOrder.changeStatus(dto.getOrderStatus());

@@ -3,8 +3,8 @@ package kitchenpos.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.MenuService;
-import kitchenpos.application.dto.MenuCreateRequestDto;
-import kitchenpos.application.dto.MenuResponseDto;
+import kitchenpos.application.dto.request.MenuCreateRequest;
+import kitchenpos.application.dto.response.MenuResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +20,7 @@ public class MenuRestController {
     }
 
     @PostMapping("/api/menus")
-    public ResponseEntity<MenuResponseDto> create(@RequestBody final MenuCreateRequestDto dto) {
+    public ResponseEntity<MenuResponseDto> create(@RequestBody final MenuCreateRequest dto) {
         final MenuResponseDto created = menuService.create(dto);
         final URI uri = URI.create("/api/menus/" + created.getId());
         return ResponseEntity.created(uri)

@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.MenuCreateRequestDto;
-import kitchenpos.application.dto.MenuResponseDto;
+import kitchenpos.application.dto.request.MenuCreateRequest;
+import kitchenpos.application.dto.response.MenuResponseDto;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -36,7 +36,7 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuResponseDto create(final MenuCreateRequestDto dto) {
+    public MenuResponseDto create(final MenuCreateRequest dto) {
         final List<MenuProduct> menuProducts = dto.getMenuProducts();
         isExistGroupId(dto);
         isLessThanTotalPrice(menuProducts, dto.getPrice());
@@ -80,7 +80,7 @@ public class MenuService {
         return sum;
     }
 
-    private void isExistGroupId(MenuCreateRequestDto dto) {
+    private void isExistGroupId(MenuCreateRequest dto) {
         if (!menuGroupDao.existsById(dto.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }

@@ -1,15 +1,15 @@
-package kitchenpos.application.dto;
+package kitchenpos.application.dto.request;
 
 import java.util.List;
 import kitchenpos.domain.OrderLineItem;
 
-public class OrderCreateRequestDto {
+public class OrderCreateRequest {
 
     private Long orderTableId;
 
     private List<OrderLineItem> orderLineItems;
 
-    public OrderCreateRequestDto(Long orderTableId, List<OrderLineItem> orderLineItems) {
+    public OrderCreateRequest(Long orderTableId, List<OrderLineItem> orderLineItems) {
         this.orderTableId = orderTableId;
         validateOrderLineItem(orderLineItems);
         this.orderLineItems = orderLineItems;

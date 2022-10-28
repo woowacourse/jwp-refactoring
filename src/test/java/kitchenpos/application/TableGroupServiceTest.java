@@ -9,7 +9,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 import java.util.List;
-import kitchenpos.application.dto.OrderTableIdRequestDto;
+import kitchenpos.application.dto.request.OrderTableIdRequestDto;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;

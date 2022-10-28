@@ -1,9 +1,9 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.TableService;
-import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
-import kitchenpos.application.dto.OrderTableCreateRequestDto;
-import kitchenpos.application.dto.OrderTableChangeNumberOfGuestRequest;
+import kitchenpos.application.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.application.dto.request.OrderTableCreateRequestDto;
+import kitchenpos.application.dto.request.OrderTableChangeNumberOfGuestRequest;
 import kitchenpos.domain.OrderTable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.MenuService;
-import kitchenpos.application.dto.MenuCreateRequestDto;
+import kitchenpos.application.dto.request.MenuCreateRequest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -25,7 +25,7 @@ class MenuRestControllerTest extends ControllerTestSupporter {
         //TODO: 에러핸들링 하기
     void create_요청_가격이_0이거나_음수이면_에러를_반환한다() throws Exception {
         //given
-        MenuCreateRequestDto dto = new MenuCreateRequestDto("name", BigDecimal.valueOf(-100), 1L,
+        MenuCreateRequest dto = new MenuCreateRequest("name", BigDecimal.valueOf(-100), 1L,
                 List.of(MENU_PRODUCT_REQUEST));
 
         //when

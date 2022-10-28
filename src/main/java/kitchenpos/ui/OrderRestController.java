@@ -1,8 +1,8 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.OrderService;
-import kitchenpos.application.dto.OrderChangeRequestDto;
-import kitchenpos.application.dto.OrderCreateRequestDto;
+import kitchenpos.application.dto.request.OrderChangeRequest;
+import kitchenpos.application.dto.request.OrderCreateRequest;
 import kitchenpos.domain.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +19,7 @@ public class OrderRestController {
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<Order> create(@RequestBody final OrderCreateRequestDto dto) {
+    public ResponseEntity<Order> create(@RequestBody final OrderCreateRequest dto) {
         final Order created = orderService.create(dto);
         final URI uri = URI.create("/api/orders/" + created.getId());
         return ResponseEntity.created(uri)
@@ -37,7 +37,7 @@ public class OrderRestController {
     @PutMapping("/api/orders/{orderId}/order-status")
     public ResponseEntity<Order> changeOrderStatus(
             @PathVariable final Long orderId,
-            @RequestBody final OrderChangeRequestDto dto
+            @RequestBody final OrderChangeRequest dto
     ) {
         return ResponseEntity.ok(orderService.changeOrderStatus(orderId, dto));
     }

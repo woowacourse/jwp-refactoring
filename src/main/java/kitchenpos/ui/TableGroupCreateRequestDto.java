@@ -1,7 +1,7 @@
 package kitchenpos.ui;
 
 import java.util.List;
-import kitchenpos.application.dto.OrderTableIdRequestDto;
+import kitchenpos.application.dto.request.OrderTableIdRequestDto;
 import org.springframework.util.CollectionUtils;
 
 public class TableGroupCreateRequestDto {

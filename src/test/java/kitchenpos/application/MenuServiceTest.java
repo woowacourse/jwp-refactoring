@@ -13,8 +13,8 @@ import static org.mockito.BDDMockito.given;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.application.dto.MenuCreateRequestDto;
-import kitchenpos.application.dto.MenuResponseDto;
+import kitchenpos.application.dto.request.MenuCreateRequest;
+import kitchenpos.application.dto.response.MenuResponseDto;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -61,7 +61,7 @@ class MenuServiceTest {
                 .willReturn(MENU_PRODUCT);
 
         //when
-        MenuCreateRequestDto dto = new MenuCreateRequestDto("후라이드", BigDecimal.valueOf(19000), 1L,
+        MenuCreateRequest dto = new MenuCreateRequest("후라이드", BigDecimal.valueOf(19000), 1L,
                 List.of(MENU_PRODUCT));
         MenuResponseDto savedMenu = menuService.create(dto);
 
@@ -75,7 +75,7 @@ class MenuServiceTest {
         //TODO: 에러 핸들링 후, 수정하기
     void create_요청_가격이_0이거나_음수이면_에러를_반환한다() {
         assertThatThrownBy(() -> menuService.create(
-                new MenuCreateRequestDto(
+                new MenuCreateRequest(
                         "name", BigDecimal.valueOf(-100),
                         1L, List.of(MENU_PRODUCT_REQUEST)))
         ).isInstanceOf(IllegalArgumentException.class);
@@ -91,7 +91,7 @@ class MenuServiceTest {
 
         //when, then
         BigDecimal price = BigDecimal.valueOf(30000);
-        MenuCreateRequestDto dto = new MenuCreateRequestDto("name", price, 1L,
+        MenuCreateRequest dto = new MenuCreateRequest("name", price, 1L,
                 List.of(MENU_PRODUCT_REQUEST));
 
         assertThatThrownBy(() -> menuService.create(dto))
