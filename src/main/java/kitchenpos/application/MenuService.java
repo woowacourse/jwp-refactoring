@@ -41,42 +41,13 @@ public class MenuService {
 
     @Transactional
     public Menu create(final MenuCreateRequest menuCreateRequest) {
-        final Long price = menuCreateRequest.getPrice();
+        MenuProducts menuProducts = generateMenuProducts(menuCreateRequest);
+        Menu menu = menuDao.save(generateMenu(menuCreateRequest, menuProducts));
 
-        if (Objects.isNull(price) || price < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        if (!menuGroupDao.existsById(menuCreateRequest.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
-        Map<Long, Long> groupByMenuProductsId = menuCreateRequest.getMenuProducts().stream()
-                .collect(Collectors.toMap(MenuProductsRequest::getProductId, MenuProductsRequest::getQuantity));
-
-        Map<Long, Long> groupedPriceByProductId = productDao.findAllByIds(
-                new ArrayList<>(groupByMenuProductsId.keySet())).stream()
-                    .collect(Collectors.toMap(Product::getId, Product::getPrice));
-
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        groupByMenuProductsId.keySet()
-                .forEach(each -> savedMenuProducts.add(new MenuProduct(each, groupByMenuProductsId.get(each))));
-
-        MenuProducts menuProducts = new MenuProducts(savedMenuProducts, new ArrayList<>(groupedPriceByProductId.keySet()));
-
-        if (menuProducts.isOverThanTotalPrice(groupedPriceByProductId, price)) {
-            throw new IllegalArgumentException();
-        }
-
-        final Menu savedMenu = menuDao.save(new Menu(
-                menuCreateRequest.getName(), menuCreateRequest.getPrice(), menuCreateRequest.getMenuGroupId()));
-
-        final Long menuId = savedMenu.getId();
+        final Long menuId = menu.getId();
         List<MenuProduct> results = menuProducts.changeMenuId(menuId).getMenuProducts();
         results.forEach(menuProductDao::save);
-        savedMenu.setMenuProducts(savedMenuProducts);
-
-        return savedMenu;
+        return menu.changeMenuProducts(results);
     }
 
     public List<Menu> list() {
@@ -87,5 +58,52 @@ public class MenuService {
         }
 
         return menus;
+    }
+
+    private void validateExistMenuGroup(Long menuGroupId) {
+        if (!menuGroupDao.existsById(menuGroupId)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private MenuProducts generateMenuProducts(MenuCreateRequest menuCreateRequest) {
+        validateExistProduct(menuCreateRequest);
+        Map<Long, Long> groupByMenuProductsId = menuCreateRequest.getMenuProducts().stream()
+                .collect(Collectors.toMap(MenuProductsRequest::getProductId, MenuProductsRequest::getQuantity));
+
+        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
+        groupByMenuProductsId.keySet()
+                .forEach(each -> savedMenuProducts.add(new MenuProduct(each, groupByMenuProductsId.get(each))));
+
+        return new MenuProducts(savedMenuProducts);
+    }
+
+    private void validateExistProduct(MenuCreateRequest menuCreateRequest) {
+        List<Long> existProductIds = productDao.findAll().stream()
+                .map(Product::getId)
+                .collect(Collectors.toUnmodifiableList());
+        if (menuCreateRequest.getMenuProducts().stream()
+                .anyMatch(each -> !existProductIds.contains(each.getProductId()))) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private Menu generateMenu(MenuCreateRequest menuCreateRequest, MenuProducts menuProducts) {
+        validateExistMenuGroup(menuCreateRequest.getMenuGroupId());
+        validateOverTotalPrice(menuCreateRequest, menuProducts);
+        return new Menu(menuCreateRequest.getName(), menuCreateRequest.getPrice(), menuCreateRequest.getMenuGroupId());
+    }
+
+    private void validateOverTotalPrice(MenuCreateRequest menuCreateRequest, MenuProducts menuProducts) {
+        if (menuCreateRequest.getPrice() == null) {
+            throw new IllegalArgumentException();
+        }
+        Map<Long, Long> groupedPriceByProductId = productDao.findAllByIds(
+                        menuProducts.getProductsIds())
+                .stream()
+                .collect(Collectors.toMap(Product::getId, Product::getPrice));
+        if (menuProducts.isOverThanTotalPrice(groupedPriceByProductId, menuCreateRequest.getPrice())) {
+            throw new IllegalArgumentException();
+        }
     }
 }

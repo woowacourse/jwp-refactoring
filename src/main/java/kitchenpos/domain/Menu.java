@@ -11,6 +11,8 @@ public class Menu {
     private List<MenuProduct> menuProducts;
 
     public Menu(Long id, String name, Long price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        validateName(name);
+        validatePrice(price);
         this.id = id;
         this.name = name;
         this.price = price;
@@ -18,43 +20,40 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
+    private void validatePrice(Long price) {
+        if (price == null || price < 0L) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateName(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Menu(String name, Long price, Long menuGroupId) {
         this(null, name, price, menuGroupId, null);
     }
 
-    public Menu() {
+    public Menu changeMenuProducts(List<MenuProduct> menuProducts) {
+        return new Menu(this.id, this.name, this.price, this.menuGroupId, menuProducts);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
     }
 
     public Long getPrice() {
         return price;
     }
 
-    public void setPrice(final Long price) {
-        this.price = price;
-    }
-
     public Long getMenuGroupId() {
         return menuGroupId;
-    }
-
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {

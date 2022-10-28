@@ -37,8 +37,8 @@ public class OrderServiceTest {
                 new OrderTable(4L, null, 4, false),
                 List.of(new OrderLineItem(null, 2L, 3L),
                         new OrderLineItem(null, 1L, 2L)),
-                List.of(new Menu(1L, null, null, null, null),
-                        new Menu(2L, null, null, null, null)));
+                List.of(new Menu(1L, "test", 1L, null, null),
+                        new Menu(2L, "test", 1L, null, null)));
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(4L,
                 List.of(new OrderLineItemRequest(2L, 3L),
                         new OrderLineItemRequest(1L, 2L)));
@@ -66,8 +66,8 @@ public class OrderServiceTest {
                 new OrderTable(4, false),
                 List.of(new OrderLineItem(null, 2L, 3L),
                         new OrderLineItem(null, 100L, 2L)),
-                List.of(new Menu(1L, null, null, null, null),
-                        new Menu(2L, null, null, null, null)));
+                List.of(new Menu(1L, "test", 1L, null, null),
+                        new Menu(2L, "test", 1L, null, null)));
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(4L,
                 List.of(new OrderLineItemRequest(2L, 3L),
                         new OrderLineItemRequest(100L, 2L)));
@@ -81,8 +81,8 @@ public class OrderServiceTest {
                 new OrderTable(2L, null, 4, false),
                 List.of(new OrderLineItem(null, 2L, 3L),
                         new OrderLineItem(null, 1L, 2L)),
-                List.of(new Menu(1L, null, null, null, null),
-                        new Menu(2L, null, null, null, null)));
+                List.of(new Menu(1L, "test", 1L, null, null),
+                        new Menu(2L, "test", 1L, null, null)));
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(1L,
                 List.of(new OrderLineItemRequest(2L, 3L),
                         new OrderLineItemRequest(1L, 2L)));

@@ -7,22 +7,11 @@ public class MenuProducts {
 
     private final List<MenuProduct> menuProducts;
 
-    public MenuProducts(List<MenuProduct> menuProducts, List<Long> productId) {
-        validateExistProductId(menuProducts, productId);
-        this.menuProducts = comPressQuantity(menuProducts);
+    public MenuProducts(List<MenuProduct> menuProducts) {
+        this.menuProducts = compressQuantity(menuProducts);
     }
 
-    private void validateExistProductId(List<MenuProduct> menuProducts, List<Long> productId) {
-        Set<Long> expectedProductId = menuProducts.stream()
-                .map(MenuProduct::getProductId)
-                .collect(Collectors.toSet());
-        Set<Long> actualProductId = new HashSet<>(productId);
-        if (!actualProductId.containsAll(expectedProductId)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private List<MenuProduct> comPressQuantity(List<MenuProduct> menuProducts) {
+    private List<MenuProduct> compressQuantity(List<MenuProduct> menuProducts) {
         Map<Long, Long> groupedQuantityByProduct = new HashMap<>();
         for (MenuProduct menuProduct : menuProducts) {
             Long quantity = groupedQuantityByProduct.computeIfAbsent(menuProduct.getProductId(), (id) -> 0L);
@@ -47,13 +36,16 @@ public class MenuProducts {
         List<MenuProduct> changedMenuProducts = this.menuProducts.stream()
                 .map(each -> each.changeMenuId(menuId))
                 .collect(Collectors.toUnmodifiableList());
-        List<Long> productIds = changedMenuProducts.stream()
-                .map(MenuProduct::getProductId)
-                .collect(Collectors.toUnmodifiableList());
-        return new MenuProducts(changedMenuProducts, productIds);
+        return new MenuProducts(changedMenuProducts);
     }
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
+    }
+
+    public List<Long> getProductsIds() {
+        return menuProducts.stream()
+                .map(MenuProduct::getProductId)
+                .collect(Collectors.toUnmodifiableList());
     }
 }
