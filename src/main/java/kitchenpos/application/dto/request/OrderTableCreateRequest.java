@@ -12,12 +12,18 @@ public class OrderTableCreateRequest {
     public OrderTableCreateRequest() {
     }
 
-    public OrderTableCreateRequest(final Long id, final Long tableGroupId, final int numberOfGuests,
+    public OrderTableCreateRequest(final Long id,
+                                   final Long tableGroupId,
+                                   final int numberOfGuests,
                                    final boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public OrderTable toOrderTable() {
+        return new OrderTable(null, null, this.numberOfGuests, this.empty);
     }
 
     public Long getId() {
@@ -34,9 +40,5 @@ public class OrderTableCreateRequest {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public OrderTable toOrderTable() {
-        return new OrderTable(null, null, this.numberOfGuests, this.empty);
     }
 }

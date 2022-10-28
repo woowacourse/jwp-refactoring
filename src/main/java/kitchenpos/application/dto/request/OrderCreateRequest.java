@@ -15,6 +15,33 @@ public class OrderCreateRequest {
     private LocalDateTime orderedTime;
     private List<OrderLineItemDto> orderLineItemsDto;
 
+    public OrderCreateRequest() {
+    }
+
+    public OrderCreateRequest(final Long id,
+                              final Long orderTableId,
+                              final String orderStatus,
+                              final LocalDateTime orderedTime,
+                              final List<OrderLineItemDto> orderLineItems) {
+        this.id = id;
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        this.orderLineItemsDto = orderLineItems;
+    }
+
+    public Order toOrder(final Long orderTableId,
+                         final OrderStatus orderStatus,
+                         final LocalDateTime orderedTime) {
+        return new Order(
+                id,
+                orderTableId,
+                orderStatus,
+                orderedTime,
+                toOrderLineItems()
+        );
+    }
+
     public Long getId() {
         return id;
     }
@@ -33,29 +60,6 @@ public class OrderCreateRequest {
 
     public List<OrderLineItemDto> getOrderLineItemsDto() {
         return orderLineItemsDto;
-    }
-
-    public OrderCreateRequest() {
-    }
-
-    public OrderCreateRequest(final Long id, final Long orderTableId, final String orderStatus,
-                              final LocalDateTime orderedTime,
-                              final List<OrderLineItemDto> orderLineItems) {
-        this.id = id;
-        this.orderTableId = orderTableId;
-        this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
-        this.orderLineItemsDto = orderLineItems;
-    }
-
-    public Order toOrder(final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
-        return new Order(
-                id,
-                orderTableId,
-                orderStatus,
-                orderedTime,
-                toOrderLineItems()
-        );
     }
 
     private List<OrderLineItem> toOrderLineItems() {

@@ -21,6 +21,10 @@ public class TableGroupCreateRequest {
         this.orderTableIdsDto = orderTableIdsDto;
     }
 
+    public TableGroup toTableGroup(final LocalDateTime createdDate) {
+        return new TableGroup(null, createdDate);
+    }
+
     public Long getId() {
         return id;
     }
@@ -31,9 +35,5 @@ public class TableGroupCreateRequest {
 
     public List<OrderTableIdDto> getOrderTableIdsDto() {
         return orderTableIdsDto;
-    }
-
-    public TableGroup toTableGroup(final LocalDateTime createdDate) {
-        return new TableGroup(null, createdDate);
     }
 }

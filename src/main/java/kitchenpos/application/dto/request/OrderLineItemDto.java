@@ -15,15 +15,15 @@ public class OrderLineItemDto {
         this.quantity = orderLineItem.getQuantity();
     }
 
+    public OrderLineItem toOrderLineItem() {
+        return new OrderLineItem(null, this.menuId, this.quantity);
+    }
+
     public Long getMenuId() {
         return menuId;
     }
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public OrderLineItem toOrderLineItem() {
-        return new OrderLineItem(null, this.menuId, this.quantity);
     }
 }

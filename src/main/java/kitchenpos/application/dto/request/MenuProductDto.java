@@ -5,7 +5,7 @@ import kitchenpos.domain.MenuProduct;
 public class MenuProductDto {
 
     private Long productId;
-    private long quantity;
+    private Long quantity;
 
     public MenuProductDto() {
     }

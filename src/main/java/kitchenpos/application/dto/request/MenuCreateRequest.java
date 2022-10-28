@@ -17,7 +17,10 @@ public class MenuCreateRequest {
     public MenuCreateRequest() {
     }
 
-    public MenuCreateRequest(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
+    public MenuCreateRequest(final Long id,
+                             final String name,
+                             final BigDecimal price,
+                             final Long menuGroupId,
                              final List<MenuProductDto> menuProductsDto) {
         this.id = id;
         this.name = name;

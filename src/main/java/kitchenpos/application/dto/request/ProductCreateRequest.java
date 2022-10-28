@@ -18,6 +18,10 @@ public class ProductCreateRequest {
         this.price = price;
     }
 
+    public Product toProduct() {
+        return new Product(id, name, price);
+    }
+
     public Long getId() {
         return id;
     }
@@ -28,9 +32,5 @@ public class ProductCreateRequest {
 
     public BigDecimal getPrice() {
         return price;
-    }
-
-    public Product toProduct() {
-        return new Product(id, name, price);
     }
 }

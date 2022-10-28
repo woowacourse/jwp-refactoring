@@ -9,10 +9,6 @@ public class OrderTableIdDto {
     public OrderTableIdDto() {
     }
 
-    public OrderTableIdDto(final Long orderTableId) {
-        this.orderTableId = orderTableId;
-    }
-
     public OrderTableIdDto(final OrderTable orderTable) {
         this.orderTableId = orderTable.getId();
     }
