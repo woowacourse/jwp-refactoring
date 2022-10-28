@@ -32,14 +32,13 @@ class MenuRepository implements MenuDao {
         final Long menuId = entity.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
 
-        // :todo 객체끼리 수동으로 의존 관계 맺어주는게 불편,ORM 사용해볼까
         for (final MenuProduct menuProduct : entity.getMenuProducts()) {
             menuProduct.setMenuId(menuId);
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
         entity.setMenuProducts(savedMenuProducts);
 
-        return entity;
+        return menuDao.save(entity);
     }
 
     @Override
@@ -51,7 +50,6 @@ class MenuRepository implements MenuDao {
     public List<Menu> findAll() {
         final List<Menu> menus = menuDao.findAll();
 
-        // :todo 객체끼리 수동으로 의존 관계 맺어주는게 불편,ORM 사용해볼까 2
         for (final Menu menu : menus) {
             menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
         }
