@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -31,36 +30,12 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final CreateTableGroupRequest request) {
-        final List<Long> orderTableIds = request.getOrderTables().stream()
-            .map(table -> table.getId())
+        final List<OrderTable> orderTables = request.getOrderTables().stream()
+            .map(table -> findOrderTableById(table.getId()))
             .collect(Collectors.toList());
 
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-
-        if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException("존재하지 않은 테이블입니다.");
-        }
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException("이미 다른 그룹에 존재하는 테이블입니다.");
-            }
-
-            if (!savedOrderTable.isEmpty()) {
-                throw new IllegalArgumentException("비어있지 않은 테이블입니다.");
-            }
-        }
-
-        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup());
-        final Long tableGroupId = savedTableGroup.getId();
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.group(tableGroupId);
-            orderTableDao.save(savedOrderTable);
-        }
-        savedTableGroup.setOrderTables(savedOrderTables);
-
-        return savedTableGroup;
+        TableGroup tableGroup = new TableGroup(orderTables);
+        return tableGroupDao.save(tableGroup);
     }
 
     @Transactional
@@ -80,5 +55,10 @@ public class TableGroupService {
             orderTable.ungroup();
             orderTableDao.save(orderTable);
         }
+    }
+
+    private OrderTable findOrderTableById(Long id) {
+        return orderTableDao.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 테이블입니다."));
     }
 }

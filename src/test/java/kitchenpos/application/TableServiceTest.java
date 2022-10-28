@@ -58,21 +58,21 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("예외사항이 존재하지 않는 경우 상태를 변경한다.")
         void changeEmpty() {
             // given
-            OrderTable savedOrderTable = createAndSaveOrderTable(10, false);
-            ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(true);
+            OrderTable savedOrderTable = createAndSaveOrderTable(true);
+            ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(false);
 
             // when
             OrderTable changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), request);
 
             // then
-            assertThat(changedOrderTable.isEmpty()).isTrue();
+            assertThat(changedOrderTable.isEmpty()).isFalse();
         }
 
         @Test
         @DisplayName("존재하지 않는 테이블 id인 경우 예외가 발생한다.")
         void invalidOrderTableId() {
             // given
-            ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(true);
+            ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(false);
 
             // when, then
             assertThatThrownBy(() -> tableService.changeEmpty(0L, request))
@@ -85,11 +85,12 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("COOKING 혹은 MEAL 상태인 경우 예외가 발생한다.")
         void invalidStatus(String status) {
             // given
-            OrderTable savedOrderTable = createAndSaveOrderTable(10, true);
-            Order savedOrder = orderDao.save(new Order(savedOrderTable.getId()));
-            savedOrder.changeStatus(status);
+            OrderTable savedOrderTable = createAndSaveOrderTable(true);
+            Order order = new Order(savedOrderTable.getId());
+            order.changeStatus(status);
+            orderDao.save(order);
 
-            ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(true);
+            ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(false);
 
             // when, then
             assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), request))
@@ -107,7 +108,7 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("예외사항이 존재하지 않는 경우 방문자 수를 변경한다.")
         void changeNumberOfGuests() {
             // given
-            OrderTable savedOrderTable = createAndSaveOrderTable(10, false);
+            OrderTable savedOrderTable = createAndSaveOrderTable(false);
             ChangeOrderTableNumberOfGuestRequest request = new ChangeOrderTableNumberOfGuestRequest(20);
 
             // when
@@ -131,8 +132,8 @@ class TableServiceTest extends ServiceTest {
 
     }
 
-    private OrderTable createAndSaveOrderTable(int numberOfGuests, boolean empty) {
-        OrderTable orderTable = new OrderTable(numberOfGuests, empty);
+    private OrderTable createAndSaveOrderTable(boolean empty) {
+        OrderTable orderTable = new OrderTable(10, empty);
         return orderTableDao.save(orderTable);
     }
 

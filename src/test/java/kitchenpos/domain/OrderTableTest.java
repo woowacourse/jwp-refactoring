@@ -20,11 +20,12 @@ class OrderTableTest {
             OrderTable orderTable = new OrderTable(10, true);
 
             // when
-            orderTable.group(1L);
+            TableGroup tableGroup = new TableGroup();
+            orderTable.group(tableGroup);
 
             // then
             assertAll(
-                () -> assertThat(orderTable.getTableGroupId()).isEqualTo(1L),
+                () -> assertThat(orderTable.getTableGroup()).isEqualTo(tableGroup),
                 () -> assertThat(orderTable.isEmpty()).isFalse()
             );
         }
@@ -40,14 +41,15 @@ class OrderTableTest {
         void ungroup() {
             // given
             OrderTable orderTable = new OrderTable(10, true);
-            orderTable.group(1L);
+            TableGroup tableGroup = new TableGroup();
+            orderTable.group(tableGroup);
 
             // when
             orderTable.ungroup();
 
             // then
             assertAll(
-                () -> assertThat(orderTable.getTableGroupId()).isNull(),
+                () -> assertThat(orderTable.getTableGroup()).isNull(),
                 () -> assertThat(orderTable.isEmpty()).isFalse()
             );
         }
@@ -72,10 +74,12 @@ class OrderTableTest {
         }
 
         @Test
-        @DisplayName("table group id가 null이 아닌 채 empty 상태를 변경하는 경우 예외가 발생한다.")
+        @DisplayName("table group이 null이 아닌 채 empty 상태를 변경하는 경우 예외가 발생한다.")
         void notNullTableGroupId() {
             // given
-            OrderTable orderTable = new OrderTable(1L, 1L, 10, true);
+            OrderTable orderTable = new OrderTable(10, true);
+            TableGroup tableGroup = new TableGroup();
+            orderTable.group(tableGroup);
 
             // when, then
             assertThatThrownBy(() -> orderTable.changeEmpty(false))

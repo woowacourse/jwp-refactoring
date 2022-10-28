@@ -1,30 +1,46 @@
 package kitchenpos.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class OrderTable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long tableGroupId;
+
+    @ManyToOne
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
+
+    @Column(nullable = false)
     private int numberOfGuests;
+
+    @Column(nullable = false)
     private boolean empty;
+
+    protected OrderTable() {
+    }
 
     public OrderTable(int numberOfGuests, boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
-        this.id = id;
-        this.tableGroupId = tableGroupId;
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
-    }
-
-    public void group(Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public void group(TableGroup tableGroup) {
+        validateGroup();
+        this.tableGroup = tableGroup;
         empty = false;
     }
 
     public void ungroup() {
-        tableGroupId = null;
+        tableGroup = null;
         empty = false;
     }
 
@@ -42,8 +58,8 @@ public class OrderTable {
         return id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
     public int getNumberOfGuests() {
@@ -55,7 +71,7 @@ public class OrderTable {
     }
 
     private void validateEmptyChangeable() {
-        if (tableGroupId != null) {
+        if (tableGroup != null) {
             throw new IllegalArgumentException("테이블 그룹에 묶여있어 상태를 변경할 수 없습니다.");
         }
     }
@@ -67,6 +83,16 @@ public class OrderTable {
 
         if (empty) {
             throw new IllegalArgumentException("비어있는 테이블입니다.");
+        }
+    }
+
+    private void validateGroup() {
+        if (tableGroup != null) {
+            throw new IllegalArgumentException("이미 다른 그룹에 존재하는 테이블입니다.");
+        }
+
+        if (!empty) {
+            throw new IllegalArgumentException("비어있지 않은 테이블입니다.");
         }
     }
 }
