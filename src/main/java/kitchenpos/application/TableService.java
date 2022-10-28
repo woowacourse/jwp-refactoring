@@ -44,23 +44,20 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        final OrderTable updatedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new)
+        final OrderTable updatedOrderTable = orderTableRepository.getOrderTable(orderTableId)
                 .changeEmpty(request.isEmpty());
         return OrderTableResponse.from(orderTableRepository.save(updatedOrderTable));
     }
 
     private boolean hasNotCompletedOrder(final Long orderTableId) {
         return orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId,
-                List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
+                orderTableId, List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
         );
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final ChangeNumberOfGuestsRequest request) {
-        final OrderTable updatedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new)
+        final OrderTable updatedOrderTable = orderTableRepository.getOrderTable(orderTableId)
                 .changeNumberOfGuests(request.getNumberOfGuests());
         return OrderTableResponse.from(orderTableRepository.save(updatedOrderTable));
     }
