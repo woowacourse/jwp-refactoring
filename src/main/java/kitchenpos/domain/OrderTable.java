@@ -55,7 +55,7 @@ public class OrderTable {
     public static OrderTable of(final int numberOfGuests, final boolean empty) {
         validateNegativeNumberOfGuests(numberOfGuests);
 
-        return new OrderTable(null, null, numberOfGuests, empty);
+        return new OrderTable(null, null, numberOfGuests, empty, new ArrayList<>());
     }
 
     public void changeEmptyStatus(final boolean empty) {
