@@ -36,40 +36,49 @@ public class MenuService {
 
     @Transactional
     public Menu create(final MenuCreateRequest request) {
+        checkMenuGroup(request);
+        final List<MenuProductCreateRequest> menuProductsCreateRequest = request.getMenuProducts();
+
+        Menu menu = new Menu(null, request.getName(), request.getPrice(), request.getMenuGroupId(), null);
+        menu.checkMenuable(menuProductsCreateRequest);
+        checkMenuPrice(menuProductsCreateRequest, menu);
+
+        final Menu savedMenu = menuDao.save(menu);
+        setMenuProducts(menuProductsCreateRequest, savedMenu);
+        return savedMenu;
+    }
+
+    private void checkMenuGroup(MenuCreateRequest request) {
         if (!menuGroupDao.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
+    }
 
-        final List<MenuProductCreateRequest> menuProductsRequest = request.getMenuProducts();
-
-        Menu menu = new Menu(null, request.getName(), request.getPrice(), request.getMenuGroupId(), null);
-
+    private void checkMenuPrice(List<MenuProductCreateRequest> menuProductsCreateRequest, Menu menu) {
         BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProductCreateRequest menuProductRequest : menuProductsRequest) {
+        for (final MenuProductCreateRequest menuProductRequest : menuProductsCreateRequest) {
             Product product = productDao.getById(menuProductRequest.getProductId());
-            BigDecimal price = product.getPrice();
             long quantity = menuProductRequest.getQuantity();
-            sum = sum.add(price).multiply(BigDecimal.valueOf(quantity));
+            sum = sum.add(product.multiplyPrice(quantity));
         }
 
         if (menu.getPrice().compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
+    }
 
-        final Menu savedMenu = menuDao.save(menu);
-
+    private void setMenuProducts(List<MenuProductCreateRequest> menuProductsCreateRequest, Menu savedMenu) {
+        Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProductCreateRequest menuProductRequest : menuProductsRequest) {
+        for (final MenuProductCreateRequest menuProduct : menuProductsCreateRequest) {
             MenuProduct savedMenuProduct = menuProductDao.save(
                     new MenuProduct(null,
-                            savedMenu.getId(),
-                            menuProductRequest.getProductId(),
-                            menuProductRequest.getQuantity()));
+                            menuId,
+                            menuProduct.getProductId(),
+                            menuProduct.getQuantity()));
             savedMenuProducts.add(savedMenuProduct);
         }
         savedMenu.setMenuProducts(savedMenuProducts);
-
-        return savedMenu;
     }
 
     @Transactional(readOnly = true)

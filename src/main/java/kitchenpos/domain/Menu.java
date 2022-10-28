@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import kitchenpos.ui.dto.MenuProductCreateRequest;
 
 public class Menu {
     private Long id;
@@ -48,5 +49,9 @@ public class Menu {
 
     public void setMenuProducts(List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
+    }
+
+    public void checkMenuable(List<MenuProductCreateRequest> menuProducts) {
+
     }
 }

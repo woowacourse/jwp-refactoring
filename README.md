@@ -217,5 +217,9 @@ Controller에서 받아온 객체를 그대로 save하거나, 해당 객체의 �
 
        - [x] 2개 미만 리스트 검증
 
-         
+   - ungroup 메서드 리팩터링
 
+
+
+9. MenuService 리팩터링
+   - 
