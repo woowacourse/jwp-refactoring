@@ -46,7 +46,7 @@ public class TableGroupService {
         return TableGroupResponse.of(savedTableGroup);
     }
 
-    private static void validateOrderTables(final List<OrderTable> orderTables) {
+    private void validateOrderTables(final List<OrderTable> orderTables) {
         for (final OrderTable orderTable : orderTables) {
             if (!orderTable.isEmpty() || orderTable.hasTableGroup()) {
                 throw new IllegalArgumentException();

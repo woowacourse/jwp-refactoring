@@ -54,7 +54,7 @@ public class TableService {
         return OrderTableResponse.of(orderTable);
     }
 
-    private static void validateOrderTable(final OrderTable orderTable) {
+    private void validateOrderTable(final OrderTable orderTable) {
         if (orderTable.hasTableGroup()) {
             throw new IllegalArgumentException();
         }
@@ -79,7 +79,7 @@ public class TableService {
         return OrderTableResponse.of(orderTable);
     }
 
-    private static void validateEmpty(final OrderTable orderTable) {
+    private void validateEmpty(final OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }

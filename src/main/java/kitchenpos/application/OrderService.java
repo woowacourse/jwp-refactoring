@@ -53,7 +53,7 @@ public class OrderService {
         return orderRequest.toEntity(menus);
     }
 
-    private static void validateEmpty(final OrderTable orderTable) {
+    private void validateEmpty(final OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -83,7 +83,7 @@ public class OrderService {
         return OrderResponse.of(savedOrder);
     }
 
-    private static void validateOrderCompletion(final Order savedOrder) {
+    private void validateOrderCompletion(final Order savedOrder) {
         if (savedOrder.isCompletion()) {
             throw new IllegalArgumentException();
         }

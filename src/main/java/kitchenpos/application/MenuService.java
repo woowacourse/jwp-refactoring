@@ -61,7 +61,7 @@ public class MenuService {
         }
     }
 
-    private static void validateMenuPrice(final Menu menu) {
+    private void validateMenuPrice(final Menu menu) {
         if (menu.isPriceGreaterThanMenuProductsPrice()) {
             throw new IllegalArgumentException();
         }
