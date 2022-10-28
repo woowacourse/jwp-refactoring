@@ -133,8 +133,8 @@ class TableGroupServiceTest {
         @DisplayName("테이블 중 주문 상태가 Cooking, Meal인 주문이 있을 경우 예외가 발생한다")
         @Test
         void throwExceptionBecauseOrderStatusIsCookingOrMeal() {
-            Order order = new Order(table1.getId(), List.of(new OrderLineItem(1L, 3)));
-            order.setOrderStatus(OrderStatus.COOKING.name());
+            Order order = Order.create(table1.getId(), List.of(new OrderLineItem(1L, 3)));
+            order.changeStatus(OrderStatus.COOKING);
             orderDao.save(order);
 
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

@@ -23,9 +23,14 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderRequest;
+import kitchenpos.dto.OrderResponse;
+import kitchenpos.dto.OrderStatusUpdateRequest;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.ProductFixture;
+import kitchenpos.repository.OrderRepository;
 import kitchenpos.support.SpringBootNestedTest;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -35,6 +40,9 @@ class OrderServiceTest {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Autowired
     private OrderTableDao orderTableDao;
@@ -76,19 +84,20 @@ class OrderServiceTest {
         @DisplayName("주문을 생성하면 ID가 할당된 Order객체가 반환된다")
         @Test
         void create() {
-            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(후라이드_양념치킨_두마리세트.getId(), 3));
-            Order order = new Order(orderTable.getId(), orderLineItems);
+            List<OrderLineItemRequest> orderLineItemsRequests = List.of(
+                    new OrderLineItemRequest(후라이드_양념치킨_두마리세트.getId(), 3L));
+            OrderRequest orderRequest = new OrderRequest(orderTable.getId(), orderLineItemsRequests);
 
-            Order actual = orderService.create(order);
+            OrderResponse actual = orderService.create(orderRequest);
             assertThat(actual).isNotNull();
         }
 
         @DisplayName("orderLineItems이 비어있을 경우 예외가 발생한다")
         @Test
         void throwExceptionBecauseOfEmptyOrderLineItems() {
-            Order order = new Order(orderTable.getId(), List.of());
+            OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of());
 
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(orderRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -96,10 +105,10 @@ class OrderServiceTest {
         @Test
         void throwExceptionBecauseOfNotExistMenu() {
             Long notExistId = 0L;
-            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(notExistId, 3));
-            Order order = new Order(orderTable.getId(), orderLineItems);
+            List<OrderLineItemRequest> orderLineItemRequests = List.of(new OrderLineItemRequest(notExistId, 3L));
+            OrderRequest orderRequest = new OrderRequest(orderTable.getId(), orderLineItemRequests);
 
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(orderRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -107,10 +116,11 @@ class OrderServiceTest {
         @Test
         void throwExceptionBecauseOfNotExistTable() {
             Long notExistId = 0L;
-            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(후라이드_양념치킨_두마리세트.getId(), 3));
-            Order order = new Order(notExistId, orderLineItems);
+            List<OrderLineItemRequest> orderLineItemRequests = List.of(
+                    new OrderLineItemRequest(후라이드_양념치킨_두마리세트.getId(), 3L));
+            OrderRequest orderRequest = new OrderRequest(notExistId, orderLineItemRequests);
 
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(orderRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -121,8 +131,9 @@ class OrderServiceTest {
             newEmptyTable.setEmpty(true);
             OrderTable emptyTable = orderTableDao.save(newEmptyTable);
 
-            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(후라이드_양념치킨_두마리세트.getId(), 3));
-            Order order = new Order(emptyTable.getId(), orderLineItems);
+            List<OrderLineItemRequest> orderLineItemRequests = List.of(
+                    new OrderLineItemRequest(후라이드_양념치킨_두마리세트.getId(), 3L));
+            OrderRequest order = new OrderRequest(emptyTable.getId(), orderLineItemRequests);
 
             assertThatThrownBy(() -> orderService.create(order))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -132,7 +143,7 @@ class OrderServiceTest {
     @DisplayName("주문 목록을 조회한다")
     @Test
     void list() {
-        List<Order> actual = orderService.list();
+        List<OrderResponse> actual = orderService.list();
 
         assertThat(actual).hasSize(0);
     }
@@ -145,38 +156,22 @@ class OrderServiceTest {
         @Test
         void changeOrderStatus() {
             Order order = createOrder();
-            String expectedOrderStatus = OrderStatus.COMPLETION.name();
+            OrderStatus expectedOrderStatus = OrderStatus.COMPLETION;
 
-            Order orderToChangeCompleteStatus = createOrder();
-            orderToChangeCompleteStatus.setOrderStatus(expectedOrderStatus);
-            Order changedOrder = orderService.changeOrderStatus(order.getId(), orderToChangeCompleteStatus);
+            OrderStatusUpdateRequest orderStatusUpdateRequest = new OrderStatusUpdateRequest(
+                    expectedOrderStatus.name());
+            OrderResponse changedOrder = orderService.changeOrderStatus(order.getId(), orderStatusUpdateRequest);
 
-            assertThat(changedOrder.getOrderStatus()).isEqualTo(expectedOrderStatus);
+            assertThat(changedOrder.getOrderStatus()).isEqualTo(expectedOrderStatus.name());
         }
 
         @DisplayName("존재하지 않는 주문일 경우 예외가 발생한다")
         @Test
         void throwExceptionBecauseOfNotExistOrder() {
             Long notExistId = 0L;
-            Order orderToUpdate = createOrder();
+            OrderStatusUpdateRequest orderStatusUpdateRequest = new OrderStatusUpdateRequest(OrderStatus.MEAL.name());
 
-            assertThatThrownBy(() -> orderService.changeOrderStatus(notExistId, orderToUpdate))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("Complete상태의 주문은 변경할 경우 예외가 발생한다")
-        @Test
-        void throwExceptionBecauseOfCompletedOrder() {
-            Order order = createOrder();
-
-            Order orderToChangeCompleteStatus = createOrder();
-            orderToChangeCompleteStatus.setOrderStatus(OrderStatus.COMPLETION.name());
-            orderService.changeOrderStatus(order.getId(), orderToChangeCompleteStatus);
-
-            Order orderToChange = createOrder();
-            orderToChange.setOrderStatus(OrderStatus.MEAL.name());
-
-            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), orderToChange))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(notExistId, orderStatusUpdateRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -184,10 +179,11 @@ class OrderServiceTest {
             Long orderTableId = orderTable.getId();
             changeTableToNotEmpty(orderTableId);
 
-            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(후라이드_양념치킨_두마리세트.getId(), 3));
-            Order order = new Order(orderTableId, orderLineItems);
+            List<OrderLineItem> orderLineItems = List.of(
+                    new OrderLineItem(후라이드_양념치킨_두마리세트.getId(), 3L));
+            Order orderRequest = Order.create(orderTableId, orderLineItems);
 
-            return orderService.create(order);
+            return orderRepository.save(orderRequest);
         }
     }
 

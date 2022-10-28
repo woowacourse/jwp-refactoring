@@ -70,10 +70,8 @@ class TableServiceTest {
             OrderTable newOrderTable = new OrderTable();
             OrderTable orderTable = orderTableDao.save(newOrderTable);
 
-            Order order = new Order();
-            order.setOrderTableId(orderTable.getId());
-            order.setOrderedTime(LocalDateTime.now());
-            order.setOrderStatus(OrderStatus.COMPLETION.name());
+            Order order = Order.create(orderTable.getId(), List.of());
+            order.changeStatus(OrderStatus.COMPLETION);
             orderDao.save(order);
 
             OrderTable emptyOrderTable = new OrderTable();
@@ -114,8 +112,8 @@ class TableServiceTest {
             OrderTable newOrderTable = new OrderTable();
             OrderTable orderTable = tableService.create(newOrderTable);
 
-            Order order = new Order(orderTable.getId(), List.of(new OrderLineItem(1L, 3)));
-            order.setOrderStatus(OrderStatus.COOKING.name());
+            Order order = Order.create(orderTable.getId(), List.of(new OrderLineItem(1L, 3)));
+            order.changeStatus(OrderStatus.COOKING);
             orderDao.save(order);
 
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTable()))
