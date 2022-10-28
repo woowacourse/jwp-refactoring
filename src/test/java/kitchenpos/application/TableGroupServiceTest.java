@@ -13,6 +13,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -25,35 +27,38 @@ class TableGroupServiceTest extends ServiceTest {
         // given
         final OrderTable firstSavedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
         final OrderTable secondSavedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
-        final TableGroup tableGroup = TABLE_GROUP_NOW.생성(List.of(firstSavedOrderTable, secondSavedOrderTable));
+        final TableGroupRequest tableGroupRequest = new TableGroupRequest(
+                List.of(firstSavedOrderTable.getId(), secondSavedOrderTable.getId()));
 
         // when
-        final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        final TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
 
         // then
-        assertThat(savedTableGroup.getId()).isEqualTo(1L);
+        assertThat(tableGroupResponse.getId()).isEqualTo(1L);
     }
 
     @Test
     void 테이블그룹을_생성할_때_묶을_그룹이_2개이상이_아니면_예외가_발생한다() {
         // given
         final OrderTable savedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
-        final TableGroup tableGroup = TABLE_GROUP_NOW.생성(List.of(savedOrderTable));
+        final TableGroupRequest tableGroupRequest = new TableGroupRequest(
+                List.of(savedOrderTable.getId()));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 테이블그룹을_생성할_때_묶을_그룹테이블이_존재하지_않으면_예외를_발생한다() {
         // given
-        final OrderTable firstUnsavedOrderTable = ORDER_TABLE_EMPTY_1.생성();
+        final Long notExistOrderTableId = Long.MAX_VALUE;
         final OrderTable secondSavedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
-        final TableGroup tableGroup = TABLE_GROUP_NOW.생성(List.of(firstUnsavedOrderTable, secondSavedOrderTable));
+        final TableGroupRequest tableGroupRequest = new TableGroupRequest(
+                List.of(notExistOrderTableId, secondSavedOrderTable.getId()));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -62,43 +67,45 @@ class TableGroupServiceTest extends ServiceTest {
         // given
         final OrderTable fullSavedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성());
         final OrderTable emptySavedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
-        final TableGroup tableGroup = TABLE_GROUP_NOW.생성(List.of(fullSavedOrderTable, emptySavedOrderTable));
+        final TableGroupRequest tableGroupRequest = new TableGroupRequest(
+                List.of(fullSavedOrderTable.getId(), emptySavedOrderTable.getId()));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 테이블그룹을_생성할_때_묶을_테이블중_이미_테이블_그룹이_있다면_예외를_발생한다() {
         // given
-        final Long alreadySavedTableGroupId = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성()).getId();
-        final OrderTable alreadySavedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(alreadySavedTableGroupId));
+        final TableGroup tableGroup = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성());
+        final OrderTable alreadySavedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroup));
 
         final OrderTable savedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
-        final TableGroup tableGroup = TABLE_GROUP_NOW.생성(List.of(alreadySavedOrderTable, savedOrderTable));
+        final TableGroupRequest tableGroupRequest = new TableGroupRequest(
+                List.of(alreadySavedOrderTable.getId(), savedOrderTable.getId()));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 테이블_그룹을_해제할_수_있다() {
         // given
-        final Long tableGroupId = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성()).getId();
-        final OrderTable alreadySavedOrderTable1 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroupId));
-        final OrderTable alreadySavedOrderTable2 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroupId));
+        final TableGroup tableGroup = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성());
+        final OrderTable alreadySavedOrderTable1 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroup));
+        final OrderTable alreadySavedOrderTable2 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroup));
         주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(alreadySavedOrderTable1.getId()));
         주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(alreadySavedOrderTable2.getId()));
 
         // when
-        tableGroupService.ungroup(tableGroupId);
+        tableGroupService.ungroup(tableGroup.getId());
 
         // then
         final List<OrderTable> orderTables = tableService.list();
         assertThat(orderTables)
-                .extracting("tableGroupId")
+                .extracting("tableGroup")
                 .containsExactly(null, null);
     }
 
@@ -106,14 +113,14 @@ class TableGroupServiceTest extends ServiceTest {
     @ValueSource(strings = {"COOKING", "MEAL"})
     void 테이블_그룹을_해제할_때_주문테이블의_주문상태가_제조중이거나_식사중이면_예외를_발생한다(final String status) {
         // given
-        final Long tableGroupId = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성()).getId();
-        final OrderTable alreadySavedOrderTable1 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroupId));
-        final OrderTable alreadySavedOrderTable2 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroupId));
+        final TableGroup tableGroup = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성());
+        final OrderTable alreadySavedOrderTable1 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroup));
+        final OrderTable alreadySavedOrderTable2 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroup));
         주문을_저장한다(new Order(alreadySavedOrderTable1.getId(), OrderStatus.valueOf(status), LocalDateTime.now()));
         주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(alreadySavedOrderTable2.getId()));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -40,6 +40,4 @@ public class OrderRequest {
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);
     }
-
-
 }

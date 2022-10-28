@@ -1,6 +1,7 @@
 package kitchenpos.support;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 public enum OrderTableFixture {
 
@@ -20,7 +21,7 @@ public enum OrderTableFixture {
         return new OrderTable(null, numberOfGuest, empty);
     }
 
-    public OrderTable 생성(final long tableGroupId) {
-        return new OrderTable(tableGroupId, numberOfGuest, empty);
+    public OrderTable 생성(final TableGroup tableGroup) {
+        return new OrderTable(tableGroup, numberOfGuest, empty);
     }
 }

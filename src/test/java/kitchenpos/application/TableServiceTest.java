@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -21,13 +22,13 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 테이블이_저장될_때_테이블그룹이_null로_지정된다() {
         // given
-        final OrderTable orderTable = ORDER_TABLE_NOT_EMPTY_1.생성(1L);
+        final OrderTable orderTable = ORDER_TABLE_NOT_EMPTY_1.생성(new TableGroup(1L));
 
         // when
         final OrderTable savedOrderTable = tableService.create(orderTable);
 
         // then
-        assertThat(savedOrderTable.getTableGroupId()).isNull();
+        assertThat(savedOrderTable.getTableGroup()).isNull();
     }
 
     @Test
@@ -60,8 +61,8 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 테이블_그룹_아이디가_null이_아니면_테이블을_비어있음_상태로_변경할_수_없다() {
         // given
-        final Long tableGroupId = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성()).getId();
-        final OrderTable savedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성(tableGroupId));
+        final TableGroup tableGroup = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성());
+        final OrderTable savedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성(tableGroup));
         주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(savedOrderTable.getId()));
 
         final OrderTable updateFor = new OrderTable(null, savedOrderTable.getNumberOfGuests(), true);

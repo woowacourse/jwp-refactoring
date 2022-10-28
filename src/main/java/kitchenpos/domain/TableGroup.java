@@ -1,15 +1,15 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import org.springframework.util.CollectionUtils;
 
 @Entity
 public class TableGroup {
@@ -21,20 +21,33 @@ public class TableGroup {
     @Column(name = "created_date")
     private LocalDateTime createdDate;
 
-    @OneToMany
-    @JoinColumn(name = "table_group_id")
+    @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
     private List<OrderTable> orderTables;
 
     public TableGroup() {
     }
 
+    public TableGroup(final Long id) {
+        this.id = id;
+    }
+
     public TableGroup(LocalDateTime createdDate) {
-        this(createdDate, new ArrayList<>());
+        this.createdDate = createdDate;
     }
 
     public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
+        validateOrderTables(orderTables);
+        for (OrderTable orderTable : orderTables) {
+            orderTable.setTableGroup(this);
+        }
         this.createdDate = createdDate;
         this.orderTables = orderTables;
+    }
+
+    private void validateOrderTables(final List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
