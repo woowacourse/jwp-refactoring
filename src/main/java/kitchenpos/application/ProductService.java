@@ -14,28 +14,28 @@ import java.util.Objects;
 
 @Service
 public class ProductService {
+
     private final ProductDao productDao;
 
-    public ProductService(final ProductDao productDao) {
+    public ProductService(ProductDao productDao) {
         this.productDao = productDao;
     }
 
     @Transactional
     public ProductResponse create(ProductCreateRequest request) {
-        BigDecimal price = request.getPrice();
+        Product product = request.toEntity();
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        Product savedProduct = productDao.save(request.toEntity());
+        Product savedProduct = productDao.save(product);
 
         return ProductResponse.from(savedProduct);
     }
 
     public List<ProductResponse> list() {
         List<Product> savedProducts = productDao.findAll();
+        return toProductResponses(savedProducts);
+    }
 
+    private List<ProductResponse> toProductResponses(List<Product> savedProducts) {
         return savedProducts.stream()
                 .map(ProductResponse::from)
                 .collect(Collectors.toList());
