@@ -44,7 +44,7 @@ public class OrderRepository {
         final List<Order> orders = orderDao.findAll();
 
         for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
+            order.addOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
         }
 
         return orders;

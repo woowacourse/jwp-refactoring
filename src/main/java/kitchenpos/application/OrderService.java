@@ -12,6 +12,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.request.OrderCreateRequest;
 import kitchenpos.ui.request.OrderLineItemDto;
+import kitchenpos.ui.request.OrderStatusChangeRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,11 +80,11 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public Order changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        savedOrder.changeOrderStatus(OrderStatus.valueOf(order.getOrderStatus()));
+        savedOrder.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
 
         return orderRepository.update(savedOrder);
     }

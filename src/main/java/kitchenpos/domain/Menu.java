@@ -21,10 +21,6 @@ public class Menu {
         this.menuProducts = new ArrayList<>();
     }
 
-    public Menu(final Menu menu, final List<MenuProduct> menuProducts) {
-        this(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProducts);
-    }
-
     public Menu(final String name, final BigDecimal price, final Long menuGroupId) {
         this(null, name, price, menuGroupId, new ArrayList<>());
     }
