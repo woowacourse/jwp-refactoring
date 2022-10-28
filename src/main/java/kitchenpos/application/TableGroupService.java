@@ -13,11 +13,13 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableGroupService {
+
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
@@ -31,7 +33,8 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupRequest tableGroupRequest) {
+    public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
+        final List<OrderTableRequest> orderTableRequests = tableGroupRequest.getOrderTables();
         final List<Long> orderTableIds = tableGroupRequest.getOrderTablesIds();
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
@@ -39,27 +42,20 @@ public class TableGroupService {
             throw new IllegalArgumentException("요청 주문 테이블과 조회된 주문 테이블의 수는 같아야합니다.");
         }
 
-        final List<OrderTableRequest> orderTableRequests = tableGroupRequest.getOrderTables();
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
                 throw new IllegalArgumentException("주문 테이블은 비어있을 수 없고 테이블 그룹은 비어있어야합니다.");
             }
         }
-        List<OrderTable> orderTables = orderTableRequests.stream()
-                .map(OrderTable::from)
+
+        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
+
+        List<OrderTable> orderTables = savedOrderTables.stream()
+                .peek(orderTable -> orderTable.group(savedTableGroup.getId()))
+                .map(orderTableDao::save)
                 .collect(Collectors.toList());
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
-        final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
-            savedOrderTable.setEmpty(false);
-            orderTableDao.save(savedOrderTable);
-        }
-        savedTableGroup.setOrderTables(savedOrderTables);
-
-        return savedTableGroup;
+        return TableGroupResponse.of(savedTableGroup, orderTables);
     }
 
     @Transactional
@@ -76,14 +72,8 @@ public class TableGroupService {
         }
 
         List<OrderTable> updateOrderTables = orderTables.stream()
-                .map(orderTable -> new OrderTable(orderTable.getId(),
-                        null,
-                        orderTable.getNumberOfGuests(),
-                        false))
+                .peek(OrderTable::ungroup)
+                .map(orderTableDao::save)
                 .collect(Collectors.toList());
-
-        for (final OrderTable orderTable : updateOrderTables) {
-            orderTableDao.save(orderTable);
-        }
     }
 }

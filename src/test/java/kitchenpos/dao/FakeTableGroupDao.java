@@ -17,7 +17,7 @@ public class FakeTableGroupDao implements TableGroupDao {
 
     @Override
     public TableGroup save(TableGroup entity) {
-        TableGroup tableGroup = new TableGroup(id++, entity.getCreatedDate(), entity.getOrderTables());
+        TableGroup tableGroup = new TableGroup(id++, entity.getCreatedDate());
         IN_MEMORY_TABLE_GROUP.add(tableGroup);
         return tableGroup;
     }

@@ -19,6 +19,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -54,7 +55,7 @@ public class TableGroupServiceTest {
         orderTables.add(saveOrderTable1);
         orderTables.add(saveOrderTable2);
 
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
 
         List<OrderTableRequest> orderTableRequests = orderTables.stream()
                 .map(orderTable -> new OrderTableRequest(orderTable.getId()))
@@ -62,13 +63,13 @@ public class TableGroupServiceTest {
         TableGroupRequest tableGroupRequest = new TableGroupRequest(orderTableRequests);
 
         // when
-        TableGroup nweTableGroup = tableGroupService.create(tableGroupRequest);
+        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
 
         // then
         assertAll(
-                () -> assertThat(nweTableGroup.getId()).isNotNull(),
-                () -> assertThat(nweTableGroup.getCreatedDate()).isNotNull(),
-                () -> assertThat(nweTableGroup.getOrderTables().size()).isEqualTo(2)
+                () -> assertThat(tableGroupResponse.getId()).isNotNull(),
+                () -> assertThat(tableGroupResponse.getCreatedDate()).isNotNull(),
+                () -> assertThat(tableGroupResponse.getOrderTables().size()).isEqualTo(2)
         );
     }
 
@@ -82,7 +83,6 @@ public class TableGroupServiceTest {
         OrderTable orderTable2 = generateOrderTable(null, 0, true);
 
         OrderTable saveOrderTable1 = orderTableDao.save(orderTable1);
-        OrderTable saveOrderTable2 = orderTableDao.save(orderTable2);
 
         orderTables.add(saveOrderTable1);
         List<OrderTableRequest> orderTableRequests = orderTables.stream()
@@ -120,7 +120,7 @@ public class TableGroupServiceTest {
         orderTables.add(saveOrderTable1);
         orderTables.add(saveOrderTable2);
 
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
 
         List<OrderTableRequest> orderTableRequests = orderTables.stream()
                 .map(orderTable -> new OrderTableRequest(orderTable.getId()))
@@ -149,7 +149,7 @@ public class TableGroupServiceTest {
         orderTables.add(saveOrderTable1);
         orderTables.add(saveOrderTable2);
 
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
 
         List<OrderTableRequest> orderTableRequests = orderTables.stream()
                 .map(orderTable -> new OrderTableRequest(orderTable.getId()))
