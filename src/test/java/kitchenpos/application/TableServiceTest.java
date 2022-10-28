@@ -10,11 +10,11 @@ import kitchenpos.application.request.OrderLineItemRequest;
 import kitchenpos.application.request.OrderRequest;
 import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.application.response.OrderTableResponse;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderLineItemRepository;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +38,7 @@ class TableServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private MenuRepository menuRepository;
@@ -54,8 +54,8 @@ class TableServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new TableService(orderDao, orderTableRepository);
-        orderService = new OrderService(menuRepository, orderDao, orderLineItemRepository, orderTableRepository);
+        sut = new TableService(orderRepository, orderTableRepository);
+        orderService = new OrderService(menuRepository, orderRepository, orderLineItemRepository, orderTableRepository);
     }
 
     @DisplayName("새로운 주문 테이블을 생성할 수 있다.")

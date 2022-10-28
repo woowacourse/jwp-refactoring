@@ -15,6 +15,10 @@ public class OrderResponse {
     private LocalDateTime orderedTime;
     private List<OrderLineItemResponse> orderLineItems;
 
+    public OrderResponse(final Order order, final List<OrderLineItemResponse> orderLineItems) {
+        this(order.getId(), order.getOrderTableId(), order.getOrderStatus(), order.getOrderedTime(), orderLineItems);
+    }
+
     @JsonCreator
     public OrderResponse(final Long id, final Long orderTableId, final String orderStatus,
                          final LocalDateTime orderedTime,
@@ -24,10 +28,6 @@ public class OrderResponse {
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
-    }
-
-    public OrderResponse(final Order order, final List<OrderLineItemResponse> orderLineItems) {
-        this(order.getId(), order.getOrderTableId(), order.getOrderStatus(), order.getOrderedTime(), orderLineItems);
     }
 
     public static OrderResponse from(final Order order) {

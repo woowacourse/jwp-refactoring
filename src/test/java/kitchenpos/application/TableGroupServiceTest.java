@@ -10,11 +10,11 @@ import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.application.request.TableGroupRequest;
 import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.application.response.TableGroupResponse;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +32,7 @@ class TableGroupServiceTest {
     private TableService tableService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
@@ -42,8 +42,8 @@ class TableGroupServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new TableGroupService(orderDao, orderTableRepository, tableGroupRepository);
-        tableService = new TableService(orderDao, orderTableRepository);
+        sut = new TableGroupService(orderRepository, orderTableRepository, tableGroupRepository);
+        tableService = new TableService(orderRepository, orderTableRepository);
     }
 
     @DisplayName("새로운 단체 지정(table group)을 생성할 수 있다.")
@@ -190,7 +190,7 @@ class TableGroupServiceTest {
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
         final Order order = new Order(createdOrderTable.getId(), "COOKING", LocalDateTime.now(),
                 List.of(orderLineItem));
-        orderDao.save(order);
+        orderRepository.save(order);
     }
 
     private List<OrderTable> toOrderTables(final List<OrderTableResponse> orderTableResponses) {

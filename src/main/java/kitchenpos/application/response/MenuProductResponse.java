@@ -10,16 +10,16 @@ public class MenuProductResponse {
     private Long productId;
     private long quantity;
 
+    public MenuProductResponse(final MenuProduct menuProduct) {
+        this(menuProduct.getSeq(), menuProduct.getMenuId(), menuProduct.getProductId(), menuProduct.getQuantity());
+    }
+
     @JsonCreator
     public MenuProductResponse(final Long seq, final Long menuId, final Long productId, final long quantity) {
         this.seq = seq;
         this.menuId = menuId;
         this.productId = productId;
         this.quantity = quantity;
-    }
-
-    public MenuProductResponse(final MenuProduct menuProduct) {
-        this(menuProduct.getSeq(), menuProduct.getMenuId(), menuProduct.getProductId(), menuProduct.getQuantity());
     }
 
     public Long getSeq() {

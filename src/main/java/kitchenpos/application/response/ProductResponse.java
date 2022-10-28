@@ -10,15 +10,15 @@ public class ProductResponse {
     private String name;
     private BigDecimal price;
 
+    public ProductResponse(final Product product) {
+        this(product.getId(), product.getName(), product.getPrice());
+    }
+
     @JsonCreator
     public ProductResponse(final Long id, final String name, final BigDecimal price) {
         this.id = id;
         this.name = name;
         this.price = price;
-    }
-
-    public ProductResponse(final Product product) {
-        this(product.getId(), product.getName(), product.getPrice());
     }
 
     public Long getId() {

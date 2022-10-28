@@ -23,7 +23,7 @@ public class TableGroup {
     @Transient
     private List<OrderTable> orderTables;
 
-    public TableGroup() {
+    protected TableGroup() {
     }
 
     public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {

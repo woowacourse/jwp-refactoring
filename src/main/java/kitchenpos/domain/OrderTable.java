@@ -22,7 +22,11 @@ public class OrderTable {
     @Column(nullable = false)
     private boolean empty;
 
-    public OrderTable() {
+    protected OrderTable() {
+    }
+
+    public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this(null, tableGroupId, numberOfGuests, empty);
     }
 
     public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
@@ -30,10 +34,6 @@ public class OrderTable {
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-    }
-
-    public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        this(null, tableGroupId, numberOfGuests, empty);
     }
 
     public OrderTable(final int numberOfGuests, final boolean empty) {

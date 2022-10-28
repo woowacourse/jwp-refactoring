@@ -1,27 +1,47 @@
 package kitchenpos.domain;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
+@Entity
+@Table(name = "orders")
 public class Order {
 
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private Long orderTableId;
+
+    @Column(nullable = false)
     private String orderStatus;
+
+    @Column(nullable = false)
     private LocalDateTime orderedTime;
+
+    @Transient
     private List<OrderLineItem> orderLineItems;
 
-    public Order() {
-    }
-
-    public Order(final Long orderTableId, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
-        this.orderTableId = orderTableId;
-        this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+    protected Order() {
     }
 
     public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
+    }
+
+    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
+        this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;

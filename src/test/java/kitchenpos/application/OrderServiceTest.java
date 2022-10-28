@@ -14,12 +14,12 @@ import kitchenpos.application.request.OrderRequest;
 import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.application.response.OrderResponse;
 import kitchenpos.application.response.OrderTableResponse;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderLineItemRepository;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,7 +44,7 @@ class OrderServiceTest {
     private MenuRepository menuRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private OrderLineItemRepository orderLineItemRepository;
@@ -54,8 +54,8 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new OrderService(menuRepository, orderDao, orderLineItemRepository, orderTableRepository);
-        tableService = new TableService(orderDao, orderTableRepository);
+        sut = new OrderService(menuRepository, orderRepository, orderLineItemRepository, orderTableRepository);
+        tableService = new TableService(orderRepository, orderTableRepository);
     }
 
     @DisplayName("주문을 등록할 수 있다. (주문을 하면 조리 상태가 된다.)")
@@ -76,7 +76,7 @@ class OrderServiceTest {
         assertThat(response).isNotNull();
         assertThat(response.getId()).isNotNull();
         assertThat(response.getOrderStatus()).isEqualTo(COOKING.name());
-        final Order foundOrder = orderDao.findById(response.getId()).get();
+        final Order foundOrder = orderRepository.findById(response.getId()).get();
         assertThat(foundOrder)
                 .usingRecursiveComparison()
                 .ignoringFields("id", "orderLineItems")
@@ -155,12 +155,13 @@ class OrderServiceTest {
     @Test
     void canNotChangeOrderStatusWhenEmptyOrder() {
         // given
+        final long notExistOrderId = -1L;
         final OrderLineItemRequest orderLineItemRequest = createOrderLineItemRequest();
         final OrderTableRequest orderTableRequest = new OrderTableRequest(null, 1, false);
         final OrderTableResponse orderTableResponse = tableService.create(orderTableRequest);
 
         final OrderLineItem orderLineItem = toOrderLineItem(orderLineItemRequest);
-        final Order order = new Order(orderTableResponse.getId(), LocalDateTime.now(), List.of(orderLineItem));
+        final Order order = new Order(notExistOrderId, orderTableResponse.getId(), "COOKING", LocalDateTime.now(), List.of(orderLineItem));
         final OrderRequest changeRequest = new OrderRequest(orderTableResponse.getId(), "COMPLETION",
                 LocalDateTime.now(),
                 List.of(orderLineItemRequest));
@@ -181,7 +182,7 @@ class OrderServiceTest {
         final OrderLineItem orderLineItem = toOrderLineItem(orderLineItemRequest);
         final Order order = new Order(orderTableResponse.getId(), "COMPLETION", LocalDateTime.now(),
                 List.of(orderLineItem));
-        final Order savedOrder = orderDao.save(order);
+        final Order savedOrder = orderRepository.save(order);
         final OrderRequest changeOrderRequest = new OrderRequest(order.getOrderTableId(), order.getOrderStatus(),
                 order.getOrderedTime(), getOrderLineItemRequestsFromOrder(savedOrder));
 

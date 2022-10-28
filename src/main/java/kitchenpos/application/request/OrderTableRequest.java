@@ -10,24 +10,24 @@ public class OrderTableRequest {
     private int numberOfGuests;
     private boolean empty;
 
-    @JsonCreator
-    public OrderTableRequest(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        this.id = id;
-        this.tableGroupId = tableGroupId;
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
-    }
-
-    public OrderTableRequest(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        this(null, tableGroupId, numberOfGuests, empty);
-    }
-
     public OrderTableRequest(final OrderTable orderTable) {
         this(orderTable.getTableGroupId(), orderTable.getNumberOfGuests(), orderTable.isEmpty());
     }
 
     public OrderTableRequest(final int numberOfGuests, final boolean empty) {
         this(null, numberOfGuests, empty);
+    }
+
+    public OrderTableRequest(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this(null, tableGroupId, numberOfGuests, empty);
+    }
+
+    @JsonCreator
+    public OrderTableRequest(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this.id = id;
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
     }
 
     public static OrderTableRequest from(final OrderTable orderTable) {

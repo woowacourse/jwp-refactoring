@@ -13,16 +13,16 @@ public class TableGroupResponse {
     private LocalDateTime createdDate;
     private List<OrderTableResponse> orderTables;
 
+    public TableGroupResponse(final TableGroup tableGroup, final List<OrderTableResponse> orderTables) {
+        this(tableGroup.getId(), tableGroup.getCreatedDate(), orderTables);
+    }
+
     @JsonCreator
     public TableGroupResponse(final Long id, final LocalDateTime createdDate,
                               final List<OrderTableResponse> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
-    }
-
-    public TableGroupResponse(final TableGroup tableGroup, final List<OrderTableResponse> orderTables) {
-        this(tableGroup.getId(), tableGroup.getCreatedDate(), orderTables);
     }
 
     public static TableGroupResponse from(final TableGroup tableGroup) {
