@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.given;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -80,7 +81,10 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("그룹으로 지정할 주문 테이블의 갯수가 2개보다 적으면, 예외를 던진다.")
         void fail_lessThanTwoTables() {
             //given
-            createRequest = new TableGroupCreateRequest(Arrays.asList(orderTableA));
+            List<OrderTable> orderTables = Arrays.asList(orderTableA);
+            createRequest = new TableGroupCreateRequest(orderTables);
+            given(orderTableDao.findAllByIdIn(any()))
+                    .willReturn(orderTables);
 
             //when & then
             assertThatThrownBy(() -> tableGroupService.create(createRequest))

@@ -14,6 +14,10 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
+    public static TableGroup ofNew(OrderTables orderTables) {
+        return new TableGroup(null, LocalDateTime.now(), orderTables.getValue());
+    }
+
     public Long getId() {
         return id;
     }
@@ -28,5 +32,9 @@ public class TableGroup {
 
     public void setOrderTables(List<OrderTable> orderTables) {
         this.orderTables = orderTables;
+    }
+
+    public void setOrderTables(OrderTables orderTables) {
+        this.orderTables = orderTables.getValue();
     }
 }
