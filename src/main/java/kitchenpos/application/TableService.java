@@ -2,11 +2,13 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,16 +23,19 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTableCreateRequest orderTableCreateRequest) {
-        return orderTableDao.save(OrderTable.from(orderTableCreateRequest));
+    public OrderTableResponse create(final OrderTableCreateRequest orderTableCreateRequest) {
+        OrderTable orderTable = orderTableDao.save(OrderTable.from(orderTableCreateRequest));
+        return OrderTableResponse.from(orderTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableDao.findAll();
+    public List<OrderTableResponse> list() {
+        return orderTableDao.findAll().stream()
+                .map(OrderTableResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final boolean empty) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final boolean empty) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -40,16 +45,19 @@ public class TableService {
         }
 
         savedOrderTable.changeEmpty(empty);
-        return orderTableDao.save(savedOrderTable);
+
+        OrderTable orderTable = orderTableDao.save(savedOrderTable);
+        return OrderTableResponse.from(orderTable);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
 
-        return orderTableDao.save(savedOrderTable);
+        OrderTable orderTable = orderTableDao.save(savedOrderTable);
+        return OrderTableResponse.from(orderTable);
     }
 }
