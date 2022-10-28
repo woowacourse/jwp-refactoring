@@ -20,8 +20,9 @@ public class MenuFixture {
 
     private static List<MenuProduct> createMenuProducts(final Product[] products) {
         final List<MenuProduct> menuProducts = new ArrayList<>();
+        long seq = 1L;
         for (final Product product : products) {
-            final MenuProduct menuProduct = new MenuProduct(product.getId(), QUANTITY);
+            final MenuProduct menuProduct = new MenuProduct(seq++, null, product.getId(), product.getPrice(), QUANTITY);
             menuProducts.add(menuProduct);
         }
 

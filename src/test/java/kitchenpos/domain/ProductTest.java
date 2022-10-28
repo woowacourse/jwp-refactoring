@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 public class ProductTest {
 
     @Test
-    @DisplayName("상품의 가격은 0원 이상이어야한다.")
+    @DisplayName("상품의 가격은 0원 미만이면 예외를 던진다.")
     void price_underZero_throwException() {
         // when & then
         assertThatThrownBy(() -> new Product("test", BigDecimal.valueOf(-1)))
@@ -17,7 +17,7 @@ public class ProductTest {
     }
 
     @Test
-    @DisplayName("상품의 가격은 null 이면 안된다.")
+    @DisplayName("상품의 가격은 null 이면 예외를 던진다.")
     void price_null_throwException() {
         // when & then
         assertThatThrownBy(() -> new Product("test", null))

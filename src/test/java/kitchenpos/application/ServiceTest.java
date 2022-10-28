@@ -21,6 +21,7 @@ import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.dto.response.TableGroupResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +47,7 @@ public abstract class ServiceTest {
     @Autowired
     protected TableService tableService;
 
+    @Qualifier("menuRepository")
     @Autowired
     protected MenuDao menuDao;
 

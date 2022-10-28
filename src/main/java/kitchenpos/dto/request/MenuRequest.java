@@ -24,14 +24,6 @@ public class MenuRequest {
         this.menuProducts = menuProducts;
     }
 
-    public Menu toEntity() {
-        final List<MenuProduct> menuProducts = this.menuProducts.stream()
-                .map(MenuProductRequest::toEntity)
-                .collect(Collectors.toList());
-
-        return new Menu(name, price, menuGroupId, menuProducts);
-    }
-
     public String getName() {
         return name;
     }
