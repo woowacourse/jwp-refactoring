@@ -24,7 +24,7 @@ public class OrderTable {
 
     private boolean empty;
 
-    public OrderTable() {
+    protected OrderTable() {
     }
 
     public OrderTable(final TableGroup tableGroup, final NumberOfGuests numberOfGuests, final boolean empty) {

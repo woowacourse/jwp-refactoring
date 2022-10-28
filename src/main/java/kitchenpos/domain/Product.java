@@ -20,7 +20,7 @@ public class Product {
     protected Product() {
     }
 
-    public Product(Long id) {
+    protected Product(Long id) {
         this.id = id;
     }
 
