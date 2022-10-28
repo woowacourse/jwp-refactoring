@@ -2,11 +2,14 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class TableGroup {
     private Long id;
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
+
+    
 
     public Long getId() {
         return id;

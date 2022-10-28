@@ -17,7 +17,7 @@ public class OrderTableHttpCommunication {
     }
 
     public static HttpCommunication changeEmpty(final Long orderTableId, final Map<String, Object> requestBody) {
-        final String requestUrl = String.format("/api/tables/%s/empty", orderTableId);
+        final String requestUrl = String.format("/api/v2/tables/%s/empty", orderTableId);
         return HttpCommunication.request()
                 .update(requestUrl, requestBody)
                 .build();

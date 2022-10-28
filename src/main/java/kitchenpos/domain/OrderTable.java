@@ -1,5 +1,8 @@
 package kitchenpos.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Objects;
+
 public class OrderTable {
     private Long id;
     private Long tableGroupId;
@@ -17,6 +20,11 @@ public class OrderTable {
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
         this(null, null, numberOfGuests, empty);
+    }
+
+    @JsonIgnore
+    public boolean isPartOfTableGroup() {
+        return Objects.nonNull(tableGroupId);
     }
 
     public Long getId() {

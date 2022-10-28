@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import static javax.management.openmbean.SimpleType.BOOLEAN;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -51,7 +52,6 @@ class TableRestControllerTest extends ControllerTest {
                 getRequestPreprocessor(),
                 getResponsePreprocessor(),
                 requestFields(
-                        fieldWithPath("numberOfGuests").type(NUMBER).description("number of guest"),
                         fieldWithPath("empty").type(BOOLEAN).description("check empty")
                 ),
                 responseFields(
@@ -87,10 +87,10 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("주문 테이블 사용 중 여부를 변경한다.")
     @Test
     void changeEmpty() throws Exception {
-        when(tableService.changeEmpty(anyLong(), any(OrderTable.class))).thenReturn(DomainFixture.getOrderTable(true));
+        when(tableService.changeEmpty(anyLong(), anyBoolean())).thenReturn(DtoFixture.getOrderTableDto(true));
 
-        final ResultActions resultActions = mockMvc.perform(put("/api/tables/1/empty")
-                        .content(objectMapper.writeValueAsString(Map.of("isEmpty", true)))
+        final ResultActions resultActions = mockMvc.perform(put("/api/v2/tables/1/empty")
+                        .content(objectMapper.writeValueAsString(Map.of("empty", true)))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -99,7 +99,7 @@ class TableRestControllerTest extends ControllerTest {
                 getRequestPreprocessor(),
                 getResponsePreprocessor(),
                 requestFields(
-                        fieldWithPath("isEmpty").type(BOOLEAN).description("table empty status")
+                        fieldWithPath("empty").type(BOOLEAN).description("table empty status")
                 ),
                 responseFields(
                         fieldWithPath("id").type(NUMBER).description("table order id"),

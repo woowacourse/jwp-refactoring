@@ -7,6 +7,7 @@ import kitchenpos.application.dto.OrderTableCreationDto;
 import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.request.OrderTableCreationRequest;
+import kitchenpos.ui.dto.request.TableChangeEmptyRequest;
 import kitchenpos.ui.dto.response.OrderTableResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,6 +57,7 @@ public class TableRestController {
         return ResponseEntity.ok().body(tableService.getOrderTables());
     }
 
+    @Deprecated
     @PutMapping("/api/tables/{orderTableId}/empty")
     public ResponseEntity<OrderTable> changeEmpty(
             @PathVariable final Long orderTableId,
@@ -65,6 +67,15 @@ public class TableRestController {
                 .body(tableService.changeEmpty(orderTableId, orderTable))
                 ;
     }
+
+    @PutMapping("/api/v2/tables/{orderTableId}/empty")
+    public ResponseEntity<OrderTableResponse> changeEmptyStatus(
+            @PathVariable final Long orderTableId,
+            @RequestBody final TableChangeEmptyRequest emptyRequest
+    ) {
+        return ResponseEntity.ok().body(OrderTableResponse.from(tableService.changeEmpty(orderTableId, emptyRequest.getEmpty())));
+    }
+
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
     public ResponseEntity<OrderTable> changeNumberOfGuests(

@@ -3,11 +3,13 @@ package kitchenpos.application;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderTableCreationDto;
 import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
@@ -37,12 +39,12 @@ public class TableService {
         return OrderTableDto.from(orderTableDao.save(OrderTableCreationDto.toEntity(orderTableCreationDto)));
     }
 
-
     @Deprecated
     public List<OrderTable> list() {
         return orderTableDao.findAll();
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTableDto> getOrderTables() {
         return orderTableDao.findAll()
                 .stream()
@@ -50,6 +52,7 @@ public class TableService {
                 .collect(Collectors.toList());
     }
 
+    @Deprecated
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
@@ -67,6 +70,25 @@ public class TableService {
         savedOrderTable.setEmpty(orderTable.isEmpty());
 
         return orderTableDao.save(savedOrderTable);
+    }
+
+    @Transactional
+    public OrderTableDto changeEmpty(final Long orderTableId, final Boolean emptyStatus) {
+        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+                .orElseThrow(IllegalArgumentException::new);
+        canChangeEmptyStatus(savedOrderTable);
+
+        final OrderTable orderTable = new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
+                savedOrderTable.getNumberOfGuests(), emptyStatus);
+
+        return OrderTableDto.from(orderTableDao.save(orderTable));
+    }
+
+    private void canChangeEmptyStatus(final OrderTable orderTable) {
+        final Optional<Order> order = orderDao.findByTableId(orderTable.getId());
+        if (orderTable.isPartOfTableGroup() || (order.isPresent() && !order.get().isInCompletionStatus())) {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Transactional

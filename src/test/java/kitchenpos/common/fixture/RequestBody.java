@@ -2,8 +2,11 @@ package kitchenpos.common.fixture;
 
 import static java.util.Map.entry;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 
 public class RequestBody {
 
@@ -28,7 +31,6 @@ public class RequestBody {
     }
 
     public static final Map<String, Object> ORDER_TABLE_1 = Map.of(
-            "numberOfGuests", 0,
             "empty", true
     );
 
@@ -49,6 +51,15 @@ public class RequestBody {
                         "menuId", menuId,
                         "quantity", 1
                 )));
+    }
+
+    public static Map<String, Object> getOrderWithCompletionStatus(final Long orderTableId) {
+        return Map.of(
+               "orderTableId", orderTableId,
+                "orderStatus", OrderStatus.COMPLETION,
+                "orderedTime", LocalDateTime.now(),
+                "orderLineItems", List.of(new OrderLineItem())
+        );
     }
 
     public static Map<String, Object> getOrderTableGroups(final Long tableId1, final Long tableId2) {

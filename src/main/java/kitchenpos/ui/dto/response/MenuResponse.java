@@ -7,11 +7,13 @@ import kitchenpos.application.dto.MenuDto;
 
 public class MenuResponse {
 
-    private final Long id;
-    private final String name;
-    private final BigDecimal price;
-    private final Long menuGroupId;
-    private final List<MenuProductResponse> menuProducts;
+    private Long id;
+    private String name;
+    private BigDecimal price;
+    private Long menuGroupId;
+    private List<MenuProductResponse> menuProducts;
+
+    public MenuResponse() {}
 
     private MenuResponse(final Long id,
                          final String name,

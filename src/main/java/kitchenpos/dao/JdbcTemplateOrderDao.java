@@ -54,6 +54,18 @@ public class JdbcTemplateOrderDao implements OrderDao {
     }
 
     @Override
+    public Optional<Order> findByTableId(final Long id) {
+        try {
+            final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders WHERE order_table_id = (:id)";
+            final SqlParameterSource parameters = new MapSqlParameterSource()
+                    .addValue("id", id);
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet)));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public List<Order> findAll() {
         final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
@@ -94,12 +106,17 @@ public class JdbcTemplateOrderDao implements OrderDao {
         jdbcTemplate.update(sql, parameters);
     }
 
-    private Order toEntity(final ResultSet resultSet) throws SQLException {
-        final Order entity = new Order();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setOrderTableId(resultSet.getLong("order_table_id"));
-        entity.setOrderStatus(resultSet.getString("order_status"));
-        entity.setOrderedTime(resultSet.getObject("ordered_time", LocalDateTime.class));
-        return entity;
+    private Order toEntity(final ResultSet resultSet) {
+        try {
+            final Order entity = new Order();
+            entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
+            entity.setOrderTableId(resultSet.getLong("order_table_id"));
+            entity.setOrderStatus(resultSet.getString("order_status"));
+            entity.setOrderedTime(resultSet.getObject("ordered_time", LocalDateTime.class));
+            return entity;
+        } catch (SQLException e) {
+            return null;
+        }
+
     }
 }
