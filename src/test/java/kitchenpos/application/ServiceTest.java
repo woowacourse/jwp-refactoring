@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -18,6 +17,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +60,7 @@ abstract class ServiceTest {
     private MenuRepository menuRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private TableGroupDao tableGroupDao;
@@ -95,7 +95,7 @@ abstract class ServiceTest {
 
     protected OrderTable saveOrderTable(final int numberOfGuests, final boolean empty) {
         final OrderTable orderTable = new OrderTable(numberOfGuests, empty);
-        return orderTableDao.save(orderTable);
+        return orderTableRepository.save(orderTable);
     }
 
     protected Order saveOrder(final OrderTable orderTable, final String orderStatus,
@@ -116,7 +116,7 @@ abstract class ServiceTest {
             final OrderTable saved = new OrderTable(orderTable.getId(), savedTableGroup.getId(),
                     orderTable.getNumberOfGuests(),
                     orderTable.isEmpty());
-            orderTableDao.save(saved);
+            orderTableRepository.save(saved);
         }
 
         return savedTableGroup;

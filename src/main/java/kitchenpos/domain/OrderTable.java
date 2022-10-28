@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
 
 public class OrderTable {
 
@@ -18,6 +19,7 @@ public class OrderTable {
         this(id, null, numberOfGuests, empty);
     }
 
+    @PersistenceCreator
     public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;

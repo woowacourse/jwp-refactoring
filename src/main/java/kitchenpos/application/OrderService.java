@@ -7,12 +7,12 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.ui.dto.request.ChangeOrderStatusRequest;
 import kitchenpos.ui.dto.request.OrderCreateRequest;
 import kitchenpos.ui.dto.request.OrderLineItemRequest;
@@ -29,16 +29,16 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
     public OrderService(final MenuRepository menuRepository,
                         final OrderDao orderDao,
                         final OrderLineItemDao orderLineItemDao,
-                        final OrderTableDao orderTableDao) {
+                        final OrderTableRepository orderTableRepository) {
         this.menuRepository = menuRepository;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
@@ -57,7 +57,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
+        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
