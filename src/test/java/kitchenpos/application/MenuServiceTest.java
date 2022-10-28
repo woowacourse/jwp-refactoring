@@ -3,7 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import static kitchenpos.fixture.MenuFixture.*;
+import static kitchenpos.fixture.MenuFixture.후라이드_양념치킨_두마리세트;
 
 import java.util.List;
 
@@ -16,9 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.support.SpringBootNestedTest;
@@ -56,9 +57,9 @@ class MenuServiceTest {
         @DisplayName("메뉴를 생성하면 ID를 할당된 Menu객체가 반환된다")
         @Test
         void create() {
-            Menu menu = 후라이드_양념치킨_두마리세트.toMenu(두마리메뉴.getId(), 후라이드.getId(), 양념치킨.getId());
+            MenuRequest request = 후라이드_양념치킨_두마리세트.toRequest(두마리메뉴.getId(), 후라이드.getId(), 양념치킨.getId());
 
-            Menu actual = menuService.create(menu);
+            MenuResponse actual = menuService.create(request);
             assertThat(actual.getId()).isNotNull();
         }
 
@@ -66,9 +67,9 @@ class MenuServiceTest {
         @Test
         void throwExceptionWithNotExistMenuGroup() {
             Long notExistMenuGroupId = 0L;
-            Menu menu = 후라이드_양념치킨_두마리세트.toMenu(notExistMenuGroupId, 후라이드.getId(), 양념치킨.getId());
+            MenuRequest request = 후라이드_양념치킨_두마리세트.toRequest(notExistMenuGroupId, 후라이드.getId(), 양념치킨.getId());
 
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -76,9 +77,9 @@ class MenuServiceTest {
         @Test
         void throwExceptionWithNotExistProduct() {
             Long notExistProductId = 0L;
-            Menu menu = 후라이드_양념치킨_두마리세트.toMenu(두마리메뉴.getId(), notExistProductId, 양념치킨.getId());
+            MenuRequest request = 후라이드_양념치킨_두마리세트.toRequest(두마리메뉴.getId(), notExistProductId, 양념치킨.getId());
 
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -86,10 +87,10 @@ class MenuServiceTest {
     @DisplayName("존재하는 모든 메뉴 목록을 조회한다")
     @Test
     void list() {
-        Menu menu = 후라이드_양념치킨_두마리세트.toMenu(두마리메뉴.getId(), 후라이드.getId(), 양념치킨.getId());
-        menuService.create(menu);
+        MenuRequest request = 후라이드_양념치킨_두마리세트.toRequest(두마리메뉴.getId(), 후라이드.getId(), 양념치킨.getId());
+        menuService.create(request);
 
-        List<Menu> list = menuService.list();
+        List<MenuResponse> list = menuService.list();
 
         assertThat(list).hasSize(1);
     }

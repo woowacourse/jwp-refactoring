@@ -1,25 +1,23 @@
-package kitchenpos.domain;
+package kitchenpos.dto;
 
-public class MenuProduct {
+import kitchenpos.domain.MenuProduct;
+
+public class MenuProductResponse {
 
     private final Long seq;
     private final Long menuId;
     private final Long productId;
     private final long quantity;
 
-    public MenuProduct(Long productId, long quantity) {
-        this(null, null, productId, quantity);
-    }
-
-    public MenuProduct(Long menuId, Long productId, long quantity) {
-        this(null, menuId, productId, quantity);
-    }
-
-    public MenuProduct(Long seq, Long menuId, Long productId, long quantity) {
+    public MenuProductResponse(Long seq, Long menuId, Long productId, long quantity) {
         this.seq = seq;
         this.menuId = menuId;
         this.productId = productId;
         this.quantity = quantity;
+    }
+
+    public MenuProductResponse(MenuProduct menuProduct) {
+        this(menuProduct.getSeq(), menuProduct.getMenuId(), menuProduct.getProductId(), menuProduct.getQuantity());
     }
 
     public Long getSeq() {

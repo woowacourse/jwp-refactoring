@@ -17,11 +17,19 @@ public class Menu {
     }
 
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
+        this(id, name, price, menuGroupId, new ArrayList<>());
+    }
+
+    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroupId, menuProducts);
+    }
+
+    public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = new Price(price);
         this.menuGroupId = menuGroupId;
-        this.menuProducts = new ArrayList<>();
+        this.menuProducts = menuProducts;
     }
 
     public void validatePriceIsCheaperThanSum(BigDecimal sumOfPrice) {

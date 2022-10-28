@@ -1,9 +1,14 @@
 package kitchenpos.fixture;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.MenuProductRequest;
+import kitchenpos.dto.MenuRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 public enum MenuFixture {
@@ -16,6 +21,14 @@ public enum MenuFixture {
     MenuFixture(String name, BigDecimal price) {
         this.name = name;
         this.price = price;
+    }
+
+    public MenuRequest toRequest(Long menuGroupId, Long... productIds) {
+        List<MenuProductRequest> menuProductRequests = Arrays.stream(productIds)
+                .map(productId -> new MenuProductRequest(productId, 1L))
+                .collect(Collectors.toList());
+
+        return new MenuRequest(name, price, menuGroupId, menuProductRequests);
     }
 
     public Menu toMenu(Long menuGroupId, Long... productIds) {
