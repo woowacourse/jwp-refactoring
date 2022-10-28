@@ -33,6 +33,15 @@ public class Menu {
         this(id, name, price, menuGroupId, null);
     }
 
+    public Menu(Menu menu, List<MenuProduct> menuProducts) {
+        this.id = menu.id;
+        this.name = menu.name;
+        validatePrice(menu.price);
+        this.price = menu.price;
+        this.menuGroupId = menu.menuGroupId;
+        this.menuProducts = menuProducts;
+    }
+
     private void validatePrice(BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new MenuPriceException();

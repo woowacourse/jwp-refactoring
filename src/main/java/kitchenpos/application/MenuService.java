@@ -1,18 +1,15 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
+import java.util.stream.Collectors;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.exception.MenuPriceException;
-import kitchenpos.exception.NotFoundMenuGroupException;
 import kitchenpos.exception.NotFoundProductException;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.ui.dto.MenuProductDto;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
 import org.springframework.stereotype.Service;
@@ -20,49 +17,30 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
-    private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
-    private final MenuProductDao menuProductDao;
+    private final MenuRepository menuRepository;
     private final ProductDao productDao;
 
-    public MenuService(
-            MenuDao menuDao,
-            MenuGroupDao menuGroupDao,
-            MenuProductDao menuProductDao,
-            ProductDao productDao
-    ) {
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
+    public MenuService(MenuRepository menuRepository, ProductDao productDao) {
+        this.menuRepository = menuRepository;
         this.productDao = productDao;
     }
 
     @Transactional
     public Menu create(MenuCreateRequest menuCreateRequest) {
-        validateMenuGroupId(menuCreateRequest.getMenuGroupId());
-
         List<MenuProduct> menuProducts = getMenuProducts(menuCreateRequest.getMenuProducts());
         validatePrice(menuProducts, menuCreateRequest.getPrice());
-
-        Menu menu = new Menu(menuCreateRequest.getName(), menuCreateRequest.getPrice(),
+        Menu menu = new Menu(
+                menuCreateRequest.getName(),
+                menuCreateRequest.getPrice(),
                 menuCreateRequest.getMenuGroupId());
-        Menu savedMenu = menuDao.save(menu);
 
-        return setMenuProducts(savedMenu, menuProducts);
-    }
-
-    private void validateMenuGroupId(Long menuGroupId) {
-        if (!menuGroupDao.existsById(menuGroupId)) {
-            throw new NotFoundMenuGroupException();
-        }
+        return menuRepository.save(menu, menuProducts);
     }
 
     private List<MenuProduct> getMenuProducts(List<MenuProductDto> menuProductDtos) {
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        for (MenuProductDto menuProductDto : menuProductDtos) {
-            menuProducts.add(new MenuProduct(menuProductDto.getProductId(), menuProductDto.getQuantity()));
-        }
-        return menuProducts;
+        return menuProductDtos.stream()
+                .map(menuProductDto -> new MenuProduct(menuProductDto.getProductId(), menuProductDto.getQuantity()))
+                .collect(Collectors.toList());
     }
 
     private void validatePrice(List<MenuProduct> menuProducts, BigDecimal price) {
@@ -79,28 +57,7 @@ public class MenuService {
         }
     }
 
-    private Menu setMenuProducts(Menu savedMenu, List<MenuProduct> menuProducts) {
-        Long menuId = savedMenu.getId();
-        List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (MenuProduct menuProduct : menuProducts) {
-            MenuProduct newMenuProduct = new MenuProduct(menuId, menuProduct.getProductId(), menuProduct.getQuantity());
-            savedMenuProducts.add(menuProductDao.save(newMenuProduct));
-        }
-
-        return new Menu(savedMenu.getId(), savedMenu.getName(), savedMenu.getPrice(),
-                savedMenu.getMenuGroupId(), savedMenuProducts);
-    }
-
     public List<Menu> list() {
-        List<Menu> menus = menuDao.findAll();
-        List<Menu> result = new ArrayList<>();
-
-        for (Menu menu : menus) {
-            Menu newMenu = new Menu(menu.getId(), menu.getName(), menu.getPrice(),
-                    menu.getMenuGroupId(), menuProductDao.findAllByMenuId(menu.getId()));
-            result.add(newMenu);
-        }
-
-        return result;
+        return menuRepository.findAll();
     }
 }
