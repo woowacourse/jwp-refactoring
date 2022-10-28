@@ -1,10 +1,8 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
@@ -19,18 +17,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final MenuProductRepository menuProductRepository;
     private final ProductRepository productRepository;
 
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-            final MenuProductRepository menuProductRepository,
             final ProductRepository productRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.menuProductRepository = menuProductRepository;
         this.productRepository = productRepository;
     }
 
@@ -39,14 +34,9 @@ public class MenuService {
         if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
             throw new NotFoundMenuGroupException();
         }
-
         validateMenuPrice(menu);
-        final Menu savedMenu = menuRepository.save(menu);
-
-        final List<MenuProduct> savedMenuProducts = saveMenuProducts(menu.getMenuProducts(), savedMenu);
-
-        savedMenu.updateMenuProducts(savedMenuProducts);
-        return savedMenu;
+        updateMenuProducts(menu.getMenuProducts(), menu);
+        return menuRepository.save(menu);
     }
 
     private void validateMenuPrice(final Menu menu) {
@@ -59,13 +49,11 @@ public class MenuService {
         menu.validatePrice(sum);
     }
 
-    private List<MenuProduct> saveMenuProducts(final List<MenuProduct> menuProducts, final Menu menu) {
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
+    private void updateMenuProducts(final List<MenuProduct> menuProducts, final Menu menu) {
         for (final MenuProduct menuProduct : menuProducts) {
             menuProduct.updateMenu(menu);
-            savedMenuProducts.add(menuProductRepository.save(menuProduct));
         }
-        return savedMenuProducts;
+        menu.updateMenuProducts(menuProducts);
     }
 
     public List<Menu> list() {
