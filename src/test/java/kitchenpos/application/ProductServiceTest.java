@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import kitchenpos.application.dto.ProductCreateRequest;
 import kitchenpos.application.dto.ProductResponse;
-import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +34,7 @@ class ProductServiceTest {
             productService.create(product);
 
             // when
-            final List<Product> extract = productService.list();
+            final List<ProductResponse> extract = productService.list();
 
             // then
             assertThat(extract).hasSize(1);
