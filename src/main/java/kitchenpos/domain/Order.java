@@ -53,8 +53,10 @@ public class Order {
 
     public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus,
                  final LocalDateTime orderedTime) {
-        this(orderTableId, orderStatus, orderedTime, new ArrayList<>());
         this.id = id;
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
     }
 
     public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
