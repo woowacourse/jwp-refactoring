@@ -44,6 +44,14 @@ public class Menu {
         return name;
     }
 
+    public Long getMenuGroupId() {
+        return menuGroupId;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }

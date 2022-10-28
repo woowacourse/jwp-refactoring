@@ -8,9 +8,6 @@ public class OrderTable {
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTable() {
-    }
-
     public OrderTable(Long id) {
         this.id = id;
     }
@@ -51,7 +48,7 @@ public class OrderTable {
         return empty;
     }
 
-    public void hasGroupId() {
+    public void validateHasGroupId() {
         if (Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException();
         }

@@ -63,7 +63,7 @@ class MenuServiceTest {
         void create_success() {
             final MenuRequest menuRequest = new MenuRequest("순삭치킨",
                     BigDecimal.valueOf(20000),
-                    2L,
+                    1L,
                     MENU_PRODUCT_REQUESTS);
 
             final Menu savedMenu = menuService.create(menuRequest);

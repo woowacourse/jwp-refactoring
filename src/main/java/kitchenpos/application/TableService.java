@@ -47,7 +47,7 @@ public class TableService {
     }
 
     private void validateAbleToChangeEmpty(final Long orderTableId, final OrderTable savedOrderTable) {
-        savedOrderTable.hasGroupId();
+        savedOrderTable.validateHasGroupId();
 
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
