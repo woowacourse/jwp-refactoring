@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
@@ -18,6 +17,7 @@ import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ class OrderServiceTest extends ServiceTest {
     private MenuRepository menuRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Test
     void 주문을_생성할_수_있다() {
@@ -57,7 +57,7 @@ class OrderServiceTest extends ServiceTest {
         Menu menu2 = menuRepository.save(new Menu("메뉴2", new BigDecimal(40000), menuGroup,
                 new ArrayList<>(Arrays.asList(menuProduct1, menuProduct2))));
 
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 5, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
 
         OrderLineItem orderLineItem1 = new OrderLineItem(null, menu1.getId(), 1);
         OrderLineItem orderLineItem2 = new OrderLineItem(null, menu2.getId(), 2);
@@ -76,7 +76,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문_항목이_비어있는_경우_주문을_생성할_수_없다() {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 5, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
 
         Order order = new Order(orderTable.getId(), null, new ArrayList<>());
 
@@ -98,7 +98,7 @@ class OrderServiceTest extends ServiceTest {
         Menu menu2 = menuRepository.save(new Menu("메뉴2", new BigDecimal(40000), menuGroup,
                 new ArrayList<>(Arrays.asList(menuProduct1, menuProduct2))));
 
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 5, true));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, true));
 
         OrderLineItem orderLineItem1 = new OrderLineItem(null, menu1.getId(), 1);
         OrderLineItem orderLineItem2 = new OrderLineItem(null, menu2.getId(), 2);
@@ -111,7 +111,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 전체_주문_목록을_조회할_수_있다() {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 5, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
 
         Order order1 = new Order(orderTable.getId(), "COOKING", new ArrayList<>());
         Order order2 = new Order(orderTable.getId(), "COOKING", new ArrayList<>());
@@ -126,7 +126,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문_상태를_변경할_수_있다() {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 5, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
 
         Order order = orderDao.save(new Order(orderTable.getId(), "COOKING", new ArrayList<>()));
         Order newOrder = orderDao.save(new Order(orderTable.getId(), "MEAL", new ArrayList<>()));
@@ -138,7 +138,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 기존_주문_상태가_계산_완료_상태인_경우_상태를_변경할_수_없다() {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 5, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
 
         Order order = orderDao.save(new Order(orderTable.getId(), "COMPLETION", new ArrayList<>()));
         Order newOrder = orderDao.save(new Order(orderTable.getId(), "MEAL", new ArrayList<>()));
