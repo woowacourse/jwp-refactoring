@@ -11,9 +11,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.request.MenuProductRequest;
+import kitchenpos.dto.request.MenuRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,19 +45,24 @@ public class MenuRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final MenuProduct menuProduct1 = new MenuProduct(1L, 3);
-        final MenuProduct menuProduct2 = new MenuProduct(2L, 3);
-        final List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
-        final Menu menu = new Menu("메뉴1", BigDecimal.valueOf(3000), 1L, menuProducts);
+        final MenuProductRequest menuProduct1 = new MenuProductRequest(1L, 3);
+        final MenuProductRequest menuProduct2 = new MenuProductRequest(2L, 3);
+        final List<MenuProductRequest> menuProductRequests = Arrays.asList(menuProduct1, menuProduct2);
+        final MenuRequest menuRequest = new MenuRequest("메뉴1", BigDecimal.valueOf(3000), 1L, menuProductRequests);
+
+        final List<MenuProduct> menuProducts = menuProductRequests.stream()
+                .map(menuProductRequest -> new MenuProduct(menuProductRequest.getProductId(),
+                        menuProductRequest.getQuantity()))
+                .collect(Collectors.toList());
 
         final Menu savedMenu = new Menu(1L, "메뉴1", BigDecimal.valueOf(3000), 1L, menuProducts);
 
-        given(menuService.create(any(Menu.class))).willReturn(savedMenu);
+        given(menuService.create(any(MenuRequest.class))).willReturn(savedMenu);
 
         // when
         final ResultActions resultActions = mockMvc.perform(post("/api/menus")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(menu)))
+                        .content(objectMapper.writeValueAsString(menuRequest)))
                 .andDo(print());
 
         // then

@@ -8,7 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.request.MenuProductRequest;
+import kitchenpos.dto.request.MenuRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +27,13 @@ public class MenuServiceTest {
     @Test
     void create_ifMenuPriceIsNegative_throwsException() {
         // given
-        final MenuProduct menuProduct1 = new MenuProduct(1L, 3);
-        final MenuProduct menuProduct2 = new MenuProduct(2L, 3);
-        final List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
-        final Menu menu = new Menu("메뉴1", BigDecimal.valueOf(-1000), 1L, menuProducts);
+        final MenuProductRequest menuProduct1 = new MenuProductRequest(1L, 3);
+        final MenuProductRequest menuProduct2 = new MenuProductRequest(2L, 3);
+        final List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
+        final MenuRequest menuRequest = new MenuRequest("메뉴1", BigDecimal.valueOf(-1000), 1L, menuProducts);
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -40,10 +41,10 @@ public class MenuServiceTest {
     @Test
     void create_ifMenuPriceIsNull_throwsException() {
         // given
-        final MenuProduct menuProduct1 = new MenuProduct(1L, 3);
-        final MenuProduct menuProduct2 = new MenuProduct(2L, 3);
-        final List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
-        final Menu menu = new Menu("메뉴1", null, 1L, menuProducts);
+        final MenuProductRequest menuProduct1 = new MenuProductRequest(1L, 3);
+        final MenuProductRequest menuProduct2 = new MenuProductRequest(2L, 3);
+        final List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
+        final MenuRequest menu = new MenuRequest("메뉴1", null, 1L, menuProducts);
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -54,10 +55,10 @@ public class MenuServiceTest {
     @Test
     void create_ifMenuGroupNotExist_throwsException() {
         // given
-        final MenuProduct menuProduct1 = new MenuProduct(1L, 3);
-        final MenuProduct menuProduct2 = new MenuProduct(2L, 3);
-        final List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
-        final Menu menu = new Menu("메뉴1", BigDecimal.valueOf(1000), 5L, menuProducts);
+        final MenuProductRequest menuProduct1 = new MenuProductRequest(1L, 3);
+        final MenuProductRequest menuProduct2 = new MenuProductRequest(2L, 3);
+        final List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
+        final MenuRequest menu = new MenuRequest("메뉴1", BigDecimal.valueOf(1000), 5L, menuProducts);
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -68,10 +69,10 @@ public class MenuServiceTest {
     @Test
     void create_ifMenuProductNotExist_throwsExcpetion() {
         // given
-        final MenuProduct menuProduct1 = new MenuProduct(7L, 3);
-        final MenuProduct menuProduct2 = new MenuProduct(2L, 3);
-        final List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
-        final Menu menu = new Menu("메뉴1", BigDecimal.valueOf(1000), 1L, menuProducts);
+        final MenuProductRequest menuProduct1 = new MenuProductRequest(7L, 3);
+        final MenuProductRequest menuProduct2 = new MenuProductRequest(2L, 3);
+        final List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
+        final MenuRequest menu = new MenuRequest("메뉴1", BigDecimal.valueOf(1000), 1L, menuProducts);
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -82,10 +83,10 @@ public class MenuServiceTest {
     @Test
     void create_ifMenuPriceMoreExpensiveThanProducts_throwsException() {
         // given
-        final MenuProduct menuProduct1 = new MenuProduct(1L, 1);
-        final MenuProduct menuProduct2 = new MenuProduct(2L, 1);
-        final List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
-        final Menu menu = new Menu("메뉴1", BigDecimal.valueOf(40000), 1L, menuProducts);
+        final MenuProductRequest menuProduct1 = new MenuProductRequest(1L, 1);
+        final MenuProductRequest menuProduct2 = new MenuProductRequest(2L, 1);
+        final List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
+        final MenuRequest menu = new MenuRequest("메뉴1", BigDecimal.valueOf(40000), 1L, menuProducts);
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -96,10 +97,10 @@ public class MenuServiceTest {
     @Test
     void create() {
         // given
-        final MenuProduct menuProduct1 = new MenuProduct(1L, 1);
-        final MenuProduct menuProduct2 = new MenuProduct(2L, 1);
-        final List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
-        final Menu menu = new Menu("메뉴1", BigDecimal.valueOf(32000), 1L, menuProducts);
+        final MenuProductRequest menuProduct1 = new MenuProductRequest(1L, 1);
+        final MenuProductRequest menuProduct2 = new MenuProductRequest(2L, 1);
+        final List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
+        final MenuRequest menu = new MenuRequest("메뉴1", BigDecimal.valueOf(32000), 1L, menuProducts);
 
         // when
         final Menu savedMenu = menuService.create(menu);
