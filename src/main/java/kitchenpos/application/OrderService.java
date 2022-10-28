@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -35,8 +36,12 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+    public Order create(final OrderRequest orderRequest) {
+
+        final List<OrderLineItem> orderLineItems = orderRequest.getOrderLineItems()
+                .stream()
+                .map(it -> new OrderLineItem(null, it.getMenuId(), it.getQuantity()))
+                .collect(Collectors.toList());
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
@@ -50,9 +55,12 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        order.setId(null);
+        //order.setId(null);
 
-        final OrderTable orderTable = orderTableRepository.findById(order.getOrderTable().getId())
+        final Order order = new Order(orderTableRepository.findById(orderRequest.getOrderTableId()).get(),
+                orderRequest.getOrderStatus(), orderRequest.getOrderedTime());
+
+        final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {

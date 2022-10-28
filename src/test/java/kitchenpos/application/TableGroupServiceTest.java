@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.OrderLineItemRequest;
+import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -104,8 +107,16 @@ class TableGroupServiceTest extends ServiceTest {
         Order 요리중_주문 = new Order(orderTables.get(0), OrderStatus.COOKING.name(), LocalDateTime.now());
         주문_항목을_추가한다(요리중_주문);
 
+        final List<OrderLineItemRequest> orderLineItemRequests = 요리중_주문.getOrderLineItems()
+                .stream()
+                .map(orderLineItem -> new OrderLineItemRequest(orderLineItem.getOrder().getId(),
+                        orderLineItem.getMenuId(),
+                        orderLineItem.getQuantity()))
+                .collect(Collectors.toList());
+
         TableGroup 단체_테이블 = 단체_지정(orderTables);
-        orderService.create(요리중_주문);
+        orderService.create(new OrderRequest(요리중_주문.getOrderTable().getId(), 요리중_주문.getOrderStatus(),
+                요리중_주문.getOrderedTime(), orderLineItemRequests));
 
         assertThatThrownBy(
                 () -> tableGroupService.ungroup(단체_테이블.getId())
