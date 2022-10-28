@@ -118,8 +118,7 @@ public class OrderServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 항목이 비어있을 수 없습니다.");
     }
-
-    // TODO: 예외 상황 수정 필요(현재 중복된 주문일 경우 예외 반환하는형태임)
+    
     @Test
     @DisplayName("존재하지 않는 메뉴를 주문한다면 예외를 반환한다.")
     void create_WhenDifferentOrderLineItemsSize() {
@@ -137,7 +136,27 @@ public class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 메뉴는 주문할 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 메뉴를 주문한다면 예외를 반환한다.")
+    void create_WhenOrderNotExistMenu() {
+        // given
+        OrderTable emptyOrderTable = generateOrderTable(null, 0, false);
+        OrderTable saveOrderTable = orderTableDao.save(emptyOrderTable);
+
+        OrderLineItemRequest orderLineItemRequest1 = generateOrderLineItemRequest(-1L, 1L);
+        List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
+        orderLineItemRequests.add(orderLineItemRequest1);
+        OrderCreateRequest orderCreateRequest = generateOrderCreateRequest(saveOrderTable.getId(),
+                orderLineItemRequests);
+
+        // when & then
+        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 메뉴는 주문할 수 없습니다.");
     }
 
     @Test
