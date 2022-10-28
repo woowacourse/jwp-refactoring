@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +20,7 @@ public class Menu {
     private BigDecimal price;
     private Long menuGroupId;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts;
 

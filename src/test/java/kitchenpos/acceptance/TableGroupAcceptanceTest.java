@@ -8,7 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderTableRequest;
+import kitchenpos.application.dto.TableGroupRequest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
@@ -29,12 +31,15 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
         주문_테이블들.add(테이블1);
         주문_테이블들.add(테이블2);
 
-        TableGroup 테이블_그룹 = new TableGroup(LocalDateTime.now(), 주문_테이블들);
+        final List<Long> 주문_테이블들_ID = 주문_테이블들.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+
+        TableGroupRequest 테이블_그룹 = new TableGroupRequest(LocalDateTime.now(), 주문_테이블들_ID);
         TableGroup target = testRestTemplate.postForObject("http://localhost:" + port + "/api/table-groups",
                 테이블_그룹, TableGroup.class);
 
         assertThat(target.getId()).isNotZero();
-        assertThat(target.getOrderTables().size()).isEqualTo(2);
     }
 
     @Test

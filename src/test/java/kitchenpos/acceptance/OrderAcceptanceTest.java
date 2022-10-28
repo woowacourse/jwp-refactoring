@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.dto.MenuRequest;
+import kitchenpos.application.dto.OrderLineItemRequest;
+import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -56,9 +58,9 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 주문을_추가한다() {
-        Order 주문 = new Order(테이블, OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
-        주문.addOrderLineItem(new OrderLineItem(주문, 메뉴1.getId(), 1));
-        주문.addOrderLineItem(new OrderLineItem(주문, 메뉴2.getId(), 1));
+        OrderRequest 주문 = new OrderRequest(테이블.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
+        주문.addOrderLineItem(new OrderLineItemRequest(null, 메뉴1.getId(), 1));
+        주문.addOrderLineItem(new OrderLineItemRequest(null, 메뉴2.getId(), 1));
 
         Order target = testRestTemplate.postForObject("http://localhost:" + port + "/api/orders", 주문, Order.class);
 
@@ -68,9 +70,9 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 주문들을_조회한다() {
-        Order 주문 = new Order(테이블, OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
-        주문.addOrderLineItem(new OrderLineItem(주문, 메뉴1.getId(), 1));
-        주문.addOrderLineItem(new OrderLineItem(주문, 메뉴2.getId(), 1));
+        OrderRequest 주문 = new OrderRequest(테이블.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
+        주문.addOrderLineItem(new OrderLineItemRequest(null, 메뉴1.getId(), 1));
+        주문.addOrderLineItem(new OrderLineItemRequest(null, 메뉴2.getId(), 1));
 
         testRestTemplate.postForObject("http://localhost:" + port + "/api/orders", 주문, Order.class);
 

@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ public class Order {
     private String orderStatus;
     private LocalDateTime orderedTime;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;
 

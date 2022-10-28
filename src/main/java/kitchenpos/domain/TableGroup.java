@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Entity;
@@ -16,6 +17,7 @@ public class TableGroup {
     private Long id;
     private LocalDateTime createdDate;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
 

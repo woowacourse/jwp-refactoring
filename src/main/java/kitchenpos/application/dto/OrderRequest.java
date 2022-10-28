@@ -20,6 +20,9 @@ public class OrderRequest {
 
     private List<OrderLineItemRequest> orderLineItems;
 
+    public OrderRequest() {
+    }
+
     public OrderRequest(Long orderTableId, String orderStatus, LocalDateTime orderedTime,
                         List<OrderLineItemRequest> orderLineItems) {
         this.orderTableId = orderTableId;
