@@ -17,13 +17,13 @@ public class TableGroup {
         this.createdDate = createdDate;
     }
 
-    public void union(final List<OrderTable> orderTables) {
+    public void unite(final List<OrderTable> orderTables) {
         if (orderTables.size() < 2) {
             throw new IllegalArgumentException();
         }
 
         for (OrderTable orderTable : orderTables) {
-            orderTable.joinToGroup(id);
+            orderTable.joinGroup(id);
         }
     }
 

@@ -19,9 +19,9 @@ public class OrderTable {
     private boolean empty;
 
     @OneToMany(mappedBy = "orderTableId")
-    private List<Order> orders = new ArrayList<>();
+    private List<Order> orders;
 
-    public OrderTable() {
+    protected OrderTable() {
     }
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
@@ -35,38 +35,6 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
         this.orders = new ArrayList<>(orders);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    public boolean isEmpty() {
-        return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 
     public void changeEmptyStatus(final boolean isEmpty) {
@@ -83,7 +51,49 @@ public class OrderTable {
         this.empty = isEmpty;
     }
 
+    public void changeNumberOfGuest(final int numberOfGuest) {
+        if (numberOfGuest < 0 || empty) {
+            throw new IllegalArgumentException();
+        }
 
+        this.numberOfGuests = numberOfGuest;
+    }
+
+    void joinGroup(final Long newGroupId) {
+        if (newGroupId == null || !empty || tableGroupId != null) {
+            throw new IllegalArgumentException();
+        }
+
+        tableGroupId = newGroupId;
+        empty = false;
+    }
+
+    public void leaveGroup() {
+        for (Order order : orders) {
+            if (!order.getOrderStatus().equals("COMPLETION")) {
+                throw new IllegalArgumentException();
+            }
+        }
+
+        tableGroupId = null;
+        empty = false;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getTableGroupId() {
+        return tableGroupId;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public boolean isEmpty() {
+        return empty;
+    }
 
     @Override
     public String toString() {
@@ -94,22 +104,5 @@ public class OrderTable {
                 ", empty=" + empty +
                 ", orders=" + orders +
                 '}';
-    }
-
-    public void changeNumberOfGuest(final int numberOfGuest) {
-        if (numberOfGuest < 0 || empty) {
-            throw new IllegalArgumentException();
-        }
-
-        this.numberOfGuests = numberOfGuest;
-    }
-
-    void joinToGroup(final Long id) {
-        if (id == null || !empty || tableGroupId != null) {
-            throw new IllegalArgumentException();
-        }
-
-        tableGroupId = id;
-        empty = false;
     }
 }

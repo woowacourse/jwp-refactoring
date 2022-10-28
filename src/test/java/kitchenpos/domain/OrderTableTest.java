@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,9 +15,7 @@ class OrderTableTest {
     @Test
     void changeTableEmptyStatusIncludedToTableGroup() {
         // arrange
-        OrderTable orderTable = new OrderTable(
-                1L, 1L, 10, false, List.of()
-        );
+        OrderTable orderTable = createGroupedOrderTable(1L, 1L);
 
         // act & assert
         assertThatThrownBy(() -> orderTable.changeEmptyStatus(true))
@@ -26,10 +26,7 @@ class OrderTableTest {
     @Test
     void changeTableEmptyStatusHasNotCompletionOrders() {
         // arrange
-        List<Order> orders = List.of(
-                new Order("COOKING"), new Order("COMPLETION"), new Order("MEAL")
-        );
-        OrderTable orderTable = new OrderTable(1L, null, 10, false, orders);
+        OrderTable orderTable = createOrderTable(1L, 0, "COOKING", "COMPLETION", "MEAL");
 
         // act & assert
         assertThatThrownBy(() -> orderTable.changeEmptyStatus(true))
@@ -40,10 +37,7 @@ class OrderTableTest {
     @Test
     void changeTableEmptyStatus() {
         // arrange
-        List<Order> orders = List.of(
-                new Order("COMPLETION"), new Order("COMPLETION")
-        );
-        OrderTable orderTable = new OrderTable(1L, null, 10, false, orders);
+        OrderTable orderTable = createOrderTable(1L, 0, "COMPLETION", "COMPLETION");
 
         // act
         orderTable.changeEmptyStatus(true);
@@ -56,19 +50,19 @@ class OrderTableTest {
     @Test
     void changeTableNumberOfGuestToNegative() {
         // arrange
-        OrderTable orderTable = new OrderTable(1L, null, 2, false, List.of());
+        OrderTable orderTable = createOrderTable(1L, 0);
 
         // act & assert
         assertThatThrownBy(() -> orderTable.changeNumberOfGuest(-1))
                 .isInstanceOf(IllegalArgumentException.class);
-        assertThat(orderTable.getNumberOfGuests()).isEqualTo(2);
+        assertThat(orderTable.getNumberOfGuests()).isEqualTo(0);
     }
 
     @DisplayName("빈 테이블의 방문 손님 수는 변경할 수 없다.")
     @Test
     void changeTableNumberOfGuestForEmptyTable() {
         // arrange
-        OrderTable orderTable = new OrderTable(1L, null, 0, true, List.of());
+        OrderTable orderTable = createEmptyOrderTable(1L);
 
         // act & assert
         assertThatThrownBy(() -> orderTable.changeNumberOfGuest(10))
@@ -80,12 +74,57 @@ class OrderTableTest {
     @Test
     void changeTableNumberOfGuest() {
         // arrange
-        OrderTable orderTable = new OrderTable(1L, null, 2, false, List.of());
+        OrderTable orderTable = createOrderTable(1L, 0);
 
         // act
         orderTable.changeNumberOfGuest(10);
 
         // assert
         assertThat(orderTable.getNumberOfGuests()).isEqualTo(10);
+    }
+
+    @DisplayName("계산이 완료되지 않은 주문이 있는 경우 그룹 해제가 불가능하다.")
+    @Test
+    void ungroupHasNotCompletionOrderTable() {
+        // arrange
+        OrderTable orderTable = createGroupedOrderTable(1L, 1L, "COOKING", "COMPLETION", "MEAL");
+
+        // act
+        assertThatThrownBy(() -> orderTable.leaveGroup())
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문 테이블의 그룹을 해제한다.")
+    @Test
+    void ungroupOrderTables() {
+        // arrange
+        OrderTable orderTable = createGroupedOrderTable(1L, 1L, "COMPLETION", "COMPLETION");
+
+        // act
+        orderTable.leaveGroup();
+
+        // assert
+        assertThat(orderTable.getTableGroupId()).isNull();
+        assertThat(orderTable.isEmpty()).isFalse();
+    }
+
+    private OrderTable createGroupedOrderTable(final Long id, final Long groupId, final String... orderStatus) {
+        List<Order> orders = Stream.of(orderStatus)
+                .map(Order::new)
+                .collect(Collectors.toList());
+
+        return new OrderTable(id, groupId, 0, false, orders);
+    }
+
+    private OrderTable createOrderTable(final Long id, int numberOfGuests, final String... orderStatus) {
+        List<Order> orders = Stream.of(orderStatus)
+                .map(Order::new)
+                .collect(Collectors.toList());
+
+        return new OrderTable(id, null, numberOfGuests, false, orders);
+    }
+
+    private OrderTable createEmptyOrderTable(final Long id) {
+        return new OrderTable(id, null, 0, true, List.of());
     }
 }

@@ -102,7 +102,7 @@ class TableGroupRestControllerTest {
 
         createOrder(1L, createOrderLineItemRequest(후라이드치킨_메뉴.id(), 1L));
 
-        // act
+        // act & assert
         assertThatThrownBy(() -> sut.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -132,6 +132,8 @@ class TableGroupRestControllerTest {
         order.setOrderTableId(orderTableId);
         order.setOrderLineItems(List.of(itemRequests));
         orderRestController.create(order);
+
+        System.out.println(orderRestController.list().getBody());
     }
 
 }

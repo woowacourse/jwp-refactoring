@@ -16,13 +16,13 @@ class TableGroupTest {
     void tableGroupIdMustExist() {
         // arrange
         List<OrderTable> orderTables = List.of(
-                new OrderTable(1L, null, 0, true, List.of()),
-                new OrderTable(2L, null, 0, true, List.of())
+                createEmptyTable(1L),
+                createEmptyTable(2L)
         );
         TableGroup group = new TableGroup(LocalDateTime.now());
 
         // act & assert
-        assertThatThrownBy(() -> group.union(orderTables))
+        assertThatThrownBy(() -> group.unite(orderTables))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -31,12 +31,12 @@ class TableGroupTest {
     void wantToGroupingOrderTablesMustOverTwoSize() {
         // arrange
         List<OrderTable> orderTables = List.of(
-                new OrderTable(1L, null, 0, true, List.of())
+                createEmptyTable(1L)
         );
         TableGroup group = new TableGroup(1L, LocalDateTime.now());
 
         // act & assert
-        assertThatThrownBy(() -> group.union(orderTables))
+        assertThatThrownBy(() -> group.unite(orderTables))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -45,13 +45,13 @@ class TableGroupTest {
     void orderTablesMustNotEmpty() {
         // arrange
         List<OrderTable> orderTables = List.of(
-                new OrderTable(1L, null, 0, true, List.of()),
-                new OrderTable(2L, null, 2, false, List.of())
+                createEmptyTable(1L),
+                createOrderTable(2L)
         );
         TableGroup group = new TableGroup(1L, LocalDateTime.now());
 
         // act & assert
-        assertThatThrownBy(() -> group.union(orderTables))
+        assertThatThrownBy(() -> group.unite(orderTables))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -60,13 +60,13 @@ class TableGroupTest {
     void orderTableMustNotGroupedTable() {
         // arrange
         List<OrderTable> orderTables = List.of(
-                new OrderTable(1L, 2L, 0, true, List.of()),
-                new OrderTable(2L, null, 2, true, List.of())
+                createGroupedOrderTable(1L, 2L),
+                createEmptyTable(2L)
         );
         TableGroup group = new TableGroup(1L, LocalDateTime.now());
 
         // act & assert
-        assertThatThrownBy(() -> group.union(orderTables))
+        assertThatThrownBy(() -> group.unite(orderTables))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -75,13 +75,13 @@ class TableGroupTest {
     void groupOrderTables() {
         // arrange
         List<OrderTable> orderTables = List.of(
-                new OrderTable(1L, null, 0, true, List.of()),
-                new OrderTable(2L, null, 0, true, List.of())
+                createEmptyTable(1L),
+                createEmptyTable(2L)
         );
         TableGroup group = new TableGroup(1L, LocalDateTime.now());
 
         // act
-        group.union(orderTables);
+        group.unite(orderTables);
 
         // assert
         assertThat(orderTables)
@@ -90,5 +90,17 @@ class TableGroupTest {
                         Tuple.tuple(1L, false),
                         Tuple.tuple(1L, false)
                 );
+    }
+
+    private OrderTable createEmptyTable(final Long id) {
+        return new OrderTable(id, null, 0, true, List.of());
+    }
+
+    private OrderTable createOrderTable(final Long id) {
+        return new OrderTable(id, null, 0, false, List.of());
+    }
+
+    private OrderTable createGroupedOrderTable(final Long id, final Long groupId) {
+        return new OrderTable(id, groupId, 0, false, List.of());
     }
 }
