@@ -2,6 +2,7 @@ package kitchenpos.table.domain;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.table.exception.InvalidGroupOrderTablesSizeException;
 
 public class OrderTables {
 

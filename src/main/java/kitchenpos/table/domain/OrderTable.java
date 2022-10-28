@@ -1,6 +1,8 @@
 package kitchenpos.table.domain;
 
 import java.util.Objects;
+import kitchenpos.table.exception.InvalidNumberOfGuestsException;
+import kitchenpos.table.exception.InvalidTableGroupJoinException;
 
 public class OrderTable {
 

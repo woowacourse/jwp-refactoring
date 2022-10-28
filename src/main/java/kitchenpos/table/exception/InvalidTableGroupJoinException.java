@@ -1,4 +1,4 @@
-package kitchenpos.table.domain;
+package kitchenpos.table.exception;
 
 public class InvalidTableGroupJoinException extends RuntimeException {
 
