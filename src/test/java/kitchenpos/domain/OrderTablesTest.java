@@ -19,8 +19,8 @@ class OrderTablesTest {
     @DisplayName("빈 주문 테이블이 아닐경우 예외가 발생한다.")
     void orderTableIsNotEmpty() {
         assertThatThrownBy(() -> new OrderTables(List.of(
-                new OrderTable(2, false),
-                new OrderTable(2, false))))
+                new OrderTable(1L, 2L, 2,false),
+                new OrderTable(2L, 2L, 2, false))))
                 .hasMessage("빈 주문 테이블이어야 합니다.");
     }
 
@@ -28,8 +28,8 @@ class OrderTablesTest {
     @DisplayName("단체지정이 된 경우 예외가 발생한다.")
     void orderTableIsTableGroup() {
         assertThatThrownBy(() -> new OrderTables(List.of(
-                new OrderTable(2, false, 1L),
-                new OrderTable(2, false, 2L))))
+                new OrderTable(1L, 2L, 2,false),
+                new OrderTable(2L, 2L, 2, false))))
                 .hasMessage("빈 주문 테이블이어야 합니다.");
     }
 }

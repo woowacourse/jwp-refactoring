@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,7 +21,7 @@ public class OrderTable {
     @Column(name = "empty", columnDefinition = "BIT(1)")
     private boolean empty;
 
-    @JoinColumn(name = "table_group_id", nullable = false)
+    @JoinColumn(name = "table_group_id")
     private Long tableGroupId;
 
     protected OrderTable() {
@@ -33,15 +34,19 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public OrderTable(int numberOfGuests, boolean empty, Long tableGroupId) {
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
-        this.tableGroupId = tableGroupId;
+    public OrderTable(int numberOfGuests, boolean empty) {
+        this(null, null, numberOfGuests, empty);
     }
 
-    public OrderTable(int numberOfGuests, boolean empty) {
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
+    public static OrderTable empty(int numberOfGuests) {
+        return new OrderTable(numberOfGuests, true);
+    }
+
+    public void decideAvailabilityOfOrderRegistration(OrderAble orderAble) {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException("이미 단체지정이 되어있습니다.");
+        }
+        this.empty = orderAble.isEmptyTable();
     }
 
     public Long getId() {
@@ -79,5 +84,19 @@ public class OrderTable {
     public void group(Long tableGroupId) {
         this.tableGroupId = tableGroupId;
         this.empty = false;
+    }
+
+    public void changeNumberOfGuests(int numberOfGuests) {
+        validate(numberOfGuests);
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validate(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("방문한 손님 수는 0 이상이어야 합니다.");
+        }
+        if (empty) {
+            throw new IllegalArgumentException("빈 테이블입니다.");
+        }
     }
 }

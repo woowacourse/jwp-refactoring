@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.OrderTableCommand;
 import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.domain.OrderAble;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,7 @@ public class TableService {
     private final TableValidator tableValidator;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(TableValidator tableValidator,
-                        OrderTableRepository orderTableRepository) {
+    public TableService(TableValidator tableValidator, OrderTableRepository orderTableRepository) {
         this.tableValidator = tableValidator;
         this.orderTableRepository = orderTableRepository;
     }
@@ -35,18 +35,17 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(Long orderTableId, OrderTableCommand command) {
-        OrderTable savedOrderTable = getOrderTable(orderTableId);
-        tableValidator.validateChangeEmpty(savedOrderTable);
-        savedOrderTable.setEmpty(command.isEmpty());
-        return OrderTableResponse.from(savedOrderTable);
+        OrderTable orderTable = getOrderTable(orderTableId);
+        tableValidator.validateChangeEmpty(orderTable);
+        orderTable.decideAvailabilityOfOrderRegistration(OrderAble.of(command.isEmpty()));
+        return OrderTableResponse.from(orderTable);
     }
 
     @Transactional
-    public OrderTableResponse changeNumberOfGuests(Long orderTableId, OrderTableCommand orderTable) {
-        OrderTable savedOrderTable = getOrderTable(orderTableId);
-        tableValidator.validateNumberOfGuests(orderTable.getNumberOfGuests(), savedOrderTable);
-        savedOrderTable.setNumberOfGuests(orderTable.getNumberOfGuests());
-        return OrderTableResponse.from(savedOrderTable);
+    public OrderTableResponse changeNumberOfGuests(Long orderTableId, OrderTableCommand command) {
+        OrderTable orderTable = getOrderTable(orderTableId);
+        orderTable.changeNumberOfGuests(command.getNumberOfGuests());
+        return OrderTableResponse.from(orderTable);
     }
 
     private OrderTable getOrderTable(Long orderTableId) {

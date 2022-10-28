@@ -89,7 +89,7 @@ class TableServiceTest {
         @Test
         @DisplayName("주문 테이블로 변경한다.")
         void changeNotEmpty() {
-            OrderTable orderTable = orderTableRepository.save(new OrderTable(2, true));
+            OrderTable orderTable = orderTableRepository.save(OrderTable.empty(2));
 
             OrderTableResponse response = tableService.changeEmpty(orderTable.getId(), new OrderTableCommand(2, false));
 
@@ -114,7 +114,7 @@ class TableServiceTest {
                         new TableGroup(new OrderTables(List.of(new OrderTable(2, true),
                                 new OrderTable(3, true)))));
 
-                OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false, tableGroup.getId()));
+                OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
 
                 assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTableCommand(2, false)))
                         .hasMessage("이미 단체지정이 되어있습니다.");
