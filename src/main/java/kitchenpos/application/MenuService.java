@@ -1,5 +1,9 @@
 package kitchenpos.application;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -10,12 +14,8 @@ import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 @Service
+@Transactional
 public class MenuService {
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
@@ -34,14 +34,15 @@ public class MenuService {
         this.productDao = productDao;
     }
 
-    @Transactional
     public Menu create(final Menu menu) {
         final BigDecimal price = menu.getPrice();
 
+        // :todo  Menu 책임
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
 
+        // :todo menuGroup 책임
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
@@ -55,6 +56,7 @@ public class MenuService {
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
+        // : todo product 책임
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
@@ -63,6 +65,8 @@ public class MenuService {
 
         final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
+
+        // :todo 객체끼리 수동으로 의존 관계 맺어주는게 불편,ORM 사용해볼까
         for (final MenuProduct menuProduct : menuProducts) {
             menuProduct.setMenuId(menuId);
             savedMenuProducts.add(menuProductDao.save(menuProduct));
@@ -72,9 +76,11 @@ public class MenuService {
         return savedMenu;
     }
 
+    @Transactional(readOnly = true)
     public List<Menu> list() {
         final List<Menu> menus = menuDao.findAll();
 
+        // :todo 객체끼리 수동으로 의존 관계 맺어주는게 불편,ORM 사용해볼까 2
         for (final Menu menu : menus) {
             menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
         }
