@@ -53,7 +53,6 @@ public class OrderServiceTest extends ServiceTest {
         // given
         final OrderTable table = 테이블등록(createOrderTable(3, false));
         final Menu notRegisteredMenu = createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육));
-        notRegisteredMenu.setId(999L);
 
         final OrderRequest order = createOrderRequest(table, notRegisteredMenu);
 
@@ -118,10 +117,6 @@ public class OrderServiceTest extends ServiceTest {
     @Test
     @DisplayName("changeOrderStatus : 주문이 존재하지 않으면 예외가 발생한다.")
     void changeOrderStatus_noOrder_throwException() {
-        // given
-        final OrderTable table = 테이블등록(createOrderTable(3, false));
-        final MenuResponse menu = 메뉴등록(createMenuRequest("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
-
         // when & then
         assertThatThrownBy(() -> orderService.changeOrderStatus(null, forUpdateStatus(MEAL)))
                 .isInstanceOf(IllegalArgumentException.class);
