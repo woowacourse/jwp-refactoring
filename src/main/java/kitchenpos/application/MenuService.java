@@ -8,10 +8,10 @@ import java.util.List;
 import kitchenpos.application.request.MenuProductRequest;
 import kitchenpos.application.request.MenuRequest;
 import kitchenpos.application.response.MenuResponse;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
@@ -22,18 +22,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
 
     private final MenuRepository menuRepository;
-    private final MenuGroupDao menuGroupDao;
+    private final MenuGroupRepository menuGroupRepository;
     private final ProductRepository productRepository;
     private final MenuProductRepository menuProductRepository;
 
     public MenuService(
             final MenuRepository menuRepository,
-            final MenuGroupDao menuGroupDao,
+            final MenuGroupRepository menuGroupRepository,
             final ProductRepository productRepository,
             final MenuProductRepository menuProductRepository
     ) {
         this.menuRepository = menuRepository;
-        this.menuGroupDao = menuGroupDao;
+        this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
         this.menuProductRepository = menuProductRepository;
     }
@@ -43,7 +43,7 @@ public class MenuService {
         final Menu menu = Menu.of(request.getName(), request.getPrice(), request.getMenuGroupId(),
                 getMenuProducts(request));
 
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
+        if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
             throw new IllegalArgumentException("어느 하나의 메뉴 그룹에는 속해야 합니다.");
         }
 

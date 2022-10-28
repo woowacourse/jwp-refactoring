@@ -30,7 +30,7 @@ public class Menu {
     @Transient
     private List<MenuProduct> menuProducts;
 
-    public Menu() {
+    protected Menu() {
     }
 
     public Menu(final String name, final BigDecimal price, final Long menuGroupId,

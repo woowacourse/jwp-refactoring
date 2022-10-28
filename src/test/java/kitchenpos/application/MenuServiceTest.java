@@ -9,8 +9,8 @@ import java.util.List;
 import kitchenpos.application.request.MenuProductRequest;
 import kitchenpos.application.request.MenuRequest;
 import kitchenpos.application.response.MenuResponse;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
@@ -35,7 +35,7 @@ class MenuServiceTest {
     private MenuRepository menuRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -45,7 +45,7 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new MenuService(menuRepository, menuGroupDao, productRepository, menuProductRepository);
+        sut = new MenuService(menuRepository, menuGroupRepository, productRepository, menuProductRepository);
     }
 
     @DisplayName("새로운 메뉴를 등록할 수 있다.")
@@ -72,8 +72,9 @@ class MenuServiceTest {
     @Test
     void createWithNonGroup() {
         // given
+        final long notExistMenuGroupId = -1L;
         final MenuProductRequest menuProduct = createMenuProductRequest();
-        final MenuRequest request = new MenuRequest("후라이드치킨", BigDecimal.valueOf(16000), null, List.of(menuProduct));
+        final MenuRequest request = new MenuRequest("후라이드치킨", BigDecimal.valueOf(16000), notExistMenuGroupId, List.of(menuProduct));
 
         // when & then
         assertThatThrownBy(() -> sut.create(request))
