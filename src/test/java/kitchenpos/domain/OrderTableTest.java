@@ -4,14 +4,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import kitchenpos.domain.validator.OrderTableValidator;
 import kitchenpos.exception.badrequest.OrderTableAlreadyInGroupException;
 import kitchenpos.exception.badrequest.OrderTableNegativeNumberOfGuestsException;
 import kitchenpos.exception.badrequest.OrderTableUnableToChangeNumberOfGuestsWhenEmptyException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-class OrderTableTest {
+class OrderTableTest extends DomainTest {
+    @Autowired
+    private OrderTableValidator orderTableValidator;
+
     @DisplayName("OrderTable은")
     @Nested
     class OrderTableConstructor {
@@ -57,7 +62,7 @@ class OrderTableTest {
 
             // when
             final var afterExpected = false;
-            orderTable.changeEmpty(afterExpected);
+            orderTable.changeEmpty(orderTableValidator, afterExpected);
             final var after = orderTable.isEmpty();
 
             // then
@@ -74,7 +79,7 @@ class OrderTableTest {
             final var orderTable = new OrderTable(1L, 1L, 0, false);
 
             // when & then
-            assertThatThrownBy(() -> orderTable.changeEmpty(true))
+            assertThatThrownBy(() -> orderTable.changeEmpty(orderTableValidator, true))
                     .isInstanceOf(OrderTableAlreadyInGroupException.class);
         }
     }
@@ -92,7 +97,7 @@ class OrderTableTest {
 
             // when
             final var afterExpected = 10;
-            orderTable.changeNumberOfGuests(afterExpected);
+            orderTable.changeNumberOfGuests(orderTableValidator, afterExpected);
             final var after = orderTable.getNumberOfGuests();
 
             // then
@@ -109,7 +114,7 @@ class OrderTableTest {
             final var orderTable = new OrderTable(0, false);
 
             // when & then
-            assertThatThrownBy(() -> orderTable.changeNumberOfGuests(-1))
+            assertThatThrownBy(() -> orderTable.changeNumberOfGuests(orderTableValidator, -1))
                     .isInstanceOf(OrderTableNegativeNumberOfGuestsException.class);
         }
 
@@ -120,13 +125,8 @@ class OrderTableTest {
             final var orderTable = new OrderTable(0, true);
 
             // when & then
-            assertThatThrownBy(() -> orderTable.changeNumberOfGuests(10))
+            assertThatThrownBy(() -> orderTable.changeNumberOfGuests(orderTableValidator, 10))
                     .isInstanceOf(OrderTableUnableToChangeNumberOfGuestsWhenEmptyException.class);
         }
-    }
-
-    @Test
-    void changeTableGroupId() {
-        // TODO 테이블 그룹 리팩터링 시 해당 메서드 제거하고, 그룹, 언 그룹 로직을 도메인 내부에 구현해야함
     }
 }

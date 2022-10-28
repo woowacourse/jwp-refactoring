@@ -6,23 +6,23 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import kitchenpos.exception.badrequest.OrderTableAlreadyInGroupException;
+import kitchenpos.domain.validator.OrderTableValidator;
 import kitchenpos.exception.badrequest.OrderTableNegativeNumberOfGuestsException;
-import kitchenpos.exception.badrequest.OrderTableUnableToChangeNumberOfGuestsWhenEmptyException;
 
 @Entity
 public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", columnDefinition = "bigint(20)")
     private Long id;
-    @Column(name = "table_group_id")
+    @Column(name = "table_group_id", columnDefinition = "bigint(20)")
     private Long tableGroupId;
-    @Column(name = "number_of_guests", nullable = false)
+    @Column(name = "number_of_guests", nullable = false, columnDefinition = "int(11)")
     private int numberOfGuests;
     @Column(name = "empty", nullable = false)
     private boolean empty;
 
-    public OrderTable() {
+    protected OrderTable() {
     }
 
     public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
@@ -31,52 +31,47 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
 
-        validateZeroOrPositive(this.numberOfGuests);
+        if (numberOfGuests < 0) {
+            throw new OrderTableNegativeNumberOfGuestsException(numberOfGuests);
+        }
     }
 
     public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        this(null, tableGroupId, numberOfGuests, empty);
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
     }
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
         this(null, null, numberOfGuests, empty);
     }
 
-    private void validateZeroOrPositive(final int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new OrderTableNegativeNumberOfGuestsException(this.numberOfGuests);
-        }
-    }
-
-    public OrderTable changeEmpty(final boolean empty) {
-        validateNotInGroup();
+    public OrderTable changeEmpty(final OrderTableValidator validator, final boolean empty) {
+        validator.validateChangeEmpty(this, this.id);
         this.empty = empty;
-
         return this;
     }
 
-    private void validateNotInGroup() {
-        if (Objects.nonNull(this.tableGroupId)) {
-            throw new OrderTableAlreadyInGroupException(this.tableGroupId);
-        }
-    }
-
-    public OrderTable changeNumberOfGuests(final int numberOfGuests) {
-        validateZeroOrPositive(numberOfGuests);
-        validateIsNotEmpty();
+    public OrderTable changeNumberOfGuests(final OrderTableValidator validator, final int numberOfGuests) {
+        validator.validateChangeNumberOfGuests(this, numberOfGuests);
         this.numberOfGuests = numberOfGuests;
-
         return this;
     }
 
-    private void validateIsNotEmpty() {
-        if (this.empty) {
-            throw new OrderTableUnableToChangeNumberOfGuestsWhenEmptyException();
-        }
+    public OrderTable group(final OrderTableValidator validator, final Long tableGroupId) {
+        validator.validateGroup(this);
+        this.empty = false;
+        this.tableGroupId = tableGroupId;
+        return this;
     }
 
-    public void changeTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public void unGroup(final OrderTableValidator validator) {
+        validator.validateUnGroup(this);
+        this.tableGroupId = null;
+    }
+
+    public boolean alreadyInGroup() {
+        return Objects.nonNull(this.tableGroupId);
     }
 
     public Long getId() {

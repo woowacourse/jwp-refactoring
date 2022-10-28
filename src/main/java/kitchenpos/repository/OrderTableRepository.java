@@ -1,5 +1,6 @@
 package kitchenpos.repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.OrderTable;
@@ -12,7 +13,7 @@ public interface OrderTableRepository extends Repository<OrderTable, Long> {
 
     List<OrderTable> findAll();
 
-    List<OrderTable> findAllByIdIn(List<Long> ids);
+    List<OrderTable> findAllByIdInAndEmptyIsTrueAndTableGroupIdIsNull(Collection<Long> id);
 
     List<OrderTable> findAllByTableGroupId(Long tableGroupId);
 }
