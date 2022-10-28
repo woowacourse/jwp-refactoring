@@ -1,40 +1,35 @@
 package kitchenpos.application;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.OrderCommand;
 import kitchenpos.application.dto.request.OrderLineItemCommand;
 import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
-    private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
-    private final OrderValidator orderValidator;
+    private final OrderTableRepository orderTableRepository;
     private final OrderRepository orderRepository;
+    private final OrderValidator orderValidator;
 
-    public OrderService(
-            final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
-            final OrderTableDao orderTableDao,
-            OrderValidator orderValidator, OrderRepository orderRepository) {
-        this.orderDao = orderDao;
+    public OrderService(OrderLineItemDao orderLineItemDao,
+                        OrderTableRepository orderTableRepository,
+                        OrderValidator orderValidator,
+                        OrderRepository orderRepository) {
         this.orderLineItemDao = orderLineItemDao;
-        this.orderTableDao = orderTableDao;
-        this.orderValidator = orderValidator;
+        this.orderTableRepository = orderTableRepository;
         this.orderRepository = orderRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
@@ -62,7 +57,7 @@ public class OrderService {
     }
 
     private OrderTable getOrderTable(Long orderTableId) {
-        return orderTableDao.findById(orderTableId)
+        return orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
     }
 
@@ -73,21 +68,14 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
-        final Order savedOrder = orderDao.findById(orderId)
+    public OrderResponse changeOrderStatus(final Long orderId, final String status) {
+        Order savedOrder = getOrder(orderId);
+        savedOrder.changeStatus(OrderStatus.valueOf(status));
+        return OrderResponse.from(savedOrder);
+    }
+
+    private Order getOrder(Long orderId) {
+        return orderRepository.findByIdOrderByOrderLineItems(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
-
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException("계산 완료된 주문입니다.");
-        }
-
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
-
-        orderDao.save(savedOrder);
-
-        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
-
-        return savedOrder;
     }
 }

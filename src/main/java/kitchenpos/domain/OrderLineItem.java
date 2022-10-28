@@ -41,6 +41,10 @@ public class OrderLineItem {
         this.orderId = orderId;
     }
 
+    public OrderLineItem(Long menuId, int quantity) {
+        this(null, null, menuId, quantity);
+    }
+
     public Long getSeq() {
         return seq;
     }

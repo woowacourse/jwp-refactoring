@@ -3,9 +3,12 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,8 +26,9 @@ public class Order {
     @Column(name = "order_table_id", nullable = false)
     private Long orderTableId;
 
+    @Enumerated(value = EnumType.STRING)
     @Column(name = "order_status", nullable = false)
-    private String orderStatus;
+    private OrderStatus orderStatus;
 
     @Column(name = "ordered_time")
     private LocalDateTime orderedTime;
@@ -39,12 +43,12 @@ public class Order {
                  List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
-        this.orderStatus = orderStatus;
+        this.orderStatus = OrderStatus.valueOf(orderStatus);
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
 
-    public Order(Long orderTableId) {
+    public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
     }
 
@@ -72,12 +76,8 @@ public class Order {
         this.orderTableId = orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
-    }
-
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
@@ -94,5 +94,12 @@ public class Order {
 
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
+    }
+
+    public void changeStatus(OrderStatus status) {
+        if (Objects.equals(OrderStatus.COMPLETION, status)) {
+            throw new IllegalArgumentException("계산 완료된 주문입니다.");
+        }
+        this.orderStatus = status;
     }
 }

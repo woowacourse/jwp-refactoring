@@ -16,7 +16,9 @@ import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderRepository;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.Product;
@@ -143,85 +145,64 @@ class OrderServiceTest {
     @Test
     @DisplayName("존재하는 주문을 모두 조회한다.")
     void list() {
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("추천메뉴"));
+        Menu menu = menuRepository.save(new Menu("강정치킨", BigDecimal.valueOf(37000), menuGroup.getId()));
         OrderTable orderTable = orderTableRepository.save(new OrderTable(2, true));
-        orderRepository.save(new Order(orderTable.getId()));
-        orderRepository.save(new Order(orderTable.getId()));
-        orderRepository.save(new Order(orderTable.getId()));
+
+        orderRepository.save(new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 2))));
+        orderRepository.save(new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 2))));
+        orderRepository.save(new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 2))));
 
         List<OrderResponse> orders = orderService.list();
 
         assertThat(orders).hasSize(3);
     }
 
-//    @Nested
-//    @DisplayName("주문의 상태를 변경할 때")
-//    class ChangeStatus {
-//
-//        @Test
-//        @DisplayName("식사 상태로 변경한다.")
-//        void changeOrderStatus() {
-//            OrderTable orderTable = orderTableRepository.save(new OrderTable(2, true));
-//            Order savedOrder = orderRepository.save(new Order(orderTable.getId()));
-//            )
-//
-//            assertThat(response.getBody().getOrderStatus()).isEqualTo("MEAL");
-//            assertThat(response.getStatusCodeValue()).isEqualTo(HttpStatus.OK.value());
-//        }
-//
-//        @Nested
-//        @DisplayName("예외가 발생하는 경우는")
-//        class Exception {
-//
-//            @Test
-//            @DisplayName("주문이 존재하지 않으면 예외가 발생한다.")
-//            void changeOrderStatusNotFoundOrder() {
-//                Order order = new Order();
-//                order.setOrderStatus("COOKING");
-//
-//                assertThatThrownBy(() -> orderRestController.changeOrderStatus(order.getId(), order))
-//                        .hasMessage("주문이 존재하지 않습니다.");
-//            }
-//
-//            @Test
-//            @DisplayName("계산 완료 상태로 변경하면 예외가 발생한다.")
-//            void changeOrderStatusCompletion() {
-//                Order order = createOrder(createOrderTable(2, false).getId(), List.of(getOrderLineItem()));
-//                order.setOrderStatus("COMPLETION");
-//                orderRestController.changeOrderStatus(order.getId(), order);
-//
-//                assertThatThrownBy(() -> orderRestController.changeOrderStatus(order.getId(), order))
-//                        .hasMessage("계산 완료된 주문입니다.");
-//            }
-//        }
-//    }
-//
-//    private OrderLineItem getOrderLineItem() {
-//        MenuGroup menuGroup = createMenuGroup("추천 메뉴");
-//        Product product = createProduct("강정치킨", 18000);
-//
-//        MenuProduct menuProduct = new MenuProduct();
-//        menuProduct.setProductId(product.getId());
-//        menuProduct.setQuantity(2);
-//
-//        Menu menu = createMenu("강정치킨", 18000, menuGroup.getId(), List.of(menuProduct));
-//
-//        OrderLineItem orderLineItem = new OrderLineItem();
-//        orderLineItem.setMenuId(menu.getId());
-//        orderLineItem.setQuantity(1);
-//        return orderLineItem;
-//    }
-//
-//    private MenuProduct createMenuProduct(Product product) {
-//        MenuProduct menuProduct = new MenuProduct();
-//        menuProduct.setProductId(product.getId());
-//        menuProduct.setQuantity(2);
-//        return menuProduct;
-//    }
-//
-//    private OrderLineItem createOrderLineItem(Menu menu) {
-//        OrderLineItem orderLineItem = new OrderLineItem();
-//        orderLineItem.setMenuId(menu.getId());
-//        orderLineItem.setQuantity(1);
-//        return orderLineItem;
-//    }
+    @Nested
+    @DisplayName("주문의 상태를 변경할 때")
+    class ChangeStatus {
+
+        @Test
+        @DisplayName("식사 상태로 변경한다.")
+        void changeOrderStatus() {
+            MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("추천메뉴"));
+            Product product = productRepository.save(new Product("강정치킨", BigDecimal.valueOf(18000)));
+            Menu menu = menuRepository.save(new Menu("강정치킨", BigDecimal.valueOf(37000), menuGroup.getId()));
+            menu.addMenuProduct(new MenuProduct(menu.getId(), product.getId(), 2));
+
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
+
+            OrderResponse savedOrder = orderService.create(
+                    new OrderCommand(orderTable.getId(), List.of(new OrderLineItemCommand(menu.getId(), 2))));
+
+            OrderResponse orderResponse = orderService.changeOrderStatus(savedOrder.getId(), "MEAL");
+
+            assertThat(orderResponse.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+            assertThat(orderResponse.getOrderLineItems()).isNotEmpty();
+        }
+
+        @Nested
+        @DisplayName("예외가 발생하는 경우는")
+        class Exception {
+
+            @Test
+            @DisplayName("주문이 존재하지 않으면 예외가 발생한다.")
+            void changeOrderStatusNotFoundOrder() {
+                orderTableRepository.save(new OrderTable(2, true));
+
+                assertThatThrownBy(() -> orderService.changeOrderStatus(1L, "MEAL"))
+                        .hasMessage("주문이 존재하지 않습니다.");
+            }
+
+            @Test
+            @DisplayName("계산 완료 상태로 변경하면 예외가 발생한다.")
+            void changeOrderStatusCompletion() {
+                OrderTable orderTable = orderTableRepository.save(new OrderTable(2, true));
+                Order savedOrder = orderRepository.save(new Order(orderTable.getId(), OrderStatus.COMPLETION));
+
+                assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), "COMPLETION"))
+                        .hasMessage("계산 완료된 주문입니다.");
+            }
+        }
+    }
 }
