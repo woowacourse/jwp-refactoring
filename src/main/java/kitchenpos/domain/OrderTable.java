@@ -1,7 +1,7 @@
 package kitchenpos.domain;
 
-import kitchenpos.dto.OrderTableCreateRequest;
-import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.request.OrderTableRequest;
 
 public class OrderTable {
     private Long id;
