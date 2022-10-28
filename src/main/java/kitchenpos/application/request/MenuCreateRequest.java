@@ -2,9 +2,6 @@ package kitchenpos.application.request;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 
 public class MenuCreateRequest {
 
@@ -22,12 +19,6 @@ public class MenuCreateRequest {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
-    }
-
-    public Menu toEntity() {
-        return new Menu(null, name, price, menuGroupId, menuProducts.stream()
-                        .map(MenuProductCreateRequest::toEntity)
-                        .collect(Collectors.toList()));
     }
 
     public String getName() {
@@ -57,10 +48,6 @@ public class MenuCreateRequest {
         public MenuProductCreateRequest(final Long productId, final long quantity) {
             this.productId = productId;
             this.quantity = quantity;
-        }
-
-        public MenuProduct toEntity() {
-            return new MenuProduct(null, null, productId, quantity);
         }
 
         public Long getProductId() {
