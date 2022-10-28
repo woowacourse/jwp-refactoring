@@ -6,24 +6,26 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.RepositoryTest;
 import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.application.request.TableGroupRequest;
 import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.application.response.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-@RepositoryTest
+@SpringBootTest
+@Transactional
 class TableGroupServiceTest {
 
     private TableGroupService sut;
@@ -33,15 +35,15 @@ class TableGroupServiceTest {
     private OrderDao orderDao;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private TableGroupDao tableGroupDao;
 
     @BeforeEach
     void setUp() {
-        sut = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
-        tableService = new TableService(orderDao, orderTableDao);
+        sut = new TableGroupService(orderDao, orderTableRepository, tableGroupDao);
+        tableService = new TableService(orderDao, orderTableRepository);
     }
 
     @DisplayName("새로운 단체 지정(table group)을 생성할 수 있다.")
@@ -118,7 +120,7 @@ class TableGroupServiceTest {
 
         final TableGroupResponse createdTableGroup = sut.create(new TableGroupRequest(LocalDateTime.now(), orderTables));
         final OrderTable orderTable = new OrderTable(createdTableGroup.getId(), 0, true);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final OrderTableRequest orderTableRequest = OrderTableRequest.from(savedOrderTable);
         orderTables.add(orderTableRequest);

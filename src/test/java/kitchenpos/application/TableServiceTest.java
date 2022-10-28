@@ -11,12 +11,12 @@ import kitchenpos.application.request.OrderRequest;
 import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderLineItemRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ class TableServiceTest {
     private MenuRepository menuRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private OrderLineItemRepository orderLineItemRepository;
@@ -54,8 +54,8 @@ class TableServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new TableService(orderDao, orderTableDao);
-        orderService = new OrderService(menuRepository, orderDao, orderLineItemRepository, orderTableDao);
+        sut = new TableService(orderDao, orderTableRepository);
+        orderService = new OrderService(menuRepository, orderDao, orderLineItemRepository, orderTableRepository);
     }
 
     @DisplayName("새로운 주문 테이블을 생성할 수 있다.")
@@ -70,7 +70,7 @@ class TableServiceTest {
         // then
         assertThat(response).isNotNull();
         assertThat(response.getId()).isNotNull();
-        final OrderTable foundOrderTable = orderTableDao.findById(response.getId()).get();
+        final OrderTable foundOrderTable = orderTableRepository.findById(response.getId()).get();
         assertThat(foundOrderTable)
                 .usingRecursiveComparison()
                 .ignoringFields("id")
@@ -118,7 +118,7 @@ class TableServiceTest {
 
         final OrderTable orderTable = new OrderTable(0, true);
         orderTable.setTableGroupId(savedTableGroup.getId());
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final OrderTableRequest request = new OrderTableRequest(savedOrderTable.getId(),
                 savedOrderTable.getNumberOfGuests(), savedOrderTable.isEmpty());
@@ -132,7 +132,7 @@ class TableServiceTest {
     @Test
     void canNotChangeTableWhenCookingOrMeal() {
         // given
-        final OrderTable orderTable = orderTableDao.save(new OrderTable(0, false));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(0, false));
         final Long orderTableId = orderTable.getId();
 
         final OrderLineItemRequest orderLineItem = createOrderLineItemRequest();

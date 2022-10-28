@@ -8,9 +8,9 @@ import java.util.Objects;
 import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,11 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableService {
 
     private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
+    public TableService(final OrderDao orderDao, final OrderTableRepository orderTableRepository) {
         this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
@@ -33,12 +33,12 @@ public class TableService {
         orderTable.setId(null);
         orderTable.setTableGroupId(null);
 
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         return new OrderTableResponse(savedOrderTable);
     }
 
     public List<OrderTableResponse> list() {
-        final List<OrderTable> orderTables = orderTableDao.findAll();
+        final List<OrderTable> orderTables = orderTableRepository.findAll();
 
         return orderTables.stream()
                 .map(OrderTableResponse::new)
@@ -47,7 +47,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest request) {
-        final OrderTable foundOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTable foundOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         if (Objects.nonNull(foundOrderTable.getTableGroupId())) {
@@ -61,7 +61,7 @@ public class TableService {
 
         foundOrderTable.setEmpty(request.isEmpty());
 
-        final OrderTable savedOrderTable = orderTableDao.save(foundOrderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(foundOrderTable);
         return new OrderTableResponse(savedOrderTable);
     }
 
@@ -73,7 +73,7 @@ public class TableService {
             throw new IllegalArgumentException("음수로 주문 테이블의 손님 수를 변경할 수 없습니다.");
         }
 
-        final OrderTable foundOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTable foundOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         if (foundOrderTable.isEmpty()) {
@@ -82,7 +82,7 @@ public class TableService {
 
         foundOrderTable.setNumberOfGuests(numberOfGuests);
 
-        final OrderTable savedOrderTable = orderTableDao.save(foundOrderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(foundOrderTable);
         return new OrderTableResponse(savedOrderTable);
     }
 }

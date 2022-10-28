@@ -15,12 +15,12 @@ import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.application.response.OrderResponse;
 import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderLineItemRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,18 +47,15 @@ class OrderServiceTest {
     private OrderDao orderDao;
 
     @Autowired
-    private OrderLineItemDao orderLineItemDao;
-
-    @Autowired
     private OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @BeforeEach
     void setUp() {
-        sut = new OrderService(menuRepository, orderDao, orderLineItemRepository, orderTableDao);
-        tableService = new TableService(orderDao, orderTableDao);
+        sut = new OrderService(menuRepository, orderDao, orderLineItemRepository, orderTableRepository);
+        tableService = new TableService(orderDao, orderTableRepository);
     }
 
     @DisplayName("주문을 등록할 수 있다. (주문을 하면 조리 상태가 된다.)")
