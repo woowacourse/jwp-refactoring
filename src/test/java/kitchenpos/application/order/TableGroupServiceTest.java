@@ -130,7 +130,7 @@ class TableGroupServiceTest extends IntegrationTest {
         @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
         void ungroup(OrderStatus orderStatus) {
             orderDao.save(
-                    new Order(orderTable1.getId(), orderStatus.name(), LocalDateTime.now(), Collections.emptyList()));
+                    new Order(orderTable1, orderStatus, LocalDateTime.now(), Collections.emptyList()));
 
             assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                     .isInstanceOf(IllegalArgumentException.class);
