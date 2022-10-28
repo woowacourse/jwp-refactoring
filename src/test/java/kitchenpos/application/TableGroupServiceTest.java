@@ -11,12 +11,12 @@ import kitchenpos.application.request.TableGroupRequest;
 import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.application.response.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,11 +38,11 @@ class TableGroupServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @BeforeEach
     void setUp() {
-        sut = new TableGroupService(orderDao, orderTableRepository, tableGroupDao);
+        sut = new TableGroupService(orderDao, orderTableRepository, tableGroupRepository);
         tableService = new TableService(orderDao, orderTableRepository);
     }
 
@@ -59,7 +59,7 @@ class TableGroupServiceTest {
         // then
         assertThat(createdTableGroup).isNotNull();
         assertThat(createdTableGroup.getId()).isNotNull();
-        final TableGroup foundTableGroup = tableGroupDao.findById(createdTableGroup.getId()).get();
+        final TableGroup foundTableGroup = tableGroupRepository.findById(createdTableGroup.getId()).get();
         assertThat(foundTableGroup)
                 .usingRecursiveComparison()
                 .ignoringFields("id", "orderTables")

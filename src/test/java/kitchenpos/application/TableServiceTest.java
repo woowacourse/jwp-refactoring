@@ -11,12 +11,12 @@ import kitchenpos.application.request.OrderRequest;
 import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,7 +50,7 @@ class TableServiceTest {
     private OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @BeforeEach
     void setUp() {
@@ -114,7 +114,7 @@ class TableServiceTest {
     void canNotChangeEmptyWhenGroupIdNotNull() {
         // given
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of());
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         final OrderTable orderTable = new OrderTable(0, true);
         orderTable.setTableGroupId(savedTableGroup.getId());
