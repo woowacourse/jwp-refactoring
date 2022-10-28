@@ -27,7 +27,7 @@ public class OrderTable {
     }
 
     public OrderTable changeNumberOfGuests(final int numberOfGuests) {
-        if (isEmpty()) {
+        if (empty) {
             throw new IllegalArgumentException();
         }
         if (numberOfGuests < 0) {
@@ -43,7 +43,7 @@ public class OrderTable {
         return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 
-    public void verifyCanGroup() {
+    public void verifyCanGroup() { // 비어있고, 단체지정 되어있지 않아야함
         final boolean canGroup = empty && tableGroupId == null;
         if (!canGroup) {
             throw new IllegalArgumentException();
@@ -51,7 +51,7 @@ public class OrderTable {
     }
 
     public OrderTable ungroup() {
-        return new OrderTable(id, tableGroupId, numberOfGuests, false);
+        return new OrderTable(id, null, numberOfGuests, false);
     }
 
     public Long getId() {

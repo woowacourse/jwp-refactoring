@@ -34,7 +34,7 @@ class MenuTest {
 
         @Test
         @DisplayName("가격이 상품 금액의 총 합보다 클 수 없다.")
-        void of_totalAmountGraterThenPrice_exception() {
+        void of_totalAmountGraterThanPrice_exception() {
             // given
             final Product chicken = getProduct(1_000);
             final Product sushi = getProduct(2_000);
