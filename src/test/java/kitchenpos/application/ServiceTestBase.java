@@ -20,6 +20,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.ProductRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ public abstract class ServiceTestBase {
     protected MenuGroupDao menuGroupDao;
 
     @Autowired
-    protected MenuDao menuDao;
+    protected MenuDao jdbcTemplateMenuDao;
 
     @Autowired
     protected OrderLineItemDao orderLineItemDao;
@@ -73,7 +74,7 @@ public abstract class ServiceTestBase {
     }
 
     protected MenuRequest createMenuRequest(final String name, final BigDecimal price,
-                                            final Long menuGroupId, final List<MenuProduct> menuProducts) {
+                                            final Long menuGroupId, final List<MenuProductRequest> menuProducts) {
         MenuRequest menu = new MenuRequest(name, price, menuGroupId, menuProducts);
 
         return menu;

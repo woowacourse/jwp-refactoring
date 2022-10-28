@@ -19,18 +19,18 @@ import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
-    private final MenuDao menuDao;
+    private final MenuDao jdbcTemplateMenuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
 
     public OrderService(
-            final MenuDao menuDao,
+            final MenuDao jdbcTemplateMenuDao,
             final OrderDao orderDao,
             final OrderLineItemDao orderLineItemDao,
             final OrderTableDao orderTableDao
     ) {
-        this.menuDao = menuDao;
+        this.jdbcTemplateMenuDao = jdbcTemplateMenuDao;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
         this.orderTableDao = orderTableDao;
@@ -48,7 +48,7 @@ public class OrderService {
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+        if (orderLineItems.size() != jdbcTemplateMenuDao.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("메뉴의 수가 부족합니다.");
         }
 

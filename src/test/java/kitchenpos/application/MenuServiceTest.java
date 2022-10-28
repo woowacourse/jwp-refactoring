@@ -22,6 +22,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,8 +45,8 @@ class MenuServiceTest extends ServiceTestBase {
         Product productChicken2 = productDao.save(양념_치킨());
         MenuGroup chickenMenuGroup = menuGroupDao.save(치킨());
 
-        Menu menuChicken1 = menuDao.save(후라이드_치킨(chickenMenuGroup));
-        Menu menuChicken2 = menuDao.save(양념_치킨(chickenMenuGroup));
+        Menu menuChicken1 = jdbcTemplateMenuDao.save(후라이드_치킨(chickenMenuGroup));
+        Menu menuChicken2 = jdbcTemplateMenuDao.save(양념_치킨(chickenMenuGroup));
 
         MenuProduct menuProductChicken1 = 메뉴_상품_생성(menuChicken1, productChicken1, 1);
         MenuProduct menuProductChicken2 = 메뉴_상품_생성(menuChicken2, productChicken2, 1);
@@ -53,7 +54,7 @@ class MenuServiceTest extends ServiceTestBase {
         Product productPizza = productDao.save(포테이토_피자());
         MenuGroup pizzaMenuGroup = menuGroupDao.save(피자());
 
-        Menu menuPizza = menuDao.save(포테이토_피자(pizzaMenuGroup));
+        Menu menuPizza = jdbcTemplateMenuDao.save(포테이토_피자(pizzaMenuGroup));
         MenuProduct menuProductPizza = 메뉴_상품_생성(menuPizza, productPizza, 1);
 
         // when
@@ -74,10 +75,10 @@ class MenuServiceTest extends ServiceTestBase {
         MenuGroup chickenMenuGroup = menuGroupDao.save(여러마리_메뉴_그룹());
         Product chicken = productDao.save(후라이드_치킨());
         Product seasonedChicken = productDao.save(양념_치킨());
-        List<MenuProduct> menuProducts = Arrays.asList(
-                new MenuProduct(chicken.getId(), 1),
-                new MenuProduct(seasonedChicken.getId(), 2));
-        MenuRequest menuRequest = createMenuRequest("세마리 메뉴", null, chickenMenuGroup.getId(), menuProducts);
+        List<MenuProductRequest> menuProductRequests = Arrays.asList(
+                new MenuProductRequest(chicken.getId(), 1),
+                new MenuProductRequest(seasonedChicken.getId(), 2));
+        MenuRequest menuRequest = createMenuRequest("세마리 메뉴", null, chickenMenuGroup.getId(), menuProductRequests);
 
         // when & then
         assertThatThrownBy(
@@ -93,9 +94,9 @@ class MenuServiceTest extends ServiceTestBase {
         MenuGroup chickenMenuGroup = menuGroupDao.save(치킨());
         Product chicken = productDao.save(후라이드_치킨());
         Product seasonedChicken = productDao.save(양념_치킨());
-        List<MenuProduct> menuProducts = Arrays.asList(
-                new MenuProduct(chicken.getId(), 1),
-                new MenuProduct(seasonedChicken.getId(), 2));
+        List<MenuProductRequest> menuProducts = Arrays.asList(
+                new MenuProductRequest(chicken.getId(), 1),
+                new MenuProductRequest(seasonedChicken.getId(), 2));
         MenuRequest menuRequest = createMenuRequest("세마리 메뉴", BigDecimal.valueOf(-1000), chickenMenuGroup.getId(),
                 menuProducts);
 
@@ -112,9 +113,9 @@ class MenuServiceTest extends ServiceTestBase {
         // given
         Product chicken = productDao.save(후라이드_치킨());
         Product seasonedChicken = productDao.save(양념_치킨());
-        List<MenuProduct> menuProducts = Arrays.asList(
-                new MenuProduct(chicken.getId(), 1),
-                new MenuProduct(seasonedChicken.getId(), 2));
+        List<MenuProductRequest> menuProducts = Arrays.asList(
+                new MenuProductRequest(chicken.getId(), 1),
+                new MenuProductRequest(seasonedChicken.getId(), 2));
         MenuRequest menuRequest = createMenuRequest("세마리 메뉴", BigDecimal.valueOf(40000), 0L, menuProducts);
 
         // when & then
@@ -129,9 +130,9 @@ class MenuServiceTest extends ServiceTestBase {
     void createMenuGroupId() {
         // given
         MenuGroup chickenMenuGroup = menuGroupDao.save(치킨());
-        List<MenuProduct> menuProducts = Arrays.asList(
-                new MenuProduct(0L, 1));
-        MenuRequest menuRequest = createMenuRequest("세마리 메뉴", BigDecimal.valueOf(40000), chickenMenuGroup.getId(),
+        List<MenuProductRequest> menuProducts = Arrays.asList(
+                new MenuProductRequest(0L, 1));
+        MenuRequest menuRequest = createMenuRequest("세마리 메뉴", BigDecimal.ZERO, chickenMenuGroup.getId(),
                 menuProducts);
 
         // when & then
@@ -148,9 +149,9 @@ class MenuServiceTest extends ServiceTestBase {
         MenuGroup chickenMenuGroup = menuGroupDao.save(여러마리_메뉴_그룹());
         Product chicken = productDao.save(후라이드_치킨());
         Product seasonedChicken = productDao.save(양념_치킨());
-        List<MenuProduct> menuProducts = Arrays.asList(
-                new MenuProduct(chicken.getId(), 1),
-                new MenuProduct(seasonedChicken.getId(), 2));
+        List<MenuProductRequest> menuProducts = Arrays.asList(
+                new MenuProductRequest(chicken.getId(), 1),
+                new MenuProductRequest(seasonedChicken.getId(), 2));
         MenuRequest menuRequest = createMenuRequest("세마리 메뉴", BigDecimal.valueOf(1000000), chickenMenuGroup.getId(),
                 menuProducts);
 
@@ -169,9 +170,9 @@ class MenuServiceTest extends ServiceTestBase {
         MenuGroup chickenMenuGroup = menuGroupDao.save(여러마리_메뉴_그룹());
         Product chicken = productDao.save(후라이드_치킨());
         Product seasonedChicken = productDao.save(양념_치킨());
-        List<MenuProduct> menuProducts = Arrays.asList(
-                new MenuProduct(chicken.getId(), 1),
-                new MenuProduct(seasonedChicken.getId(), 2));
+        List<MenuProductRequest> menuProducts = Arrays.asList(
+                new MenuProductRequest(chicken.getId(), 1),
+                new MenuProductRequest(seasonedChicken.getId(), 2));
         MenuRequest menuRequest = createMenuRequest("세마리 메뉴", BigDecimal.valueOf(price), chickenMenuGroup.getId(),
                 menuProducts);
 
@@ -188,17 +189,17 @@ class MenuServiceTest extends ServiceTestBase {
         MenuGroup chickenMenuGroup = menuGroupDao.save(여러마리_메뉴_그룹());
         Product chicken = productDao.save(후라이드_치킨());
         Product seasonedChicken = productDao.save(양념_치킨());
-        List<MenuProduct> menuProducts = Arrays.asList(
-                new MenuProduct(chicken.getId(), 1),
-                new MenuProduct(seasonedChicken.getId(), 2));
+        List<MenuProductRequest> menuProducts = Arrays.asList(
+                new MenuProductRequest(chicken.getId(), 1),
+                new MenuProductRequest(seasonedChicken.getId(), 2));
         MenuRequest menuRequest = createMenuRequest("세마리 메뉴", BigDecimal.valueOf(40000), chickenMenuGroup.getId(),
                 menuProducts);
 
         // when
         Menu menu = menuService.create(menuRequest);
 
-        List<Menu> menus = menuDao.findAll();
-        Optional<Menu> foundMenu = menuDao.findById(menu.getId());
+        List<Menu> menus = jdbcTemplateMenuDao.findAll();
+        Optional<Menu> foundMenu = jdbcTemplateMenuDao.findById(menu.getId());
         //then
         assertAll(
                 () -> assertThat(menus).hasSize(1),
@@ -213,16 +214,16 @@ class MenuServiceTest extends ServiceTestBase {
         MenuGroup chickenMenuGroup = menuGroupDao.save(여러마리_메뉴_그룹());
         Product chicken = productDao.save(후라이드_치킨());
         Product seasonedChicken = productDao.save(양념_치킨());
-        List<MenuProduct> menuProducts = Arrays.asList(
-                new MenuProduct(chicken.getId(), 1),
-                new MenuProduct(seasonedChicken.getId(), 2));
+        List<MenuProductRequest> menuProducts = Arrays.asList(
+                new MenuProductRequest(chicken.getId(), 1),
+                new MenuProductRequest(seasonedChicken.getId(), 2));
         MenuRequest menuRequest = createMenuRequest("세마리 메뉴", BigDecimal.valueOf(40_000L), chickenMenuGroup.getId(),
                 menuProducts);
 
         // when
         Menu menu = menuService.create(menuRequest);
 
-        Optional<Menu> foundMenu = menuDao.findById(menu.getId());
+        Optional<Menu> foundMenu = jdbcTemplateMenuDao.findById(menu.getId());
         List<MenuProduct> foundMenuProducts = menuProductDao.findAllByMenuId(menu.getId());
         //then
         assertAll(

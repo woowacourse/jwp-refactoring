@@ -55,8 +55,8 @@ class OrderServiceTest extends ServiceTestBase {
         menuChicken1.setMenuProducts(Collections.singletonList(menuProductChicken1));
         menuChicken2.setMenuProducts(Collections.singletonList(menuProductChicken2));
 
-        friedChicken = menuDao.save(menuChicken1);
-        seasonedChicken = menuDao.save(menuChicken2);
+        friedChicken = jdbcTemplateMenuDao.save(menuChicken1);
+        seasonedChicken = jdbcTemplateMenuDao.save(menuChicken2);
 
         Product productPizza = productDao.save(포테이토_피자());
         MenuGroup pizzaMenuGroup = menuGroupDao.save(피자());
@@ -66,7 +66,7 @@ class OrderServiceTest extends ServiceTestBase {
 
         menuPizza.setMenuProducts(Collections.singletonList(menuProductPizza));
 
-        potatoPizza = menuDao.save(menuPizza);
+        potatoPizza = jdbcTemplateMenuDao.save(menuPizza);
     }
 
 

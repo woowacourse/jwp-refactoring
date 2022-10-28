@@ -53,8 +53,8 @@ class TableGroupServiceTest extends ServiceTestBase {
         menuChicken1.setMenuProducts(Collections.singletonList(menuProductChicken1));
         menuChicken2.setMenuProducts(Collections.singletonList(menuProductChicken2));
 
-        friedChicken = menuDao.save(menuChicken1);
-        seasonedChicken = menuDao.save(menuChicken2);
+        friedChicken = jdbcTemplateMenuDao.save(menuChicken1);
+        seasonedChicken = jdbcTemplateMenuDao.save(menuChicken2);
 
         Product productPizza = productDao.save(포테이토_피자());
         MenuGroup pizzaMenuGroup = menuGroupDao.save(피자());
@@ -64,7 +64,7 @@ class TableGroupServiceTest extends ServiceTestBase {
 
         menuPizza.setMenuProducts(Collections.singletonList(menuProductPizza));
 
-        potatoPizza = menuDao.save(menuPizza);
+        potatoPizza = jdbcTemplateMenuDao.save(menuPizza);
     }
 
     @DisplayName("단체 주문에 대해 포함된 주문 중 완료가 아닌 주문이 존재하면 예외를 발생한다.")
