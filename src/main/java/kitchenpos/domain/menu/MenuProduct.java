@@ -45,9 +45,6 @@ public class MenuProduct {
         this(null, menu, product, quantity);
     }
 
-    public MenuProduct(final Product product, final long quantity) {
-        this(null, null, product, quantity);
-    }
 
     public BigDecimal calculatePrice() {
         return product.multiplyQuantity(quantity);

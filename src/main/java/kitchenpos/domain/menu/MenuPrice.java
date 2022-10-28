@@ -27,12 +27,8 @@ public class MenuPrice {
         }
     }
 
-    public BigDecimal multiply(final long number) {
-        return value.multiply(BigDecimal.valueOf(number));
-    }
-
-    public boolean isExpensive(final BigDecimal sum) {
-        return value.compareTo(sum) > 0;
+    public boolean isExpensive(final BigDecimal price) {
+        return value.compareTo(price) > 0;
     }
 
     @Override

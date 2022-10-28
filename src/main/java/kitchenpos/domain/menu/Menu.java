@@ -1,6 +1,5 @@
 package kitchenpos.domain.menu;
 
-import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -46,8 +45,7 @@ public class Menu {
     }
 
     public void updateProducts(final MenuProducts menuProducts) {
-        final BigDecimal sum = menuProducts.calculateEntirePrice();
-        if (menuPrice.isExpensive(sum)) {
+        if (menuPrice.isExpensive(menuProducts.calculateEntirePrice())) {
             throw new IllegalArgumentException("Menu 가격은 Product 가격의 합을 초과할 수 없습니다.");
         }
         this.menuProducts = menuProducts;
