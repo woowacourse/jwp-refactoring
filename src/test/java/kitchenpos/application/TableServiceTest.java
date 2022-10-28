@@ -59,7 +59,9 @@ class TableServiceTest {
             final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
             savedOrderTable = tableService.create(orderTableRequest);
 
-            assertThatThrownBy(() -> tableService.changeEmpty(100L, orderTable))
+            final OrderTableRequest changeOrderTableRequest = new OrderTableRequest(true);
+
+            assertThatThrownBy(() -> tableService.changeEmpty(100L, changeOrderTableRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -74,7 +76,7 @@ class TableServiceTest {
 
             savedOrderTable = orderTableDao.save(orderTable);
 
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTableRequest(true)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -91,7 +93,7 @@ class TableServiceTest {
 
             Order savedOrder = orderDao.save(order);
 
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTableRequest(true)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -108,7 +110,7 @@ class TableServiceTest {
 
             Order savedOrder = orderDao.save(order);
 
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTableRequest(true)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -118,7 +120,7 @@ class TableServiceTest {
             savedOrderTable = tableService.create(orderTableRequest);
             orderTable.setEmpty(true);
 
-            OrderTable changedTable = tableService.changeEmpty(savedOrderTable.getId(), this.orderTable);
+            OrderTable changedTable = tableService.changeEmpty(savedOrderTable.getId(), new OrderTableRequest(true));
 
             assertThat(changedTable.isEmpty()).isTrue();
         }
@@ -157,7 +159,7 @@ class TableServiceTest {
         @Test
         void changeNumberOfGuests_fail_when_orderTable_is_empty() {
             orderTable.setEmpty(true);
-            final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
+            final OrderTableRequest orderTableRequest = new OrderTableRequest(5, true);
             savedOrderTable = tableService.create(orderTableRequest);
 
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable))
