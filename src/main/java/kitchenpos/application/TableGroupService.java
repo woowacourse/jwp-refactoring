@@ -38,42 +38,52 @@ public class TableGroupService {
         final List<Long> orderTableIds = tableGroupRequest.getOrderTablesIds();
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
+        validateExistOrderTable(orderTableIds, savedOrderTables);
+        savedOrderTables.forEach(this::validateNonEmptyOrderTableAndNullTableGroup);
+
+        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
+        final List<OrderTable> orderTables = saveOrderTables(savedOrderTables, savedTableGroup);
+
+        return TableGroupResponse.of(savedTableGroup, orderTables);
+    }
+
+    private void validateNonEmptyOrderTableAndNullTableGroup(OrderTable savedOrderTable) {
+        if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
+            throw new IllegalArgumentException("주문 테이블은 비어있을 수 없고 테이블 그룹은 비어있어야합니다.");
+        }
+    }
+
+    private void validateExistOrderTable(List<Long> orderTableIds, List<OrderTable> savedOrderTables) {
         if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException("요청 주문 테이블과 조회된 주문 테이블의 수는 같아야합니다.");
         }
+    }
 
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException("주문 테이블은 비어있을 수 없고 테이블 그룹은 비어있어야합니다.");
-            }
-        }
-
-        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
-
-        List<OrderTable> orderTables = savedOrderTables.stream()
+    private List<OrderTable> saveOrderTables(List<OrderTable> savedOrderTables, TableGroup savedTableGroup) {
+        return savedOrderTables.stream()
                 .peek(orderTable -> orderTable.group(savedTableGroup.getId()))
                 .map(orderTableDao::save)
                 .collect(Collectors.toList());
-
-        return TableGroupResponse.of(savedTableGroup, orderTables);
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
 
+        validateOrderStatus(orderTables);
+
+        orderTables.stream()
+                .peek(OrderTable::ungroup)
+                .forEach(orderTableDao::save);
+    }
+
+    private void validateOrderStatus(final List<OrderTable> orderTables) {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
-
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문이 Cooking이거나 Meal인 경우 그룹 해제할 수 없습니다.");
         }
-
-        List<OrderTable> updateOrderTables = orderTables.stream()
-                .peek(OrderTable::ungroup)
-                .map(orderTableDao::save)
-                .collect(Collectors.toList());
     }
 }

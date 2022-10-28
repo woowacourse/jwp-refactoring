@@ -31,7 +31,6 @@ public class Order {
         return new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
     }
 
-    // TODO: 잘못된 이름 들어오는 경우 예외 처리
     public void changeOrderStatus(String orderStatusName) {
         if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
             throw new IllegalArgumentException("완료된 주문은 상태를 변경할 수 없습니다.");
@@ -43,31 +42,15 @@ public class Order {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Long getOrderTableId() {
         return orderTableId;
-    }
-
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
     }
 
     public String getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
     }
 }
