@@ -69,6 +69,14 @@ public class Order {
         return order;
     }
 
+    public void updateOrderStatus(final OrderStatus orderStatus) {
+        if (this.orderStatus.isCompleted()) {
+            throw new IllegalArgumentException();
+        }
+
+        this.orderStatus = orderStatus;
+    }
+
     public Long getId() {
         return id;
     }
@@ -89,10 +97,6 @@ public class Order {
         return orderLineItems;
     }
 
-    public void updateOrderStatus(final OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -109,9 +113,5 @@ public class Order {
     @Override
     public int hashCode() {
         return Objects.hash(id, orderTable, orderStatus, orderedTime, orderLineItems);
-    }
-
-    public boolean isCompleted() {
-        return orderStatus.isCompleted();
     }
 }

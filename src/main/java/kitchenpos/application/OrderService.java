@@ -30,8 +30,7 @@ public class OrderService {
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository
-    ) {
+            final OrderTableRepository orderTableRepository) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
@@ -64,9 +63,6 @@ public class OrderService {
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusUpdateRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
-        if (savedOrder.isCompleted()) {
-            throw new IllegalArgumentException();
-        }
         final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
         savedOrder.updateOrderStatus(orderStatus);
 
