@@ -67,9 +67,7 @@ class TableServiceTest {
 
         @Test
         void changeEmpty_fail_when_tableGroupId_exist() {
-            TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(orderTable));
-            tableGroup.setCreatedDate(LocalDateTime.now());
+            TableGroup tableGroup = new TableGroup( LocalDateTime.now(), List.of(orderTable));
             TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
             orderTable.setTableGroupId(savedTableGroup.getId());

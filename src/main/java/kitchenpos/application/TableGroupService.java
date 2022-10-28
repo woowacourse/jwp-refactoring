@@ -59,8 +59,7 @@ public class TableGroupService {
             savedOrderTable.setEmpty(false);
             orderTableDao.save(savedOrderTable);
         }
-        savedTableGroup.setOrderTables(savedOrderTables);
-        return savedTableGroup;
+        return new TableGroup(savedTableGroup.getId(), savedTableGroup.getCreatedDate(), savedOrderTables);
     }
 
     private void validateOrderTablesSize(final OrderTables orderTables, final List<OrderTable> savedOrderTables) {

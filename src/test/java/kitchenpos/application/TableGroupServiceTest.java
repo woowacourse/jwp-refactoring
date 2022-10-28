@@ -5,7 +5,6 @@ import static kitchenpos.application.ServiceTestFixture.INVALID_ORDER_TABLE_REQU
 import static kitchenpos.application.ServiceTestFixture.ORDER_TABLE1;
 import static kitchenpos.application.ServiceTestFixture.ORDER_TABLE2;
 import static kitchenpos.application.ServiceTestFixture.ORDER_TABLE3;
-import static kitchenpos.application.ServiceTestFixture.ORDER_TABLES;
 import static kitchenpos.application.ServiceTestFixture.ORDER_TABLE_REQUEST1;
 import static kitchenpos.application.ServiceTestFixture.ORDER_TABLE_REQUESTS;
 import static kitchenpos.domain.OrderStatus.COMPLETION;
@@ -35,8 +34,8 @@ class TableGroupServiceTest {
 
         @BeforeEach
         void setup() {
-            tableGroup = new TableGroup();
-            tableGroup.setOrderTables(ORDER_TABLES);
+//            tableGroup = new TableGroup();
+//            tableGroup.setOrderTables(ORDER_TABLES);
 
             orderTableDao.save(ORDER_TABLE1);
             orderTableDao.save(ORDER_TABLE2);
@@ -91,8 +90,8 @@ class TableGroupServiceTest {
 
         @BeforeEach
         void setup() {
-            tableGroup = new TableGroup();
-            tableGroup.setOrderTables(ORDER_TABLES);
+//            tableGroup = new TableGroup();
+//            tableGroup.setOrderTables(ORDER_TABLES);
 
             order = new Order();
 
@@ -125,7 +124,7 @@ class TableGroupServiceTest {
                 orderDao.save(order);
             }
 
-            tableGroup.setOrderTables(ORDER_TABLES);
+//            tableGroup.setOrderTables(ORDER_TABLES);
             TableGroup savedTableGroup = tableGroupService.create(new TableGroupRequest(ORDER_TABLE_REQUESTS));
             tableGroupService.ungroup(savedTableGroup.getId());
 
