@@ -35,7 +35,7 @@ class MenuGroupServiceTest {
             menuGroupService.create(menuGroup);
 
             // when
-            final List<MenuGroup> extract = menuGroupService.list();
+            final List<MenuGroupResponse> extract = menuGroupService.list();
 
             // then
             assertThat(extract).hasSize(1);
