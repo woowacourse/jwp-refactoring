@@ -42,4 +42,12 @@ public class OrderTable {
     public boolean isEmpty() {
         return empty;
     }
+
+    public void empty() {
+        this.empty = true;
+    }
+
+    public void full() {
+        this.empty = false;
+    }
 }

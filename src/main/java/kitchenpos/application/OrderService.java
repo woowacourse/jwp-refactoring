@@ -17,7 +17,6 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 
@@ -44,27 +43,27 @@ public class OrderService {
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
-        validateOrderLineItemIsNotEmpty(orderLineItems);
-        validateOrderLineItemIsNotDuplicatedAndExist(orderRequest.getOrderLineItems(), orderLineItems);
-        validateOrderTableIsNotEmpty(orderTable);
+        validateOrderLineItemNotEmpty(orderLineItems);
+        validateOrderLineItemNotDuplicatedAndExist(orderRequest.getOrderLineItems(), orderLineItems);
+        validateOrderTableNotEmpty(orderTable);
 
         Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
         return orderRepository.save(order);
     }
 
-    private void validateOrderTableIsNotEmpty(OrderTable orderTable) {
+    private void validateOrderTableNotEmpty(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
     }
 
-    private void validateOrderLineItemIsNotEmpty(List<OrderLineItem> orderLineItems) {
+    private void validateOrderLineItemNotEmpty(List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
         }
     }
 
-    private void validateOrderLineItemIsNotDuplicatedAndExist(
+    private void validateOrderLineItemNotDuplicatedAndExist(
             List<OrderLineItemRequest> orderLineItemRequests, List<OrderLineItem> orderLineItems) {
 
         if (orderLineItems.size() != orderLineItemRequests.size()) {
