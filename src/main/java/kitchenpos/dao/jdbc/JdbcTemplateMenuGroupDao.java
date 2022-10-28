@@ -73,6 +73,6 @@ public class JdbcTemplateMenuGroupDao implements MenuGroupDao {
         final Long id = resultSet.getLong("id");
         final String name = resultSet.getString("name");
 
-        return new MenuGroup(id, name);
+        return null;
     }
 }

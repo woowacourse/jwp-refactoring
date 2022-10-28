@@ -102,6 +102,6 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         int numberOfGuests = resultSet.getInt("number_of_guests");
         boolean empty = resultSet.getBoolean("empty");
 
-        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
+        return null;
     }
 }

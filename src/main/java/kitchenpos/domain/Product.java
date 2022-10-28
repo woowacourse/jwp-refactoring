@@ -15,10 +15,10 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
-    @Column
+    @Column(nullable = false)
     private BigDecimal price;
 
     protected Product() {
@@ -61,13 +61,6 @@ public class Product {
         if (price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("상품은 0원 미만일 수 없습니다.");
         }
-    }
-
-    // jdbc
-    public Product(Long id, String name, BigDecimal price) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
     }
 
 }

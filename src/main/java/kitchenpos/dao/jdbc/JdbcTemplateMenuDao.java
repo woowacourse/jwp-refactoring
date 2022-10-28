@@ -78,6 +78,6 @@ public class JdbcTemplateMenuDao implements MenuDao {
         BigDecimal price = resultSet.getBigDecimal("price");
         Long menuGroupId = resultSet.getLong("menu_group_id");
 
-        return new Menu(id, name, price, menuGroupId);
+        return null;
     }
 }

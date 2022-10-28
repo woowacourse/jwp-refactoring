@@ -69,6 +69,6 @@ public class JdbcTemplateProductDao implements ProductDao {
         String name = resultSet.getString("name");
         BigDecimal price = resultSet.getBigDecimal("price");
 
-        return new Product(id, name, price);
+        return null;
     }
 }

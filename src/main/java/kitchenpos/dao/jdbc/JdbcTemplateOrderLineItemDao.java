@@ -77,6 +77,6 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
         final Long menuId = resultSet.getLong("menu_id");
         final long quantity = resultSet.getLong("quantity");
 
-        return new OrderLineItem(seq, orderId, menuId, quantity);
+        return null;
     }
 }

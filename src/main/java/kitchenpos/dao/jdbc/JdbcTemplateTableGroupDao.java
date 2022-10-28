@@ -68,6 +68,6 @@ public class JdbcTemplateTableGroupDao implements TableGroupDao {
         final long id = resultSet.getLong(KEY_COLUMN_NAME);
         final LocalDateTime createdDate = resultSet.getObject("created_date", LocalDateTime.class);
 
-        return new TableGroup(id, createdDate);
+        return null;
     }
 }

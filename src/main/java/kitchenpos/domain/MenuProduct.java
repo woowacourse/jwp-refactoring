@@ -14,13 +14,15 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
+    @Column(nullable = false)
     @ManyToOne
     private Menu menu;
 
+    @Column(nullable = false)
     @ManyToOne
     private Product product;
 
-    @Column
+    @Column(nullable = false)
     private long quantity;
 
     protected MenuProduct() {
@@ -48,23 +50,4 @@ public class MenuProduct {
         return product;
     }
 
-    public Long getMenuId() {
-        return null;
-    }
-
-    public Long getProductId() {
-        return null;
-    }
-
-    // jdbc
-    public MenuProduct(Long seq, Long menuId, Long productId, long quantity) {
-        this.seq = seq;
-        this.menu = null;
-        this.product = null;
-        this.quantity = quantity;
-    }
-
-    public void setMenuId(final Long menuId) {
-        this.menu = null;
-    }
 }

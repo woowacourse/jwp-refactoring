@@ -3,20 +3,30 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
 import org.springframework.util.CollectionUtils;
 
+@Entity
 public class TableGroup {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column
     private LocalDateTime createdDate;
+
+    @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
 
-    public TableGroup(){
+    public TableGroup() {
         this.createdDate = LocalDateTime.now();
-    }
-
-    public TableGroup(Long id, LocalDateTime createdDate) {
-        this.id = id;
-        this.createdDate = createdDate;
     }
 
     public Long getId() {

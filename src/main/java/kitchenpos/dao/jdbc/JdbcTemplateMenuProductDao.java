@@ -77,6 +77,6 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
         final Long productId = resultSet.getLong("product_id");
         final long quantity = resultSet.getLong("quantity");
 
-        return new MenuProduct(seq, menuId, productId, quantity);
+        return null;
     }
 }

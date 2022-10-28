@@ -104,6 +104,6 @@ public class JdbcTemplateOrderDao implements OrderDao {
         final String orderStatus = resultSet.getString("order_status");
         final LocalDateTime orderedTime = resultSet.getObject("ordered_time", LocalDateTime.class);
 
-        return new Order(id, orderTableId, orderStatus, orderedTime);
+        return null;
     }
 }

@@ -20,12 +20,13 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
-    @Column
+    @Column(nullable = false)
     private BigDecimal price;
 
+    @Column(nullable = false)
     @ManyToOne
     private MenuGroup menuGroup;
 
@@ -66,10 +67,6 @@ public class Menu {
         return menuProducts;
     }
 
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
-    }
-
     private void validate(String name, BigDecimal price, Map<Product, Long> menuProducts) {
         validateName(name);
         validatePrice(price);
@@ -100,18 +97,6 @@ public class Menu {
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException("각 상품 가격의 합보다 큰 가격을 적용할 수 없습니다.");
         }
-    }
-
-    // jdbc
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.menuGroup = null;
-    }
-
-    public Long getMenuGroupId() {
-        return null;
     }
 
 }
