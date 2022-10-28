@@ -36,6 +36,12 @@ public class OrderTable {
         }
     }
 
+    public void validateCanBeGrouped() {
+        if (!empty || tableGroupId != null) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Long getId() {
         return id;
     }

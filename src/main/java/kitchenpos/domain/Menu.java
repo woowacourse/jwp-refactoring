@@ -11,6 +11,12 @@ public class Menu {
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
+    public void checkIsAvailablePrice(final BigDecimal priceToSet) {
+        if (price.getPrice().compareTo(priceToSet) > 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Long getId() {
         return id;
     }

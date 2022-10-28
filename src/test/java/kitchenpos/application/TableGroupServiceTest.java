@@ -34,28 +34,6 @@ class TableGroupServiceTest extends FakeSpringContext {
         assertThat(result.getOrderTables().size()).isEqualTo(tableGroup.getOrderTables().size());
     }
 
-    @DisplayName("주문 테이블 목록이 비어있다면, 테이블 그룹 등록 시 예외 발생")
-    @Test
-    void create_emptyOrderTables_throwsException() {
-        final var emptyTableGroup = tableGroup();
-
-        assertThatThrownBy(
-                () -> tableGroupService.create(emptyTableGroup)
-        ).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("주문 테이블이 하나 뿐이라면, 테이블 그룹 등록 시 예외 발생")
-    @Test
-    void create_onlyOneOrderTable_throwsException() {
-        final var singleTable = orderTableDao.save(emptyTable(1));
-
-        final var tableGroup = tableGroup(singleTable);
-
-        assertThatThrownBy(
-                () -> tableGroupService.create(tableGroup)
-        ).isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("주문 테이블 중 하나라도 빈 상태가 아니라면, 테이블 그룹 등록 시 예외 발생")
     @Test
     void create_containsNotEmptyTable_throwsException() {

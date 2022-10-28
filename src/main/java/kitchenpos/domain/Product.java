@@ -16,6 +16,10 @@ public class Product {
         this.price = new Price(price);
     }
 
+    public BigDecimal calculateTotalPrice(final long quantity) {
+        return price.getPrice().multiply(new BigDecimal(quantity));
+    }
+
     public Long getId() {
         return id;
     }

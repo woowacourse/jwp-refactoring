@@ -46,13 +46,10 @@ public class MenuService {
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = productDao.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+            sum = sum.add(product.calculateTotalPrice(menuProduct.getQuantity()));
         }
 
-        final BigDecimal price = menu.getPrice().getPrice();
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
+        menu.checkIsAvailablePrice(sum);
 
         final Menu savedMenu = menuDao.save(menu);
 
