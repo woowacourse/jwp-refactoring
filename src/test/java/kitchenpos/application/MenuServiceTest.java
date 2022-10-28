@@ -182,17 +182,17 @@ class MenuServiceTest extends ServiceTest {
             final Product chicken2 = saveProduct("앙념치킨");
             final MenuGroup chickenMenuGroup = saveMenuGroup("치킨");
             final Menu chickenMenu = saveMenu("반반치킨", BigDecimal.valueOf(10_000), chickenMenuGroup,
-                    new MenuProduct(chicken1.getId(), 2L),
-                    new MenuProduct(chicken2.getId(), 4L));
+                    new MenuProduct(chicken1.getId(), 2L, chicken1.getPrice()),
+                    new MenuProduct(chicken2.getId(), 4L, chicken2.getPrice()));
 
             final Product sushi1 = saveProduct("연어초밥");
             final Product sushi2 = saveProduct("광어초밥");
             final Product sushi3 = saveProduct("참치초밥");
             final MenuGroup sushiMenuGroup = saveMenuGroup("초밥");
             final Menu sushiMenu = saveMenu("모둠초밥", BigDecimal.valueOf(15_000), sushiMenuGroup,
-                    new MenuProduct(sushi1.getId(), 3L),
-                    new MenuProduct(sushi2.getId(), 2L),
-                    new MenuProduct(sushi3.getId(), 1L));
+                    new MenuProduct(sushi1.getId(), 3L, sushi1.getPrice()),
+                    new MenuProduct(sushi2.getId(), 2L, sushi2.getPrice()),
+                    new MenuProduct(sushi3.getId(), 1L, sushi3.getPrice()));
 
             // when
             final List<MenuResponse> actual = menuService.list();

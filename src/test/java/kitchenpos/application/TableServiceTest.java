@@ -106,7 +106,7 @@ class TableServiceTest extends ServiceTest {
             // given
             final Product product = saveProduct("감자튀김");
             final MenuGroup menuGroup = saveMenuGroup("감자");
-            final Menu menu = saveMenu("감자세트", BigDecimal.ONE, menuGroup, new MenuProduct(product.getId(), 1L));
+            final Menu menu = saveMenu("감자세트", BigDecimal.ONE, menuGroup, new MenuProduct(product.getId(), 1L, product.getPrice()));
             final OrderTable orderTable = saveOrderTable(10, false);
             saveOrder(orderTable, orderStatus, new OrderLineItem(menu.getId(), 1L));
 

@@ -1,8 +1,6 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
@@ -34,33 +32,25 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
-        final BigDecimal price = request.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
+        final Menu menu = menuRepository.save(toEntity(request));
+        return MenuResponse.from(menu);
+    }
 
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProductRequest menuProduct : request.getMenuProducts()) {
-            final Product product = productRepository.findById(menuProduct.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
-                .map(it -> new MenuProduct(it.getProductId(), it.getQuantity()))
+    private Menu toEntity(final MenuCreateRequest request) {
+        final List<MenuProduct> menuProducts = request.getMenuProducts()
+                .stream()
+                .map(this::toMenuProduct)
                 .collect(Collectors.toList());
-        final Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), menuProducts);
+        return Menu.of(request.getName(), request.getPrice(), request.getMenuGroupId(), menuProducts);
+    }
 
-        return MenuResponse.from(menuRepository.save(menu));
+    private MenuProduct toMenuProduct(final MenuProductRequest request) {
+        final Product product = productRepository.findById(request.getProductId())
+                .orElseThrow(IllegalArgumentException::new);
+        return new MenuProduct(product.getId(), request.getQuantity(), product.getPrice());
     }
 
     public List<MenuResponse> list() {

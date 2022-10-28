@@ -1,7 +1,9 @@
 package kitchenpos.domain;
 
+import java.math.BigDecimal;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
+import org.springframework.data.annotation.Transient;
 
 public class MenuProduct {
 
@@ -9,6 +11,16 @@ public class MenuProduct {
     private final Long seq;
     private final Long productId;
     private final long quantity;
+
+    @Transient
+    private BigDecimal price;
+
+    public MenuProduct(final Long productId, final long quantity, final BigDecimal price) {
+        this.seq = null;
+        this.productId = productId;
+        this.quantity = quantity;
+        this.price = price;
+    }
 
     public MenuProduct(final Long productId, final long quantity) {
         this(null, productId, quantity);
@@ -19,6 +31,10 @@ public class MenuProduct {
         this.seq = seq;
         this.productId = productId;
         this.quantity = quantity;
+    }
+
+    public BigDecimal calculateAmount() {
+        return price.multiply(BigDecimal.valueOf(quantity));
     }
 
     public Long getSeq() {

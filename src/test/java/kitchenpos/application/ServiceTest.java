@@ -71,7 +71,7 @@ abstract class ServiceTest {
     }
 
     protected Product saveProduct(final String name) {
-        return saveProduct(name, BigDecimal.ONE);
+        return saveProduct(name, BigDecimal.valueOf(10_000));
     }
 
     protected Product saveProduct(final String name, final BigDecimal price) {
@@ -86,7 +86,7 @@ abstract class ServiceTest {
 
     protected Menu saveMenu(final String name, final BigDecimal price, final MenuGroup menuGroup,
                             final MenuProduct... menuProducts) {
-        final Menu menu = new Menu(name, price, menuGroup.getId(), List.of(menuProducts));
+        final Menu menu = Menu.of(name, price, menuGroup.getId(), List.of(menuProducts));
         return menuRepository.save(menu);
     }
 
