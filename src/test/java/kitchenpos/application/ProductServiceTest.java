@@ -40,24 +40,6 @@ class ProductServiceTest {
         assertThat(response.getId()).isNotNull();
     }
 
-    @DisplayName("상품 등록 시 상품의 가격은 null 이 아니어야 한다")
-    @Test
-    void createPriceIsNull() {
-        final ProductRequest request = new ProductRequest("후라이드", null);
-
-        assertThatThrownBy(() -> productService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("상품 등록 시 상품의 가격은 0원 이상이어야 한다")
-    @Test
-    void createPriceIsLowerZero() {
-        final ProductRequest request = new ProductRequest("후라이드", new BigDecimal(-1));
-
-        assertThatThrownBy(() -> productService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("상품의 목록을 조회한다")
     @Test
     void list() {
