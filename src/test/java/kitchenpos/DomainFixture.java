@@ -25,11 +25,7 @@ public class DomainFixture {
     private static final int ONE_QUANTITY = 1;
 
     public static Product createProduct(final String name, final int price) {
-        final Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
-
-        return product;
+        return Product.ofNullId(name, BigDecimal.valueOf(price));
     }
 
     public static MenuGroup createMenuGroup(final String name) {
