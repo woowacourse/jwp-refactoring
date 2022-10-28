@@ -7,7 +7,6 @@ import static kitchenpos.support.TestFixtureFactory.주문_테이블을_생성�
 import static kitchenpos.support.TestFixtureFactory.주문을_생성한다;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,7 +15,12 @@ import kitchenpos.TransactionalTest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.response.OrderTableCreateResponse;
+import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.dto.response.OrderTableUpdateResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,43 +30,43 @@ class TableServiceTest {
     @Autowired
     private TableGroupRepository tableGroupRepository;
     @Autowired
+    private OrderTableRepository orderTableRepository;
+    @Autowired
     private OrderRepository orderRepository;
     @Autowired
     private TableService tableService;
 
     @Test
     void 주문_테이블을_생성할_수_있다() {
-        OrderTable orderTable = 주문_테이블을_생성한다(null, 1, false);
+        OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(1, false);
 
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTableCreateResponse savedOrderTable = tableService.create(orderTableCreateRequest);
 
-        assertAll(
-                () -> assertThat(savedOrderTable.getId()).isNotNull(),
-                () -> assertThat(savedOrderTable).usingRecursiveComparison()
-                        .ignoringFields("id")
-                        .isEqualTo(orderTable)
-        );
+        assertThat(savedOrderTable.getId()).isNotNull();
     }
 
     @Test
     void 주문_테이블_목록을_조회할_수_있다() {
-        OrderTable orderTable1 = tableService.create(주문_테이블을_생성한다(null, 1, false));
-        OrderTable orderTable2 = tableService.create(주문_테이블을_생성한다(null, 0, true));
+        Long orderTableId1 = tableService.create(new OrderTableCreateRequest(0, true))
+                .getId();
+        Long orderTableId2 = tableService.create(new OrderTableCreateRequest(0, true))
+                .getId();
 
-        List<OrderTable> actual = tableService.list();
+        List<OrderTableResponse> actual = tableService.list();
 
         assertThat(actual).hasSize(2)
-                .usingFieldByFieldElementComparator()
-                .containsExactly(orderTable1, orderTable2);
+                .extracting("id")
+                .containsExactly(orderTableId1, orderTableId2);
     }
 
     @Test
     void 주문_테이블을_빈_테이블로_변경할_수_있다() {
-        OrderTable orderTable = tableService.create(주문_테이블을_생성한다(null, 1, false));
+        Long orderTableId = tableService.create(new OrderTableCreateRequest(1, false))
+                .getId();
 
-        OrderTable changedOrderTable = tableService.changeEmpty(orderTable.getId(), true);
+        OrderTableUpdateResponse orderTableUpdateResponse = tableService.changeEmpty(orderTableId, true);
 
-        assertThat(changedOrderTable.isEmpty()).isTrue();
+        assertThat(orderTableUpdateResponse.isEmpty()).isTrue();
     }
 
     @Test
@@ -73,8 +77,8 @@ class TableServiceTest {
 
     @Test
     void 변경_대상_테이블이_단체_지정되어_있으면_예외를_반환한다() {
-        OrderTable orderTable1 = tableService.create(주문_테이블을_생성한다(null, 1, true));
-        OrderTable orderTable2 = tableService.create(주문_테이블을_생성한다(null, 0, true));
+        OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
+        OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 0, true));
         TableGroup tableGroup = tableGroupRepository
                 .save(단체_지정을_생성한다(LocalDateTime.now(), new ArrayList<>()));
         tableGroup.group(List.of(orderTable1, orderTable2));
@@ -85,29 +89,32 @@ class TableServiceTest {
 
     @Test
     void 변경_대상_테이블의_주문_목록_중_식사_중인_주문이_있을_경우_예외를_반환한다() {
-        OrderTable orderTable = tableService.create(주문_테이블을_생성한다(null, 1, false));
-        orderRepository.save(주문을_생성한다(orderTable.getId(), COOKING.name(), LocalDateTime.now(), null));
+        Long orderTableId = tableService.create(new OrderTableCreateRequest(1, false))
+                .getId();
+        orderRepository.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), null));
 
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, true))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 변경_대상_테이블의_주문_목록_중_조리_중인_주문이_있을_경우_예외를_반환한다() {
-        OrderTable orderTable = tableService.create(주문_테이블을_생성한다(null, 1, false));
-        orderRepository.save(주문을_생성한다(orderTable.getId(), MEAL.name(), LocalDateTime.now(), null));
+        Long orderTableId = tableService.create(new OrderTableCreateRequest(1, false))
+                .getId();
+        orderRepository.save(주문을_생성한다(orderTableId, MEAL.name(), LocalDateTime.now(), null));
 
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, true))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 테이블의_방문한_손님_수를_변경할_수_있다() {
-        OrderTable orderTable = tableService.create(주문_테이블을_생성한다(null, 0, false));
+        Long orderTableId = tableService.create(new OrderTableCreateRequest(1, false))
+                .getId();
 
-        tableService.changeNumberOfGuests(orderTable.getId(), 1);
+        OrderTableUpdateResponse orderTableUpdateResponse = tableService.changeNumberOfGuests(orderTableId, 1);
 
-        assertThat(orderTable.getNumberOfGuests()).isOne();
+        assertThat(orderTableUpdateResponse.getNumberOfGuests()).isOne();
     }
 
     @Test
@@ -124,9 +131,10 @@ class TableServiceTest {
 
     @Test
     void 인원_변경_테이블이_빈_테이블이면_예외를_반환한다() {
-        OrderTable orderTable = tableService.create(주문_테이블을_생성한다(null, 0, true));
+        Long orderTableId = tableService.create(new OrderTableCreateRequest(1, true))
+                .getId();
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), 1))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, 1))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
