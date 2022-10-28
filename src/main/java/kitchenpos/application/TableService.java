@@ -42,46 +42,25 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeStatusRequest request) {
-        final OrderTable orderTable = getOrderTableById(orderTableId);
-
+        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+                .orElseThrow(IllegalArgumentException::new);
         validateCompletionStatus(orderTableId);
-        orderTable.changeEmpty(request.isEmpty());
-        orderTableRepository.save(orderTable);
-        return OrderTableResponse.from(orderTableRepository.save(orderTable));
+        savedOrderTable.changeEmpty(request.isEmpty());
+        return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
                                                    final OrderTableChangeNumberOfGuestsRequest request) {
-        final int numberOfGuests = request.getNumberOfGuests();
-
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        validateOrderTableEmpty(orderTable);
-        orderTable.changeNumberOfGuests(numberOfGuests);
-        orderTableRepository.save(orderTable);
+        orderTable.changeNumberOfGuests(request.getNumberOfGuests());
         return OrderTableResponse.from(orderTableRepository.save(orderTable));
-    }
-
-    private OrderTable getOrderTableById(final Long orderTableId) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
-        return savedOrderTable;
     }
 
     private void validateCompletionStatus(final Long orderTableId) {
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateOrderTableEmpty(final OrderTable savedOrderTable) {
-        if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
     }
