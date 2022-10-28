@@ -8,6 +8,9 @@ public class TableGroup {
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
 
+    protected TableGroup() {
+    }
+
     public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this(null, createdDate, orderTables);
     }

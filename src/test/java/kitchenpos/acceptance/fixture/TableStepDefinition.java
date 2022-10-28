@@ -11,9 +11,10 @@ import org.springframework.http.HttpStatus;
 public class TableStepDefinition {
 
     public static long 테이블을_생성한다(
-       final int numberOfGuests
+       final int numberOfGuests,
+       final boolean empty
     ) {
-        OrderTable orderTable = new OrderTable(null, numberOfGuests, false);
+        OrderTable orderTable = new OrderTable(null, numberOfGuests, empty);
 
         return RestAssured.given().log().all()
             .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
