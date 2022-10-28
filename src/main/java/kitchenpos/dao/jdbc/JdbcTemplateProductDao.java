@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -15,8 +15,15 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class JdbcTemplateProductDao implements ProductDao {
+/**
+ * 사용되지 않는 DB 접근 계층 구현체입니다.
+ * <p/>
+ * 현재는 JPA 구현체를 사용하고 있으며
+ * <p/>
+ * 추후 돌아갈 때는 아래의 @Repository 주석을 풀면 됩니다.
+ */
+//@Repository
+public class JdbcTemplateProductDao implements ProductRepository {
     private static final String TABLE_NAME = "product";
     private static final String KEY_COLUMN_NAME = "id";
 

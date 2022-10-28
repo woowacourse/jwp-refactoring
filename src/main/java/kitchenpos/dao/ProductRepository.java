@@ -5,7 +5,7 @@ import kitchenpos.domain.Product;
 import java.util.List;
 import java.util.Optional;
 
-public interface ProductDao {
+public interface ProductRepository {
     Product save(Product entity);
 
     Optional<Product> findById(Long id);

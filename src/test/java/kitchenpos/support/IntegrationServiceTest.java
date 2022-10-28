@@ -9,6 +9,7 @@ import kitchenpos.application.TableService;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.dao.TableGroupDao;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,9 @@ abstract public class IntegrationServiceTest {
 
 
     // DAO's
+    @Autowired
+    protected ProductRepository productRepository;
+
     @Autowired
     protected OrderLineItemDao orderLineItemDao;
     @Autowired
