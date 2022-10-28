@@ -20,13 +20,10 @@ public class ProductService {
 
     @Transactional
     public Product create(ProductCreateRequest productCreateRequest) {
-        final Long price = productCreateRequest.getPrice();
+        Long price = productCreateRequest.getPrice();
+        String name = productCreateRequest.getName();
 
-        if (Objects.isNull(price) || price < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        return productDao.save(new Product(productCreateRequest.getName(), price));
+        return productDao.save(new Product(name, price));
     }
 
     public List<Product> list() {
