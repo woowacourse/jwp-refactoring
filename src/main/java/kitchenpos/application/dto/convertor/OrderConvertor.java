@@ -16,10 +16,7 @@ public class OrderConvertor {
     }
 
     public static Order convertToOrder(final OrderRequest request) {
-        final Order order = new Order();
-        order.setOrderTableId(request.getOrderTableId());
-        order.setOrderLineItems(convertToOrderLineItem(request.getOrderLineItems()));
-        return order;
+        return new Order(request.getOrderTableId(), convertToOrderLineItem(request.getOrderLineItems()));
     }
 
     public static Order convertToOrder(final OrderChangeRequest request) {

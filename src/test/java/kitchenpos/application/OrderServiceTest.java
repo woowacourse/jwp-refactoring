@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static kitchenpos.domain.fixture.MenuFixture.후라이드_치킨_세트의_가격과_메뉴_상품_리스트는;
 import static kitchenpos.domain.fixture.MenuGroupFixture.치킨_세트;
 import static kitchenpos.domain.fixture.MenuProductFixture.상품_하나;
-import static kitchenpos.domain.fixture.OrderFixture.완료된_주문;
 import static kitchenpos.domain.fixture.OrderFixture.요리중인_주문;
 import static kitchenpos.domain.fixture.OrderFixture.주문_1번;
 import static kitchenpos.domain.fixture.OrderTableFixture.비어있는_테이블;
@@ -12,7 +11,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -88,15 +86,6 @@ class OrderServiceTest {
         assertThat(response.getId()).isNotNull();
     }
 
-    @DisplayName("주문 등록 시 주문 항목이 비어있으면 안된다")
-    @Test
-    void createOrderLineItemIsEmpty() {
-        final OrderRequest request = new OrderRequest(저장된_주문_테이블.getId(), Collections.emptyList());
-
-        assertThatThrownBy(() -> orderService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("주문 등록 시 주문 항목이 메뉴에 존재해야 한다")
     @Test
     void createOrderLineItemIsNotExist() {
@@ -106,7 +95,8 @@ class OrderServiceTest {
         final OrderRequest request = new OrderRequest(저장된_주문_테이블.getId(), List.of(notSavedOrderLineItemRequest));
 
         assertThatThrownBy(() -> orderService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("존재하지 않는 메뉴가 포함되어 있습니다.");
     }
 
     @DisplayName("주문 등록 시 주문 테이블이 존재해야 한다")
@@ -118,7 +108,8 @@ class OrderServiceTest {
         final OrderRequest request = new OrderRequest(notSavedOrderTableId, List.of(orderLineItemRequest));
 
         assertThatThrownBy(() -> orderService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("존재하지 않는 테이블입니다.");
     }
 
     @DisplayName("주문 등록 시 주문 테이블이 비어있으면 안된다")
@@ -130,7 +121,8 @@ class OrderServiceTest {
         final OrderRequest request = new OrderRequest(savedEmptyOrderTable.getId(), List.of(orderLineItemRequest));
 
         assertThatThrownBy(() -> orderService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("테이블이 비어있으면 안됩니다.");
     }
 
     @DisplayName("주문의 목록을 조회한다")
@@ -165,17 +157,7 @@ class OrderServiceTest {
 
         final OrderChangeRequest request = new OrderChangeRequest(OrderStatus.COMPLETION.name());
         assertThatThrownBy(() -> orderService.changeOrderStatus(notSavedOrderId, request))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("주문의 상태 변경 시 주문이 완료된 상태면 안된다")
-    @Test
-    void changeOrderStatusOrderIsCompletion() {
-        final Order order = 완료된_주문(저장된_주문_테이블.getId());
-        final Order savedOrder = orderDao.save(order);
-
-        final OrderChangeRequest request = new OrderChangeRequest(OrderStatus.COMPLETION.name());
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("존재하지 않는 주문입니다.");
     }
 }
