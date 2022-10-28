@@ -37,10 +37,10 @@ public class MenuProduct {
         this.productId = productId;
         this.quantity = quantity;
         this.price = price;
-        mapMenu(menu);
+        designateMenu(menu);
     }
 
-    public void mapMenu(final Menu menu) {
+    public void designateMenu(final Menu menu) {
         if (this.menu != null) {
             this.menu.getMenuProducts()
                     .remove(this);

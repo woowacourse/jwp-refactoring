@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
@@ -33,17 +34,27 @@ public class Menu {
 
     public Menu(final Long id, final String name, final Price price, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
+        validatePrice(menuProducts, price);
+        mapMenuProduct(menuProducts);
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        mapMenuProduct(menuProducts);
     }
 
     private void mapMenuProduct(final List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
         for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.mapMenu(this);
+            menuProduct.designateMenu(this);
+        }
+    }
+
+    private void validatePrice(final List<MenuProduct> menuProducts, final Price price) {
+        Price sum = menuProducts.stream()
+                .map(MenuProduct::getAmount)
+                .reduce(new Price(BigDecimal.ZERO), Price::add);
+        if (price.isExpensiveThan(sum)) {
+            throw new IllegalArgumentException();
         }
     }
 

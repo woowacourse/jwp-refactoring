@@ -1,11 +1,9 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
@@ -43,26 +41,16 @@ public class MenuService {
         if (!menuGroupRepository.existsById(menuCreateRequest.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
+        List<MenuProduct> menuProducts = createMenuProducts(menuCreateRequest);
+        Menu menu = menuMapper.toMenu(menuCreateRequest, menuProducts);
+        return menuDtoMapper.toMenuCreateResponse(menuRepository.save(menu));
+    }
 
-        List<MenuProduct> menuProducts = menuCreateRequest.getMenuProducts()
+    private List<MenuProduct> createMenuProducts(final MenuCreateRequest menuCreateRequest) {
+        return menuCreateRequest.getMenuProducts()
                 .stream()
                 .map(this::createMenuProduct)
                 .collect(Collectors.toList());
-
-        Price sum = new Price(BigDecimal.ZERO);
-        for (MenuProduct menuProduct : menuProducts) {
-            sum = sum.add(menuProduct.getPrice().multiply(menuProduct.getQuantity()));
-        }
-
-        Menu menu = menuMapper.toMenu(menuCreateRequest, menuProducts);
-
-        if (menu.getPrice().getValue().compareTo(sum.getValue()) > 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final Menu savedMenu = menuRepository.save(menu);
-
-        return menuDtoMapper.toMenuCreateResponse(savedMenu);
     }
 
     private MenuProduct createMenuProduct(final MenuProductCreateRequest menuProductCreateRequest) {
