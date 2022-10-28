@@ -33,6 +33,10 @@ public class Menu {
         this.menuProducts.addAll(menuProducts);
     }
 
+    public boolean isExpensiveThan(final Price price) {
+        return this.price.isOver(price);
+    }
+
     public Long getId() {
         return id;
     }

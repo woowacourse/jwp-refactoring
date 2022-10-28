@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 
 public class Price {
@@ -16,6 +17,23 @@ public class Price {
 
     public static Price from(final int value) {
         return new Price(new BigDecimal(value));
+    }
+
+    public static Price sum(List<Price> prices) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (Price price : prices) {
+            sum = sum.add(price.value);
+        }
+        return new Price(sum);
+    }
+
+    public Price multiply(final long multiplicand) {
+        final BigDecimal multipliedValue = value.multiply(BigDecimal.valueOf(multiplicand));
+        return new Price(multipliedValue);
+    }
+
+    public boolean isOver(final Price other) {
+        return value.compareTo(other.value) > 0;
     }
 
     private static void validateValue(final BigDecimal value) {

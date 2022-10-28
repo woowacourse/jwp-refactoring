@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
@@ -9,6 +8,7 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuRequest;
 import org.springframework.stereotype.Service;
@@ -36,22 +36,22 @@ public class MenuService {
     @Transactional
     public Menu create(final MenuRequest request) {
         final Menu menu = request.toEntity();
-        final BigDecimal price = menu.getPrice();
-
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
 
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
 
-        BigDecimal sum = BigDecimal.ZERO;
+        final List<Price> pricesOfProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = productDao.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+            final Price priceOfProducts = product.calculatePrice(menuProduct.getQuantity());
+            pricesOfProducts.add(priceOfProducts);
         }
 
-        if (price.compareTo(sum) > 0) {
+        final Price totalPriceOfProducts = Price.sum(pricesOfProducts);
+        if (menu.isExpensiveThan(totalPriceOfProducts)) {
             throw new IllegalArgumentException();
         }
 

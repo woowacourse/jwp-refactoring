@@ -18,6 +18,10 @@ public class Product {
         return new Product(null, name, price);
     }
 
+    public Price calculatePrice(final long quantity) {
+        return price.multiply(quantity);
+    }
+
     public Long getId() {
         return id;
     }
