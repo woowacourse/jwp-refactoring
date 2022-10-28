@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Deprecated
 public class DatabaseCleaner implements InitializingBean {
 
     @PersistenceContext
