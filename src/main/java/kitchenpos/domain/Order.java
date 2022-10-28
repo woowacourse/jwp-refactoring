@@ -7,11 +7,11 @@ import java.util.Objects;
 
 public class Order {
 
-    private Long id;
-    private Long orderTableId;
+    private final Long id;
+    private final Long orderTableId;
     private String orderStatus;
-    private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private final LocalDateTime orderedTime;
+    private final List<OrderLineItem> orderLineItems;
 
     public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
         this(id, orderTableId, orderStatus, orderedTime, new ArrayList<>());

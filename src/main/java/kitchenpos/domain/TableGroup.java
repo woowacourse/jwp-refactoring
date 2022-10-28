@@ -6,9 +6,9 @@ import java.util.List;
 
 public class TableGroup {
 
-    private Long id;
-    private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
+    private final Long id;
+    private final LocalDateTime createdDate;
+    private final List<OrderTable> orderTables;
 
     public TableGroup() {
         this(null, LocalDateTime.now(), new ArrayList<>());
