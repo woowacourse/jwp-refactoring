@@ -19,11 +19,7 @@ public class ProductService {
 
     @Transactional
     public ProductResponse create(final ProductRequest product) {
-        return toResponse(productDao.save(toEntity(product)));
-    }
-
-    private Product toEntity(ProductRequest product) {
-        return new Product(null, product.getName(), product.getPrice());
+        return toResponse(productDao.save(toProduct(product)));
     }
 
     private ProductResponse toResponse(Product product) {
@@ -34,5 +30,9 @@ public class ProductService {
         return productDao.findAll().stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
+    }
+
+    private Product toProduct(ProductRequest product) {
+        return new Product(product.getName(), product.getPrice());
     }
 }
