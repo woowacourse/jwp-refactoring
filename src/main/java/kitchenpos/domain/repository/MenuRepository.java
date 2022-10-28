@@ -45,4 +45,8 @@ public class MenuRepository {
                         menuProductDao.findAllByMenuId(menu.getId())
                 )).collect(Collectors.toList());
     }
+
+    public Long countByIdIn(List<Long> ids) {
+        return menuDao.countByIdIn(ids);
+    }
 }

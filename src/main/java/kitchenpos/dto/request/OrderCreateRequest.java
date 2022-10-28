@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 
 public class OrderCreateRequest {
 
@@ -27,8 +28,8 @@ public class OrderCreateRequest {
         return orderLineItems;
     }
 
-    public Order toEntity(String name, LocalDateTime now) {
-        return new Order(orderTableId, name, now, toOrderLineItemEntity());
+    public Order toEntity(String orderStatus, Long actualMenusSize) {
+        return Order.create(orderTableId, orderStatus, toOrderLineItemEntity(), actualMenusSize);
     }
 
     private List<OrderLineItem> toOrderLineItemEntity() {
