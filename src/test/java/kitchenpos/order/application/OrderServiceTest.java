@@ -25,7 +25,7 @@ import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.order.repository.TableRepository;
+import kitchenpos.order.repository.OrderTableRepository;
 import kitchenpos.order.ui.dto.OrderChangeStatusRequest;
 import kitchenpos.order.ui.dto.OrderCreateRequest;
 import kitchenpos.order.ui.dto.OrderLineItemCreateRequest;
@@ -40,25 +40,26 @@ import org.springframework.test.context.jdbc.Sql;
 @Sql(scripts = "classpath:truncate.sql")
 class OrderServiceTest {
 
-    private ProductRepository productRepository;
-    private MenuGroupRepository menuGroupRepository;
-    private MenuRepository menuRepository;
-    private TableRepository tableRepository;
-    private OrderRepository orderRepository;
+    private final ProductRepository productRepository;
+    private final MenuGroupRepository menuGroupRepository;
+    private final MenuRepository menuRepository;
+    private final OrderTableRepository orderTableRepository;
+    private final OrderRepository orderRepository;
 
-    private OrderService orderService;
+    private final OrderService orderService;
 
     @Autowired
-    public OrderServiceTest(ProductRepository productRepository,
-                            MenuGroupRepository menuGroupRepository,
-                            MenuRepository menuRepository, TableRepository tableRepository,
-                            OrderRepository orderRepository) {
+    public OrderServiceTest(final ProductRepository productRepository,
+                            final MenuGroupRepository menuGroupRepository,
+                            final MenuRepository menuRepository,
+                            final OrderTableRepository orderTableRepository,
+                            final OrderRepository orderRepository) {
         this.productRepository = productRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.menuRepository = menuRepository;
-        this.tableRepository = tableRepository;
+        this.orderTableRepository = orderTableRepository;
         this.orderRepository = orderRepository;
-        this.orderService = new OrderService(tableRepository, orderRepository);
+        this.orderService = new OrderService(orderTableRepository, orderRepository);
     }
 
     private Menu menu;
@@ -70,7 +71,7 @@ class OrderServiceTest {
         final var productB = productRepository.save(치즈볼);
         final var menuGroup = menuGroupRepository.save(세트_메뉴);
         menu = menuRepository.save(뿌링클_치즈볼_메뉴_생성(menuGroup.getId(), productA, productB));
-        table = tableRepository.save(채워진_테이블_생성());
+        table = orderTableRepository.save(채워진_테이블_생성());
     }
 
     @Test
@@ -131,7 +132,7 @@ class OrderServiceTest {
     @Test
     void 빈_테이블인_경우_예외를_던진다() {
         // given
-        final var emptyTable = tableRepository.save(빈_테이블_생성());
+        final var emptyTable = orderTableRepository.save(빈_테이블_생성());
         final var request = new OrderCreateRequest(emptyTable.getId(),
                 List.of(new OrderLineItemCreateRequest(menu.getId(), 1)));
 

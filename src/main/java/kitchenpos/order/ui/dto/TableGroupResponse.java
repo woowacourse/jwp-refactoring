@@ -15,8 +15,8 @@ public class TableGroupResponse {
     private TableGroupResponse() {
     }
 
-    public TableGroupResponse(Long id, LocalDateTime createdDate,
-                              List<TableResponse> orderTables) {
+    public TableGroupResponse(final Long id, final LocalDateTime createdDate,
+                              final List<TableResponse> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;

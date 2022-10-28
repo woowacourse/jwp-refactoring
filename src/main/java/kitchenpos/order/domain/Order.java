@@ -41,13 +41,13 @@ public class Order {
     protected Order() {
     }
 
-    public Order(OrderStatus orderStatus, LocalDateTime orderedTime,
-                 List<OrderLineItem> orderLineItems) {
+    public Order(final OrderStatus orderStatus, final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
         this(null, null, orderStatus, orderedTime, orderLineItems);
     }
 
-    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
-                 List<OrderLineItem> orderLineItems) {
+    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus,
+                 final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
         validateOrderLineItemsNotEmpty(orderLineItems);
         this.id = id;
         this.orderTable = orderTable;
@@ -63,6 +63,7 @@ public class Order {
     }
 
     public void changeStatus(final OrderStatus status) {
+        // TODO: 2022/10/28 변경해야한다!
         if (status.isSame(OrderStatus.MEAL)) {
             this.orderStatus = this.orderStatus.meal();
             return;
@@ -72,14 +73,6 @@ public class Order {
 
     public void setTable(final OrderTable table) {
         this.orderTable = table;
-    }
-
-    public void meal() {
-        this.orderStatus = this.orderStatus.meal();
-    }
-
-    public void complete() {
-        this.orderStatus = this.orderStatus.complete();
     }
 
     public boolean isCompleted() {

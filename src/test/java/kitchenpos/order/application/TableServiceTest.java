@@ -14,7 +14,7 @@ import kitchenpos.common.exception.NotFoundException;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.TableGroup;
 import kitchenpos.order.repository.TableGroupRepository;
-import kitchenpos.order.repository.TableRepository;
+import kitchenpos.order.repository.OrderTableRepository;
 import kitchenpos.order.ui.dto.TableChangeEmptyRequest;
 import kitchenpos.order.ui.dto.TableChangeGuestNumberRequest;
 import kitchenpos.order.ui.dto.TableCreateRequest;
@@ -28,15 +28,16 @@ import org.springframework.test.context.jdbc.Sql;
 @Sql(scripts = "classpath:truncate.sql")
 class TableServiceTest {
 
-    private TableRepository tableRepository;
-    private TableGroupRepository tableGroupRepository;
-    private TableService tableService;
+    private final OrderTableRepository orderTableRepository;
+    private final TableGroupRepository tableGroupRepository;
+
+    private final TableService tableService;
 
     @Autowired
-    public TableServiceTest(final TableRepository tableRepository, final TableGroupRepository tableGroupRepository) {
-        this.tableRepository = tableRepository;
+    public TableServiceTest(final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository) {
+        this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
-        this.tableService = new TableService(tableRepository);
+        this.tableService = new TableService(orderTableRepository);
     }
 
     @Test
@@ -70,7 +71,7 @@ class TableServiceTest {
     }
 
     private OrderTable 테이블_생성_및_저장() {
-        return tableRepository.save(빈_테이블_생성());
+        return orderTableRepository.save(빈_테이블_생성());
     }
 
     @Test
@@ -119,7 +120,7 @@ class TableServiceTest {
     @Test
     void 방문_손님_수를_변경한다() {
         // given
-        final var table = tableRepository.save(채워진_테이블_생성());
+        final var table = orderTableRepository.save(채워진_테이블_생성());
         final var request = new TableChangeGuestNumberRequest(5);
 
         // when
@@ -135,7 +136,7 @@ class TableServiceTest {
     @Test
     void 방문_손님_수_변경시_방문_손님_수가_0보다_작으면_예외를_던진다() {
         // given
-        final var table = tableRepository.save(채워진_테이블_생성());
+        final var table = orderTableRepository.save(채워진_테이블_생성());
         final var request = new TableChangeGuestNumberRequest(-1);
 
         // when & then
@@ -161,7 +162,7 @@ class TableServiceTest {
     @Test
     void 방문_손님_수_변경시_비어있는_테이블인_경우_예외를_던진다() {
         // given
-        final var table = tableRepository.save(빈_테이블_생성());
+        final var table = orderTableRepository.save(빈_테이블_생성());
         final var request = new TableChangeGuestNumberRequest(4);
 
         // when & then

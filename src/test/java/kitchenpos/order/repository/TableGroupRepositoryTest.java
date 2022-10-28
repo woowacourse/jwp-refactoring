@@ -15,10 +15,10 @@ import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
 @Sql("classpath:truncate.sql")
-class OrderTableGroupRepositoryTest {
+class TableGroupRepositoryTest {
 
     @Autowired
-    private TableRepository tableRepository;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private TableGroupRepository tableGroupRepository;
@@ -26,8 +26,8 @@ class OrderTableGroupRepositoryTest {
     @Test
     void 단체_지정을_저장한다(@Autowired EntityManager em) {
         // given
-        final var tableA = tableRepository.save(빈_테이블_생성());
-        final var tableB = tableRepository.save(빈_테이블_생성());
+        final var tableA = orderTableRepository.save(빈_테이블_생성());
+        final var tableB = orderTableRepository.save(빈_테이블_생성());
         final var group = new TableGroup(List.of(tableA, tableB), LocalDateTime.now());
 
         // when

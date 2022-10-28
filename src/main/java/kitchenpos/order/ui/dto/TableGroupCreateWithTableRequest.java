@@ -11,7 +11,7 @@ public class TableGroupCreateWithTableRequest {
     private TableGroupCreateWithTableRequest() {
     }
 
-    public TableGroupCreateWithTableRequest(long id) {
+    public TableGroupCreateWithTableRequest(final long id) {
         this.id = id;
     }
 

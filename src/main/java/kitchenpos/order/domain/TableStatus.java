@@ -31,7 +31,7 @@ public class TableStatus {
 
     public void changeEmpty(final boolean empty) {
         this.empty = this.empty.changeTo(empty);
-        resetGuestNumber(empty); // 테이블이 비게 되면 방문자 수는 0명이 된다.
+        resetGuestNumber(empty);
     }
 
     private void resetGuestNumber(boolean empty) {

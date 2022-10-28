@@ -14,7 +14,7 @@ import kitchenpos.common.exception.DomainLogicException;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.TableGroup;
 import kitchenpos.order.repository.TableGroupRepository;
-import kitchenpos.order.repository.TableRepository;
+import kitchenpos.order.repository.OrderTableRepository;
 import kitchenpos.order.ui.dto.TableGroupCreateRequest;
 import kitchenpos.order.ui.dto.TableGroupCreateWithTableRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,16 +27,17 @@ import org.springframework.test.context.jdbc.Sql;
 @Sql(scripts = "classpath:truncate.sql")
 class TableGroupServiceTest {
 
-    private TableRepository tableRepository;
-    private TableGroupRepository tableGroupRepository;
-    private TableGroupService tableGroupService;
+    private final OrderTableRepository orderTableRepository;
+    private final TableGroupRepository tableGroupRepository;
+
+    private final TableGroupService tableGroupService;
 
     @Autowired
-    public TableGroupServiceTest(final TableRepository tableRepository,
+    public TableGroupServiceTest(final OrderTableRepository orderTableRepository,
                                  final TableGroupRepository tableGroupRepository) {
-        this.tableRepository = tableRepository;
+        this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
-        this.tableGroupService = new TableGroupService(tableGroupRepository, tableRepository);
+        this.tableGroupService = new TableGroupService(tableGroupRepository, orderTableRepository);
     }
 
     private OrderTable tableA;
@@ -44,8 +45,8 @@ class TableGroupServiceTest {
 
     @BeforeEach
     void setUp() {
-        tableA = tableRepository.save(빈_테이블_생성());
-        tableB = tableRepository.save(빈_테이블_생성());
+        tableA = orderTableRepository.save(빈_테이블_생성());
+        tableB = orderTableRepository.save(빈_테이블_생성());
     }
 
     @Test
@@ -82,7 +83,7 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정하는_테이블이_비어있지_않은_경우_예외를_던진다() {
         // given
-        final var tableC = tableRepository.save(채워진_테이블_생성());
+        final var tableC = orderTableRepository.save(채워진_테이블_생성());
         final var request = new TableGroupCreateRequest(List.of(
                 new TableGroupCreateWithTableRequest(tableA.getId()),
                 new TableGroupCreateWithTableRequest(tableC.getId()))

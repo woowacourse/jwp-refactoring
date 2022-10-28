@@ -48,7 +48,7 @@ public class OrderTable {
         this(null, null, status, orders);
     }
 
-    public OrderTable(Long id, TableGroup tableGroup, TableStatus status, List<Order> orders) {
+    public OrderTable(final Long id, final TableGroup tableGroup, final TableStatus status, final List<Order> orders) {
         this.id = id;
         this.tableGroup = tableGroup;
         this.status = status;
@@ -68,18 +68,6 @@ public class OrderTable {
 
     public void changeTableGroup(final TableGroup group) {
         this.tableGroup = group;
-    }
-
-    public boolean isGrouped() {
-        return tableGroup != null;
-    }
-
-    public boolean isEmpty() {
-        return status.isEmpty();
-    }
-
-    public List<Order> getOrders() {
-        return orders;
     }
 
     public void validateAllOrderCompleted() {
@@ -109,6 +97,18 @@ public class OrderTable {
         if (status.isEmpty()) {
             throw new DomainLogicException(CustomErrorCode.ORDER_TABLE_EMPTY_ERROR);
         }
+    }
+
+    public boolean isGrouped() {
+        return tableGroup != null;
+    }
+
+    public boolean isEmpty() {
+        return status.isEmpty();
+    }
+
+    public List<Order> getOrders() {
+        return orders;
     }
 
     public Long getId() {

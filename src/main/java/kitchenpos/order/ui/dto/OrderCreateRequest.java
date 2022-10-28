@@ -21,8 +21,8 @@ public class OrderCreateRequest {
     private OrderCreateRequest() {
     }
 
-    public OrderCreateRequest(Long tableId,
-                              List<OrderLineItemCreateRequest> orderLineItems) {
+    public OrderCreateRequest(final Long tableId,
+                              final List<OrderLineItemCreateRequest> orderLineItems) {
         this.tableId = tableId;
         this.orderLineItems = orderLineItems;
     }

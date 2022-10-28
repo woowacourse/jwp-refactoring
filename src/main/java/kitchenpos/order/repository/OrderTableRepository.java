@@ -6,7 +6,7 @@ import kitchenpos.order.domain.OrderTable;
 import org.apache.juli.logging.Log;
 import org.springframework.data.repository.Repository;
 
-public interface TableRepository extends Repository<OrderTable, Log> {
+public interface OrderTableRepository extends Repository<OrderTable, Log> {
 
     OrderTable save(OrderTable entity);
 
@@ -15,8 +15,4 @@ public interface TableRepository extends Repository<OrderTable, Log> {
     List<OrderTable> findAll();
 
     void flush();
-
-//    List<Table> findAllByIdIn(List<Long> ids);
-
-//    List<Table> findAllByTableGroupId(Long tableGroupId);
 }

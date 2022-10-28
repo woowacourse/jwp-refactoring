@@ -17,7 +17,7 @@ public class TableCreateRequest {
     private TableCreateRequest() {
     }
 
-    public TableCreateRequest(int numberOfGuests, boolean empty) {
+    public TableCreateRequest(final int numberOfGuests, final boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
