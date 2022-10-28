@@ -8,6 +8,8 @@ import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.product.application.ProductService;
+import kitchenpos.product.application.dto.ProductRequestDto;
+import kitchenpos.product.presentation.dto.ProductRequest;
 import kitchenpos.table.application.TableGroupService;
 import kitchenpos.table.application.TableService;
 import kitchenpos.table.domain.OrderTable;
@@ -39,8 +41,8 @@ public class ServiceTest {
     @Autowired
     protected TableService tableService;
 
-    protected Product 상품_등록(final Product product) {
-        return productService.create(product);
+    protected Product 상품_등록(final ProductRequestDto productRequestDto) {
+        return productService.create(productRequestDto);
     }
 
     protected OrderTable 주문_테이블_등록(final OrderTable orderTable) {

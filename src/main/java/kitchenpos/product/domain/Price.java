@@ -7,12 +7,18 @@ public class Price {
     private BigDecimal value;
 
     public Price(final BigDecimal value) {
-        validPrice(value);
+        validatePrice(value.intValue());
         this.value = value;
     }
 
-    private void validPrice(final BigDecimal price) {
+    private void validatePrice(final Integer price) {
         if (price == null || price.doubleValue() < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateMenuPrice(final BigDecimal menuPrice, final BigDecimal sumOfMenuProductsPrice){
+        if (menuPrice.compareTo(sumOfMenuProductsPrice) > 0) {
             throw new IllegalArgumentException();
         }
     }

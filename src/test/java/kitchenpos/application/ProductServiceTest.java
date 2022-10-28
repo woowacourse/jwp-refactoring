@@ -8,10 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.product.application.dto.ProductRequestDto;
 import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.matchers.Null;
 
 class ProductServiceTest extends ServiceTest {
 
@@ -22,7 +24,7 @@ class ProductServiceTest extends ServiceTest {
         @Test
         @DisplayName("상품을 생성한다.")
         void create() {
-            final Product product = 상품_생성("상품명", BigDecimal.valueOf(10000));
+            final ProductRequestDto product = 상품_생성("상품명", BigDecimal.valueOf(10000));
 
             final Product actual = 상품_등록(product);
 
@@ -37,16 +39,16 @@ class ProductServiceTest extends ServiceTest {
         @Test
         @DisplayName("가격이 null이면 예외를 발생시킨다.")
         void create_nullPrice() {
-            final Product product = 상품_생성("상품명", null);
+            final ProductRequestDto product = 상품_생성("상품명", null);
 
             assertThatThrownBy(() -> 상품_등록(product))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(NullPointerException.class);
         }
 
         @Test
         @DisplayName("가격이 음수이면 예외를 발생시킨다.")
         void create_negativePrice() {
-            final Product product = 상품_생성("상품명", BigDecimal.valueOf(-10000));
+            final ProductRequestDto product = 상품_생성("상품명", BigDecimal.valueOf(-10000));
 
             assertThatThrownBy(() -> 상품_등록(product))
                     .isInstanceOf(IllegalArgumentException.class);
