@@ -7,29 +7,14 @@ import kitchenpos.domain.MenuGroup;
 public class MenuFixture {
 
     public static Menu 후라이드_치킨(final MenuGroup menuGroup) {
-        Menu menu = new Menu();
-        menu.setName("후라이드치킨");
-        menu.setPrice(BigDecimal.valueOf(18000));
-        menu.setMenuGroupId(menuGroup.getId());
-
-        return menu;
+        return new Menu("후라이드치킨", BigDecimal.valueOf(18000), menuGroup.getId());
     }
 
     public static Menu 양념_치킨(final MenuGroup menuGroup) {
-        Menu menu = new Menu();
-        menu.setName("양념치킨");
-        menu.setPrice(BigDecimal.valueOf(19000));
-        menu.setMenuGroupId(menuGroup.getId());
-
-        return menu;
+        return new Menu("양념치킨", BigDecimal.valueOf(19000), menuGroup.getId());
     }
 
     public static Menu 포테이토_피자(final MenuGroup menuGroup) {
-        Menu menu = new Menu();
-        menu.setName("포테이토피자");
-        menu.setPrice(BigDecimal.valueOf(15000));
-        menu.setMenuGroupId(menuGroup.getId());
-
-        return menu;
+        return new Menu("포테이토피자", BigDecimal.valueOf(15000), menuGroup.getId());
     }
 }

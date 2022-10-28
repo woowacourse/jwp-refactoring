@@ -20,6 +20,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.ProductRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -66,10 +67,14 @@ public abstract class ServiceTestBase {
     }
 
     protected Menu 메뉴_등록(final String name, final BigDecimal price, final Long menuGroupId) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
+        Menu menu = new Menu(name, price, menuGroupId);
+
+        return menu;
+    }
+
+    protected MenuRequest createMenuRequest(final String name, final BigDecimal price,
+                                            final Long menuGroupId, final List<MenuProduct> menuProducts) {
+        MenuRequest menu = new MenuRequest(name, price, menuGroupId, menuProducts);
 
         return menu;
     }

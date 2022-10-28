@@ -11,6 +11,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +35,10 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu menuRequest) {
+    public Menu create(final MenuRequest menuRequest) {
+        Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuRequest.getMenuGroupId(),
+                menuRequest.getMenuProducts());
+
         final BigDecimal price = menuRequest.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
@@ -58,7 +62,7 @@ public class MenuService {
             throw new IllegalArgumentException("가격이 유효하지 않습니다.");
         }
 
-        final Menu savedMenu = menuDao.save(menuRequest);
+        final Menu savedMenu = menuDao.save(menu);
 
         final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();

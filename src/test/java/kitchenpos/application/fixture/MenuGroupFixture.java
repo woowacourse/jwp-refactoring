@@ -11,6 +11,13 @@ public class MenuGroupFixture {
         return menuGroup;
     }
 
+    public static MenuGroup 여러마리_메뉴_그룹() {
+        MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setName("치킨");
+
+        return menuGroup;
+    }
+
     public static MenuGroup 피자() {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("피자");

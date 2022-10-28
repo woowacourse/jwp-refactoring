@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static kitchenpos.application.fixture.MenuFixture.양념_치킨;
 import static kitchenpos.application.fixture.MenuFixture.포테이토_피자;
 import static kitchenpos.application.fixture.MenuFixture.후라이드_치킨;
+import static kitchenpos.application.fixture.MenuGroupFixture.여러마리_메뉴_그룹;
 import static kitchenpos.application.fixture.MenuGroupFixture.치킨;
 import static kitchenpos.application.fixture.MenuGroupFixture.피자;
 import static kitchenpos.application.fixture.ProductFixture.양념_치킨;
@@ -14,13 +15,14 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -69,12 +71,17 @@ class MenuServiceTest extends ServiceTestBase {
     @Test
     void createMenePriceNull() {
         // given
-        MenuGroup chickenMenuGroup = menuGroupDao.save(치킨());
-        Menu menu = 메뉴_등록("후라이드치킨", null, chickenMenuGroup.getId());
+        MenuGroup chickenMenuGroup = menuGroupDao.save(여러마리_메뉴_그룹());
+        Product chicken = productDao.save(후라이드_치킨());
+        Product seasonedChicken = productDao.save(양념_치킨());
+        List<MenuProduct> menuProducts = Arrays.asList(
+                new MenuProduct(chicken.getId(), 1),
+                new MenuProduct(seasonedChicken.getId(), 2));
+        MenuRequest menuRequest = createMenuRequest("세마리 메뉴", null, chickenMenuGroup.getId(), menuProducts);
 
         // when & then
         assertThatThrownBy(
-                () -> menuService.create(menu)
+                () -> menuService.create(menuRequest)
         ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("메뉴의 가격은 비어있거나 0보다 작을 수 없습니다.");
     }
@@ -84,11 +91,17 @@ class MenuServiceTest extends ServiceTestBase {
     void createMenuPrice0() {
         // given
         MenuGroup chickenMenuGroup = menuGroupDao.save(치킨());
-        Menu menu = 메뉴_등록("후라이드치킨", BigDecimal.valueOf(-1000), chickenMenuGroup.getId());
+        Product chicken = productDao.save(후라이드_치킨());
+        Product seasonedChicken = productDao.save(양념_치킨());
+        List<MenuProduct> menuProducts = Arrays.asList(
+                new MenuProduct(chicken.getId(), 1),
+                new MenuProduct(seasonedChicken.getId(), 2));
+        MenuRequest menuRequest = createMenuRequest("세마리 메뉴", BigDecimal.valueOf(-1000), chickenMenuGroup.getId(),
+                menuProducts);
 
         // when & then
         assertThatThrownBy(
-                () -> menuService.create(menu)
+                () -> menuService.create(menuRequest)
         ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("메뉴의 가격은 비어있거나 0보다 작을 수 없습니다.");
     }
@@ -97,11 +110,16 @@ class MenuServiceTest extends ServiceTestBase {
     @Test
     void createNoProduct() {
         // given
-        Menu menu = 메뉴_등록("후라이드치킨", BigDecimal.valueOf(18000), 0L);
+        Product chicken = productDao.save(후라이드_치킨());
+        Product seasonedChicken = productDao.save(양념_치킨());
+        List<MenuProduct> menuProducts = Arrays.asList(
+                new MenuProduct(chicken.getId(), 1),
+                new MenuProduct(seasonedChicken.getId(), 2));
+        MenuRequest menuRequest = createMenuRequest("세마리 메뉴", BigDecimal.valueOf(40000), 0L, menuProducts);
 
         // when & then
         assertThatThrownBy(
-                () -> menuService.create(menu)
+                () -> menuService.create(menuRequest)
         ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("존재하지 않는 메뉴 그룹입니다.");
     }
@@ -110,16 +128,15 @@ class MenuServiceTest extends ServiceTestBase {
     @Test
     void createMenuGroupId() {
         // given
-        MenuGroup pizzaMenuGroup = menuGroupDao.save(피자());
-        Menu menuPizza = 포테이토_피자(pizzaMenuGroup);
-        MenuProduct menuProductPizza = 메뉴_상품_생성(menuPizza.getId(), 0L, 1);
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(menuProductPizza);
-        menuPizza.setMenuProducts(menuProducts);
+        MenuGroup chickenMenuGroup = menuGroupDao.save(치킨());
+        List<MenuProduct> menuProducts = Arrays.asList(
+                new MenuProduct(0L, 1));
+        MenuRequest menuRequest = createMenuRequest("세마리 메뉴", BigDecimal.valueOf(40000), chickenMenuGroup.getId(),
+                menuProducts);
 
         // when & then
         assertThatThrownBy(
-                () -> menuService.create(menuPizza)
+                () -> menuService.create(menuRequest)
         ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("존재하지 않는 상품입니다.");
     }
@@ -128,37 +145,39 @@ class MenuServiceTest extends ServiceTestBase {
     @Test
     void createInvalidMenuPrice() {
         // given
-        MenuGroup pizzaMenuGroup = menuGroupDao.save(피자());
-        Product productPizza = productDao.save(상품_등록("포테이토피자", 5000));
-        Menu menuPizza = 메뉴_등록("포테이토피자", BigDecimal.valueOf(16000), pizzaMenuGroup.getId());
-        MenuProduct menuProductPizza = 메뉴_상품_생성(menuPizza.getId(), productPizza.getId(), 3);
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(menuProductPizza);
-        menuPizza.setMenuProducts(menuProducts);
+        MenuGroup chickenMenuGroup = menuGroupDao.save(여러마리_메뉴_그룹());
+        Product chicken = productDao.save(후라이드_치킨());
+        Product seasonedChicken = productDao.save(양념_치킨());
+        List<MenuProduct> menuProducts = Arrays.asList(
+                new MenuProduct(chicken.getId(), 1),
+                new MenuProduct(seasonedChicken.getId(), 2));
+        MenuRequest menuRequest = createMenuRequest("세마리 메뉴", BigDecimal.valueOf(1000000), chickenMenuGroup.getId(),
+                menuProducts);
 
         // when & then
         assertThatThrownBy(
-                () -> menuService.create(menuPizza)
+                () -> menuService.create(menuRequest)
         ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("가격이 유효하지 않습니다.");
     }
 
     @DisplayName("가격이 구매할 수 있는 product의 금액보다 같거나 작으면 예외를 발생하지 않는다.")
     @ParameterizedTest
-    @ValueSource(ints = {15000, 14000})
+    @ValueSource(ints = {56000, 55000})
     void createInvalidMenuPrice(int price) {
         // given
-        MenuGroup pizzaMenuGroup = menuGroupDao.save(피자());
-        Product productPizza = productDao.save(상품_등록("포테이토피자", 5000));
-        Menu menuPizza = 메뉴_등록("포테이토피자", BigDecimal.valueOf(price), pizzaMenuGroup.getId());
-        MenuProduct menuProductPizza = 메뉴_상품_생성(menuPizza.getId(), productPizza.getId(), 3);
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(menuProductPizza);
-        menuPizza.setMenuProducts(menuProducts);
+        MenuGroup chickenMenuGroup = menuGroupDao.save(여러마리_메뉴_그룹());
+        Product chicken = productDao.save(후라이드_치킨());
+        Product seasonedChicken = productDao.save(양념_치킨());
+        List<MenuProduct> menuProducts = Arrays.asList(
+                new MenuProduct(chicken.getId(), 1),
+                new MenuProduct(seasonedChicken.getId(), 2));
+        MenuRequest menuRequest = createMenuRequest("세마리 메뉴", BigDecimal.valueOf(price), chickenMenuGroup.getId(),
+                menuProducts);
 
         // when & then
         assertDoesNotThrow(
-                () -> menuService.create(menuPizza)
+                () -> menuService.create(menuRequest)
         );
     }
 
@@ -166,16 +185,17 @@ class MenuServiceTest extends ServiceTestBase {
     @Test
     void createMenu() {
         // given
-        MenuGroup pizzaMenuGroup = menuGroupDao.save(피자());
-        Product productPizza = productDao.save(상품_등록("포테이토피자", 5000));
-        Menu menuPizza = 메뉴_등록("포테이토피자", BigDecimal.valueOf(15000), pizzaMenuGroup.getId());
-        MenuProduct menuProductPizza = 메뉴_상품_생성(menuPizza.getId(), productPizza.getId(), 3);
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(menuProductPizza);
-        menuPizza.setMenuProducts(menuProducts);
+        MenuGroup chickenMenuGroup = menuGroupDao.save(여러마리_메뉴_그룹());
+        Product chicken = productDao.save(후라이드_치킨());
+        Product seasonedChicken = productDao.save(양념_치킨());
+        List<MenuProduct> menuProducts = Arrays.asList(
+                new MenuProduct(chicken.getId(), 1),
+                new MenuProduct(seasonedChicken.getId(), 2));
+        MenuRequest menuRequest = createMenuRequest("세마리 메뉴", BigDecimal.valueOf(40000), chickenMenuGroup.getId(),
+                menuProducts);
 
         // when
-        Menu menu = menuService.create(menuPizza);
+        Menu menu = menuService.create(menuRequest);
 
         List<Menu> menus = menuDao.findAll();
         Optional<Menu> foundMenu = menuDao.findById(menu.getId());
@@ -190,24 +210,26 @@ class MenuServiceTest extends ServiceTestBase {
     @Test
     void createMenuAndCheckMenuProduct() {
         // given
-        MenuGroup pizzaMenuGroup = menuGroupDao.save(피자());
-        Product productPizza = productDao.save(상품_등록("포테이토피자", 5000));
-        Menu menuPizza = 메뉴_등록("포테이토피자", BigDecimal.valueOf(15000), pizzaMenuGroup.getId());
-        MenuProduct menuProductPizza = 메뉴_상품_생성(menuPizza.getId(), productPizza.getId(), 3);
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(menuProductPizza);
-        menuPizza.setMenuProducts(menuProducts);
+        MenuGroup chickenMenuGroup = menuGroupDao.save(여러마리_메뉴_그룹());
+        Product chicken = productDao.save(후라이드_치킨());
+        Product seasonedChicken = productDao.save(양념_치킨());
+        List<MenuProduct> menuProducts = Arrays.asList(
+                new MenuProduct(chicken.getId(), 1),
+                new MenuProduct(seasonedChicken.getId(), 2));
+        MenuRequest menuRequest = createMenuRequest("세마리 메뉴", BigDecimal.valueOf(40_000L), chickenMenuGroup.getId(),
+                menuProducts);
 
         // when
-        Menu menu = menuService.create(menuPizza);
+        Menu menu = menuService.create(menuRequest);
 
         Optional<Menu> foundMenu = menuDao.findById(menu.getId());
         List<MenuProduct> foundMenuProducts = menuProductDao.findAllByMenuId(menu.getId());
         //then
         assertAll(
                 () -> assertThat(foundMenu).isPresent(),
-                () -> assertThat(foundMenuProducts).hasSize(1),
-                () -> assertThat(foundMenuProducts.get(0).getProductId()).isEqualTo(productPizza.getId())
+                () -> assertThat(foundMenuProducts).hasSize(2),
+                () -> assertThat(foundMenuProducts).extracting("productId")
+                        .contains(chicken.getId(), seasonedChicken.getId())
         );
     }
 }
