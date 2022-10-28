@@ -42,20 +42,32 @@ public class OrderTable {
     }
 
     public void changeEmpty(final boolean empty) {
-        verifyIsAlreadyGroupedTable();
+        verifyIsAlreadyGroupedTable("이미 단체로 지정된 테이블은 테이블 상태를 변경할 수 없습니다.");
         this.empty = empty;
-    }
-
-    private void verifyIsAlreadyGroupedTable() {
-        if (Objects.nonNull(this.tableGroup)) {
-            throw new IllegalArgumentException("이미 단체로 지정된 테이블은 테이블 상태를 변경할 수 없습니다.");
-        }
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
         verifyNumberOfGuestsToChangeIsLessThanZero(numberOfGuests);
         verifyIsEmptyTable();
         this.numberOfGuests = numberOfGuests;
+    }
+
+    public void groupTable(final TableGroup tableGroup) {
+        verifyIsOrderTable();
+        verifyIsAlreadyGroupedTable("이미 단체로 지정된 테이블은 새로 단체를 지정할 수 없습니다.");
+        this.tableGroup = tableGroup;
+        this.empty = false;
+    }
+
+    public void ungroupTable() {
+        this.tableGroup = null;
+        this.empty = false;
+    }
+
+    private void verifyIsAlreadyGroupedTable(final String message) {
+        if (Objects.nonNull(this.tableGroup)) {
+            throw new IllegalArgumentException(message);
+        }
     }
 
     private void verifyNumberOfGuestsToChangeIsLessThanZero(final int numberOfGuests) {
@@ -70,12 +82,10 @@ public class OrderTable {
         }
     }
 
-    public void groupTable(final Long tableGroupId) {
-        this.empty = false;
-    }
-
-    public void ungroupTable() {
-        this.empty = false;
+    private void verifyIsOrderTable() {
+        if (!empty) {
+            throw new IllegalArgumentException("주문 테이블은 단체로 지정할 수 없습니다.");
+        }
     }
 
     public Long getId() {

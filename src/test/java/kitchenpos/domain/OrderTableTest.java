@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,12 @@ public class OrderTableTest {
     @Test
     @Disabled
     void changeAlreadyGroupTableStatus() {
+        final OrderTable sut = new OrderTable(5, false);
+        final TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now());
+        sut.groupTable(tableGroup);
 
+        assertThatThrownBy(() -> sut.changeEmpty(true))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("정상적인 경우 손님 수를 변경할 수 있다.")

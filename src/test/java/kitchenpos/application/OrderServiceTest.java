@@ -18,7 +18,6 @@ import kitchenpos.application.support.IntegrationTest;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
@@ -26,6 +25,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ public class OrderServiceTest {
     private OrderDao orderDao;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private ProductDao productDao;
@@ -59,7 +59,7 @@ public class OrderServiceTest {
         @DisplayName("정상적인 경우 주문을 등록할 수 있다.")
         @Test
         void createOrder() {
-            final OrderTable orderTable = orderTableDao.save(테이블_생성(주문_테이블9.getNumberOfGuests(), 주문_테이블9.isEmpty()));
+            final OrderTable orderTable = orderTableRepository.save(테이블_생성(주문_테이블9.getNumberOfGuests(), 주문_테이블9.isEmpty()));
             final MenuProduct menuProduct = 메뉴_상품_생성(후라이드_상품.getId(), 5L);
             final Menu menu = menuDao.save(메뉴_생성("한마리메뉴", 500, 한마리메뉴_그룹.getId(), List.of(menuProduct)));
             final OrderLineItem orderLineItem = 주문_항목_생성(menu.getId(), 1);
@@ -138,7 +138,7 @@ public class OrderServiceTest {
         final Menu menu2 = menuDao.save(메뉴_생성("한마리메뉴", 500, 한마리메뉴_그룹.getId(), List.of(menuProduct2)));
         final OrderLineItem orderLineItem2 = 주문_항목_생성(menu2.getId(), 1);
 
-        final OrderTable orderTable = orderTableDao.save(테이블_생성(5, false));
+        final OrderTable orderTable = orderTableRepository.save(테이블_생성(5, false));
         final Order order = 주문_생성(orderTable.getId(), List.of(orderLineItem1, orderLineItem2));
 
         orderDao.save(order);
@@ -157,7 +157,7 @@ public class OrderServiceTest {
             final Menu menu = menuDao.save(메뉴_생성("한마리메뉴", 500, 한마리메뉴_그룹.getId(), List.of(menuProduct)));
             final OrderLineItem orderLineItem = 주문_항목_생성(menu.getId(), 1);
 
-            final OrderTable orderTable = orderTableDao.save(테이블_생성(주문_테이블9.getNumberOfGuests(), 주문_테이블9.isEmpty()));
+            final OrderTable orderTable = orderTableRepository.save(테이블_생성(주문_테이블9.getNumberOfGuests(), 주문_테이블9.isEmpty()));
             final Order order = orderDao.save(주문_생성(orderTable.getId(), List.of(orderLineItem)));
             final Order changedOrder = 주문_생성(order.getId(), OrderStatus.MEAL.name(), List.of(orderLineItem));
 
@@ -173,7 +173,7 @@ public class OrderServiceTest {
             final Menu menu = menuDao.save(메뉴_생성("한마리메뉴", 500, 한마리메뉴_그룹.getId(), List.of(menuProduct)));
             final OrderLineItem orderLineItem = 주문_항목_생성(menu.getId(), 1);
 
-            final OrderTable orderTable = orderTableDao.save(테이블_생성(주문_테이블9.getNumberOfGuests(), 주문_테이블9.isEmpty()));
+            final OrderTable orderTable = orderTableRepository.save(테이블_생성(주문_테이블9.getNumberOfGuests(), 주문_테이블9.isEmpty()));
             final Long 존재하지_않는_주문_ID = -1L;
             final Order changedOrder = 주문_생성(orderTable.getId(), OrderStatus.MEAL.name(), List.of(orderLineItem));
 
@@ -188,7 +188,7 @@ public class OrderServiceTest {
             final Menu menu = menuDao.save(메뉴_생성("한마리메뉴", 500, 한마리메뉴_그룹.getId(), List.of(menuProduct)));
             final OrderLineItem orderLineItem = 주문_항목_생성(menu.getId(), 1);
 
-            final OrderTable orderTable = orderTableDao.save(테이블_생성(주문_테이블9.getNumberOfGuests(), 주문_테이블9.isEmpty()));
+            final OrderTable orderTable = orderTableRepository.save(테이블_생성(주문_테이블9.getNumberOfGuests(), 주문_테이블9.isEmpty()));
             final Order order = orderDao.save(주문_생성(orderTable.getId(), OrderStatus.COMPLETION.name(), List.of(orderLineItem)));
             final Order changedOrder = 주문_생성(order.getId(), OrderStatus.MEAL.name(), List.of(orderLineItem));
 
