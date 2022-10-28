@@ -8,7 +8,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -17,14 +16,12 @@ import kitchenpos.application.dto.request.OrderChangeRequest;
 import kitchenpos.application.dto.request.OrderCreateRequest;
 import kitchenpos.application.dto.request.OrderLineItemDto;
 import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderLineItemRepository;
-import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -37,16 +34,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class OrderServiceTest {
 
     @Mock
-    private MenuRepository menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    private OrderRepository orderDao;
-
-    @Mock
-    private OrderLineItemRepository orderLineItemDao;
-
-    @Mock
-    private OrderTableRepository orderTableDao;
+    private OrderRepository orderRepository;
 
     @InjectMocks
     private OrderService orderService;
@@ -63,7 +54,8 @@ class OrderServiceTest {
 
         @Test
         void order_line_itmes가_비어있으면_예외를_반환한다() {
-            OrderCreateRequest request = 주문_생성_dto를_만든다(id, orderTableId, orderStatus, orderedTime, Arrays.asList(new OrderLineItem(1L, 3L)));
+            OrderCreateRequest request = 주문_생성_dto를_만든다(id, orderTableId, orderStatus, orderedTime,
+                    Arrays.asList(new OrderLineItem(1L, 3L)));
             assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -73,7 +65,7 @@ class OrderServiceTest {
             // given
             OrderCreateRequest request = 주문_생성_dto를_만든다(id, orderTableId, orderStatus, orderedTime,
                     orderLineItems);
-            when(menuDao.countByIdIn(any())).thenReturn(3L);
+            when(menuRepository.countByIdIn(any())).thenReturn(3L);
 
             // when & then
             assertThatThrownBy(() -> orderService.create(request))
@@ -85,10 +77,10 @@ class OrderServiceTest {
             // given
             OrderCreateRequest request = 주문_생성_dto를_만든다(id, orderTableId, orderStatus, orderedTime,
                     orderLineItems);
-            when(menuDao.countByIdIn(any())).thenReturn(Long.valueOf(orderLineItems.size()));
+            when(menuRepository.countByIdIn(any())).thenReturn(Long.valueOf(orderLineItems.size()));
 
             Order order = request.toOrder(orderTableId, orderStatus, orderedTime);
-            when(orderDao.save(any(Order.class))).thenReturn(order);
+            when(orderRepository.save(any(Order.class))).thenReturn(order);
 
             // when
             OrderResponse response = orderService.create(request);
@@ -131,7 +123,7 @@ class OrderServiceTest {
         void order_목록을_조회할_수_있다() {
             // given
             Order order1 = new Order(1L, COOKING, LocalDateTime.now(), orderLineItems);
-            when(orderDao.findAllWithOrderLineItems()).thenReturn(Arrays.asList(order1));
+            when(orderRepository.findAllWithOrderLineItems()).thenReturn(Arrays.asList(order1));
 
             // when
             List<OrderResponse> responses = orderService.list();
@@ -147,7 +139,7 @@ class OrderServiceTest {
         void 일치하는_order_id가_없을_경우_예외를_반환한다() {
             // given
             Long notExistOrderId = 1234L;
-            when(orderDao.findById(notExistOrderId)).thenReturn(Optional.empty());
+            when(orderRepository.findById(notExistOrderId)).thenReturn(Optional.empty());
 
             // when & then
             assertThatThrownBy(() -> orderService.changeOrderStatus(notExistOrderId, new OrderChangeRequest()))
@@ -159,7 +151,7 @@ class OrderServiceTest {
             // given
             Order order = order_객체를_생성한다(1L, COMPLETION, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L)));
             Long orderId = 1L;
-            when(orderDao.findById(orderId)).thenReturn(Optional.of(order));
+            when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
 
             // when & then
             assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, new OrderChangeRequest(COOKING.name())))
@@ -170,7 +162,7 @@ class OrderServiceTest {
         void aorder_status를_변경할_수_있다() {
             // given
             Order order = order_객체를_생성한다(1L, COOKING, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L)));
-            when(orderDao.findById(1L)).thenReturn(Optional.of(order));
+            when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
 
             // when
             OrderResponse response = orderService.changeOrderStatus(1L, new OrderChangeRequest("COMPLETION"));

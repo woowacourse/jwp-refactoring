@@ -5,7 +5,6 @@ import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
@@ -164,8 +162,10 @@ class JdbcTemplateOrderRepositoryTest {
             boolean expected
     ) {
         // given
-        Order order1 = order_객체를_생성한다(orderTableId1, orderStatus1, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L)));
-        Order order2 = order_객체를_생성한다(orderTableId2, orderStatus2, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L)));
+        Order order1 = order_객체를_생성한다(orderTableId1, orderStatus1, LocalDateTime.now(),
+                Arrays.asList(new OrderLineItem(1L, 3L)));
+        Order order2 = order_객체를_생성한다(orderTableId2, orderStatus2, LocalDateTime.now(),
+                Arrays.asList(new OrderLineItem(1L, 3L)));
         orderRepository.save(order1);
         orderRepository.save(order2);
 

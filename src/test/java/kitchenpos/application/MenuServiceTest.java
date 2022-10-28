@@ -14,13 +14,12 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.request.MenuProductDto;
 import kitchenpos.application.dto.response.MenuResponse;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuProductRepository;
-import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,16 +32,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class MenuServiceTest {
 
     @Mock
-    private MenuRepository menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    private MenuGroupRepository menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Mock
-    private ProductRepository productDao;
-
-    @Mock
-    private MenuProductRepository menuProductDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private MenuService menuService;
@@ -59,9 +55,10 @@ class MenuServiceTest {
         void 메뉴를_생성한다() {
             // given
             MenuCreateRequest request = 메뉴_생성_dto를_만든다(price, menuGroupId, menuProducts);
-            when(menuDao.save(any(Menu.class))).thenReturn(new Menu(1L, "pasta", price, menuGroupId, menuProducts));
-            when(menuGroupDao.existsById(any(Long.class))).thenReturn(true);
-            when(productDao.findById(any(Long.class))).thenReturn(
+            when(menuRepository.save(any(Menu.class))).thenReturn(
+                    new Menu(1L, "pasta", price, menuGroupId, menuProducts));
+            when(menuGroupRepository.existsById(any(Long.class))).thenReturn(true);
+            when(productRepository.findById(any(Long.class))).thenReturn(
                     Optional.of(new Product(1L, "pasta", BigDecimal.valueOf(13000))));
 
             // when
@@ -98,7 +95,7 @@ class MenuServiceTest {
             // given
             Long notExistMenuGroupId = 101L;
             MenuCreateRequest request = 메뉴_생성_dto를_만든다(price, notExistMenuGroupId, new ArrayList<>());
-            when(menuGroupDao.existsById(notExistMenuGroupId)).thenReturn(false);
+            when(menuGroupRepository.existsById(notExistMenuGroupId)).thenReturn(false);
 
             // when & then
             assertThatThrownBy(() -> menuService.create(request))
@@ -109,7 +106,7 @@ class MenuServiceTest {
         void 가격_총합이_0이하이면_예외를_반환한다() {
             // given
             MenuCreateRequest request = 메뉴_생성_dto를_만든다(price, menuGroupId, new ArrayList<>());
-            when(menuGroupDao.existsById(menuGroupId)).thenReturn(true);
+            when(menuGroupRepository.existsById(menuGroupId)).thenReturn(true);
 
             // when & then
             assertThatThrownBy(() -> menuService.create(request))
@@ -124,9 +121,9 @@ class MenuServiceTest {
             List<MenuProduct> menuProductsWithNotExistProducts = Arrays.asList(menuProductWithNotExistProduct);
 
             MenuCreateRequest request = 메뉴_생성_dto를_만든다(price, menuGroupId, menuProductsWithNotExistProducts);
-            when(menuGroupDao.existsById(menuGroupId)).thenReturn(true);
+            when(menuGroupRepository.existsById(menuGroupId)).thenReturn(true);
 
-            when(productDao.findById(notExistProductId)).thenReturn(Optional.empty());
+            when(productRepository.findById(notExistProductId)).thenReturn(Optional.empty());
 
             // when & then
             assertThatThrownBy(() -> menuService.create(request))
@@ -146,7 +143,8 @@ class MenuServiceTest {
         @Test
         void 메뉴_목록을_조회한다() {
             // given
-            when(menuDao.findAllWithMenuProducts()).thenReturn(Arrays.asList(new Menu(1L, "pasta", price, menuGroupId, menuProducts)));
+            when(menuRepository.findAllWithMenuProducts()).thenReturn(
+                    Arrays.asList(new Menu(1L, "pasta", price, menuGroupId, menuProducts)));
 
             // when
             List<MenuResponse> responses = menuService.list();
@@ -167,7 +165,7 @@ class MenuServiceTest {
                 price,
                 menuGroupId,
                 menuProducts.stream()
-                .map(MenuProductDto::new)
-                .collect(Collectors.toList()));
+                        .map(MenuProductDto::new)
+                        .collect(Collectors.toList()));
     }
 }

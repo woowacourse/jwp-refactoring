@@ -10,8 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.dto.request.ProductCreateRequest;
 import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ProductServiceTest {
 
     @Mock
-    private ProductRepository productDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private ProductService productService;
@@ -35,11 +35,12 @@ class ProductServiceTest {
         private final Long id = 1L;
         private final String name = "pasta";
         private final BigDecimal price = BigDecimal.valueOf(13000);
+
         @Test
         void 상품을_생성할_수_있다() {
             // given
             ProductCreateRequest request = 상품_생성_dto를_만든다(id, name, price);
-            when(productDao.save(any(Product.class))).thenReturn(request.toProduct());
+            when(productRepository.save(any(Product.class))).thenReturn(request.toProduct());
 
             // when
             ProductResponse response = productService.create(request);
@@ -76,10 +77,11 @@ class ProductServiceTest {
     class list는 {
 
     }
+
     @Test
     void 상품_목록을_조회할_수_있다() {
         Product product = new Product(1L, "pasta", BigDecimal.valueOf(13000));
-        when(productDao.findAll()).thenReturn(Arrays.asList(product));
+        when(productRepository.findAll()).thenReturn(Arrays.asList(product));
         List<ProductResponse> responses = productService.list();
 
         assertThat(responses).hasSize(1)

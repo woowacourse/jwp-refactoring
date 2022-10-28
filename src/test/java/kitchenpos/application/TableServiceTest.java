@@ -14,9 +14,9 @@ import kitchenpos.application.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.application.dto.request.OrderTableChangeStatusRequest;
 import kitchenpos.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,10 +28,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TableServiceTest {
 
     @Mock
-    private OrderRepository orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableRepository orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @InjectMocks
     private TableService tableService;
@@ -43,7 +43,7 @@ class TableServiceTest {
         void order_table을_저장할_수_있다() {
             // given
             OrderTableCreateRequest request = new OrderTableCreateRequest(1L, 11L, 3, true);
-            when(orderTableDao.save(any(OrderTable.class))).thenReturn(request.toOrderTable());
+            when(orderTableRepository.save(any(OrderTable.class))).thenReturn(request.toOrderTable());
 
             // when
             OrderTableResponse response = tableService.create(request);
@@ -61,7 +61,7 @@ class TableServiceTest {
             // given
             OrderTable orderTable1 = new OrderTable();
             OrderTable orderTable2 = new OrderTable();
-            when(orderTableDao.findAll()).thenReturn(Arrays.asList(orderTable1, orderTable2));
+            when(orderTableRepository.findAll()).thenReturn(Arrays.asList(orderTable1, orderTable2));
 
             // when
             List<OrderTableResponse> responses = tableService.list();
@@ -76,7 +76,7 @@ class TableServiceTest {
 
         @Test
         void 일치하는_order_table_id가_없을_시_예외를_반환한다() {
-            when(orderTableDao.findById(any(Long.class))).thenReturn(Optional.empty());
+            when(orderTableRepository.findById(any(Long.class))).thenReturn(Optional.empty());
             assertThatThrownBy(() -> tableService.changeEmpty(1L, new OrderTableChangeStatusRequest(true)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -86,7 +86,7 @@ class TableServiceTest {
             // given
             Long notNullTableGroupId = 11L;
             OrderTable orderTable = new OrderTable(1L, notNullTableGroupId, 3, false);
-            when(orderTableDao.findById(any(Long.class))).thenReturn(Optional.of(orderTable));
+            when(orderTableRepository.findById(any(Long.class))).thenReturn(Optional.of(orderTable));
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(1L, new OrderTableChangeStatusRequest(true)))
@@ -98,8 +98,8 @@ class TableServiceTest {
             // given
             Long orderTableId = 1L;
             OrderTable orderTable = new OrderTable(orderTableId, null, 3, false);
-            when(orderTableDao.findById(any(Long.class))).thenReturn(Optional.of(orderTable));
-            when(orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId,
+            when(orderTableRepository.findById(any(Long.class))).thenReturn(Optional.of(orderTable));
+            when(orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId,
                     Arrays.asList(COOKING, MEAL))).thenReturn(
                     true);
 
@@ -113,11 +113,11 @@ class TableServiceTest {
             // given
             Long orderTableId = 1L;
             OrderTable orderTable = new OrderTable(orderTableId, null, 3, false);
-            when(orderTableDao.findById(any(Long.class))).thenReturn(Optional.of(orderTable));
-            when(orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId,
+            when(orderTableRepository.findById(any(Long.class))).thenReturn(Optional.of(orderTable));
+            when(orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId,
                     Arrays.asList(COOKING, MEAL))).thenReturn(
                     false);
-            when(orderTableDao.save(any(OrderTable.class))).thenReturn(orderTable);
+            when(orderTableRepository.save(any(OrderTable.class))).thenReturn(orderTable);
             // when
             tableService.changeEmpty(1L, new OrderTableChangeStatusRequest(true));
 
@@ -140,7 +140,7 @@ class TableServiceTest {
         void ID에_맞는_order_table이_없을_경우_예외를_반환한다() {
             // given
             Long notExistOrderTableId = 1234L;
-            when(orderTableDao.findById(notExistOrderTableId)).thenReturn(Optional.empty());
+            when(orderTableRepository.findById(notExistOrderTableId)).thenReturn(Optional.empty());
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(notExistOrderTableId,
@@ -153,7 +153,7 @@ class TableServiceTest {
             // given
             Long orderTableId = 1L;
             OrderTable orderTable = new OrderTable(orderTableId, 11L, 5, true);
-            when(orderTableDao.findById(orderTableId)).thenReturn(Optional.of(orderTable));
+            when(orderTableRepository.findById(orderTableId)).thenReturn(Optional.of(orderTable));
 
             // when & then
             assertThatThrownBy(
@@ -166,8 +166,8 @@ class TableServiceTest {
             // given
             Long orderTableId = 1L;
             OrderTable orderTable = new OrderTable(orderTableId, 11L, 5, false);
-            when(orderTableDao.findById(1L)).thenReturn(Optional.of(orderTable));
-            when(orderTableDao.save(any(OrderTable.class))).thenReturn(orderTable);
+            when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable));
+            when(orderTableRepository.save(any(OrderTable.class))).thenReturn(orderTable);
             // when
             tableService.changeNumberOfGuests(orderTableId, new OrderTableChangeNumberOfGuestsRequest(3));
 

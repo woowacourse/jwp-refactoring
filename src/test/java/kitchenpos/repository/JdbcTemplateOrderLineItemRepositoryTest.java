@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
@@ -63,7 +61,8 @@ class JdbcTemplateOrderLineItemRepositoryTest {
     @Test
     void ID로_조회한다() {
         //before
-        orderRepository.save(new Order(null, 1L, COOKING, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L))));
+        orderRepository.save(
+                new Order(null, 1L, COOKING, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L))));
 
         // given
         OrderLineItem orderLineItem = new OrderLineItem(orderId, 1L, 1L);
@@ -101,5 +100,6 @@ class JdbcTemplateOrderLineItemRepositoryTest {
         List<OrderLineItem> orderLineItems = orderLineItemRepository.findAll();
         assertThat(orderLineItems).hasSize(1)
                 .extracting("menuId", "quantity")
-                .contains(tuple(1L, 3L));}
+                .contains(tuple(1L, 3L));
+    }
 }

@@ -5,7 +5,6 @@ import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -16,11 +15,11 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.OrderTableIdDto;
 import kitchenpos.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,13 +32,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TableGroupServiceTest {
 
     @Mock
-    private OrderRepository orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableRepository orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Mock
-    private TableGroupRepository tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @InjectMocks
     private TableGroupService tableGroupService;
@@ -82,7 +81,7 @@ class TableGroupServiceTest {
             List<OrderTable> orderTables = Arrays.asList(orderTable, orderTable2);
             TableGroupCreateRequest request = 테이블_그룹_생성_dto를_만든다(id, createdDate,
                     orderTables);
-            when(orderTableDao.findAllByOrderTableIdsIn(any())).thenReturn(orderTables);
+            when(orderTableRepository.findAllByOrderTableIdsIn(any())).thenReturn(orderTables);
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -96,7 +95,7 @@ class TableGroupServiceTest {
             OrderTable orderTable = new OrderTable(orderId, notNullTableGroupId, numberOfGuests, empty);
             List<OrderTable> orderTables = Arrays.asList(orderTable, orderTable2);
             TableGroupCreateRequest request = 테이블_그룹_생성_dto를_만든다(id, createdDate, orderTables);
-            when(orderTableDao.findAllByOrderTableIdsIn(any())).thenReturn(orderTables);
+            when(orderTableRepository.findAllByOrderTableIdsIn(any())).thenReturn(orderTables);
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -107,9 +106,9 @@ class TableGroupServiceTest {
         void table_group을_생성할_수_있다() {
             // given
             TableGroupCreateRequest request = 테이블_그룹_생성_dto를_만든다(id, createdDate, orderTables);
-            when(orderTableDao.findAllByOrderTableIdsIn(any())).thenReturn(orderTables);
+            when(orderTableRepository.findAllByOrderTableIdsIn(any())).thenReturn(orderTables);
 
-            when(tableGroupDao.save(any(TableGroup.class))).thenReturn(
+            when(tableGroupRepository.save(any(TableGroup.class))).thenReturn(
                     request.toTableGroup(LocalDateTime.now()));
 
             // when
@@ -141,8 +140,8 @@ class TableGroupServiceTest {
         @Test
         void order가_COOKING_또는_MEAL_상태이면_예외를_반환한다() {
             // given
-            when(orderTableDao.findAllByTableGroupId(1L)).thenReturn(Arrays.asList(orderTable1, orderTable2));
-            when(orderDao.existsByOrderTableIdInAndOrderStatusIn(
+            when(orderTableRepository.findAllByTableGroupId(1L)).thenReturn(Arrays.asList(orderTable1, orderTable2));
+            when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                     Arrays.asList(11L, 12L),
                     Arrays.asList(COOKING, MEAL))).thenReturn(true);
 
@@ -154,9 +153,9 @@ class TableGroupServiceTest {
         @Test
         void table_group을_취소할_수_있다() {
             // given
-            when(orderTableDao.findAllByTableGroupId(1L)).thenReturn(Arrays.asList(orderTable1, orderTable2));
+            when(orderTableRepository.findAllByTableGroupId(1L)).thenReturn(Arrays.asList(orderTable1, orderTable2));
 
-            when(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any())).thenReturn(false);
+            when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any())).thenReturn(false);
 
             // when
             tableGroupService.ungroup(1L);

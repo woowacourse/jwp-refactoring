@@ -15,14 +15,14 @@ import kitchenpos.application.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(TableGroupRestController.class)
 class TableGroupRestControllerTest extends ControllerTest {
 
     private final String defaultTableGroupUrl = "/api/table-groups";
-private final TableGroupResponse tableGroupResponse = new TableGroupResponse(1L, LocalDateTime.now(), new ArrayList<>());
+    private final TableGroupResponse tableGroupResponse = new TableGroupResponse(1L, LocalDateTime.now(),
+            new ArrayList<>());
     @Autowired
     private TableGroupService tableGroupService;
 
