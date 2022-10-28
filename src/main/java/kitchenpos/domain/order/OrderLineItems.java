@@ -1,5 +1,6 @@
 package kitchenpos.domain.order;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -17,6 +18,10 @@ public class OrderLineItems {
     }
 
     public OrderLineItems(final List<OrderLineItem> value) {
+        if (value == null) {
+            this.value = new ArrayList<>();
+            return;
+        }
         validateDuplicatedMenuExists(value);
         this.value = value;
     }
@@ -27,7 +32,7 @@ public class OrderLineItems {
                 .distinct()
                 .count();
         if (menuSize != value.size()) {
-            throw new IllegalArgumentException("중복된 menuId가 존재합니다.");
+            throw new IllegalArgumentException("중복된 menu가 존재합니다.");
         }
     }
 }

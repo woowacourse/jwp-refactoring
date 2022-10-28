@@ -52,17 +52,13 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order(final Long orderTableId, final OrderLineItems orderLineItems) {
-        this(null, orderTableId, null, null, orderLineItems);
-    }
-
     public Order(final Long orderTableId, final OrderStatus orderStatus) {
         this(null, orderTableId, orderStatus, LocalDateTime.now(), null);
     }
 
     public void updateOrderLineItems(final OrderLineItems orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems.getValue())) {
-            throw new IllegalArgumentException("OrderLineItem이 존재하지 않습니다.");
+            throw new IllegalArgumentException("주문 상품이 존재하지 않습니다.");
         }
         this.orderLineItems = orderLineItems;
     }

@@ -41,8 +41,4 @@ public class OrderLineItem {
     public OrderLineItem(final Order order, final Long menuId, final long quantity) {
         this(null, order, menuId, quantity);
     }
-
-    public OrderLineItem(final Long menuId, final long quantity) {
-        this(null, null, menuId, quantity);
-    }
 }
