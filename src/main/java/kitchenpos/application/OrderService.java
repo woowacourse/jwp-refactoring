@@ -49,12 +49,12 @@ public class OrderService {
         return OrderResponse.of(savedOrder, orderLineItems);
     }
 
-    private OrderTable findOrderTable(OrderCreateRequest orderCreateRequest) {
+    private OrderTable findOrderTable(final OrderCreateRequest orderCreateRequest) {
         return orderTableDao.findById(orderCreateRequest.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
     }
 
-    private void validateEmptyOrderLineItemRequests(List<OrderLineItemRequest> orderLineItemRequests) {
+    private void validateEmptyOrderLineItemRequests(final List<OrderLineItemRequest> orderLineItemRequests) {
         if (CollectionUtils.isEmpty(orderLineItemRequests)) {
             throw new IllegalArgumentException("주문 항목이 비어있을 수 없습니다.");
         }
@@ -70,7 +70,8 @@ public class OrderService {
         }
     }
 
-    private List<OrderLineItem> saveOrderLineItems(List<OrderLineItemRequest> orderLineItemRequests, Order savedOrder) {
+    private List<OrderLineItem> saveOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests,
+                                                   final Order savedOrder) {
         return orderLineItemRequests.stream()
                 .map(orderLineItemRequest -> orderLineItemDao.save(new OrderLineItem(savedOrder.getId(),
                         orderLineItemRequest.getMenuId(),
@@ -81,7 +82,7 @@ public class OrderService {
     public List<OrderResponse> list() {
         final List<Order> orders = orderDao.findAll();
 
-        List<OrderResponse> orderResponses = new ArrayList<>();
+        final List<OrderResponse> orderResponses = new ArrayList<>();
         for (final Order order : orders) {
             List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(order.getId());
             orderResponses.add(OrderResponse.of(order, orderLineItems));
@@ -97,7 +98,7 @@ public class OrderService {
 
         savedOrder.changeOrderStatus(orderStatusName);
         orderDao.save(savedOrder);
-        List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(orderId);
+        final List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(orderId);
 
         return OrderResponse.of(savedOrder, orderLineItems);
     }

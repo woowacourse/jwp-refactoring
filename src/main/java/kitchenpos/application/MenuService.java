@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
+
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
     private final MenuProductDao menuProductDao;
@@ -46,20 +47,20 @@ public class MenuService {
         return MenuResponse.of(savedMenu, savedMenuProducts);
     }
 
-    private List<MenuProduct> saveMenuProducts(List<MenuProduct> menuProducts, Menu savedMenu) {
+    private List<MenuProduct> saveMenuProducts(final List<MenuProduct> menuProducts, final Menu savedMenu) {
         return menuProducts.stream()
                 .map(menuProduct -> menuProductDao.save(
                         new MenuProduct(savedMenu.getId(), menuProduct.getProductId(), menuProduct.getQuantity())))
                 .collect(Collectors.toList());
     }
 
-    private List<MenuProduct> getMenuProducts(MenuRequest menuRequest) {
+    private List<MenuProduct> getMenuProducts(final MenuRequest menuRequest) {
         return menuRequest.getMenuProducts().stream()
                 .map(MenuProduct::from)
                 .collect(Collectors.toList());
     }
 
-    private BigDecimal getSumOfMenuPrice(List<MenuProduct> menuProducts) {
+    private BigDecimal getSumOfMenuPrice(final List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = productDao.findById(menuProduct.getProductId())
@@ -69,7 +70,7 @@ public class MenuService {
         return sum;
     }
 
-    private void validateMenuGroup(Menu menu) {
+    private void validateMenuGroup(final Menu menu) {
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
             throw new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다.");
         }

@@ -25,7 +25,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse create(final OrderTableCreateRequest orderTableCreateRequest) {
-        OrderTable orderTable = orderTableDao.save(OrderTable.from(orderTableCreateRequest));
+        final OrderTable orderTable = orderTableDao.save(OrderTable.from(orderTableCreateRequest));
         return OrderTableResponse.from(orderTable);
     }
 
@@ -46,12 +46,12 @@ public class TableService {
         return OrderTableResponse.from(orderTable);
     }
 
-    private OrderTable findOrderTable(Long orderTableId) {
+    private OrderTable findOrderTable(final Long orderTableId) {
         return orderTableDao.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
     }
 
-    private void validateTableOrderStatus(Long orderTableId) {
+    private void validateTableOrderStatus(final Long orderTableId) {
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException("주문 상태가 Cooking이나 Meal일 경우 테이블의 상태를 변경할 수 없습니다.");
