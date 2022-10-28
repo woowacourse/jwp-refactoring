@@ -42,6 +42,19 @@
 테이블 그룹은 주문 테이블들을 묶은 것입니다. (예: 테이블 단체 계산)
 - 따라서 2개 이상이어야 의미가 있음
 
+## 의존관계
+
+Product는 의존 대상이 없다.  
+MenuGroup 또한 의존 대상이 없다.  
+Menu를 만들기 위해서는 MenuGrouop 한 개와 Prodcut (1 ~ N)개가 필요하다.
+- MenuProduct는 Product를 만들었으면 만들 수 있다.
+  - product_id는 Product를 만든 직후 기입 가능
+  - menu_id는 menu를 만들 때 setting
+
+Order를 만들기 위해서는 OrderTable이 필요하다.  
+OrderTable은 어디에도 의존하지 않는다.
+고로 OrderTable -> Order -> OrderTableGroup 순으로 만들면 된다.  
+(Order)TableGroup은 단지 Table을 묶어주는 역할을 할 뿐이다.
   
 ## 요구 사항
 
