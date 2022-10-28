@@ -22,6 +22,7 @@ import kitchenpos.ui.dto.request.MenuProductRequest;
 import kitchenpos.ui.dto.request.MenuRequest;
 import kitchenpos.ui.dto.request.OrderTableRequest;
 import kitchenpos.ui.dto.request.ProductRequest;
+import kitchenpos.ui.dto.request.TableGroupRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -145,8 +146,9 @@ public class AcceptanceTest {
 //    }
 
     protected TableGroup 테이블_그룹을_생성한다(List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
+        TableGroupRequest tableGroup = new TableGroupRequest(orderTables.stream()
+                .map(OrderTable::getTableGroupId)
+                .collect(Collectors.toList()));
 
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)

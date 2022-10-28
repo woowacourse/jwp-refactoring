@@ -1,13 +1,9 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.OrderTableCommand;
 import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -15,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
+
     private final TableValidator tableValidator;
     private final OrderTableRepository orderTableRepository;
 

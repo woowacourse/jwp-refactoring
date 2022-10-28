@@ -1,70 +1,55 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
+import kitchenpos.application.dto.request.TableGroupCommand;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.TableGroupRepository;
+import kitchenpos.domain.TableGroupValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
+
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
-    private final TableGroupDao tableGroupDao;
+    private final OrderTableRepository orderTableRepository;
+    private final TableGroupRepository tableGroupRepository;
+    private final TableGroupValidator tableGroupValidator;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao,
-                             final TableGroupDao tableGroupDao) {
+    public TableGroupService(OrderDao orderDao, OrderTableDao orderTableDao,
+                             OrderTableRepository orderTableRepository,
+                             TableGroupRepository tableGroupRepository,
+                             TableGroupValidator tableGroupValidator) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
-        this.tableGroupDao = tableGroupDao;
+        this.orderTableRepository = orderTableRepository;
+        this.tableGroupRepository = tableGroupRepository;
+        this.tableGroupValidator = tableGroupValidator;
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
-
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException("주문 테이블은 2개 이상이어야 합니다.");
-        }
-
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-
-        if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException("주문 테이블의 수가 다릅니다.");
-        }
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException("빈 주문 테이블이어야 합니다.");
-            }
-        }
-
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-
-        final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
-            savedOrderTable.setEmpty(false);
-            orderTableDao.save(savedOrderTable);
-        }
-        savedTableGroup.setOrderTables(savedOrderTables);
-
+    public TableGroup create(final TableGroupCommand tableGroupCommand) {
+        List<OrderTable> orderTables = orderTableRepository.findAllByIn(tableGroupCommand.getOrderTableId());
+        tableGroupValidator.validateCreate(tableGroupCommand, orderTables);
+        TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(orderTables));
+        addOrderTable(orderTables, savedTableGroup);
         return savedTableGroup;
+    }
+
+    private void addOrderTable(List<OrderTable> orderTables, TableGroup savedTableGroup) {
+        Long tableGroupId = savedTableGroup.getId();
+        for (OrderTable savedOrderTable : orderTables) {
+            savedOrderTable.cleanTableAndFillTableGroup(tableGroupId);
+        }
+        savedTableGroup.setOrderTables(orderTables);
     }
 
     @Transactional

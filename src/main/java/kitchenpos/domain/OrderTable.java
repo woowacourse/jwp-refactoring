@@ -1,9 +1,11 @@
 package kitchenpos.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 
 @Entity
 public class OrderTable {
@@ -12,11 +14,14 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long tableGroupId;
-
+    @Column(name = "number_of_guests", nullable = false)
     private int numberOfGuests;
 
+    @Column(name = "empty", columnDefinition = "BIT(1)")
     private boolean empty;
+
+    @JoinColumn(name = "table_group_id", nullable = false)
+    private Long tableGroupId;
 
     protected OrderTable() {
     }
@@ -63,5 +68,10 @@ public class OrderTable {
 
     public void setEmpty(final boolean empty) {
         this.empty = empty;
+    }
+
+    public void cleanTableAndFillTableGroup(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+        this.empty = false;
     }
 }
