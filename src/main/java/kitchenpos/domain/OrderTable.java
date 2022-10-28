@@ -13,6 +13,12 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
     public static OrderTable of(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
