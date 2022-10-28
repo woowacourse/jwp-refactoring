@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableGroupService {
+
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
@@ -43,15 +44,15 @@ public class TableGroupService {
         return updateOrderTableIdAndTableGroupId(savedOrderTables, savedTableGroup);
     }
 
-    private List<OrderTable> toOrderTables(TableGroupRequest tableGroupRequest) {
+    private List<OrderTable> toOrderTables(final TableGroupRequest tableGroupRequest) {
         return tableGroupRequest.getOrderTables()
                 .stream()
                 .map(it -> new OrderTable(it.getId()))
                 .collect(Collectors.toList());
     }
 
-    private TableGroup updateOrderTableIdAndTableGroupId(List<OrderTable> savedOrderTables,
-                                                         TableGroup savedTableGroup) {
+    private TableGroup updateOrderTableIdAndTableGroupId(final List<OrderTable> savedOrderTables,
+                                                         final TableGroup savedTableGroup) {
         final Long tableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.setTableGroupId(tableGroupId);
@@ -76,6 +77,15 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
 
+        validateAbleToUngroup(orderTables);
+
+        for (final OrderTable orderTable : orderTables) {
+            orderTableDao.save(new OrderTable(orderTable.getId(), null,
+                    orderTable.getNumberOfGuests(), false));
+        }
+    }
+
+    private void validateAbleToUngroup(final List<OrderTable> orderTables) {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
@@ -83,12 +93,6 @@ public class TableGroupService {
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
-            orderTableDao.save(orderTable);
         }
     }
 }
