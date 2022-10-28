@@ -14,7 +14,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import org.aspectj.weaver.ast.Or;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
@@ -24,7 +23,7 @@ public class OrderE2eTest extends E2eTest {
     void create() {
 
         // given
-        final Long 주문테이블_ID = POST_요청(ORDER_TABLE_URL, new OrderTable(0, false)).as(OrderTable.class).getId();
+        final Long 주문테이블_ID = POST_요청(TABLE_URL, new OrderTable(0, false)).as(OrderTable.class).getId();
         final LocalDateTime 주문일시 = now().minusMinutes(1);
 
         // when
@@ -66,7 +65,7 @@ public class OrderE2eTest extends E2eTest {
 
         // when
         final ExtractableResponse<Response> 응답 =
-                PUT_요청("/api/orders/%s/order-status", 주문.getId(), 주문(OrderStatus.MEAL));
+                PUT_요청("/api/orders/{orderId}/order-status", 주문.getId(), 주문(OrderStatus.MEAL));
 
         final Order 상태바뀐_주문 = 응답.body().as(Order.class);
 

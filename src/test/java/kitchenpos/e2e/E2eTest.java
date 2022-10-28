@@ -13,6 +13,7 @@ import io.restassured.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
@@ -23,6 +24,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.support.DbTableCleaner;
 import org.assertj.core.api.ListAssert;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,8 +48,9 @@ public abstract class E2eTest {
     public static final String MENU_URL = "/api/menus";
 
     public static final String MENU_GROUP_URL = "/api/menu-groups";
-    public static final String ORDER_TABLE_URL = "/api/tables";
     public static final String ORDER_URL = "/api/orders";
+    public static final String TABLE_URL = "/api/tables";
+    public static final String TABLE_GROUP_URL = "/api/table-groups";
 
     @LocalServerPort
     private int port;
@@ -87,25 +90,24 @@ public abstract class E2eTest {
                 .extract();
     }
 
-    protected ExtractableResponse<Response> PUT_요청(final String path, final Object requestBody) {
+    protected ExtractableResponse<Response> PUT_요청(final String path, final Long id, final Object requestBody) {
 
         return RestAssured.given().log().all()
                 .body(requestBody)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
-                .put(path)
+                .put(path, id)
                 .then().log().all()
                 .extract();
     }
 
-    protected ExtractableResponse<Response> PUT_요청(final String pathWithId, final Long id, final Object requestBody) {
-        final String path = String.format(pathWithId, id);
+    protected ExtractableResponse<Response> DELETE_요청(final String path, final Long id, final Object requestBody) {
 
         return RestAssured.given().log().all()
                 .body(requestBody)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
-                .put(path)
+                .delete(path, id)
                 .then().log().all()
                 .extract();
     }
@@ -202,7 +204,7 @@ public abstract class E2eTest {
 
         final Long 메뉴_ID = 메뉴_생성_및_ID_반환();
 
-        final Long 주문테이블_ID = POST_요청(ORDER_TABLE_URL, new OrderTable(0, false)).as(OrderTable.class).getId();
+        final Long 주문테이블_ID = POST_요청(TABLE_URL, new OrderTable(0, false)).as(OrderTable.class).getId();
 
         final LocalDateTime 주문일시 = now().minusMinutes(1);
 
@@ -224,13 +226,43 @@ public abstract class E2eTest {
 
         final Long 메뉴_ID = 메뉴_생성_및_ID_반환();
 
-        final Long 주문테이블_ID = POST_요청(ORDER_TABLE_URL, new OrderTable(0, false)).as(OrderTable.class).getId();
+        final Long 주문테이블_ID = POST_요청(TABLE_URL, new OrderTable(0, false)).as(OrderTable.class).getId();
 
         final LocalDateTime 주문일시 = now().minusMinutes(1);
 
         final Order 주문 = new Order(주문테이블_ID, MEAL.name(), 주문일시, List.of(new OrderLineItem(메뉴_ID, 1)));
 
         return POST_요청(ORDER_URL, 주문).as(Order.class);
+    }
+
+    protected OrderTable 주문테이블_생성() {
+        return 주문테이블_생성(new OrderTable(0, true));
+    }
+
+    protected OrderTable 주문테이블_생성(final OrderTable orderTable) {
+        final ExtractableResponse<Response> 응답 = POST_요청(TABLE_URL, orderTable);
+        return 응답.body().as(OrderTable.class);
+    }
+
+    protected List<OrderTable> 주문테이블들_생성(final int size) {
+
+        return 주문테이블들_생성(size, 주문테이블_생성());
+    }
+
+    protected List<OrderTable> 주문테이블들_생성(final int size, final OrderTable orderTable) {
+
+        List<OrderTable> orderTables = new ArrayList<>();
+
+        for (int i = 0; i < size; i++) {
+            orderTables.add(주문테이블_생성(orderTable));
+        }
+
+        return orderTables;
+    }
+
+    protected TableGroup 테이블그룹_생성(final TableGroup tableGroup) {
+        final ExtractableResponse<Response> 응답 = POST_요청(TABLE_GROUP_URL, tableGroup);
+        return 응답.body().as(TableGroup.class);
     }
 
     protected Long 메뉴_생성_및_ID_반환() {
