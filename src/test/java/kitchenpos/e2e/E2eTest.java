@@ -4,9 +4,11 @@ import static java.util.Arrays.stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.restassured.RestAssured;
+import io.restassured.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Product;
 import kitchenpos.support.DbTableCleaner;
 import org.assertj.core.api.ListAssert;
@@ -31,6 +33,7 @@ public abstract class E2eTest {
     public static final String MENU_URL = "/api/menus";
 
     public static final String MENU_GROUP_URL = "/api/menu-groups";
+    public static final String ORDER_TABLE_URL = "/api/tables";
 
     @LocalServerPort
     private int port;
@@ -68,11 +71,6 @@ public abstract class E2eTest {
                 .extract();
     }
 
-    protected Executable NOT_NULL_검증(final Product productResponse) {
-
-        return () -> assertThat(productResponse.getId()).isNotNull();
-    }
-
     protected Executable HTTP_STATUS_검증(final HttpStatus httpStatus, final ExtractableResponse<Response> response) {
 
         return () -> assertThat(response.statusCode()).isEqualTo(httpStatus.value());
@@ -88,9 +86,9 @@ public abstract class E2eTest {
         return () -> assertThat(actual).isEqualTo(expected);
     }
 
-    protected <T> Executable 단일_검증(final T actual, final String fieldName, final AssertionPair pair) {
+    protected <T> Executable 단일_검증(final T actual, final String fieldName, final Object... expectedFields) {
 
-        return 리스트_검증(List.of(actual), fieldName, pair);
+        return 리스트_검증(List.of(actual), fieldName, expectedFields);
     }
 
     protected Executable 리스트_검증(final List list, final String filedName, final Object... expectedFields) {
@@ -114,13 +112,21 @@ public abstract class E2eTest {
      *<p/>
      * 추후 B/DFS로 검증 로직을 수정할 수 있음
      */
-    protected Executable[] 리스트_검증(final List actualList, final AssertionPair... pairs) {
+    protected List<Executable> 리스트_검증(final List actualList, final AssertionPair... pairs) {
 
         final ListAssert listAssert = assertThat(actualList);
 
         return stream(pairs)
                 .map(pair -> pair.toExecutable(listAssert))
-                .toArray(Executable[]::new);
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 슈퍼타입 토큰을 이용해서 한 단계 이상 깊이의 제네릭의 값을 추출합니다.
+     */
+    protected  <T> List<T> extractHttpBody(final ExtractableResponse<Response> 응답) {
+        return 응답.body().as(new TypeRef<List<T>>() {
+        });
     }
 
     protected static class AssertionPair {

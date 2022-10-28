@@ -28,7 +28,7 @@ class ProductE2eTest extends E2eTest {
         // then
         assertAll(
                 HTTP_STATUS_검증(HttpStatus.CREATED, 응답),
-                NOT_NULL_검증(저장된_상품),
+                NOT_NULL_검증(저장된_상품.getId()),
                 단일_검증(저장된_상품.name(), "양념 치킨"),
                 단일_검증(저장된_상품.intPrice(), 10_000)
         );
