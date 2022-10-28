@@ -2,10 +2,7 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -17,13 +14,13 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.util.Pair;
 import org.springframework.test.context.jdbc.Sql;
 
 @Sql("/tear_down.sql")
@@ -66,7 +63,7 @@ abstract class ServiceTest {
     private TableGroupDao tableGroupDao;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @BeforeEach
     void setUp() {
@@ -99,13 +96,9 @@ abstract class ServiceTest {
     }
 
     protected Order saveOrder(final OrderTable orderTable, final String orderStatus,
-                              final Pair<Menu, Long>... orderLineItemPairs) {
-        final List<OrderLineItem> orderLineItems = Arrays.stream(orderLineItemPairs)
-                .map(pair -> new OrderLineItem(pair.getFirst().getId(), pair.getSecond()))
-                .collect(Collectors.toList());
-
-        final Order order = new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), orderLineItems);
-        return orderDao.save(order);
+                              final OrderLineItem... orderLineItems) {
+        final Order order = new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), List.of(orderLineItems));
+        return orderRepository.save(order);
     }
 
     protected TableGroup saveTableGroup(final OrderTable... orderTables) {

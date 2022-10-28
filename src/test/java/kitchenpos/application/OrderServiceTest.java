@@ -13,6 +13,7 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -25,7 +26,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.springframework.data.util.Pair;
 
 @DisplayName("OrderService의")
 class OrderServiceTest extends ServiceTest {
@@ -152,7 +152,7 @@ class OrderServiceTest extends ServiceTest {
                     new MenuProduct(chicken2.getId(), 4L));
 
             final OrderTable orderTable1 = saveOrderTable(10, false);
-            saveOrder(orderTable1, "COOKING", Pair.of(chickenMenu, 2L));
+            saveOrder(orderTable1, "COOKING", new OrderLineItem(chickenMenu.getId(), 2L));
 
             final Product sushi1 = saveProduct("연어초밥");
             final Product sushi2 = saveProduct("광어초밥");
@@ -164,7 +164,7 @@ class OrderServiceTest extends ServiceTest {
                     new MenuProduct(sushi3.getId(), 1L));
 
             final OrderTable orderTable2 = saveOrderTable(2, false);
-            saveOrder(orderTable2, "MEAL", Pair.of(sushiMenu, 3L));
+            saveOrder(orderTable2, "MEAL", new OrderLineItem(sushiMenu.getId(), 3L));
 
             // when
             final List<OrderResponse> actual = orderService.list();
@@ -190,7 +190,7 @@ class OrderServiceTest extends ServiceTest {
             // given
             final Menu chickenMenu = getMenu();
             final OrderTable orderTable = saveOrderTable(10, false);
-            final Long orderId = saveOrder(orderTable, sourceOrderStatus, Pair.of(chickenMenu, 2L)).getId();
+            final Long orderId = saveOrder(orderTable, sourceOrderStatus, new OrderLineItem(chickenMenu.getId(), 2L)).getId();
 
             final ChangeOrderStatusRequest request = new ChangeOrderStatusRequest(targetOrderStatus);
 
@@ -218,7 +218,7 @@ class OrderServiceTest extends ServiceTest {
             // given
             final Menu chickenMenu = getMenu();
             final OrderTable orderTable = saveOrderTable(10, false);
-            final Long orderId = saveOrder(orderTable, COMPLETION.name(), Pair.of(chickenMenu, 2L)).getId();
+            final Long orderId = saveOrder(orderTable, COMPLETION.name(), new OrderLineItem(chickenMenu.getId(), 2L)).getId();
 
             final ChangeOrderStatusRequest request = new ChangeOrderStatusRequest(MEAL.name());
 

@@ -10,6 +10,7 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
@@ -18,7 +19,6 @@ import kitchenpos.ui.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.util.Pair;
 
 @DisplayName("TableGroupService의")
 class TableGroupServiceTest extends ServiceTest {
@@ -137,8 +137,8 @@ class TableGroupServiceTest extends ServiceTest {
             final Product product = saveProduct("감자튀김");
             final MenuGroup menuGroup = saveMenuGroup("감자");
             final Menu menu = saveMenu("감자세트", BigDecimal.ONE, menuGroup, new MenuProduct(product.getId(), 1L));
-            saveOrder(orderTable1, "COOKING", Pair.of(menu, 1L));
-            saveOrder(orderTable2, "COMPLETION", Pair.of(menu, 2L));
+            saveOrder(orderTable1, "COOKING", new OrderLineItem(menu.getId(), 1L));
+            saveOrder(orderTable2, "COMPLETION", new OrderLineItem(menu.getId(), 2L));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))

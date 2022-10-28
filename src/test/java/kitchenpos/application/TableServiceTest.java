@@ -9,6 +9,7 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.request.ChangeEmptyRequest;
@@ -21,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.data.util.Pair;
 
 @DisplayName("TableService의")
 class TableServiceTest extends ServiceTest {
@@ -108,7 +108,7 @@ class TableServiceTest extends ServiceTest {
             final MenuGroup menuGroup = saveMenuGroup("감자");
             final Menu menu = saveMenu("감자세트", BigDecimal.ONE, menuGroup, new MenuProduct(product.getId(), 1L));
             final OrderTable orderTable = saveOrderTable(10, false);
-            saveOrder(orderTable, orderStatus, Pair.of(menu, 1L));
+            saveOrder(orderTable, orderStatus, new OrderLineItem(menu.getId(), 1L));
 
             final ChangeEmptyRequest request = new ChangeEmptyRequest(true);
 

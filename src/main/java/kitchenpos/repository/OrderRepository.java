@@ -1,15 +1,12 @@
-package kitchenpos.dao;
-
-import kitchenpos.domain.Order;
+package kitchenpos.repository;
 
 import java.util.List;
-import java.util.Optional;
+import kitchenpos.domain.Order;
+import org.springframework.data.repository.CrudRepository;
 
-public interface OrderDao {
-    Order save(Order entity);
+public interface OrderRepository extends CrudRepository<Order, Long> {
 
-    Optional<Order> findById(Long id);
-
+    @Override
     List<Order> findAll();
 
     boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<String> orderStatuses);

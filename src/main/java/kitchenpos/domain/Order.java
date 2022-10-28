@@ -1,33 +1,31 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
+import org.springframework.data.relational.core.mapping.MappedCollection;
+import org.springframework.data.relational.core.mapping.Table;
 
+@Table(name = "ORDERS")
 public class Order {
 
     @Id
-    private Long id;
-    private Long orderTableId;
-    private String orderStatus;
-    private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private final Long id;
+    private final Long orderTableId;
+    private final String orderStatus;
+    private final LocalDateTime orderedTime;
 
-    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
-        this(null, orderTableId, orderStatus, orderedTime, new ArrayList<>());
-    }
+    @MappedCollection(idColumn = "ORDER_ID")
+    private final List<OrderLineItem> orderLineItems;
 
     public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
-        this(id, orderTableId, orderStatus, orderedTime, new ArrayList<>());
-    }
-
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+    @PersistenceCreator
+    private Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
@@ -36,8 +34,8 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public void changeOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
+    public Order changeOrderStatus(final String orderStatus) {
+        return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
     public Long getId() {
@@ -54,5 +52,9 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
+    }
+
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems;
     }
 }
