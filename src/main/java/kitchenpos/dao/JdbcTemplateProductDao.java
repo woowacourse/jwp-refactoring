@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class JdbcTemplateProductDao implements ProductDao {
+
     private static final String TABLE_NAME = "product";
     private static final String KEY_COLUMN_NAME = "id";
 
@@ -26,8 +27,7 @@ public class JdbcTemplateProductDao implements ProductDao {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
-                .usingGeneratedKeyColumns(KEY_COLUMN_NAME)
-        ;
+                .usingGeneratedKeyColumns(KEY_COLUMN_NAME);
     }
 
     @Override
@@ -60,10 +60,10 @@ public class JdbcTemplateProductDao implements ProductDao {
     }
 
     private Product toEntity(final ResultSet resultSet) throws SQLException {
-        final Product entity = new Product();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setName(resultSet.getString("name"));
-        entity.setPrice(resultSet.getBigDecimal("price"));
-        return entity;
+        return new Product(
+                resultSet.getLong(KEY_COLUMN_NAME),
+                resultSet.getString("name"),
+                resultSet.getBigDecimal("price")
+        );
     }
 }

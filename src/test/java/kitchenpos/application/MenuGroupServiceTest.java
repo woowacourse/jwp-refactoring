@@ -1,9 +1,11 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,21 +20,27 @@ class MenuGroupServiceTest extends ServiceTest {
     @DisplayName("메뉴 그룹을 등록할 수 있다.")
     @Test
     void create() {
-        MenuGroup firstMenuGroup = new MenuGroup("1번 메뉴 그룹");
+        final String name = "1번 메뉴 그룹";
+        final MenuGroupCreateRequest request = new MenuGroupCreateRequest(name);
 
-        MenuGroup menuGroup = menuGroupService.create(firstMenuGroup);
+        final MenuGroupResponse response = menuGroupService.create(request);
 
-        assertThat(menuGroup).isNotNull();
+        assertAll(
+                () -> assertThat(response.getId()).isNotNull(),
+                () -> assertThat(response.getName()).isEqualTo(name)
+        );
     }
 
     @DisplayName("메뉴 그룹들을 조회할 수 있다.")
     @Test
     void list() {
-        menuGroupService.create(new MenuGroup("1번 메뉴 그룹"));
-        menuGroupService.create(new MenuGroup("2번 메뉴 그룹"));
+        final MenuGroupCreateRequest firstRequest = new MenuGroupCreateRequest("1번 메뉴 그룹");
+        final MenuGroupCreateRequest secondRequest = new MenuGroupCreateRequest("2번 메뉴 그룹");
+        menuGroupService.create(firstRequest);
+        menuGroupService.create(secondRequest);
 
-        List<MenuGroup> menuGroups = menuGroupService.list();
+        final List<MenuGroupResponse> response = menuGroupService.list();
 
-        assertThat(menuGroups).hasSize(2);
+        assertThat(response).hasSize(2);
     }
 }

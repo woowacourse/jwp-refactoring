@@ -7,19 +7,22 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.common.DatabaseCleaner;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.request.MenuProductRequest;
+import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -30,16 +33,16 @@ class MenuServiceTest extends ServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @Autowired
     private DatabaseCleaner databaseCleaner;
@@ -48,95 +51,70 @@ class MenuServiceTest extends ServiceTest {
 
     private MenuGroup menuGroup;
 
-    @BeforeEach
-    void setUp() {
-        databaseCleaner.tableClear();
-
-        product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
-        menuGroup = menuGroupDao.save(new MenuGroup("1번 메뉴 그룹"));
+    @Override
+    void setObject() {
+        product = productRepository.save(new Product("치킨", BigDecimal.valueOf(10000)));
+        menuGroup = menuGroupRepository.save(new MenuGroup("1번 메뉴 그룹"));
     }
 
     @DisplayName("메뉴를 등록할 수 있다.")
     @Test
     void create() {
-        Menu newMenu = new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(),
-                createMenuProducts(product.getId()));
+        final String name = "1번 메뉴";
+        final BigDecimal price = BigDecimal.valueOf(10000);
+        final MenuCreateRequest request = new MenuCreateRequest(name, price, menuGroup.getId(),
+                createMenuProductRequest(product.getId()));
 
-        Menu menu = menuService.create(newMenu);
+        final MenuResponse response = menuService.create(request);
 
-        assertThat(menu).isNotNull();
-    }
-
-    @DisplayName("메뉴 등록 시 메뉴의 가격이 null이면 예외가 발생한다.")
-    @Test
-    void createWithNullPrice() {
-        Menu menu = new Menu("1번 메뉴", null, menuGroup.getId(), createMenuProducts(product.getId()));
-
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("메뉴 등록 시 메뉴의 가격이 0보다 작으면 예외가 발생한다.")
-    @ParameterizedTest
-    @ValueSource(ints = {-1, -5})
-    void createWithInvalidPrice(int price) {
-        Menu menu = new Menu("1번 메뉴", BigDecimal.valueOf(price), menuGroup.getId(),
-                createMenuProducts(product.getId()));
-
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertAll(
+                () -> assertThat(response.getId()).isNotNull(),
+                () -> assertThat(response.getMenuGroupId()).isNotNull(),
+                () -> assertThat(response.getMenuProducts()).isNotEmpty(),
+                () -> assertThat(response.getName()).isEqualTo(name),
+                () -> assertThat(response.getPrice().longValue()).isEqualTo(price.longValue())
+        );
     }
 
     @DisplayName("메뉴 등록 시 메뉴 그룹이 존재하지 않으면 예외가 발생한다.")
     @Test
     void createWithNoMenuGroup() {
-        Menu menu = new Menu("1번 메뉴", BigDecimal.valueOf(10000), 9999L, createMenuProducts(product.getId()));
+        final MenuCreateRequest request = new MenuCreateRequest("1번 메뉴", BigDecimal.valueOf(10000), 9999L,
+                createMenuProductRequest(product.getId()));
 
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("메뉴 등록 시 메뉴상품이 비어 있으면 예외가 발생한다.")
-    @Test
-    void createWithNoMenuProduct() {
-        Menu menu = new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(), new ArrayList<>());
-
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("메뉴 등록 시 메뉴의 가격이 메뉴 상품의 총합 보다 크면 예외가 발생한다.")
-    @ValueSource(ints = {10001, 50000})
-    @ParameterizedTest
-    void createWithPriceMoreThanMenuProductSum(int price) {
-        Menu menu = new Menu("1번 메뉴", BigDecimal.valueOf(price), menuGroup.getId(),
-                createMenuProducts(product.getId()));
-
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴들을 조회할 수 있다.")
     @Test
     void list() {
-        Menu newMenu = new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(),
+        final Menu newMenu = new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(),
                 createMenuProducts(product.getId()));
-        Menu menu = menuDao.save(newMenu);
-        MenuProduct menuProduct = new MenuProduct(menu.getId(), product.getId(), 10);
-        menuProductDao.save(menuProduct);
+        final Menu menu = menuRepository.save(newMenu);
+        final MenuProduct menuProduct = new MenuProduct(menu.getId(), product.getId(), 10);
+        menuProductRepository.save(menuProduct);
 
-        List<Menu> menus = menuService.list();
+        final List<MenuResponse> response = menuService.list();
 
         assertAll(
-                () -> assertThat(menus).hasSize(1),
-                () -> assertThat(menus.get(0).getMenuProducts()).isNotEmpty()
+                () -> assertThat(response).hasSize(1),
+                () -> assertThat(response.get(0).getMenuProducts()).isNotEmpty()
         );
     }
 
-    private List<MenuProduct> createMenuProducts(Long... productIds) {
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        for (Long productId : productIds) {
-            menuProducts.add(new MenuProduct(productId, 1L));
+    private MenuProducts createMenuProducts(final Long... productIds) {
+        final List<MenuProduct> menuProducts = new ArrayList<>();
+        for (final Long productId : productIds) {
+            menuProducts.add(new MenuProduct(productId, 1L, BigDecimal.valueOf(10000)));
+        }
+        return new MenuProducts(menuProducts, BigDecimal.valueOf(9000));
+    }
+
+    private List<MenuProductRequest> createMenuProductRequest(final Long... productIds) {
+        final List<MenuProductRequest> menuProducts = new ArrayList<>();
+        for (final Long productId : productIds) {
+            menuProducts.add(new MenuProductRequest(productId, 1L));
         }
         return menuProducts;
     }
