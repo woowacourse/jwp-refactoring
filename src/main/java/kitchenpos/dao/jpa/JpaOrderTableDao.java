@@ -42,7 +42,7 @@ public class JpaOrderTableDao implements OrderTableDao {
 
     @Override
     public List<OrderTable> findAllByTableGroupId(Long tableGroupId) {
-        return orderTableRepository.findByTableGroup(tableGroupId);
+        return orderTableRepository.findByTableGroupId(tableGroupId);
     }
 
 }

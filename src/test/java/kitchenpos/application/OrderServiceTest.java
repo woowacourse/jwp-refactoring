@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.order.ChangeOrderStatusRequest;
 import kitchenpos.dto.order.CreateOrderLineItemRequest;
@@ -132,16 +131,11 @@ class OrderServiceTest extends ServiceTest {
     private Order createAndSaveOrder() {
         Menu savedMenu = createAndSaveMenu();
         OrderTable savedOrderTable = createAndSaveOrderTable();
-        Order savedOrder = orderDao.save(new Order(savedOrderTable.getId()));
-
-        OrderLineItem orderLineItem = new OrderLineItem(savedOrder.getId(), savedMenu.getId(), 10);
-        OrderLineItem savedOrderLineItem = orderLineItemDao.save(orderLineItem);
-
-        savedOrder.setOrderLineItems(new ArrayList<OrderLineItem>() {{
-            add(savedOrderLineItem);
+        Order order = new Order(savedOrderTable, new HashMap<Menu, Long>() {{
+            put(savedMenu, 1L);
         }});
 
-        return savedOrder;
+        return orderDao.save(order);
     }
 
     private Menu createAndSaveMenu() {

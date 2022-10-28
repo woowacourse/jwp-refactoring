@@ -30,10 +30,13 @@ public class TableGroup {
     }
 
     public TableGroup(List<OrderTable> orderTables) {
-        createdDate = LocalDateTime.now();
         validateOrderTables(orderTables);
+
+        createdDate = LocalDateTime.now();
+
         for (OrderTable orderTable : orderTables) {
             orderTable.group(this);
+            this.orderTables.add(orderTable);
         }
     }
 

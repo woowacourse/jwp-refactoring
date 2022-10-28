@@ -3,7 +3,9 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,16 +14,31 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 class OrderTest {
 
+    private final OrderTable orderTable = new OrderTable(10, true);
+
+    private final Menu menu = new Menu(
+        "menu",
+        new BigDecimal(1000),
+        new MenuGroup("menuGroup"),
+        new HashMap<Product, Long>() {{
+            put(new Product("product", new BigDecimal(1000)), 1L);
+        }}
+    );
+
+    Map<Menu, Long> orderLineItems = new HashMap<Menu, Long>() {{
+        put(menu, 1L);
+    }};
+
     @Test
     @DisplayName("예외사항이 존재하지 않는 경우 객체를 생성한다.")
     void order() {
-        assertDoesNotThrow(() -> new Order(1L));
+        assertDoesNotThrow(() -> new Order(orderTable, orderLineItems));
     }
 
     @Test
-    @DisplayName("주문 테이블 아이디가 비어있는 경우 예외가 발생한다.")
+    @DisplayName("주문 테이블이 비어있는 경우 예외가 발생한다.")
     void nullOrderTableId() {
-        assertThatThrownBy(() -> new Order(null))
+        assertThatThrownBy(() -> new Order(null, orderLineItems))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("주문 테이블은 비어있을 수 없습니다.");
     }
@@ -29,9 +46,8 @@ class OrderTest {
     @ParameterizedTest
     @NullAndEmptySource
     @DisplayName("orderLineItems가 비어있는 경우 예외가 발생한다.")
-    void emptyOrderItemLines(List<OrderLineItem> items) {
-        Order order = new Order(1L);
-        assertThatThrownBy(() -> order.setOrderLineItems(items))
+    void emptyOrderItemLines(Map<Menu, Long> items) {
+        assertThatThrownBy(() -> new Order(orderTable, items))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("주문 항목은 비어있을 수 없습니다.");
     }
@@ -40,7 +56,7 @@ class OrderTest {
     @DisplayName("COMPLETION 상태인 order를 변경하려는 경우 예외가 발생한다.")
     void completionStatus() {
         // given
-        Order order = new Order(1L);
+        Order order = new Order(orderTable, orderLineItems);
         order.changeStatus("COMPLETION");
 
         // when, then

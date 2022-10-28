@@ -47,7 +47,7 @@ public class TableService {
 
         savedOrderTable.changeEmpty(request.isEmpty());
 
-        return orderTableDao.save(savedOrderTable);
+        return savedOrderTable;
     }
 
     @Transactional

@@ -2,6 +2,8 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -10,8 +12,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.dto.table.ChangeOrderTableEmptyRequest;
 import kitchenpos.dto.table.ChangeOrderTableNumberOfGuestRequest;
 import kitchenpos.dto.table.CreateOrderTableRequest;
@@ -86,7 +91,7 @@ class TableServiceTest extends ServiceTest {
         void invalidStatus(String status) {
             // given
             OrderTable savedOrderTable = createAndSaveOrderTable(true);
-            Order order = new Order(savedOrderTable.getId());
+            Order order = createOrder(savedOrderTable);
             order.changeStatus(status);
             orderDao.save(order);
 
@@ -135,6 +140,28 @@ class TableServiceTest extends ServiceTest {
     private OrderTable createAndSaveOrderTable(boolean empty) {
         OrderTable orderTable = new OrderTable(10, empty);
         return orderTableDao.save(orderTable);
+    }
+
+    private Order createOrder(OrderTable orderTable) {
+        Product product = productDao.save(new Product("product", new BigDecimal(5000)));
+
+        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("menuGroup"));
+
+        Menu menu = menuDao.save(new Menu(
+            "menu",
+            new BigDecimal(2000),
+            menuGroup,
+            new HashMap<Product, Long>() {{
+                put(product, 1L);
+            }}
+        ));
+
+        return new Order(
+            orderTable,
+            new HashMap<Menu, Long>() {{
+                put(menu, 1L);
+            }}
+        );
     }
 
 }
