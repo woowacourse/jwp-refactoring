@@ -8,7 +8,7 @@ import java.util.List;
 import kitchenpos.ProductCreateRequestFixture;
 import kitchenpos.SpringServiceTest;
 import kitchenpos.application.request.ProductCreateRequest;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 

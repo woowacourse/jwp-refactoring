@@ -9,7 +9,7 @@ import kitchenpos.MenuCreateRequestFixture;
 import kitchenpos.SpringServiceTest;
 import kitchenpos.application.request.MenuCreateRequest;
 import kitchenpos.application.request.MenuCreateRequest.MenuProductCreateRequest;
-import kitchenpos.domain.Menu;
+import kitchenpos.domain.menu.Menu;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 

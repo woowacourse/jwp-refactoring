@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.request.MenuCreateRequest;
 import kitchenpos.application.request.MenuCreateRequest.MenuProductCreateRequest;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.dao.menu.MenuDao;
+import kitchenpos.dao.menu.MenuGroupDao;
+import kitchenpos.dao.product.ProductDao;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.product.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.request.TableGroupCreateRequest;
 import kitchenpos.application.request.TableGroupCreateRequest.OrderTableGroupRequest;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.dao.order.OrderDao;
+import kitchenpos.dao.table.OrderTableDao;
+import kitchenpos.dao.table.TableGroupDao;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
