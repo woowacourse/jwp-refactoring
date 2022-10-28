@@ -37,6 +37,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemRequest;
+import kitchenpos.dto.response.OrderResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -94,11 +95,11 @@ public class OrderServiceTest {
                 orderLineItemRequests);
 
         // when
-        Order savedOrder = orderService.create(orderCreateRequest);
+        OrderResponse orderResponse = orderService.create(orderCreateRequest);
 
         // then
-        assertThat(savedOrder.getId()).isNotNull();
-        assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        assertThat(orderResponse.getId()).isNotNull();
+        assertThat(orderResponse.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
     }
 
     @Test
@@ -156,10 +157,10 @@ public class OrderServiceTest {
         orderService.create(orderCreateRequest);
 
         // when
-        List<Order> orders = orderService.list();
+        List<OrderResponse> orderResponses = orderService.list();
 
         // then
-        assertThat(orders.size()).isEqualTo(1);
+        assertThat(orderResponses.size()).isEqualTo(1);
     }
 
     @Test
@@ -175,13 +176,13 @@ public class OrderServiceTest {
         OrderCreateRequest orderCreateRequest = generateOrderCreateRequest(saveOrderTable.getId(),
                 orderLineItemRequests);
 
-        Order order = orderService.create(orderCreateRequest);
+        OrderResponse orderResponse = orderService.create(orderCreateRequest);
 
         // when
-        Order changeOrder = orderService.changeOrderStatus(order.getId(), "MEAL");
+        OrderResponse response = orderService.changeOrderStatus(orderResponse.getId(), "MEAL");
 
         // then
-        assertThat(changeOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+        assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
     }
 
     @Test
@@ -197,10 +198,10 @@ public class OrderServiceTest {
         OrderCreateRequest orderCreateRequest = generateOrderCreateRequest(saveOrderTable.getId(),
                 orderLineItemRequests);
 
-        Order order = orderService.create(orderCreateRequest);
-        Order changeOrder = orderService.changeOrderStatus(order.getId(), "COMPLETION");
+        OrderResponse orderResponse = orderService.create(orderCreateRequest);
+        OrderResponse completion = orderService.changeOrderStatus(orderResponse.getId(), "COMPLETION");
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(changeOrder.getId(), "MEAL"))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(completion.getId(), "MEAL"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("완료된 주문은 상태를 변경할 수 없습니다.");
     }

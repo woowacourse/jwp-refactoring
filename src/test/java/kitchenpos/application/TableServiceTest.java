@@ -91,8 +91,7 @@ public class TableServiceTest {
         OrderTableCreateRequest orderTableCreateRequest = generateOrderTableCreateRequest(0, true);
         OrderTable orderTable = tableService.create(orderTableCreateRequest);
 
-        Order order = generateOrder(LocalDateTime.now(), orderTable.getId(), OrderStatus.COOKING.name(),
-                new ArrayList<>());
+        Order order = generateOrder(LocalDateTime.now(), orderTable.getId(), OrderStatus.COOKING.name());
         orderDao.save(order);
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), false))
