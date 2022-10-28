@@ -4,28 +4,16 @@ import static java.lang.Integer.MAX_VALUE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.sun.tools.javac.util.List;
 import java.math.BigDecimal;
 import java.util.Collections;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.exception.MenuPriceException;
 import kitchenpos.exception.NotFoundMenuGroupException;
 import kitchenpos.ui.dto.MenuProductDto;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class MenuServiceTest {
-
-    @Autowired
-    private MenuService menuService;
-
-    @Autowired
-    private MenuDao menuDao;
+class MenuServiceTest extends ServiceTest {
 
     @Test
     void 메뉴를_생성한다() {
@@ -66,15 +54,11 @@ class MenuServiceTest {
 
     @Test
     void 메뉴_리스트를_반환한다() {
-        Menu menu = createMenu(2L, 0, List.nil());
+        Menu menu = new Menu("", BigDecimal.valueOf(0), 1L, Collections.emptyList());
 
         int beforeSize = menuService.list().size();
         menuDao.save(menu);
 
         assertThat(menuService.list().size()).isEqualTo(beforeSize + 1);
-    }
-
-    private Menu createMenu(Long menuGroupId, int price, List<MenuProduct> products) {
-        return new Menu("test", BigDecimal.valueOf(price), menuGroupId, products);
     }
 }

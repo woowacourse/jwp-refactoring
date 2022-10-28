@@ -3,21 +3,11 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.request.ProductCreateRequest;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class ProductServiceTest {
-
-    @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    private ProductService productService;
+class ProductServiceTest extends ServiceTest {
 
     @Test
     void 상품을_생성한다() {

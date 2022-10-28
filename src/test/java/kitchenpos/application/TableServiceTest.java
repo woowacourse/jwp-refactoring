@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.exception.GuestSizeException;
 import kitchenpos.exception.NotFoundOrderTableException;
@@ -11,17 +10,8 @@ import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.ui.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.request.OrderTableCreateRequest;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class TableServiceTest {
-
-    @Autowired
-    private TableService tableService;
-
-    @Autowired
-    private OrderTableDao orderTableDao;
+class TableServiceTest extends ServiceTest {
 
     @Test
     void 주문테이블을_저장한다() {

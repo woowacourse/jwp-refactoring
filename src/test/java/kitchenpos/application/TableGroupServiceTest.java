@@ -6,34 +6,28 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.exception.OrderTableGroupingSizeException;
 import kitchenpos.ui.dto.OrderTableIdDto;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class TableGroupServiceTest {
+class TableGroupServiceTest extends ServiceTest {
 
-    @Autowired
-    private TableGroupService tableGroupService;
+    private OrderTable orderTable;
 
-    @Autowired
-    private OrderTableDao orderTableDao;
-
-    @Autowired
-    private TableGroupDao tableGroupDao;
+    @BeforeEach
+    void setUp() {
+        orderTable = new OrderTable(0, true);
+    }
 
     @Test
     void 테이블그룹을_생성한다() {
-        OrderTable saved1 = orderTableDao.save(createOrderTable(true));
-        OrderTable saved2 = orderTableDao.save(createOrderTable(true));
+        OrderTable saved1 = orderTableDao.save(orderTable);
+        OrderTable saved2 = orderTableDao.save(orderTable);
 
         TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(Arrays.asList(
                 new OrderTableIdDto(saved1.getId()),
@@ -47,7 +41,7 @@ class TableGroupServiceTest {
 
     @Test
     void 테이블그룹을_생성할때_주문테이블_수가_2개미만이면_예외를_발생한다() {
-        OrderTable saved = orderTableDao.save(createOrderTable(true));
+        OrderTable saved = orderTableDao.save(orderTable);
 
         TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(Collections.singletonList(
                 new OrderTableIdDto(saved.getId())
@@ -59,8 +53,8 @@ class TableGroupServiceTest {
 
     @Test
     void 테이블그룹을_생성할때_저장된_orderTables와_일치하지않으면_예외를_발생한다() {
-        OrderTable saved1 = orderTableDao.save(createOrderTable(true));
-        orderTableDao.save(createOrderTable(true));
+        OrderTable saved1 = orderTableDao.save(orderTable);
+        orderTableDao.save(orderTable);
 
         TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(Arrays.asList(
                 new OrderTableIdDto(saved1.getId()),
@@ -73,8 +67,8 @@ class TableGroupServiceTest {
 
     @Test
     void 그룹을_해제한다() {
-        OrderTable saved1 = orderTableDao.save(createOrderTable(true));
-        OrderTable saved2 = orderTableDao.save(createOrderTable(true));
+        OrderTable saved1 = orderTableDao.save(orderTable);
+        OrderTable saved2 = orderTableDao.save(orderTable);
 
         TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Arrays.asList(saved1, saved2));
         tableGroupDao.save(tableGroup);
@@ -82,9 +76,5 @@ class TableGroupServiceTest {
         tableGroupService.ungroup(tableGroup.getId());
 
         assertThat(orderTableDao.findById(saved1.getId()).get().getTableGroupId()).isNull();
-    }
-
-    private OrderTable createOrderTable(boolean isEmpty) {
-        return new OrderTable(0, isEmpty);
     }
 }
