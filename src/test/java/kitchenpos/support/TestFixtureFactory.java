@@ -31,9 +31,8 @@ public class TestFixtureFactory {
         return new Menu(null, name, new Price(price), menuGroupId, menuProducts);
     }
 
-    public static MenuProduct 메뉴_상품을_생성한다(final Menu menu, final Long productId, final long quantity,
-                                          final Price price) {
-        return new MenuProduct(null, menu, productId, quantity, price);
+    public static MenuProduct 메뉴_상품을_생성한다(final Long productId, final long quantity, final Price price) {
+        return new MenuProduct(null, null, productId, quantity, price);
     }
 
     public static Order 주문을_생성한다(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,

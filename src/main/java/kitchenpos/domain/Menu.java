@@ -37,7 +37,14 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
+        mapMenuProduct(menuProducts);
+    }
+
+    private void mapMenuProduct(final List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.mapMenu(this);
+        }
     }
 
     public Long getId() {
@@ -58,10 +65,6 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
     }
 
     @Override

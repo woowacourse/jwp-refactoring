@@ -1,7 +1,8 @@
 package kitchenpos.ui.mapper;
 
-import java.util.ArrayList;
+import java.util.List;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Price;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
 import org.springframework.stereotype.Component;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class MenuMapperImpl implements MenuMapper {
 
     @Override
-    public Menu toMenu(final MenuCreateRequest menuCreateRequest) {
+    public Menu toMenu(final MenuCreateRequest menuCreateRequest, final List<MenuProduct> menuProducts) {
         if (menuCreateRequest == null) {
             return null;
         }
@@ -20,7 +21,7 @@ public class MenuMapperImpl implements MenuMapper {
                 menuCreateRequest.getName(),
                 new Price(menuCreateRequest.getPrice()),
                 menuCreateRequest.getMenuGroupId(),
-                new ArrayList<>()
+                menuProducts
         );
     }
 }

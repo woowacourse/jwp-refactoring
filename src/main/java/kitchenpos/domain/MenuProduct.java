@@ -40,14 +40,12 @@ public class MenuProduct {
         mapMenu(menu);
     }
 
-    private void mapMenu(final Menu menu) {
+    public void mapMenu(final Menu menu) {
         if (this.menu != null) {
             this.menu.getMenuProducts()
                     .remove(this);
         }
         this.menu = menu;
-        menu.getMenuProducts()
-                .add(this);
     }
 
     public Long getSeq() {
@@ -56,10 +54,6 @@ public class MenuProduct {
 
     public Menu getMenu() {
         return menu;
-    }
-
-    public void setMenu(final Menu menu) {
-        this.menu = menu;
     }
 
     public Long getProductId() {
@@ -72,6 +66,10 @@ public class MenuProduct {
 
     public Price getPrice() {
         return price;
+    }
+
+    public Price getAmount() {
+        return price.multiply(quantity);
     }
 
     @Override
