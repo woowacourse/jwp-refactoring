@@ -1,14 +1,12 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.TableGroupCreateRequest;
@@ -59,22 +57,24 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-
-        if (orderRepository.existsByOrderTableInAndOrderStatusIn(orderTables, List.of(COOKING, MEAL))) {
-            throw new IllegalArgumentException();
-        }
-
+        validateCanUngroup(orderTables);
         orderTables.forEach(OrderTable::ungroup);
     }
 
-    private static void validateOrderTablesSize(final List<Long> orderTableIds) {
+    private void validateOrderTablesSize(final List<Long> orderTableIds) {
         if (orderTableIds.isEmpty() || orderTableIds.size() < 2) {
             throw new IllegalArgumentException();
         }
     }
 
-    private static void validateTablesExist(final List<Long> orderTableIds, final List<OrderTable> savedOrderTables) {
+    private void validateTablesExist(final List<Long> orderTableIds, final List<OrderTable> savedOrderTables) {
         if (orderTableIds.size() != savedOrderTables.size()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateCanUngroup(final List<OrderTable> orderTables) {
+        if (orderRepository.existsByOrderTableInAndOrderStatusIn(orderTables, OrderStatus.getUndoneStatuses())) {
             throw new IllegalArgumentException();
         }
     }
