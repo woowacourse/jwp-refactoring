@@ -11,4 +11,6 @@ public interface ProductDao {
     Optional<Product> findById(Long id);
 
     List<Product> findAll();
+
+    List<Product> findAllByIds(List<Long> ids);
 }

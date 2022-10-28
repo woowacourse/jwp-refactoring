@@ -9,17 +9,28 @@ public class MenuProduct {
     private long quantity;
 
     public MenuProduct(Long seq, Long menuId, Long productId, long quantity) {
+        validateProductId(productId);
+        validateQuantity(quantity);
         this.seq = seq;
         this.menuId = menuId;
         this.productId = productId;
         this.quantity = quantity;
     }
 
-    public MenuProduct(Long productId, long quantity) {
-        this(null, null, productId, quantity);
+    private void validateQuantity(long quantity) {
+        if (quantity < 1L) {
+            throw new IllegalArgumentException();
+        }
     }
 
-    public MenuProduct() {
+    private void validateProductId(Long productId) {
+        if (productId == null) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public MenuProduct(Long productId, long quantity) {
+        this(null, null, productId, quantity);
     }
 
     public Long getSeq() {

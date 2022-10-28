@@ -6,6 +6,7 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuProductsRequest;
@@ -53,16 +54,18 @@ public class MenuService {
         Map<Long, Long> groupByMenuProductsId = menuCreateRequest.getMenuProducts().stream()
                 .collect(Collectors.toMap(MenuProductsRequest::getProductId, MenuProductsRequest::getQuantity));
 
-        long sum = 0L;
+        Map<Long, Long> groupedPriceByProductId = productDao.findAllByIds(
+                new ArrayList<>(groupByMenuProductsId.keySet())).stream()
+                    .collect(Collectors.toMap(Product::getId, Product::getPrice));
+
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (Long menuProductsId : groupByMenuProductsId.keySet()) {
-            final Product product = productDao.findById(menuProductsId)
-                    .orElseThrow(IllegalArgumentException::new);
-            sum += product.getPrice() * groupByMenuProductsId.get(menuProductsId);
             savedMenuProducts.add(new MenuProduct(menuProductsId, groupByMenuProductsId.get(menuProductsId)));
         }
 
-        if (price.compareTo(sum) > 0) {
+        MenuProducts menuProducts = new MenuProducts(savedMenuProducts, new ArrayList<>(groupedPriceByProductId.keySet()));
+
+        if (menuProducts.isOverThanTotalPrice(groupedPriceByProductId, price)) {
             throw new IllegalArgumentException();
         }
 

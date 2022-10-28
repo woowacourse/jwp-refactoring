@@ -1,0 +1,59 @@
+package kitchenpos.domain;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
+public class MenuProductsTest {
+
+    @DisplayName("존재하지 않는 제품 id로 메뉴 상품 목록을 생성할 수 없다")
+    @Test
+    void create_productIdNotExist() {
+        List<Long> existProductId = List.of(1L, 2L, 3L);
+        List<MenuProduct> menuProducts = List.of(
+                new MenuProduct(1L,1L), new MenuProduct(4L, 3L));
+
+        assertThatThrownBy(() -> new MenuProducts(menuProducts, existProductId)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("중복되는 상품 id로 메뉴 상품 목록을 생성 시 중복을 없앤다")
+    @Test
+    void create_duplicateProduct() {
+        List<Long> existProductId = List.of(1L, 2L, 3L);
+        List<MenuProduct> menuProductList = List.of(
+                new MenuProduct(1L,1L), new MenuProduct(2L, 3L),
+                new MenuProduct(2L, 1L));
+
+        MenuProducts menuProducts = new MenuProducts(menuProductList, existProductId);
+
+        assertAll(
+                () -> assertThat(menuProducts.getMenuProducts().size()).isEqualTo(2),
+                () -> assertThat(menuProducts.getMenuProducts().get(1).getProductId()).isEqualTo(2L),
+                () -> assertThat(menuProducts.getMenuProducts().get(1).getQuantity()).isEqualTo(4L)
+        );
+    }
+
+    @DisplayName("메뉴 가격이 메뉴 상품 목록 전체 가격보다 큰 경우")
+    @ParameterizedTest
+    @CsvSource(value = {"7000:false", "7001:true"}, delimiter = ':')
+    void isOverThanTotalPrice(long menuPrice, boolean result) {
+        List<Long> existProductId = List.of(1L, 2L, 3L);
+        List<MenuProduct> menuProductList = List.of(
+                new MenuProduct(1L,1L), new MenuProduct(2L, 3L));
+        Map<Long, Long> groupedPriceByProduct = Map.of(1L, 1000L, 2L, 2000L, 3L, 3000L);
+
+        MenuProducts menuProducts = new MenuProducts(menuProductList, existProductId);
+        boolean overThanTotalPrice = menuProducts.isOverThanTotalPrice(groupedPriceByProduct, menuPrice);
+
+        assertThat(overThanTotalPrice).isEqualTo(result);
+    }
+}

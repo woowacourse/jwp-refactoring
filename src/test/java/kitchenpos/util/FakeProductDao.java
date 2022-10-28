@@ -38,4 +38,12 @@ public class FakeProductDao implements ProductDao {
                 .stream()
                 .collect(Collectors.toUnmodifiableList());
     }
+
+    @Override
+    public List<Product> findAllByIds(List<Long> ids) {
+        return repository.values()
+                .stream()
+                .filter(each -> ids.contains(each.getId()))
+                .collect(Collectors.toUnmodifiableList());
+    }
 }
