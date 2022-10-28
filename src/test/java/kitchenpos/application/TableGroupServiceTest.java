@@ -20,9 +20,9 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.OrderTableIdRequest;
-import kitchenpos.dto.request.TableGroupRequest;
-import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.application.dto.request.OrderTableIdRequest;
+import kitchenpos.application.dto.request.TableGroupRequest;
+import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.support.SpringBootNestedTest;
 
 @Transactional

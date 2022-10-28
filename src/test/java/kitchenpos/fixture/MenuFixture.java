@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.dto.request.MenuProductRequest;
-import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.application.dto.request.MenuProductRequest;
+import kitchenpos.application.dto.request.MenuRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 public enum MenuFixture {

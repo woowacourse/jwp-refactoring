@@ -15,9 +15,9 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.OrderStatusUpdateRequest;
-import kitchenpos.dto.request.OrderRequest;
-import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.application.dto.request.OrderStatusUpdateRequest;
+import kitchenpos.application.dto.request.OrderRequest;
+import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.repository.OrderRepository;
 
 @Service

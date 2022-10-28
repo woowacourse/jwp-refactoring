@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.application.MenuGroupService;
-import kitchenpos.dto.request.MenuGroupRequest;
-import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.application.dto.request.MenuGroupRequest;
+import kitchenpos.application.dto.response.MenuGroupResponse;
 
 @RestController
 public class MenuGroupRestController {

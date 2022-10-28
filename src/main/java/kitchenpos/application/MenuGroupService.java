@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.request.MenuGroupRequest;
-import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.application.dto.request.MenuGroupRequest;
+import kitchenpos.application.dto.response.MenuGroupResponse;
 
 @Service
 @Transactional

@@ -15,8 +15,8 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.request.TableGroupRequest;
-import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.application.dto.request.TableGroupRequest;
+import kitchenpos.application.dto.response.TableGroupResponse;
 
 @Service
 @Transactional

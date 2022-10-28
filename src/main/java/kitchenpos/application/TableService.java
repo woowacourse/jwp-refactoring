@@ -12,10 +12,10 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.ChangeNumOfTableGuestsRequest;
-import kitchenpos.dto.request.ChangeOrderTableEmptyRequest;
-import kitchenpos.dto.request.OrderTableRequest;
-import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.application.dto.request.ChangeNumOfTableGuestsRequest;
+import kitchenpos.application.dto.request.ChangeOrderTableEmptyRequest;
+import kitchenpos.application.dto.request.OrderTableRequest;
+import kitchenpos.application.dto.response.OrderTableResponse;
 
 @Service
 @Transactional

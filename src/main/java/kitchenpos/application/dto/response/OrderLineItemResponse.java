@@ -1,4 +1,4 @@
-package kitchenpos.dto.response;
+package kitchenpos.application.dto.response;
 
 import kitchenpos.domain.OrderLineItem;
 
