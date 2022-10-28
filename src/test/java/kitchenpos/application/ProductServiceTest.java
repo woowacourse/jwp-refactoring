@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.dto.ProductResponse;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ class ProductServiceTest extends ServiceTest {
 
     @Test
     void 상품을_생성한다() {
-        Product actual = productService.create(상품의_가격은(new BigDecimal(10_000)));
+        ProductResponse actual = productService.create(상품의_가격은(new BigDecimal(10_000)));
         assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
     }
 
@@ -42,7 +43,7 @@ class ProductServiceTest extends ServiceTest {
     void 모든_상품을_조회한다() {
         상품_생성(10_000);
 
-        List<Product> products = productService.list();
+        List<ProductResponse> products = productService.list();
 
         assertThat(products).hasSizeGreaterThanOrEqualTo(1);
     }
