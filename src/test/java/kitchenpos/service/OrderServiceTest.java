@@ -46,7 +46,7 @@ public class OrderServiceTest {
         Order order = orderService.create(orderCreateRequest);
 
         assertAll(
-                () -> assertThat(order.getOrderStatus()).isEqualTo("COOKING"),
+                () -> assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
                 () -> assertThat(order.getOrderTableId()).isEqualTo(4L),
                 () -> assertThat(order.getOrderLineItems().size()).isEqualTo(2)
         );
@@ -101,7 +101,7 @@ public class OrderServiceTest {
     @Test
     void changeOrderStatus() {
         preprocessWhenChange(
-                new Order(1L, 2L, "COOKING", LocalDateTime.now(), null),
+                new Order(1L, 2L, OrderStatus.COOKING, LocalDateTime.now(), null),
                 List.of(
                         new OrderLineItem(1L, 1L, 1L),
                         new OrderLineItem(1L, 2L, 1L)));
@@ -110,7 +110,7 @@ public class OrderServiceTest {
         Order order = orderService.changeOrderStatus(1L, orderStatusUpdateRequest);
 
         assertAll(
-                () -> assertThat(order.getOrderStatus()).isEqualTo("MEAL"),
+                () -> assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.MEAL),
                 () -> assertThat(order.getOrderTableId()).isEqualTo(2L),
                 () -> assertThat(order.getOrderLineItems().size()).isEqualTo(2)
         );

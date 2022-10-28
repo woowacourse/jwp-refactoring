@@ -39,23 +39,14 @@ public class OrderService {
     @Transactional
     public Order create(OrderCreateRequest orderCreateRequest) {
         OrderLineItems orderLineItems = generateOrderLineItems(orderCreateRequest);
+        OrderTable orderTable = generateOrderTable(orderCreateRequest);
 
-        final OrderTable orderTable = orderTableDao.findById(orderCreateRequest.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        final Order savedOrder = orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now()));
-
+        Order savedOrder = orderDao.save(generateOrder(orderTable));
 
         final Long orderId = savedOrder.getId();
         List<OrderLineItem> lastOrderLineItems = orderLineItems.changeOrderId(orderId).getOrderLineItems();
         lastOrderLineItems.forEach(orderLineItemDao::save);
-        savedOrder.setOrderLineItems(lastOrderLineItems);
-
-        return savedOrder;
+        return savedOrder.changeOrderLineItems(lastOrderLineItems);
     }
 
     private OrderLineItems generateOrderLineItems(OrderCreateRequest orderCreateRequest) {
@@ -80,32 +71,50 @@ public class OrderService {
         }
     }
 
-    public List<Order> list() {
-        final List<Order> orders = orderDao.findAll();
+    private OrderTable generateOrderTable(OrderCreateRequest orderCreateRequest) {
+        OrderTable orderTable = orderTableDao.findById(orderCreateRequest.getOrderTableId())
+                .orElseThrow(IllegalArgumentException::new);
+        validateNonEmptyOrderTable(orderTable);
+        return orderTable;
+    }
 
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
+    private void validateNonEmptyOrderTable(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
         }
+    }
 
-        return orders;
+    private Order generateOrder(OrderTable orderTable) {
+        return new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
+    }
+
+    public List<Order> list() {
+        return orderDao.findAll().stream()
+                .map(each -> each.changeOrderLineItems(orderLineItemDao.findAllByOrderId(each.getId())))
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Transactional
     public Order changeOrderStatus(final Long orderId, OrderStatusUpdateRequest orderStatusUpdateRequest) {
+        Order searchedOrder = searchOrder(orderId);
+        final OrderStatus orderStatus = OrderStatus.valueOf(orderStatusUpdateRequest.getOrderStatus());
+
+        searchedOrder = orderDao.save(searchedOrder.changeOrderStatus(orderStatus));
+
+        return searchedOrder.changeOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
+    }
+
+    private Order searchOrder(Long orderId) {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        validateCompletedOrder(savedOrder);
+        return savedOrder;
+    }
+
+    private void validateCompletedOrder(Order order) {
+        if (order.isCompletion()) {
             throw new IllegalArgumentException();
         }
-
-        final OrderStatus orderStatus = OrderStatus.valueOf(orderStatusUpdateRequest.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
-
-        orderDao.save(savedOrder);
-
-        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
-
-        return savedOrder;
     }
 }

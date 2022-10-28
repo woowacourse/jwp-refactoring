@@ -1,16 +1,18 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 public class Order {
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+        validateOrderTableId(orderTableId);
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -18,50 +20,48 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
-        this(null, orderTableId, orderStatus.name(), orderedTime, null);
+    private void validateOrderTableId(Long orderTableId) {
+        if (orderTableId == null) {
+            throw new IllegalArgumentException();
+        }
     }
 
-    public Order() {
+    public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        this(null, orderTableId, orderStatus, orderedTime, null);
+    }
+
+    public Order changeOrderLineItems(List<OrderLineItem> orderLineItems) {
+        return new Order(this.id, this.orderTableId, this.orderStatus, this.orderedTime, orderLineItems);
+    }
+
+    public boolean isCompletion() {
+        return this.orderStatus == OrderStatus.COMPLETION;
+    }
+
+    public Order changeOrderStatus(OrderStatus orderStatus) {
+        if (this.isCompletion()) {
+            throw new IllegalArgumentException();
+        }
+        return new Order(this.id, this.orderTableId, orderStatus, this.orderedTime, this.orderLineItems);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Long getOrderTableId() {
         return orderTableId;
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
-    }
-
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
-    }
-
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 }

@@ -2,6 +2,7 @@ package kitchenpos.util;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 
 import java.util.*;
@@ -15,9 +16,10 @@ public class FakeOrderDao implements OrderDao {
     @Override
     public Order save(Order entity) {
         if (entity.getId() == null) {
-            entity.setId(++id);
-            repository.put(entity.getId(), entity);
-            return entity;
+            Order addEntity = new Order(++id, entity.getOrderTableId(), entity.getOrderStatus(),
+                    entity.getOrderedTime(), entity.getOrderLineItems());
+            repository.put(addEntity.getId(), addEntity);
+            return addEntity;
         }
         repository.put(entity.getId(), entity);
         return entity;
@@ -43,7 +45,7 @@ public class FakeOrderDao implements OrderDao {
         return repository.values()
                 .stream()
                 .anyMatch(each -> Objects.equals(each.getOrderTableId(), orderTableId) &&
-                        orderStatuses.contains(each.getOrderStatus()));
+                        orderStatuses.contains(each.getOrderStatus().name()));
     }
 
     @Override
@@ -51,6 +53,6 @@ public class FakeOrderDao implements OrderDao {
         return repository.values()
                 .stream()
                 .anyMatch(each -> orderTableIds.contains(each.getOrderTableId()) &&
-                        orderStatuses.contains(each.getOrderStatus()));
+                        orderStatuses.contains(each.getOrderStatus().name()));
     }
 }
