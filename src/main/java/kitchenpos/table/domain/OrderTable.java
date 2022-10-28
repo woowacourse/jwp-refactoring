@@ -3,51 +3,30 @@ package kitchenpos.table.domain;
 import java.util.Objects;
 
 public class OrderTable {
-    private Long id;
+
+    private final Long id;
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
+    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         this.id = id;
-    }
-
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
         this.tableGroupId = tableGroupId;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
-    }
-
-    public boolean isEmpty() {
-        return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
         this.empty = empty;
+    }
+
+    public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
+        this(null, tableGroupId, numberOfGuests, empty);
+    }
+
+    public OrderTable(int numberOfGuests, boolean empty) {
+        this(null, numberOfGuests, empty);
     }
 
     public void occupyTableGroup(Long tableGroupId) {
         shouldNotJoinTableGroup();
         this.tableGroupId = tableGroupId;
-        this.empty = false;
-    }
-
-    public void unOccupyTableGroup() {
-        this.tableGroupId = null;
         this.empty = false;
     }
 
@@ -59,5 +38,41 @@ public class OrderTable {
 
     private boolean canJoinWithTableGroupStatus() {
         return (this.empty && Objects.isNull(this.tableGroupId));
+    }
+
+    public void unOccupyTableGroup() {
+        this.tableGroupId = null;
+        this.empty = false;
+    }
+
+    public void changeEmpty(Boolean empty) {
+        this.empty = empty;
+    }
+
+    public void changeNumberOfGuests(int numberOfGuests) {
+        validateNumberOfGuests(numberOfGuests);
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0 || empty) {
+            throw new InvalidNumberOfGuestsException();
+        }
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getTableGroupId() {
+        return tableGroupId;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 }
