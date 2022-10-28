@@ -2,7 +2,6 @@ package kitchenpos.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
@@ -16,7 +15,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class JdbcTemplateMenuDao implements MenuDao {
+public class JdbcTemplateMenuDao {
     private static final String TABLE_NAME = "menu";
     private static final String KEY_COLUMN_NAME = "id";
 
@@ -31,14 +30,12 @@ public class JdbcTemplateMenuDao implements MenuDao {
         ;
     }
 
-    @Override
     public Menu save(final Menu entity) {
         final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
         final Number key = jdbcInsert.executeAndReturnKey(parameters);
         return select(key.longValue());
     }
 
-    @Override
     public Optional<Menu> findById(final Long id) {
         try {
             return Optional.of(select(id));
@@ -47,13 +44,11 @@ public class JdbcTemplateMenuDao implements MenuDao {
         }
     }
 
-    @Override
     public List<Menu> findAll() {
         final String sql = "SELECT id, name, price, menu_group_id FROM menu ";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    @Override
     public long countByIdIn(final List<Long> ids) {
         final String sql = "SELECT COUNT(*) FROM menu WHERE id IN (:ids)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
@@ -69,12 +64,11 @@ public class JdbcTemplateMenuDao implements MenuDao {
     }
 
     private Menu toEntity(final ResultSet resultSet) throws SQLException {
-        return new Menu(
+        return Menu.createForEntity(
                 resultSet.getLong("id"),
                 resultSet.getString("name"),
                 resultSet.getBigDecimal("price"),
-                resultSet.getLong("menu_group_id"),
-                new LinkedList<>()
+                resultSet.getLong("menu_group_id")
         );
     }
 }

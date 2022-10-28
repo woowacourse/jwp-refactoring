@@ -13,12 +13,12 @@ import org.junit.jupiter.api.Test;
 
 class JdbcTemplateMenuDaoTest extends JdbcTemplateTest{
 
-    private MenuDao menuDao;
+    private JdbcTemplateMenuDao jdbcTemplateMenuDao;
     private MenuGroupDao menuGroupDao;
 
     @BeforeEach
     void setUp() {
-        menuDao = new JdbcTemplateMenuDao(dataSource);
+        jdbcTemplateMenuDao = new JdbcTemplateMenuDao(dataSource);
         menuGroupDao = new JdbcTemplateMenuGroupDao(dataSource);
     }
 
@@ -26,14 +26,14 @@ class JdbcTemplateMenuDaoTest extends JdbcTemplateTest{
     @DisplayName("데이터 베이스에 저장할 경우 id 값을 가진 엔티티로 반환한다.")
     void save() {
         final MenuGroup menuGroup = menuGroupDao.save(getMenuGroupRequest(1L));
-        final Menu menu = menuDao.save(getMenuRequest(menuGroup.getId()));
+        final Menu menu = jdbcTemplateMenuDao.save(getMenuRequest(menuGroup.getId()));
         assertThat(menu.getId()).isNotNull();
     }
 
     @Test
     @DisplayName("목록을 조회한다.")
     void list() {
-        final List<Menu> actual = menuDao.findAll();
+        final List<Menu> actual = jdbcTemplateMenuDao.findAll();
         assertThat(actual).hasSize(6);
     }
 }
