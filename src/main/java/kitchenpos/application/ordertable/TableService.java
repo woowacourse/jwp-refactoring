@@ -1,4 +1,4 @@
-package kitchenpos.application.order;
+package kitchenpos.application.ordertable;
 
 import java.util.Arrays;
 import java.util.List;

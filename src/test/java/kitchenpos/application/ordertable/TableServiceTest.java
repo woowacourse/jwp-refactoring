@@ -1,4 +1,4 @@
-package kitchenpos.application.order;
+package kitchenpos.application.ordertable;
 
 import static kitchenpos.support.fixture.OrderTableFixture.createEmptyStatusTable;
 import static kitchenpos.support.fixture.OrderTableFixture.createNonEmptyStatusTable;

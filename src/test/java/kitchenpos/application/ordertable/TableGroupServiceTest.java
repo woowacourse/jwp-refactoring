@@ -1,4 +1,4 @@
-package kitchenpos.application.order;
+package kitchenpos.application.ordertable;
 
 import static kitchenpos.support.fixture.OrderTableFixture.createEmptyStatusTable;
 import static kitchenpos.support.fixture.OrderTableFixture.createNonEmptyStatusTable;
@@ -9,6 +9,10 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.application.ordertable.OrderTableOfGroupRequest;
+import kitchenpos.application.ordertable.TableGroupRequest;
+import kitchenpos.application.ordertable.TableGroupResponse;
+import kitchenpos.application.ordertable.TableGroupService;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;

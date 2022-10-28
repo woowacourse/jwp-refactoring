@@ -1,4 +1,4 @@
-package kitchenpos.application.order;
+package kitchenpos.application.ordertable;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;

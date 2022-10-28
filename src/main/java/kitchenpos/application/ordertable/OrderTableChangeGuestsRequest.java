@@ -1,4 +1,4 @@
-package kitchenpos.application.order;
+package kitchenpos.application.ordertable;
 
 public class OrderTableChangeGuestsRequest {
 
