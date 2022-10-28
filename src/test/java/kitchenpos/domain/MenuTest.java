@@ -13,7 +13,7 @@ class MenuTest {
     @Test
     void validatePriceIsCheaperThanSum() {
         BigDecimal price = new BigDecimal(30_000);
-        Menu menu = new Menu("치킨 세트", price, 1L);
+        Menu menu = new Menu(null, "치킨 세트", price, 1L);
 
         BigDecimal sumOfProductPrice = new BigDecimal(25_000);
 

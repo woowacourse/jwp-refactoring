@@ -32,7 +32,7 @@ public enum MenuFixture {
     }
 
     public Menu toMenu(Long menuGroupId, Long... productIds) {
-        Menu menu = new Menu(name, price, menuGroupId);
+        Menu menu = new Menu(null, name, price, menuGroupId);
         addMenuProducts(menu, productIds);
         return menu;
     }

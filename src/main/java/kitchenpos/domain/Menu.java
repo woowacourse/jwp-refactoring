@@ -12,10 +12,6 @@ public class Menu {
     private final Long menuGroupId;
     private final List<MenuProduct> menuProducts;
 
-    public Menu(String name, BigDecimal price, Long menuGroupId) {
-        this(null, name, price, menuGroupId);
-    }
-
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
         this(id, name, price, menuGroupId, new ArrayList<>());
     }
