@@ -1,9 +1,7 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -34,57 +32,37 @@ public class MenuService {
         this.productDao = productDao;
     }
 
-    public Menu create(final Menu menu) {
-        final BigDecimal price = menu.getPrice();
-
-        // :todo  Menu 책임
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
+    public Menu create(final Menu request) {
         // :todo menuGroup 책임
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
+        if (!menuGroupDao.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
+        return menuDao.save(
+                new Menu(
+                        request.getName(),
+                        request.getPrice(),
+                        request.getMenuGroupId(),
+                        mapToMenuProducts(request.getMenuProducts())
+                )
+        );
+    }
 
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
+    private List<MenuProduct> mapToMenuProducts(final List<MenuProduct> requests) {
+        return requests.stream()
+                .map(it -> {
+                    final Product product = getProductById(it.getProductId());
+                    return new MenuProduct(product.getId(), it.getQuantity(), product.getPrice());
+                })
+                .collect(Collectors.toList());
+    }
 
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        // : todo product 책임
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final Menu savedMenu = menuDao.save(menu);
-
-        final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-
-        // :todo 객체끼리 수동으로 의존 관계 맺어주는게 불편,ORM 사용해볼까
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
-        }
-        savedMenu.setMenuProducts(savedMenuProducts);
-
-        return savedMenu;
+    private Product getProductById(final Long productId) {
+        return productDao.findById(productId)
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     @Transactional(readOnly = true)
     public List<Menu> list() {
-        final List<Menu> menus = menuDao.findAll();
-
-        // :todo 객체끼리 수동으로 의존 관계 맺어주는게 불편,ORM 사용해볼까 2
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
-
-        return menus;
+        return menuDao.findAll();
     }
 }
