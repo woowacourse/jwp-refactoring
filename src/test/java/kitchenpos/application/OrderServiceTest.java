@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.domain.order.OrderStatus.COMPLETION;
+import static kitchenpos.domain.order.OrderStatus.COOKING;
+import static kitchenpos.domain.order.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -10,9 +10,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderRepository;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
 import kitchenpos.domain.menu.Menu;
@@ -63,8 +63,8 @@ class OrderServiceTest extends ServiceTest {
 
         OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
 
-        OrderLineItem orderLineItem1 = new OrderLineItem(null, menu1.getId(), 1);
-        OrderLineItem orderLineItem2 = new OrderLineItem(null, menu2.getId(), 2);
+        OrderLineItem orderLineItem1 = new OrderLineItem(menu1.getId(), 1);
+        OrderLineItem orderLineItem2 = new OrderLineItem(menu2.getId(), 2);
 
         Order order = new Order(orderTable, COOKING, List.of(orderLineItem1, orderLineItem2));
 
@@ -105,8 +105,8 @@ class OrderServiceTest extends ServiceTest {
 
         OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, true));
 
-        OrderLineItem orderLineItem1 = new OrderLineItem(null, menu1.getId(), 1);
-        OrderLineItem orderLineItem2 = new OrderLineItem(null, menu2.getId(), 2);
+        OrderLineItem orderLineItem1 = new OrderLineItem(menu1.getId(), 1);
+        OrderLineItem orderLineItem2 = new OrderLineItem(menu2.getId(), 2);
 
         Order order = new Order(orderTable, COOKING, List.of(orderLineItem1, orderLineItem2));
 

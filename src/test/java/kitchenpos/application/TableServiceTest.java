@@ -7,9 +7,9 @@ import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderRepository;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
 import org.junit.jupiter.api.Test;
