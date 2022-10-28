@@ -53,15 +53,12 @@ public class Order {
 
     public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus,
                  final LocalDateTime orderedTime) {
+        this(orderTableId, orderStatus, orderedTime, new ArrayList<>());
         this.id = id;
-        this.orderTableId = orderTableId;
-        this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
     }
 
     public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
-        validateOrderLineItemsEmpty(orderLineItems);
         injectOrder(orderLineItems);
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -75,10 +72,8 @@ public class Order {
         }
     }
 
-    private void validateOrderLineItemsEmpty(final List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
+    public boolean isOrderLineItemsEmpty() {
+        return CollectionUtils.isEmpty(this.orderLineItems);
     }
 
     public boolean isOrderLineItemsSizeEqualTo(final int size) {

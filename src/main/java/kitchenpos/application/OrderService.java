@@ -35,11 +35,9 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
         final Order order = convertToOrder(orderRequest);
+        validateOrderLineItemsEmpty(order);
         validateMenusExist(orderRequest.getOrderLineItems().size(), order);
-
-        final OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-        validateEmpty(orderTable);
+        validateOrderTableExistAndNotEmpty(orderRequest);
         orderDao.save(order);
         return OrderResponse.of(order);
     }
@@ -53,14 +51,22 @@ public class OrderService {
         return orderRequest.toEntity(menus);
     }
 
-    private void validateEmpty(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
+    private static void validateOrderLineItemsEmpty(final Order order) {
+        if (order.isOrderLineItemsEmpty()) {
             throw new IllegalArgumentException();
         }
     }
 
     private void validateMenusExist(final int menusSize, final Order order) {
         if (!order.isOrderLineItemsSizeEqualTo(menusSize)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateOrderTableExistAndNotEmpty(final OrderRequest orderRequest) {
+        final OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId())
+                .orElseThrow(IllegalArgumentException::new);
+        if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
     }
