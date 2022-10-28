@@ -86,20 +86,35 @@ class JdbcTemplateOrderTableDaoTest {
                     .collect(Collectors.toUnmodifiableList());
         }
 
-        @ParameterizedTest
-        @ValueSource(longs = {1L, 2L})
-        void findAllByTableGroupId(final long tableGroupId) {
-            final var actual = orderTableDao.findAllByTableGroupId(tableGroupId);
-            final var expected = asListByTableGroupId(savedOrderTables, tableGroupId);
-            DaoUtils.assertAllEquals(actual, expected, JdbcTemplateOrderTableDaoTest.this::assertEquals);
-        }
+        @Nested
+        class findAllByTableGroupId {
 
-        private List<OrderTable> asListByTableGroupId(final Map<Long, OrderTable> orderTables,
-                                                      final Long tableGroupId) {
-            return orderTables.values()
-                    .stream()
-                    .filter(orderTable -> orderTable.getTableGroupId().equals(tableGroupId))
-                    .collect(Collectors.toUnmodifiableList());
+            @ParameterizedTest(name = "exist")
+            @ValueSource(longs = 1L)
+            void exist(final long tableGroupId) {
+                assert savedOrderTables.containsKey(tableGroupId);
+
+                final var actual = orderTableDao.findAllByTableGroupId(tableGroupId);
+                final var expected = asListByTableGroupId(savedOrderTables, tableGroupId);
+                DaoUtils.assertAllEquals(actual, expected, JdbcTemplateOrderTableDaoTest.this::assertEquals);
+            }
+
+            @ParameterizedTest(name = "empty")
+            @ValueSource(longs = 20L)
+            void empty(final long tableGroupId) {
+                assert !savedOrderTables.containsKey(tableGroupId);
+
+                final var actual = orderTableDao.findAllByTableGroupId(tableGroupId);
+                assertThat(actual).isEmpty();
+            }
+
+            private List<OrderTable> asListByTableGroupId(final Map<Long, OrderTable> orderTables,
+                                                          final Long tableGroupId) {
+                return orderTables.values()
+                        .stream()
+                        .filter(orderTable -> orderTable.getTableGroupId().equals(tableGroupId))
+                        .collect(Collectors.toUnmodifiableList());
+            }
         }
 
         @Nested
