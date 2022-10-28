@@ -19,7 +19,7 @@ public class Order {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "order_table_id", nullable = false)
     private Long orderTableId;
 
     @Column(nullable = false)

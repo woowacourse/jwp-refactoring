@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.EntityManager;
 import kitchenpos.RepositoryTest;
 import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.application.request.TableGroupRequest;
@@ -38,9 +39,12 @@ class TableGroupServiceTest {
     @Autowired
     private TableGroupRepository tableGroupRepository;
 
+    @Autowired
+    private EntityManager entityManager;
+
     @BeforeEach
     void setUp() {
-        sut = new TableGroupService(orderRepository, orderTableRepository, tableGroupRepository);
+        sut = new TableGroupService(orderTableRepository, tableGroupRepository);
         tableService = new TableService(orderRepository, orderTableRepository);
     }
 
@@ -99,6 +103,8 @@ class TableGroupServiceTest {
         // given
         final List<OrderTableRequest> orderTables = toOrderTableRequests(tableService.list());
         sut.create(new TableGroupRequest(LocalDateTime.now(), orderTables));
+        entityManager.flush();
+        entityManager.clear();
 
         final OrderTableRequest orderTable1 = orderTables.get(0);
         final OrderTableRequest orderTable2 = orderTables.get(1);
@@ -162,6 +168,8 @@ class TableGroupServiceTest {
         final TableGroupResponse createdTableGroup = sut.create(tableGroup);
 
         saveCookingOrder(createdOrderTable);
+        entityManager.flush();
+        entityManager.clear();
 
         // when & then
         assertThatThrownBy(() -> sut.ungroup(createdTableGroup.getId()))

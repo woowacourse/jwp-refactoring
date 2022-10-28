@@ -2,11 +2,15 @@ package kitchenpos.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 
 @Entity
 public class OrderTable {
@@ -15,6 +19,7 @@ public class OrderTable {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    @Column(name = "table_group_id")
     private Long tableGroupId;
 
     @Column(nullable = false)
@@ -22,6 +27,10 @@ public class OrderTable {
 
     @Column(nullable = false)
     private boolean empty;
+
+    @OneToMany
+    @JoinColumn(name = "order_table_id")
+    private List<Order> orders = new ArrayList<>();
 
     protected OrderTable() {
     }
@@ -50,6 +59,22 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void updateNumberOfGuests(final int numberOfGuests) {
+        validateNegativeNumberOfGuests(numberOfGuests);
+
+        if (isEmpty()) {
+            throw new IllegalArgumentException("테이블이 비어있는 상태일 수 없습니다.");
+        }
+
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public boolean containsCookingOrMealOrder() {
+        return orders.stream()
+                .anyMatch(it -> it.getOrderStatus().equals(OrderStatus.COOKING.name())
+                        || it.getOrderStatus().equals(OrderStatus.MEAL.name()));
+    }
+
     public Long getId() {
         return id;
     }
@@ -72,16 +97,6 @@ public class OrderTable {
 
     public void setEmpty(final boolean empty) {
         this.empty = empty;
-    }
-
-    public void updateNumberOfGuests(final int numberOfGuests) {
-        validateNegativeNumberOfGuests(numberOfGuests);
-
-        if (isEmpty()) {
-            throw new IllegalArgumentException("테이블이 비어있는 상태일 수 없습니다.");
-        }
-
-        this.numberOfGuests = numberOfGuests;
     }
 
     private static void validateNegativeNumberOfGuests(final int numberOfGuests) {

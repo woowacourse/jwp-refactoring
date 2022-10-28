@@ -63,10 +63,9 @@ class TableServiceTest {
         assertThat(response).isNotNull();
         assertThat(response.getId()).isNotNull();
         final OrderTable foundOrderTable = orderTableRepository.findById(response.getId()).get();
-        assertThat(foundOrderTable)
-                .usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(response);
+        assertThat(response)
+                .extracting(OrderTableResponse::getTableGroupId, OrderTableResponse::getNumberOfGuests, OrderTableResponse::isEmpty)
+                .containsExactly(foundOrderTable.getTableGroupId(), foundOrderTable.getNumberOfGuests(), foundOrderTable.isEmpty());
     }
 
     @DisplayName("전체 주문 테이블 목록을 조회할 수 있다.")
