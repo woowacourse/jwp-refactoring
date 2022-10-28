@@ -1,5 +1,9 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.request.OrderLineItemRequest;
+import kitchenpos.application.dto.request.OrderRequest;
+import kitchenpos.application.dto.request.SavedOrderRequest;
+import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -38,7 +42,9 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
+    public OrderResponse create(final OrderRequest request) {
+        final Order order = convertToOrder(request);
+
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
@@ -76,21 +82,23 @@ public class OrderService {
         }
         savedOrder.setOrderLineItems(savedOrderLineItems);
 
-        return savedOrder;
+        return convertToOrderResponse(savedOrder);
     }
 
-    public List<Order> list() {
+    public List<OrderResponse> list() {
         final List<Order> orders = orderDao.findAll();
 
         for (final Order order : orders) {
             order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
         }
 
-        return orders;
+        return convertToOrderResponse(orders);
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public OrderResponse changeOrderStatus(final Long orderId, final SavedOrderRequest request) {
+        final Order order = convertToOrder(request);
+
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -105,6 +113,43 @@ public class OrderService {
 
         savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
 
-        return savedOrder;
+        return convertToOrderResponse(savedOrder);
+    }
+
+    private Order convertToOrder(final OrderRequest request) {
+        final Order order = new Order();
+        order.setOrderTableId(request.getOrderTableId());
+        order.setOrderLineItems(convertToOrderLineItem(request.getOrderLineItems()));
+        return order;
+    }
+
+    private Order convertToOrder(final SavedOrderRequest request) {
+        final Order order = new Order();
+        order.setOrderStatus(request.getOrderStatus());
+        return order;
+    }
+
+    private OrderResponse convertToOrderResponse(final Order savedOrder) {
+        return new OrderResponse(savedOrder.getId(), savedOrder.getOrderTableId(), savedOrder.getOrderStatus(),
+            savedOrder.getOrderedTime(), savedOrder.getOrderLineItems());
+    }
+
+    private List<OrderResponse> convertToOrderResponse(final List<Order> orders) {
+        return orders.stream()
+            .map(this::convertToOrderResponse)
+            .collect(Collectors.toUnmodifiableList());
+    }
+
+    private List<OrderLineItem> convertToOrderLineItem(final List<OrderLineItemRequest> orderLineItems) {
+        return orderLineItems.stream()
+            .map(this::convertToOrderLineItem)
+            .collect(Collectors.toUnmodifiableList());
+    }
+
+    private OrderLineItem convertToOrderLineItem(final OrderLineItemRequest request) {
+        final OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(request.getMenuId());
+        orderLineItem.setQuantity(request.getQuantity());
+        return orderLineItem;
     }
 }
