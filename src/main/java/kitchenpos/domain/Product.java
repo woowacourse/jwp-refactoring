@@ -1,8 +1,8 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.PersistenceCreator;
 
 public class Product {
 
@@ -11,15 +11,21 @@ public class Product {
     private final String name;
     private final BigDecimal price;
 
-    public Product(final String name, final BigDecimal price) {
-        this(null, name, price);
+    public static Product of(final String name, final BigDecimal price) {
+        return new Product(null, name, price);
     }
 
-    @PersistenceCreator
     private Product(final Long id, final String name, final BigDecimal price) {
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = getVerifiedPrice(price);
+    }
+
+    private BigDecimal getVerifiedPrice(final BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
+        return price;
     }
 
     public Long getId() {

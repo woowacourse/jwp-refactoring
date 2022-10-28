@@ -75,7 +75,7 @@ abstract class ServiceTest {
     }
 
     protected Product saveProduct(final String name, final BigDecimal price) {
-        final Product product = new Product(name, price);
+        final Product product = Product.of(name, price);
         return productRepository.save(product);
     }
 

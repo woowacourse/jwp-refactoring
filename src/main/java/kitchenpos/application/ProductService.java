@@ -1,10 +1,6 @@
 package kitchenpos.application;
 
-import static java.util.stream.StreamSupport.stream;
-
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.ProductRepository;
@@ -25,19 +21,18 @@ public class ProductService {
 
     @Transactional
     public ProductResponse create(final ProductCreateRequest request) {
-        final BigDecimal price = request.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final Product product = new Product(request.getName(), price);
-        final Product saved = productRepository.save(product);
-        return new ProductResponse(saved.getId(), saved.getName(), saved.getPrice());
+        final Product product = productRepository.save(
+                Product.of(
+                        request.getName(),
+                        request.getPrice()
+                )
+        );
+        return new ProductResponse(product.getId(), product.getName(), product.getPrice());
     }
 
     public List<ProductResponse> list() {
-        return stream(productRepository.findAll().spliterator(), false)
+        return productRepository.findAll()
+                .stream()
                 .map(it -> new ProductResponse(it.getId(), it.getName(), it.getPrice()))
                 .collect(Collectors.toList());
     }
