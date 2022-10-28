@@ -1,13 +1,10 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.exception.ExceptionType.INVALID_TABLE_GROUP_EXCEPTION;
 import static kitchenpos.application.exception.ExceptionType.INVALID_TABLE_UNGROUP_EXCEPTION;
 import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.exception.CustomIllegalArgumentException;
 import kitchenpos.dao.OrderDao;
@@ -16,11 +13,13 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.OrderTableRequest;
+import kitchenpos.ui.dto.TableGroupRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
+@Transactional
 public class TableGroupService {
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
@@ -33,47 +32,26 @@ public class TableGroupService {
         this.tableGroupDao = tableGroupDao;
     }
 
-    // todo Transactional 최상단으로 올리기
-    @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+    public TableGroup create(final TableGroupRequest request) {
+        final List<OrderTable> savedOrderTables = getRequestOrderTables(request.getOrderTables());
+        validateSize(request.getOrderTables(), savedOrderTables);
+        return tableGroupDao.save(request.toTableGroup());
+    }
 
-        // todo TableGroup 객체 책임
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new CustomIllegalArgumentException(INVALID_TABLE_GROUP_EXCEPTION);
+    private void validateSize(final List<OrderTableRequest> targetOrderTables,
+                              final List<OrderTable> savedOrderTables) {
+        if (targetOrderTables.size() != savedOrderTables.size()) {
+            throw new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION);
         }
+    }
 
+    private List<OrderTable> getRequestOrderTables(final List<OrderTableRequest> orderTables) {
         final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
+                .map(OrderTableRequest::getId)
                 .collect(Collectors.toList());
 
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-
-        // todo TableGroup 객체 책임
-        if (orderTables.size() != savedOrderTables.size()) {
-            throw new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION);
-        }
-
-        // todo TableGroup 객체 책임
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION);
-            }
-        }
-        // todo 시간 주입을 외부에서 받도록 할 수는 없을까?
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-
-        final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
-            savedOrderTable.setEmpty(false);
-            orderTableDao.save(savedOrderTable);
-        }
-        savedTableGroup.setOrderTables(savedOrderTables);
-
-        return savedTableGroup;
+        return savedOrderTables;
     }
 
     @Transactional

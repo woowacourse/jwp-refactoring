@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class TableService {
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
@@ -26,8 +27,6 @@ public class TableService {
         this.orderTableDao = orderTableDao;
     }
 
-    // todo Transactional 최상단으로 올리기
-    @Transactional
     public OrderTable create(final OrderTable orderTable) {
         // todo 왜 setId를 해주는지?
         orderTable.setId(null);
