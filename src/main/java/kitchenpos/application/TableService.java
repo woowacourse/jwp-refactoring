@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class TableService {
 
     private final OrderDao orderDao;
@@ -26,9 +26,10 @@ public class TableService {
         this.orderTableDao = orderTableDao;
     }
 
+    @Transactional
     public OrderTableResponse create(OrderTableRequest orderTableRequest) {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, orderTableRequest.getNumberOfGuests(),
-                orderTableRequest.isEmpty()));
+        OrderTable orderTable = orderTableDao.save(
+                new OrderTable(null, orderTableRequest.getNumberOfGuests(), orderTableRequest.isEmpty()));
 
         return new OrderTableResponse(orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(),
                 orderTable.isEmpty());
@@ -38,16 +39,16 @@ public class TableService {
         return orderTableDao.findAll();
     }
 
+    @Transactional
     public void changeEmpty(Long orderTableId, TableEmptyRequest tableEmptyRequest) {
-        OrderTable orderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        OrderTable orderTable = orderTableDao.findById(orderTableId).orElseThrow(IllegalArgumentException::new);
 
         if (Objects.nonNull(orderTable.getTableGroupId())) {
             throw new IllegalArgumentException();
         }
 
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId,
+                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
 
@@ -56,16 +57,15 @@ public class TableService {
                         tableEmptyRequest.getEmpty()));
     }
 
-    public void changeNumberOfGuests(Long orderTableId,
-                                     TableNumberOfGuestsRequest tableNumberOfGuestsRequest) {
+    @Transactional
+    public void changeNumberOfGuests(Long orderTableId, TableNumberOfGuestsRequest tableNumberOfGuestsRequest) {
         int numberOfGuests = tableNumberOfGuestsRequest.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }
 
-        OrderTable orderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        OrderTable orderTable = orderTableDao.findById(orderTableId).orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
