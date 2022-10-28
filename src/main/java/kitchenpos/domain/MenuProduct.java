@@ -15,7 +15,7 @@ public class MenuProduct {
     }
 
     @PersistenceCreator
-    public MenuProduct(final Long seq, final Long productId, final long quantity) {
+    private MenuProduct(final Long seq, final Long productId, final long quantity) {
         this.seq = seq;
         this.productId = productId;
         this.quantity = quantity;

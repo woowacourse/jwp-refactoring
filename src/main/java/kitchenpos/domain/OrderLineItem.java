@@ -6,9 +6,9 @@ import org.springframework.data.annotation.PersistenceCreator;
 public class OrderLineItem {
 
     @Id
-    private Long seq;
-    private Long menuId;
-    private long quantity;
+    private final Long seq;
+    private final Long menuId;
+    private final long quantity;
 
     public OrderLineItem(final Long menuId, final long quantity) {
         this(null, menuId, quantity);

@@ -3,7 +3,6 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -17,7 +16,6 @@ import kitchenpos.ui.dto.response.OrderTableResponse;
 import kitchenpos.ui.dto.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 @Transactional(readOnly = true)
@@ -37,57 +35,50 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
-        final List<OrderTableIdRequest> orderTables = request.getOrderTables();
-
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<Long> orderTableIds = orderTables.stream()
+        final List<Long> orderTableIds = request.getOrderTables()
+                .stream()
                 .map(OrderTableIdRequest::getId)
                 .collect(Collectors.toList());
 
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
-        if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
-            }
-        }
-
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-
-        final List<OrderTable> updatedOrderTables = savedOrderTables.stream()
-                .map(it -> new OrderTable(it.getId(), savedTableGroup.getId(), it.getNumberOfGuests(), false))
-                .collect(Collectors.toList());
-        final List<OrderTableResponse> orderTableResponses = orderTableRepository.saveAll(updatedOrderTables)
+        final TableGroup tableGroup = tableGroupRepository.save(TableGroup.from(LocalDateTime.now()))
+                .addOrderTables(savedOrderTables);
+        final List<OrderTableResponse> orderTableResponses = tableGroup.getOrderTables()
                 .stream()
-                .map(it -> new OrderTableResponse(it.getId(), savedTableGroup.getId(), it.getNumberOfGuests(), it.isEmpty()))
-                .collect(Collectors.toList());;
-        return new TableGroupResponse(savedTableGroup.getId(), savedTableGroup.getCreatedDate(), orderTableResponses);
+                .map(orderTableRepository::save)
+                .map(this::toOrderTableResponse)
+                .collect(Collectors.toList());
+
+        return new TableGroupResponse(tableGroup.getId(), tableGroup.getCreatedDate(), orderTableResponses);
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        if (containNotCompletedOrder(orderTables)) {
+            throw new IllegalArgumentException();
+        }
 
+        orderTables.stream()
+                .map(OrderTable::ungroup)
+                .forEach(orderTableRepository::save);
+    }
+
+    private boolean containNotCompletedOrder(final List<OrderTable> orderTables) {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
+        return orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()));
+    }
 
-        for (final OrderTable orderTable : orderTables) {
-            final OrderTable updated = orderTable.ungroup(false);
-            orderTableRepository.save(updated);
-        }
+    private OrderTableResponse toOrderTableResponse(final OrderTable orderTable) {
+        return new OrderTableResponse(
+                orderTable.getId(),
+                orderTable.getTableGroupId(),
+                orderTable.getNumberOfGuests(),
+                orderTable.isEmpty());
     }
 }

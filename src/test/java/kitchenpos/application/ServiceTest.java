@@ -102,7 +102,7 @@ abstract class ServiceTest {
     }
 
     protected TableGroup saveTableGroup(final OrderTable... orderTables) {
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        final TableGroup tableGroup = TableGroup.from(LocalDateTime.now());
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         for (final OrderTable orderTable : orderTables) {

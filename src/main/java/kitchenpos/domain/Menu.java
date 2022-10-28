@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
@@ -23,13 +22,9 @@ public class Menu {
         this(null, name, price, menuGroupId, menuProducts);
     }
 
-    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
-        this(id, name, price, menuGroupId, new ArrayList<>());
-    }
-
     @PersistenceCreator
-    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
-                final List<MenuProduct> menuProducts) {
+    private Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
+                 final List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;

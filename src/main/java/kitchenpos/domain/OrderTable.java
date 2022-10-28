@@ -22,16 +22,8 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
+    public OrderTable group(final Long tableGroupId) {
+        return new OrderTable(id, tableGroupId, numberOfGuests, false);
     }
 
     public OrderTable changeNumberOfGuests(final int numberOfGuests) {
@@ -44,10 +36,6 @@ public class OrderTable {
         return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 
-    public boolean isEmpty() {
-        return empty;
-    }
-
     public OrderTable changeEmpty(final boolean empty) {
         if (Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException();
@@ -55,7 +43,30 @@ public class OrderTable {
         return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 
-    public OrderTable ungroup(final boolean empty) {
-        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
+    public void verifyCanGroup() {
+        final boolean canGroup = empty && tableGroupId == null;
+        if (!canGroup) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public OrderTable ungroup() {
+        return new OrderTable(id, tableGroupId, numberOfGuests, false);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getTableGroupId() {
+        return tableGroupId;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 }
