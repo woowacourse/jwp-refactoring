@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -20,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
+
     private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
@@ -38,36 +38,21 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+    public Order create(final Order request) {
+        final var orderLineItems = request.getOrderLineItems()
+                .stream()
+                .map(item -> new OrderLineItem(item.getOrderId(), item.getMenuId(), item.getQuantity()))
+                .collect(Collectors.toUnmodifiableList());
+        validateOrderLineItemsNotEmpty(orderLineItems);
+        validateMenuNotDuplicated(orderLineItems);
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("주문 항목이 비어 있습니다.");
-        }
-
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException("중복된 메뉴의 주문 항목이 존재합니다.");
-        }
-
-        order.setId(null);
-
-        final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
+        final var orderTableId = request.getOrderTableId();
+        final OrderTable orderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("주문 테이블을 찾을 수 없습니다."));
+        validateOrderTableEmpty(orderTable);
 
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("주문 테이블이 비어 있습니다.");
-        }
-
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-
+        final var order = new Order(request.getOrderTableId(), orderLineItems);
         final Order savedOrder = orderDao.save(order);
-
         final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItem orderLineItem : orderLineItems) {
@@ -77,6 +62,28 @@ public class OrderService {
         savedOrder.setOrderLineItems(savedOrderLineItems);
 
         return savedOrder;
+    }
+
+    private void validateOrderLineItemsNotEmpty(List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException("주문 항목이 비어 있습니다.");
+        }
+    }
+
+    private void validateMenuNotDuplicated(List<OrderLineItem> orderLineItems) {
+        final List<Long> menuIds = orderLineItems.stream()
+                .map(OrderLineItem::getMenuId)
+                .collect(Collectors.toList());
+
+        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+            throw new IllegalArgumentException("중복된 메뉴의 주문 항목이 존재합니다.");
+        }
+    }
+
+    private void validateOrderTableEmpty(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("주문 테이블이 비어 있습니다.");
+        }
     }
 
     public List<Order> list() {
@@ -93,18 +100,20 @@ public class OrderService {
     public Order changeOrderStatus(final Long orderId, final Order order) {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
-
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException("이미 결제 완료된 주문입니다.");
-        }
+        validateOrderNotYestCompleted(savedOrder);
 
         final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
         savedOrder.setOrderStatus(orderStatus.name());
 
         orderDao.save(savedOrder);
-
         savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
 
         return savedOrder;
+    }
+
+    private void validateOrderNotYestCompleted(Order savedOrder) {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+            throw new IllegalArgumentException("이미 결제 완료된 주문입니다.");
+        }
     }
 }
