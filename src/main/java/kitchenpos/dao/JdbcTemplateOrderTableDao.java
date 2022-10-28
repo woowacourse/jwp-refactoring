@@ -97,7 +97,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         final OrderTable entity = new OrderTable();
         entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
         entity.setTableGroupId(resultSet.getObject("table_group_id", Long.class));
-        entity.setNumberOfGuests(resultSet.getInt("number_of_guests"));
+        entity.updateNumberOfGuests(resultSet.getInt("number_of_guests"));
         entity.changeEmptyStatusTo(resultSet.getBoolean("empty"));
         return entity;
     }

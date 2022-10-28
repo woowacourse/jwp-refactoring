@@ -55,7 +55,7 @@ class TableServiceTest {
         @Test
         void changeEmpty() {
             final var expected = orderTableDao.save(new OrderTable(null, 1, false));
-            expected.setEmpty(true);
+            expected.changeEmptyStatusTo(true);
 
             final var actual = tableService.changeEmpty(expected.getId(), expected);
             assertThat(actual).usingRecursiveComparison()
@@ -80,7 +80,7 @@ class TableServiceTest {
             final var tableGroupId = 1L;
 
             final var orderTable = orderTableDao.save(new OrderTable(tableGroupId, 1, false));
-            orderTable.setEmpty(true);
+            orderTable.changeEmptyStatusTo(true);
 
             final var orderTableId = orderTable.getId();
             assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTable))
@@ -113,7 +113,7 @@ class TableServiceTest {
         void changeNumberOfGuests(final int expectedNumberOfGuests) {
             final var orderTable = orderTableDao.save(new OrderTable(null, 1, false));
 
-            orderTable.setNumberOfGuests(expectedNumberOfGuests);
+            orderTable.updateNumberOfGuests(expectedNumberOfGuests);
             tableService.changeNumberOfGuests(orderTable.getId(), orderTable);
 
             final var actual = orderTable.getNumberOfGuests();
@@ -128,7 +128,7 @@ class TableServiceTest {
             final var orderTable = new OrderTable(null, 1, false);
             final var savedOrderTable = orderTableDao.save(orderTable);
 
-            orderTable.setNumberOfGuests(negativeNumberOfGuests);
+            orderTable.updateNumberOfGuests(negativeNumberOfGuests);
 
             final var orderTableId = savedOrderTable.getId();
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, orderTable))

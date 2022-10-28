@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+@Transactional(readOnly = true)
 @Service
 public class TableService {
 
@@ -23,10 +24,8 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-
+    public OrderTable create(final OrderTable request) {
+        final var orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
         return orderTableDao.save(orderTable);
     }
 
@@ -35,14 +34,16 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTable changeEmpty(final Long orderTableId, final OrderTable request) {
+        final var isEmpty = request.isEmpty();
+
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("주문 테이블을 찾을 수 없습니다."));
 
         validateOrderTableNotGrouped(savedOrderTable);
         validateAllOrderTablesCompleted(orderTableId);
 
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+        savedOrderTable.changeEmptyStatusTo(isEmpty);
 
         return orderTableDao.save(savedOrderTable);
     }
@@ -61,31 +62,28 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable request) {
+        final int numberOfGuests = request.getNumberOfGuests();
 
         validateNumberOfGuestsNotNegative(numberOfGuests);
 
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTable orderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("주문 테이블을 찾을 수 없습니다."));
+        validateOrderTableNotEmpty(orderTable);
 
-        validateOrderTableNotEmpty(savedOrderTable);
-
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
-        return orderTableDao.save(savedOrderTable);
+        orderTable.updateNumberOfGuests(numberOfGuests);
+        return orderTableDao.save(orderTable);
     }
 
-    private void validateNumberOfGuestsNotNegative(int numberOfGuests) {
+    private void validateNumberOfGuestsNotNegative(final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException("손님 수는 음수가 될 수 없습니다.");
         }
     }
 
-    private void validateOrderTableNotEmpty(OrderTable savedOrderTable) {
+    private void validateOrderTableNotEmpty(final OrderTable savedOrderTable) {
         if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException("주문 테이블이 비어있습니다.");
         }
     }
-
 }
