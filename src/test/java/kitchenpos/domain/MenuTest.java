@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -24,10 +25,13 @@ class MenuTest {
 
     @DisplayName("메뉴의 가격이 총 가격보다 크면 예외를 반환한다.")
     @Test
-    void validateTotalPrice() {
-        final Menu menu = new Menu("마이쮸 포도맛", BigDecimal.valueOf(2000), 1L);
-
-        assertThatThrownBy(() -> menu.validateTotalPrice(BigDecimal.valueOf(800)))
+    void create_exception_() {
+        assertThatThrownBy(() -> new Menu(
+                "마이쮸 포도맛",
+                BigDecimal.valueOf(2000),
+                1L,
+                List.of(new MenuProduct(1L, 1, BigDecimal.valueOf(1000)))
+        ))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

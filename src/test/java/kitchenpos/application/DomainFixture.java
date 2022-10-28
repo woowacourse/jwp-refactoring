@@ -13,9 +13,7 @@ import kitchenpos.domain.Product;
 public class DomainFixture {
 
     public static Menu getMenu(final Long menuGroupId, final List<MenuProduct> menuProducts) {
-        final Menu menu = new Menu(null, "마이쮸 포도맛", BigDecimal.valueOf(800), menuGroupId);
-        menu.setMenuProducts(menuProducts);
-        return menu;
+        return new Menu("마이쮸 포도맛", BigDecimal.valueOf(800), menuGroupId, menuProducts);
     }
 
     public static Product getProduct() {

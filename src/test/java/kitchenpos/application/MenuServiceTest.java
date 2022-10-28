@@ -49,20 +49,8 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void create_exception_noSuchProduct() {
         final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroup());
-        final List<MenuProduct> menuProducts = List.of(new MenuProduct(null, null, null, 1));
+        final List<MenuProduct> menuProducts = List.of(new MenuProduct(null, 1, BigDecimal.valueOf(800)));
         final Menu menu = getMenu(menuGroup.getId(), menuProducts);
-
-        assertThatThrownBy(() -> 메뉴_등록(menu))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("메뉴를 등록한다. - 메뉴 금액이 각 상품 금액의 합보다 크면 예외를 반환한다.")
-    @Test
-    void create_exception_wrongTotalPrice() {
-        final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroup());
-        final List<MenuProduct> menuProducts = createMenuProducts();
-        final Menu menu = new Menu("마이쮸 포도맛", BigDecimal.valueOf(900), menuGroup.getId());
-        menu.setMenuProducts(menuProducts);
 
         assertThatThrownBy(() -> 메뉴_등록(menu))
                 .isInstanceOf(IllegalArgumentException.class);

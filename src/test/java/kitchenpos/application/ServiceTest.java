@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static kitchenpos.application.DomainFixture.getProduct;
 
+import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
@@ -40,32 +41,32 @@ public abstract class ServiceTest {
     @Autowired
     protected OrderTableDao orderTableDao;
 
-    protected Product 상품_등록(Product product) {
+    protected Product 상품_등록(final Product product) {
         return productService.create(product);
     }
 
-    protected MenuGroup 메뉴_그룹_등록(MenuGroup menuGroup) {
+    protected MenuGroup 메뉴_그룹_등록(final MenuGroup menuGroup) {
         return menuGroupService.create(menuGroup);
     }
 
-    protected Menu 메뉴_등록(Menu menu) {
+    protected Menu 메뉴_등록(final Menu menu) {
         return menuService.create(menu);
     }
 
-    protected OrderTable 테이블_등록(OrderTable table) {
+    protected OrderTable 테이블_등록(final OrderTable table) {
         return tableService.create(table);
     }
 
-    protected TableGroup 단체_지정(TableGroup tableGroup) {
+    protected TableGroup 단체_지정(final TableGroup tableGroup) {
         return tableGroupService.create(tableGroup);
     }
 
-    protected Order 주문_등록(Order order) {
+    protected Order 주문_등록(final Order order) {
         return orderService.create(order);
     }
 
     protected List<MenuProduct> createMenuProducts() {
         final Product product = 상품_등록(getProduct());
-        return List.of(new MenuProduct(null, null, product.getId(), 1));
+        return List.of(new MenuProduct(product.getId(), 1, BigDecimal.valueOf(800L)));
     }
 }
