@@ -5,27 +5,27 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.RepositoryTest;
 import kitchenpos.application.request.ProductRequest;
 import kitchenpos.application.response.ProductResponse;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@RepositoryTest
+@DataJpaTest
 class ProductServiceTest {
 
     private ProductService sut;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @BeforeEach
     void setUp() {
-        sut = new ProductService(productDao);
+        sut = new ProductService(productRepository);
     }
 
     @DisplayName("새로운 상품을 등록할 수 있다.")
@@ -40,7 +40,7 @@ class ProductServiceTest {
         // then
         assertThat(productResponse).isNotNull();
         assertThat(productResponse.getId()).isNotNull();
-        final Product foundProduct = productDao.findById(productResponse.getId()).get();
+        final Product foundProduct = productRepository.findById(productResponse.getId()).get();
         assertThat(foundProduct)
                 .usingRecursiveComparison()
                 .ignoringFields("id")

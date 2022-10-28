@@ -6,21 +6,21 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.RepositoryTest;
 import kitchenpos.application.request.MenuProductRequest;
 import kitchenpos.application.request.MenuRequest;
 import kitchenpos.application.response.MenuResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@RepositoryTest
+@SpringBootTest
 class MenuServiceTest {
 
     private static final long MENU_ID = 1L;
@@ -39,11 +39,11 @@ class MenuServiceTest {
     private MenuProductDao menuProductDao;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @BeforeEach
     void setUp() {
-        sut = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
+        sut = new MenuService(menuDao, menuGroupDao, menuProductDao, productRepository);
     }
 
     @DisplayName("새로운 메뉴를 등록할 수 있다.")
