@@ -24,9 +24,4 @@ public class ProductService {
     public List<Product> list() {
         return productDao.findAll();
     }
-
-    public Product search(long productId) {
-        return productDao.findById(productId)
-                .orElseThrow(IllegalArgumentException::new);
-    }
 }

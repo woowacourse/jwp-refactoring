@@ -10,6 +10,9 @@ public class OrderTable {
     }
 
     public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;

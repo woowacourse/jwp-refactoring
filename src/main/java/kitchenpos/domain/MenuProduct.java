@@ -31,6 +31,13 @@ public class MenuProduct {
         this.price = price;
     }
 
+    public MenuProduct(Long menuId, Long productId, long quantity, BigDecimal price) {
+        this.menuId = menuId;
+        this.productId = productId;
+        this.quantity = quantity;
+        this.price = price;
+    }
+
     public Long getSeq() {
         return seq;
     }

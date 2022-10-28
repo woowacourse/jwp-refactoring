@@ -15,6 +15,7 @@ import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -36,7 +37,7 @@ public class OrderServiceTest {
     private OrderLineItemDao orderLineItemDao = new OrderLineItemFakeDao();
     private OrderTableDao orderTableDao = new OrderTableFakeDao();
 
-    private OrderService orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+    private OrderService orderService = new OrderService(orderDao, orderLineItemDao, orderTableDao);
 
     @DisplayName("주문을 생성할 때")
     @Nested
@@ -110,7 +111,8 @@ public class OrderServiceTest {
         // given
         OrderTable orderTable = orderTableDao.save(new OrderTable(null, 2, false));
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
-        Menu menu = menuDao.save(new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), new ArrayList<>()));
+        Menu menu = menuDao.save(new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(),
+                List.of(new MenuProduct(null, 3L, 3, BigDecimal.valueOf(1000)))));
         ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
         orderLineItems.add(orderLineItemDao.save(new OrderLineItem(menu.getId(), 3)));
         orderDao.save(new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), orderLineItems));
