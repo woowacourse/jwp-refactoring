@@ -1,14 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.dto.request.OrderTableIdRequest;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,12 +58,12 @@ class TableGroupServiceTest {
     @DisplayName("tableGroup을 생성한다.")
     @Test
     void createTableGroupSuccess() {
-        OrderTable 테이블_1번 = tableService.create(테이블_1번());
-        OrderTable 테이블_2번 = tableService.create(테이블_2번());
+        OrderTableResponse 테이블_1번 = tableService.create(테이블_1번());
+        OrderTableResponse 테이블_2번 = tableService.create(테이블_2번());
         List<OrderTableIdRequest> 테이블_그룹 = List.of(new OrderTableIdRequest(테이블_1번.getId()),
                 new OrderTableIdRequest(테이블_2번.getId()));
 
-        TableGroup actual = tableGroupService.create(createTableGroup(테이블_그룹));
+        TableGroupResponse actual = tableGroupService.create(createTableGroup(테이블_그룹));
 
         assertThat(actual.getOrderTables()).hasSize(2);
     }
@@ -80,7 +80,7 @@ class TableGroupServiceTest {
     @DisplayName("TableGroup이 사이즈가 2미만인 경우 예외를 던진다.")
     @Test
     void createTableGroupByOneSize() {
-        OrderTable 테이블_1번 = tableService.create(테이블_1번());
+        OrderTableResponse 테이블_1번 = tableService.create(테이블_1번());
         List<OrderTableIdRequest> 테이블_그룹 = List.of(new OrderTableIdRequest(테이블_1번.getId()));
 
         assertThatThrownBy(() -> tableGroupService.create(createTableGroup(테이블_그룹)))
@@ -90,8 +90,8 @@ class TableGroupServiceTest {
     @DisplayName("TableGroup이 가진 orderTables의 사이즈와 실제 orderTables의 사이즈가 다른 경우 예외를 던진다.")
     @Test
     void createTableGroupByRealNotSavedOrderTables() {
-        OrderTable 테이블_1번 = tableService.create(테이블_1번());
-        OrderTable 테이블_2번 = tableService.create(테이블_2번());
+        OrderTableResponse 테이블_1번 = tableService.create(테이블_1번());
+        OrderTableResponse 테이블_2번 = tableService.create(테이블_2번());
         Long 테이블_3번_빈값 = 0L;
 
         List<OrderTableIdRequest> 테이블_그룹 = List.of(new OrderTableIdRequest(테이블_1번.getId()),
@@ -105,9 +105,9 @@ class TableGroupServiceTest {
     @DisplayName("저장된 orderTables 중 비어있지 않은 table이 존재하는 경우 예외를 던진다.")
     @Test
     void createTableGroupByNotEmptyOrderTable() {
-        OrderTable 테이블_1번 = tableService.create(테이블_1번());
-        OrderTable 테이블_2번 = tableService.create(테이블_2번());
-        OrderTable 비어있지_않은_테이블 = tableService.create(createOrderTable(0, false));
+        OrderTableResponse 테이블_1번 = tableService.create(테이블_1번());
+        OrderTableResponse 테이블_2번 = tableService.create(테이블_2번());
+        OrderTableResponse 비어있지_않은_테이블 = tableService.create(createOrderTable(0, false));
 
         List<OrderTableIdRequest> 테이블_그룹 = List.of(new OrderTableIdRequest(테이블_1번.getId()),
                 new OrderTableIdRequest(테이블_2번.getId()),
@@ -122,17 +122,17 @@ class TableGroupServiceTest {
     @Test
     void unlockTableGroup() {
         // 테이블 그룹화
-        OrderTable 테이블_1번 = tableService.create(테이블_1번());
-        OrderTable 테이블_2번 = tableService.create(테이블_2번());
+        OrderTableResponse 테이블_1번 = tableService.create(테이블_1번());
+        OrderTableResponse 테이블_2번 = tableService.create(테이블_2번());
         List<OrderTableIdRequest> 테이블_그룹 = List.of(new OrderTableIdRequest(테이블_1번.getId()),
                 new OrderTableIdRequest(테이블_2번.getId()));
-        TableGroup tableGroup = tableGroupService.create(createTableGroup(테이블_그룹));
+        TableGroupResponse tableGroup = tableGroupService.create(createTableGroup(테이블_그룹));
 
         // 해제
         tableGroupService.ungroup(tableGroup.getId());
 
         // 결과
-        List<OrderTable> actual = tableService.list();
+        List<OrderTableResponse> actual = tableService.list();
         assertAll(
                 () -> assertThat(actual.get(0).getTableGroupId()).isNull(),
                 () -> assertThat(actual.get(0).isEmpty()).isFalse(),
@@ -152,11 +152,11 @@ class TableGroupServiceTest {
         MenuResponse 메뉴_후라이드치킨 = menuService.create(request);
 
         // 테이블 설정 및 그룹화
-        OrderTable 테이블_1번 = tableService.create(테이블_1번());
-        OrderTable 테이블_2번 = tableService.create(테이블_2번());
+        OrderTableResponse 테이블_1번 = tableService.create(테이블_1번());
+        OrderTableResponse 테이블_2번 = tableService.create(테이블_2번());
         List<OrderTableIdRequest> 테이블_그룹 = List.of(new OrderTableIdRequest(테이블_1번.getId()),
                 new OrderTableIdRequest(테이블_2번.getId()));
-        TableGroup tableGroup = tableGroupService.create(createTableGroup(테이블_그룹));
+        TableGroupResponse tableGroup = tableGroupService.create(createTableGroup(테이블_그룹));
 
         // 1번 테이블 주문
         OrderLineItemCreateRequest orderLineItem = createOrderLineItem(메뉴_후라이드치킨.getId(), 1);

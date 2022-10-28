@@ -8,6 +8,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +32,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupCreateRequest request) {
+    public TableGroupResponse create(final TableGroupCreateRequest request) {
         final OrderTables orderTables = new OrderTables(request.getOrderTables());
         final OrderTables savedOrderTables = new OrderTables(
                 orderTableDao.findAllByIdIn(orderTables.getIds()));
@@ -45,9 +46,11 @@ public class TableGroupService {
             savedOrderTable.setEmpty(false);
             orderTableDao.save(savedOrderTable);
         }
-        savedTableGroup.setOrderTables(savedOrderTables.getOrderTables());
-
-        return savedTableGroup;
+        return new TableGroupResponse(
+                savedTableGroup.getId(),
+                savedTableGroup.getCreatedDate(),
+                savedOrderTables.getOrderTables()
+        );
     }
 
     @Transactional

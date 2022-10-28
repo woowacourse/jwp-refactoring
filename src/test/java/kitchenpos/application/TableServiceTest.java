@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
@@ -10,6 +9,7 @@ import kitchenpos.dto.request.OrderTableUpdateNumberOfGuestsRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,7 +63,7 @@ class TableServiceTest {
     void createOrderTableSuccess() {
         OrderTableCreateRequest 테이블_1번 = 테이블_1번();
 
-        OrderTable actual = tableService.create(테이블_1번);
+        OrderTableResponse actual = tableService.create(테이블_1번);
 
         assertAll(
                 () -> assertThat(actual.getNumberOfGuests()).isEqualTo(테이블_1번.getNumberOfGuests()),
@@ -78,7 +78,7 @@ class TableServiceTest {
         tableService.create(테이블_2번());
         tableService.create(테이블_3번());
 
-        List<OrderTable> actual = tableService.list();
+        List<OrderTableResponse> actual = tableService.list();
 
         assertThat(actual).hasSize(3);
     }
@@ -94,7 +94,7 @@ class TableServiceTest {
         MenuResponse 메뉴_후라이드치킨 = menuService.create(request);
 
         // 테이블 설정
-        OrderTable 테이블_1번 = tableService.create(테이블_1번());
+        OrderTableResponse 테이블_1번 = tableService.create(테이블_1번());
         tableService.changeEmpty(테이블_1번.getId(), createOrderTableUpdateEmptyRequest(false));
 
         // 주문
@@ -107,7 +107,7 @@ class TableServiceTest {
         orderService.changeOrderStatus(order.getId(), changedOrder.toEntity());
 
         // empty 변경
-        OrderTable actual = tableService.changeEmpty(테이블_1번.getId(), createOrderTableUpdateEmptyRequest(false));
+        OrderTableResponse actual = tableService.changeEmpty(테이블_1번.getId(), createOrderTableUpdateEmptyRequest(false));
 
         assertAll(() -> {
             assertThat(actual.getNumberOfGuests()).isEqualTo(테이블_1번.getNumberOfGuests());
@@ -119,7 +119,7 @@ class TableServiceTest {
     @ParameterizedTest
     @ValueSource(ints = {Integer.MIN_VALUE, -1})
     void numberOfGuestsUnderZero(final int numberOfGuests) {
-        OrderTable 테이블_1번 = tableService.create(테이블_1번());
+        OrderTableResponse 테이블_1번 = tableService.create(테이블_1번());
 
         OrderTableUpdateNumberOfGuestsRequest actual = createOrderTableUpdateNumberOfGuestsRequest(numberOfGuests);
 
@@ -130,7 +130,7 @@ class TableServiceTest {
     @DisplayName("저장된 orderTable이 비어있는 경우 예외를 던진다.")
     @Test
     void savedOrderTableIsEmpty() {
-        OrderTable 테이블_1번 = tableService.create(테이블_1번());
+        OrderTableResponse 테이블_1번 = tableService.create(테이블_1번());
 
 
         OrderTableUpdateNumberOfGuestsRequest actual = createOrderTableUpdateNumberOfGuestsRequest(2);

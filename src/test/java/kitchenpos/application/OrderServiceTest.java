@@ -1,13 +1,13 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.fixture.OrderTableFixtures;
 import org.junit.jupiter.api.DisplayName;
@@ -63,7 +63,7 @@ class OrderServiceTest {
         MenuResponse 메뉴_후라이드치킨 = menuService.create(request);
 
         // 1번테이블, 0명
-        OrderTable orderTable = tableService.create(테이블_1번());
+        OrderTableResponse orderTable = tableService.create(테이블_1번());
         tableService.changeEmpty(orderTable.getId(), OrderTableFixtures.createOrderTableUpdateEmptyRequest(false));
 
         // 주문: 1번 테이블 / 후라이드 치킨 1개
@@ -80,7 +80,7 @@ class OrderServiceTest {
     @DisplayName("orderLineItems가 비어있는 경우 예외를 던진다.")
     @Test
     void createOrderByorderLineItemsIsEmpty() {
-        OrderTable orderTable = tableService.create(테이블_1번());
+        OrderTableResponse orderTable = tableService.create(테이블_1번());
         OrderCreateRequest order = createOrder(orderTable.getId(), List.of());
 
         assertThatThrownBy(() -> orderService.create(order))
@@ -98,7 +98,7 @@ class OrderServiceTest {
         MenuResponse 메뉴_후라이드치킨 = menuService.create(request);
 
         // 1번테이블, 0명
-        OrderTable orderTable = tableService.create(테이블_1번());
+        OrderTableResponse orderTable = tableService.create(테이블_1번());
         tableService.changeEmpty(orderTable.getId(), OrderTableFixtures.createOrderTableUpdateEmptyRequest(false));
 
         // 주문할 메뉴
@@ -141,9 +141,9 @@ class OrderServiceTest {
         MenuResponse 메뉴_후라이드치킨 = menuService.create(request);
 
         // 테이블 설정
-        OrderTable 테이블_1번 = tableService.create(테이블_1번());
+        OrderTableResponse 테이블_1번 = tableService.create(테이블_1번());
         tableService.changeEmpty(테이블_1번.getId(), OrderTableFixtures.createOrderTableUpdateEmptyRequest(false));
-        OrderTable 테이블_2번 = tableService.create(테이블_2번());
+        OrderTableResponse 테이블_2번 = tableService.create(테이블_2번());
         tableService.changeEmpty(테이블_2번.getId(), OrderTableFixtures.createOrderTableUpdateEmptyRequest(false));
 
         // 주문할 메뉴
@@ -168,7 +168,7 @@ class OrderServiceTest {
         MenuResponse 메뉴_후라이드치킨 = menuService.create(request);
 
         // 테이블 설정
-        OrderTable orderTable = tableService.create(테이블_1번());
+        OrderTableResponse orderTable = tableService.create(테이블_1번());
         tableService.changeEmpty(orderTable.getId(), OrderTableFixtures.createOrderTableUpdateEmptyRequest(false));
 
         // 주문
@@ -198,7 +198,7 @@ class OrderServiceTest {
         MenuResponse 메뉴_후라이드치킨 = menuService.create(request);
 
         // 테이블 설정
-        OrderTable orderTable = tableService.create(테이블_1번());
+        OrderTableResponse orderTable = tableService.create(테이블_1번());
         tableService.changeEmpty(orderTable.getId(), OrderTableFixtures.createOrderTableUpdateEmptyRequest(false));
 
         // 주문
