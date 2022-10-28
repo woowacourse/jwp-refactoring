@@ -95,7 +95,7 @@ class MenuServiceTest {
         MenuRequest 라면_메뉴 = 라면_메뉴();
         라면_메뉴.setPrice(new BigDecimal(1500));
         라면_메뉴.setMenuGroupId(면.getId());
-        라면_메뉴.setMenuProducts(Arrays.asList(new MenuProduct(null, 라면, 1)));
+        라면_메뉴.setMenuProducts(Arrays.asList(new MenuProduct(null, 라면.getId(), 1)));
 
         assertThatThrownBy(
                 () -> menuService.create(라면_메뉴)
@@ -107,8 +107,8 @@ class MenuServiceTest {
     void 메뉴를_성공적으로_조회할_수_있다() {
         Product 라면 = productService.create(맛있는_라면());
         List<MenuProduct> 메뉴_상품들 = Arrays.asList(
-                new MenuProduct(null, 라면, 1),
-                new MenuProduct(null, 라면, 1)
+                new MenuProduct(null, 라면.getId(), 1),
+                new MenuProduct(null, 라면.getId(), 1)
         );
 
         MenuGroup menuGroup = menuGroupService.create(면_메뉴_그룹());
@@ -128,7 +128,7 @@ class MenuServiceTest {
 
     private List<MenuProduct> 메뉴_상품(Product product) {
         List<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(new MenuProduct(null, product, 1));
+        menuProducts.add(new MenuProduct(null, product.getId(), 1));
         return menuProducts;
     }
 }

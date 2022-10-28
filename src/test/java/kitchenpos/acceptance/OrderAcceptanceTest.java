@@ -38,7 +38,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         MenuGroup 메뉴_그룹 = testRestTemplate.postForObject("http://localhost:" + port + "/api/menu-groups",
                 면_메뉴_그룹(), MenuGroup.class);
 
-        MenuProduct menuProduct = new MenuProduct(null, 라면_제품, 1);
+        MenuProduct menuProduct = new MenuProduct(null, 라면_제품.getId(), 1);
         List<MenuProduct> 메뉴_그룹들 = new ArrayList<>();
         메뉴_그룹들.add(menuProduct);
 

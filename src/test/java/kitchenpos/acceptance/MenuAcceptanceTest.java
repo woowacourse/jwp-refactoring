@@ -30,7 +30,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         메뉴_그룹 = testRestTemplate.postForObject("http://localhost:" + port + "/api/menu-groups",
                 면_메뉴_그룹(), MenuGroup.class);
 
-        MenuProduct menuProduct = new MenuProduct(null, 라면_제품, 1);
+        MenuProduct menuProduct = new MenuProduct(null, 라면_제품.getId(), 1);
         List<MenuProduct> 메뉴_그룹들 = Arrays.asList(menuProduct);
 
         라면_메뉴 = 라면_메뉴();

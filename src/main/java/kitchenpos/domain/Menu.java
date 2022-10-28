@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -26,10 +25,15 @@ public class Menu {
     public Menu() {
     }
 
-    private Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
-                 final List<MenuProduct> menuProducts) {
+    public Menu(final String name, final BigDecimal price, final Long menuGroupId,
+                final List<MenuProduct> menuProducts, List<Product> products) {
+        this(null, name, price, menuGroupId, menuProducts, products);
+    }
+
+    private Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts,
+                List<Product> products) {
         validatePrice(price);
-        validatePriceWithProducts(price, menuProducts);
+        validatePriceWithProducts(price, menuProducts, products);
         this.id = id;
         this.name = name;
         this.price = price;
@@ -37,24 +41,34 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public Menu(final String name, final BigDecimal price, final Long menuGroupId,
-                final List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
-    }
+    private void validatePriceWithProducts(final BigDecimal price, List<MenuProduct> menuProducts,
+                                           List<Product> products) {
+//        final List<Product> products = menuProducts.stream()
+//                .map(MenuProduct::getProductId)
+//                .collect(Collectors.toList());
 
-    private void validatePriceWithProducts(final BigDecimal price, List<MenuProduct> menuProducts) {
-        final List<Product> products = menuProducts.stream()
-                .map(MenuProduct::getProduct)
+        final List<Long> productIds = menuProducts.stream()
+                .map(MenuProduct::getProductId)
                 .collect(Collectors.toList());
 
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
 
-            final Product product = products.stream()
-                    .filter(productInProducts -> productInProducts.getId()
-                            .equals(menuProduct.getProduct().getId()))
+//            menuProducts.stream()
+//                    .filter(productIdProducts -> productIdProducts.getProductId()
+//                            .equals(menuProduct.getProductId()))
+//                    .findAny()
+//                    .orElseThrow(() -> new IllegalArgumentException("product를 찾을 수 없습니다."));
+
+            final Long productId = productIds.stream()
+                    .filter(id -> id.equals(menuProduct.getProductId()))
                     .findAny()
                     .orElseThrow(() -> new IllegalArgumentException("product를 찾을 수 없습니다."));
+
+            final Product product = products.stream()
+                    .filter(it -> it.getId().equals(productId))
+                    .findAny()
+                    .orElseThrow(IllegalArgumentException::new);
 
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }

@@ -42,7 +42,7 @@ public class ServiceTest {
 
     protected Menu 메뉴를_생성한다(String name) {
         Product product = productService.create(new ProductRequest("맛있는 라면", new BigDecimal(1300)));
-        List<MenuProduct> menuProducts = Arrays.asList(new MenuProduct(null, product, 1));
+        List<MenuProduct> menuProducts = Arrays.asList(new MenuProduct(null, product.getId(), 1));
 
         MenuGroup menuGroup = menuGroupService.create(new MenuGroup("면"));
         Menu ramen = menuService.create(new MenuRequest(name, new BigDecimal(1200), menuGroup.getId(), menuProducts));
