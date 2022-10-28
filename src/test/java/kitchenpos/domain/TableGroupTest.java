@@ -22,7 +22,7 @@ class TableGroupTest {
         TableGroup group = new TableGroup(LocalDateTime.now());
 
         // act & assert
-        assertThatThrownBy(() -> group.unite(orderTables))
+        assertThatThrownBy(() -> group.bind(orderTables))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -36,7 +36,7 @@ class TableGroupTest {
         TableGroup group = new TableGroup(1L, LocalDateTime.now());
 
         // act & assert
-        assertThatThrownBy(() -> group.unite(orderTables))
+        assertThatThrownBy(() -> group.bind(orderTables))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -51,7 +51,7 @@ class TableGroupTest {
         TableGroup group = new TableGroup(1L, LocalDateTime.now());
 
         // act & assert
-        assertThatThrownBy(() -> group.unite(orderTables))
+        assertThatThrownBy(() -> group.bind(orderTables))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -66,7 +66,7 @@ class TableGroupTest {
         TableGroup group = new TableGroup(1L, LocalDateTime.now());
 
         // act & assert
-        assertThatThrownBy(() -> group.unite(orderTables))
+        assertThatThrownBy(() -> group.bind(orderTables))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -81,7 +81,7 @@ class TableGroupTest {
         TableGroup group = new TableGroup(1L, LocalDateTime.now());
 
         // act
-        group.unite(orderTables);
+        group.bind(orderTables);
 
         // assert
         assertThat(orderTables)

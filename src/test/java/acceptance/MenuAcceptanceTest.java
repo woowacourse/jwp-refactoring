@@ -16,8 +16,10 @@ import common.AcceptanceTest;
 import io.restassured.RestAssured;
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.ui.request.MenuProductRequest;
+import kitchenpos.ui.request.MenuRequest;
+import kitchenpos.ui.response.MenuProductResponse;
+import kitchenpos.ui.response.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -28,11 +30,11 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @Test
     void findMenuList() {
         // act
-        List<Menu> menus = getMenus();
+        List<MenuResponse> menus = getMenus();
 
         // assert
         assertThat(menus)
-                .extracting(Menu::getId, Menu::getName, Menu::getMenuGroupId, m -> m.getPrice().intValueExact())
+                .extracting(MenuResponse::getId, MenuResponse::getName, MenuResponse::getMenuGroupId, m -> m.getPrice().intValueExact())
                 .hasSize(6)
                 .contains(
                         tuple(후라이드치킨_메뉴.id(), 후라이드치킨_메뉴.이름(), 후라이드치킨_메뉴.그룹_ID(), 후라이드치킨_메뉴.가격()),
@@ -48,11 +50,11 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @Test
     void createMenu() {
         // arrange
-        MenuProduct 후라이드 = createMenuProduct(후라이드_상품.id(), 1L);
-        MenuProduct 양념 = createMenuProduct(양념치킨_상품.id(), 1L);
+        MenuProductRequest 후라이드 = createMenuProductRequest(후라이드_상품.id(), 1L);
+        MenuProductRequest 양념 = createMenuProductRequest(양념치킨_상품.id(), 1L);
 
         // act
-        Menu createdMenu = createMenu("후라이드+양념치킨", 19000, 1L, 후라이드, 양념);
+        MenuResponse createdMenu = createMenu("후라이드+양념치킨", 19000, 1L, 후라이드, 양념);
 
         // assert
         assertThat(createdMenu.getId()).isNotNull();
@@ -60,49 +62,43 @@ class MenuAcceptanceTest extends AcceptanceTest {
         assertThat(createdMenu.getPrice().intValueExact()).isEqualTo(19000);
         assertThat(createdMenu.getMenuGroupId()).isEqualTo(1L);
         assertThat(createdMenu.getMenuProducts())
-                .extracting(MenuProduct::getProductId, MenuProduct::getQuantity)
+                .extracting(MenuProductResponse::getProductId, MenuProductResponse::getQuantity)
                 .containsExactlyInAnyOrder(
                         tuple(후라이드_상품.id(), 1L),
                         tuple(양념치킨_상품.id(), 1L)
                 );
 
-        List<Menu> menus = getMenus();
+        List<MenuResponse> menus = getMenus();
         assertThat(menus)
-                .extracting(Menu::getId)
+                .extracting(MenuResponse::getId)
                 .hasSize(7)
                 .contains(createdMenu.getId());
     }
 
-    private MenuProduct createMenuProduct(long id, long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(id);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+    private MenuProductRequest createMenuProductRequest(long id, long quantity) {
+        return new MenuProductRequest(id, quantity);
     }
 
-    private Menu createMenu(String name, int price, long menuGroupId, MenuProduct... menuProducts) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(List.of(menuProducts));
+    private MenuResponse createMenu(String name, int price, long menuGroupId, MenuProductRequest... menuProductRequests) {
+        MenuRequest menuRequest = new MenuRequest(name, BigDecimal.valueOf(price), menuGroupId,
+                List.of(menuProductRequests));
 
         return RestAssured.given().log().all()
                 .contentType(APPLICATION_JSON_VALUE)
-                .body(menu)
+                .body(menuRequest)
                 .when().log().all()
                 .post("/api/menus")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
-                .extract().as(Menu.class);
+                .extract().as(MenuResponse.class);
     }
 
-    private List<Menu> getMenus() {
+    private List<MenuResponse> getMenus() {
         return RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/menus")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .extract().jsonPath().getList(".", Menu.class);
+                .extract().jsonPath().getList(".", MenuResponse.class);
     }
 }

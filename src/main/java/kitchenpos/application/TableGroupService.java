@@ -28,7 +28,7 @@ public class TableGroupService {
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
         final List<OrderTable> orderTables = findOrderTablesIdIn(orderTableIds);
 
-        tableGroup.unite(orderTables);
+        tableGroup.bind(orderTables);
 
         return tableGroup;
     }
