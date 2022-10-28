@@ -7,7 +7,7 @@
     - 목록
         - [x] MenuGroupRestController
         - [x] MenuRestController
-        - [ ] OrderRestController
+        - [x] OrderRestController
         - [x] ProductRestController
         - [x] TableGroupRestController
         - [x] TableRestController
@@ -17,6 +17,9 @@
         - [ ] MenuGroupService
         - [ ] MenuService
         - [ ] OrderService
+            - Order 메서드 추가
+                - changeOrderStatus()
+                - addOrderLineItem()
         - [ ] ProductService
         - [ ] TableGroupService
         - [ ] TableService

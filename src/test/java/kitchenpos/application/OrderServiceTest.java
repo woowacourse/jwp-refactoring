@@ -3,17 +3,15 @@ package kitchenpos.application;
 import static kitchenpos.fixture.MenuFixture.generateMenu;
 import static kitchenpos.fixture.MenuGroupFixture.generateMenuGroup;
 import static kitchenpos.fixture.MenuProductFixture.generateMemberProduct;
-import static kitchenpos.fixture.OrderFixture.generateOrder;
-import static kitchenpos.fixture.OrderLineItemFixture.generateOrderLineItem;
+import static kitchenpos.fixture.OrderFixture.generateOrderCreateRequest;
+import static kitchenpos.fixture.OrderLineItemFixture.generateOrderLineItemRequest;
 import static kitchenpos.fixture.OrderTableFixture.generateOrderTable;
-import static kitchenpos.fixture.ProductFixture.generateProduct;
 import static kitchenpos.fixture.ProductFixture.뿌링클;
 import static kitchenpos.fixture.ProductFixture.사이다;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.FakeMenuDao;
@@ -34,10 +32,11 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderLineItemRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -88,20 +87,18 @@ public class OrderServiceTest {
         OrderTable emptyOrderTable = generateOrderTable(null, 0, false);
         OrderTable saveOrderTable = orderTableDao.save(emptyOrderTable);
 
-        OrderLineItem orderLineItem = generateOrderLineItem(뿌링클_음료두개_세트.getId(), 1L, null);
-
-        ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
-        orderLineItems.add(orderLineItem);
-        Order order = generateOrder(LocalDateTime.now(),
-                saveOrderTable.getId(),
-                OrderStatus.COOKING.name(),
-                orderLineItems);
+        OrderLineItemRequest orderLineItemRequest = generateOrderLineItemRequest(뿌링클_음료두개_세트.getId(), 1L);
+        List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
+        orderLineItemRequests.add(orderLineItemRequest);
+        OrderCreateRequest orderCreateRequest = generateOrderCreateRequest(saveOrderTable.getId(),
+                orderLineItemRequests);
 
         // when
-        Order savedOrder = orderService.create(order);
+        Order savedOrder = orderService.create(orderCreateRequest);
 
         // then
         assertThat(savedOrder.getId()).isNotNull();
+        assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
     }
 
     @Test
@@ -111,35 +108,35 @@ public class OrderServiceTest {
         OrderTable emptyOrderTable = generateOrderTable(null, 0, false);
         OrderTable saveOrderTable = orderTableDao.save(emptyOrderTable);
 
-        OrderLineItem orderLineItem = generateOrderLineItem(뿌링클_음료두개_세트.getId(), 1L, null);
+        List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
 
-        Order order = new Order();
-        order.setOrderTableId(saveOrderTable.getId());
+        OrderCreateRequest orderCreateRequest = generateOrderCreateRequest(saveOrderTable.getId(),
+                orderLineItemRequests);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 항목이 비어있을 수 없습니다.");
     }
 
+    // TODO: 예외 상황 수정 필요(현재 중복된 주문일 경우 예외 반환하는형태임)
     @Test
-    @DisplayName("주문 생성 시 메뉴당 하나의 주문 항목이 아니라면 예외를 반환한다.")
+    @DisplayName("존재하지 않는 메뉴를 주문한다면 예외를 반환한다.")
     void create_WhenDifferentOrderLineItemsSize() {
         // given
         OrderTable emptyOrderTable = generateOrderTable(null, 0, false);
         OrderTable saveOrderTable = orderTableDao.save(emptyOrderTable);
 
-        OrderLineItem orderLineItem1 = generateOrderLineItem(뿌링클_음료두개_세트.getId(), 1L, null);
-        OrderLineItem orderLineItem2 = generateOrderLineItem(뿌링클_음료두개_세트.getId(), 1L, null);
-
-        Order order = new Order();
-        order.setOrderTableId(saveOrderTable.getId());
-        ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
-        orderLineItems.add(orderLineItem1);
-        orderLineItems.add(orderLineItem2);
-        order.setOrderLineItems(orderLineItems);
+        OrderLineItemRequest orderLineItemRequest1 = generateOrderLineItemRequest(뿌링클_음료두개_세트.getId(), 1L);
+        OrderLineItemRequest orderLineItemRequest2 = generateOrderLineItemRequest(뿌링클_음료두개_세트.getId(), 1L);
+        List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
+        orderLineItemRequests.add(orderLineItemRequest1);
+        orderLineItemRequests.add(orderLineItemRequest2);
+        OrderCreateRequest orderCreateRequest = generateOrderCreateRequest(saveOrderTable.getId(),
+                orderLineItemRequests);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -150,15 +147,13 @@ public class OrderServiceTest {
         OrderTable emptyOrderTable = generateOrderTable(null, 0, false);
         OrderTable saveOrderTable = orderTableDao.save(emptyOrderTable);
 
-        OrderLineItem orderLineItem = generateOrderLineItem(뿌링클_음료두개_세트.getId(), 1L, null);
+        OrderLineItemRequest orderLineItemRequest = generateOrderLineItemRequest(뿌링클_음료두개_세트.getId(), 1L);
+        List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
+        orderLineItemRequests.add(orderLineItemRequest);
+        OrderCreateRequest orderCreateRequest = generateOrderCreateRequest(saveOrderTable.getId(),
+                orderLineItemRequests);
 
-        Order order = new Order();
-        order.setOrderTableId(saveOrderTable.getId());
-        ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
-        orderLineItems.add(orderLineItem);
-        order.setOrderLineItems(orderLineItems);
-
-        orderService.create(order);
+        orderService.create(orderCreateRequest);
 
         // when
         List<Order> orders = orderService.list();
@@ -174,20 +169,39 @@ public class OrderServiceTest {
         OrderTable emptyOrderTable = generateOrderTable(null, 0, false);
         OrderTable saveOrderTable = orderTableDao.save(emptyOrderTable);
 
-        OrderLineItem orderLineItem = generateOrderLineItem(뿌링클_음료두개_세트.getId(), 1L, null);
+        OrderLineItemRequest orderLineItemRequest = generateOrderLineItemRequest(뿌링클_음료두개_세트.getId(), 1L);
+        List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
+        orderLineItemRequests.add(orderLineItemRequest);
+        OrderCreateRequest orderCreateRequest = generateOrderCreateRequest(saveOrderTable.getId(),
+                orderLineItemRequests);
 
-        Order order = new Order();
-        order.setOrderTableId(saveOrderTable.getId());
-        ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
-        orderLineItems.add(orderLineItem);
-        order.setOrderLineItems(orderLineItems);
-
-        Order savedOrder = orderService.create(order);
+        Order order = orderService.create(orderCreateRequest);
 
         // when
-        Order changeOrder = orderService.changeOrderStatus(savedOrder.getId(), savedOrder);
+        Order changeOrder = orderService.changeOrderStatus(order.getId(), "MEAL");
 
         // then
-        assertThat(changeOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        assertThat(changeOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+    }
+
+    @Test
+    @DisplayName("주문의 상태를 변경 시 완료된 주문인 경우 예외를 반환한다.")
+    void changeOrderStatus_WhenCompletionOrderStatus() {
+        // given
+        OrderTable emptyOrderTable = generateOrderTable(null, 0, false);
+        OrderTable saveOrderTable = orderTableDao.save(emptyOrderTable);
+
+        OrderLineItemRequest orderLineItemRequest = generateOrderLineItemRequest(뿌링클_음료두개_세트.getId(), 1L);
+        List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
+        orderLineItemRequests.add(orderLineItemRequest);
+        OrderCreateRequest orderCreateRequest = generateOrderCreateRequest(saveOrderTable.getId(),
+                orderLineItemRequests);
+
+        Order order = orderService.create(orderCreateRequest);
+        Order changeOrder = orderService.changeOrderStatus(order.getId(), "COMPLETION");
+        // when & then
+        assertThatThrownBy(() -> orderService.changeOrderStatus(changeOrder.getId(), "MEAL"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("완료된 주문은 상태를 변경할 수 없습니다.");
     }
 }
