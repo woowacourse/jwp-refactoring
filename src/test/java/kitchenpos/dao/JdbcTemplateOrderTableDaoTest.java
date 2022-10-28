@@ -58,7 +58,7 @@ class JdbcTemplateOrderTableDaoTest {
         private Map<Long, OrderTable> saveAll(final OrderTable... orderTables) {
             return Stream.of(orderTables)
                     .map(orderTableDao::save)
-                    .collect(Collectors.toMap(OrderTable::getId, OrderTable -> OrderTable));
+                    .collect(Collectors.toMap(OrderTable::getId, orderTable -> orderTable));
         }
 
         @Test

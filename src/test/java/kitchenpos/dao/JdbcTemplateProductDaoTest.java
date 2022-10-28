@@ -55,7 +55,7 @@ class JdbcTemplateProductDaoTest {
         private Map<Long, Product> saveAll(final Product... products) {
             return Stream.of(products)
                     .map(productDao::save)
-                    .collect(Collectors.toMap(Product::getId, Product -> Product));
+                    .collect(Collectors.toMap(Product::getId, product -> product));
         }
 
         @Test
