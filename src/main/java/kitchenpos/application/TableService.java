@@ -47,14 +47,14 @@ public class TableService {
                                           final OrderTableEmptyRequest orderTableEmptyRequest) {
         final OrderTable orderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        validateOrderTable(orderTable);
+        findNotEmptyOrderTable(orderTable);
         validateOrderStatusCompletion(orderTableId);
         orderTable.updateEmptyStatus(orderTableEmptyRequest.isEmpty());
 
         return OrderTableResponse.of(orderTable);
     }
 
-    private void validateOrderTable(final OrderTable orderTable) {
+    private void findNotEmptyOrderTable(final OrderTable orderTable) {
         if (orderTable.hasTableGroup()) {
             throw new IllegalArgumentException();
         }
@@ -69,9 +69,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
                                                    final OrderTableNumberOfGuestsRequest orderTableNumberOfGuestRequest) {
-        final OrderTable orderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-        validateEmpty(orderTable);
+        final OrderTable orderTable = findNotEmptyOrderTable(orderTableId);
 
         final NumberOfGuests numberOfGuests = new NumberOfGuests(orderTableNumberOfGuestRequest.getNumberOfGuests());
         orderTable.updateNumberOfGuests(numberOfGuests);
@@ -79,9 +77,12 @@ public class TableService {
         return OrderTableResponse.of(orderTable);
     }
 
-    private void validateEmpty(final OrderTable orderTable) {
+    private OrderTable findNotEmptyOrderTable(final Long orderTableId) {
+        final OrderTable orderTable = orderTableDao.findById(orderTableId)
+                .orElseThrow(IllegalArgumentException::new);
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
+        return orderTable;
     }
 }
