@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.MenuGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +40,14 @@ public class MenuGroupRestControllerTest {
     void create() throws Exception {
         // given
         final MenuGroup menuGroup = MENU_GROUP1.create();
+        final MenuGroupRequest request = new MenuGroupRequest(menuGroup.getName());
 
-        given(menuGroupService.create(any(MenuGroup.class))).willReturn(menuGroup);
+        given(menuGroupService.create(any(MenuGroupRequest.class))).willReturn(menuGroup);
 
         // when
         final ResultActions resultActions = mockMvc.perform(post("/api/menu-groups")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(menuGroup)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andDo(print());
 
         // then
