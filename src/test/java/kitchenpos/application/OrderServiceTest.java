@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -35,7 +35,7 @@ class OrderServiceTest extends ServiceTest {
     private ProductRepository productRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private MenuDao menuDao;
@@ -48,7 +48,7 @@ class OrderServiceTest extends ServiceTest {
         Product product1 = productRepository.save(new Product("상품1", new BigDecimal(10000)));
         Product product2 = productRepository.save(new Product("상품2", new BigDecimal(20000)));
 
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹1"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
 
         MenuProduct menuProduct1 = new MenuProduct(1L, null, product1.getId(), 1);
         MenuProduct menuProduct2 = new MenuProduct(1L, null, product2.getId(), 2);
@@ -89,7 +89,7 @@ class OrderServiceTest extends ServiceTest {
         Product product1 = productRepository.save(new Product("상품1", new BigDecimal(10000)));
         Product product2 = productRepository.save(new Product("상품2", new BigDecimal(20000)));
 
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹1"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
 
         MenuProduct menuProduct1 = new MenuProduct(1L, null, product1.getId(), 1);
         MenuProduct menuProduct2 = new MenuProduct(1L, null, product2.getId(), 2);

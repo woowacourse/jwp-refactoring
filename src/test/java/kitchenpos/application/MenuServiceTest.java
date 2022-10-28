@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class MenuServiceTest extends ServiceTest {
-
     @Autowired
     private MenuService menuService;
 
@@ -30,7 +29,7 @@ class MenuServiceTest extends ServiceTest {
     private ProductRepository productRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Test
     void 메뉴를_생성할_수_있다() {
@@ -40,7 +39,7 @@ class MenuServiceTest extends ServiceTest {
         MenuProduct menuProduct1 = new MenuProduct(1L, null, product1.getId(), 2);
         MenuProduct menuProduct2 = new MenuProduct(2L, null, product2.getId(), 1);
 
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
 
         Menu menu = new Menu("메뉴", new BigDecimal(35000), menuGroup.getId(),
                 new ArrayList<>(Arrays.asList(menuProduct1, menuProduct2)));
@@ -58,7 +57,7 @@ class MenuServiceTest extends ServiceTest {
 
     @Test
     void 메뉴의_가격이_음수인_경우_메뉴를_생성할_수_없다() {
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
 
         Menu menu = new Menu("메뉴", new BigDecimal(-1), menuGroup.getId(), new ArrayList<>());
 
@@ -80,7 +79,7 @@ class MenuServiceTest extends ServiceTest {
         MenuProduct menuProduct1 = new MenuProduct(1L, null, product1.getId(), 2);
         MenuProduct menuProduct2 = new MenuProduct(2L, null, product2.getId(), 1);
 
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
 
         Menu menu = new Menu("메뉴", new BigDecimal(50000), menuGroup.getId(),
                 new ArrayList<>(Arrays.asList(menuProduct1, menuProduct2)));
@@ -96,7 +95,7 @@ class MenuServiceTest extends ServiceTest {
         MenuProduct menuProduct1 = new MenuProduct(1L, null, product1.getId(), 2);
         MenuProduct menuProduct2 = new MenuProduct(2L, null, product2.getId(), 1);
 
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
 
         Menu menu1 = new Menu("메뉴1", new BigDecimal(35000), menuGroup.getId(),
                 new ArrayList<>(Arrays.asList(menuProduct1, menuProduct2)));
