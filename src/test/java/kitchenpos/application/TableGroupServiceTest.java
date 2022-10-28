@@ -1,8 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFixture.메뉴_생성;
 import static kitchenpos.fixture.MenuGroupFixtures.한마리메뉴_그룹;
-import static kitchenpos.fixture.MenuProductFixture.메뉴_상품_생성;
 import static kitchenpos.fixture.OrderFixture.주문_생성;
 import static kitchenpos.fixture.OrderLineItemFixture.주문_항목_생성;
 import static kitchenpos.fixture.OrderTableFixtures.빈_테이블1;
@@ -11,21 +9,24 @@ import static kitchenpos.fixture.OrderTableFixtures.테이블_생성;
 import static kitchenpos.fixture.ProductFixtures.후라이드_상품;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.application.dto.TableGroupRequest;
 import kitchenpos.application.dto.TableIdRequest;
 import kitchenpos.application.support.IntegrationTest;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -45,13 +46,13 @@ public class TableGroupServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private ProductRepository productRepository;
 
     @Nested
     @DisplayName("단체 지정")
@@ -90,8 +91,10 @@ public class TableGroupServiceTest {
             final TableIdRequest tableIdRequest2 = new TableIdRequest(emptyTable2.getId());
             final TableGroup tableGroup = sut.create(new TableGroupRequest(List.of(tableIdRequest1, tableIdRequest2)));
 
-            final MenuProduct menuProduct = 메뉴_상품_생성(후라이드_상품.getId(), 5L);
-            final Menu menu = menuDao.save(메뉴_생성("한마리메뉴", 500, 한마리메뉴_그룹.getId(), List.of(menuProduct)));
+            final Product product = productRepository.getOne(후라이드_상품.getId());
+            final MenuProduct menuProduct = new MenuProduct(product, 5L);
+            final MenuGroup menuGroup = menuGroupRepository.getOne(한마리메뉴_그룹.getId());
+            final Menu menu = menuRepository.save(new Menu("한마리메뉴", BigDecimal.TEN, menuGroup, List.of(menuProduct)));
             final OrderLineItem orderLineItem = 주문_항목_생성(menu.getId(), 1);
             orderDao.save(주문_생성(emptyTable1.getId(), OrderStatus.COOKING.name(), List.of(orderLineItem)));
 
