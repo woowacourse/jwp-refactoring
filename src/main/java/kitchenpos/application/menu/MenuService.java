@@ -40,7 +40,7 @@ public class MenuService {
 
         final Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup, Collections.emptyList());
 
-        final List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProductRequests();
+        final List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProducts();
         final List<MenuProduct> menuProducts = menuProductRequests.stream()
                 .map((menuProductRequest) -> findProduct(menu, menuProductRequest))
                 .collect(Collectors.toList());
