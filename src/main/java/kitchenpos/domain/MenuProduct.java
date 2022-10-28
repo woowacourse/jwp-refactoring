@@ -8,48 +8,35 @@ public class MenuProduct {
     private Long productId;
     private long quantity;
 
-    @Deprecated
-    public MenuProduct() {}
-
-    public MenuProduct(Long productId, long quantity) {
+    public MenuProduct(Long id, Long menuId, Long productId, long quantity) {
+        this.id = id;
+        this.menuId = menuId;
         this.productId = productId;
         this.quantity = quantity;
+    }
+
+    public MenuProduct(Long productId, long quantity) {
+        this(null, null, productId, quantity);
     }
 
     public Long getId() {
         return id;
     }
 
-    @Deprecated
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Long getMenuId() {
         return menuId;
-    }
-
-    @Deprecated
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
     }
 
     public Long getProductId() {
         return productId;
     }
 
-    @Deprecated
-    public void setProductId(final Long productId) {
-        this.productId = productId;
-    }
-
     public long getQuantity() {
         return quantity;
     }
 
-    @Deprecated
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
+    public void setMenuId(Long menuId) {
+        this.menuId = menuId;
     }
 
     @Override
