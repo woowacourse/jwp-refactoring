@@ -9,5 +9,5 @@ public interface MenuGroupRepository extends Repository<MenuGroup, Long> {
 
     List<MenuGroup> findAll();
 
-    boolean existsById(Long id);
+    boolean existsById(Long menuGroupId);
 }

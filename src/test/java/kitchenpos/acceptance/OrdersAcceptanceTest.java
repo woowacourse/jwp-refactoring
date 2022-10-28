@@ -15,13 +15,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.request.OrderTableCreateRequest;
 import kitchenpos.ui.dto.response.MenuGroupResponse;
+import kitchenpos.ui.dto.response.MenuResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -31,7 +31,7 @@ public class OrdersAcceptanceTest extends AcceptanceTest {
     private Product 생성된_까르보치킨;
     private Product 생성된_짜장치킨;
     private MenuGroupResponse 메뉴그룹_생성응답;
-    private Menu 생성된_메뉴;
+    private MenuResponse 생성된_메뉴;
 
     @BeforeEach
     void setUpOrders() {
@@ -39,7 +39,7 @@ public class OrdersAcceptanceTest extends AcceptanceTest {
         생성된_까르보치킨 = 생성요청(프로덕트_URL, 까르보치킨_생성요청).body().as(Product.class);
         생성된_짜장치킨 = 생성요청(프로덕트_URL, 짜장치킨_생성요청).body().as(Product.class);
         메뉴그룹_생성응답 = 생성요청(메뉴그룹_URL, 세_마리_메뉴_생성요청).body().as(MenuGroupResponse.class);
-        생성된_메뉴 = 생성요청(메뉴_URL, 메뉴생성요청_데이터()).body().as(Menu.class);
+        생성된_메뉴 = 생성요청(메뉴_URL, 메뉴생성요청_데이터()).body().as(MenuResponse.class);
     }
 
     public Map<String, Object> 메뉴생성요청_데이터() {

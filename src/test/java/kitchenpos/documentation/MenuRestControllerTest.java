@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
 import kitchenpos.ui.dto.request.MenuProductRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +23,8 @@ import org.springframework.restdocs.payload.JsonFieldType;
 class MenuRestControllerTest extends DocumentationTest {
     private static final String MENU_API_URL = "/api/menus";
 
+    private final Product productA = new Product(1L, "까르보치킨 한 마리", new BigDecimal("20000.00"));
+
     @DisplayName("POST " + MENU_API_URL)
     @Test
     void create() {
@@ -31,8 +34,8 @@ class MenuRestControllerTest extends DocumentationTest {
         given(menuService.create(any()))
                 .willReturn(new Menu(1L, name, price, menuGroupId,
                                 List.of(
-                                        new MenuProduct(1L, 1L, 1L, 1L),
-                                        new MenuProduct(2L, 1L, 2L, 1L)
+                                        new MenuProduct(1L, 1L, productA, 1L),
+                                        new MenuProduct(2L, 1L, new Product(2L, "짜장 한 마리", new BigDecimal("18000.00")), 1L)
                                 )
                         )
                 );
@@ -78,12 +81,12 @@ class MenuRestControllerTest extends DocumentationTest {
                 .willReturn(List.of(
                                 new Menu(1L, "까르보 한 마리", new BigDecimal("18000.00"), 1L,
                                         List.of(
-                                                new MenuProduct(1L, 1L, 1L, 1L)
+                                                new MenuProduct(1L, 1L, productA, 1L)
                                         )
                                 ),
                                 new Menu(2L, "까르보 두 마리", new BigDecimal("35000.00"), 2L,
                                         List.of(
-                                                new MenuProduct(2L, 2L, 1L, 2L)
+                                                new MenuProduct(2L, 2L, productA, 2L)
                                         )
                                 )
                         )

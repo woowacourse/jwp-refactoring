@@ -1,5 +1,6 @@
 package kitchenpos.repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Product;
@@ -11,4 +12,6 @@ public interface ProductRepository extends Repository<Product, Long> {
     Optional<Product> findById(Long id);
 
     List<Product> findAll();
+
+    List<Product> findByIdIn(Collection<Long> productIds);
 }

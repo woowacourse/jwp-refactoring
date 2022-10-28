@@ -155,9 +155,6 @@ class MenuServiceTest extends ServiceTest {
 
         // when
         final var actual = menuService.list();
-        final var prices = actual.stream()
-                .map(Menu::getPrice)
-                .collect(Collectors.toList());
         final var menuProducts = actual.stream()
                 .flatMap(menu -> menu.getMenuProducts().stream())
                 .collect(Collectors.toList());
@@ -166,9 +163,9 @@ class MenuServiceTest extends ServiceTest {
         assertAll(
                 () -> assertThat(actual).extracting("id").containsExactly(1L, 2L),
                 () -> assertThat(actual).extracting("name").containsExactly(name, secondName),
-                () -> assertThat(prices).containsExactly(price, secondPrice),
+                () -> assertThat(actual).extracting("price").containsExactly(price, secondPrice),
                 () -> assertThat(actual).extracting("menuGroupId").containsExactly(menuGroupId, menuGroupId),
-                () -> assertThat(menuProducts).extracting("productId").containsExactly(1L, 2L, 1L, 2L),
+                () -> assertThat(menuProducts).extracting("product").extracting("id").containsExactly(1L, 2L, 1L, 2L),
                 () -> assertThat(menuProducts).extracting("quantity").containsExactly(1L, 1L, 1L, 1L)
         );
     }

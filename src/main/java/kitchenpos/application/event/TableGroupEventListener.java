@@ -17,8 +17,8 @@ public class TableGroupEventListener {
         this.orderTableValidator = orderTableValidator;
     }
 
-    @EventListener
     @Transactional
+    @EventListener
     public void handleTableGroupEvent(final TableGroupEvent tableGroupEvent) {
         final var tableGroup = tableGroupEvent.getTableGroup();
         final var tableGroupId = tableGroup.getId();
@@ -28,8 +28,8 @@ public class TableGroupEventListener {
                 .forEach(table -> table.group(orderTableValidator, tableGroupId));
     }
 
-    @EventListener
     @Transactional
+    @EventListener
     public void handleTableUnGroupEvent(final TableUnGroupEvent tableUnGroupEvent) {
         final var tableGroupId = tableUnGroupEvent.getTableGroupId();
 
