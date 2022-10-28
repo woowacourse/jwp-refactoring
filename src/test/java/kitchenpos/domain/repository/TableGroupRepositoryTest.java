@@ -21,7 +21,7 @@ class TableGroupRepositoryTest {
 
     @Test
     void 단체_지정을_저장_하면_id가_채워진다() {
-        TableGroup tableGroup = 단체_지정을_생성한다(LocalDateTime.now(), null);
+        TableGroup tableGroup = 단체_지정을_생성한다(LocalDateTime.now(), List.of());
 
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
@@ -35,7 +35,7 @@ class TableGroupRepositoryTest {
 
     @Test
     void id로_단체_지정을_조회할_수_있다() {
-        TableGroup tableGroup = tableGroupRepository.save(단체_지정을_생성한다(LocalDateTime.now(), null));
+        TableGroup tableGroup = tableGroupRepository.save(단체_지정을_생성한다(LocalDateTime.now(), List.of()));
 
         TableGroup actual = tableGroupRepository.findById(tableGroup.getId())
                 .orElseGet(Assertions::fail);
@@ -53,8 +53,8 @@ class TableGroupRepositoryTest {
 
     @Test
     void 모든_단체_지정을_조회할_수_있다() {
-        TableGroup tableGroup1 = tableGroupRepository.save(단체_지정을_생성한다(LocalDateTime.now(), null));
-        TableGroup tableGroup2 = tableGroupRepository.save(단체_지정을_생성한다(LocalDateTime.now(), null));
+        TableGroup tableGroup1 = tableGroupRepository.save(단체_지정을_생성한다(LocalDateTime.now(), List.of()));
+        TableGroup tableGroup2 = tableGroupRepository.save(단체_지정을_생성한다(LocalDateTime.now(), List.of()));
 
         List<TableGroup> actual = tableGroupRepository.findAll();
 

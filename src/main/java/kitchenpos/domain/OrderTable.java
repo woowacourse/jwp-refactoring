@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -21,8 +22,8 @@ public class OrderTable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
-    @Column(name = "number_of_guests", nullable = false)
-    private int numberOfGuests;
+    @Embedded
+    private NumberOfGuests numberOfGuests;
     @Column(name = "empty", nullable = false)
     private boolean empty;
 
@@ -32,8 +33,30 @@ public class OrderTable {
     public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
         this.id = id;
         this.tableGroup = tableGroup;
-        this.numberOfGuests = numberOfGuests;
+        this.numberOfGuests = new NumberOfGuests(numberOfGuests);
         this.empty = empty;
+    }
+
+    public void changeEmpty(final boolean empty) {
+        validateTableGroupNotDesignated();
+        this.empty = empty;
+    }
+
+    private void validateTableGroupNotDesignated() {
+        if (tableGroup != null) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        validateNotEmpty();
+        this.numberOfGuests = new NumberOfGuests(numberOfGuests);
+    }
+
+    private void validateNotEmpty() {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public void designateTableGroup(final TableGroup tableGroup) {
@@ -48,24 +71,12 @@ public class OrderTable {
         return tableGroup;
     }
 
-    public void setTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
-    }
-
     public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
+        return numberOfGuests.getValue();
     }
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 
     @Override

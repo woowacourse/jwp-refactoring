@@ -29,10 +29,10 @@ public class TableGroup {
     public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
+        group(orderTables);
     }
 
-    public void group(final List<OrderTable> orderTables) {
+    private void group(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
         orderTables.forEach(orderTable -> orderTable.designateTableGroup(this));
     }

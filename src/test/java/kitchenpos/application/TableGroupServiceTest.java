@@ -35,9 +35,6 @@ class TableGroupServiceTest {
 
         TableGroup savedTableGroup = tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()));
 
-        orderTable1.setEmpty(false);
-        orderTable2.setEmpty(false);
-
         assertAll(
                 () -> assertThat(savedTableGroup.getId()).isNotNull(),
                 () -> assertThat(savedTableGroup.getOrderTables())

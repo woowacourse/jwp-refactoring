@@ -46,7 +46,6 @@ public class TableGroupService {
         }
 
         TableGroup tableGroup = new TableGroup(null, LocalDateTime.now(), savedOrderTables);
-        tableGroup.group(savedOrderTables);
 
         return tableGroupRepository.save(tableGroup);
     }
@@ -65,8 +64,8 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(null);
-            orderTable.setEmpty(false);
+            orderTable.designateTableGroup(null);
+            orderTable.changeEmpty(false);
             orderTableRepository.save(orderTable);
         }
     }

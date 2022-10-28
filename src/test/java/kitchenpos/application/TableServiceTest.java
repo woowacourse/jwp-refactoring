@@ -9,11 +9,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.TransactionalTest;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
@@ -79,9 +77,7 @@ class TableServiceTest {
     void 변경_대상_테이블이_단체_지정되어_있으면_예외를_반환한다() {
         OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
         OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 0, true));
-        TableGroup tableGroup = tableGroupRepository
-                .save(단체_지정을_생성한다(LocalDateTime.now(), new ArrayList<>()));
-        tableGroup.group(List.of(orderTable1, orderTable2));
+        tableGroupRepository.save(단체_지정을_생성한다(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), false))
                 .isInstanceOf(IllegalArgumentException.class);

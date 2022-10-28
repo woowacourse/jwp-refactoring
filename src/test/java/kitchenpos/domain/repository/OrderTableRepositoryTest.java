@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.TransactionalTest;
@@ -111,8 +110,7 @@ class OrderTableRepositoryTest {
         OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 0, true));
         OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 0, true));
         TableGroup tableGroup = tableGroupRepository
-                .save(단체_지정을_생성한다(LocalDateTime.now(), new ArrayList<>()));
-        tableGroup.group(List.of(orderTable1, orderTable2));
+                .save(단체_지정을_생성한다(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
         List<OrderTable> actual = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
 

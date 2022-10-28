@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.OrderRepository;
@@ -44,34 +43,21 @@ public class TableService {
 
     @Transactional
     public OrderTableUpdateResponse changeEmpty(final Long orderTableId, final boolean empty) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+        OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
-        savedOrderTable.setEmpty(empty);
+        savedOrderTable.changeEmpty(empty);
         return orderTableDtoMapper.toOrderTableUpdateResponse(savedOrderTable);
     }
 
     @Transactional
     public OrderTableUpdateResponse changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+        OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
+        savedOrderTable.changeNumberOfGuests(numberOfGuests);
         return orderTableDtoMapper.toOrderTableUpdateResponse(savedOrderTable);
     }
 }
