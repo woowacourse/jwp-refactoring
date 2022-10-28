@@ -25,7 +25,7 @@ public class Price {
         }
     }
 
-    public static Price of(int value) {
+    public static Price from(int value) {
         return new Price(BigDecimal.valueOf(value));
     }
 
@@ -48,5 +48,9 @@ public class Price {
 
     public BigDecimal getValue() {
         return value;
+    }
+
+    public boolean isGreaterThan(Price price) {
+        return value.compareTo(price.value) > 0;
     }
 }

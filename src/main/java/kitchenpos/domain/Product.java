@@ -37,7 +37,7 @@ public class Product {
     }
 
     public Product(String name, int price) {
-        this(null, name, Price.of(price));
+        this(null, name, Price.from(price));
     }
 
     public Product(String name, BigDecimal price) {

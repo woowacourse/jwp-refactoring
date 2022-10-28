@@ -36,4 +36,20 @@ public class MenuProduct {
     public MenuProduct(Long menuId, Long productId, long quantity) {
         this(null, menuId, productId, quantity);
     }
+
+    public Long getSeq() {
+        return seq;
+    }
+
+    public Long getMenuId() {
+        return menuId;
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public long getQuantity() {
+        return quantity;
+    }
 }

@@ -71,7 +71,7 @@ public class MenuServiceTest {
                         List.of(new MenuProductCommand(product.getId(), 2)));
 
                 assertThatThrownBy(() -> menuService.create(menuRequest))
-                        .hasMessage("가격이 0원 이상이어야 합니다");
+                        .hasMessage("가격은 0원 이상이어야 합니다.");
             }
 
             @Test

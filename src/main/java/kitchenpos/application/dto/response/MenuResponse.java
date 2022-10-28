@@ -2,6 +2,7 @@ package kitchenpos.application.dto.response;
 
 import java.math.BigDecimal;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.Price;
 
 public class MenuResponse {
     private Long id;
@@ -20,7 +21,7 @@ public class MenuResponse {
     }
 
     public static MenuResponse from(Menu menu) {
-        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId());
+        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice().getValue(), menu.getMenuGroupId());
     }
 
     public Long getId() {
