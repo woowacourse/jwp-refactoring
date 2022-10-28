@@ -4,16 +4,24 @@ import com.sun.istack.NotNull;
 
 public class OrderTableRequest {
     @NotNull
-    private Long id;
+    private int numberOfGuests;
+
+    @NotNull
+    private boolean empty;
 
     public OrderTableRequest() {
     }
 
-    public OrderTableRequest(final Long id) {
-        this.id = id;
+    public OrderTableRequest(final int numberOfGuests, final boolean empty) {
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
     }
 
-    public Long getId() {
-        return id;
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 }

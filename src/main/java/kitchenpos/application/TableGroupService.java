@@ -9,7 +9,7 @@ import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
 import kitchenpos.domain.ordertable.TableGroup;
 import kitchenpos.domain.ordertable.TableGroupRepository;
-import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.OrderTableIdRequest;
 import kitchenpos.dto.TableGroupRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +31,7 @@ public class TableGroupService {
     @Transactional
     public TableGroup create(final TableGroupRequest request) {
         final List<Long> orderTableIds = request.getOrderTables().stream()
-                .map(OrderTableRequest::getId)
+                .map(OrderTableIdRequest::getId)
                 .collect(Collectors.toList());
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 

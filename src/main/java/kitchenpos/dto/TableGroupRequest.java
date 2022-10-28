@@ -5,16 +5,16 @@ import java.util.List;
 
 public class TableGroupRequest {
     @NotNull
-    private List<OrderTableRequest> orderTables;
+    private List<OrderTableIdRequest> orderTables;
 
     public TableGroupRequest() {
     }
 
-    public TableGroupRequest(final List<OrderTableRequest> orderTables) {
+    public TableGroupRequest(final List<OrderTableIdRequest> orderTables) {
         this.orderTables = orderTables;
     }
 
-    public List<OrderTableRequest> getOrderTables() {
+    public List<OrderTableIdRequest> getOrderTables() {
         return orderTables;
     }
 }

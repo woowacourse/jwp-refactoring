@@ -12,6 +12,7 @@ import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
+import kitchenpos.dto.OrderTableRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -30,9 +31,9 @@ class TableServiceTest extends ServiceTest {
 
     @Test
     void 테이블을_생성할_수_있다() {
-        OrderTable orderTable = new OrderTable(null, 5, false);
+        OrderTableRequest request = new OrderTableRequest(5, false);
 
-        OrderTable actual = tableService.create(orderTable);
+        OrderTable actual = tableService.create(request);
 
         assertAll(() -> {
             assertThat(actual.getId()).isNotNull();
@@ -57,9 +58,9 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 기존_테이블의_빈_테이블_여부를_변경할_수_있다() {
         OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
-        OrderTable newOrderTable = new OrderTable(null, 0, true);
+        OrderTableRequest request = new OrderTableRequest(0, true);
 
-        OrderTable actual = tableService.changeEmpty(orderTable.getId(), newOrderTable);
+        OrderTable actual = tableService.changeEmpty(orderTable.getId(), request);
 
         assertThat(actual.isEmpty()).isTrue();
     }
@@ -68,21 +69,21 @@ class TableServiceTest extends ServiceTest {
     @EnumSource(mode = EXCLUDE, names = {"COMPLETION"})
     void 기존_테이블의_주문_상태가_완료_상태가_아니면_빈_테이블로_변경할_수_없다(OrderStatus orderStatus) {
         OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
-        OrderTable newOrderTable = new OrderTable(null, 0, true);
+        OrderTableRequest request = new OrderTableRequest(0, true);
 
         Order order = new Order(orderTable, orderStatus, new ArrayList<>());
         orderRepository.save(order);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), newOrderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 기존_테이블의_손님_수를_변경할_수_있다() {
         OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, false));
-        OrderTable newOrderTable = new OrderTable(null, 5, false);
+        OrderTableRequest request = new OrderTableRequest(5, false);
 
-        OrderTable actual = tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable);
+        OrderTable actual = tableService.changeNumberOfGuests(orderTable.getId(), request);
 
         assertThat(actual.getNumberOfGuests()).isEqualTo(5);
     }
@@ -90,18 +91,18 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 손님_수가_음수인_경우_손님_수를_변경할_수_없다() {
         OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, false));
-        OrderTable newOrderTable = new OrderTable(null, -1, false);
+        OrderTableRequest request = new OrderTableRequest(-1, false);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 빈_테이블은_손님_수를_변경할_수_없다() {
         OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, true));
-        OrderTable newOrderTable = new OrderTable(null, 5, true);
+        OrderTableRequest request = new OrderTableRequest(5, true);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -14,7 +14,7 @@ import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
 import kitchenpos.domain.ordertable.TableGroup;
 import kitchenpos.domain.ordertable.TableGroupRepository;
-import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.OrderTableIdRequest;
 import kitchenpos.dto.TableGroupRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -41,7 +41,7 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 2, true));
 
         TableGroupRequest request = new TableGroupRequest(
-                List.of(new OrderTableRequest(orderTable1.getId()), new OrderTableRequest(orderTable2.getId())));
+                List.of(new OrderTableIdRequest(orderTable1.getId()), new OrderTableIdRequest(orderTable2.getId())));
 
         TableGroup actual = tableGroupService.create(request);
 
@@ -58,7 +58,7 @@ class TableGroupServiceTest extends ServiceTest {
     void 단체로_지정할_테이블이_한_개_이하인_경우_지정할_수_없다() {
         OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, 1, true));
 
-        TableGroupRequest request = new TableGroupRequest(List.of(new OrderTableRequest(orderTable1.getId())));
+        TableGroupRequest request = new TableGroupRequest(List.of(new OrderTableIdRequest(orderTable1.getId())));
 
         assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -69,7 +69,7 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 2, true));
 
         TableGroupRequest request = new TableGroupRequest(
-                List.of(new OrderTableRequest(orderTable1.getId()), new OrderTableRequest(orderTable2.getId())));
+                List.of(new OrderTableIdRequest(orderTable1.getId()), new OrderTableIdRequest(orderTable2.getId())));
 
         assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -84,8 +84,8 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 1, true));
 
         TableGroupRequest request = new TableGroupRequest(
-                List.of(new OrderTableRequest(alreadyGroupedOrderTable1.getId()),
-                        new OrderTableRequest(orderTable.getId())));
+                List.of(new OrderTableIdRequest(alreadyGroupedOrderTable1.getId()),
+                        new OrderTableIdRequest(orderTable.getId())));
 
         assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }

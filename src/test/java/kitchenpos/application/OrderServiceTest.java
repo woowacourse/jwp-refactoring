@@ -30,7 +30,7 @@ class OrderServiceTest extends ServiceTest {
     private OrderService orderService;
 
     @Autowired
-    protected OrderRepository orderRepository;
+    private OrderRepository orderRepository;
 
     @Autowired
     private ProductRepository productRepository;
