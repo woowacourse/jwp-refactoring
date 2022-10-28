@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.springframework.util.CollectionUtils;
 
 @Entity
 @Table(name = "table_group")
@@ -33,8 +34,35 @@ public class TableGroup {
     }
 
     private void group(final List<OrderTable> orderTables) {
+        validateOrderTables(orderTables);
         this.orderTables = orderTables;
         orderTables.forEach(orderTable -> orderTable.designateTableGroup(this));
+    }
+
+    private void validateOrderTables(final List<OrderTable> orderTables) {
+        validateOrderTablesSize(orderTables);
+        for (final OrderTable orderTable : orderTables) {
+            validateEmptyTable(orderTable);
+            validateTableGroupNotDesignated(orderTable);
+        }
+    }
+
+    private void validateOrderTablesSize(final List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateEmptyTable(final OrderTable orderTable) {
+        if (!orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateTableGroupNotDesignated(final OrderTable orderTable) {
+        if (orderTable.isDesignatedTableGroup()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -45,15 +73,7 @@ public class TableGroup {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 }

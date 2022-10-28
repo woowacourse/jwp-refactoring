@@ -1,13 +1,14 @@
 package kitchenpos.domain.repository;
 
 import static kitchenpos.support.TestFixtureFactory.단체_지정을_생성한다;
+import static kitchenpos.support.TestFixtureFactory.주문_테이블을_생성한다;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.TransactionalTest;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,24 +19,26 @@ class TableGroupRepositoryTest {
 
     @Autowired
     private TableGroupRepository tableGroupRepository;
+    @Autowired
+    private OrderTableRepository orderTableRepository;
 
     @Test
     void 단체_지정을_저장_하면_id가_채워진다() {
-        TableGroup tableGroup = 단체_지정을_생성한다(LocalDateTime.now(), List.of());
+        OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 0, true));
+        OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 0, true));
 
-        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+        TableGroup savedTableGroup = tableGroupRepository.save(
+                new TableGroup(null, LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
-        assertAll(
-                () -> assertThat(savedTableGroup.getId()).isNotNull(),
-                () -> assertThat(savedTableGroup).usingRecursiveComparison()
-                        .ignoringFields("id")
-                        .isEqualTo(tableGroup)
-        );
+        assertThat(savedTableGroup.getId()).isNotNull();
     }
 
     @Test
     void id로_단체_지정을_조회할_수_있다() {
-        TableGroup tableGroup = tableGroupRepository.save(단체_지정을_생성한다(LocalDateTime.now(), List.of()));
+        OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 0, true));
+        OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 0, true));
+        TableGroup tableGroup = tableGroupRepository.save(
+                단체_지정을_생성한다(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
         TableGroup actual = tableGroupRepository.findById(tableGroup.getId())
                 .orElseGet(Assertions::fail);
@@ -53,13 +56,15 @@ class TableGroupRepositoryTest {
 
     @Test
     void 모든_단체_지정을_조회할_수_있다() {
-        TableGroup tableGroup1 = tableGroupRepository.save(단체_지정을_생성한다(LocalDateTime.now(), List.of()));
-        TableGroup tableGroup2 = tableGroupRepository.save(단체_지정을_생성한다(LocalDateTime.now(), List.of()));
+        OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 0, true));
+        OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 0, true));
+        TableGroup tableGroup = tableGroupRepository.save(
+                단체_지정을_생성한다(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
         List<TableGroup> actual = tableGroupRepository.findAll();
 
-        assertThat(actual).hasSize(2)
+        assertThat(actual).hasSize(1)
                 .usingFieldByFieldElementComparator()
-                .containsExactly(tableGroup1, tableGroup2);
+                .containsExactly(tableGroup);
     }
 }

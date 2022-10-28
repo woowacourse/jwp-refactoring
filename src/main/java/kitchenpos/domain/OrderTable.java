@@ -59,6 +59,10 @@ public class OrderTable {
         }
     }
 
+    public boolean isDesignatedTableGroup() {
+        return this.tableGroup != null;
+    }
+
     public void designateTableGroup(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
     }
