@@ -35,6 +35,6 @@ public abstract class FakeSpringContext {
     protected final MenuRepository menus = new MenuRepository(menuDao, menuProductDao);
     protected final ProductRepository products = new ProductRepository(productDao);
     protected final MenuGroupRepository menuGroups = new MenuGroupRepository(menuGroupDao);
-    protected final OrderTableRepository orderTables = new OrderTableRepository(orderTableDao);
+    protected final OrderTableRepository orderTables = new OrderTableRepository(orderDao, orderTableDao);
     protected final OrderRepository orders = new OrderRepository(orderDao, orderLineItemDao);
 }

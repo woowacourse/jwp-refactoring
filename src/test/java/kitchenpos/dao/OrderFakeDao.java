@@ -1,9 +1,18 @@
 package kitchenpos.dao;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 
 public class OrderFakeDao extends BaseFakeDao<Order> implements OrderDao {
+
+    @Override
+    public List<Order> findByOrderTableId(final Long orderTableId) {
+        return entities.values()
+                .stream()
+                .filter(order -> order.getOrderTableId().equals(orderTableId))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId,

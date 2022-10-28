@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 
 class TableServiceTest extends FakeSpringContext {
 
-    private final TableService tableService = new TableService(orderDao, orderTableDao);
+    private final TableService tableService = new TableService(orderTables);
 
     @DisplayName("주문 테이블 등록")
     @Test
@@ -74,7 +74,7 @@ class TableServiceTest extends FakeSpringContext {
         final var result = tableService.changeNumberOfGuests(table.getId(), updatedTable);
         assertAll(
                 () -> assertThat(result.getId()).isEqualTo(table.getId()),
-                () -> assertThat(result.getNumberOfGuests()).isEqualTo(table.getNumberOfGuests())
+                () -> assertThat(result.getNumberOfGuests()).isEqualTo(updatedTable.getNumberOfGuests())
         );
     }
 

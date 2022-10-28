@@ -1,21 +1,31 @@
 package kitchenpos.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class OrderTable {
 
     private Long id;
     private Long tableGroupId;
     private Guests numberOfGuests;
     private boolean empty;
+    private List<Order> orders;
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
-        this(null, null, numberOfGuests, empty);
+        this(null, null, numberOfGuests, empty, new ArrayList<>());
     }
 
     public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this(id, tableGroupId, numberOfGuests, empty, new ArrayList<>());
+    }
+
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty,
+                      final List<Order> orders) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = new Guests(numberOfGuests);
         this.empty = empty;
+        this.orders = orders;
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
@@ -31,7 +41,17 @@ public class OrderTable {
 
     public void changeEmptyTo(final boolean status) {
         validateNotGrouped();
+        validateAllOrderCompleted();
         this.empty = status;
+    }
+
+    private void validateAllOrderCompleted() {
+        final var uncompletedOrderExists = orders.stream()
+                .anyMatch(order -> order.getOrderStatus() != OrderStatus.COMPLETION);
+
+        if (uncompletedOrderExists) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private void validateNotGrouped() {
