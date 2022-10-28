@@ -42,15 +42,11 @@ public class OrderLineItem {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
-
     public Order getOrder() {
         return order;
     }
 
-    public void setOrder(final Order order) {
+    public void updateOrder(final Order order) {
         this.order = order;
     }
 
@@ -62,7 +58,4 @@ public class OrderLineItem {
         return quantity;
     }
 
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
-    }
 }

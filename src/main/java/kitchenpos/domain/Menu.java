@@ -50,7 +50,7 @@ public class Menu {
 
     public Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
         for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenu(this);
+            menuProduct.updateMenu(this);
         }
         this.name = name;
         this.price = price;
@@ -59,11 +59,11 @@ public class Menu {
     }
 
     public boolean isPriceGreaterThanMenuProductsPrice() {
-        final BigDecimal sum = menuProducts.stream()
+        final Price sumPrice = menuProducts.stream()
                 .map(menuProduct -> menuProduct.getProduct().getPrice()
-                        .multiply(BigDecimal.valueOf(menuProduct.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        return price.isGreaterThan(sum);
+                        .multiply(menuProduct.getQuantity()))
+                .reduce(new Price(BigDecimal.ZERO), Price::add);
+        return price.isGreaterThan(sumPrice);
     }
 
     public Long getId() {

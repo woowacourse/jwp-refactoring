@@ -45,24 +45,8 @@ public class OrderTable {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
-
-    public void setTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
-    }
-
     public void removeTableGroup() {
         this.tableGroup = null;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
     }
 
     public void updateNumberOfGuests(final int numberOfGuests) {
@@ -72,7 +56,19 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void setEmpty(final boolean empty) {
+    public TableGroup getTableGroup() {
+        return tableGroup;
+    }
+
+    public void updateTableGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public void updateEmptyStatus(final boolean empty) {
         this.empty = empty;
     }
 }

@@ -23,8 +23,16 @@ public class Price {
         }
     }
 
-    public boolean isGreaterThan(final BigDecimal anotherValue) {
-        return value.compareTo(anotherValue) > 0;
+    public boolean isGreaterThan(final Price another) {
+        return value.compareTo(another.value) > 0;
+    }
+
+    public Price multiply(final long quantity) {
+        return new Price(this.value.multiply(new BigDecimal(quantity)));
+    }
+
+    public Price add(final Price anotherPrice) {
+        return new Price(this.value.add(anotherPrice.value));
     }
 
     public BigDecimal getValue() {

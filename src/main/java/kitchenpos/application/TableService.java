@@ -48,7 +48,7 @@ public class TableService {
                 .orElseThrow(IllegalArgumentException::new);
         validateOrderTable(orderTable);
         validateOrderStatusCompletion(orderTableId);
-        orderTable.setEmpty(orderTableEmptyRequest.isEmpty());
+        orderTable.updateEmptyStatus(orderTableEmptyRequest.isEmpty());
 
         return OrderTableResponse.of(orderTable);
     }

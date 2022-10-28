@@ -38,7 +38,7 @@ public class TableGroup {
     public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
         validateOrderTables(orderTables);
         for (OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(this);
+            orderTable.updateTableGroup(this);
         }
         this.createdDate = createdDate;
         this.orderTables = orderTables;
