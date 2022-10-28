@@ -56,18 +56,6 @@ public class TableGroupService {
         );
     }
 
-    private static void validateTablesExist(final List<Long> orderTableIds, final List<OrderTable> savedOrderTables) {
-        if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private static void validateOrderTablesSize(final List<Long> orderTableIds) {
-        if (orderTableIds.isEmpty() || orderTableIds.size() < 2) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
@@ -77,5 +65,17 @@ public class TableGroupService {
         }
 
         orderTables.forEach(OrderTable::ungroup);
+    }
+
+    private static void validateOrderTablesSize(final List<Long> orderTableIds) {
+        if (orderTableIds.isEmpty() || orderTableIds.size() < 2) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private static void validateTablesExist(final List<Long> orderTableIds, final List<OrderTable> savedOrderTables) {
+        if (orderTableIds.size() != savedOrderTables.size()) {
+            throw new IllegalArgumentException();
+        }
     }
 }
