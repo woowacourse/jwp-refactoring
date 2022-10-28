@@ -48,7 +48,7 @@ public class MenuService {
     }
 
     private List<Product> getProducts(final MenuRequest menuRequest) {
-        final List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProductRequests();
+        final List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProducts();
         final List<Long> productIds = menuProductRequests.stream()
                 .map(MenuProductRequest::getProductId)
                 .collect(Collectors.toList());

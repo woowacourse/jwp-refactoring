@@ -35,7 +35,7 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
         final Order order = convertToOrder(orderRequest);
-        validateMenusExist(orderRequest.getOrderMenus().size(), order);
+        validateMenusExist(orderRequest.getOrderLineItems().size(), order);
 
         final OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
@@ -45,7 +45,7 @@ public class OrderService {
     }
 
     private Order convertToOrder(final OrderRequest orderRequest) {
-        final List<Long> menuIds = orderRequest.getOrderMenus()
+        final List<Long> menuIds = orderRequest.getOrderLineItems()
                 .stream()
                 .map(OrderMenuRequest::getMenuId)
                 .collect(Collectors.toList());

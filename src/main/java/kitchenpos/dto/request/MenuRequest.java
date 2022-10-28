@@ -12,16 +12,16 @@ public class MenuRequest {
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-    private List<MenuProductRequest> menuProductRequests;
+    private List<MenuProductRequest> menuProducts;
 
     public MenuRequest() {
     }
 
-    public MenuRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProductRequest> menuProductRequests) {
+    public MenuRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProductRequest> menuProducts) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProductRequests = menuProductRequests;
+        this.menuProducts = menuProducts;
     }
 
     public String getName() {
@@ -36,12 +36,12 @@ public class MenuRequest {
         return menuGroupId;
     }
 
-    public List<MenuProductRequest> getMenuProductRequests() {
-        return menuProductRequests;
+    public List<MenuProductRequest> getMenuProducts() {
+        return menuProducts;
     }
 
     public Menu toEntity(final List<Product> products) {
-        final List<MenuProduct> menuProducts = this.menuProductRequests.stream()
+        final List<MenuProduct> menuProducts = this.menuProducts.stream()
                 .map(it -> new MenuProduct(null, findProduct(it.getProductId(), products), it.getQuantity()))
                 .collect(Collectors.toList());
         return new Menu(name, price, menuGroupId, menuProducts);

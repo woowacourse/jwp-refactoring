@@ -14,6 +14,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.OrderTableIdRequest;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.TableGroupResponse;
@@ -30,7 +31,8 @@ class TableGroupServiceTest extends ServiceTest {
         final OrderTable firstSavedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
         final OrderTable secondSavedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(
-                List.of(firstSavedOrderTable.getId(), secondSavedOrderTable.getId()));
+                List.of(new OrderTableIdRequest(firstSavedOrderTable.getId()),
+                        new OrderTableIdRequest(secondSavedOrderTable.getId())));
 
         // when
         final TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
@@ -44,7 +46,7 @@ class TableGroupServiceTest extends ServiceTest {
         // given
         final OrderTable savedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(
-                List.of(savedOrderTable.getId()));
+                List.of(new OrderTableIdRequest(savedOrderTable.getId())));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
@@ -57,7 +59,8 @@ class TableGroupServiceTest extends ServiceTest {
         final Long notExistOrderTableId = Long.MAX_VALUE;
         final OrderTable secondSavedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(
-                List.of(notExistOrderTableId, secondSavedOrderTable.getId()));
+                List.of(new OrderTableIdRequest(notExistOrderTableId),
+                        new OrderTableIdRequest(secondSavedOrderTable.getId())));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
@@ -70,7 +73,8 @@ class TableGroupServiceTest extends ServiceTest {
         final OrderTable fullSavedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성());
         final OrderTable emptySavedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(
-                List.of(fullSavedOrderTable.getId(), emptySavedOrderTable.getId()));
+                List.of(new OrderTableIdRequest(fullSavedOrderTable.getId()),
+                        new OrderTableIdRequest(emptySavedOrderTable.getId())));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
@@ -85,7 +89,8 @@ class TableGroupServiceTest extends ServiceTest {
 
         final OrderTable savedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(
-                List.of(alreadySavedOrderTable.getId(), savedOrderTable.getId()));
+                List.of(new OrderTableIdRequest(alreadySavedOrderTable.getId()),
+                        new OrderTableIdRequest(savedOrderTable.getId())));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
