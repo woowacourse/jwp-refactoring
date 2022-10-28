@@ -38,6 +38,7 @@ CREATE TABLE menu_product
     menu_id    BIGINT(20) NOT NULL,
     product_id BIGINT(20) NOT NULL,
     quantity   BIGINT(20) NOT NULL,
+    price      DECIMAL(19, 2) NOT NULL,
     PRIMARY KEY (seq)
 );
 

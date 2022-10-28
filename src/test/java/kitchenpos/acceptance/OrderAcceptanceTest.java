@@ -38,14 +38,14 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         Long productId2 = ProductAcceptanceTest.createProduct("돼지국밥", 7_000);
         Long productId3 = ProductAcceptanceTest.createProduct("피자", 12_000);
 
-        MenuProduct menuProduct1 = new MenuProduct(productId1, 1);
-        MenuProduct menuProduct2 = new MenuProduct(productId2, 1);
-        MenuProduct menuProduct3 = new MenuProduct(productId3, 1);
+        MenuProduct menuProduct1 = new MenuProduct(productId1, 1, BigDecimal.valueOf(9_000));
+        MenuProduct menuProduct2 = new MenuProduct(productId2, 1, BigDecimal.valueOf(7_000));
+        MenuProduct menuProduct3 = new MenuProduct(productId3, 1, BigDecimal.valueOf(12_000));
 
         Long menuId1 = createMenu(
-                new Menu("해장 세트", BigDecimal.valueOf(15_000), menuGroupId, List.of(menuProduct1, menuProduct2)));
+                Menu.create("해장 세트", BigDecimal.valueOf(15_000), menuGroupId, List.of(menuProduct1, menuProduct2)));
         Long menuId2 = createMenu(
-                new Menu("아재 세트", BigDecimal.valueOf(13_000), menuGroupId, List.of(menuProduct3, menuProduct2)));
+                Menu.create("아재 세트", BigDecimal.valueOf(13_000), menuGroupId, List.of(menuProduct3, menuProduct2)));
 
         Long orderId1 = createOrder(tableId1, List.of(menuId1));
         Long orderId2 = createOrder(tableId2, List.of(menuId1, menuId2));
@@ -95,11 +95,11 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         Long productId1 = ProductAcceptanceTest.createProduct("후라이드", 9000);
         Long productId2 = ProductAcceptanceTest.createProduct("돼지국밥", 7000);
 
-        MenuProduct menuProduct1 = new MenuProduct(productId1, 1);
-        MenuProduct menuProduct2 = new MenuProduct(productId2, 1);
+        MenuProduct menuProduct1 = new MenuProduct(productId1, 1, BigDecimal.valueOf(9000));
+        MenuProduct menuProduct2 = new MenuProduct(productId2, 1, BigDecimal.valueOf(7000));
 
         Long menuId = createMenu(
-                new Menu("해장 세트", BigDecimal.valueOf(15_000), menuGroupId, List.of(menuProduct1, menuProduct2)));
+                Menu.create("해장 세트", BigDecimal.valueOf(15_000), menuGroupId, List.of(menuProduct1, menuProduct2)));
 
         Long orderId = createOrder(tableId, List.of(menuId));
 

@@ -39,19 +39,19 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         Long productId3 = ProductAcceptanceTest.createProduct("피자", 12000);
         Long productId4 = ProductAcceptanceTest.createProduct("수육", 18000);
 
-        MenuProduct menuProduct1 = new MenuProduct(productId1, 1);
-        MenuProduct menuProduct2 = new MenuProduct(productId2, 1);
-        MenuProduct menuProduct3 = new MenuProduct(productId3, 1);
-        MenuProduct menuProduct4 = new MenuProduct(productId4, 1);
+        MenuProduct menuProduct1 = new MenuProduct(productId1, 1, BigDecimal.valueOf(9000));
+        MenuProduct menuProduct2 = new MenuProduct(productId2, 1, BigDecimal.valueOf(7000));
+        MenuProduct menuProduct3 = new MenuProduct(productId3, 1, BigDecimal.valueOf(12000));
+        MenuProduct menuProduct4 = new MenuProduct(productId4, 1, BigDecimal.valueOf(18000));
 
         Long menuId1 = createMenu(
-                new Menu("해장 세트", BigDecimal.valueOf(15_000), menuGroupId, List.of(menuProduct1, menuProduct2)));
+                Menu.create("해장 세트", BigDecimal.valueOf(15_000), menuGroupId, List.of(menuProduct1, menuProduct2)));
         Long menuId2 = createMenu(
-                new Menu("아재 세트", BigDecimal.valueOf(13_000), menuGroupId, List.of(menuProduct3, menuProduct2)));
+                Menu.create("아재 세트", BigDecimal.valueOf(13_000), menuGroupId, List.of(menuProduct3, menuProduct2)));
         Long menuId3 = createMenu(
-                new Menu("피자치킨 세트", BigDecimal.valueOf(12_000), menuGroupId, List.of(menuProduct1, menuProduct3)));
+                Menu.create("피자치킨 세트", BigDecimal.valueOf(12_000), menuGroupId, List.of(menuProduct1, menuProduct3)));
         Long menuId4 = createMenu(
-                new Menu("국밥 수육 메뉴", BigDecimal.valueOf(27_000), menuGroupId, List.of(menuProduct3, menuProduct4)));
+                Menu.create("국밥 수육 메뉴", BigDecimal.valueOf(27_000), menuGroupId, List.of(menuProduct3, menuProduct4)));
 
         List<MenuResponse> menus = getMenus();
 

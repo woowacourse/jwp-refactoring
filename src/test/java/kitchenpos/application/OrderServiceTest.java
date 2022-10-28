@@ -9,8 +9,10 @@ import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.application.dto.OrderStatusRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +29,9 @@ class OrderServiceTest extends ApplicationTest {
     @Test
     void list() {
         MenuGroup menuGroup = 메뉴그룹_생성(new MenuGroup("메뉴그룹"));
-        Menu menu = 메뉴_생성(new Menu("메뉴1", BigDecimal.valueOf(17_000), menuGroup.getId()));
+        Product product = 상품_생성(new Product("상품1", BigDecimal.valueOf(19_000)));
+        MenuProduct menuProduct = new MenuProduct(product.getId(), 1, BigDecimal.valueOf(19_000));
+        Menu menu = 메뉴_생성(Menu.create("메뉴1", BigDecimal.valueOf(17_000), menuGroup.getId(), List.of(menuProduct)));
         OrderTable orderTable = 주문테이블_생성(new OrderTable(null, 5, false));
 
         orderService.create(new OrderRequest(orderTable.getId(), List.of(new OrderLineItemRequest(menu.getId(), 2))));
@@ -42,7 +46,9 @@ class OrderServiceTest extends ApplicationTest {
     @ValueSource(strings = {"MEAL", "COMPLETION"})
     void changeOrderStatus(String status) {
         MenuGroup menuGroup = 메뉴그룹_생성(new MenuGroup("메뉴그룹"));
-        Menu menu = 메뉴_생성(new Menu("메뉴1", BigDecimal.valueOf(17_000), menuGroup.getId()));
+        Product product = 상품_생성(new Product("상품1", BigDecimal.valueOf(19_000)));
+        MenuProduct menuProduct = new MenuProduct(product.getId(), 1, BigDecimal.valueOf(19_000));
+        Menu menu = 메뉴_생성(Menu.create("메뉴1", BigDecimal.valueOf(17_000), menuGroup.getId(), List.of(menuProduct)));
         OrderTable orderTable = 주문테이블_생성(new OrderTable(null, 5, false));
         OrderResponse orderResponse = orderService.create(
                 new OrderRequest(orderTable.getId(), List.of(new OrderLineItemRequest(menu.getId(), 2))));

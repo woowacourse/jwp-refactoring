@@ -9,6 +9,7 @@ import io.restassured.RestAssured;
 import java.util.List;
 import java.util.Map;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.OrderTableResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,9 +46,10 @@ public class TableAcceptanceTest extends AcceptanceTest {
         long tableId2 = createTable(new OrderTable(null, 2, false));
         long tableId3 = createTable(new OrderTable(null, 3, false));
 
-        List<OrderTable> tables = getTables();
+        List<OrderTableResponse> tables = getTables();
 
-        assertThat(tables).extracting(OrderTable::getId, OrderTable::getNumberOfGuests, OrderTable::isEmpty)
+        assertThat(tables).extracting(OrderTableResponse::getId, OrderTableResponse::getNumberOfGuests,
+                        OrderTableResponse::isEmpty)
                 .containsExactlyInAnyOrder(
                         tuple(tableId1, 0, true),
                         tuple(tableId2, 2, false),
@@ -55,13 +57,13 @@ public class TableAcceptanceTest extends AcceptanceTest {
                 );
     }
 
-    private List<OrderTable> getTables() {
+    private List<OrderTableResponse> getTables() {
         return RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/tables")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .extract().body().jsonPath().getList(".", OrderTable.class);
+                .extract().body().jsonPath().getList(".", OrderTableResponse.class);
     }
 
     @DisplayName("테이블의 주문 가능 여부 (empty)를 변경한다.")
@@ -72,13 +74,13 @@ public class TableAcceptanceTest extends AcceptanceTest {
 
         updateTableEmpty(tableId, empty);
 
-        List<OrderTable> tables = getTables();
-        OrderTable table = tables.stream()
+        List<OrderTableResponse> tables = getTables();
+        OrderTableResponse tableResponse = tables.stream()
                 .filter(t -> tableId.equals(t.getId()))
                 .findFirst()
                 .orElseThrow();
 
-        assertThat(table.isEmpty()).isEqualTo(empty);
+        assertThat(tableResponse.isEmpty()).isEqualTo(empty);
     }
 
     private void updateTableEmpty(long tableId, boolean empty) {
@@ -99,8 +101,8 @@ public class TableAcceptanceTest extends AcceptanceTest {
 
         updateTableNumberOfGuests(tableId, numberOfGuests);
 
-        List<OrderTable> tables = getTables();
-        OrderTable table = tables.stream()
+        List<OrderTableResponse> tables = getTables();
+        OrderTableResponse table = tables.stream()
                 .filter(t -> tableId.equals(t.getId()))
                 .findFirst()
                 .orElseThrow();
