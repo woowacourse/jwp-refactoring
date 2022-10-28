@@ -10,8 +10,8 @@ import kitchenpos.application.request.MenuProductRequest;
 import kitchenpos.application.request.MenuRequest;
 import kitchenpos.application.response.MenuResponse;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,14 +38,14 @@ class MenuServiceTest {
     private MenuGroupDao menuGroupDao;
 
     @Autowired
-    private MenuProductDao menuProductDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private ProductRepository productRepository;
+    private MenuProductRepository menuProductRepository;
 
     @BeforeEach
     void setUp() {
-        sut = new MenuService(menuRepository, menuGroupDao, menuProductDao, productRepository);
+        sut = new MenuService(menuRepository, menuGroupDao, productRepository, menuProductRepository);
     }
 
     @DisplayName("새로운 메뉴를 등록할 수 있다.")

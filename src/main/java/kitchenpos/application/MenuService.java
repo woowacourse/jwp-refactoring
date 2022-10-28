@@ -9,10 +9,10 @@ import kitchenpos.application.request.MenuProductRequest;
 import kitchenpos.application.request.MenuRequest;
 import kitchenpos.application.response.MenuResponse;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -24,18 +24,18 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupDao menuGroupDao;
     private final ProductRepository productRepository;
-    private final MenuProductDao menuProductDao;
+    private final MenuProductRepository menuProductRepository;
 
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupDao menuGroupDao,
-            final MenuProductDao menuProductDao,
-            final ProductRepository productRepository
+            final ProductRepository productRepository,
+            final MenuProductRepository menuProductRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
         this.productRepository = productRepository;
+        this.menuProductRepository = menuProductRepository;
     }
 
     @Transactional
@@ -68,7 +68,7 @@ public class MenuService {
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
             menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
+            savedMenuProducts.add(menuProductRepository.save(menuProduct));
         }
         savedMenu.setMenuProducts(savedMenuProducts);
 
@@ -79,7 +79,7 @@ public class MenuService {
         final List<Menu> menus = menuRepository.findAll();
 
         for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+            menu.setMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
         }
 
         return menus.stream()
