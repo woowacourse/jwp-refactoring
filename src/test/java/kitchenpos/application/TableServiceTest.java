@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import static kitchenpos.application.ServiceTestFixture.ORDER_LINE_ITEMS;
 import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -78,11 +77,7 @@ class TableServiceTest {
             final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
             savedOrderTable = tableService.create(orderTableRequest);
 
-            Order order = new Order();
-            order.setOrderStatus(COOKING.name());
-            order.changeOrderLineItems(ORDER_LINE_ITEMS);
-            order.setOrderTableId(savedOrderTable.getId());
-            order.setOrderedTime(LocalDateTime.now());
+            final Order order = new Order(savedOrderTable.getId(), COOKING.name(), LocalDateTime.now(), ORDER_LINE_ITEMS);
 
             Order savedOrder = orderDao.save(order);
 
@@ -95,11 +90,7 @@ class TableServiceTest {
             final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
             savedOrderTable = tableService.create(orderTableRequest);
 
-            Order order = new Order();
-            order.setOrderStatus(MEAL.name());
-            order.changeOrderLineItems(ORDER_LINE_ITEMS);
-            order.setOrderTableId(savedOrderTable.getId());
-            order.setOrderedTime(LocalDateTime.now());
+            final Order order = new Order(savedOrderTable.getId(), COOKING.name(), LocalDateTime.now(), ORDER_LINE_ITEMS);
 
             Order savedOrder = orderDao.save(order);
 

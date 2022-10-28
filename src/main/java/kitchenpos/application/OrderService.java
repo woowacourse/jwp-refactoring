@@ -74,10 +74,9 @@ public class OrderService {
     }
 
     private Order saveOrder(Order order, OrderTable orderTable) {
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-        return orderDao.save(order);
+        final Order newOrder = new Order(orderTable.getId(), OrderStatus.COOKING.name(),
+                LocalDateTime.now(), order.getOrderLineItems());
+        return orderDao.save(newOrder);
     }
 
     private void saveOrderLineItems(Order savedOrder, List<OrderLineItem> orderLineItems) {

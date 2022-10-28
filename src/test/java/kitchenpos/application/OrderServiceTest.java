@@ -8,6 +8,7 @@ import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Order;
@@ -22,16 +23,6 @@ public class OrderServiceTest {
 
     @Nested
     class CreateOrderServiceTest extends ServiceTest {
-
-        Order order;
-
-        @BeforeEach
-        void setup() {
-//            order = new Order();
-//            order.setOrderStatus(COOKING.name());
-//            order.changeOrderLineItems(ORDER_LINE_ITEMS);
-//            order.setOrderTableId(1L);
-        }
 
         @Test
         void create_fail_when_orderLineItems_has_zero_size() {
@@ -81,10 +72,7 @@ public class OrderServiceTest {
         @Test
         void create_success() {
             OrderTable orderTable = new OrderTable(1L, 5, false);
-//            orderTable.setNumberOfGuests(5);
-//            orderTable.setEmpty(false);
             OrderTable savedOrderTable = orderTableDao.save(orderTable);
-//            order.setOrderTableId(savedOrderTable.getId());
 
             OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), "COOKING", ORDER_LINE_ITEM_REQUESTS);
             Order savedOrder = orderService.create(orderRequest);
@@ -108,10 +96,8 @@ public class OrderServiceTest {
 
         @BeforeEach
         void setup() {
-            order = new Order();
-            order.setOrderStatus(COOKING.name());
-            order.changeOrderLineItems(ORDER_LINE_ITEMS);
-            order.setOrderTableId(1L);
+            order = new Order(1L, COOKING.name(),
+                    LocalDateTime.now(), ORDER_LINE_ITEMS);
         }
 
         @Test
@@ -125,18 +111,16 @@ public class OrderServiceTest {
         @Test
         void changeOrderStatus_success() {
             OrderTable orderTable = new OrderTable(1L, 5, false);
-//            orderTable.setNumberOfGuests(5);
-//            orderTable.setEmpty(false);
             OrderTable savedOrderTable = orderTableDao.save(orderTable);
-            order.setOrderTableId(savedOrderTable.getId());
 
             OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), "COOKING", ORDER_LINE_ITEM_REQUESTS);
 
             Order savedOrder = orderService.create(orderRequest);
 
-            order.setOrderStatus(MEAL.name());
+            Order newOrder = new Order(savedOrder.getId(), savedOrderTable.getId(), MEAL.name(),
+                    savedOrder.getOrderedTime(), savedOrder.getOrderLineItems());
 
-            Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), order);
+            Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), newOrder);
 
             assertThat(changedOrder.getOrderStatus()).isEqualTo(MEAL.name());
         }

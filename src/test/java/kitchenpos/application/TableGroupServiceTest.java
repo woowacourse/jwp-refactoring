@@ -30,13 +30,8 @@ class TableGroupServiceTest {
     @Nested
     class CreateTest extends ServiceTest {
 
-        private TableGroup tableGroup;
-
         @BeforeEach
         void setup() {
-//            tableGroup = new TableGroup();
-//            tableGroup.setOrderTables(ORDER_TABLES);
-
             orderTableDao.save(ORDER_TABLE1);
             orderTableDao.save(ORDER_TABLE2);
             orderTableDao.save(ORDER_TABLE3);
@@ -85,16 +80,8 @@ class TableGroupServiceTest {
     @Nested
     class UngroupTest extends ServiceTest {
 
-        private TableGroup tableGroup;
-        private Order order;
-
         @BeforeEach
         void setup() {
-//            tableGroup = new TableGroup();
-//            tableGroup.setOrderTables(ORDER_TABLES);
-
-            order = new Order();
-
             orderTableDao.save(ORDER_TABLE1);
             orderTableDao.save(ORDER_TABLE2);
             orderTableDao.save(ORDER_TABLE3);
@@ -102,9 +89,7 @@ class TableGroupServiceTest {
 
         @Test
         void ungroup_fail_when_orderStatus_MEAL() {
-            order.setOrderStatus(MEAL.name());
-            order.setOrderTableId(1L);
-            order.setOrderedTime(LocalDateTime.now());
+            Order order = new Order(1L, MEAL.name(), LocalDateTime.now(), null);
             orderDao.save(order);
 
             TableGroup savedTableGroup = tableGroupService.create(new TableGroupRequest(ORDER_TABLE_REQUESTS));
@@ -120,11 +105,11 @@ class TableGroupServiceTest {
                     .collect(Collectors.toList());
 
             for (Order order : orders) {
-                order.setOrderStatus(COMPLETION.name());
-                orderDao.save(order);
+                Order newOrder = new Order(order.getOrderTableId(), COMPLETION.name(),
+                        order.getOrderedTime(), order.getOrderLineItems());
+                orderDao.save(newOrder);
             }
 
-//            tableGroup.setOrderTables(ORDER_TABLES);
             TableGroup savedTableGroup = tableGroupService.create(new TableGroupRequest(ORDER_TABLE_REQUESTS));
             tableGroupService.ungroup(savedTableGroup.getId());
 
