@@ -11,7 +11,7 @@ import org.springframework.test.context.TestConstructor.AutowireMode;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.application.MenuGroupService;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.application.dto.MenuGroupRequest;
 
 @SpringBootTest
 @TestConstructor(autowireMode = AutowireMode.ALL)
@@ -27,14 +27,14 @@ public class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 생성한다.")
     @Test
     public void createMenuGroup() {
-        assertDoesNotThrow(() -> menuGroupService.create(new MenuGroup("밥류")));
+        assertDoesNotThrow(() -> menuGroupService.create(new MenuGroupRequest("밥류")));
     }
 
     @DisplayName("생성된 메뉴 그룹을 조회한다.")
     @Test
     public void listMenuGroup() {
-        menuGroupService.create(new MenuGroup("밥류"));
-        menuGroupService.create(new MenuGroup("햄류"));
+        menuGroupService.create(new MenuGroupRequest("밥류"));
+        menuGroupService.create(new MenuGroupRequest("햄류"));
 
         assertThat(menuGroupService.list()).hasSize(2);
     }

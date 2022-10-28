@@ -41,7 +41,6 @@ public class TableGroupService {
         validateOrderTables(orderTables, tableGroupRequest.getOrderTables());
         TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-
         for (final OrderTable savedOrderTable : orderTables) {
             savedOrderTable.full();
         }
@@ -96,13 +95,14 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (orderRepository.findByOrderTableIdInAndOrderStatusIn(
+                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL)).size() > 0) {
             throw new IllegalArgumentException();
         }
 
         for (final OrderTable orderTable : orderTables) {
             tableGroup.deleteOrderTable(orderTable);
+            orderTable.deleteTableGroup();
             orderTable.empty();
         }
     }

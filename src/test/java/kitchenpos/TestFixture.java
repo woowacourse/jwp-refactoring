@@ -10,49 +10,58 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.application.MenuService;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.TableGroupService;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.application.dto.MenuProductRequest;
+import kitchenpos.application.dto.MenuRequest;
+import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
 
 @Component
 @Transactional
 public class TestFixture {
 
     private final ProductService productService;
-    private final MenuGroupDao menuGroupDao;
+    private final MenuGroupRepository menuGroupRepository;
     private final MenuService menuService;
     private final TableGroupService tableGroupService;
-    private final OrderLineItemDao orderLineItemDao;
+    private final OrderLineItemRepository orderLineItemRepository;
 
-    public TestFixture(ProductService productService, MenuGroupDao menuGroupDao, MenuService menuService,
-                       TableGroupService tableGroupService, OrderLineItemDao orderLineItemDao) {
+    public TestFixture(ProductService productService, MenuGroupRepository menuGroupRepository, MenuService menuService,
+                       TableGroupService tableGroupService, OrderLineItemRepository orderLineItemRepository) {
         this.productService = productService;
-        this.menuGroupDao = menuGroupDao;
+        this.menuGroupRepository = menuGroupRepository;
         this.menuService = menuService;
         this.tableGroupService = tableGroupService;
-        this.orderLineItemDao = orderLineItemDao;
+        this.orderLineItemRepository = orderLineItemRepository;
     }
 
     public Product 삼겹살() {
-        return productService.create(new Product("삼겹살", BigDecimal.valueOf(1000L)));
+        return productService.create(
+                new ProductRequest("삼겹살", BigDecimal.valueOf(1000L)));
     }
 
     public MenuGroup 삼겹살_종류() {
-        return menuGroupDao.save(new MenuGroup("삼겹살 종류"));
+        return menuGroupRepository.save(new MenuGroup("삼겹살 종류"));
     }
 
     public Menu 삼겹살_메뉴() {
-        Product product = productService.create(삼겹살());
-        MenuGroup menuGroup = menuGroupDao.save(삼겹살_종류());
-        List<MenuProduct> menuProducts = new ArrayList<MenuProduct>();
-        menuProducts.add(new MenuProduct(product.getId(), 1L));
+        Product product = 삼겹살();
+        MenuGroup menuGroup = menuGroupRepository.save(삼겹살_종류());
+        MenuProduct savedMenuProduct = new MenuProduct(product, 1L);
 
         return menuService.create(
-                new Menu("메뉴", BigDecimal.valueOf(1000L), menuGroup.getId(), menuProducts)
+                new MenuRequest(
+                        "메뉴",
+                        BigDecimal.valueOf(1000L),
+                        menuGroup.getId(),
+                        List.of(new MenuProductRequest(savedMenuProduct.getProduct().getId(),
+                                savedMenuProduct.getQuantity()))
+                )
         );
     }
 }

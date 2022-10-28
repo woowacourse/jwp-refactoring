@@ -9,12 +9,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import kitchenpos.application.dto.MenuProductRequest;
 import kitchenpos.application.dto.MenuRequest;
 
+@Table(name = "menu")
 @Entity
 public class Menu {
 
@@ -28,6 +31,7 @@ public class Menu {
     private MenuGroup menuGroup;
 
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @JoinColumn(name="menu_id")
     private List<MenuProduct> menuProducts;
 
     public Menu() {}
@@ -48,7 +52,7 @@ public class Menu {
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
-        if (sum.compareTo(price) > 0) {
+        if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
     }

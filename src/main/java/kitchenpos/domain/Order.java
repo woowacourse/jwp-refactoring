@@ -13,7 +13,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
+@Table(name="orders")
 @Entity
 public class Order {
 
@@ -30,7 +32,7 @@ public class Order {
     private LocalDateTime orderedTime;
 
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
-    @JoinColumn
+    @JoinColumn(name="order_id")
     private List<OrderLineItem> orderLineItems;
 
     public Order() {}
