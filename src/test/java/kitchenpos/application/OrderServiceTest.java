@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.transaction.Transactional;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.OrderLineItemRepository;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -36,13 +36,13 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Test
     @DisplayName("주문을 생성한다")
@@ -65,8 +65,8 @@ class OrderServiceTest {
                 () -> assertThat(saved.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
                 () -> assertThat(saved.getOrderedTime()).isBeforeOrEqualTo(LocalDateTime.now()),
                 () -> assertThat(saved.getOrderTableId()).isEqualTo(notEmptyOrderTable.getId()),
-                () -> assertThat(saved.getOrderLineItems()).extracting("orderId")
-                        .containsOnly(saved.getId())
+                () -> assertThat(saved.getOrderLineItems()).extracting("order")
+                        .containsOnly(saved)
         );
     }
 
@@ -125,10 +125,10 @@ class OrderServiceTest {
         final OrderTable notEmptyOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableId(notEmptyOrderTable.getId());
-        final Order savedOrder = orderDao.save(order);
+        final Order savedOrder = orderRepository.save(order);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(savedOrder.getId(), 1L, 2);
-        orderLineItemDao.save(orderLineItem);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(savedOrder, 1L, 2);
+        orderLineItemRepository.save(orderLineItem);
 
         // when
         final List<Order> orders = orderService.list();
@@ -148,7 +148,7 @@ class OrderServiceTest {
     void changeOrderStatus() {
         // given
         final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableId(1L);
-        final Order saved = orderDao.save(order);
+        final Order saved = orderRepository.save(order);
         final Order orderInMeal = OrderFixtures.MEAL_ORDER.create();
 
         // when
@@ -178,7 +178,7 @@ class OrderServiceTest {
     void changeOrderStatusExceptionAlreadyCompletion() {
         // given
         final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableId(1L);
-        final Order completionOrder = orderDao.save(order);
+        final Order completionOrder = orderRepository.save(order);
         final Order orderInMeal = OrderFixtures.MEAL_ORDER.create();
 
         // when, then

@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.OrderLineItemRepository;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -20,19 +20,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrderService {
     private final MenuRepository menuRepository;
-    private final OrderDao orderDao;
-    private final OrderLineItemDao orderLineItemDao;
+    private final OrderRepository orderRepository;
+    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
             final MenuRepository menuRepository,
-            final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
+            final OrderRepository orderRepository,
+            final OrderLineItemRepository orderLineItemRepository,
             final OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
-        this.orderDao = orderDao;
-        this.orderLineItemDao = orderLineItemDao;
+        this.orderRepository = orderRepository;
+        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -46,10 +46,9 @@ public class OrderService {
         orderTable.validateOrderable();
 
         final Order newOrder = new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
-        final Order savedOrder = orderDao.save(newOrder);
+        final Order savedOrder = orderRepository.save(newOrder);
 
-        final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(order.getOrderLineItems(),
-                savedOrder.getId());
+        final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(order.getOrderLineItems(), savedOrder);
 
         savedOrder.updateOrderLineItems(savedOrderLineItems);
         return savedOrder;
@@ -63,32 +62,30 @@ public class OrderService {
         order.validateOrderLineItemSize(menuRepository.countByIdIn(menuIds));
     }
 
-    private List<OrderLineItem> saveOrderLineItems(final List<OrderLineItem> orderLineItems, final Long orderId) {
+    private List<OrderLineItem> saveOrderLineItems(final List<OrderLineItem> orderLineItems, final Order order) {
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.updateOrderId(orderId);
-            savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
+            orderLineItem.updateOrder(order);
+            savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
         }
         return savedOrderLineItems;
     }
 
     public List<Order> list() {
-        final List<Order> orders = orderDao.findAll();
+        final List<Order> orders = orderRepository.findAll();
         for (final Order order : orders) {
-            order.updateOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
+            order.updateOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
         }
         return orders;
     }
 
     @Transactional
     public Order changeOrderStatus(final Long orderId, final Order order) {
-        final Order savedOrder = orderDao.findById(orderId)
+        final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(NotFoundOrderException::new);
 
         savedOrder.updateOrderStatus(OrderStatus.valueOf(order.getOrderStatus()).name());
-        final Order changedOrder = orderDao.save(savedOrder);
-
-        changedOrder.updateOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
-        return changedOrder;
+        savedOrder.updateOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
+        return savedOrder;
     }
 }

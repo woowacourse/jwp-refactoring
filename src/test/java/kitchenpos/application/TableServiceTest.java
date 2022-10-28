@@ -8,7 +8,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
@@ -44,7 +44,7 @@ class TableServiceTest {
     private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -93,7 +93,7 @@ class TableServiceTest {
         final OrderTable notEmptyOrderTable = OrderTableFixtures.createWithGuests(null, 2);
 
         final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableId(savedOrderTable.getId());
-        orderDao.save(order);
+        orderRepository.save(order);
 
         // when
         final OrderTable changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), notEmptyOrderTable);
@@ -146,7 +146,7 @@ class TableServiceTest {
         final OrderTable notEmptyOrderTable = OrderTableFixtures.createWithGuests(null, 2);
 
         final Order order = orderFixtures.createWithOrderTableId(savedOrderTable.getId());
-        orderDao.save(order);
+        orderRepository.save(order);
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), notEmptyOrderTable))

@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.Optional;
-import javax.sql.DataSource;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -21,22 +20,19 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
 @DataJpaTest
-class OrderLineItemDaoTest {
+class OrderLineItemRepositoryTest {
 
-    private final OrderLineItemDao orderLineItemDao;
-    private final OrderDao orderDao;
+    @Autowired
+    private OrderLineItemRepository orderLineItemRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
-    
-    @Autowired
-    private MenuRepository menuRepository;
 
     @Autowired
-    private OrderLineItemDaoTest(final DataSource dataSource) {
-        this.orderLineItemDao = new JdbcTemplateOrderLineItemDao(dataSource);
-        this.orderDao = new JdbcTemplateOrderDao(dataSource);
-    }
+    private MenuRepository menuRepository;
 
     @Test
     @DisplayName("주문 항목을 저장한다")
@@ -46,20 +42,20 @@ class OrderLineItemDaoTest {
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
-        final Order savedOrder = orderDao.save(order);
+        final Order savedOrder = orderRepository.save(order);
 
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuRepository.save(menu);
 
-        final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder.getId(), savedMenu.getId(), 2);
+        final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder, savedMenu.getId(), 2);
 
         // when
-        final OrderLineItem saved = orderLineItemDao.save(orderLineItem);
+        final OrderLineItem saved = orderLineItemRepository.save(orderLineItem);
 
         // then
         assertAll(
                 () -> assertThat(saved.getSeq()).isNotNull(),
-                () -> assertThat(saved.getOrderId()).isEqualTo(savedOrder.getId()),
+                () -> assertThat(saved.getOrder()).isEqualTo(savedOrder),
                 () -> assertThat(saved.getMenuId()).isEqualTo(savedMenu.getId()),
                 () -> assertThat(saved.getQuantity()).isEqualTo(2)
         );
@@ -75,10 +71,11 @@ class OrderLineItemDaoTest {
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuRepository.save(menu);
 
-        final OrderLineItem orderLineItem = new OrderLineItem(null, -1L, savedMenu.getId(), 2);
+        final Order notSavedOrder = OrderFixtures.COOKING_ORDER.create();
+        final OrderLineItem orderLineItem = new OrderLineItem(null, notSavedOrder, savedMenu.getId(), 2);
 
         // when, then
-        assertThatThrownBy(() -> orderLineItemDao.save(orderLineItem))
+        assertThatThrownBy(() -> orderLineItemRepository.save(orderLineItem))
                 .isExactlyInstanceOf(DataIntegrityViolationException.class);
     }
 
@@ -90,12 +87,12 @@ class OrderLineItemDaoTest {
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
-        final Order savedOrder = orderDao.save(order);
+        final Order savedOrder = orderRepository.save(order);
 
-        final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder.getId(), -1L, 2);
+        final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder, -1L, 2);
 
         // when, then
-        assertThatThrownBy(() -> orderLineItemDao.save(orderLineItem))
+        assertThatThrownBy(() -> orderLineItemRepository.save(orderLineItem))
                 .isExactlyInstanceOf(DataIntegrityViolationException.class);
     }
 
@@ -107,16 +104,16 @@ class OrderLineItemDaoTest {
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
-        final Order savedOrder = orderDao.save(order);
+        final Order savedOrder = orderRepository.save(order);
 
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuRepository.save(menu);
 
-        final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder.getId(), savedMenu.getId(), 2);
-        final OrderLineItem saved = orderLineItemDao.save(orderLineItem);
+        final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder, savedMenu.getId(), 2);
+        final OrderLineItem saved = orderLineItemRepository.save(orderLineItem);
 
         // when
-        final OrderLineItem foundOrderLineItem = orderLineItemDao.findById(saved.getSeq())
+        final OrderLineItem foundOrderLineItem = orderLineItemRepository.findById(saved.getSeq())
                 .get();
 
         // then
@@ -128,7 +125,7 @@ class OrderLineItemDaoTest {
     @DisplayName("id로 주문 항목을 조회할 때 결과가 없다면 Optional.empty를 반환한다")
     void findByIdNotExist() {
         // when
-        final Optional<OrderLineItem> orderLineItem = orderLineItemDao.findById(-1L);
+        final Optional<OrderLineItem> orderLineItem = orderLineItemRepository.findById(-1L);
 
         // then
         assertThat(orderLineItem).isEmpty();
@@ -142,16 +139,16 @@ class OrderLineItemDaoTest {
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
-        final Order savedOrder = orderDao.save(order);
+        final Order savedOrder = orderRepository.save(order);
 
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuRepository.save(menu);
 
-        final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder.getId(), savedMenu.getId(), 2);
-        final OrderLineItem saved = orderLineItemDao.save(orderLineItem);
+        final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder, savedMenu.getId(), 2);
+        final OrderLineItem saved = orderLineItemRepository.save(orderLineItem);
 
         // when
-        final List<OrderLineItem> orderLineItems = orderLineItemDao.findAll();
+        final List<OrderLineItem> orderLineItems = orderLineItemRepository.findAll();
 
         // then
         assertAll(
@@ -169,16 +166,16 @@ class OrderLineItemDaoTest {
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
-        final Order savedOrder = orderDao.save(order);
+        final Order savedOrder = orderRepository.save(order);
 
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuRepository.save(menu);
 
-        final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder.getId(), savedMenu.getId(), 2);
-        final OrderLineItem saved = orderLineItemDao.save(orderLineItem);
+        final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder, savedMenu.getId(), 2);
+        final OrderLineItem saved = orderLineItemRepository.save(orderLineItem);
 
         // when
-        final List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(savedOrder.getId());
+        final List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(savedOrder.getId());
 
         // then
         assertAll(

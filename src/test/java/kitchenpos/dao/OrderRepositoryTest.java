@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import javax.sql.DataSource;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -20,17 +19,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
 @DataJpaTest
-class OrderDaoTest {
+class OrderRepositoryTest {
 
-    private final OrderDao orderDao;
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
-
-    @Autowired
-    private OrderDaoTest(final DataSource dataSource) {
-        this.orderDao = new JdbcTemplateOrderDao(dataSource);
-    }
 
     @Test
     @DisplayName("주문을 저장한다")
@@ -42,7 +37,7 @@ class OrderDaoTest {
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
 
         // when
-        final Order saved = orderDao.save(order);
+        final Order saved = orderRepository.save(order);
 
         // then
         assertAll(
@@ -60,7 +55,7 @@ class OrderDaoTest {
         final Order order = new Order(null, -1L, OrderStatus.MEAL.name(), LocalDateTime.now());
 
         // when, then
-        assertThatThrownBy(() -> orderDao.save(order))
+        assertThatThrownBy(() -> orderRepository.save(order))
                 .isExactlyInstanceOf(DataIntegrityViolationException.class);
     }
 
@@ -72,10 +67,10 @@ class OrderDaoTest {
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
-        final Order saved = orderDao.save(order);
+        final Order saved = orderRepository.save(order);
 
         // when
-        final Order foundOrder = orderDao.findById(saved.getId())
+        final Order foundOrder = orderRepository.findById(saved.getId())
                 .get();
 
         // then
@@ -87,7 +82,7 @@ class OrderDaoTest {
     @DisplayName("id로 주문을 조회할 때 결과가 없다면 Optional.empty를 반환한다")
     void findByIdNotExist() {
         // when
-        final Optional<Order> order = orderDao.findById(-1L);
+        final Optional<Order> order = orderRepository.findById(-1L);
 
         // then
         assertThat(order).isEmpty();
@@ -101,10 +96,10 @@ class OrderDaoTest {
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
-        final Order saved = orderDao.save(order);
+        final Order saved = orderRepository.save(order);
 
         // when
-        final List<Order> orders = orderDao.findAll();
+        final List<Order> orders = orderRepository.findAll();
 
         // then
         assertAll(
@@ -122,16 +117,17 @@ class OrderDaoTest {
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
-        orderDao.save(order);
+        orderRepository.save(order);
 
         // when
-        final boolean exists = orderDao.existsByOrderTableIdAndOrderStatusIn(savedOrderTable.getId(),
+        final boolean exists = orderRepository.existsByOrderTableIdAndOrderStatusIn(savedOrderTable.getId(),
                 Collections.singletonList(OrderStatus.MEAL.name()));
 
-        final boolean notMatchOrderStatus = orderDao.existsByOrderTableIdAndOrderStatusIn(savedOrderTable.getId(),
+        final boolean notMatchOrderStatus = orderRepository.existsByOrderTableIdAndOrderStatusIn(
+                savedOrderTable.getId(),
                 Collections.singletonList(OrderStatus.COMPLETION.name()));
 
-        final boolean notExistsOrderTable = orderDao.existsByOrderTableIdAndOrderStatusIn(-1L,
+        final boolean notExistsOrderTable = orderRepository.existsByOrderTableIdAndOrderStatusIn(-1L,
                 Collections.singletonList(OrderStatus.COMPLETION.name()));
 
         // then
@@ -150,18 +146,18 @@ class OrderDaoTest {
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
-        orderDao.save(order);
+        orderRepository.save(order);
 
         // when
-        final boolean exists = orderDao.existsByOrderTableIdInAndOrderStatusIn(
+        final boolean exists = orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 Collections.singletonList(savedOrderTable.getId()),
                 Collections.singletonList(OrderStatus.MEAL.name()));
 
-        final boolean notMatchOrderStatus = orderDao.existsByOrderTableIdInAndOrderStatusIn(
+        final boolean notMatchOrderStatus = orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 Collections.singletonList(savedOrderTable.getId()),
                 Collections.singletonList(OrderStatus.COMPLETION.name()));
 
-        final boolean notExistsOrderTable = orderDao.existsByOrderTableIdInAndOrderStatusIn(
+        final boolean notExistsOrderTable = orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 Collections.singletonList(-1L),
                 Collections.singletonList(OrderStatus.MEAL.name()));
 

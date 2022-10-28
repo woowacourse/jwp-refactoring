@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import javax.transaction.Transactional;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
@@ -39,7 +39,7 @@ class TableGroupServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private TableGroupRepository tableGroupRepository;
@@ -163,7 +163,7 @@ class TableGroupServiceTest {
         final OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
         final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableId(savedOrderTable1.getId());
-        orderDao.save(order);
+        orderRepository.save(order);
 
         // when
         tableGroupService.ungroup(alreadyGroupedTable.getId());
@@ -196,7 +196,7 @@ class TableGroupServiceTest {
         orderTableRepository.save(orderTable2);
 
         final Order order = orderFixtures.createWithOrderTableId(savedOrderTable1.getId());
-        orderDao.save(order);
+        orderRepository.save(order);
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(alreadyGroupedTable.getId()))
