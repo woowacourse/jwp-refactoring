@@ -14,6 +14,10 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
+    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        this(null, createdDate, orderTables);
+    }
+
     public TableGroup(final List<OrderTable> orderTables) {
         this(null, null, orderTables);
     }
