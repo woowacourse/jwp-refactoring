@@ -31,7 +31,6 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -78,7 +77,7 @@ public class OrderServiceTest {
         menuProducts.add(사이다_두개);
         menuProducts.add(뿌링클_한개);
 
-        뿌링클_음료두개_세트 = menuDao.save(generateMenu("뿌링클 음료두개 세트", BigDecimal.valueOf(21000), 세트메뉴_1L, menuProducts));
+        뿌링클_음료두개_세트 = menuDao.save(generateMenu("뿌링클 음료두개 세트", BigDecimal.valueOf(21000), 세트메뉴_1L));
     }
 
     @Test

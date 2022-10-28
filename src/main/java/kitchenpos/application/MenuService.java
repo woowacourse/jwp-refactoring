@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
@@ -12,6 +11,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.response.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,17 +35,19 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuRequest menuRequest) {
+    public MenuResponse create(final MenuRequest menuRequest) {
         Menu menu = Menu.from(menuRequest);
 
+        final List<MenuProduct> menuProductResponses = menuRequest.getMenuProducts().stream()
+                .map(MenuProduct::from)
+                .collect(Collectors.toList());
+
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다.");
         }
 
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
-
         BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
+        for (final MenuProduct menuProduct : menuProductResponses) {
             final Product product = productDao.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().getValue().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
@@ -57,22 +59,18 @@ public class MenuService {
 
         final Menu savedMenu = menuDao.save(menu);
 
-        final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            savedMenuProducts.add(menuProductDao.save(
-                    new MenuProduct(menuId, menuProduct.getProductId(), menuProduct.getQuantity())));
-        }
+        List<MenuProduct> menuProducts = menuProductResponses.stream()
+                .map(menuProduct -> menuProductDao.save(
+                        new MenuProduct(savedMenu.getId(), menuProduct.getProductId(), menuProduct.getQuantity())))
+                .collect(Collectors.toList());
 
-        return new Menu(savedMenu.getId(), savedMenu.getName(), savedMenu.getPrice(), savedMenu.getMenuGroupId(),
-                savedMenuProducts);
+        return MenuResponse.of(savedMenu, menuProducts);
     }
 
-    public List<Menu> list() {
+    public List<MenuResponse> list() {
         final List<Menu> menus = menuDao.findAll();
         return menus.stream()
-                .map(menu -> new Menu(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(),
-                        menuProductDao.findAllByMenuId(menu.getId())))
+                .map(menu -> MenuResponse.of(menu, menuProductDao.findAllByMenuId(menu.getId())))
                 .collect(Collectors.toList());
     }
 }
