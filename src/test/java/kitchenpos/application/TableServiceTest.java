@@ -6,13 +6,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import kitchenpos.SpringServiceTest;
 import kitchenpos.application.request.OrderChangeNumberOfGuestsRequest;
 import kitchenpos.application.request.OrderTableCreateRequest;
 import kitchenpos.application.request.OrderTableEmptyChangeRequest;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
@@ -77,7 +78,11 @@ class TableServiceTest {
 
             @BeforeEach
             void setUp() {
-                Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
+                Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(),
+                                Arrays.asList(
+                                        new OrderTable(0, true),
+                                        new OrderTable(0, true)
+                                )))
                         .getId();
                 orderTableDao.save(new OrderTable(orderTableId, tableGroupId, 0, true));
             }
@@ -98,7 +103,8 @@ class TableServiceTest {
 
             @BeforeEach
             void setUp() {
-                orderDao.save(new Order(orderTableId, COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
+                orderDao.save(new Order(orderTableId, COOKING.name(), LocalDateTime.now(),
+                        Arrays.asList(new OrderLineItem(1L, 1))));
             }
 
             @Test
@@ -117,7 +123,8 @@ class TableServiceTest {
 
             @BeforeEach
             void setUp() {
-                orderDao.save(new Order(orderTableId, MEAL.name(), LocalDateTime.now(), new ArrayList<>()));
+                orderDao.save(new Order(orderTableId, MEAL.name(), LocalDateTime.now(),
+                        Arrays.asList(new OrderLineItem(1L, 1))));
             }
 
             @Test

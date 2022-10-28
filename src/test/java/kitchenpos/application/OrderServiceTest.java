@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.SpringServiceTest;
+import kitchenpos.application.request.OrderCreateRequest;
+import kitchenpos.application.request.OrderCreateRequest.OrderLineItemCreateRequest;
 import kitchenpos.application.request.OrderStatusChangeRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -29,11 +31,16 @@ class OrderServiceTest {
         @Nested
         class 주문항목이_비어있는_경우 extends SpringServiceTest {
 
-            private final Order order = new Order(1L, null, LocalDateTime.now(), new ArrayList<>());
+            private final OrderCreateRequest request = new OrderCreateRequest(1L, new ArrayList<>());
+
+            @BeforeEach
+            void setUp() {
+                orderTableDao.save(new OrderTable(1L, null, 1, false));
+            }
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> orderService.create(order))
+                assertThatThrownBy(() -> orderService.create(request))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("주문항목이 비어있습니다.");
             }
@@ -42,12 +49,17 @@ class OrderServiceTest {
         @Nested
         class 주문항목이_실제_메뉴와_불일치하는_경우 extends SpringServiceTest {
 
-            private final Order order = new Order(1L, null, LocalDateTime.now(),
-                    createOrderLineItem(new OrderLineItem(0L, 1)));
+            private final OrderCreateRequest request = new OrderCreateRequest(1L,
+                    Arrays.asList(new OrderLineItemCreateRequest(0L, 1)));
+
+            @BeforeEach
+            void setUp() {
+                orderTableDao.save(new OrderTable(1L, null, 1, false));
+            }
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> orderService.create(order))
+                assertThatThrownBy(() -> orderService.create(request))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("실제 메뉴로만 주문이 가능합니다.");
             }
@@ -56,12 +68,12 @@ class OrderServiceTest {
         @Nested
         class 없는_주문테이블을_입력한_경우 extends SpringServiceTest {
 
-            private final Order order = new Order(null, null, LocalDateTime.now(),
-                    createOrderLineItem(new OrderLineItem(1L, 1)));
+            private final OrderCreateRequest request = new OrderCreateRequest(0L,
+                    Arrays.asList(new OrderLineItemCreateRequest(1L, 1)));
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> orderService.create(order))
+                assertThatThrownBy(() -> orderService.create(request))
                         .isInstanceOf(IllegalArgumentException.class);
             }
         }
@@ -69,12 +81,12 @@ class OrderServiceTest {
         @Nested
         class 주문테이블이_비어있는_경우 extends SpringServiceTest {
 
-            private final Order order = new Order(1L, null, LocalDateTime.now(),
-                    createOrderLineItem(new OrderLineItem(1L, 1)));
+            private final OrderCreateRequest request = new OrderCreateRequest(1L,
+                    Arrays.asList(new OrderLineItemCreateRequest(1L, 1)));
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> orderService.create(order))
+                assertThatThrownBy(() -> orderService.create(request))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("주문테이블이 비어있습니다.");
             }
@@ -83,8 +95,8 @@ class OrderServiceTest {
         @Nested
         class 정상적으로_주문요청한_경우 extends SpringServiceTest {
 
-            private final Order order = new Order(1L, null, LocalDateTime.now(),
-                    createOrderLineItem(new OrderLineItem(1L, 1)));
+            private final OrderCreateRequest request = new OrderCreateRequest(1L,
+                    Arrays.asList(new OrderLineItemCreateRequest(1L, 1)));
 
             @BeforeEach
             void setUp() {
@@ -93,7 +105,7 @@ class OrderServiceTest {
 
             @Test
             void 주문을_추가하고_반환한다() {
-                Order actual = orderService.create(order);
+                Order actual = orderService.create(request);
                 List<OrderLineItem> actualItems = orderLineItemDao.findAllByOrderId(actual.getId());
 
                 assertAll(
@@ -143,9 +155,9 @@ class OrderServiceTest {
 
             @BeforeEach
             void setUp() {
-                orderId = orderDao.save(new Order(1L, COMPLETION.name(), LocalDateTime.now(), new ArrayList<>()))
+                orderId = orderDao.save(new Order(1L, COMPLETION.name(), LocalDateTime.now(),
+                                Arrays.asList(new OrderLineItem(1L, 2))))
                         .getId();
-                orderLineItemDao.save(new OrderLineItem(orderId, 1L, 2));
             }
 
             @Test
@@ -164,9 +176,9 @@ class OrderServiceTest {
 
             @BeforeEach
             void setUp() {
-                orderId = orderDao.save(new Order(1L, COOKING.name(), LocalDateTime.now(), new ArrayList<>()))
+                orderId = orderDao.save(new Order(1L, COOKING.name(), LocalDateTime.now(),
+                                Arrays.asList(new OrderLineItem(1L, 2))))
                         .getId();
-                orderLineItemDao.save(new OrderLineItem(orderId, 1L, 2));
             }
 
             @Test

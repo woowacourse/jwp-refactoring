@@ -13,6 +13,7 @@ import kitchenpos.SpringServiceTest;
 import kitchenpos.application.request.TableGroupCreateRequest;
 import kitchenpos.application.request.TableGroupCreateRequest.OrderTableGroupRequest;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
@@ -128,7 +129,8 @@ class TableGroupServiceTest {
                                 new OrderTable(2L, null, 0, true)
                         )))
                         .getId();
-                orderDao.save(new Order(1L, COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
+                orderDao.save(new Order(1L, COOKING.name(), LocalDateTime.now(),
+                        Arrays.asList(new OrderLineItem(1L, 1))));
             }
 
             @Test
@@ -152,7 +154,8 @@ class TableGroupServiceTest {
                                         new OrderTable(2L, null, 0, true)
                                 )))
                         .getId();
-                orderDao.save(new Order(1L, MEAL.name(), LocalDateTime.now(), new ArrayList<>()));
+                orderDao.save(new Order(1L, MEAL.name(), LocalDateTime.now(),
+                        Arrays.asList(new OrderLineItem(1L, 2))));
             }
 
             @Test

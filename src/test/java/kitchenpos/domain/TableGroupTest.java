@@ -34,7 +34,7 @@ class TableGroupTest {
     @Test
     void 생성_시_주문테이블이_단체지정된_경우_예외가_발생한다() {
         assertThatThrownBy(() -> new TableGroup(1L, LocalDateTime.now(),
-                Arrays.asList(new OrderTable(1L, 1L, 0, true), new OrderTable(0, true))))
+                Arrays.asList(new OrderTable(1L, 2L, 0, true), new OrderTable(0, true))))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 테이블이 비어있지 않거나 이미 단체지정되어있습니다.");
     }
