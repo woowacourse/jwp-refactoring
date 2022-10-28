@@ -8,6 +8,15 @@ Content-Type: application/json
 }
 
 ###
+POST localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "price": 17000
+}
+
+
+###
 GET localhost:8080/api/products
 
 ###

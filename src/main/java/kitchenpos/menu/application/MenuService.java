@@ -11,6 +11,7 @@ import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menu.repository.ProductRepository;
 import kitchenpos.menu.ui.dto.MenuCreateRequest;
+import kitchenpos.menu.ui.dto.MenuProductCreateRequest;
 import kitchenpos.menu.ui.dto.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +33,7 @@ public class MenuService {
     public MenuResponse create(final MenuCreateRequest request) {
         validateExistMenuGroup(request);
         // TODO: 2022/10/26 to pretty
-        final List<MenuProduct> menuProducts = toMenuProducts(request);
+        final List<MenuProduct> menuProducts = mapToMenuProduct(request.getMenuProducts());
         return MenuResponse.from(menuRepository.save(request.toMenu(menuProducts)));
     }
 
@@ -42,9 +43,8 @@ public class MenuService {
         }
     }
 
-    private List<MenuProduct> toMenuProducts(final MenuCreateRequest request) {
-        return request.getMenuProducts()
-                .stream()
+    private List<MenuProduct> mapToMenuProduct(final List<MenuProductCreateRequest> request) {
+        return request.stream()
                 .map(mpr -> new MenuProduct(
                         findProductById(mpr.getProductId()),
                         new Quantity(mpr.getQuantity())

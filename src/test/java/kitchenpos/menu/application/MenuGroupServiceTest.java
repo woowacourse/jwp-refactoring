@@ -16,8 +16,8 @@ import org.springframework.test.context.jdbc.Sql;
 @Sql(scripts = "classpath:truncate.sql")
 class MenuGroupServiceTest {
 
-    private MenuGroupRepository menuGroupRepository;
-    private MenuGroupService menuGroupService;
+    private final MenuGroupRepository menuGroupRepository;
+    private final MenuGroupService menuGroupService;
 
     @Autowired
     public MenuGroupServiceTest(final MenuGroupRepository menuGroupRepository) {

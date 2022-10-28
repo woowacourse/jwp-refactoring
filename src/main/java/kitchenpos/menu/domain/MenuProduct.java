@@ -33,6 +33,7 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
+    // TODO: 2022/10/28 Amount로 변경
     public Price calculateTotalPrice() {
         return this.product.multiplyPriceWith(quantity);
     }
