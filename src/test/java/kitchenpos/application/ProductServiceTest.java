@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.stream.Stream;
+import kitchenpos.application.dto.ProductRequest;
+import kitchenpos.application.dto.ProductResponse;
 import kitchenpos.domain.Product;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayName;
@@ -25,9 +27,9 @@ class ProductServiceTest {
     @DisplayName("상품을 생성한다.")
     @Test
     void create() {
-        Product product = productService.create(new Product("제육", BigDecimal.ONE));
+        ProductResponse actucal = productService.create(new ProductRequest("제육", BigDecimal.ONE));
 
-        assertThat(product.getId()).isNotNull();
+        assertThat(actucal.getId()).isNotNull();
     }
 
     @DisplayName("상품의 가격이 0이거나 없으면 예외가 발생한다")
@@ -35,7 +37,7 @@ class ProductServiceTest {
     @NullSource
     @ParameterizedTest
     void createFailureWhenPriceIsNullOrNegative(BigDecimal price) {
-        assertThatThrownBy(() -> productService.create(new Product("제육 볶음", price)))
+        assertThatThrownBy(() -> productService.create(new ProductRequest("제육 볶음", price)))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
@@ -46,7 +48,7 @@ class ProductServiceTest {
     @DisplayName("상품의 목록을 조회한다.")
     @Test
     void list() {
-        productService.create(new Product("제육", BigDecimal.ONE));
+        productService.create(new ProductRequest("제육", BigDecimal.ONE));
 
         assertThat(productService.list()).hasSize(1);
     }

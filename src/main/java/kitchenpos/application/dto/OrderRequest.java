@@ -28,12 +28,7 @@ public class OrderRequest {
             return orderLineItems;
         }
 
-        public Order toOrder() {
-            return new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.now());
-        }
-
     }
-
 
     public static class Status {
         private OrderStatus orderStatus;
