@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.SpringServiceTest;
+import kitchenpos.application.request.OrderChangeNumberOfGuestsRequest;
+import kitchenpos.application.request.OrderTableCreateRequest;
 import kitchenpos.application.request.OrderTableEmptyChangeRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
@@ -25,11 +27,11 @@ class TableServiceTest {
         @Nested
         class 생성할_주문테이블을_입력받는_경우 extends SpringServiceTest {
 
-            private final OrderTable orderTable = new OrderTable(0, true);
+            private final OrderTableCreateRequest request = new OrderTableCreateRequest(0, true);
 
             @Test
             void 주문테이블을_저장하고_반환한다() {
-                OrderTable actual = tableService.create(orderTable);
+                OrderTable actual = tableService.create(request);
 
                 assertThat(actual).isNotNull();
             }
@@ -148,11 +150,11 @@ class TableServiceTest {
         class 변경할_손님의_수가_0미만인_경우 extends SpringServiceTest {
 
             private final Long orderTableId = 1L;
-            private final OrderTable changeOrderTable = new OrderTable(-1, true);
+            private final OrderChangeNumberOfGuestsRequest request = new OrderChangeNumberOfGuestsRequest(-1);
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, changeOrderTable))
+                assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, request))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("손님의 수는 0미만이 될 수 없습니다.");
             }
@@ -162,11 +164,11 @@ class TableServiceTest {
         class 존재하지않는_주문테이블을_입력한_경우 extends SpringServiceTest {
 
             private final Long NOT_FOUND_ORDER_TABLE_ID = 0L;
-            private final OrderTable changeOrderTable = new OrderTable(2, true);
+            private final OrderChangeNumberOfGuestsRequest request = new OrderChangeNumberOfGuestsRequest(2);
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> tableService.changeNumberOfGuests(NOT_FOUND_ORDER_TABLE_ID, changeOrderTable))
+                assertThatThrownBy(() -> tableService.changeNumberOfGuests(NOT_FOUND_ORDER_TABLE_ID, request))
                         .isInstanceOf(IllegalArgumentException.class);
             }
         }
@@ -175,10 +177,10 @@ class TableServiceTest {
         class 주문테이블이_비어있는_경우 extends SpringServiceTest {
 
             private final Long orderTableId = 1L;
-            private final OrderTable changeOrderTable = new OrderTable(2, true);
+            private final OrderChangeNumberOfGuestsRequest request = new OrderChangeNumberOfGuestsRequest(2);
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, changeOrderTable))
+                assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, request))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("빈 테이블은 손님 수를 수정할 수 없습니다.");
             }
@@ -190,7 +192,7 @@ class TableServiceTest {
             private static final int CHANGE_NUMBER_OF_GUESTS = 2;
 
             private final Long orderTableId = 1L;
-            private final OrderTable changeOrderTable = new OrderTable(CHANGE_NUMBER_OF_GUESTS, false);
+            private final OrderChangeNumberOfGuestsRequest request = new OrderChangeNumberOfGuestsRequest(CHANGE_NUMBER_OF_GUESTS);
 
             @BeforeEach
             void setUp() {
@@ -199,7 +201,7 @@ class TableServiceTest {
 
             @Test
             void 손님_수를_변경하고_주문테이블을_반환한다() {
-                OrderTable actual = tableService.changeNumberOfGuests(orderTableId, changeOrderTable);
+                OrderTable actual = tableService.changeNumberOfGuests(orderTableId, request);
                 assertThat(actual.getNumberOfGuests()).isEqualTo(CHANGE_NUMBER_OF_GUESTS);
             }
         }

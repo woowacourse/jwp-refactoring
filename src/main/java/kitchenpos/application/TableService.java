@@ -2,6 +2,8 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.application.request.OrderChangeNumberOfGuestsRequest;
+import kitchenpos.application.request.OrderTableCreateRequest;
 import kitchenpos.application.request.OrderTableEmptyChangeRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -21,11 +23,8 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-
-        return orderTableDao.save(orderTable);
+    public OrderTable create(final OrderTableCreateRequest request) {
+        return orderTableDao.save(new OrderTable(request.getNumberOfGuests(), request.isEmpty()));
     }
 
     public List<OrderTable> list() {
@@ -42,22 +41,10 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("손님의 수는 0미만이 될 수 없습니다.");
-        }
-
+    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderChangeNumberOfGuestsRequest request) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException("빈 테이블은 손님 수를 수정할 수 없습니다.");
-        }
-
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
+        savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
         return orderTableDao.save(savedOrderTable);
     }
 
