@@ -1,6 +1,13 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.TableGroup;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import javax.sql.DataSource;
+
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -9,12 +16,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import kitchenpos.domain.TableGroup;
 
 @Repository
 public class JdbcTemplateTableGroupDao implements TableGroupDao {
@@ -62,9 +64,8 @@ public class JdbcTemplateTableGroupDao implements TableGroupDao {
     }
 
     private TableGroup toEntity(final ResultSet resultSet) throws SQLException {
-        final TableGroup entity = new TableGroup();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setCreatedDate(resultSet.getObject("created_date", LocalDateTime.class));
-        return entity;
+        long id = resultSet.getLong(KEY_COLUMN_NAME);
+        LocalDateTime createdDate = resultSet.getObject("created_date", LocalDateTime.class);
+        return new TableGroup(id, createdDate);
     }
 }

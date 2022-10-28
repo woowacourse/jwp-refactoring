@@ -25,8 +25,8 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
-import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.dto.request.OrderStatusUpdateRequest;
+import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.ProductFixture;
@@ -72,8 +72,7 @@ class OrderServiceTest {
         Menu menu = MenuFixture.후라이드_양념치킨_두마리세트.toMenu(두마리메뉴.getId(), 후라이드.getId(), 양념치킨.getId());
         후라이드_양념치킨_두마리세트 = menuDao.save(menu);
 
-        OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setEmpty(false);
+        OrderTable newOrderTable = new OrderTable(3, false);
         orderTable = orderTableDao.save(newOrderTable);
     }
 
@@ -127,8 +126,7 @@ class OrderServiceTest {
         @DisplayName("비어있는 테이블일 경우 예외가 발생한다")
         @Test
         void throwExceptionBecauseOfEmptyTable() {
-            OrderTable newEmptyTable = new OrderTable();
-            newEmptyTable.setEmpty(true);
+            OrderTable newEmptyTable = new OrderTable(0, true);
             OrderTable emptyTable = orderTableDao.save(newEmptyTable);
 
             List<OrderLineItemRequest> orderLineItemRequests = List.of(
@@ -190,8 +188,8 @@ class OrderServiceTest {
     void changeTableToNotEmpty(Long tableId) {
         OrderTable orderTable = orderTableDao.findById(tableId)
                 .orElseThrow();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(5);
+        orderTable.changeEmptyStatus(false);
+        orderTable.changeNumberOfGuests(5);
 
         orderTableDao.save(orderTable);
     }
