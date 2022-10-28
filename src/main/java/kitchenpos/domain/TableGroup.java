@@ -41,9 +41,7 @@ public class TableGroup {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId())) {
-                throw new IllegalArgumentException("이미 테이블이 단체 지정되어있거나 비어있지 않으면 단체 지정할 수 없습니다.");
-            }
+            validateOrderTableEmptyOrNotExist(orderTable);
         }
 
         return new TableGroup(createdDate, orderTables);
@@ -51,30 +49,34 @@ public class TableGroup {
 
     public void ungroup() {
         for (OrderTable orderTable : orderTables) {
-            if (orderTable.containsCookingOrMealOrder()) {
-                throw new IllegalArgumentException("이미 테이블의 음식을 준비중이거나 식사중이면 단체 지정을 해제할 수 없습니다.");
-            }
+            checkOrderStatus(orderTable);
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
+            orderTable.ungroup();
         }
     }
 
     public void mergeOrderTables() {
         for (OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(id);
-            orderTable.setEmpty(false);
+            orderTable.merge(id);
+        }
+    }
+
+    private static void checkOrderStatus(final OrderTable orderTable) {
+        if (orderTable.containsCookingOrMealOrder()) {
+            throw new IllegalArgumentException("이미 테이블의 음식을 준비중이거나 식사중이면 단체 지정을 해제할 수 없습니다.");
+        }
+    }
+
+    private static void validateOrderTableEmptyOrNotExist(final OrderTable orderTable) {
+        if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId())) {
+            throw new IllegalArgumentException("이미 테이블이 단체 지정되어있거나 비어있지 않으면 단체 지정할 수 없습니다.");
         }
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public LocalDateTime getCreatedDate() {

@@ -86,6 +86,22 @@ public class OrderTable {
                         || it.getOrderStatus().equals(OrderStatus.MEAL.name()));
     }
 
+    public void ungroup() {
+        this.tableGroupId = null;
+        this.empty = false;
+    }
+
+    public void merge(final Long id) {
+        this.tableGroupId = id;
+        this.empty = false;
+    }
+
+    private static void validateNegativeNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("음수로 주문 테이블의 손님 수를 변경할 수 없습니다.");
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -94,25 +110,11 @@ public class OrderTable {
         return tableGroupId;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
-    }
-
-    private static void validateNegativeNumberOfGuests(final int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("음수로 주문 테이블의 손님 수를 변경할 수 없습니다.");
-        }
     }
 }

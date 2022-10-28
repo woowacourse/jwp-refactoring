@@ -55,6 +55,15 @@ public class Menu {
         return new Menu(name, price, menuGroupId, menuProducts);
     }
 
+    private static BigDecimal calculateProductSum(final MenuProducts menuProducts) {
+        BigDecimal sum = BigDecimal.ZERO;
+        final List<RelatedProduct> relatedProducts = menuProducts.getRelatedProducts();
+        for (RelatedProduct relatedProduct : relatedProducts) {
+            sum = sum.add(relatedProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(relatedProduct.getQuantity())));
+        }
+        return sum;
+    }
+
     public Long getId() {
         return id;
     }
@@ -73,14 +82,5 @@ public class Menu {
 
     public MenuProducts getMenuProducts() {
         return menuProducts;
-    }
-
-    private static BigDecimal calculateProductSum(final MenuProducts menuProducts) {
-        BigDecimal sum = BigDecimal.ZERO;
-        final List<RelatedProduct> relatedProducts = menuProducts.getRelatedProducts();
-        for (RelatedProduct relatedProduct : relatedProducts) {
-            sum = sum.add(relatedProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(relatedProduct.getQuantity())));
-        }
-        return sum;
     }
 }
