@@ -27,10 +27,6 @@ public class TableService {
     @Transactional
     public OrderTableResponse create(final OrderTableRequest request) {
         final OrderTable orderTable = TableConvertor.convertToOrderTable(request);
-
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
         return TableConvertor.convertToOrderTableResponse(savedOrderTable);
     }
@@ -45,18 +41,18 @@ public class TableService {
         final OrderTable orderTable = TableConvertor.convertToOrderTable(request);
 
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException(String.format("존재하지 않는 테이블 입니다. [%s]", orderTableId)));
 
         if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(String.format("테이블 그룹이 존재합니다. [%s]", savedOrderTable.getTableGroupId()));
         }
 
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블의 주문이 완료되지 않았습니다.");
         }
 
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+        savedOrderTable.changeEmpty(orderTable.isEmpty());
 
         final OrderTable changedOrderTable = orderTableDao.save(savedOrderTable);
         return TableConvertor.convertToOrderTableResponse(changedOrderTable);
@@ -65,21 +61,10 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest request) {
         final OrderTable orderTable = TableConvertor.convertToOrderTable(request);
-
-        final int numberOfGuests = orderTable.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException(String.format("존재하지 않는 테이블 입니다. [%s]", orderTableId)));
 
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
+        savedOrderTable.changeNumberOfGuests(orderTable.getNumberOfGuests());
 
         final OrderTable changedOrderTable = orderTableDao.save(savedOrderTable);
         return TableConvertor.convertToOrderTableResponse(changedOrderTable);

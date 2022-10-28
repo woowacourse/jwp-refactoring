@@ -35,23 +35,12 @@ public class OrderTableFixture {
             .build();
     }
 
-    public static OrderTable 테이블의_손님의_수는(final int numberOfGuests) {
-        return 주문_테이블()
-            .손님의_수(numberOfGuests)
-            .build();
-    }
-
     private static OrderTableFixture 주문_테이블() {
         return new OrderTableFixture();
     }
 
     private OrderTableFixture 테이블_그룹_아이디(final Long tableGroupId) {
         this.tableGroupId = tableGroupId;
-        return this;
-    }
-
-    private OrderTableFixture 손님의_수(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
         return this;
     }
 

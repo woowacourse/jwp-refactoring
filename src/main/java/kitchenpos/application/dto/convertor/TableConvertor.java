@@ -13,10 +13,7 @@ public class TableConvertor {
     }
 
     public static OrderTable convertToOrderTable(final OrderTableRequest request) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(request.isEmpty());
-        orderTable.setNumberOfGuests(request.getNumberOfGuests());
-        return orderTable;
+        return new OrderTable(request.getNumberOfGuests(), request.isEmpty());
     }
 
     public static OrderTableResponse convertToOrderTableResponse(final OrderTable orderTable) {

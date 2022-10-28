@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import static kitchenpos.domain.fixture.OrderFixture.완료된_주문;
 import static kitchenpos.domain.fixture.OrderFixture.요리중인_주문;
-import static kitchenpos.domain.fixture.OrderTableFixture.비어있는_테이블;
 import static kitchenpos.domain.fixture.OrderTableFixture.새로운_테이블;
 import static kitchenpos.domain.fixture.TableGroupFixture.새로운_테이블_그룹;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -92,17 +91,19 @@ class TableServiceTest {
         final long notSavedOrderTableId = 0L;
 
         assertThatThrownBy(() -> tableService.changeEmpty(notSavedOrderTableId, new OrderTableRequest(0, true)))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("존재하지 않는 테이블 입니다.");
     }
 
-    @DisplayName("테이블을 비울 때 저장되어 있는 주문 테이블의 아이디가 null 이어야 한다")
+    @DisplayName("테이블을 비울 때 저장되어 있는 테이블 그룹의 아이디가 null 이어야 한다")
     @Test
     void changeEmptyTableGroupIdIsNull() {
         final OrderTable orderTable = 새로운_테이블(저장된_테이블_그룹.getId());
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTableRequest(0, true)))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("테이블 그룹이 존재합니다.");
     }
 
     @DisplayName("테이블을 비울 때 테이블의 주문 상태가 요리중이거나 식사중일 경우 테이블을 비울 수 없다")
@@ -115,7 +116,8 @@ class TableServiceTest {
         orderDao.save(order);
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTableRequest(0, true)))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("테이블의 주문이 완료되지 않았습니다.");
     }
 
     @DisplayName("테이블의 손님의 수를 변경한다")
@@ -131,16 +133,6 @@ class TableServiceTest {
         assertThat(response.getNumberOfGuests()).isEqualTo(changedNumberOfGuests);
     }
 
-    @DisplayName("테이블 손님의 수 변경 시 변경하려는 손님의 수는 0보다 커야한다")
-    @Test
-    void changeNumberOfGuestsNumberIsLowerZero() {
-        int invalidNumberOfGuests = 0;
-        final OrderTableRequest newOrderTable = new OrderTableRequest(invalidNumberOfGuests, true);
-
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, newOrderTable))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("테이블 손님의 수 변경 시 주문 테이블이 존재해야 한다")
     @Test
     void changeNumberOfGuestsOrderTableIsNotExist() {
@@ -148,18 +140,7 @@ class TableServiceTest {
 
         final OrderTableRequest newOrderTable = new OrderTableRequest(1, true);
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(notSavedOrderTable, newOrderTable))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("테이블 손님의 수 변경 시 테이블이 비어있으면 안된다")
-    @Test
-    void changeNumberOfGuestsOrderTableIsEmpty() {
-        final OrderTable orderTable = 비어있는_테이블();
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
-
-        final OrderTableRequest newOrderTable = new OrderTableRequest(1, true);
-
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), newOrderTable))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("존재하지 않는 테이블 입니다.");
     }
 }
