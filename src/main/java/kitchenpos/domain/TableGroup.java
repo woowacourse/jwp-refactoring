@@ -34,6 +34,16 @@ public class TableGroup {
             throw new IllegalArgumentException();
         }
     }
+    public void validateIsEqualToOrderTablesSize(int size) {
+        if (orderTables.size() != size) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void setOrderTables(final List<OrderTable> orderTables) {
+        this.orderTables = orderTables;
+    }
+
     public Long getId() {
         return id;
     }
@@ -44,15 +54,5 @@ public class TableGroup {
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
-    }
-
-    public void validateIsEqualToOrderTablesSize(int size) {
-        if (orderTables.size() != size) {
-            throw new IllegalArgumentException();
-        }
     }
 }

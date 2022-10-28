@@ -1,6 +1,11 @@
 package kitchenpos.application;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.MenuCreateRequestDto;
+import kitchenpos.application.dto.MenuResponseDto;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -10,10 +15,6 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class MenuService {
@@ -35,7 +36,7 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuCreateRequestDto dto) {
+    public MenuResponseDto create(final MenuCreateRequestDto dto) {
         final List<MenuProduct> menuProducts = dto.getMenuProducts();
         isExistGroupId(dto);
         isLessThanTotalPrice(menuProducts, dto.getPrice());
@@ -44,8 +45,13 @@ public class MenuService {
         final Menu savedMenu = menuDao.save(menu);
 
         final List<MenuProduct> savedMenuProducts = saveMenuProduct(menuProducts, savedMenu.getId());
-        savedMenu.setMenuProducts(savedMenuProducts);
-        return savedMenu;
+        return new MenuResponseDto(
+                savedMenu.getId(),
+                savedMenu.getName(),
+                savedMenu.getPrice(),
+                savedMenu.getMenuGroupId(),
+                savedMenuProducts
+        );
     }
 
     private List<MenuProduct> saveMenuProduct(List<MenuProduct> menuProducts, Long menuId) {
@@ -58,7 +64,7 @@ public class MenuService {
     }
 
     private void isLessThanTotalPrice(List<MenuProduct> menuProducts, BigDecimal price) {
-        if(price.compareTo(getMaxPrice(menuProducts)) > 0) {
+        if (price.compareTo(getMaxPrice(menuProducts)) > 0) {
             throw new IllegalArgumentException("메뉴 가격은 상품 각각의 총 가격보다 클 수 없습니다.");
         }
     }
@@ -80,13 +86,15 @@ public class MenuService {
         }
     }
 
-    public List<Menu> list() {
+    public List<MenuResponseDto> list() {
         final List<Menu> menus = menuDao.findAll();
-
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
-
-        return menus;
+        return menus.stream()
+                .map(menu -> new MenuResponseDto(
+                        menu.getId(),
+                        menu.getName(),
+                        menu.getPrice(),
+                        menu.getMenuGroupId(),
+                        menuProductDao.findAllByMenuId(menu.getId())
+                )).collect(Collectors.toList());
     }
 }
