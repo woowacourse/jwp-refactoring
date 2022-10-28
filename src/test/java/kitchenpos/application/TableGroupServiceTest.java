@@ -12,10 +12,10 @@ import kitchenpos.application.dto.MenuGroupRequest;
 import kitchenpos.application.dto.MenuGroupResponse;
 import kitchenpos.application.dto.MenuProductCreateRequest;
 import kitchenpos.application.dto.MenuResponse;
+import kitchenpos.application.dto.OrderCreateRequest;
+import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.ProductCreateRequest;
 import kitchenpos.application.dto.ProductResponse;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Nested;
@@ -104,8 +104,8 @@ class TableGroupServiceTest extends IntegrationTest {
             final OrderTable orderTable2 = tableService.create(new OrderTable(null, 3, true));
             final TableGroup tableGroup = tableGroupService.create(
                 new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
-            orderService.create(
-                new Order(orderTable1.getId(), LocalDateTime.now(), List.of(new OrderLineItem(menu.getId(), 1))));
+
+            orderService.create(new OrderCreateRequest(orderTable1.getId(), List.of(new OrderLineItemRequest(menu.getId(), 1))));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
