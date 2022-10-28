@@ -6,6 +6,7 @@ import static kitchenpos.support.OrderTableFixture.ORDER_TABLE_NOT_EMPTY_1;
 import static kitchenpos.support.TableGroupFixture.TABLE_GROUP_NOW;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -104,9 +105,14 @@ class TableGroupServiceTest extends ServiceTest {
 
         // then
         final List<OrderTable> orderTables = tableService.list();
-        assertThat(orderTables)
-                .extracting("tableGroup")
-                .containsExactly(null, null);
+        assertAll(
+                () -> assertThat(orderTables)
+                        .extracting("tableGroup")
+                        .containsExactly(null, null),
+                () -> assertThat(orderTables)
+                        .extracting("empty")
+                        .containsExactly(false, false)
+        );
     }
 
     @ParameterizedTest

@@ -57,6 +57,10 @@ public class OrderTable {
         this.tableGroup = tableGroup;
     }
 
+    public void removeTableGroup() {
+        this.tableGroup = null;
+    }
+
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
