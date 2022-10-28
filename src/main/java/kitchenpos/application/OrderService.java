@@ -11,6 +11,7 @@ import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
@@ -41,14 +42,17 @@ public class OrderService {
         List<OrderLineItemRequest> itemRequests = request.getOrderLineItemRequests();
         validateOrderLineItem(itemRequests);
 
+        List<OrderLineItem> orderLineItems = itemRequests.stream()
+                .map(itemRequest -> new OrderLineItem(itemRequest.getMenuId(), itemRequest.getQuantity()))
+                .collect(Collectors.toList());
+
         Order order = new Order(
                 orderTable,
                 OrderStatus.COOKING,
                 LocalDateTime.now(),
-                itemRequests.stream()
-                        .map(OrderLineItemRequest::toOrderLineItem)
-                        .collect(Collectors.toList())
+                orderLineItems
         );
+
         return OrderResponse.from(orderRepository.save(order));
     }
 

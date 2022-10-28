@@ -10,6 +10,7 @@ import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,27 +37,40 @@ public class MenuService {
 
     public MenuResponse create(final MenuCreateRequest request) {
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
         }
-
-        Menu menu = request.toMenu(findAllProducts(request));
+        Menu menu = new Menu(
+                request.getName(),
+                request.getPrice(),
+                request.getMenuGroupId(),
+                createMenuProduct(request.getProductRequests())
+        );
         return MenuResponse.from(menuRepository.save(menu));
     }
 
-    private List<Product> findAllProducts(MenuCreateRequest request) {
-        List<Long> productIds = toProductIds(request);
-        List<Product> products = productRepository.findAllByIdIn(productIds);
-        if (productIds.size() != products.size()) {
-            throw new IllegalArgumentException("존재하지 않는 상품이 있습니다 : " + productIds);
-        }
-        return products;
+    private List<MenuProduct> createMenuProduct(List<MenuProductCreateRequest> requests) {
+        List<Product> products = productRepository.findAllByIdIn(toProductIds(requests));
+        return toMenuProduct(products, requests);
     }
 
-    private List<Long> toProductIds(MenuCreateRequest request) {
-        return request.getProductRequests()
-                .stream()
+    private List<Long> toProductIds(List<MenuProductCreateRequest> requests) {
+        return requests.stream()
                 .map(MenuProductCreateRequest::getProductId)
                 .collect(Collectors.toList());
+    }
+
+    private List<MenuProduct> toMenuProduct(List<Product> products, List<MenuProductCreateRequest> requests) {
+        return products.stream()
+                .map(product -> new MenuProduct(product, findQuantityByproductId(requests, product.getId())))
+                .collect(Collectors.toList());
+    }
+
+    private long findQuantityByproductId(List<MenuProductCreateRequest> requests, Long productId) {
+        return requests.stream()
+                .filter(request -> productId.equals(request.getProductId()))
+                .map(MenuProductCreateRequest::getQuantity)
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품이 있습니다 : " + productId));
     }
 
     @Transactional(readOnly = true)

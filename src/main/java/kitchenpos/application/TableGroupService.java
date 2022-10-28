@@ -31,7 +31,7 @@ public class TableGroupService {
 
     public TableGroupResponse create(final TableGroupCreateRequest request) {
         final List<OrderTable> savedOrderTables = findOrderTables(request);
-        TableGroup tableGroup = request.toTableGroup(savedOrderTables, LocalDateTime.now());
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
         return TableGroupResponse.from(tableGroupRepository.save(tableGroup));
     }
 
