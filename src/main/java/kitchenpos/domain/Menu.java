@@ -44,15 +44,6 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-
-    public Long getMenuGroupId() {
-        return menuGroupId;
-    }
-
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
@@ -67,7 +58,7 @@ public class Menu {
         }
     }
 
-    public void isPriceGreaterThan(final BigDecimal sum) {
+    public void validatePriceGreaterThan(final BigDecimal sum) {
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }

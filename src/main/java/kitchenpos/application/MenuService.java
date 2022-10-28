@@ -70,7 +70,7 @@ public class MenuService {
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductRequest.getQuantity())));
         }
-        menu.isPriceGreaterThan(sum);
+        menu.validatePriceGreaterThan(sum);
     }
 
     private void saveProducts(List<MenuProduct> menuProducts, Menu savedMenu) {
