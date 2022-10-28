@@ -1,7 +1,12 @@
 package kitchenpos.dao;
 
+import java.util.List;
+import java.util.Optional;
+import javax.sql.DataSource;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -9,16 +14,21 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
-
 @Repository
 public class JdbcTemplateMenuDao implements MenuDao {
     private static final String TABLE_NAME = "menu";
     private static final String KEY_COLUMN_NAME = "id";
+    private static final RowMapper<Menu> ROW_MAPPER = ((rs, rowNum) -> new Menu(
+            rs.getLong("id"),
+            rs.getString("name"),
+            rs.getBigDecimal("price"),
+            toMenuGroup(rs.getLong("menu_group_id"), rs.getString(5))
+    ));
+
+
+    private static MenuGroup toMenuGroup(final Long id, final String name) {
+        return new MenuGroup(id, name);
+    }
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -27,8 +37,7 @@ public class JdbcTemplateMenuDao implements MenuDao {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
-                .usingGeneratedKeyColumns(KEY_COLUMN_NAME)
-        ;
+                .usingGeneratedKeyColumns(KEY_COLUMN_NAME);
     }
 
     @Override
@@ -49,8 +58,9 @@ public class JdbcTemplateMenuDao implements MenuDao {
 
     @Override
     public List<Menu> findAll() {
-        final String sql = "SELECT id, name, price, menu_group_id FROM menu ";
-        return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
+        final String sql = "SELECT m.id, m.name, m.price, m.menu_group_id, mg.name FROM menu m "
+                + "JOIN menu_group mg on m.menu_group_id = mg.id";
+        return jdbcTemplate.query(sql, ROW_MAPPER);
     }
 
     @Override
@@ -62,18 +72,10 @@ public class JdbcTemplateMenuDao implements MenuDao {
     }
 
     private Menu select(final Long id) {
-        final String sql = "SELECT id, name, price, menu_group_id FROM menu WHERE id = (:id)";
+        final String sql = "SELECT m.id, m.name, m.price, m.menu_group_id, mg.name FROM menu m "
+                + "JOIN menu_group mg on m.menu_group_id = mg.id WHERE m.id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
-        return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
-    }
-
-    private Menu toEntity(final ResultSet resultSet) throws SQLException {
-        final Menu entity = new Menu();
-        entity.setId(resultSet.getLong("id"));
-        entity.setName(resultSet.getString("name"));
-        entity.setPrice(resultSet.getBigDecimal("price"));
-        entity.setMenuGroupId(resultSet.getLong("menu_group_id"));
-        return entity;
+        return jdbcTemplate.queryForObject(sql, parameters, ROW_MAPPER);
     }
 }

@@ -17,6 +17,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.support.OrderTableFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,10 +45,12 @@ public class TableServiceTest {
     @Test
     void create() {
         // given
-        final OrderTable orderTable = ORDER_TABLE1.createWithIdNull();
+        final OrderTable orderTable = ORDER_TABLE1.create();
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(orderTable.getNumberOfGuests(),
+                orderTable.isEmpty());
 
         // when
-        final OrderTable savedOrderTable = tableService.create(orderTable);
+        final OrderTable savedOrderTable = tableService.create(orderTableRequest);
 
         // then
         assertThat(savedOrderTable.getId()).isNotNull();
@@ -70,10 +73,10 @@ public class TableServiceTest {
     @Test
     void changeEmpty_notExistOrderTableId_throwsException() {
         // given
-        final OrderTable orderTable = ORDER_TABLE1.create();
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(true);
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(9L, orderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(9L, orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -87,8 +90,10 @@ public class TableServiceTest {
         orderTable.setTableGroupId(1L);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(true);
+
         // when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -96,13 +101,22 @@ public class TableServiceTest {
     @Test
     void changeEmpty_orderStatusCookingOrMeal_throwsException() {
         // given
+        final OrderTable orderTable = orderTableDao.save(new OrderTable(2, false));
+
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Arrays.asList(orderTable));
+        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        orderTable.setTableGroupId(savedTableGroup.getId());
+        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 3);
-        final Order order = new Order(null, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(),
+        final Order order = new Order(null, savedOrderTable, OrderStatus.COOKING.name(), LocalDateTime.now(),
                 Arrays.asList(orderLineItem));
         final Order savedOrder = orderDao.save(order);
 
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(true);
+
         // when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(1L, ORDER_TABLE_NOT_EMPTY.create()))
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -111,9 +125,10 @@ public class TableServiceTest {
     void changeEmpty() {
         // given
         final OrderTable orderTable = ORDER_TABLE_NOT_EMPTY.create();
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(false);
 
         // when
-        final OrderTable changedOrderTable = tableService.changeEmpty(1L, orderTable);
+        final OrderTable changedOrderTable = tableService.changeEmpty(1L, orderTableRequest);
 
         // then
         assertAll(
@@ -126,27 +141,32 @@ public class TableServiceTest {
     @Test
     void changeNumberOfGuests_numberOfGuestsLessThanZero_throwsException() {
         // given
-        final OrderTable orderTable = ORDER_TABLE1.create();
-        orderTable.setNumberOfGuests(-1);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(-1);
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("orderTableId가 존재하지 않은 경우 예외가 발생한다.")
     @Test
     void changeNumberOfGuests_notExistOrderTableId_throwsException() {
+        // given
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(3);
+
         // when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(9L, ORDER_TABLE1.create()))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(9L, orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 테이블이 비어있는 경우 예외가 발생한다.")
     @Test
     void changeNumberOfGuests_orderTableEmpty_throwsException() {
+        // given
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(3);
+
         // when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, ORDER_TABLE1.create()))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -156,10 +176,11 @@ public class TableServiceTest {
         // given
         final OrderTable savedOrderTable = orderTableDao.save(ORDER_TABLE_NOT_EMPTY.createWithIdNull());
         final OrderTable orderTable = ORDER_TABLE1.create();
-        orderTable.setNumberOfGuests(3);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(3);
 
         // when
-        final OrderTable updatedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable);
+        final OrderTable updatedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(),
+                orderTableRequest);
 
         // then
         assertAll(
