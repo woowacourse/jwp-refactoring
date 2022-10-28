@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,13 +44,14 @@ public class ProductRestControllerTest {
     void create() throws Exception {
         // given
         final Product product = PRODUCT1.create();
+        final ProductRequest request = new ProductRequest(product.getName(), product.getPrice());
 
-        given(productService.create(any(Product.class))).willReturn(product);
+        given(productService.create(any(ProductRequest.class))).willReturn(product);
 
         // when
         final ResultActions resultActions = mockMvc.perform(post("/api/products")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(product)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andDo(print());
 
         // then
