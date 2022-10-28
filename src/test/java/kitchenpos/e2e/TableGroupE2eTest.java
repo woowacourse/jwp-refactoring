@@ -50,7 +50,7 @@ public class TableGroupE2eTest extends E2eTest {
 
         // then
         assertAll(
-                HTTP_STATUS_검증(HttpStatus.NO_CONTENT, GET_요청(TABLE_URL)),
+                HTTP_STATUS_검증(HttpStatus.NO_CONTENT, 응답),
                 리스트_검증(갱신된_주문테이블_리스트,
                         row("tableGroupId", null, null),
                         row("empty", false, false)

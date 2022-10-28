@@ -49,6 +49,9 @@ public class MenuService {
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
 
         BigDecimal sum = BigDecimal.ZERO;
+        final List<Product> findAll = productRepository.findAll();
+        System.out.println("menuProducts = " + menuProducts);
+        System.out.println("findAll = " + findAll);
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = productRepository.findById(menuProduct.getProductId())
                     .orElseThrow(() -> new IllegalArgumentException("메뉴상품의 상품ID가 존재하지 않습니다."));

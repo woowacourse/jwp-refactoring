@@ -81,7 +81,7 @@ public class TableE2eTest extends E2eTest {
 
         // given
         final Long 주문테이블_ID =
-                POST_요청(TABLE_URL, new OrderTable(0, true))
+                POST_요청(TABLE_URL, new OrderTable(0, false))
                         .as(OrderTable.class)
                         .getId();
 

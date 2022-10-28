@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import static java.util.Arrays.asList;
 import static kitchenpos.support.MenuFixture.createMenu;
-import static kitchenpos.support.MenuFixture.createMenu;
 import static kitchenpos.support.MenuFixture.createMenuWithProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -13,7 +12,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import kitchenpos.support.IntegrationServiceTest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +24,7 @@ class MenuServiceTest extends IntegrationServiceTest {
     class create_메서드는 {
 
         @Nested
-        class 가격에_null을_입력할_경우 {
+        class 가격에_null을_입력할_경우 extends IntegrationServiceTest {
 
             private final BigDecimal NULL_PRICE = null;
 
@@ -38,7 +39,7 @@ class MenuServiceTest extends IntegrationServiceTest {
         }
 
         @Nested
-        class 가격에_음수를_입력될_경우 {
+        class 가격에_음수를_입력될_경우 extends IntegrationServiceTest {
 
             private final int MINUS_PRICE = -1;
 
@@ -54,7 +55,7 @@ class MenuServiceTest extends IntegrationServiceTest {
         }
 
         @Nested
-        class 없는_메뉴_그룹의_id가_입력될_경우 {
+        class 없는_메뉴_그룹의_id가_입력될_경우 extends IntegrationServiceTest {
 
             private final long NOT_EXIST_MENU_GROUP_ID = -1L;
 
@@ -71,11 +72,12 @@ class MenuServiceTest extends IntegrationServiceTest {
         }
 
         @Nested
-        class 메뉴상품의_상품ID가_존재하지_않는_경우 {
+        class 메뉴상품의_상품ID가_존재하지_않는_경우 extends IntegrationServiceTest {
 
             private static final long NOT_EXIST_MENU_PRODUCT_NUMBER = -1L;
 
-            private final List<MenuProduct> ERROR_MENU_PRODUCTS = asList(new MenuProduct(NOT_EXIST_MENU_PRODUCT_NUMBER, 1));
+            private final List<MenuProduct> ERROR_MENU_PRODUCTS = asList(
+                    new MenuProduct(NOT_EXIST_MENU_PRODUCT_NUMBER, 1));
 
             private final Menu menu = createMenu(16_000, ERROR_MENU_PRODUCTS);
 
@@ -89,7 +91,7 @@ class MenuServiceTest extends IntegrationServiceTest {
         }
 
         @Nested
-        class 메뉴_가격이_상품가격과_메뉴상품양의_곱보다_큰_경우 {
+        class 메뉴_가격이_상품가격과_메뉴상품양의_곱보다_큰_경우 extends IntegrationServiceTest {
 
             private final int ERROR_MENU_PRICE = 9_900_000;
 
@@ -104,9 +106,14 @@ class MenuServiceTest extends IntegrationServiceTest {
         }
 
         @Nested
-        class 정상적으로_메뉴를_생성가능한_경우 {
+        class 정상적으로_메뉴를_생성가능한_경우 extends IntegrationServiceTest {
 
             private final Menu menu = createMenuWithProduct(16_000, 1L);
+
+            @BeforeEach
+            void setUp() {
+                productRepository.save(new Product("후라이드", BigDecimal.valueOf(16_000)));
+            }
 
             @Test
             void 저장된_메뉴가_반환된다() {
@@ -122,7 +129,7 @@ class MenuServiceTest extends IntegrationServiceTest {
     }
 
     @Nested
-    class list_메서드는 {
+    class list_메서드는 extends IntegrationServiceTest{
 
         @Test
         void 메뉴목록을_반환한다() {
