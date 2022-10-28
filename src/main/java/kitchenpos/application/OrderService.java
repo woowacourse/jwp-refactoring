@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -53,28 +52,22 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        order.setId(null);
-
         final OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
+        final Order createdOrder = Order.create(orderTable.getId(), menuIds);
 
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-
-        final Order savedOrder = orderRepository.save(order);
+        final Order savedOrder = orderRepository.save(createdOrder);
 
         final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItem orderLineItem : orderLineItems) {
             orderLineItem.setOrderId(orderId);
-            savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
+            final OrderLineItem savedOrderItem = orderLineItemRepository.save(orderLineItem);
+            savedOrder.addMenu(savedOrderItem);
         }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
 
         return savedOrder;
     }
@@ -83,7 +76,9 @@ public class OrderService {
         final List<Order> orders = orderRepository.findAll();
 
         for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
+            final List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(order.getId());
+            orderLineItems
+                    .forEach(orderLineItem -> order.addMenu(orderLineItem.getMenuId(), orderLineItem.getQuantity()));
         }
 
         return orders;
@@ -99,11 +94,12 @@ public class OrderService {
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        savedOrder.changeOrderStatus(orderStatus.name());
 
         orderRepository.save(savedOrder);
 
-        savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
+        final List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(orderId);
+        orderLineItems.forEach(orderLineItem -> savedOrder.addMenu(orderLineItem.getMenuId(), orderLineItem.getQuantity()));
 
         return savedOrder;
     }

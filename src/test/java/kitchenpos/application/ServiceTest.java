@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.menu.MenuProductRepository;
 import kitchenpos.domain.menu.Menu;
@@ -178,12 +177,12 @@ public abstract class ServiceTest {
     }
 
     public Order 주문을_식사_상태로_만든다(final Order order) {
-        order.setOrderStatus(OrderStatus.MEAL.name());
+        order.changeOrderStatus(OrderStatus.MEAL.name());
         return orderService.changeOrderStatus(order.getId(), order);
     }
 
     public Order 주문을_완료_상태로_만든다(final Order order) {
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
+        order.changeOrderStatus(OrderStatus.COMPLETION.name());
         return orderService.changeOrderStatus(order.getId(), order);
     }
 }
