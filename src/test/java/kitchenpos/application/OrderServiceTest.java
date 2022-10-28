@@ -79,7 +79,7 @@ class OrderServiceTest {
 
     @DisplayName("orderLineItems가 비어있는 경우 예외를 던진다.")
     @Test
-    void createOrderByorderLineItemsIsEmpty() {
+    void createOrderByOrderLineItemsIsEmpty() {
         OrderTableResponse orderTable = tableService.create(테이블_1번());
         OrderCreateRequest order = createOrder(orderTable.getId(), List.of());
 
