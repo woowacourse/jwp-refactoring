@@ -34,8 +34,6 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        savedOrderTable.validateExistTableGroupId();
-
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();

@@ -20,5 +20,8 @@
         - [ ] ProductService
         - [ ] TableGroupService
         - [ ] TableService
+            - OrderTable 메서드 추가
+                - changeNumberOfGuest()
+                - changeEmpty()
     - 추가 수정 사항
         - 가격 검증 로직 : Price 클래스 생성하여 예외 검증 처리 
