@@ -35,7 +35,7 @@ public class TableGroupService {
         validateOrderTablesSize(tableGroupCreateRequest.getOrderTables());
 
         List<Long> orderTableIds = getOrderTableIds1(tableGroupCreateRequest.getOrderTables());
-        return tableGroupRepository.create(orderTableIds);
+        return tableGroupRepository.save(orderTableIds);
     }
 
     private void validateOrderTablesSize(List<OrderTableIdDto> orderTableIdDtos) {

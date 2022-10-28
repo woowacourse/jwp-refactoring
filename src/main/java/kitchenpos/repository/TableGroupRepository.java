@@ -20,7 +20,7 @@ public class TableGroupRepository {
         this.tableGroupDao = tableGroupDao;
     }
 
-    public TableGroup create(List<Long> orderTableIds) {
+    public TableGroup save(List<Long> orderTableIds) {
         List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
         validateOrderTableIds(orderTableIds, savedOrderTables);
 

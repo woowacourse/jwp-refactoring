@@ -32,6 +32,17 @@ class TableServiceTest extends ServiceTest {
     }
 
     @Test
+    void 주문테이블을_비운다() {
+        OrderTable orderTable = new OrderTable(0, false);
+        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(true);
+
+        tableService.changeEmpty(savedOrderTable.getId(), request);
+
+        assertThat(orderTableDao.findById(savedOrderTable.getId()).get().isEmpty()).isTrue();
+    }
+
+    @Test
     void 주문테이블을_비울때_아이디가_잘못되면_예외를_반환한다() {
         OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(true);
 
