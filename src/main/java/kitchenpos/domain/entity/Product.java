@@ -1,6 +1,7 @@
 package kitchenpos.domain.entity;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,14 +17,15 @@ public class Product {
 
     private String name;
 
-    private long price;
+    @Embedded
+    private Price price;
 
     protected Product() {
     }
 
     public Product(String name, long price) {
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
     }
 
     public Long getId() {
@@ -35,6 +37,6 @@ public class Product {
     }
 
     public long getPrice() {
-        return price;
+        return price.getValue();
     }
 }
