@@ -20,6 +20,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.exception.NotFoundException;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.ui.dto.CreateMenuProductsRequest;
 import kitchenpos.ui.dto.CreateMenuRequest;
@@ -90,7 +91,7 @@ class MenuServiceTest {
 
         // when, then
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NotFoundException.class);
     }
 
     @DisplayName("메뉴를 생성할 때 총 금액이 각 메뉴상품들의 가격의 총합보다 작으면 정상적으로 동작한다.")
@@ -119,6 +120,19 @@ class MenuServiceTest {
         // when, then
         assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("메뉴를 생성할 때 존재하지 않는 상품ID라면 예외를 반환한다.")
+    @Test
+    void create_fail_if_productId_is_null() {
+        // given
+        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
+        CreateMenuRequest request = createMenuRequest("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
+                Collections.singletonList(createMenuProductRequest(9999999L, 2)));
+
+        // when, then
+        assertThatThrownBy(() -> menuService.create(request))
+                .isInstanceOf(NotFoundException.class);
     }
 
     @DisplayName("모든 메뉴를 조회한다.")
