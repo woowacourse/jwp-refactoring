@@ -17,13 +17,13 @@ import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
-    private final OrderDao orderDao;
+    private final OrderDao jdbcTemplateOrderDao;
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao,
+    public TableGroupService(final OrderDao jdbcTemplateOrderDao, final OrderTableDao orderTableDao,
                              final TableGroupDao tableGroupDao) {
-        this.orderDao = orderDao;
+        this.jdbcTemplateOrderDao = jdbcTemplateOrderDao;
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
     }
@@ -75,7 +75,7 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
+        if (jdbcTemplateOrderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException("완료되지 않은 주문이 존재합니다.");
         }

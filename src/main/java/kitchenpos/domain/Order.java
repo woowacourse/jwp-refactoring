@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.util.CollectionUtils;
 
 public class Order {
     private Long id;
@@ -9,6 +10,33 @@ public class Order {
     private String orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
+
+    public Order() {
+    }
+
+    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException("주문 항목이 비어있습니다.");
+        }
+
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
+    }
+
+    public static Order create(final Long orderTableId, final List<OrderLineItem> orderLineItems, long menuSize) {
+        Order order = new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+        order.validateMenuSize(menuSize);
+        return order;
+    }
+
+    private void validateMenuSize(final long menuSize) {
+        if (orderLineItems.size() != menuSize) {
+            throw new IllegalArgumentException("메뉴의 수가 부족합니다.");
+        }
+    }
 
     public Long getId() {
         return id;

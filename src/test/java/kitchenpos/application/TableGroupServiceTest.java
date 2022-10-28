@@ -81,7 +81,7 @@ class TableGroupServiceTest extends ServiceTestBase {
         Order order1 = 주문_생성(savedOrderTable1);
         order1.setOrderStatus(orderStatus.name());
         order1.setOrderedTime(LocalDateTime.now());
-        Order savedOrder = orderDao.save(order1);
+        Order savedOrder = jdbcTemplateOrderDao.save(order1);
 
         // when & then
         assertThatThrownBy(
@@ -103,7 +103,7 @@ class TableGroupServiceTest extends ServiceTestBase {
         Order order1 = 주문_생성(savedOrderTable1);
         order1.setOrderStatus(OrderStatus.COMPLETION.name());
         order1.setOrderedTime(LocalDateTime.now());
-        Order savedOrder = orderDao.save(order1);
+        Order savedOrder = jdbcTemplateOrderDao.save(order1);
 
         // when
         tableGroupService.ungroup(savedTableGroup.getId());

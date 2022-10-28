@@ -22,6 +22,8 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.ProductRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,7 +34,7 @@ import org.springframework.test.context.jdbc.Sql;
 public abstract class ServiceTestBase {
 
     @Autowired
-    protected OrderDao orderDao;
+    protected OrderDao jdbcTemplateOrderDao;
 
     @Autowired
     protected ProductDao productDao;
@@ -148,11 +150,30 @@ public abstract class ServiceTestBase {
         return orderLineItem;
     }
 
+    protected OrderCreateRequest createOrderCreateRequest(Long orderTableId,
+                                                          List<OrderLineItemRequest> orderLineItemRequests) {
+        return new OrderCreateRequest(orderTableId, orderLineItemRequests);
+    }
+
+    protected OrderLineItem createOrderLineItemRequest(final Order order, final Menu menu, final long quantity) {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(menu.getId());
+        orderLineItem.setQuantity(quantity);
+        orderLineItem.setOrderId(order.getId());
+
+        return orderLineItem;
+    }
+
+
     protected OrderLineItem 주문_항목_생성(final Menu menu, final long quantity) {
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(menu.getId());
         orderLineItem.setQuantity(quantity);
 
         return orderLineItem;
+    }
+
+    protected OrderLineItemRequest createOrderLineItemRequest(final Long menuId, final long quantity) {
+        return new OrderLineItemRequest(menuId, quantity);
     }
 }

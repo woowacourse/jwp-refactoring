@@ -25,6 +25,8 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderLineItemRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -98,15 +100,14 @@ class OrderServiceTest extends ServiceTestBase {
     void orderWithEmptyOrderLineItem() {
         // given
         OrderTable orderTable1 = orderTableDao.save(주문_테이블_생성());
-        OrderTable orderTable2 = orderTableDao.save(주문_테이블_생성());
-        TableGroup tableGroup = tableGroupDao.save(단체_지정_생성(orderTable1, orderTable2));
 
-        Order order1 = 주문_생성(orderTable1);
-        OrderLineItem orderLineItem1 = 주문_항목_생성(order1, friedChicken, 1);
+        OrderLineItemRequest orderLineItem1 = createOrderLineItemRequest(friedChicken.getId(), 1);
+        OrderCreateRequest orderRequest = createOrderCreateRequest(orderTable1.getId(),
+                Collections.emptyList());
 
         // when & then
         assertThatThrownBy(
-                () -> orderService.create(order1)
+                () -> orderService.create(orderRequest)
         ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("주문 항목이 비어있습니다.");
     }
@@ -116,17 +117,15 @@ class OrderServiceTest extends ServiceTestBase {
     void orderWithDifferentMenuSize() {
         // given
         OrderTable orderTable1 = orderTableDao.save(주문_테이블_생성());
-        OrderTable orderTable2 = orderTableDao.save(주문_테이블_생성());
-        TableGroup tableGroup = tableGroupDao.save(단체_지정_생성(orderTable1, orderTable2));
 
-        Order order1 = 주문_생성(orderTable1);
-        OrderLineItem orderLineItem1 = 주문_항목_생성(friedChicken, 1);
-        OrderLineItem orderLineItem2 = 주문_항목_생성(friedChicken, 1);
-        order1.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
+        OrderLineItemRequest orderLineItem1 = createOrderLineItemRequest(friedChicken.getId(), 1);
+        OrderLineItemRequest orderLineItem2 = createOrderLineItemRequest(friedChicken.getId(), 1);
+        OrderCreateRequest orderRequest = createOrderCreateRequest(orderTable1.getId(),
+                Arrays.asList(orderLineItem1, orderLineItem2));
 
         // when & then
         assertThatThrownBy(
-                () -> orderService.create(order1)
+                () -> orderService.create(orderRequest)
         ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("메뉴의 수가 부족합니다.");
     }
@@ -135,13 +134,13 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void orderWithNotExistedOrderTableId() {
         // given
-        Order order1 = 주문_생성(0L);
-        OrderLineItem orderLineItem1 = 주문_항목_생성(friedChicken, 1);
-        order1.setOrderLineItems(Arrays.asList(orderLineItem1));
+        OrderLineItemRequest orderLineItem1 = createOrderLineItemRequest(friedChicken.getId(), 1);
+        OrderCreateRequest orderRequest = createOrderCreateRequest(0L,
+                Collections.singletonList(orderLineItem1));
 
         // when & then
         assertThatThrownBy(
-                () -> orderService.create(order1)
+                () -> orderService.create(orderRequest)
         ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("주문 테이블이 존재하지 않습니다.");
     }
@@ -151,15 +150,14 @@ class OrderServiceTest extends ServiceTestBase {
     void orderWithEmptyOrderTableId() {
         // given
         OrderTable orderTable1 = orderTableDao.save(빈_주문_테이블_생성());
-        TableGroup tableGroup = tableGroupDao.save(단체_지정_생성(orderTable1));
 
-        Order order1 = 주문_생성(orderTable1);
-        OrderLineItem orderLineItem1 = 주문_항목_생성(friedChicken, 1);
-        order1.setOrderLineItems(Arrays.asList(orderLineItem1));
+        OrderLineItemRequest orderLineItem1 = createOrderLineItemRequest(friedChicken.getId(), 1);
+        OrderCreateRequest orderRequest = createOrderCreateRequest(orderTable1.getId(),
+                Collections.singletonList(orderLineItem1));
 
         // when & then
         assertThatThrownBy(
-                () -> orderService.create(order1)
+                () -> orderService.create(orderRequest)
         ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("빈 주문 테이블입니다.");
     }
@@ -172,17 +170,18 @@ class OrderServiceTest extends ServiceTestBase {
         OrderTable orderTable2 = orderTableDao.save(주문_테이블_생성());
         TableGroup tableGroup = tableGroupDao.save(단체_지정_생성(orderTable1, orderTable2));
 
-        Order order1 = 주문_생성(orderTable1);
-        OrderLineItem orderLineItem1 = 주문_항목_생성(order1, friedChicken, 1);
-        order1.setOrderLineItems(Arrays.asList(orderLineItem1));
+        OrderLineItemRequest orderLineItem1 = createOrderLineItemRequest(friedChicken.getId(), 1);
+        OrderLineItemRequest orderLineItem2 = createOrderLineItemRequest(seasonedChicken.getId(), 2);
+        OrderCreateRequest orderRequest = createOrderCreateRequest(orderTable1.getId(),
+                Arrays.asList(orderLineItem1, orderLineItem2));
 
         // when
-        Order savedOrder = orderService.create(order1);
+        Order savedOrder = orderService.create(orderRequest);
 
         // then
         assertAll(
                 () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
-                () -> assertThat(savedOrder.getOrderLineItems()).hasSize(1)
+                () -> assertThat(savedOrder.getOrderLineItems()).hasSize(2)
         );
     }
 
@@ -253,6 +252,6 @@ class OrderServiceTest extends ServiceTestBase {
         order.setOrderedTime(LocalDateTime.now());
         order.setOrderStatus(OrderStatus.COOKING.name());
 
-        return orderDao.save(order);
+        return jdbcTemplateOrderDao.save(order);
     }
 }

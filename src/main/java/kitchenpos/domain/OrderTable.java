@@ -6,6 +6,20 @@ public class OrderTable {
     private int numberOfGuests;
     private boolean empty;
 
+    public OrderTable(final int numberOfGuests, final boolean empty) {
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
+    public OrderTable() {
+    }
+
+    public void validateEmpty() {
+        if (isEmpty()) {
+            throw new IllegalArgumentException("빈 주문 테이블입니다.");
+        }
+    }
+
     public Long getId() {
         return id;
     }

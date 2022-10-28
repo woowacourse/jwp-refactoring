@@ -165,7 +165,7 @@ class TableServiceTest extends ServiceTestBase {
         Order order1 = 주문_생성(savedTable);
         order1.setOrderedTime(LocalDateTime.now());
         order1.setOrderStatus(OrderStatus.COMPLETION.name());
-        Order savedOrder = orderDao.save(order1);
+        Order savedOrder = jdbcTemplateOrderDao.save(order1);
         OrderLineItem orderLineItem1 = 주문_항목_생성(savedOrder, friedChicken, 1);
         orderLineItemDao.save(orderLineItem1);
 
@@ -248,6 +248,6 @@ class TableServiceTest extends ServiceTestBase {
         order.setOrderedTime(LocalDateTime.now());
         order.setOrderStatus(OrderStatus.COOKING.name());
 
-        return orderDao.save(order);
+        return jdbcTemplateOrderDao.save(order);
     }
 }

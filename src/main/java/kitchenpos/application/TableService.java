@@ -12,11 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
-    private final OrderDao orderDao;
+    private final OrderDao jdbcTemplateOrderDao;
     private final OrderTableDao orderTableDao;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
+    public TableService(final OrderDao jdbcTemplateOrderDao, final OrderTableDao orderTableDao) {
+        this.jdbcTemplateOrderDao = jdbcTemplateOrderDao;
         this.orderTableDao = orderTableDao;
     }
 
@@ -41,7 +41,7 @@ public class TableService {
             throw new IllegalArgumentException("TableGroupId가 있습니다.");
         }
 
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
+        if (jdbcTemplateOrderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException("주문이 진행 중입니다.");
         }
