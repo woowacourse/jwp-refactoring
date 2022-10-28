@@ -27,8 +27,8 @@ class OrderRepositoryTest {
         // given
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(4, false));
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(5, false));
-        final Order order1 = new Order(orderTable1.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
-        final Order order2 = new Order(orderTable2.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
+        final Order order1 = new Order(orderTable1, OrderStatus.COOKING.name(), LocalDateTime.now());
+        final Order order2 = new Order(orderTable2, OrderStatus.MEAL.name(), LocalDateTime.now());
         orderRepository.save(order1);
         orderRepository.save(order2);
 
@@ -47,8 +47,8 @@ class OrderRepositoryTest {
         // given
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(4, false));
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(5, false));
-        final Order order1 = new Order(orderTable1.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
-        final Order order2 = new Order(orderTable2.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
+        final Order order1 = new Order(orderTable1, OrderStatus.COOKING.name(), LocalDateTime.now());
+        final Order order2 = new Order(orderTable2, OrderStatus.MEAL.name(), LocalDateTime.now());
         orderRepository.save(order1);
         orderRepository.save(order2);
 
@@ -67,8 +67,8 @@ class OrderRepositoryTest {
         // given
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(4, false));
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(5, false));
-        final Order order1 = new Order(orderTable1.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
-        final Order order2 = new Order(orderTable2.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
+        final Order order1 = new Order(orderTable1, OrderStatus.COOKING.name(), LocalDateTime.now());
+        final Order order2 = new Order(orderTable2, OrderStatus.MEAL.name(), LocalDateTime.now());
         orderRepository.save(order1);
         orderRepository.save(order2);
 
