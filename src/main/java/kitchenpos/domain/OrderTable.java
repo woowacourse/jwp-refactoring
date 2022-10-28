@@ -5,7 +5,7 @@ import kitchenpos.exception.GuestSizeException;
 
 public class OrderTable {
     private final Long id;
-    private final Long tableGroupId;
+    private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
@@ -20,6 +20,13 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
+    public OrderTable(OrderTable orderTable, Long tableGroupId) {
+        this.id = orderTable.id;
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = orderTable.numberOfGuests;
+        this.empty = orderTable.empty;
+    }
+
     public void changeEmpty(boolean empty) {
         if (Objects.nonNull(this.tableGroupId)) {
             throw new IllegalArgumentException();
@@ -32,6 +39,10 @@ public class OrderTable {
             throw new GuestSizeException();
         }
         this.numberOfGuests = numberOfGuests;
+    }
+
+    public void ungroup() {
+        this.tableGroupId = null;
     }
 
     public boolean isNotPossibleTableGrouping() {
