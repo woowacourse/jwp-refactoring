@@ -1,60 +1,49 @@
 package kitchenpos.application;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.OrderCommand;
+import kitchenpos.application.dto.request.OrderLineItemCommand;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.menu.MenuRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
-    private final MenuRepository menuRepository;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
+    private final OrderValidator orderValidator;
+    private final OrderRepository orderRepository;
 
     public OrderService(
-            final MenuRepository menuRepository,
             final OrderDao orderDao,
             final OrderLineItemDao orderLineItemDao,
-            final OrderTableDao orderTableDao
-    ) {
-        this.menuRepository = menuRepository;
+            final OrderTableDao orderTableDao,
+            OrderValidator orderValidator, OrderRepository orderRepository) {
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
         this.orderTableDao = orderTableDao;
+        this.orderValidator = orderValidator;
+        this.orderRepository = orderRepository;
     }
 
     @Transactional
     public OrderResponse create(final OrderCommand orderCommand) {
-        final List<OrderLineItem> orderLineItems = orderCommand.getOrderLineItems();
+        List<OrderLineItemCommand> orderLineItems = orderCommand.getOrderLineItems();
+        Long orderTableId = orderCommand.getOrderTableId();
+        orderValidator.validateCreate(orderCommand);
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("주문 항목이 비어있습니다.");
-        }
-
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException("주문항목의 수와 메뉴의 수가 일치하지 않습니다.");
-        }
-
-        final OrderTable orderTable = orderTableDao.findById(orderCommand.getOrderTableId())
-                .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
+        OrderTable orderTable = getOrderTable(orderTableId);
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("빈 테이블입니다.");
@@ -62,17 +51,19 @@ public class OrderService {
 
         Order order = new Order(orderTable.getId(), OrderStatus.COOKING);
 
-        final Order savedOrder = orderDao.save(order);
+        Order savedOrder = orderRepository.save(order);
 
         final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(orderId);
-            savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
-        }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
-
+        List<OrderLineItem> collect = orderLineItems.stream()
+                .map(it -> new OrderLineItem(orderId, it.getMenuId(), it.getQuantity()))
+                .collect(Collectors.toList());
+        order.setOrderLineItems(collect);
         return OrderResponse.from(savedOrder);
+    }
+
+    private OrderTable getOrderTable(Long orderTableId) {
+        return orderTableDao.findById(orderTableId)
+                .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
     }
 
     public List<Order> list() {

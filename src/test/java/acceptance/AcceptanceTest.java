@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import kitchenpos.Application;
 import kitchenpos.application.dto.request.OrderCommand;
+import kitchenpos.application.dto.request.OrderLineItemCommand;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.common.DataClearExtension;
 import kitchenpos.domain.MenuGroupDto;
@@ -183,7 +184,10 @@ public class AcceptanceTest {
 //    }
 
     protected long 주문을_생성한다(long table, List<OrderLineItem> orderLineItems) {
-        OrderCommand order = new OrderCommand(table, orderLineItems);
+        List<OrderLineItemCommand> orderLineItemCommands = orderLineItems.stream()
+                .map(it -> new OrderLineItemCommand(it.getMenuId(), it.getQuantity()))
+                .collect(Collectors.toList());
+        OrderCommand order = new OrderCommand(table, orderLineItemCommands);
 
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
