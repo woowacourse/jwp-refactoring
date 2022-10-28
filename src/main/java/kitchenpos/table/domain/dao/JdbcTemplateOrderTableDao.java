@@ -2,6 +2,7 @@ package kitchenpos.table.domain.dao;
 
 import kitchenpos.table.domain.OrderTable;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -18,8 +19,12 @@ import java.util.Optional;
 
 @Repository
 public class JdbcTemplateOrderTableDao implements OrderTableDao {
+
     private static final String TABLE_NAME = "order_table";
-    private static final String KEY_COLUMN_NAME = "id";
+    private static final String KEY_COLUMN = "id";
+    private static final String TABLE_GROUP_ID_COLUMN = "table_group_id";
+    private static final String NUMBER_OF_GUESTS_COLUMN = "number_of_guests";
+    private static final String EMPTY_COLUMN = "empty";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -27,8 +32,8 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     public JdbcTemplateOrderTableDao(final DataSource dataSource) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
-                .withTableName(TABLE_NAME)
-                .usingGeneratedKeyColumns(KEY_COLUMN_NAME)
+            .withTableName(TABLE_NAME)
+            .usingGeneratedKeyColumns(KEY_COLUMN)
         ;
     }
 
@@ -55,50 +60,43 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     @Override
     public List<OrderTable> findAll() {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table";
-        return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
+        return jdbcTemplate.query(sql, new OrderTableRowMapper());
     }
 
     @Override
     public List<OrderTable> findAllByIdIn(final List<Long> ids) {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id IN (:ids)";
-        final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("ids", ids);
-        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+        final SqlParameterSource parameters = new MapSqlParameterSource("ids", ids);
+        return jdbcTemplate.query(sql, parameters, new OrderTableRowMapper());
     }
 
     @Override
     public List<OrderTable> findAllByTableGroupId(final Long tableGroupId) {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty" +
-                " FROM order_table WHERE table_group_id = (:tableGroupId)";
-        final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("tableGroupId", tableGroupId);
-        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+            " FROM order_table WHERE table_group_id = (:tableGroupId)";
+        final SqlParameterSource parameters = new MapSqlParameterSource("tableGroupId", tableGroupId);
+        return jdbcTemplate.query(sql, parameters, new OrderTableRowMapper());
     }
 
     private OrderTable select(final Long id) {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("id", id);
-        return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+            .addValue(KEY_COLUMN, id);
+        return jdbcTemplate.queryForObject(sql, parameters, new OrderTableRowMapper());
     }
 
     private void update(final OrderTable entity) {
         final String sql = "UPDATE order_table SET table_group_id = (:tableGroupId)," +
-                " number_of_guests = (:numberOfGuests), empty = (:empty) WHERE id = (:id)";
-        final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("tableGroupId", entity.getTableGroupId())
-                .addValue("numberOfGuests", entity.getNumberOfGuests())
-                .addValue("empty", entity.isEmpty())
-                .addValue("id", entity.getId());
-        jdbcTemplate.update(sql, parameters);
+            " number_of_guests = (:numberOfGuests), empty = (:empty) WHERE id = (:id)";
+        jdbcTemplate.update(sql, new BeanPropertySqlParameterSource(entity));
     }
 
-    private OrderTable toEntity(final ResultSet resultSet) throws SQLException {
-        final OrderTable entity = new OrderTable();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setTableGroupId(resultSet.getObject("table_group_id", Long.class));
-        entity.setNumberOfGuests(resultSet.getInt("number_of_guests"));
-        entity.setEmpty(resultSet.getBoolean("empty"));
-        return entity;
+    private static class OrderTableRowMapper implements RowMapper<OrderTable> {
+
+        @Override
+        public OrderTable mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new OrderTable(rs.getLong(KEY_COLUMN), rs.getObject(TABLE_GROUP_ID_COLUMN, Long.class),
+                rs.getInt(NUMBER_OF_GUESTS_COLUMN), rs.getBoolean(EMPTY_COLUMN));
+        }
     }
 }
