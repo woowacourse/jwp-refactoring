@@ -19,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
+
     private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
@@ -38,10 +39,28 @@ public class OrderService {
     public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
         final List<OrderLineItemRequest> orderLineItemRequests = orderCreateRequest.getOrderLineItems();
 
+        validateEmptyOrderLineItemRequests(orderLineItemRequests);
+        validateExistOrderLineItemRequestInMenu(orderLineItemRequests);
+
+        final OrderTable orderTable = findOrderTable(orderCreateRequest);
+        final Order savedOrder = orderDao.save(Order.from(orderTable));
+        final List<OrderLineItem> orderLineItems = saveOrderLineItems(orderLineItemRequests, savedOrder);
+
+        return OrderResponse.of(savedOrder, orderLineItems);
+    }
+
+    private OrderTable findOrderTable(OrderCreateRequest orderCreateRequest) {
+        return orderTableDao.findById(orderCreateRequest.getOrderTableId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
+    }
+
+    private void validateEmptyOrderLineItemRequests(List<OrderLineItemRequest> orderLineItemRequests) {
         if (CollectionUtils.isEmpty(orderLineItemRequests)) {
             throw new IllegalArgumentException("주문 항목이 비어있을 수 없습니다.");
         }
+    }
 
+    private void validateExistOrderLineItemRequestInMenu(List<OrderLineItemRequest> orderLineItemRequests) {
         final List<Long> menuIds = orderLineItemRequests.stream()
                 .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());
@@ -49,19 +68,14 @@ public class OrderService {
         if (orderLineItemRequests.size() != menuDao.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("존재하지 않는 메뉴는 주문할 수 없습니다.");
         }
+    }
 
-        final OrderTable orderTable = orderTableDao.findById(orderCreateRequest.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        final Order savedOrder = orderDao.save(Order.from(orderTable));
-
-        List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
+    private List<OrderLineItem> saveOrderLineItems(List<OrderLineItemRequest> orderLineItemRequests, Order savedOrder) {
+        return orderLineItemRequests.stream()
                 .map(orderLineItemRequest -> orderLineItemDao.save(new OrderLineItem(savedOrder.getId(),
                         orderLineItemRequest.getMenuId(),
                         orderLineItemRequest.getQuantity())))
                 .collect(Collectors.toList());
-
-        return OrderResponse.of(savedOrder, orderLineItems);
     }
 
     public List<OrderResponse> list() {

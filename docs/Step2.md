@@ -28,7 +28,7 @@
     - 목록
         - [x] MenuGroupService
         - [x] MenuService
-        - [ ] OrderService
+        - [x] OrderService
             - Order 메서드 추가
                 - changeOrderStatus()
                 - addOrderLineItem()
