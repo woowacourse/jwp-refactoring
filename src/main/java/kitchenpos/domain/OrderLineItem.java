@@ -31,6 +31,10 @@ public class OrderLineItem {
         this(null, orderId, menuId, quantity);
     }
 
+    public OrderLineItem(final Long menuId, final Long quantity) {
+        this(null, null, menuId, quantity);
+    }
+
     public Long getSeq() {
         return seq;
     }
