@@ -73,10 +73,12 @@ public class TableRestController {
             @PathVariable final Long orderTableId,
             @RequestBody final TableChangeEmptyRequest emptyRequest
     ) {
-        return ResponseEntity.ok().body(OrderTableResponse.from(tableService.changeEmpty(orderTableId, emptyRequest.getEmpty())));
+        return ResponseEntity.ok()
+                .body(OrderTableResponse.from(tableService.changeEmpty(orderTableId, emptyRequest.getEmpty())));
     }
 
 
+    @Deprecated
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
     public ResponseEntity<OrderTable> changeNumberOfGuests(
             @PathVariable final Long orderTableId,
@@ -85,5 +87,14 @@ public class TableRestController {
         return ResponseEntity.ok()
                 .body(tableService.changeNumberOfGuests(orderTableId, orderTable))
                 ;
+    }
+
+    @PutMapping("/api/v2/tables/{orderTableId}/number-of-guests")
+    public ResponseEntity<OrderTableResponse> changeNumberOfGuests(
+            @PathVariable final Long orderTableId,
+            @RequestBody final TableChangeNumberOfGuestsRequest numberOfGuestsRequest
+    ) {
+        return ResponseEntity.ok().body(OrderTableResponse.from(
+                tableService.changeNumberOfGuests(orderTableId, numberOfGuestsRequest.getNumberOfGuests())));
     }
 }

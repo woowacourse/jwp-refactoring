@@ -77,4 +77,17 @@ class TableServiceTest {
 
         assertThat(orderTableDto.isEmpty()).isFalse();
     }
+
+    @DisplayName("주문 테이블의 인원 수를 변경한다.")
+    @Test
+    void changeNumberOfGuests() {
+        final OrderTable orderTable = new OrderTable(0, true);
+        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        orderDao.save(new Order(savedOrderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
+                List.of(new OrderLineItem())));
+        tableService.changeEmpty(savedOrderTable.getId(), false);
+        final OrderTableDto orderTableDto = tableService.changeNumberOfGuests(savedOrderTable.getId(), 3);
+
+        assertThat(orderTableDto.getNumberOfGuests()).isEqualTo(3);
+    }
 }

@@ -103,8 +103,8 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
         final Map<String, Object> requestBody = Map.of(
                 "numberOfGuests", 3,
                 "empty", nonEmptyOrderTable.isEmpty());
-        final OrderTable result = OrderTableHttpCommunication.changeNumberOfGuests(orderTable.getId(), requestBody)
-                .getResponseBodyAsObject(OrderTable.class);
+        final OrderTableResponse result = OrderTableHttpCommunication.changeNumberOfGuests(orderTable.getId(), requestBody)
+                .getResponseBodyAsObject(OrderTableResponse.class);
 
         assertThat(result.getNumberOfGuests()).isEqualTo(3);
     }

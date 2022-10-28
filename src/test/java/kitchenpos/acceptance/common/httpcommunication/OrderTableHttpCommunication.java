@@ -24,7 +24,7 @@ public class OrderTableHttpCommunication {
     }
 
     public static HttpCommunication changeNumberOfGuests(final Long orderTableId, final Map<String, Object> requestBody) {
-        final String requestUrl = String.format("/api/tables/%s/number-of-guests", orderTableId);
+        final String requestUrl = String.format("/api/v2/tables/%s/number-of-guests", orderTableId);
         return HttpCommunication.request()
                 .update(requestUrl, requestBody)
                 .build();

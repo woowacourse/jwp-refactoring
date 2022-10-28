@@ -91,6 +91,7 @@ public class TableService {
         }
     }
 
+    @Deprecated
     @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
         final int numberOfGuests = orderTable.getNumberOfGuests();
@@ -109,5 +110,13 @@ public class TableService {
         savedOrderTable.setNumberOfGuests(numberOfGuests);
 
         return orderTableDao.save(savedOrderTable);
+    }
+
+    @Transactional
+    public OrderTableDto changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
+        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        return OrderTableDto.from(orderTableDao.save(savedOrderTable.changeNumberOfGuest(numberOfGuests)));
     }
 }

@@ -3,6 +3,7 @@ package kitchenpos.ui;
 import static javax.management.openmbean.SimpleType.BOOLEAN;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -113,9 +114,9 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("주문 테이블의 게스트 수를 변경한다.")
     @Test
     void changeNumberOfGuests() throws Exception {
-        when(tableService.changeNumberOfGuests(anyLong(), any(OrderTable.class))).thenReturn(DomainFixture.getOrderTable(true));
+        when(tableService.changeNumberOfGuests(anyLong(), anyInt())).thenReturn(DtoFixture.getOrderTableDto(false));
 
-        final ResultActions resultActions = mockMvc.perform(put("/api/tables/1/number-of-guests")
+        final ResultActions resultActions = mockMvc.perform(put("/api/v2/tables/1/number-of-guests")
                         .content(objectMapper.writeValueAsString(Map.of("numberOfGuests", 0)))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())

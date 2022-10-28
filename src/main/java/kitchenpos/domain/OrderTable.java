@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Objects;
 
 public class OrderTable {
+
+    private static final int MIN_GUESTS = 0;
+
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
@@ -25,6 +28,17 @@ public class OrderTable {
     @JsonIgnore
     public boolean isPartOfTableGroup() {
         return Objects.nonNull(tableGroupId);
+    }
+
+    public OrderTable changeNumberOfGuest(final int numberOfGuests) {
+        canChangeNumberOfGuest(numberOfGuests);
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
+    }
+
+    private void canChangeNumberOfGuest(final int numberOfGuests) {
+        if (numberOfGuests < MIN_GUESTS || empty) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
