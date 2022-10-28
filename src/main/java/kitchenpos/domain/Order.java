@@ -26,6 +26,7 @@ public class Order {
     private OrderTable orderTable;
 
     private String orderStatus;
+
     private LocalDateTime orderedTime;
 
     @JsonIgnore

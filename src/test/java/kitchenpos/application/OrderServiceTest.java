@@ -189,11 +189,10 @@ class OrderServiceTest extends ServiceTest {
                         orderLineItem.getMenuId(), orderLineItem.getQuantity()))
                 .collect(Collectors.toList());
 
-        final OrderRequest orderRequest = new OrderRequest(요리중_주문.getOrderTable().getId(), 요리중_주문.getOrderStatus(),
+        final OrderRequest orderRequest = new OrderRequest(요리중_주문.getOrderTable().getId(), OrderStatus.COMPLETION.name(),
                 요리중_주문.getOrderedTime(), orderLineItemRequests);
 
         Order targetOrder = orderService.create(orderRequest);
-        targetOrder.setOrderStatus(OrderStatus.COMPLETION.name());
 
         assertThatThrownBy(
                 () -> orderService.changeOrderStatus(targetOrder.getId(), targetOrder)
