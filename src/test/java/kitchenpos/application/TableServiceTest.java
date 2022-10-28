@@ -7,8 +7,8 @@ import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
@@ -26,7 +26,7 @@ class TableServiceTest extends ServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Test
     void 테이블을_생성할_수_있다() {
@@ -70,8 +70,8 @@ class TableServiceTest extends ServiceTest {
         OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
         OrderTable newOrderTable = new OrderTable(null, 0, true);
 
-        Order order = new Order(orderTable.getId(), orderStatus.name(), new ArrayList<>());
-        orderDao.save(order);
+        Order order = new Order(orderTable, orderStatus, new ArrayList<>());
+        orderRepository.save(order);
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), newOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);

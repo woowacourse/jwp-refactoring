@@ -7,9 +7,9 @@ import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import kitchenpos.dao.OrderDao;
+import java.util.List;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
@@ -32,15 +32,14 @@ class TableGroupServiceTest extends ServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Test
     void 테이블을_단체로_지정할_수_있다() {
         OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, 1, true));
         OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 2, true));
 
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(),
-                new ArrayList<>(Arrays.asList(orderTable1, orderTable2)));
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
         TableGroup actual = tableGroupService.create(tableGroup);
 
@@ -54,7 +53,7 @@ class TableGroupServiceTest extends ServiceTest {
     void 단체로_지정할_테이블이_한_개_이하인_경우_지정할_수_없다() {
         OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, 1, true));
 
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), new ArrayList<>(Arrays.asList(orderTable1)));
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -64,8 +63,7 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, 1, false));
         OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 2, true));
 
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(),
-                new ArrayList<>(Arrays.asList(orderTable1, orderTable2)));
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -76,13 +74,12 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 2, true));
 
         TableGroup tableGroup1 = tableGroupRepository.save(
-                new TableGroup(LocalDateTime.now(), new ArrayList<>(Arrays.asList(orderTable1, orderTable2))));
+                new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
         OrderTable orderTable3 = orderTableRepository.save(new OrderTable(tableGroup1, 1, true));
         OrderTable orderTable4 = orderTableRepository.save(new OrderTable(null, 1, true));
 
-        TableGroup tableGroup2 = new TableGroup(LocalDateTime.now(),
-                new ArrayList<>(Arrays.asList(orderTable3, orderTable4)));
+        TableGroup tableGroup2 = new TableGroup(LocalDateTime.now(), List.of(orderTable3, orderTable4));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup2)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -93,7 +90,7 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 2, true));
 
         TableGroup tableGroup = tableGroupRepository.save(
-                new TableGroup(LocalDateTime.now(), new ArrayList<>(Arrays.asList(orderTable1, orderTable2))));
+                new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
         orderTableRepository.save(
                 new OrderTable(orderTable1.getId(), tableGroup, orderTable1.getNumberOfGuests(),
                         orderTable1.isEmpty()));
@@ -121,7 +118,7 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 2, true));
 
         TableGroup tableGroup = tableGroupRepository.save(
-                new TableGroup(LocalDateTime.now(), new ArrayList<>(Arrays.asList(orderTable1, orderTable2))));
+                new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
         orderTableRepository.save(
                 new OrderTable(orderTable1.getId(), tableGroup, orderTable1.getNumberOfGuests(),
                         orderTable1.isEmpty()));
@@ -129,7 +126,7 @@ class TableGroupServiceTest extends ServiceTest {
                 new OrderTable(orderTable2.getId(), tableGroup, orderTable2.getNumberOfGuests(),
                         orderTable2.isEmpty()));
 
-        orderDao.save(new Order(orderTable1.getId(), orderStatus.name(), new ArrayList<>()));
+        orderRepository.save(new Order(orderTable1, orderStatus, new ArrayList<>()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);

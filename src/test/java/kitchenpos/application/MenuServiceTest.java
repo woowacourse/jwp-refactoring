@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -41,8 +40,7 @@ class MenuServiceTest extends ServiceTest {
 
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
 
-        Menu menu = new Menu("메뉴", new BigDecimal(35000), menuGroup,
-                new ArrayList<>(Arrays.asList(menuProduct1, menuProduct2)));
+        Menu menu = new Menu("메뉴", new BigDecimal(35000), menuGroup, List.of(menuProduct1, menuProduct2));
 
         Menu actual = menuService.create(menu);
 
@@ -74,8 +72,7 @@ class MenuServiceTest extends ServiceTest {
 
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
 
-        Menu menu = new Menu("메뉴", new BigDecimal(50000), menuGroup,
-                new ArrayList<>(Arrays.asList(menuProduct1, menuProduct2)));
+        Menu menu = new Menu("메뉴", new BigDecimal(50000), menuGroup, List.of(menuProduct1, menuProduct2));
 
         assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -90,10 +87,8 @@ class MenuServiceTest extends ServiceTest {
 
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
 
-        Menu menu1 = new Menu("메뉴1", new BigDecimal(35000), menuGroup,
-                new ArrayList<>(Arrays.asList(menuProduct1, menuProduct2)));
-        Menu menu2 = new Menu("메뉴2", new BigDecimal(38000), menuGroup,
-                new ArrayList<>(Arrays.asList(menuProduct1, menuProduct2)));
+        Menu menu1 = new Menu("메뉴1", new BigDecimal(35000), menuGroup, List.of(menuProduct1, menuProduct2));
+        Menu menu2 = new Menu("메뉴2", new BigDecimal(38000), menuGroup, List.of(menuProduct1, menuProduct2));
 
         menuRepository.save(menu1);
         menuRepository.save(menu2);
