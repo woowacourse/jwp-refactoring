@@ -1,5 +1,9 @@
 package kitchenpos.application;
 
+import java.time.LocalDate;
+import kitchenpos.application.dto.OrderTableIdDto;
+import kitchenpos.application.dto.TableGroupCreationDto;
+import kitchenpos.application.dto.TableGroupDto;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -28,6 +32,7 @@ public class TableGroupService {
         this.tableGroupDao = tableGroupDao;
     }
 
+    @Deprecated
     @Transactional
     public TableGroup create(final TableGroup tableGroup) {
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
@@ -66,6 +71,31 @@ public class TableGroupService {
 
         return savedTableGroup;
     }
+
+    @Transactional
+    public TableGroupDto create(final TableGroupCreationDto tableGroupCreationDto) {
+        List<Long> orderTableIds = tableGroupCreationDto.getOrderTableIds()
+                .stream()
+                .map(OrderTableIdDto::getId)
+                .collect(Collectors.toList());
+        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
+        if (orderTableIds.size() != savedOrderTables.size()) {
+            throw new IllegalArgumentException();
+        }
+
+        final TableGroup tableGroup = new TableGroup(savedOrderTables, LocalDateTime.now());
+
+        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        final Long tableGroupId = savedTableGroup.getId();
+
+        final List<OrderTable> orderTables = savedOrderTables.stream()
+                .map(orderTable -> orderTableDao.save(
+                        new OrderTable(orderTable.getId(), tableGroupId, orderTable.getNumberOfGuests(), false)))
+                .collect(Collectors.toList());
+
+        return TableGroupDto.from(savedTableGroup.addTableGroups(orderTables));
+    }
+
 
     @Transactional
     public void ungroup(final Long tableGroupId) {

@@ -10,6 +10,7 @@ import kitchenpos.application.dto.OrderLineItemDto;
 import kitchenpos.application.dto.OrderTableCreationDto;
 import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.application.dto.ProductDto;
+import kitchenpos.application.dto.TableGroupDto;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -18,6 +19,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.request.TableGroupCreationRequest;
 
 public class DtoFixture {
 
@@ -48,4 +50,11 @@ public class DtoFixture {
         final Order order = new Order(1L, 2L, OrderStatus.COOKING, LocalDateTime.now(), List.of(orderLineItem));
         return OrderDto.from(order);
     }
+
+   public static TableGroupDto getTableGroupDto() {
+       final OrderTable orderTable1 = new OrderTable(1L, 1L, 0, true);
+       final OrderTable orderTable2 = new OrderTable(2L, 1L, 0, true);
+       return new TableGroupDto(1L, LocalDateTime.now(),
+               List.of(OrderTableDto.from(orderTable1), OrderTableDto.from(orderTable2)));
+   }
 }

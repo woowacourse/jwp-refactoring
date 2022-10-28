@@ -1,6 +1,7 @@
 package kitchenpos.acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -26,8 +27,10 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
         final ExtractableResponse<Response> response = TableGroupHttpCommunication.create(
                         RequestBody.getOrderTableGroups(orderTable1.getId(), orderTable2.getId())) .getResponse();
 
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
-        assertThat(response.header("Location")).isNotBlank();
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
+                () -> assertThat(response.header("Location")).isNotBlank()
+        );
     }
 
     @DisplayName("TableGroup 에서 특정 OrderTable 을 제외해야 한다.")
