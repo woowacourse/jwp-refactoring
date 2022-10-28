@@ -34,7 +34,7 @@
                 - addOrderLineItem()
         - [x] ProductService
         - [x] TableGroupService
-        - [ ] TableService
+        - [x] TableService
             - OrderTable 메서드 추가
                 - changeNumberOfGuest()
                 - changeEmpty()

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
+
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
 
@@ -36,28 +37,34 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final boolean empty) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        final OrderTable savedOrderTable = findOrderTable(orderTableId);
+        validateTableOrderStatus(orderTableId);
 
+        savedOrderTable.changeEmpty(empty);
+
+        final OrderTable orderTable = orderTableDao.save(savedOrderTable);
+        return OrderTableResponse.from(orderTable);
+    }
+
+    private OrderTable findOrderTable(Long orderTableId) {
+        return orderTableDao.findById(orderTableId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
+    }
+
+    private void validateTableOrderStatus(Long orderTableId) {
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException("주문 상태가 Cooking이나 Meal일 경우 테이블의 상태를 변경할 수 없습니다.");
         }
-
-        savedOrderTable.changeEmpty(empty);
-
-        OrderTable orderTable = orderTableDao.save(savedOrderTable);
-        return OrderTableResponse.from(orderTable);
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        final OrderTable savedOrderTable = findOrderTable(orderTableId);
 
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
 
-        OrderTable orderTable = orderTableDao.save(savedOrderTable);
+        final OrderTable orderTable = orderTableDao.save(savedOrderTable);
         return OrderTableResponse.from(orderTable);
     }
 }
