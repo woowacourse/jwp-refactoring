@@ -6,6 +6,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.application.dto.ProductCreateRequest;
+import kitchenpos.application.dto.ProductResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -25,7 +27,7 @@ class OrderServiceTest extends IntegrationTest {
         void 요청을_할_수_있다() {
             // given
             final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-            final Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 1000));
             final Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
             createMenu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
             final Menu saveMenu = menuService.create(createMenu);
@@ -43,7 +45,7 @@ class OrderServiceTest extends IntegrationTest {
         void 요청시_주문할_주문_아이템을_입력하지_않으면_예외가_발생한다() {
             // given
             final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-            final Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 1000));
             final Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
             createMenu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
             final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
@@ -56,7 +58,7 @@ class OrderServiceTest extends IntegrationTest {
         void 요청시_등록되지_않은_메뉴로_주문_아이템을_입력하면_예외가_발생한다() {
             // given
             menuGroupService.create(new MenuGroup("1인 메뉴"));
-            productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            productService.create(new ProductCreateRequest("짜장면", 1000));
             final Long notRegisterMenuId = 100L;
             final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
 
@@ -71,7 +73,7 @@ class OrderServiceTest extends IntegrationTest {
         void 요청시_존재하지_않는_주문_테이블로_요청하는_경우_예외가_발생한다() {
             // given
             final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-            final Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 1000));
             final Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
             createMenu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
             final Menu saveMenu = menuService.create(createMenu);
@@ -90,7 +92,7 @@ class OrderServiceTest extends IntegrationTest {
         void 요청을_할_수_있다() {
             // given
             final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-            final Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 1000));
             final Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
             createMenu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
             final Menu saveMenu = menuService.create(createMenu);
@@ -111,7 +113,7 @@ class OrderServiceTest extends IntegrationTest {
         void 요청을_할_수_있다() {
             // given
             final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-            final Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 1000));
             final Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
             createMenu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
             final Menu saveMenu = menuService.create(createMenu);
@@ -130,7 +132,7 @@ class OrderServiceTest extends IntegrationTest {
         void 요청시_주문이_완료_상태이면_예외가_발생한다() {
             // given
             final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-            final Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 1000));
             final Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
             createMenu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
             final Menu saveMenu = menuService.create(createMenu);
@@ -147,7 +149,7 @@ class OrderServiceTest extends IntegrationTest {
         void 요청시_존재하지_않는_주문_상태로_변경_요청하는_경우_예외가_발생한다() {
             // given
             final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-            final Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 1000));
             final Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
             createMenu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
             final Menu saveMenu = menuService.create(createMenu);

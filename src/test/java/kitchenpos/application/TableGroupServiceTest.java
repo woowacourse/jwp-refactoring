@@ -7,13 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.application.dto.ProductCreateRequest;
+import kitchenpos.application.dto.ProductResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -94,7 +95,7 @@ class TableGroupServiceTest extends IntegrationTest {
         void 요청으로_지정된_그룹을_해제할_때_주문의_상태가_종료가_아닌경우_예외가_발생한다() {
             // given
             final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
-            final Product product = productService.create(new Product("짜장면", BigDecimal.valueOf(1000)));
+            final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 1000));
             final Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
             createMenu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
             final Menu saveMenu = menuService.create(createMenu);
