@@ -58,8 +58,13 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void doTabling(Long tableGroupId) {
+    public void merge(Long tableGroupId) {
         this.tableGroupId = tableGroupId;
+        this.empty = false;
+    }
+
+    public void ungroup() {
+        this.tableGroupId = null;
         this.empty = false;
     }
 

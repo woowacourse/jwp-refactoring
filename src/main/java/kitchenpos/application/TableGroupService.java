@@ -50,7 +50,7 @@ public class TableGroupService {
     private void mergeOrderTables(List<OrderTable> savedOrderTables, TableGroup tableGroup) {
         final Long tableGroupId = tableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.doTabling(tableGroupId);
+            savedOrderTable.merge(tableGroupId);
             orderTableDao.save(savedOrderTable);
         }
         tableGroup.setOrderTables(savedOrderTables);
@@ -77,8 +77,7 @@ public class TableGroupService {
 
     private void splitOrderTables(List<OrderTable> orderTables) {
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
+            orderTable.ungroup();
             orderTableDao.save(orderTable);
         }
     }
