@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,8 +22,15 @@ public class Product {
     public Product() {}
 
     public Product(String name, BigDecimal price) {
+        validatePriceIsNotNullOrNotNegative(price);
         this.name = name;
         this.price = price;
+    }
+
+    private void validatePriceIsNotNullOrNotNegative(BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
