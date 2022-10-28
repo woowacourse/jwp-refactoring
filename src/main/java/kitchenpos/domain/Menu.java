@@ -28,6 +28,11 @@ public class Menu {
 
     public static Menu of(final String name, final BigDecimal price, final Long menuGroupId,
                           final List<MenuProduct> menuProducts) {
+        verifyPrice(price, menuProducts);
+        return new Menu(null, name, price, menuGroupId, menuProducts);
+    }
+
+    private static void verifyPrice(final BigDecimal price, final List<MenuProduct> menuProducts) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
@@ -35,17 +40,9 @@ public class Menu {
         final BigDecimal totalAmount = menuProducts.stream()
                 .map(MenuProduct::calculateAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-
         if (price.compareTo(totalAmount) > 0) {
             throw new IllegalArgumentException();
         }
-        return new Menu(
-                null,
-                name,
-                price,
-                menuGroupId,
-                menuProducts
-        );
     }
 
     public Long getId() {
