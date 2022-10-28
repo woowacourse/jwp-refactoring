@@ -12,8 +12,9 @@ import org.springframework.util.StringUtils;
 public class MenuGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", columnDefinition = "bigint(20)")
     private Long id;
-    @Column(name = "name", length = 255, nullable = false, unique = true)
+    @Column(name = "name", length = 255, nullable = false)
     private String name;
 
     protected MenuGroup() {

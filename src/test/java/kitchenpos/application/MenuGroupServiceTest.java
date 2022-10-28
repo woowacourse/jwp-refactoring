@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import kitchenpos.exception.badrequest.MenuGroupNameDuplicateException;
 import kitchenpos.exception.badrequest.MenuGroupNameInvalidException;
 import kitchenpos.ui.dto.request.MenuGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -59,19 +58,6 @@ class MenuGroupServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() -> menuGroupService.create(request))
                     .isInstanceOf(MenuGroupNameInvalidException.class);
-        }
-
-        @DisplayName("이미 존재하는 name일 경우 예외가 발생한다")
-        @Test
-        void should_fail_on_duplicate_name() {
-            // given
-            final var expectedName = "순살 두 마리 메뉴";
-            final var request = new MenuGroupCreateRequest(expectedName);
-            menuGroupService.create(request);
-
-            // when & then
-            assertThatThrownBy(() -> menuGroupService.create(request))
-                    .isInstanceOf(MenuGroupNameDuplicateException.class);
         }
     }
 
