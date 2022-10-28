@@ -10,7 +10,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(final String name, final int price) {
+    public Product(final String name, final long price) {
         this.name = name;
         this.price = new BigDecimal(price);
     }
