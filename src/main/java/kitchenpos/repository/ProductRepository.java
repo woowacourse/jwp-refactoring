@@ -1,5 +1,6 @@
 package kitchenpos.repository;
 
+import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Repository;
@@ -16,5 +17,13 @@ public class ProductRepository {
     public Product get(final Long id) {
         return productDao.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
+    }
+
+    public Product add(final Product product) {
+        return productDao.save(product);
+    }
+
+    public List<Product> getAll() {
+        return productDao.findAll();
     }
 }

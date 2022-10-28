@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 class ProductServiceTest extends FakeSpringContext {
 
-    private final ProductService productService = new ProductService(productDao);
+    private final ProductService productService = new ProductService(products);
 
     @DisplayName("create 메서드는")
     @Nested

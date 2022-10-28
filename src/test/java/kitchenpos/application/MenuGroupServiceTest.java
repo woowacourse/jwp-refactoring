@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 class MenuGroupServiceTest extends FakeSpringContext {
 
-    private final MenuGroupService menuGroupService = new MenuGroupService(menuGroupDao);
+    private final MenuGroupService menuGroupService = new MenuGroupService(menuGroups);
 
     @DisplayName("메뉴 그룹 등록")
     @Test
