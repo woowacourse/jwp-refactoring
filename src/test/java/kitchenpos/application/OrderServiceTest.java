@@ -24,11 +24,6 @@ import kitchenpos.common.builder.OrderBuilder;
 import kitchenpos.common.builder.OrderLineItemBuilder;
 import kitchenpos.common.builder.OrderTableBuilder;
 import kitchenpos.common.builder.ProductBuilder;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -37,6 +32,16 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderLineItemRequest;
+import kitchenpos.dto.request.OrderUpdateRequest;
+import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.dto.response.OrdersResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,50 +53,49 @@ class OrderServiceTest extends ServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     private Menu 야채곱창_메뉴;
     private OrderTable 야채곱창_주문_테이블;
 
     @BeforeEach
     void setUp() {
-        MenuGroup 루나세트 = menuGroupDao.save(메뉴_그룹_생성(루나세트_이름));
+        MenuGroup 루나세트 = menuGroupRepository.save(메뉴_그룹_생성(루나세트_이름));
 
-        Product 야채곱창 = productDao.save(상품_생성(야채곱창_이름, 야채곱창_가격));
+        Product 야채곱창 = productRepository.save(상품_생성(야채곱창_이름, 야채곱창_가격));
         MenuProduct 루나_야채곱창 = 메뉴_상품_생성(야채곱창, 메뉴_상품_수량);
 
-        야채곱창_메뉴 = menuDao.save(메뉴_생성(야채곱창_이름, 야채곱창_가격, 루나세트, 루나_야채곱창));
-        야채곱창_주문_테이블 = orderTableDao.save(주문_테이블_생성(테이블_손님_수, 사용중인_테이블));
+        야채곱창_메뉴 = menuRepository.save(메뉴_생성(야채곱창_이름, 야채곱창_가격, 루나세트, 루나_야채곱창));
+        야채곱창_주문_테이블 = orderTableRepository.save(주문_테이블_생성(테이블_손님_수, 사용중인_테이블));
     }
 
     @DisplayName("주문을 등록한다.")
     @Test
     void 주문을_등록한다() {
         // given
-        OrderLineItem 야채곱창_주문항목 = 주문_항목_생성(야채곱창_메뉴);
-        Order 야채곱창_주문 = 주문_생성(야채곱창_주문_테이블, List.of(야채곱창_주문항목), COOKING);
+        OrderLineItemRequest 야채곱창_주문항목_생성_요청 = new OrderLineItemRequest(야채곱창_메뉴.getId(), 메뉴_상품_수량);
+        OrderCreateRequest 야채곱창_주문_생성_요청 = new OrderCreateRequest(야채곱창_주문_테이블.getId(), List.of(야채곱창_주문항목_생성_요청));
 
         // when
-        Order actual = orderService.create(야채곱창_주문);
+        OrderResponse actual = orderService.create(야채곱창_주문_생성_요청);
 
         // then
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertThat(actual.getOrderStatus()).isEqualTo(COOKING.name()),
-                () -> assertThat(actual.getOrderLineItems()).extracting(OrderLineItem::getMenuId)
-                        .contains(야채곱창_메뉴.getId())
+                () -> assertThat(actual.getOrderLineItems()).hasSize(1)
         );
     }
 
@@ -99,12 +103,12 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문을_등록할_때_주문_항목이_메뉴에_없으면_예외가_발생한다() {
         // given
-        Menu 없는_메뉴 = new Menu();
-        OrderLineItem 주문항목 = 주문_항목_생성(없는_메뉴);
-        Order 주문 = 주문_생성(야채곱창_주문_테이블, List.of(주문항목), COOKING);
+        Long 없는_메뉴_아이디 = 999L;
+        OrderLineItemRequest 없는메뉴_주문항목_생성_요청 = new OrderLineItemRequest(없는_메뉴_아이디, 메뉴_상품_수량);
+        OrderCreateRequest 야채곱창_주문_생성_요청 = new OrderCreateRequest(야채곱창_주문_테이블.getId(), List.of(없는메뉴_주문항목_생성_요청));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(주문))
+        assertThatThrownBy(() -> orderService.create(야채곱창_주문_생성_요청))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -112,10 +116,10 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문을_등록할_때_주문_항목이_없으면_예외가_발생한다() {
         // given
-        Order 야채곱창_주문 = 주문_생성(야채곱창_주문_테이블, Collections.emptyList(), COOKING);
+        OrderCreateRequest 야채곱창_주문_생성_요청 = new OrderCreateRequest(야채곱창_주문_테이블.getId(), Collections.emptyList());
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(야채곱창_주문))
+        assertThatThrownBy(() -> orderService.create(야채곱창_주문_생성_요청))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -123,12 +127,12 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문을_등록할_때_주문_테이블이_빈_테이블_이면_예외가_발생한다() {
         // given
-        OrderTable 빈_테이블 = orderTableDao.save(주문_테이블_생성(테이블_손님_수, 사용가능_테이블));
-        OrderLineItem 야채곱창_주문항목 = 주문_항목_생성(야채곱창_메뉴);
-        Order 야채곱창_주문 = 주문_생성(빈_테이블, List.of(야채곱창_주문항목), COOKING);
+        OrderTable 빈_테이블 = orderTableRepository.save(주문_테이블_생성(테이블_손님_수, 사용가능_테이블));
+        OrderLineItemRequest 야채곱창_주문항목_생성_요청 = new OrderLineItemRequest(야채곱창_메뉴.getId(), 메뉴_상품_수량);
+        OrderCreateRequest 야채곱창_주문_생성_요청 = new OrderCreateRequest(빈_테이블.getId(), List.of(야채곱창_주문항목_생성_요청));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(야채곱창_주문))
+        assertThatThrownBy(() -> orderService.create(야채곱창_주문_생성_요청))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -138,13 +142,13 @@ class OrderServiceTest extends ServiceTest {
         // given
         OrderLineItem 야채곱창_주문항목 = 주문_항목_생성(야채곱창_메뉴);
         Order 야채곱창_주문 = 주문_생성(야채곱창_주문_테이블, List.of(야채곱창_주문항목), COOKING);
-        orderDao.save(야채곱창_주문);
+        orderRepository.save(야채곱창_주문);
 
         // when
-        List<Order> 주문들 = orderService.list();
+        OrdersResponse 주문들 = orderService.list();
 
         // then
-        assertThat(주문들).hasSize(1);
+        assertThat(주문들.getOrderResponses()).hasSize(1);
     }
 
     @DisplayName("주문의 주문 상태를 변경한다.")
@@ -152,10 +156,11 @@ class OrderServiceTest extends ServiceTest {
     void 주문의_주문_상태를_변경한다() {
         // given
         OrderLineItem 야채곱창_주문항목 = 주문_항목_생성(야채곱창_메뉴);
-        Order 야채곱창_주문 = orderDao.save(주문_생성(야채곱창_주문_테이블, List.of(야채곱창_주문항목), COOKING));
+        Order 야채곱창_주문 = orderRepository.save(주문_생성(야채곱창_주문_테이블, List.of(야채곱창_주문항목), COOKING));
 
         // when
-        Order 변경된_야채곱창_주문 = orderService.changeOrderStatus(야채곱창_주문.getId(), new Order(COOKING.name()));
+        OrderResponse 변경된_야채곱창_주문 = orderService.changeOrderStatus(야채곱창_주문.getId(),
+                new OrderUpdateRequest(COOKING.name()));
 
         // then
         assertThat(변경된_야채곱창_주문.getOrderStatus()).isEqualTo(COOKING.name());
@@ -165,10 +170,10 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문의_주문_상태를_변경할_때_주문이_존재하지_않으면_예외가_발생한다() {
         // given
-        Long 잘못된_주문_아이디 = -1L;
+        Long 없는_주문_아이디 = 999L;
 
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(잘못된_주문_아이디, new Order(COOKING.name())))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(없는_주문_아이디, new OrderUpdateRequest(COOKING.name())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -177,11 +182,11 @@ class OrderServiceTest extends ServiceTest {
     void 주문의_주문_상태를_변경할_때_주문_상태가_계산이면_예외가_발생한다() {
         // given
         OrderLineItem 야채곱창_주문항목 = 주문_항목_생성(야채곱창_메뉴);
-        Order 야채곱창_주문 = orderDao.save(주문_생성(야채곱창_주문_테이블, List.of(야채곱창_주문항목), COMPLETION));
+        Order 야채곱창_주문 = orderRepository.save(주문_생성(야채곱창_주문_테이블, List.of(야채곱창_주문항목), COMPLETION));
         Long 야채곱창_주문_아이디 = 야채곱창_주문.getId();
 
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(야채곱창_주문_아이디, new Order(COOKING.name())));
+        assertThatThrownBy(() -> orderService.changeOrderStatus(야채곱창_주문_아이디, new OrderUpdateRequest(COOKING.name())));
     }
 
     private Order 주문_생성(final OrderTable orderTable, final List<OrderLineItem> orderLineItems,
@@ -197,7 +202,7 @@ class OrderServiceTest extends ServiceTest {
 
     private OrderLineItem 주문_항목_생성(final Menu menu) {
         return new OrderLineItemBuilder()
-                .menuId(menu.getId())
+                .menu(menu)
                 .quantity(1)
                 .build();
     }

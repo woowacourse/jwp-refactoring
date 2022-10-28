@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 public class MenuServiceTest extends ServiceTest {
 
@@ -140,7 +139,7 @@ public class MenuServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(야채곱창_메뉴_생성_요청))
-                .isInstanceOf(InvalidDataAccessApiUsageException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴를 등록할 때, 메뉴 가격이 메뉴상품 가격 합보다 크면 예외가 발생한다.")

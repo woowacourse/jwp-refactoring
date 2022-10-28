@@ -33,6 +33,6 @@ public class OrderBuilder {
     }
 
     public Order build() {
-        return new Order(orderTableId, orderLineItems, orderStatus);
+        return new Order(orderTableId, orderStatus, orderLineItems);
     }
 }

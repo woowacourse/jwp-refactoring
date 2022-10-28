@@ -1,11 +1,12 @@
 package kitchenpos.common.builder;
 
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.OrderLineItem;
 
 public class OrderLineItemBuilder {
 
     private Long orderId;
-    private Long menuId;
+    private Menu menu;
     private long quantity;
 
     public OrderLineItemBuilder orderId(final Long orderId) {
@@ -13,8 +14,8 @@ public class OrderLineItemBuilder {
         return this;
     }
 
-    public OrderLineItemBuilder menuId(final Long menuId) {
-        this.menuId = menuId;
+    public OrderLineItemBuilder menu(final Menu menu) {
+        this.menu = menu;
         return this;
     }
 
@@ -24,6 +25,6 @@ public class OrderLineItemBuilder {
     }
 
     public OrderLineItem build() {
-        return new OrderLineItem(menuId, quantity);
+        return new OrderLineItem(menu, quantity);
     }
 }

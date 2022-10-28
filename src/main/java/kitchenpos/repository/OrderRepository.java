@@ -1,11 +1,11 @@
 package kitchenpos.repository;
 
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TableGroupRepository extends JpaRepository<TableGroup, Long> {
+public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    default TableGroup getById(final Long id) {
+    default Order getById(final Long id) {
         return this.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
     }
