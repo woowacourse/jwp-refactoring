@@ -75,10 +75,4 @@ public class Menu {
             throw new IllegalArgumentException();
         }
     }
-
-    public void updateMenuIdInMenuProduct() {
-        for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(id);
-        }
-    }
 }
