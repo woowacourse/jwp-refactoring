@@ -1,7 +1,9 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,6 +15,8 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class Menu {
+
+    private static final String PRICE_ERROR_MESSAGE = "가격은 0 이상의 수여야 합니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +46,10 @@ public class Menu {
         this(null, name, null, menuGroupId, menuProducts);
     }
 
+    public Menu(final String name, final BigDecimal price, final Long menuGroupId) {
+        this(null, name, price, menuGroupId, new ArrayList<>());
+    }
+
     public Menu(final String name, final BigDecimal price, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
@@ -49,11 +57,18 @@ public class Menu {
 
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
+        validatePrice(price);
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
+
+    private void validatePrice(final BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException(PRICE_ERROR_MESSAGE);
+        }
     }
 
     public Long getId() {

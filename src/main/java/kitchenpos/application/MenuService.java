@@ -1,9 +1,8 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.NoSuchElementException;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
@@ -11,6 +10,8 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.ui.dto.CreateMenuProductsRequest;
+import kitchenpos.ui.dto.CreateMenuRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,21 +35,17 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu menu) {
-        final BigDecimal price = menu.getPrice();
+    public Menu create(final CreateMenuRequest request) {
+        BigDecimal price = request.getPrice();
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+        if (!menuGroupDao.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
 
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
+        List<CreateMenuProductsRequest> menuProductsRequests = request.getMenuProducts();
 
         BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
+        for (final CreateMenuProductsRequest menuProduct : menuProductsRequests) {
             final Product product = productDao.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
@@ -58,13 +55,18 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final Menu savedMenu = menuRepository.save(menu);
-
+        final Menu savedMenu = menuRepository.save(
+                new Menu(request.getName(), request.getPrice(), request.getMenuGroupId()));
         final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
+
+        for (CreateMenuProductsRequest menuProductsRequest : menuProductsRequests) {
+            Long productId = menuProductsRequest.getProductId();
+            long quantity = menuProductsRequest.getQuantity();
+            Product product = productDao.findById(productId)
+                    .orElseThrow(NoSuchElementException::new);
+
+            MenuProduct menuProduct = new MenuProduct(menuId, productId, quantity);
+            menuProductDao.save(menuProduct);
         }
 
         return savedMenu;

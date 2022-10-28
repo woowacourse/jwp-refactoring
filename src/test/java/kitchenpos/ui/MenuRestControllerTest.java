@@ -31,7 +31,8 @@ public class MenuRestControllerTest extends ControllerTest {
         // given
         Menu menu = createMenu("후라이드+후라이드", 19_000L, 1L,
                 Collections.singletonList(createMenuProduct(1L, 2)));
-        given(menuService.create(any())).willReturn(createMenu(1L));
+        given(menuService.create(any())).willReturn(createMenu(1L, "후라이드+후라이드", 19_000L, 1L,
+                Collections.singletonList(createMenuProduct(1L, 2))));
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/menus")
