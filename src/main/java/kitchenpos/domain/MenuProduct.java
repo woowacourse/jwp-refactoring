@@ -22,10 +22,6 @@ public class MenuProduct {
         this.price = price;
     }
 
-    public MenuProduct(final Long productId, final long quantity) {
-        this(null, productId, quantity);
-    }
-
     @PersistenceCreator
     private MenuProduct(final Long seq, final Long productId, final long quantity) {
         this.seq = seq;
