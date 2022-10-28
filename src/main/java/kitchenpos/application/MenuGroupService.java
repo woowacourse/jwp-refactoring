@@ -10,6 +10,7 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 
 @Service
+@Transactional(readOnly = true)
 public class MenuGroupService {
 
     private final MenuGroupDao menuGroupDao;

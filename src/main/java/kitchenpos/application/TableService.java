@@ -13,6 +13,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 
 @Service
+@Transactional(readOnly = true)
 public class TableService {
 
     private final OrderDao orderDao;

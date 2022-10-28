@@ -10,6 +10,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 
 @Service
+@Transactional(readOnly = true)
 public class ProductService {
 
     private final ProductDao productDao;

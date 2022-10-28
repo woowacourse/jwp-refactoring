@@ -16,6 +16,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 
 @Service
+@Transactional(readOnly = true)
 public class MenuService {
 
     private final MenuDao menuDao;

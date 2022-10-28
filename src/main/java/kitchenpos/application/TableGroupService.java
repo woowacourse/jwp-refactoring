@@ -17,6 +17,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 @Service
+@Transactional(readOnly = true)
 public class TableGroupService {
 
     private final OrderDao orderDao;
