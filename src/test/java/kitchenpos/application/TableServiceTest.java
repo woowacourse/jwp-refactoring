@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.table.domain.OrderTable;
@@ -94,7 +95,7 @@ class TableServiceTest extends ServiceTest {
             final BigDecimal lessThanSingleProductPrice = BigDecimal.valueOf(9000);
             final Product savedProduct = 상품_등록(상품);
             final MenuGroup savedMenuGroup = 메뉴_그룹_등록(메뉴_그룹);
-            final Menu savedMenu = 메뉴_등록(메뉴_생성("메뉴이름", lessThanSingleProductPrice, savedMenuGroup.getId(), savedProduct));
+            final MenuResponse savedMenu = 메뉴_등록(메뉴_생성("메뉴이름", lessThanSingleProductPrice, savedMenuGroup.getId(), savedProduct));
             final OrderTable savedTable = 주문_테이블_등록(비어있지_않은_주문_테이블);
             주문_등록(주문_생성(savedTable.getId(), savedMenu, orderStatus));
 

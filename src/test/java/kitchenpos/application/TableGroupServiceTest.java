@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
@@ -145,7 +146,7 @@ class TableGroupServiceTest extends ServiceTest {
             final BigDecimal lessThanSingleProductPrice = BigDecimal.valueOf(9000);
             final Product savedProduct = 상품_등록(상품);
             final MenuGroup savedMenuGroup = 메뉴_그룹_등록(메뉴_그룹);
-            final Menu savedMenu = 메뉴_등록(메뉴_생성("메뉴이름", lessThanSingleProductPrice, savedMenuGroup.getId(), savedProduct));
+            final MenuResponse savedMenu = 메뉴_등록(메뉴_생성("메뉴이름", lessThanSingleProductPrice, savedMenuGroup.getId(), savedProduct));
             주문_등록(주문_생성(orderTable.getId(), savedMenu, orderStatus));
 
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

@@ -3,13 +3,13 @@ package kitchenpos.application;
 
 import kitchenpos.menu.application.MenuGroupService;
 import kitchenpos.menu.application.MenuService;
-import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.application.dto.MenuRequestDto;
+import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.product.application.ProductService;
 import kitchenpos.product.application.dto.ProductRequestDto;
-import kitchenpos.product.presentation.dto.ProductRequest;
 import kitchenpos.table.application.TableGroupService;
 import kitchenpos.table.application.TableService;
 import kitchenpos.table.domain.OrderTable;
@@ -61,7 +61,7 @@ public class ServiceTest {
         return orderService.create(order);
     }
 
-    protected Menu 메뉴_등록(final Menu menu) {
-        return menuService.create(menu);
+    protected MenuResponse 메뉴_등록(final MenuRequestDto menuRequestDto) {
+        return menuService.create(menuRequestDto);
     }
 }

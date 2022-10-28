@@ -1,6 +1,7 @@
 package kitchenpos.product.domain;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class Price {
 
@@ -11,14 +12,29 @@ public class Price {
         this.value = value;
     }
 
-    private void validatePrice(final Integer price) {
-        if (price == null || price.doubleValue() < 0) {
+    public static Price convertToMenuPrice(final BigDecimal menuPrice, final List<BigDecimal> productPrice,
+                                           final List<Long> quantities) {
+
+        BigDecimal sumOfIndividualProductPrice = BigDecimal.ZERO;
+        for (int i = 0; i < productPrice.size(); i++) {
+            sumOfIndividualProductPrice = calculateIndividualProductPrice(productPrice, quantities,
+                    sumOfIndividualProductPrice, i);
+        }
+
+        if (menuPrice.compareTo(sumOfIndividualProductPrice) > 0) {
             throw new IllegalArgumentException();
         }
+
+        return new Price(menuPrice);
     }
 
-    public void validateMenuPrice(final BigDecimal menuPrice, final BigDecimal sumOfMenuProductsPrice){
-        if (menuPrice.compareTo(sumOfMenuProductsPrice) > 0) {
+    private static BigDecimal calculateIndividualProductPrice(List<BigDecimal> productPrice, List<Long> quantities,
+                                                              BigDecimal sum, int i) {
+        return sum.add(productPrice.get(i).multiply(BigDecimal.valueOf(quantities.get(i))));
+    }
+
+    private void validatePrice(final Integer price) {
+        if (price == null || price.doubleValue() < 0) {
             throw new IllegalArgumentException();
         }
     }
