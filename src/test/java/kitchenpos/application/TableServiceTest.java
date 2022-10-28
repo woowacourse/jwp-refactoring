@@ -86,7 +86,6 @@ class TableServiceTest extends ServiceTest {
             OrderTable orderTable1 = saveOrderTable(2, true);
             OrderTable orderTable2 = saveOrderTable(4, true);
             saveTableGroup(orderTable1, orderTable2);
-            System.out.println("orderTable1.getTableGroupId() = " + orderTable1.getTableGroupId());
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), createOrderTableRequest(2, false)))

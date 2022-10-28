@@ -7,7 +7,7 @@ import static kitchenpos.fixture.OrderFixture.createOrder;
 import static kitchenpos.fixture.OrderFixture.updatedOrder;
 import static kitchenpos.fixture.ProductFixture.createProductRequest;
 import static kitchenpos.fixture.TableFixture.createOrderTableRequest;
-import static kitchenpos.fixture.TableFixture.createTableGroup;
+import static kitchenpos.fixture.TableFixture.createTableGroupRequest;
 
 import java.math.BigDecimal;
 import kitchenpos.dao.MenuDao;
@@ -89,7 +89,7 @@ abstract class ServiceTest {
     }
 
     protected TableGroup saveTableGroup(OrderTable... orderTables) {
-        return tableGroupService.create(createTableGroup(orderTables));
+        return tableGroupService.create(createTableGroupRequest(orderTables));
     }
 
     protected Order saveOrder(OrderTable orderTable, Menu... menus) {

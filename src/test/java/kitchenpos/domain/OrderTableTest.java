@@ -8,6 +8,8 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 @DisplayName("OrderTable 클래스의")
 class OrderTableTest {
@@ -83,6 +85,24 @@ class OrderTableTest {
         void empty_ExceptionThrown() {
             final OrderTable orderTable = new OrderTable(0, true);
             assertThatThrownBy(() -> orderTable.updateNumberOfGuests(1))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("ungroup 메서드는")
+    class Ungroup {
+
+        @ParameterizedTest
+        @EnumSource(
+                value = OrderStatus.class,
+                names = {"COMPLETION"},
+                mode = EnumSource.Mode.EXCLUDE)
+        @DisplayName("order의 orderStatus가 COMPLETION이 아닌 경우 예외를 던진다.")
+        void orderStatus_NotCompletion_ExceptionThrown(OrderStatus orderStatus) {
+            final Order order = new Order(1L, 2L, orderStatus.name(), LocalDateTime.now());
+            OrderTable orderTable = new OrderTable(2L, 1L, 2, false, List.of(order));
+            assertThatThrownBy(orderTable::ungroup)
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

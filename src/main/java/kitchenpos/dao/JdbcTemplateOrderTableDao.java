@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -77,6 +78,13 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
+    @Override
+    public void saveAll(final OrderTables orderTables) {
+        for (OrderTable orderTable : orderTables.getOrderTables()) {
+            save(orderTable);
+        }
+    }
+
     private OrderTable select(final Long id) {
         List<Order> orders = findAllOrdersByOrderTableId(id);
         final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id = (:id)";
@@ -131,6 +139,20 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         Long tableGroupId = resultSet.getObject("table_group_id", Long.class);
         int numberOfGuests = resultSet.getInt("number_of_guests");
         boolean empty = resultSet.getBoolean("empty");
-        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty, findOrdersByOrderTableId(id));
+    }
+
+    private List<Order> findOrdersByOrderTableId(Long orderTableId) {
+        final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders WHERE order_table_id = (:order_table_id)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("order_table_id", orderTableId);
+        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> {
+            final Order entity = new Order();
+            entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
+            entity.setOrderTableId(resultSet.getLong("order_table_id"));
+            entity.setOrderStatus(resultSet.getString("order_status"));
+            entity.setOrderedTime(resultSet.getObject("ordered_time", LocalDateTime.class));
+            return entity;
+        });
     }
 }

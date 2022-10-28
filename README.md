@@ -28,7 +28,7 @@
   - 메뉴명, 가격, MenuGroup id, MenuProduct 목록을 입력받아 새로운 메뉴를 생성한다. 
   - 가격은 `null`이거나 0 미만일 수 없다.
   - 가격은 MenuProduct들의 price * quantity 총합 이하여야한다.
-  - MenuGroupd의 id는 유효해야한다.
+  - MenuGroup의 id는 유효해야한다.
   - MenuProduct 목록의 각 productId는 유효해야한다.
 - 메뉴 목록 조회 기능
   - 모든 메뉴에 대한 id, 메뉴명, 메뉴 가격, 메뉴에 해당하는 그룹 id, 메뉴에 속하는 수량이 있는 상품 목록을 조회한다. 
@@ -111,6 +111,6 @@
   - [ ] `Order` 도메인에 비즈니스 로직 위임 및 단위 테스트 작성
   - [ ] `OrderLineItem` 도메인에 비즈니스 로직 위임 및 단위 테스트 작성
   - [x] `OrderTable` 도메인에 비즈니스 로직 위임 및 단위 테스트 작성
-  - [ ] `TableGroup` 도메인에 비즈니스 로직 위임 및 단위 테스트 작성
+  - [x] `TableGroup` 도메인에 비즈니스 로직 위임 및 단위 테스트 작성
 - [ ] Spring Data JPA 마이그레이션
   - 데이터베이스 스키마 변경 및 마이그레이션에 따른 형상 관리 

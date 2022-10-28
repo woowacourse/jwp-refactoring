@@ -9,7 +9,6 @@ public class OrderTable {
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
-
     private List<Order> orders;
 
     public OrderTable() {
@@ -101,5 +100,26 @@ public class OrderTable {
 
     public void setEmpty(final boolean empty) {
         this.empty = empty;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void ungroup() {
+        validateUngroup();
+        tableGroupId = null;
+        empty = false;
+    }
+
+    private void validateUngroup() {
+        if (orders.isEmpty()) {
+            return;
+        }
+        final boolean notCompletedOrder = orders.stream()
+                .anyMatch(it -> !OrderStatus.isCompletion(it.getOrderStatus()));
+        if (notCompletedOrder) {
+            throw new IllegalArgumentException();
+        }
     }
 }
