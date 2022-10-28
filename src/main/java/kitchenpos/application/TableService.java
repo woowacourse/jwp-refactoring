@@ -26,8 +26,10 @@ public class TableService {
         this.orderTableDao = orderTableDao;
     }
 
+    // todo Transactional 최상단으로 올리기
     @Transactional
     public OrderTable create(final OrderTable orderTable) {
+        // todo 왜 setId를 해주는지?
         orderTable.setId(null);
         orderTable.setTableGroupId(null);
 
@@ -43,10 +45,12 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION));
 
+        // todo 진행중인 테이블이 존재하는지 검증하는 로직이니까 OrderTable 로 이동
         if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
             throw new CustomIllegalArgumentException(INVALID_PROCEEDING_TABLE_GROUP_EXCEPTION);
         }
 
+        // todo 요리중이거나, 식사중인 주문이 있는지 검증하는 로직이라서  Order -> OrderStatus 로 가는게 맞지 않을까
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new CustomIllegalArgumentException(INVALID_TABLE_UNGROUP_EXCEPTION);
@@ -61,6 +65,7 @@ public class TableService {
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
         final int numberOfGuests = orderTable.getNumberOfGuests();
 
+        // :todo OrderTable 내에 인원 검증 로직이니까 이동
         if (numberOfGuests < 0) {
             throw new CustomIllegalArgumentException(INVALID_CHANGE_NUMBER_OF_GUEST);
         }
@@ -68,6 +73,7 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION));
 
+        // :todo OrderTable 없는 테이블에 대한 요청인지 검증
         if (savedOrderTable.isEmpty()) {
             throw new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION);
         }
