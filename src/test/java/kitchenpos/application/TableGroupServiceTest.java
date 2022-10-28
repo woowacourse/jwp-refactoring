@@ -133,28 +133,37 @@ public class TableGroupServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("요청 주문 테이블과 조회된 주문 테이블의 수는 같아야합니다.");
     }
-//
-//    @Test
-//    @DisplayName("주문 테이블 목록과 테이블 그룹을 분리한다.")
-//    void ungroup() {
-//        // when
-//        TableGroup tableGroup = new TableGroup();
-//        List<OrderTable> orderTables = new ArrayList<>();
-//
-//        OrderTable orderTable1 = generateOrderTable(null, 0, true);
-//        OrderTable orderTable2 = generateOrderTable(null, 0, true);
-//
-//        orderTables.add(orderTableDao.save(orderTable1));
-//        orderTables.add(orderTableDao.save(orderTable2));
-//
-//        tableGroup.setOrderTables(orderTables);
-//
-//        TableGroup newTableGroup = tableGroupService.create(tableGroup);
-//
-//        // when
-//        tableGroupService.ungroup(newTableGroup.getId());
-//        // then
-//        List<OrderTable> orderTablesInTableGroup = orderTableDao.findAllByTableGroupId(newTableGroup.getId());
-//        assertThat(orderTablesInTableGroup.size()).isEqualTo(0);
-//    }
+
+    @Test
+    @DisplayName("주문 테이블 목록과 테이블 그룹을 분리한다.")
+    void ungroup() {
+        // when
+        List<OrderTable> orderTables = new ArrayList<>();
+
+        OrderTable orderTable1 = generateOrderTable(null, 0, true);
+        OrderTable orderTable2 = generateOrderTable(null, 0, true);
+
+        OrderTable saveOrderTable1 = orderTableDao.save(orderTable1);
+        OrderTable saveOrderTable2 = orderTableDao.save(orderTable2);
+
+        orderTables.add(saveOrderTable1);
+        orderTables.add(saveOrderTable2);
+
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
+
+        List<OrderTableRequest> orderTableRequests = orderTables.stream()
+                .map(orderTable -> new OrderTableRequest(orderTable.getId()))
+                .collect(Collectors.toList());
+
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(orderTableRequests);
+
+        // when
+        tableGroupService.ungroup(tableGroup.getId());
+
+        // then
+        List<OrderTable> orderTablesInTableGroup = orderTableDao.findAllByTableGroupId(tableGroup.getId());
+        assertThat(orderTablesInTableGroup.size()).isEqualTo(0);
+    }
+
+    // TODO: ungroup 예외 상황 테스트
 }
