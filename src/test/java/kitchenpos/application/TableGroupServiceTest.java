@@ -12,9 +12,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.TransactionalTest;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.dto.response.TableGroupCreateResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,13 +33,14 @@ class TableGroupServiceTest {
         OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
         OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 2, true));
 
-        TableGroup savedTableGroup = tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()));
+        TableGroupCreateResponse tableGroupCreateResponse =
+                tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()));
 
         assertAll(
-                () -> assertThat(savedTableGroup.getId()).isNotNull(),
-                () -> assertThat(savedTableGroup.getOrderTables())
-                        .usingFieldByFieldElementComparator()
-                        .containsExactly(orderTable1, orderTable2)
+                () -> assertThat(tableGroupCreateResponse.getId()).isNotNull(),
+                () -> assertThat(tableGroupCreateResponse.getOrderTables())
+                        .extracting("id")
+                        .containsExactly(orderTable1.getId(), orderTable2.getId())
         );
     }
 

@@ -10,44 +10,46 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.dto.mapper.TableGroupDtoMapper;
+import kitchenpos.dto.response.TableGroupCreateResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
+
+    private final TableGroupDtoMapper tableGroupDtoMapper;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
+    public TableGroupService(final TableGroupDtoMapper tableGroupDtoMapper, final OrderRepository orderRepository,
+                             final OrderTableRepository orderTableRepository,
                              final TableGroupRepository tableGroupRepository) {
+        this.tableGroupDtoMapper = tableGroupDtoMapper;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
-    public TableGroup create(final List<Long> orderTableIds) {
+    public TableGroupCreateResponse create(final List<Long> orderTableIds) {
         if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
             throw new IllegalArgumentException();
         }
-
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-
         if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
-
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
                 throw new IllegalArgumentException();
             }
         }
-
-        TableGroup tableGroup = new TableGroup(null, LocalDateTime.now(), savedOrderTables);
-
-        return tableGroupRepository.save(tableGroup);
+        TableGroup savedTableGroup =
+                tableGroupRepository.save(new TableGroup(null, LocalDateTime.now(), savedOrderTables));
+        return tableGroupDtoMapper.toTableGroupCreateResponse(savedTableGroup);
     }
 
     @Transactional

@@ -8,31 +8,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
-import kitchenpos.dto.mapper.TableGroupDtoMapper;
+import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.dto.response.TableGroupCreateResponse;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 class TableGroupRestControllerTest extends RestControllerTest {
 
-    @Autowired
-    private TableGroupDtoMapper tableGroupDtoMapper;
-
     @Test
     void 단체_지정에_성공한다() throws Exception {
         TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(1L, 2L));
-        TableGroup expectedTableGroup = new TableGroup(1L, LocalDateTime.now(), new ArrayList<>());
-        OrderTable orderTable1 = new OrderTable(1L, expectedTableGroup, 1, false);
-        OrderTable orderTable2 = new OrderTable(1L, expectedTableGroup, 1, false);
-        expectedTableGroup.getOrderTables().add(orderTable1);
-        expectedTableGroup.getOrderTables().add(orderTable2);
+        OrderTableResponse orderTable1 = new OrderTableResponse(1L, null, 1, false);
+        OrderTableResponse orderTable2 = new OrderTableResponse(1L, null, 1, false);
+        TableGroupCreateResponse tableGroupCreateResponse =
+                new TableGroupCreateResponse(1L, LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
-        when(tableGroupService.create(List.of(1L, 2L))).thenReturn(expectedTableGroup);
+        when(tableGroupService.create(List.of(1L, 2L))).thenReturn(tableGroupCreateResponse);
 
         mockMvc.perform(post("/api/table-groups")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
