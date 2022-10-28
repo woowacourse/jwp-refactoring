@@ -62,6 +62,10 @@ public class Order {
         orderLineItems.add(orderLineItem);
     }
 
+    public boolean isNotComplete() {
+        return orderStatus != OrderStatus.COMPLETION;
+    }
+
     public Long getId() {
         return id;
     }

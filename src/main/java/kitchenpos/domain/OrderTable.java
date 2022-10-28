@@ -1,10 +1,16 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import kitchenpos.exception.EmptyOrderTableException;
+import kitchenpos.exception.InvalidNumberOfGuestsException;
+import kitchenpos.exception.InvalidOrderStatusException;
+import kitchenpos.exception.TableGroupNullException;
 
 @Entity
 @Table(name = "order_table")
@@ -14,14 +20,24 @@ public class OrderTable {
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
+    @OneToOne(mappedBy = "orderTable")
+    private Order order;
     private boolean empty;
+
+    protected OrderTable() {
+    }
+
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final Order order,
+                      final boolean empty) {
+        this.id = id;
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = numberOfGuests;
+        this.order = order;
+        this.empty = empty;
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public Long getTableGroupId() {
@@ -37,6 +53,12 @@ public class OrderTable {
     }
 
     public void setNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new InvalidNumberOfGuestsException();
+        }
+        if (this.isEmpty()) {
+            throw new EmptyOrderTableException();
+        }
         this.numberOfGuests = numberOfGuests;
     }
 
@@ -44,7 +66,17 @@ public class OrderTable {
         return empty;
     }
 
+    public void setOrder(final Order order) {
+        this.order = order;
+    }
+
     public void setEmpty(final boolean empty) {
+        if (Objects.nonNull(this.getTableGroupId())) {
+            throw new TableGroupNullException();
+        }
+        if (order != null && order.isNotComplete()) {
+           throw new InvalidOrderStatusException();
+        }
         this.empty = empty;
     }
 }

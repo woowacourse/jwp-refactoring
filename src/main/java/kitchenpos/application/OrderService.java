@@ -5,13 +5,13 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.OrderCreateRequest;
 import kitchenpos.application.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.application.dto.request.OrderStatusRequest;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.exception.OrderLineItemMenuException;
 import kitchenpos.exception.OrderNotFoundException;
 import kitchenpos.exception.OrderTableNotFoundException;
@@ -22,23 +22,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderTableDao orderTableDao
-    ) {
+            final OrderTableRepository orderTableRepository) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public Order create(final OrderCreateRequest orderCreateRequest) {
         final List<OrderLineItem> orderLineItems = mapToOrderLineItems(orderCreateRequest);
         validateOrderLineItemsMenuIdExists(orderLineItems);
-        final OrderTable orderTable = orderTableDao.findById(orderCreateRequest.getOrderTableId())
+        final OrderTable orderTable = orderTableRepository.findById(orderCreateRequest.getOrderTableId())
                 .orElseThrow(OrderTableNotFoundException::new);
         final Order order = Order.of(orderTable, orderLineItems);
         return orderRepository.save(order);

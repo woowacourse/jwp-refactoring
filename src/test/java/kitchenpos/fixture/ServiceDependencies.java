@@ -1,7 +1,6 @@
 package kitchenpos.fixture;
 
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -12,6 +11,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import kitchenpos.domain.TableGroup;
@@ -23,20 +23,20 @@ public class ServiceDependencies {
     private final MenuGroupRepository menuGroupRepository;
     private final MenuRepository menuRepository;
     private final MenuProductRepository menuProductRepository;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
     private final TableGroupDao tableGroupDao;
     private final OrderLineItemDao orderLineItemDao;
     private final OrderRepository orderRepository;
 
     public ServiceDependencies(final ProductRepository productRepository, final MenuGroupRepository menuGroupRepository,
                                final MenuRepository menuRepository, final MenuProductRepository menuProductRepository,
-                               final OrderTableDao orderTableDao, final TableGroupDao tableGroupDao,
+                               final OrderTableRepository orderTableRepository, final TableGroupDao tableGroupDao,
                                final OrderLineItemDao orderLineItemDao, final OrderRepository orderRepository) {
         this.productRepository = productRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.menuRepository = menuRepository;
         this.menuProductRepository = menuProductRepository;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
         this.tableGroupDao = tableGroupDao;
         this.orderLineItemDao = orderLineItemDao;
         this.orderRepository = orderRepository;
@@ -51,7 +51,7 @@ public class ServiceDependencies {
     }
 
     public OrderTable save(final OrderTable orderTable) {
-        return orderTableDao.save(orderTable);
+        return orderTableRepository.save(orderTable);
     }
 
     public TableGroup save(final TableGroup tableGroup) {

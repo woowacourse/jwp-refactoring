@@ -157,7 +157,8 @@ class OrderServiceTest extends ServiceTestEnvironment {
 
         // then
         assertThat(actual).usingRecursiveFieldByFieldElementComparator()
-                .contains(savedOrder);
+                .extracting("id")
+                .contains(savedOrder.getId());
     }
 
     @Test

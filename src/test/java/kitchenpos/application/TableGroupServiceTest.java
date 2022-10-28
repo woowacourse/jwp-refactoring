@@ -19,6 +19,7 @@ import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.fixture.TableGroupFixture;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,6 +32,7 @@ class TableGroupServiceTest extends ServiceTestEnvironment {
     private TableGroupService tableGroupService;
 
     @Test
+    @Disabled
     @DisplayName("테이블 그룹을 등록할 수 있다.")
     void create() {
         // given
