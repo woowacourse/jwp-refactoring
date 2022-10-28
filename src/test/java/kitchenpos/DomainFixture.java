@@ -29,9 +29,7 @@ public class DomainFixture {
     }
 
     public static MenuGroup createMenuGroup(final String name) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        return menuGroup;
+        return MenuGroup.ofNullId(name);
     }
 
     public static Menu createMenu(final String name,
