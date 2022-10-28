@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
+import kitchenpos.application.request.OrderTableEmptyChangeRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
@@ -33,21 +33,11 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+    public OrderTable changeEmpty(final Long orderTableId, final OrderTableEmptyChangeRequest request) {
+        OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException("단체 지정된 테이블 상태를 변화할 수 없습니다.");
-        }
-
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("조리 혹은 식사중인 테이블 상태를 변화할 수 없습니다.");
-        }
-
-        savedOrderTable.setEmpty(orderTable.isEmpty());
-
+        validateCookingOrMeal(orderTableId);
+        savedOrderTable.changeEmpty(request.isEmpty());
         return orderTableDao.save(savedOrderTable);
     }
 
@@ -69,5 +59,12 @@ public class TableService {
         savedOrderTable.setNumberOfGuests(numberOfGuests);
 
         return orderTableDao.save(savedOrderTable);
+    }
+
+    private void validateCookingOrMeal(final Long orderTableId) {
+        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
+                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            throw new IllegalArgumentException("조리 혹은 식사중인 테이블 상태를 변화할 수 없습니다.");
+        }
     }
 }

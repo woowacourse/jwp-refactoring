@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 public class OrderTable {
     private Long id;
     private Long tableGroupId;
@@ -18,6 +20,13 @@ public class OrderTable {
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
         this(null, null, numberOfGuests, empty);
+    }
+
+    public void changeEmpty(final boolean empty) {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException("단체 지정된 테이블 상태를 변화할 수 없습니다.");
+        }
+        this.empty = empty;
     }
 
     public Long getId() {

@@ -1,9 +1,8 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.OrderTable;
-
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.domain.OrderTable;
 
 public interface OrderTableDao {
     OrderTable save(OrderTable entity);
@@ -15,4 +14,8 @@ public interface OrderTableDao {
     List<OrderTable> findAllByIdIn(List<Long> ids);
 
     List<OrderTable> findAllByTableGroupId(Long tableGroupId);
+
+    default OrderTable getById(Long id) {
+        return findById(id).orElseThrow(IllegalArgumentException::new);
+    }
 }

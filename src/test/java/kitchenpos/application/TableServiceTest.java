@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.SpringServiceTest;
+import kitchenpos.application.request.OrderTableEmptyChangeRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -56,12 +57,12 @@ class TableServiceTest {
         @Nested
         class 존재하지않는_주문테이블_id가_입력된_경우 extends SpringServiceTest {
 
-            private final long NOT_FOUND_ID = 0L;
-            private final OrderTable orderTable = new OrderTable(0, true);
+            private final long NOT_FOUND_ID = -1L;
+            private final OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(true);
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> tableService.changeEmpty(NOT_FOUND_ID, orderTable))
+                assertThatThrownBy(() -> tableService.changeEmpty(NOT_FOUND_ID, request))
                         .isInstanceOf(IllegalArgumentException.class);
             }
         }
@@ -70,7 +71,7 @@ class TableServiceTest {
         class 단체지정된_주문테이블이_입력된_경우 extends SpringServiceTest {
 
             private final Long orderTableId = 1L;
-            private final OrderTable changeOrderTable = new OrderTable(0, false);
+            private final OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(false);
 
             @BeforeEach
             void setUp() {
@@ -81,7 +82,7 @@ class TableServiceTest {
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, changeOrderTable))
+                assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, request))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("단체 지정된 테이블 상태를 변화할 수 없습니다.");
             }
@@ -91,7 +92,7 @@ class TableServiceTest {
         class 주문테이블에_조리상태의_주문이_있는_경우 extends SpringServiceTest {
 
             private final Long orderTableId = 1L;
-            private final OrderTable changeOrderTable = new OrderTable(0, false);
+            private final OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(false);
 
             @BeforeEach
             void setUp() {
@@ -100,7 +101,7 @@ class TableServiceTest {
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, changeOrderTable))
+                assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, request))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("조리 혹은 식사중인 테이블 상태를 변화할 수 없습니다.");
             }
@@ -110,7 +111,7 @@ class TableServiceTest {
         class 주문테이블에_식사상태의_주문이_있는_경우 extends SpringServiceTest {
 
             private final Long orderTableId = 1L;
-            private final OrderTable changeOrderTable = new OrderTable(0, false);
+            private final OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(false);
 
             @BeforeEach
             void setUp() {
@@ -119,7 +120,7 @@ class TableServiceTest {
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, changeOrderTable))
+                assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, request))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("조리 혹은 식사중인 테이블 상태를 변화할 수 없습니다.");
             }
@@ -129,11 +130,11 @@ class TableServiceTest {
         class 주문테이블_상태를_정상적으로_변환가능한_경우 extends SpringServiceTest {
 
             private final Long orderTableId = 1L;
-            private final OrderTable changeOrderTable = new OrderTable(0, false);
+            private final OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(false);
 
             @Test
             void 변경된_주문테이블이_반환된다() {
-                OrderTable actual = tableService.changeEmpty(orderTableId, changeOrderTable);
+                OrderTable actual = tableService.changeEmpty(orderTableId, request);
 
                 assertThat(actual.isEmpty()).isFalse();
             }

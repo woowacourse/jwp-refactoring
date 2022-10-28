@@ -27,6 +27,14 @@ public class Order {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
+    public boolean isCooking() {
+        return orderStatus.equals(OrderStatus.COOKING.name());
+    }
+
+    public boolean isMeal() {
+        return orderStatus.equals(OrderStatus.MEAL.name());
+    }
+
     public Long getId() {
         return id;
     }
