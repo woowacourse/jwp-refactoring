@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,38 +18,39 @@ public class TableGroup {
 
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup")
+    @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
     private List<OrderTable> orderTables;
 
     protected TableGroup() {
     }
 
     public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
+        validate(orderTables);
         this.createdDate = createdDate;
         this.orderTables = orderTables;
+    }
+
+    private void validate(List<OrderTable> orderTables) {
+        for (final OrderTable orderTable : orderTables) {
+            validateTable(orderTable);
+        }
+    }
+
+    private void validateTable(OrderTable orderTable) {
+        if (!orderTable.isEmpty() || orderTable.existsTableGroup()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 }

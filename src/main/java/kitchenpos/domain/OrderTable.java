@@ -37,10 +37,6 @@ public class OrderTable {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public TableGroup getTableGroup() {
         return tableGroup;
     }
@@ -51,10 +47,6 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 
     public void changeEmptyStatus(final boolean changedEmptyStatus) {
@@ -81,5 +73,14 @@ public class OrderTable {
         if (empty) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public void ungroup() {
+        tableGroup = null;
+        empty = false;
+    }
+
+    public void changeTableGroup(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
     }
 }
