@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableRequest;
 
 public class OrderTable {
@@ -21,6 +22,31 @@ public class OrderTable {
 
     public static OrderTable from(OrderTableRequest orderTableRequest) {
         return new OrderTable(orderTableRequest.getId(), null, 0, true);
+    }
+
+    public static OrderTable from(OrderTableCreateRequest orderTableCreateRequest) {
+        return new OrderTable(null, null, orderTableCreateRequest.getNumberOfGuests(),
+                orderTableCreateRequest.isEmpty());
+    }
+
+    public void changeEmpty(boolean empty) {
+        this.empty = empty;
+    }
+
+    public void changeNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("손님의 수는 0보다 작을 수 없습니다.");
+        }
+        if (empty) {
+            throw new IllegalArgumentException("주문을 등록할 수 없는 주문 테이블입니다.");
+        }
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public void validateExistTableGroupId() {
+        if (tableGroupId != null) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
