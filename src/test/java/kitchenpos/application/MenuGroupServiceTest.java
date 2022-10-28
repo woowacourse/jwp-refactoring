@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.MenuGroupRequest;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -14,10 +15,10 @@ class MenuGroupServiceTest extends ServiceTestBase {
     @Test
     void 메뉴_그룹_정상_생성() {
         // given
-        MenuGroup menuGroup = 분식.toEntity();
+        MenuGroupRequest request = 분식.toRequest();
 
         // when
-        MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        MenuGroup savedMenuGroup = menuGroupService.create(request);
 
         // then
         boolean actual = menuGroupDao.existsById(savedMenuGroup.getId());
@@ -27,10 +28,10 @@ class MenuGroupServiceTest extends ServiceTestBase {
     @Test
     void 메뉴_그룹_이름을_null_값으로_생성() {
         // given
-        MenuGroup menuGroup = new MenuGroup(null, null);
+        MenuGroupRequest request = new MenuGroupRequest(null);
 
         // when & then
-        assertThatThrownBy(() -> menuGroupService.create(menuGroup))
+        assertThatThrownBy(() -> menuGroupService.create(request))
                 .isInstanceOf(Exception.class);
     }
 
