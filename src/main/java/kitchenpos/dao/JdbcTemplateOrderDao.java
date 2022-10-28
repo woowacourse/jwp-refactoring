@@ -1,6 +1,16 @@
 package kitchenpos.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import javax.sql.DataSource;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -8,14 +18,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Repository
 public class JdbcTemplateOrderDao implements OrderDao {
@@ -38,10 +40,27 @@ public class JdbcTemplateOrderDao implements OrderDao {
         if (Objects.isNull(entity.getId())) {
             final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
             final Number key = jdbcInsert.executeAndReturnKey(parameters);
+            saveAllOrderLineItem(key.longValue(), entity.getOrderLineItems());
             return select(key.longValue());
         }
         update(entity);
         return entity;
+    }
+
+    private void saveAllOrderLineItem(final Long orderId, final List<OrderLineItem> orderLineItems) {
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            saveOrderLineItem(orderId, orderLineItem);
+        }
+    }
+
+    private void saveOrderLineItem(final Long orderId, final OrderLineItem orderLineItem) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("order_id", orderId);
+        params.put("menu_id", orderLineItem.getMenuId());
+        params.put("quantity", orderLineItem.getQuantity());
+        jdbcTemplate.update(
+                "insert into order_line_item (order_id, menu_id, quantity) values (:order_id, :menu_id, :quantity)",
+                params);
     }
 
     @Override
@@ -70,7 +89,8 @@ public class JdbcTemplateOrderDao implements OrderDao {
     }
 
     @Override
-    public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds, final List<String> orderStatuses) {
+    public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds,
+                                                          final List<String> orderStatuses) {
         final String sql = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END" +
                 " FROM orders WHERE order_table_id IN (:orderTableIds) AND order_status IN (:orderStatuses)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
@@ -94,12 +114,25 @@ public class JdbcTemplateOrderDao implements OrderDao {
         jdbcTemplate.update(sql, parameters);
     }
 
+    private List<OrderLineItem> findAllByOrderId(final Long orderId) {
+        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE order_id = (:orderId)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("orderId", orderId);
+        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> {
+            final OrderLineItem entity = new OrderLineItem();
+            entity.setSeq(resultSet.getLong("seq"));
+            entity.setOrderId(resultSet.getLong("order_id"));
+            entity.setMenuId(resultSet.getLong("menu_id"));
+            entity.setQuantity(resultSet.getLong("quantity"));
+            return entity;
+        });
+    }
+
     private Order toEntity(final ResultSet resultSet) throws SQLException {
-        final Order entity = new Order();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setOrderTableId(resultSet.getLong("order_table_id"));
-        entity.setOrderStatus(resultSet.getString("order_status"));
-        entity.setOrderedTime(resultSet.getObject("ordered_time", LocalDateTime.class));
-        return entity;
+        final Long id = resultSet.getLong(KEY_COLUMN_NAME);
+        final Long orderTableId = resultSet.getLong("order_table_id");
+        final String orderStatus = resultSet.getString("order_status");
+        final LocalDateTime orderedTime = resultSet.getObject("ordered_time", LocalDateTime.class);
+        return new Order(id, orderTableId, orderStatus, orderedTime, findAllByOrderId(id));
     }
 }

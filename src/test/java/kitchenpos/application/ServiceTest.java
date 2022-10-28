@@ -3,8 +3,8 @@ package kitchenpos.application;
 import static kitchenpos.fixture.MenuFixture.createMenuGroup;
 import static kitchenpos.fixture.MenuFixture.createMenuProduct;
 import static kitchenpos.fixture.MenuFixture.createMenuRequest;
-import static kitchenpos.fixture.OrderFixture.createOrder;
-import static kitchenpos.fixture.OrderFixture.updatedOrder;
+import static kitchenpos.fixture.OrderFixture.createOrderRequest;
+import static kitchenpos.fixture.OrderFixture.updatedOrderStatusRequest;
 import static kitchenpos.fixture.ProductFixture.createProductRequest;
 import static kitchenpos.fixture.TableFixture.createOrderTableRequest;
 import static kitchenpos.fixture.TableFixture.createTableGroupRequest;
@@ -93,10 +93,10 @@ abstract class ServiceTest {
     }
 
     protected Order saveOrder(OrderTable orderTable, Menu... menus) {
-        return orderService.create(createOrder(orderTable, menus));
+        return orderService.create(createOrderRequest(orderTable, menus));
     }
 
     protected Order updateOrder(Order order, String status) {
-        return orderService.changeOrderStatus(order.getId(), updatedOrder(status));
+        return orderService.changeOrderStatus(order.getId(), updatedOrderStatusRequest(status));
     }
 }

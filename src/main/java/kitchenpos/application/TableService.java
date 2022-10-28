@@ -19,7 +19,7 @@ public class TableService {
 
     @Transactional
     public OrderTable create(final OrderTableRequest request) {
-        OrderTable orderTable = request.toEntity();
+        final OrderTable orderTable = request.toEntity();
         return orderTableDao.save(orderTable);
     }
 

@@ -86,14 +86,13 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     }
 
     private OrderTable select(final Long id) {
-        List<Order> orders = findAllOrdersByOrderTableId(id);
         final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource().addValue("id", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> {
             Long tableGroupId = resultSet.getObject("table_group_id", Long.class);
             int numberOfGuests = resultSet.getInt("number_of_guests");
             boolean empty = resultSet.getBoolean("empty");
-            return new OrderTable(id, tableGroupId, numberOfGuests, empty, orders);
+            return new OrderTable(id, tableGroupId, numberOfGuests, empty, findAllOrdersByOrderTableId(id));
         });
     }
 

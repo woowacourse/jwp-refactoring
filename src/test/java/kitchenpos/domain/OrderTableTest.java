@@ -100,7 +100,8 @@ class OrderTableTest {
                 mode = EnumSource.Mode.EXCLUDE)
         @DisplayName("order의 orderStatus가 COMPLETION이 아닌 경우 예외를 던진다.")
         void orderStatus_NotCompletion_ExceptionThrown(OrderStatus orderStatus) {
-            final Order order = new Order(1L, 2L, orderStatus.name(), LocalDateTime.now());
+            OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1);
+            final Order order = new Order(1L, 2L, orderStatus.name(), LocalDateTime.now(), List.of(orderLineItem));
             OrderTable orderTable = new OrderTable(2L, 1L, 2, false, List.of(order));
             assertThatThrownBy(orderTable::ungroup)
                     .isInstanceOf(IllegalArgumentException.class);
