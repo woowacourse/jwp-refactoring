@@ -10,6 +10,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.OrderTableCreateRequest;
+import kitchenpos.ui.dto.TableChangeEmptyRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -50,12 +51,11 @@ class TableServiceTest extends ServiceTestBase {
         // given
         OrderTable orderTable = 주문_테이블_생성();
         boolean changedEmpty = !orderTable.isEmpty();
-        orderTable.setEmpty(changedEmpty);
 
         Long orderTableId = orderTable.getId();
 
         // when
-        tableService.changeEmpty(orderTableId, orderTable);
+        tableService.changeEmpty(orderTableId, new TableChangeEmptyRequest(changedEmpty));
 
         // then
         Optional<OrderTable> actual = orderTableDao.findById(orderTableId);
@@ -71,10 +71,10 @@ class TableServiceTest extends ServiceTestBase {
         주문_생성(분식_메뉴_생성(), orderTable, orderStatus);
 
         boolean changedEmpty = !orderTable.isEmpty();
-        orderTable.setEmpty(changedEmpty);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTable))
+        assertThatThrownBy(
+                () -> tableService.changeEmpty(orderTable.getId(), new TableChangeEmptyRequest(changedEmpty)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -84,10 +84,10 @@ class TableServiceTest extends ServiceTestBase {
         TableGroup tableGroup = 단체_지정_생성();
         OrderTable orderTable = 주문_테이블_생성(tableGroup.getId());
         boolean changedEmpty = !orderTable.isEmpty();
-        orderTable.setEmpty(changedEmpty);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTable))
+        assertThatThrownBy(
+                () -> tableService.changeEmpty(orderTable.getId(), new TableChangeEmptyRequest(changedEmpty)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

@@ -7,6 +7,7 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.OrderTableCreateRequest;
+import kitchenpos.ui.dto.TableChangeEmptyRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +33,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable request) {
+    public OrderTable changeEmpty(final Long orderTableId, final TableChangeEmptyRequest request) {
         final OrderTable orderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -66,7 +67,7 @@ public class TableService {
         if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-//
+        //
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
 
         return orderTableDao.save(savedOrderTable);
