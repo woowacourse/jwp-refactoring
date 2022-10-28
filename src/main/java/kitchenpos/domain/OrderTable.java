@@ -76,7 +76,7 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void cleanTableAndFillTableGroup(Long tableGroupId) {
+    public void group(Long tableGroupId) {
         this.tableGroupId = tableGroupId;
         this.empty = false;
     }

@@ -17,6 +17,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
 import org.junit.jupiter.api.Disabled;
@@ -110,12 +111,12 @@ class TableServiceTest {
             @DisplayName("단체 지정이 되어있는 경우 예외가 발생한다.")
             void changeEmptyExistGroup() {
                 TableGroup tableGroup = tableGroupRepository.save(
-                        new TableGroup(List.of(new OrderTable(2, false),
-                                new OrderTable(3, false))));
+                        new TableGroup(new OrderTables(List.of(new OrderTable(2, true),
+                                new OrderTable(3, true)))));
 
                 OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false, tableGroup.getId()));
 
-                assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTableCommand(2, true)))
+                assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTableCommand(2, false)))
                         .hasMessage("이미 단체지정이 되어있습니다.");
             }
 

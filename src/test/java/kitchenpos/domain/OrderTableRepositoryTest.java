@@ -21,7 +21,7 @@ class OrderTableRepositoryTest {
         OrderTable orderTable2 = orderTableRepository.save(new OrderTable(2, true));
         orderTableRepository.save(new OrderTable(2, true));
 
-        List<OrderTable> orderTables = orderTableRepository.findAllByIn(
+        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(
                 List.of(orderTable1.getId(), orderTable2.getId()));
 
         assertThat(orderTables).hasSize(2);

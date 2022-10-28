@@ -9,6 +9,7 @@ import kitchenpos.application.dto.request.TableGroupCommand;
 import kitchenpos.common.DataClearExtension;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -70,7 +71,7 @@ class TableGroupServiceTest {
         }
 
         @Test
-        @DisplayName("정상적으로 생성한다.")
+        @DisplayName("테이블의 수가 다른 경우 예외가 발생한다.")
         void invalidSize() {
             OrderTable orderTable1 = orderTableRepository.save(new OrderTable(2, true));
             OrderTable orderTable2 = orderTableRepository.save(new OrderTable(2, true));
@@ -90,7 +91,8 @@ class TableGroupServiceTest {
         void ungroup() {
             OrderTable orderTable1 = orderTableRepository.save(new OrderTable(2, true));
             OrderTable orderTable2 = orderTableRepository.save(new OrderTable(2, true));
-            TableGroup tableGroup = tableGroupRepository.save(new TableGroup(List.of(orderTable1, orderTable2)));
+            TableGroup tableGroup = tableGroupRepository.save(
+                    new TableGroup(new OrderTables(List.of(orderTable1, orderTable2))));
 
             assertThatNoException()
                     .isThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()));
