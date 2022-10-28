@@ -30,11 +30,7 @@ public class Order {
     }
 
     public Order(Order order, List<OrderLineItem> orderLineItems) {
-        this.id = order.id;
-        this.orderTableId = order.orderTableId;
-        this.orderStatus = order.orderStatus;
-        this.orderedTime = order.orderedTime;
-        this.orderLineItems = orderLineItems;
+        this(order.id, order.orderTableId, order.orderStatus, order.orderedTime, orderLineItems);
     }
 
     public void changeOrderStatus(String orderStatus) {

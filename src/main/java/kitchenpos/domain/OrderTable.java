@@ -21,10 +21,7 @@ public class OrderTable {
     }
 
     public OrderTable(OrderTable orderTable, Long tableGroupId) {
-        this.id = orderTable.id;
-        this.tableGroupId = tableGroupId;
-        this.numberOfGuests = orderTable.numberOfGuests;
-        this.empty = orderTable.empty;
+        this(orderTable.id, tableGroupId, orderTable.numberOfGuests, orderTable.empty);
     }
 
     public void changeEmpty(boolean empty) {

@@ -54,8 +54,7 @@ class MenuServiceTest extends ServiceTest {
 
     @Test
     void 메뉴_리스트를_반환한다() {
-        Menu menu = new Menu("", BigDecimal.valueOf(0), 1L, Collections.emptyList());
-
+        Menu menu = new Menu("", BigDecimal.valueOf(0), 1L);
         int beforeSize = menuService.list().size();
         menuDao.save(menu);
 

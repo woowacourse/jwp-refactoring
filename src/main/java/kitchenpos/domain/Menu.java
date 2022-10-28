@@ -21,25 +21,16 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
+    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
+        this(id, name, price, menuGroupId, null);
     }
 
     public Menu(String name, BigDecimal price, Long menuGroupId) {
         this(null, name, price, menuGroupId, null);
     }
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
-        this(id, name, price, menuGroupId, null);
-    }
-
     public Menu(Menu menu, List<MenuProduct> menuProducts) {
-        this.id = menu.id;
-        this.name = menu.name;
-        validatePrice(menu.price);
-        this.price = menu.price;
-        this.menuGroupId = menu.menuGroupId;
-        this.menuProducts = menuProducts;
+        this(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProducts);
     }
 
     private void validatePrice(BigDecimal price) {
