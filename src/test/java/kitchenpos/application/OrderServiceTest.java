@@ -42,8 +42,8 @@ class OrderServiceTest {
 
             @BeforeEach
             void setUp() {
-                menuGroupDao.save(menuGroup);
-                menuDao.save(menu);
+                menuGroupRepository.save(menuGroup);
+                menuRepository.save(menu);
                 orderTableDao.save(orderTable);
             }
 
@@ -93,8 +93,8 @@ class OrderServiceTest {
 
             @BeforeEach
             void setUp() {
-                menuGroupDao.save(menuGroup);
-                menuDao.save(menu);
+                menuGroupRepository.save(menuGroup);
+                menuRepository.save(menu);
             }
 
             @Test
@@ -115,8 +115,8 @@ class OrderServiceTest {
 
             @BeforeEach
             void setUp() {
-                menuGroupDao.save(menuGroup);
-                menuDao.save(menu);
+                menuGroupRepository.save(menuGroup);
+                menuRepository.save(menu);
                 orderTableDao.save(orderTable);
             }
 

@@ -11,6 +11,9 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.MenuCreateRequest;
+import kitchenpos.ui.dto.MenuGroupCreateRequest;
+import kitchenpos.ui.dto.MenuProductCreateRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class TestFixtures {
@@ -23,27 +26,33 @@ public class TestFixtures {
     }
 
     public static MenuGroup 메뉴_그룹_생성(final String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        return menuGroup;
+        return new MenuGroup(name);
+    }
+
+    public static MenuGroupCreateRequest 메뉴_그룹_생성_요청(final String name) {
+        return new MenuGroupCreateRequest(name);
     }
 
     public static Menu 메뉴_생성(final String name, final BigDecimal price,
                              final Long menuGroupId, final List<MenuProduct> menuProducts) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-        return menu;
+        return new Menu(name, price, null, menuProducts);
+    }
+
+    public static MenuCreateRequest 메뉴_생성_요청(final String name,
+                                             final BigDecimal price,
+                                             final Long menuGroupId,
+                                             final List<MenuProductCreateRequest> menuProductCreateRequests) {
+        return new MenuCreateRequest(name, price, menuGroupId, menuProductCreateRequests);
     }
 
     public static MenuProduct 메뉴_상품_생성(final Long menuId, final Long productId, final long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+        return new MenuProduct(null, null, quantity);
+    }
+
+    public static MenuProductCreateRequest 메뉴_상품_생성_요청(final Long menuId,
+                                                       final Long productId,
+                                                       final long quantity) {
+        return new MenuProductCreateRequest(1L, quantity);
     }
 
     public static Order 주문_생성(final Long orderTableId, final String orderStatus,

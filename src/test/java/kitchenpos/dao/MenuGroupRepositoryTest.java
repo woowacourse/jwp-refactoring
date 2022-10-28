@@ -11,14 +11,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DisplayName("MenuGroup 테스트")
 @SuppressWarnings("NonAsciiCharacters")
-@DaoTest
-class MenuGroupDaoTest {
+@DataJpaTest
+class MenuGroupRepositoryTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Nested
     class save_메서드는 {
@@ -30,7 +31,7 @@ class MenuGroupDaoTest {
 
             @Test
             void 저장한다() {
-                final MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+                final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 
                 assertThat(savedMenuGroup.getId()).isNotNull();
             }
@@ -48,12 +49,12 @@ class MenuGroupDaoTest {
 
             @BeforeEach
             void setUp() {
-                savedMenuGroup = menuGroupDao.save(menuGroup);
+                savedMenuGroup = menuGroupRepository.save(menuGroup);
             }
 
             @Test
             void 해당하는_MenuGroup을_반환한다() {
-                final Optional<MenuGroup> foundMenuGroup = menuGroupDao.findById(savedMenuGroup.getId());
+                final Optional<MenuGroup> foundMenuGroup = menuGroupRepository.findById(savedMenuGroup.getId());
 
                 assertAll(
                         () -> assertThat(foundMenuGroup).isPresent(),
@@ -76,12 +77,12 @@ class MenuGroupDaoTest {
 
             @BeforeEach
             void setUp() {
-                savedMenuGroup = menuGroupDao.save(menuGroup);
+                savedMenuGroup = menuGroupRepository.save(menuGroup);
             }
 
             @Test
             void 모든_MenuGroup들을_반환한다() {
-                final List<MenuGroup> menuGroups = menuGroupDao.findAll();
+                final List<MenuGroup> menuGroups = menuGroupRepository.findAll();
 
                 assertThat(menuGroups).usingFieldByFieldElementComparator()
                         .containsAll(List.of(savedMenuGroup));
@@ -96,7 +97,7 @@ class MenuGroupDaoTest {
 
         @BeforeEach
         void setUp() {
-            this.menuGroup = menuGroupDao.save(new MenuGroup("세마리메뉴"));
+            this.menuGroup = menuGroupRepository.save(new MenuGroup("세마리메뉴"));
         }
 
         @Nested
@@ -104,7 +105,7 @@ class MenuGroupDaoTest {
 
             @Test
             void true를_반환한다() {
-                final boolean actual = menuGroupDao.existsById(menuGroup.getId());
+                final boolean actual = menuGroupRepository.existsById(menuGroup.getId());
                 assertThat(actual).isTrue();
             }
         }
@@ -114,7 +115,7 @@ class MenuGroupDaoTest {
 
             @Test
             void false를_반환한다() {
-                final boolean actual = menuGroupDao.existsById(Long.MAX_VALUE);
+                final boolean actual = menuGroupRepository.existsById(Long.MAX_VALUE);
                 assertThat(actual).isFalse();
             }
         }
