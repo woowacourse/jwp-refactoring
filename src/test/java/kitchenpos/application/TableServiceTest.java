@@ -6,6 +6,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.application.dto.MenuGroupRequest;
+import kitchenpos.application.dto.MenuGroupResponse;
 import kitchenpos.application.dto.ProductCreateRequest;
 import kitchenpos.application.dto.ProductResponse;
 import kitchenpos.domain.Menu;
@@ -59,7 +61,7 @@ class TableServiceTest {
         @CsvSource(value = {"COOKING", "MEAL"})
         void 요청에서_테이블이_비어있는_상태로_변경할때_주문의_상태가_완료상태가_아니면_예외가_발생한다(final OrderStatus orderStatus) {
             // given
-            final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("1인 메뉴"));
+            final MenuGroupResponse menuGroup = menuGroupService.create(new MenuGroupRequest("1인 메뉴"));
             final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 1000));
             final Menu createMenu = new Menu("짜장면", BigDecimal.valueOf(1000), menuGroup.getId());
             createMenu.addMenuProducts(List.of(new MenuProduct(1L, null, product.getId(), 1)));
