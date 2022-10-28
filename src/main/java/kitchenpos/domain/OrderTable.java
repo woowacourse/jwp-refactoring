@@ -29,6 +29,16 @@ public class OrderTable {
                 orderTableCreateRequest.isEmpty());
     }
 
+    public void group(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+        this.empty = false;
+    }
+
+    public void ungroup() {
+        this.tableGroupId = null;
+        this.empty = false;
+    }
+
     public void changeEmpty(boolean empty) {
         validateExistTableGroupId();
         this.empty = empty;
