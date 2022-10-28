@@ -21,6 +21,10 @@ public class MenuProduct {
         return this.productId.equals(productId);
     }
 
+    public void addQuantity(final long quantity) {
+        this.quantity += quantity;
+    }
+
     public void addQuantity() {
         this.quantity++;
     }

@@ -17,6 +17,10 @@ public class OrderLineItem {
         this(null, null, menuId, quantity);
     }
 
+    public void addQuantity(final long addQuantity) {
+        this.quantity += addQuantity;
+    }
+
     public void addQuantity() {
         this.quantity++;
     }

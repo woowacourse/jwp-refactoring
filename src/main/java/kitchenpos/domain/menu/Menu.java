@@ -29,14 +29,6 @@ public class Menu {
         return menu;
     }
 
-    public void addProduct(final Long productId) {
-        final Optional<MenuProduct> menuProduct = findProduct(productId);
-        menuProduct.ifPresentOrElse(
-                MenuProduct::addQuantity,
-                () -> menuProducts.add(new MenuProduct(productId, 1))
-        );
-    }
-
     private static BigDecimal createBigDecimal(final Long price) {
         if (price == null) {
             return null;
@@ -51,7 +43,15 @@ public class Menu {
     }
 
     public void addProduct(final Long productId, final long quantity) {
-        menuProducts.add(new MenuProduct(productId, quantity));
+        final Optional<MenuProduct> menuProduct = findProduct(productId);
+        menuProduct.ifPresentOrElse(
+                findMenuProduct -> findMenuProduct.addQuantity(quantity),
+                () -> menuProducts.add(new MenuProduct(productId, 1))
+        );
+    }
+
+    public void addProduct(final Long productId) {
+        addProduct(productId, 1);
     }
 
     public Long getId() {

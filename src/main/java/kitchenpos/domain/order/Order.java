@@ -25,18 +25,22 @@ public class Order {
         return order;
     }
 
-    public void addMenu(final Long menuId) {
-        final Optional<OrderLineItem> orderLineItem = findMenu(menuId);
-        orderLineItem.ifPresentOrElse(
-                OrderLineItem::addQuantity,
-                () -> orderLineItems.add(new OrderLineItem(menuId, 1))
-        );
-    }
-
     private Optional<OrderLineItem> findMenu(final Long menuId) {
         return orderLineItems.stream()
                 .filter(orderLineItem -> orderLineItem.isSameMenu(menuId))
                 .findAny();
+    }
+
+    public void addMenu(final Long menuId, final long quantity) {
+        final Optional<OrderLineItem> orderLineItem = findMenu(menuId);
+        orderLineItem.ifPresentOrElse(
+                findOrderLineItem -> findOrderLineItem.addQuantity(quantity),
+                () -> orderLineItems.add(new OrderLineItem(menuId, 1))
+        );
+    }
+
+    public void addMenu(final Long menuId) {
+        addMenu(menuId, 1);
     }
 
     public Long getId() {
