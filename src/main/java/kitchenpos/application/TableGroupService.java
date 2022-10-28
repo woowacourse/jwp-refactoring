@@ -33,10 +33,12 @@ public class TableGroupService {
         this.tableGroupDao = tableGroupDao;
     }
 
+    // todo Transactional 최상단으로 올리기
     @Transactional
     public TableGroup create(final TableGroup tableGroup) {
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
+        // todo TableGroup 객체 책임
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new CustomIllegalArgumentException(INVALID_TABLE_GROUP_EXCEPTION);
         }
@@ -47,16 +49,18 @@ public class TableGroupService {
 
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
+        // todo TableGroup 객체 책임
         if (orderTables.size() != savedOrderTables.size()) {
             throw new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION);
         }
 
+        // todo TableGroup 객체 책임
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
                 throw new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION);
             }
         }
-
+        // todo 시간 주입을 외부에서 받도록 할 수는 없을까?
         tableGroup.setCreatedDate(LocalDateTime.now());
 
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
@@ -80,11 +84,13 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
+        // todo 주문 상태가 요리중인지, 식사중인지 검증하는 로직은 Order 안에 있어야지
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new CustomIllegalArgumentException(INVALID_TABLE_UNGROUP_EXCEPTION);
         }
 
+        // todo 상태를 변경하는 로직도 Order 안에 있어야지
         for (final OrderTable orderTable : orderTables) {
             orderTable.setTableGroupId(null);
             orderTable.setEmpty(false);
