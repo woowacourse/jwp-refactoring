@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.application.TableService;
-import kitchenpos.dto.ChangeNumOfTableGuestsRequest;
-import kitchenpos.dto.ChangeOrderTableEmptyRequest;
-import kitchenpos.dto.OrderTableRequest;
-import kitchenpos.dto.OrderTableResponse;
+import kitchenpos.dto.request.ChangeNumOfTableGuestsRequest;
+import kitchenpos.dto.request.ChangeOrderTableEmptyRequest;
+import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 
 @RestController
 public class TableRestController {

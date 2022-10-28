@@ -1,7 +1,7 @@
 package kitchenpos.fixture;
 
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.MenuGroupRequest;
+import kitchenpos.dto.request.MenuGroupRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 public enum MenuGroupFixture {
