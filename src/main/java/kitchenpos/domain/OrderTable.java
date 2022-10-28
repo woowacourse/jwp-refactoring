@@ -35,13 +35,13 @@ public class OrderTable {
     public void validateEmpty() {
         if (!isEmpty()) {
             throw new IllegalArgumentException();
-        };
+        }
     }
 
     public void validateNotEmpty() {
         if (isEmpty()) {
             throw new IllegalArgumentException();
-        };
+        }
     }
 
     public Long getId() {
