@@ -64,30 +64,6 @@ class MenuServiceTest {
         assertThat(response.getId()).isNotNull();
     }
 
-    @DisplayName("메뉴 등록 시 메뉴의 가격은 null 이 아니어야 한다")
-    @Test
-    void createMenuPriceIsNull() {
-        final BigDecimal invalidPrice = null;
-
-        final MenuProductRequest menuProductRequest = new MenuProductRequest(저장된_후라이드_치킨.getId(), MENU_PRODUCT_QUANTITY);
-        final MenuRequest request = new MenuRequest(MENU_NAME, invalidPrice, 저장된_치킨_세트.getId(), List.of(menuProductRequest));
-
-        assertThatThrownBy(() -> menuService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("메뉴 등록 시 메뉴의 가격은 0원 이상이어야 한다")
-    @Test
-    void createMenuPriceIsLowerZero() {
-        final BigDecimal invalidPrice = new BigDecimal(-1);
-
-        final MenuProductRequest menuProductRequest = new MenuProductRequest(저장된_후라이드_치킨.getId(), MENU_PRODUCT_QUANTITY);
-        final MenuRequest request = new MenuRequest(MENU_NAME, invalidPrice, 저장된_치킨_세트.getId(), List.of(menuProductRequest));
-
-        assertThatThrownBy(() -> menuService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("메뉴 등록 시 메뉴 그룹의 아이디가 존재해야 한다")
     @Test
     void createMenuGroupIdIsNotExist() {
@@ -97,7 +73,8 @@ class MenuServiceTest {
         final MenuRequest request = new MenuRequest(MENU_NAME, PRICE, notSavedMenuGroupId, List.of(menuProductRequest));
 
         assertThatThrownBy(() -> menuService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("존재하지 않는 메뉴 그룹입니다.");
     }
 
     @DisplayName("메뉴 등록 시 메뉴 상품은 등록되어 있는 상품이어야 한다")
@@ -109,19 +86,8 @@ class MenuServiceTest {
         final MenuRequest request = new MenuRequest(MENU_NAME, PRICE, 저장된_치킨_세트.getId(), List.of(notSavedMenuProductRequest));
 
         assertThatThrownBy(() -> menuService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("메뉴 등록 시 메뉴의 가격은 주문 금액의 총합보다 작거나 같아야 한다")
-    @Test
-    void createMenuPriceIsHigherThanAmount() {
-        final BigDecimal invalidPrice = 저장된_후라이드_치킨.getPrice().add(new BigDecimal(1L));
-
-        final MenuProductRequest menuProductRequest = new MenuProductRequest(저장된_후라이드_치킨.getId(), MENU_PRODUCT_QUANTITY);
-        final MenuRequest request = new MenuRequest(MENU_NAME, invalidPrice, 저장된_치킨_세트.getId(), List.of(menuProductRequest));
-
-        assertThatThrownBy(() -> menuService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("존재하지 않는 상품입니다.");
     }
 
     @DisplayName("메뉴의 목록을 조회한다")

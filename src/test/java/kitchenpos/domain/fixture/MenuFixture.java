@@ -21,6 +21,7 @@ public class MenuFixture {
     public static Menu 후라이드_치킨_세트() {
         return 메뉴()
             .이름("후라이드")
+            .가격(new BigDecimal(15_000))
             .build();
     }
 
