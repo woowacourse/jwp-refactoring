@@ -47,8 +47,7 @@ public class OrderService {
     }
 
     public List<Order> list() {
-        final List<Order> orders = orderRepository.findAll();
-        return orders;
+        return orderRepository.findAll();
     }
 
     @Transactional
@@ -59,14 +58,14 @@ public class OrderService {
         return order;
     }
 
-    private Menu findMenuById(Long id) {
-        return menuRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴입니다."));
-    }
-
     private OrderTable findOrderTableById(Long id) {
         return orderTableRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블 입니다."));
+    }
+
+    private Menu findMenuById(Long id) {
+        return menuRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴입니다."));
     }
 
     private Order findOrderById(Long id) {

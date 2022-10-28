@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +17,12 @@ import kitchenpos.repository.TableGroupRepository;
 
 @Service
 public class TableGroupService {
+
+    private static final List<String> ORDER_STATUS_FOR_CANT_UNGROUP = new ArrayList<String>() {{
+        add(OrderStatus.COOKING.name());
+        add(OrderStatus.MEAL.name());
+    }};
+
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
@@ -41,15 +47,7 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findByTableGroupId(tableGroupId);
-
-        final List<Long> orderTableIds = orderTables.stream()
-            .map(OrderTable::getId)
-            .collect(Collectors.toList());
-
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-            orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("주문이 시작되어 그룹을 해제할 수 없습니다.");
-        }
+        validateAbleToUngroup(orderTables);
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.ungroup();
@@ -57,8 +55,14 @@ public class TableGroupService {
         }
     }
 
-    private OrderTable findOrderTableById(Long id) {
+    private OrderTable findOrderTableById(final Long id) {
         return orderTableRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 테이블입니다."));
+    }
+
+    private void validateAbleToUngroup(final List<OrderTable> orderTables) {
+        if (orderRepository.existsByOrderTableInAndOrderStatusIn(orderTables, ORDER_STATUS_FOR_CANT_UNGROUP)) {
+            throw new IllegalArgumentException("주문이 시작되어 그룹을 해제할 수 없습니다.");
+        }
     }
 }

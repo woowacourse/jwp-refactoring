@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -16,6 +16,12 @@ import kitchenpos.repository.OrderTableRepository;
 
 @Service
 public class TableService {
+
+    private static final List<String> ORDER_STATUS_FOR_CANT_CHANGE_EMPTY = new ArrayList<String>() {{
+        add(OrderStatus.COOKING.name());
+        add(OrderStatus.MEAL.name());
+    }};
+
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
@@ -37,17 +43,11 @@ public class TableService {
 
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final ChangeOrderTableEmptyRequest request) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 테이블입니다."));
+        final OrderTable orderTable = findOrderTableById(orderTableId);
+        validateAbleToChangeEmpty(orderTable);
 
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-            orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("변경할 수 있는 상태가 아닙니다.");
-        }
-
-        savedOrderTable.changeEmpty(request.isEmpty());
-
-        return savedOrderTable;
+        orderTable.changeEmpty(request.isEmpty());
+        return orderTable;
     }
 
     @Transactional
@@ -55,12 +55,22 @@ public class TableService {
         final ChangeOrderTableNumberOfGuestRequest request) {
         final int numberOfGuests = request.getNumberOfGuests();
 
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 테이블입니다."));
+        final OrderTable savedOrderTable = findOrderTableById(orderTableId);
 
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
 
         return orderTableRepository.save(savedOrderTable);
+    }
+
+    private OrderTable findOrderTableById(final Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 테이블입니다."));
+    }
+
+    private void validateAbleToChangeEmpty(OrderTable orderTable) {
+        if (orderRepository.existsByOrderTableAndOrderStatusIn(orderTable, ORDER_STATUS_FOR_CANT_CHANGE_EMPTY)) {
+            throw new IllegalArgumentException("변경할 수 있는 상태가 아닙니다.");
+        }
     }
 
 }

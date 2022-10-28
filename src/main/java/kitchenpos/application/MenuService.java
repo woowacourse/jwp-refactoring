@@ -7,13 +7,13 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.menu.CreateMenuRequest;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 
 @Service
 public class MenuService {
@@ -37,8 +37,8 @@ public class MenuService {
 
         final Map<Product, Long> menuProducts = request.getMenuProducts().stream()
             .collect(Collectors.toMap(
-                menuProduct -> findProductById(menuProduct.getProductId()),
-                menuProduct -> menuProduct.getQuantity())
+                it -> findProductById(it.getProductId()),
+                it -> it.getQuantity())
             );
 
         final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup, menuProducts);
