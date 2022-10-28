@@ -58,10 +58,10 @@ public class IntegrationTest {
     @BeforeEach
     void setup() {
         menuGroup = menuGroupDao.save(createSaleMenuGroup());
-        menu = menuDao.save(createPepperoniMenu(menuGroup.getId(), menuProducts));
+        menu = menuDao.save(createPepperoniMenu(menuGroup, menuProducts));
         product1 = productDao.save(createPepperoni());
         product2 = productDao.save(createPineapple());
-        menuProducts.add(menuProductDao.save(createMenuProduct(menu.getId(), product1.getId())));
-        menuProducts.add(menuProductDao.save(createMenuProduct(menu.getId(), product2.getId())));
+        menuProducts.add(menuProductDao.save(createMenuProduct(menu, product1)));
+        menuProducts.add(menuProductDao.save(createMenuProduct(menu, product2)));
     }
 }
