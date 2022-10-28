@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.support;
 
 import static kitchenpos.fixture.MenuTestFixture.떡볶이;
 import static kitchenpos.fixture.ProductFixture.불맛_떡볶이;
@@ -9,6 +9,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.application.MenuGroupService;
+import kitchenpos.application.MenuService;
+import kitchenpos.application.OrderService;
+import kitchenpos.application.ProductService;
+import kitchenpos.application.TableGroupService;
+import kitchenpos.application.TableService;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -41,58 +47,58 @@ import org.springframework.transaction.annotation.Transactional;
 public class ServiceTestBase {
 
     @Autowired
-    public ProductService productService;
+    protected ProductService productService;
 
     @Autowired
-    public MenuGroupService menuGroupService;
+    protected MenuGroupService menuGroupService;
 
     @Autowired
-    public MenuService menuService;
+    protected MenuService menuService;
 
     @Autowired
-    public OrderService orderService;
+    protected OrderService orderService;
 
     @Autowired
-    public TableService tableService;
+    protected TableService tableService;
 
     @Autowired
-    public TableGroupService tableGroupService;
+    protected TableGroupService tableGroupService;
 
     @Autowired
-    public ProductDao productDao;
+    protected ProductDao productDao;
 
     @Autowired
-    public MenuGroupDao menuGroupDao;
+    protected MenuGroupDao menuGroupDao;
 
     @Autowired
-    public MenuDao menuDao;
+    protected MenuDao menuDao;
 
     @Autowired
-    public OrderDao orderDao;
+    protected OrderDao orderDao;
 
     @Autowired
-    public TableGroupDao tableGroupDao;
+    protected TableGroupDao tableGroupDao;
 
     @Autowired
-    public OrderLineItemDao orderLineItemDao;
+    protected OrderLineItemDao orderLineItemDao;
 
     @Autowired
-    public OrderTableDao orderTableDao;
+    protected OrderTableDao orderTableDao;
 
     @Autowired
-    public MenuProductDao menuProductDao;
+    protected MenuProductDao menuProductDao;
 
-    public Product 상품_생성(final ProductFixture productFixture) {
+    protected Product 상품_생성(final ProductFixture productFixture) {
         return productDao.save(productFixture.toEntity());
     }
 
-    public List<MenuGroup> 메뉴_그룹_목록_생성() {
+    protected List<MenuGroup> 메뉴_그룹_목록_생성() {
         return Arrays.stream(MenuGroupFixture.values())
                 .map(it -> menuGroupDao.save(it.toEntity()))
                 .collect(Collectors.toList());
     }
 
-    public Menu 분식_메뉴_생성() {
+    protected Menu 분식_메뉴_생성() {
         MenuGroup menuGroup = menuGroupDao.save(MenuGroupFixture.분식.toEntity());
         Product product = productDao.save(불맛_떡볶이.toEntity());
         List<MenuProduct> menuProducts = 메뉴_상품_목록(product);
@@ -100,39 +106,39 @@ public class ServiceTestBase {
         return menuDao.save(menu);
     }
 
-    public List<MenuProduct> 메뉴_상품_목록(final Product... products) {
+    protected List<MenuProduct> 메뉴_상품_목록(final Product... products) {
         return 메뉴_상품_목록(3, products);
     }
 
-    public List<MenuProduct> 메뉴_상품_목록(final long quantity, final Product... products) {
+    protected List<MenuProduct> 메뉴_상품_목록(final long quantity, final Product... products) {
         return Arrays.stream(products)
                 .map(it -> 메뉴_상품(it, quantity))
                 .collect(Collectors.toList());
     }
 
-    public MenuProduct 메뉴_상품(final Product product, final long quantity) {
+    protected MenuProduct 메뉴_상품(final Product product, final long quantity) {
         return new MenuProduct(null, null, product.getId(), quantity);
     }
 
-    public void 주문_생성(final Menu menu, final OrderTable orderTable, final OrderStatus orderStatus) {
+    protected void 주문_생성(final Menu menu, final OrderTable orderTable, final OrderStatus orderStatus) {
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목(menu.getId()));
         Order order = new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), orderLineItems);
         orderDao.save(order);
     }
 
-    public OrderLineItem 주문_항목(final Long menuId) {
+    protected OrderLineItem 주문_항목(final Long menuId) {
         return new OrderLineItem(null, null, menuId, 1);
     }
 
-    public Order 주문(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+    protected Order 주문(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
         return new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
-    public TableGroup 단체_지정_생성() {
+    protected TableGroup 단체_지정_생성() {
         return 단체_지정_생성(new ArrayList<>());
     }
 
-    public TableGroup 단체_지정_생성(final List<OrderTable> orderTables) {
+    protected TableGroup 단체_지정_생성(final List<OrderTable> orderTables) {
         TableGroup tableGroup = new TableGroup(null, LocalDateTime.now());
         tableGroup.addOrderTables(orderTables);
 
@@ -148,11 +154,11 @@ public class ServiceTestBase {
         }
     }
 
-    public OrderTable 주문_테이블_생성() {
+    protected OrderTable 주문_테이블_생성() {
         return 주문_테이블_생성(null);
     }
 
-    public OrderTable 주문_테이블_생성(final Long tableGroupId) {
+    protected OrderTable 주문_테이블_생성(final Long tableGroupId) {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);
         orderTable.setTableGroupId(tableGroupId);
@@ -160,7 +166,7 @@ public class ServiceTestBase {
         return orderTableDao.save(orderTable);
     }
 
-    public OrderTable 빈_주문_테이블_생성() {
+    protected OrderTable 빈_주문_테이블_생성() {
         OrderTable orderTable = new OrderTable(0, true);
         return orderTableDao.save(orderTable);
     }

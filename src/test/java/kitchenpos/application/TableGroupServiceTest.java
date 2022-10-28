@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.support.ServiceTestBase;
 import kitchenpos.ui.dto.OrderTableDto;
 import kitchenpos.ui.dto.OrderTableRequest;
 import org.junit.jupiter.api.Test;

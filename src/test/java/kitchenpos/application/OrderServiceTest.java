@@ -18,6 +18,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.fixture.MenuGroupFixture;
+import kitchenpos.support.ServiceTestBase;
 import kitchenpos.ui.dto.OrderCreateRequest;
 import kitchenpos.ui.dto.OrderLineItemDto;
 import kitchenpos.ui.dto.OrderUpdateRequest;

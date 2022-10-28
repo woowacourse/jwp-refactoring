@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Product;
+import kitchenpos.support.ServiceTestBase;
 import kitchenpos.ui.dto.ProductRequest;
 import org.junit.jupiter.api.Test;
 

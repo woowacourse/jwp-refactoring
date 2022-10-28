@@ -14,6 +14,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.MenuGroupFixture;
+import kitchenpos.support.ServiceTestBase;
 import kitchenpos.ui.dto.MenuRequest;
 import org.junit.jupiter.api.Test;
 

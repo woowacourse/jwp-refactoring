@@ -9,6 +9,7 @@ import java.util.Optional;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.support.ServiceTestBase;
 import kitchenpos.ui.dto.OrderTableCreateRequest;
 import kitchenpos.ui.dto.TableChangeEmptyRequest;
 import kitchenpos.ui.dto.TableChangeNumberOfGuestsRequest;
