@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import javax.transaction.Transactional;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.exception.IllegalPriceException;
 import kitchenpos.fixtures.ProductFixtures;
@@ -24,7 +24,7 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Test
     @DisplayName("상품을 생성한다")
@@ -70,7 +70,7 @@ class ProductServiceTest {
     void list() {
         // given
         final Product product = ProductFixtures.CHICKEN.create();
-        final Product saved = productDao.save(product);
+        final Product saved = productRepository.save(product);
 
         // when
         final List<Product> products = productService.list();

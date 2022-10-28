@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.Optional;
-import javax.sql.DataSource;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
@@ -26,12 +25,9 @@ class MenuProductRepositoryTest {
 
     @Autowired
     private MenuRepository menuRepository;
-    private final ProductDao productDao;
 
     @Autowired
-    private MenuProductRepositoryTest(final DataSource dataSource) {
-        this.productDao = new JdbcTemplateProductDao(dataSource);
-    }
+    private ProductRepository productRepository;
 
     @Test
     @DisplayName("메뉴 상품을 저장한다")
@@ -41,7 +37,7 @@ class MenuProductRepositoryTest {
         final Menu savedMenu = menuRepository.save(menu);
 
         final Product product = ProductFixtures.CHICKEN.create();
-        final Product savedProduct = productDao.save(product);
+        final Product savedProduct = productRepository.save(product);
 
         final MenuProduct menuProduct = new MenuProduct(null, savedMenu, savedProduct.getId(), 2);
 
@@ -62,7 +58,7 @@ class MenuProductRepositoryTest {
     void saveExceptionNotExistMenu() {
         // given
         final Product product = ProductFixtures.CHICKEN.create();
-        final Product savedProduct = productDao.save(product);
+        final Product savedProduct = productRepository.save(product);
 
         final MenuProduct menuProduct = new MenuProduct(null, null, savedProduct.getId(), 2);
 
@@ -93,7 +89,7 @@ class MenuProductRepositoryTest {
         final Menu savedMenu = menuRepository.save(menu);
 
         final Product product = ProductFixtures.CHICKEN.create();
-        final Product savedProduct = productDao.save(product);
+        final Product savedProduct = productRepository.save(product);
 
         final MenuProduct menuProduct = new MenuProduct(null, savedMenu, savedProduct.getId(), 2);
         final MenuProduct saved = menuProductRepository.save(menuProduct);
@@ -125,7 +121,7 @@ class MenuProductRepositoryTest {
         final Menu savedMenu = menuRepository.save(menu);
 
         final Product product = ProductFixtures.CHICKEN.create();
-        final Product savedProduct = productDao.save(product);
+        final Product savedProduct = productRepository.save(product);
 
         final MenuProduct menuProduct = new MenuProduct(null, savedMenu, savedProduct.getId(), 2);
         final MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
