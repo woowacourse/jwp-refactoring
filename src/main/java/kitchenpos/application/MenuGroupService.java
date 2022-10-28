@@ -18,13 +18,21 @@ public class MenuGroupService {
 
     @Transactional
     public MenuGroup create(MenuGroupCreateRequest menuGroupCreateRequest) {
-        if (menuGroupCreateRequest.getName() == null) {
-            throw new IllegalArgumentException();
-        }
-        return menuGroupDao.save(new MenuGroup(menuGroupCreateRequest.getName()));
+        return menuGroupDao.save(generateMenuGroup(menuGroupCreateRequest));
     }
 
     public List<MenuGroup> list() {
         return menuGroupDao.findAll();
+    }
+
+    private MenuGroup generateMenuGroup(MenuGroupCreateRequest menuGroupCreateRequest) {
+        validateName(menuGroupCreateRequest);
+        return new MenuGroup(menuGroupCreateRequest.getName());
+    }
+
+    private void validateName(MenuGroupCreateRequest menuGroupCreateRequest) {
+        if (menuGroupCreateRequest.getName() == null) {
+            throw new IllegalArgumentException();
+        }
     }
 }

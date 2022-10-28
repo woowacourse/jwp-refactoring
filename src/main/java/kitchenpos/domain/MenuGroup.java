@@ -5,30 +5,26 @@ public class MenuGroup {
     private String name;
 
     public MenuGroup(Long id, String name) {
+        validateName(name);
         this.id = id;
         this.name = name;
+    }
+
+    private void validateName(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public MenuGroup(String name) {
         this(null, name);
     }
 
-    public MenuGroup() {
-    }
-
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
     }
 }
