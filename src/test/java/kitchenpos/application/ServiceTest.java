@@ -46,7 +46,8 @@ public class ServiceTest {
     }
 
     protected Menu createMenu(final String name, final Long price, final Long menuGroupId) {
-        return new Menu(name, new BigDecimal(price), menuGroupId);
+        final MenuGroup menuGroup = menuGroupRepository.findById(menuGroupId).get();
+        return new Menu(name, new BigDecimal(price), menuGroup);
     }
 
     protected OrderTable createOrderTable(final Long id, final Long tableGroupId, final int numberOfGuests,
