@@ -9,6 +9,7 @@ import java.util.Optional;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.OrderTableCreateRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -19,12 +20,10 @@ class TableServiceTest extends ServiceTestBase {
     @Test
     void 주문_테이블_생성_성공() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.changeNumberOfGuests(3);
+        OrderTableCreateRequest request = new OrderTableCreateRequest(3, false);
 
         // when
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTable savedOrderTable = tableService.create(request);
 
         // then
         Optional<OrderTable> actual = orderTableDao.findById(savedOrderTable.getId());
