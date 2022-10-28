@@ -9,10 +9,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MenuRepository extends JpaRepository<Menu, Long> {
 
-    @EntityGraph(attributePaths = {"menuProducts"}, type = EntityGraphType.LOAD)
+    @EntityGraph(attributePaths = {"menuProducts.values"}, type = EntityGraphType.LOAD)
     Optional<Menu> findById(Long id);
 
-    @EntityGraph(attributePaths = {"menuProducts"}, type = EntityGraphType.LOAD)
+    @EntityGraph(attributePaths = {"menuProducts.values"}, type = EntityGraphType.LOAD)
     List<Menu> findAll();
 
     long countByIdIn(List<Long> ids);

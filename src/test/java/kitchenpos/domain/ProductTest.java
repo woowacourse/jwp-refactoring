@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.math.BigDecimal;
-import kitchenpos.exception.InvalidProductException;
+import kitchenpos.exception.InvalidPriceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ class ProductTest {
         @DisplayName("가격이 올바르지 않을 경우 예외가 발생한다.")
         void createPriceFailed(final Long price) {
             assertThatThrownBy(() -> new Product(PRODUCT1_NAME, BigDecimal.valueOf(price)))
-                    .isInstanceOf(InvalidProductException.class);
+                    .isInstanceOf(InvalidPriceException.class);
         }
 
         @Test

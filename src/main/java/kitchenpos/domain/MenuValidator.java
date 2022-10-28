@@ -19,20 +19,39 @@ public class MenuValidator {
         this.productRepository = productRepository;
     }
 
-    public void validate(final Long menuGroupId, final MenuProducts menuProducts, final BigDecimal price) {
+    public void validate(final Long menuGroupId, final List<MenuProduct> menuProducts, final BigDecimal price) {
+        validateMenuGroupExists(menuGroupId);
+        List<Product> products = getProducts(menuProducts);
+        validateProductExists(menuProducts, products);
+        validatePrice(menuProducts, price, products);
+    }
+
+    private void validateMenuGroupExists(final Long menuGroupId) {
         if (!menuGroupRepository.existsById(menuGroupId)) {
             throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
         }
+    }
 
-        List<Product> products = productRepository.findAllByIdIn(menuProducts.getProductIds());
+    private List<Product> getProducts(final List<MenuProduct> menuProducts) {
+        List<Long> productIds = menuProducts.stream()
+                .map(MenuProduct::getProductId)
+                .toList();
+        List<Product> products = productRepository.findAllByIdIn(productIds);
+        return products;
+    }
+
+    private void validateProductExists(final List<MenuProduct> menuProducts, final List<Product> products) {
         if (products.size() != menuProducts.size()) {
             throw new IllegalArgumentException("제품이 존재하지 않습니다.");
         }
+    }
 
+    private void validatePrice(final List<MenuProduct> menuProducts, final BigDecimal price,
+                               final List<Product> products) {
         Map<Long, BigDecimal> prices = products.stream()
                 .collect(Collectors.toMap(Product::getId, Product::getPrice));
 
-        BigDecimal totalPrice = menuProducts.getValues().stream()
+        BigDecimal totalPrice = menuProducts.stream()
                 .map(menuProduct -> BigDecimal.valueOf(menuProduct.getQuantity())
                         .multiply(prices.get(menuProduct.getProductId())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);

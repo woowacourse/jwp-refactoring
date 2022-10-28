@@ -5,7 +5,6 @@ import kitchenpos.application.dto.request.MenuCommand;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.MenuValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,13 +22,12 @@ public class MenuService {
     }
 
     public MenuResponse create(final MenuCommand menuCommand) {
-        Menu menu = menuCommand.toEntity();
-        MenuProducts menuProducts = menuCommand.toMenuProducts();
-        menuValidator.validate(menu.getMenuGroupId(), menuProducts, menu.getPrice());
-        Menu savedMenu = menuRepository.save(menu);
-        savedMenu.addMenuProducts(menuProducts);
-        menuRepository.flush();
-        return MenuResponse.from(menuRepository.findById(savedMenu.getId()).orElseThrow());
+        Menu menu = Menu.create(menuCommand.name(),
+                menuCommand.price(),
+                menuCommand.menuGroupId(),
+                menuCommand.toRawMenuProducts(),
+                menuValidator);
+        return MenuResponse.from(menuRepository.save(menu));
     }
 
     @Transactional(readOnly = true)

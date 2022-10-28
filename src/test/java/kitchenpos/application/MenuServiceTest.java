@@ -18,7 +18,9 @@ import kitchenpos.application.dto.request.MenuCommand;
 import kitchenpos.application.dto.request.MenuProductCommand;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductRepository;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.support.cleaner.ApplicationTest;
@@ -32,6 +34,9 @@ class MenuServiceTest {
 
     @Autowired
     private MenuService menuService;
+
+    @Autowired
+    private MenuRepository menuRepository;
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;
@@ -98,11 +103,12 @@ class MenuServiceTest {
                     List.of(new MenuProductCommand(product.getId(), 1)));
 
             MenuResponse menuResponse = menuService.create(menuCommand);
+            Menu menu = menuRepository.findById(menuResponse.id()).orElseThrow();
 
             assertAll(
-                    () -> assertThat(menuResponse.id()).isNotNull(),
-                    () -> assertThat(menuResponse.menuProductResponses().get(0).seq()).isNotNull(),
-                    () -> assertThat(menuResponse.menuProductResponses().get(0).menuId()).isEqualTo(menuResponse.id())
+                    () -> assertThat(menu.getId()).isNotNull(),
+                    () -> assertThat(menu.getMenuProducts().get(0).getSeq()).isNotNull(),
+                    () -> assertThat(menu.getMenuProducts().get(0).getMenuId()).isNotNull()
             );
         }
     }

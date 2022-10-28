@@ -11,7 +11,7 @@ public record MenuResponse(Long id,
                            List<MenuProductResponse> menuProductResponses) {
 
     public static MenuResponse from(final Menu menu) {
-        List<MenuProductResponse> menuProductResponses = menu.getMenuProducts().getValues()
+        List<MenuProductResponse> menuProductResponses = menu.getMenuProducts()
                 .stream()
                 .map(MenuProductResponse::from)
                 .toList();

@@ -3,6 +3,7 @@ package kitchenpos.application.dto.request;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProducts;
 
 public record MenuCommand(String name,
@@ -18,5 +19,11 @@ public record MenuCommand(String name,
         return new MenuProducts(menuProductCommands.stream()
                 .map(MenuProductCommand::toEntity)
                 .toList());
+    }
+
+    public List<MenuProduct> toRawMenuProducts() {
+        return menuProductCommands.stream()
+                .map(MenuProductCommand::toEntity)
+                .toList();
     }
 }

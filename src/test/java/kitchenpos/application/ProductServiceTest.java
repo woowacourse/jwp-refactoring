@@ -13,7 +13,7 @@ import kitchenpos.application.dto.request.ProductCommand;
 import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
-import kitchenpos.exception.InvalidProductException;
+import kitchenpos.exception.InvalidPriceException;
 import kitchenpos.support.cleaner.ApplicationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -41,7 +41,7 @@ class ProductServiceTest {
         void productPriceNegativeFailed(long price) {
             assertThatThrownBy(
                     () -> productService.create(new ProductCommand(PRODUCT1_NAME, BigDecimal.valueOf(price))))
-                    .isInstanceOf(InvalidProductException.class);
+                    .isInstanceOf(InvalidPriceException.class);
         }
 
         @ParameterizedTest

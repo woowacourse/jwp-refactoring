@@ -16,7 +16,7 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @Column(name = "menu_id", length = 20, nullable = false)
+    @Column(name = "menu_id", length = 20)
     private Long menuId;
 
     @Column(name = "product_id", length = 20, nullable = false)

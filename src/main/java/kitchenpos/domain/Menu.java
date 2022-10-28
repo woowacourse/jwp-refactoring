@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import kitchenpos.exception.InvalidMenuException;
 
 @Entity
 @Table(name = "menu")
@@ -20,7 +19,9 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private BigDecimal price;
+
+    @Embedded
+    private Price price;
     private Long menuGroupId;
 
     @Embedded
@@ -28,18 +29,20 @@ public class Menu {
 
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
                 final MenuProducts menuProducts) {
-        validatePrice(price);
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
     }
 
-    private void validatePrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidMenuException("가격은 0보다 커야합니다.");
-        }
+    public static Menu create(final String name,
+                              final BigDecimal price,
+                              final Long menuGroupId,
+                              final List<MenuProduct> menuProducts,
+                              final MenuValidator menuValidator) {
+        menuValidator.validate(menuGroupId, menuProducts, price);
+        return new Menu(null, name, price, menuGroupId, new MenuProducts(menuProducts));
     }
 
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
@@ -71,15 +74,15 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 
     public Long getMenuGroupId() {
         return menuGroupId;
     }
 
-    public MenuProducts getMenuProducts() {
-        return menuProducts;
+    public List<MenuProduct> getMenuProducts() {
+        return menuProducts.getValues();
     }
 
     @Override

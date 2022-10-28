@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    @EntityGraph(attributePaths = {"orderLineItems"}, type = EntityGraphType.LOAD)
+    @EntityGraph(attributePaths = {"orderLineItems.values"}, type = EntityGraphType.LOAD)
     List<Order> findAll();
 
     boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<OrderStatus> orderStatuses);
