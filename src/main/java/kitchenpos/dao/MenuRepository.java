@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
-@Repository
+@Component
 public class MenuRepository implements MenuDao {
 
     private final JdbcTemplateMenuDao menuDao;
@@ -23,15 +23,21 @@ public class MenuRepository implements MenuDao {
         final List<MenuProduct> menuProducts = entity.getMenuProducts();
         final Menu savedMenu = menuDao.save(entity);
 
+        final List<MenuProduct> savedMenuProducts = getMenuProducts(menuProducts, savedMenu);
+        savedMenu.setMenuProducts(savedMenuProducts);
+
+        return savedMenu;
+    }
+
+    private List<MenuProduct> getMenuProducts(final List<MenuProduct> menuProducts, final Menu savedMenu) {
         final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
             menuProduct.setMenuId(menuId);
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
-        savedMenu.setMenuProducts(savedMenuProducts);
 
-        return savedMenu;
+        return savedMenuProducts;
     }
 
     @Override
@@ -51,6 +57,6 @@ public class MenuRepository implements MenuDao {
 
     @Override
     public long countByIdIn(final List<Long> ids) {
-        return 0;
+        return menuDao.countByIdIn(ids);
     }
 }

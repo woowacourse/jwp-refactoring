@@ -57,6 +57,7 @@ public abstract class ServiceTest {
     @Autowired
     protected MenuProductDao menuProductDao;
 
+    @Qualifier("orderRepository")
     @Autowired
     protected OrderDao orderDao;
 

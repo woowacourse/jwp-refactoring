@@ -15,6 +15,7 @@ import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.request.TableGroupRequest.OrderTableId;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.TableGroupResponse;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -26,8 +27,10 @@ public class TableGroupService {
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao,
-                             final TableGroupDao tableGroupDao) {
+    public TableGroupService(
+            @Qualifier("orderRepository") final OrderDao orderDao, final OrderTableDao orderTableDao,
+            final TableGroupDao tableGroupDao
+    ) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;

@@ -96,7 +96,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
     }
 
     private Order toEntity(final ResultSet resultSet) throws SQLException {
-        return new Order(
+        return Order.forEntity(
                 resultSet.getLong(KEY_COLUMN_NAME),
                 resultSet.getLong("order_table_id"),
                 resultSet.getString("order_status"),
