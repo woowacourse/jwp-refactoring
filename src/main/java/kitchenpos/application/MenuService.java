@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.MenuCommand;
@@ -28,12 +29,13 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(MenuCommand menuCommand) {
-        validateExistsMenuGroup(menuCommand.getMenuGroupId());
-        Menu menu = menuRepository.save(
-                new Menu(menuCommand.getName(), menuCommand.getPrice(), menuCommand.getMenuGroupId()));
-        List<MenuProduct> menuProducts = toMenuProducts(menuCommand, menu);
-        menuValidator.validate(menu.getPrice(), menuProducts);
-        menu.addMenuProducts(menuProducts);
+        String name = menuCommand.getName();
+        BigDecimal price = menuCommand.getPrice();
+        long menuGroupId = menuCommand.getMenuGroupId();
+
+        validateExistsMenuGroup(menuGroupId);
+        Menu menu = menuRepository.save(new Menu(name, price, menuGroupId));
+        addMenuProducts(menuCommand, menu);
         return MenuResponse.from(menu);
     }
 
@@ -41,6 +43,12 @@ public class MenuService {
         if (!menuGroupRepository.existsById(menuGroupId)) {
             throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
         }
+    }
+
+    private void addMenuProducts(MenuCommand menuCommand, Menu menu) {
+        List<MenuProduct> menuProducts = toMenuProducts(menuCommand, menu);
+        menuValidator.validate(menu.getPrice(), menuProducts);
+        menu.addMenuProducts(menuProducts);
     }
 
     private List<MenuProduct> toMenuProducts(MenuCommand menuCommand, Menu menu) {
