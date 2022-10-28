@@ -144,7 +144,6 @@ class TableServiceTest extends ServiceTest {
 
     private Order createOrder(OrderTable orderTable) {
         Product product = productRepository.save(new Product("product", new BigDecimal(5000)));
-
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
 
         Menu menu = menuRepository.save(new Menu(

@@ -57,7 +57,7 @@ class OrderTest {
     void completionStatus() {
         // given
         Order order = new Order(orderTable, orderLineItems);
-        order.changeStatus("COMPLETION");
+        order.changeStatus(OrderStatus.COMPLETION.name());
 
         // when, then
         assertThatThrownBy(() -> order.changeStatus("COOKING"))

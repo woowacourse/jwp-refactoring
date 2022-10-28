@@ -29,11 +29,10 @@ class MenuServiceTest extends ServiceTest {
             Product product = createAndSaveProduct();
             MenuGroup menuGroup = createAndSaveMenuGroup();
 
-            CreateMenuRequest menu = createMenuCreateRequest(new BigDecimal(1000), menuGroup.getId(), product.getId(),
-                10L);
+            CreateMenuRequest request = createMenuCreateRequest(menuGroup.getId(), product.getId());
 
             // when
-            Menu savedMenu = menuService.create(menu);
+            Menu savedMenu = menuService.create(request);
 
             // then
             assertThat(savedMenu.getId()).isNotNull();
@@ -45,10 +44,10 @@ class MenuServiceTest extends ServiceTest {
             // given
             Product product = createAndSaveProduct();
 
-            CreateMenuRequest menu = createMenuCreateRequest(new BigDecimal(1000), 0L, product.getId(), 10L);
+            CreateMenuRequest request = createMenuCreateRequest(0L, product.getId());
 
             // when, then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("존재하지 않는 메뉴그룹입니다.");
         }
@@ -59,10 +58,10 @@ class MenuServiceTest extends ServiceTest {
             // given
             MenuGroup menuGroup = createAndSaveMenuGroup();
 
-            CreateMenuRequest menu = createMenuCreateRequest(new BigDecimal(1000), menuGroup.getId(), 0L, 10L);
+            CreateMenuRequest request = createMenuCreateRequest(menuGroup.getId(), 0L);
 
             // when, then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("존재하지 않는 제품입니다.");
         }
@@ -89,18 +88,14 @@ class MenuServiceTest extends ServiceTest {
 
     private MenuGroup createAndSaveMenuGroup() {
         MenuGroup menuGroup = new MenuGroup("menuGroup");
-
         return menuGroupRepository.save(menuGroup);
     }
 
-    private CreateMenuRequest createMenuCreateRequest(BigDecimal price, long menuGroupId,
-        long productId, long quantity) {
-        return new CreateMenuRequest(
-            "name",
-            price,
+    private CreateMenuRequest createMenuCreateRequest(long menuGroupId, long productId) {
+        return new CreateMenuRequest("name", new BigDecimal(1000),
             menuGroupId,
             new ArrayList<CreateMenuProductRequest>() {{
-                add(new CreateMenuProductRequest(productId, quantity));
+                add(new CreateMenuProductRequest(productId, 1L));
             }}
         );
     }

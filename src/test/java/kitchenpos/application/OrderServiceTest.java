@@ -131,9 +131,13 @@ class OrderServiceTest extends ServiceTest {
     private Order createAndSaveOrder() {
         Menu savedMenu = createAndSaveMenu();
         OrderTable savedOrderTable = createAndSaveOrderTable();
-        Order order = new Order(savedOrderTable, new HashMap<Menu, Long>() {{
-            put(savedMenu, 1L);
-        }});
+
+        Order order = new Order(
+            savedOrderTable,
+            new HashMap<Menu, Long>() {{
+                put(savedMenu, 1L);
+            }}
+        );
 
         return orderRepository.save(order);
     }

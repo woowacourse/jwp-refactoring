@@ -60,6 +60,7 @@ public class Order {
         if (Objects.equals(OrderStatus.COMPLETION.name(), orderStatus)) {
             throw new IllegalArgumentException("이미 완료된 주문 상태를 변경할 수 없습니다.");
         }
+
         orderStatus = status;
     }
 
