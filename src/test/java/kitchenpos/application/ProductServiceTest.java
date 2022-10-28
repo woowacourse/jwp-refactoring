@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import javax.transaction.Transactional;
-import kitchenpos.application.dto.ProductRequest;
+import kitchenpos.application.dto.ProductCreateRequest;
 import kitchenpos.application.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ class ProductServiceTest {
     @DisplayName("상품의 가격이 null인 경우 예외가 발생한다")
     @Test
     void null_price_exception() {
-        final ProductRequest request = new ProductRequest("양념", null);
+        final ProductCreateRequest request = new ProductCreateRequest("양념", null);
 
         assertThatThrownBy(() -> productService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -35,7 +35,7 @@ class ProductServiceTest {
     @DisplayName("상품의 가격이 0보다 작은 경우 예외가 발생한다")
     @Test
     void negative_price_exception() {
-        final ProductRequest request = new ProductRequest("양념", BigDecimal.valueOf(-1L));
+        final ProductCreateRequest request = new ProductCreateRequest("양념", BigDecimal.valueOf(-1L));
 
         assertThatThrownBy(() -> productService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -45,7 +45,7 @@ class ProductServiceTest {
     @ValueSource(ints = {0, 1})
     @ParameterizedTest
     void create(final int price) {
-        final ProductRequest request = new ProductRequest("양념", BigDecimal.valueOf(price));
+        final ProductCreateRequest request = new ProductCreateRequest("양념", BigDecimal.valueOf(price));
 
         final ProductResponse createdProduct = productService.create(request);
 

@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import javax.transaction.Transactional;
-import kitchenpos.application.dto.MenuGroupRequest;
+import kitchenpos.application.dto.MenuGroupCreateRequest;
 import kitchenpos.application.dto.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,9 +21,9 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 생성한다")
     @Test
     void create() {
-        final MenuGroupRequest menuGroupRequest = new MenuGroupRequest("반반");
+        final MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest("반반");
 
-        final MenuGroupResponse menuGroupResponse = menuGroupService.create(menuGroupRequest);
+        final MenuGroupResponse menuGroupResponse = menuGroupService.create(menuGroupCreateRequest);
 
         assertThat(menuGroupResponse.getId()).isNotNull();
     }
