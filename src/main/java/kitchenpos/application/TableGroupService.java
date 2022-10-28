@@ -1,85 +1,99 @@
 package kitchenpos.application;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.application.request.OrderTableGroupCreateRequest;
+import kitchenpos.application.request.TableGroupCreateRequest;
 import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
+import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
+
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
-    private final TableGroupDao tableGroupDao;
+    private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
-                             final TableGroupDao tableGroupDao) {
+                             final TableGroupRepository tableGroupRepository) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
-        this.tableGroupDao = tableGroupDao;
+        this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+    public TableGroup create(final TableGroupCreateRequest request) {
+        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
 
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException("OrderTable의 크기가 2 미만입니다.");
-        }
+        final List<OrderTable> orderTablesWithTableGroup = addTableGroup(request, tableGroup);
+        validateSize(orderTablesWithTableGroup);
+        validateDuplicate(request, orderTablesWithTableGroup);
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
-//        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-//
-//        if (orderTables.size() != savedOrderTables.size()) {
-//            throw new IllegalArgumentException("입력받은 OrderTable 중 존재하지 않는 것이 있습니다.");
-//        }
-//
-//        for (final OrderTable savedOrderTable : savedOrderTables) {
-//            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-//                throw new IllegalArgumentException("입력받은 OrderTable 중 상태가 empty가 아니거나 tableGroup이 이미 존재하는 것이 있습니다.");
-//            }
-//        }
-//
-//        tableGroup.setCreatedDate(LocalDateTime.now());
-//
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-//
-//        final Long tableGroupId = savedTableGroup.getId();
-//        for (final OrderTable savedOrderTable : savedOrderTables) {
-//            savedOrderTable.setTableGroupId(tableGroupId);
-//            savedOrderTable.setEmpty(false);
-//            orderTableDao.save(savedOrderTable);
-//        }
-//        savedTableGroup.setOrderTables(savedOrderTables);
-
-        return savedTableGroup;
+        return tableGroup;
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-//        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-//
-//        final List<Long> orderTableIds = orderTables.stream()
-//                .map(OrderTable::getId)
-//                .collect(Collectors.toList());
-//
-////        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-////                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-////            throw new IllegalArgumentException("해당 TableGroup의 Order 중 완료되지 않은 것이 존재합니다.");
-////        }
-//
-//        for (final OrderTable orderTable : orderTables) {
-//            orderTable.setTableGroupId(null);
-//            orderTable.setEmpty(false);
-//            orderTableDao.save(orderTable);
-//        }
+        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+
+        final List<Long> orderTableIds = getOrderTableIds(orderTables);
+        validateOrderStatus(orderTableIds);
+
+        ungroupOrderTables(orderTables);
+    }
+
+    private OrderTable toOrderTable(final long orderId, final TableGroup tableGroup) {
+        final OrderTable orderTable = orderTableRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 OrderTable이 존재하지 않습니다."));
+        orderTable.addTableGroup(tableGroup.getId());
+        return orderTable;
+    }
+
+    private List<OrderTable> addTableGroup(final TableGroupCreateRequest request, final TableGroup tableGroup) {
+        return request.getOrderTables()
+                .stream()
+                .map(OrderTableGroupCreateRequest::getId)
+                .distinct()
+                .map(it -> toOrderTable(it, tableGroup))
+                .collect(Collectors.toList());
+    }
+
+    private void validateSize(final List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+            throw new IllegalArgumentException("OrderTable의 크기가 2 미만입니다.");
+        }
+    }
+
+    private void validateDuplicate(final TableGroupCreateRequest request, final List<OrderTable> orderTables) {
+        if (request.getOrderTables().size() != orderTables.size()) {
+            throw new IllegalArgumentException("입력받은 OrderTable 중 존재하지 않는 것이 있습니다.");
+        }
+    }
+
+    private static List<Long> getOrderTableIds(final List<OrderTable> orderTables) {
+        return orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+    }
+
+    private void validateOrderStatus(final List<Long> orderTableIds) {
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+            throw new IllegalArgumentException("해당 TableGroup의 Order 중 완료되지 않은 것이 존재합니다.");
+        }
+    }
+
+    private void ungroupOrderTables(final List<OrderTable> orderTables) {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.deleteTableGroup();
+        }
     }
 }

@@ -56,4 +56,17 @@ public class OrderTable {
         }
         this.numberOfGuests = numberOfGuests;
     }
+
+    public void addTableGroup(final long tableGroupId) {
+        if (!empty || Objects.nonNull(this.tableGroupId)) {
+            throw new IllegalStateException("상태가 empty가 아니거나 tableGroup이 이미 존재합니다.");
+        }
+        this.tableGroupId = tableGroupId;
+        this.empty = false;
+    }
+
+    public void deleteTableGroup() {
+        this.tableGroupId = null;
+        this.empty = false;
+    }
 }
