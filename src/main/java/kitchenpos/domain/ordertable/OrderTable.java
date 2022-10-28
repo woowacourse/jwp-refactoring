@@ -45,7 +45,7 @@ public class OrderTable {
 
     public void changeEmpty(final boolean empty) {
         if (Objects.nonNull(tableGroupId)) {
-            throw new IllegalStateException("해당 OrderTable이 이미 TableGroup에 속해있습니다.");
+            throw new IllegalStateException("OrderTable이 이미 TableGroup에 속해있습니다.");
         }
         this.empty = empty;
     }
