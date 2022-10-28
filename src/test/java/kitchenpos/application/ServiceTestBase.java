@@ -62,22 +62,10 @@ public abstract class ServiceTestBase {
     @Autowired
     protected TableGroupDao tableGroupDao;
 
-    protected Product 상품_등록(String name, int price) {
-        Product product = new Product(name, BigDecimal.valueOf(price));
-
-        return product;
-    }
-
     protected ProductRequest createProductRequest(String name, int price) {
         ProductRequest product = new ProductRequest(name, BigDecimal.valueOf(price));
 
         return product;
-    }
-
-    protected Menu 메뉴_등록(final String name, final BigDecimal price, final Long menuGroupId) {
-        Menu menu = new Menu(name, price, menuGroupId);
-
-        return menu;
     }
 
     protected MenuRequest createMenuRequest(final String name, final BigDecimal price,
@@ -91,15 +79,6 @@ public abstract class ServiceTestBase {
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setMenuId(menu.getId());
         menuProduct.setProductId(product.getId());
-        menuProduct.setQuantity(quantity);
-
-        return menuProduct;
-    }
-
-    protected MenuProduct 메뉴_상품_생성(Long menuId, Long productId, long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
         menuProduct.setQuantity(quantity);
 
         return menuProduct;
@@ -119,13 +98,6 @@ public abstract class ServiceTestBase {
         orderTable.setNumberOfGuests(0);
 
         return orderTable;
-    }
-
-    protected Order 주문_생성(final Long orderTableId) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-
-        return order;
     }
 
     protected Order 주문_생성(final OrderTable orderTable) {
