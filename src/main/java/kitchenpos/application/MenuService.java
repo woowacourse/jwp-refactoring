@@ -62,12 +62,11 @@ public class MenuService {
         final Menu savedMenu = menuRepository.save(menu);
 
         final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
             menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductRepository.save(menuProduct));
+            final MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
+            savedMenu.addProduct(savedMenuProduct);
         }
-        savedMenu.bringMenuProducts(savedMenuProducts);
 
         return savedMenu;
     }
@@ -76,7 +75,8 @@ public class MenuService {
         final List<Menu> menus = menuRepository.findAll();
 
         for (final Menu menu : menus) {
-            menu.bringMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
+            final List<MenuProduct> menuProducts = menuProductRepository.findAllByMenuId(menu.getId());
+            menuProducts.forEach(menu::addProduct);
         }
 
         return menus;

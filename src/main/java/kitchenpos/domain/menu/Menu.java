@@ -54,6 +54,10 @@ public class Menu {
         addProduct(productId, 1);
     }
 
+    public void addProduct(final MenuProduct menuProduct) {
+        addProduct(menuProduct.getProductId(), menuProduct.getQuantity());
+    }
+
     public Long getId() {
         return id;
     }

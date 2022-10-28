@@ -77,8 +77,7 @@ public class OrderService {
 
         for (final Order order : orders) {
             final List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(order.getId());
-            orderLineItems
-                    .forEach(orderLineItem -> order.addMenu(orderLineItem.getMenuId(), orderLineItem.getQuantity()));
+            orderLineItems.forEach(order::addMenu);
         }
 
         return orders;
@@ -99,7 +98,7 @@ public class OrderService {
         orderRepository.save(savedOrder);
 
         final List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(orderId);
-        orderLineItems.forEach(orderLineItem -> savedOrder.addMenu(orderLineItem.getMenuId(), orderLineItem.getQuantity()));
+        orderLineItems.forEach(savedOrder::addMenu);
 
         return savedOrder;
     }
