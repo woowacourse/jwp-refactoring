@@ -8,12 +8,20 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.MenuCreateRequest;
 import kitchenpos.ui.dto.MenuGroupCreateRequest;
 import kitchenpos.ui.dto.MenuProductCreateRequest;
+import kitchenpos.ui.dto.OrderCreateRequest;
+import kitchenpos.ui.dto.OrderLineItemRequest;
+import kitchenpos.ui.dto.OrderTableRequest;
+import kitchenpos.ui.dto.TableCreateRequest;
+import kitchenpos.ui.dto.TableGroupCreateRequest;
+import kitchenpos.ui.dto.TableUpdateEmptyRequest;
+import kitchenpos.ui.dto.TableUpdateGuestNumberRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class TestFixtures {
@@ -55,30 +63,41 @@ public class TestFixtures {
         return new MenuProductCreateRequest(1L, quantity);
     }
 
-    public static Order 주문_생성(final Long orderTableId, final String orderStatus,
-                              final LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(orderedTime);
-        order.setOrderLineItems(orderLineItems);
-        return order;
+    public static Order 주문_생성(final OrderTable orderTable,
+                              final OrderStatus orderStatus,
+                              final LocalDateTime orderedTime,
+                              final List<OrderLineItem> orderLineItems) {
+        return new Order(orderTable, orderStatus, orderedTime, orderLineItems);
     }
 
-    public static OrderLineItem 주문_항목_생성(final Long orderId, final Long menuId, final long quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-        return orderLineItem;
+    public static OrderCreateRequest 주문_생성_요청(final Long orderTableId,
+                                              final List<OrderLineItemRequest> orderLineItemRequests) {
+        return new OrderCreateRequest(orderTableId, orderLineItemRequests);
     }
 
-    public static OrderTable 주문_테이블_생성(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+    public static OrderLineItemRequest 주문_항목_요청(final Long menuId, final Long quantity) {
+        return new OrderLineItemRequest(menuId, quantity);
+    }
+
+    public static OrderLineItem 주문_항목_생성(final Long menuId, final long quantity) {
+        return new OrderLineItem(menuId, quantity);
+    }
+
+    public static OrderTable 주문_테이블_생성(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+        return new OrderTable(tableGroup, numberOfGuests, empty);
+    }
+
+    public static TableUpdateEmptyRequest 주문_테이블_Empty_변경_요청(final boolean empty) {
+        return new TableUpdateEmptyRequest(empty);
+    }
+
+    public static TableUpdateGuestNumberRequest 주문_테이블_손님_수_변경_요청(final int numberOfGuests) {
+        return new TableUpdateGuestNumberRequest(numberOfGuests);
+    }
+
+
+    public static TableCreateRequest 주문_테이블_생성_요청(final int numberOfGuests, final boolean empty) {
+        return new TableCreateRequest(numberOfGuests, empty);
     }
 
     public static TableGroup 단체_지정_생성(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
@@ -86,5 +105,13 @@ public class TestFixtures {
         tableGroup.setCreatedDate(createdDate);
         tableGroup.setOrderTables(orderTables);
         return tableGroup;
+    }
+
+    public static TableGroupCreateRequest 단체_지정_생성_요청(final List<OrderTableRequest> orderTableRequests) {
+        return new TableGroupCreateRequest(orderTableRequests);
+    }
+
+    public static OrderTableRequest 주문_테이블_요청(final Long id) {
+        return new OrderTableRequest(id);
     }
 }
