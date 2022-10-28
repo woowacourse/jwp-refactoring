@@ -18,8 +18,7 @@ public class TableGroup {
     @Column(name = "table_group_id")
     private Long id;
 
-    @OneToMany
-    @JoinColumn(name = "tableGroup")
+    @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables = new ArrayList<>();
 
     protected TableGroup() {
