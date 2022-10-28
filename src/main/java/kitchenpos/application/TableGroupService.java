@@ -66,12 +66,16 @@ public class TableGroupService {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
         final List<Long> orderTableIds = getOrderTablesIds(orderTables);
 
+        validateIsPossibleOrderStatus(orderTableIds);
+
+        splitOrderTables(orderTables);
+    }
+
+    private void validateIsPossibleOrderStatus(List<Long> orderTableIds) {
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException("주문 상태가 요리중이거나 먹는중 상태면 테이블을 분리할 수 없습니다.");
         }
-
-        splitOrderTables(orderTables);
     }
 
     private List<Long> getOrderTablesIds(List<OrderTable> orderTables) {

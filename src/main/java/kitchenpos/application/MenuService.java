@@ -38,8 +38,8 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuCreateRequest dto) {
         final List<MenuProduct> menuProducts = dto.getMenuProducts();
-        isExistGroupId(dto);
-        isLessThanTotalPrice(menuProducts, dto.getPrice());
+        validateIsExistGroup(dto);
+        validateLessThanTotalPrice(menuProducts, dto.getPrice());
 
         final Menu menu = new Menu(dto.getName(), dto.getPrice(), dto.getMenuGroupId(), dto.getMenuProducts());
         final Menu savedMenu = menuDao.save(menu);
@@ -63,7 +63,7 @@ public class MenuService {
         return savedMenuProducts;
     }
 
-    private void isLessThanTotalPrice(List<MenuProduct> menuProducts, BigDecimal price) {
+    private void validateLessThanTotalPrice(List<MenuProduct> menuProducts, BigDecimal price) {
         if (price.compareTo(getMaxPrice(menuProducts)) > 0) {
             throw new IllegalArgumentException("메뉴 가격은 상품 각각의 총 가격보다 클 수 없습니다.");
         }
@@ -80,7 +80,7 @@ public class MenuService {
         return sum;
     }
 
-    private void isExistGroupId(MenuCreateRequest dto) {
+    private void validateIsExistGroup(MenuCreateRequest dto) {
         if (!menuGroupDao.existsById(dto.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }

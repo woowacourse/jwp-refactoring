@@ -68,10 +68,14 @@ public class OrderService {
         final List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
+        validateIsCorrectOrderLineItemSize(orderLineItems, menuIds);
+        return orderLineItems;
+    }
+
+    private void validateIsCorrectOrderLineItemSize(List<OrderLineItem> orderLineItems, List<Long> menuIds) {
         if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
-        return orderLineItems;
     }
 
     private Long findOrderTableId(Long orderTableId) {
