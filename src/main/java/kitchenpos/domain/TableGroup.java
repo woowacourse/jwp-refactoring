@@ -81,7 +81,7 @@ public class TableGroup {
         }
     }
 
-    public void unGroupOrderTables() {
+    public void ungroupOrderTables() {
         for (final OrderTable orderTable : orderTables) {
             orderTable.ungroup();
         }

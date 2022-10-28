@@ -51,7 +51,7 @@ public class TableGroupService {
 
         validateOrdersNotCompletion(orderTableIds);
 
-        tableGroup.unGroupOrderTables();
+        tableGroup.ungroupOrderTables();
     }
 
     private void validateOrdersNotCompletion(final List<Long> orderTableIds) {
