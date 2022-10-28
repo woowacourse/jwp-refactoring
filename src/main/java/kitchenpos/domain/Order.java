@@ -47,6 +47,9 @@ public class Order {
     }
 
     public static Order newOrder(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("주문테이블이 주문을 받을수 없는 상태입니다.");
+        }
         return new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), new ArrayList<>());
     }
 
@@ -54,40 +57,20 @@ public class Order {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public OrderTable getOrderTable() {
         return orderTable;
     }
-
-//    public void setOrderTableId(final Long orderTableId) {
-//        this.orderTableId = orderTableId;
-//    }
 
     public String getOrderStatus() {
         return orderStatus.name();
     }
 
-//    public void setOrderStatus(final String orderStatus) {
-//        this.orderStatus = orderStatus;
-//    }
-
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
-//
-//    public void setOrderedTime(final LocalDateTime orderedTime) {
-//        this.orderedTime = orderedTime;
-//    }
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 
     public void changeOrderLineItems(List<OrderLineItem> orderLineItems) {

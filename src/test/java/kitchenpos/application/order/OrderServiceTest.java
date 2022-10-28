@@ -103,8 +103,11 @@ class OrderServiceTest extends IntegrationTest {
         @DisplayName("저장된 주문상태가 계산완료이면 예외가 발생한다.")
         @Test
         void changeOrderStatus_Exception_CompletionStatus() {
-            final Long savedOrderId = orderDao.save(
-                    new Order(nonEmptyOrderTable, OrderStatus.COMPLETION, LocalDateTime.now(), List.of(orderLineItem))).getId();
+            final Order order = new Order(nonEmptyOrderTable, OrderStatus.COMPLETION, LocalDateTime.now(),
+                    Collections.emptyList());
+            final OrderLineItem orderLineItem = new OrderLineItem(order, menu, 1L);
+            order.changeOrderLineItems(List.of(orderLineItem));
+            final Long savedOrderId = orderDao.save(order).getId();
             final ChangeOrderStatusRequest changeOrderStatusRequest = new ChangeOrderStatusRequest(
                     OrderStatus.MEAL.name());
 

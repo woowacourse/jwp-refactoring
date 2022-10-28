@@ -36,7 +36,6 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
         final List<OrderLineItemRequest> orderLineItemRequests = orderRequest.getOrderLineItems();
-
         if (CollectionUtils.isEmpty(orderLineItemRequests)) {
             throw new IllegalArgumentException("주문메뉴가 존재하지 않습니다.");
         }
@@ -52,9 +51,6 @@ public class OrderService {
         final OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("주문테이블이 존재하지 않습니다."));
 
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("주문테이블이 주문을 받을수 없는 상태입니다.");
-        }
         final Order order = Order.newOrder(orderTable);
 
         final List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
