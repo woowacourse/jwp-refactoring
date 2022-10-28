@@ -13,6 +13,4 @@ public interface MenuProductRepository extends Repository<MenuProduct, Long> {
     Optional<MenuProduct> findBySeq(Long id);
 
     List<MenuProduct> findAll();
-
-    List<MenuProduct> findAllByMenuId(Long menuId);
 }

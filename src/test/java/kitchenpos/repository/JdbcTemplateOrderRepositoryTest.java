@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityManager;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -18,8 +19,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@DataJdbcTest
+@DataJpaTest
 class JdbcTemplateOrderRepositoryTest {
 
     private final OrderRepository orderRepository;
@@ -32,7 +34,7 @@ class JdbcTemplateOrderRepositoryTest {
     @Test
     void 저장한다() {
         // given
-        Order order = order_객체를_생성한다(1L, COOKING, LocalDateTime.now(), new ArrayList<>());
+        Order order = order_객체를_생성한다(1L, COOKING, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L)));
 
         // when
         Order savedOrder = orderRepository.save(order);
@@ -49,30 +51,30 @@ class JdbcTemplateOrderRepositoryTest {
                                  final LocalDateTime orderedTime,
                                  final List<OrderLineItem> orderLineItems) {
         return new Order(orderTableId, orderStatus, orderedTime, orderLineItems);
-
     }
 
     @Test
-    void 이미_ID가_존재하면_update를_진행한다() {
+    void 이미_ID가_존재하면_update를_진행한다(@Autowired EntityManager entityManager) {
         // given
-        Order order = order_객체를_생성한다(1L, COOKING, LocalDateTime.now(), new ArrayList<>());
+        Order order = order_객체를_생성한다(1L, COOKING, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L)));
         Order savedOrder = orderRepository.save(order);
 
         // when
         savedOrder.changeOrderStatus(MEAL);
-        Order updatedOrder = orderRepository.save(savedOrder);
+        entityManager.flush();
+//        Order updatedOrder = orderRepository.save(savedOrder);
 
         // then
         Assertions.assertAll(
-                () -> assertThat(updatedOrder.getId()).isEqualTo(savedOrder.getId()),
-                () -> assertThat(updatedOrder.getOrderStatus()).isEqualTo(MEAL.name())
+                () -> assertThat(savedOrder.getId()).isEqualTo(savedOrder.getId()),
+                () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(MEAL)
         );
     }
 
     @Test
     void ID로_order를_조회한다() {
         // given
-        Order order = order_객체를_생성한다(1L, COOKING, LocalDateTime.now(), new ArrayList<>());
+        Order order = order_객체를_생성한다(1L, COOKING, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L)));
         Order savedOrder = orderRepository.save(order);
 
         // when
@@ -105,7 +107,7 @@ class JdbcTemplateOrderRepositoryTest {
     @Test
     void order_목록을_조회한다() {
         // given
-        Order order = order_객체를_생성한다(1L, COOKING, LocalDateTime.now(), new ArrayList<>());
+        Order order = order_객체를_생성한다(1L, COOKING, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L)));
         Order savedOrder = orderRepository.save(order);
 
         // when
@@ -134,13 +136,13 @@ class JdbcTemplateOrderRepositoryTest {
     void order_status들과_order_table_id에_맞는_order가_있는지_확인한다(OrderStatus orderStatus1, OrderStatus orderStatus2,
                                                            boolean expected) {
         // given
-        Order order1 = order_객체를_생성한다(1L, orderStatus1, LocalDateTime.now(), new ArrayList<>());
-        Order order2 = order_객체를_생성한다(1L, orderStatus2, LocalDateTime.now(), new ArrayList<>());
+        Order order1 = order_객체를_생성한다(1L, orderStatus1, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L)));
+        Order order2 = order_객체를_생성한다(1L, orderStatus2, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L)));
         orderRepository.save(order1);
         orderRepository.save(order2);
 
         // when
-        boolean actual = orderRepository.existsByOrderTableIdAndOrderStatusIn(1L, Arrays.asList("COOKING", "MEAL"));
+        boolean actual = orderRepository.existsByOrderTableIdAndOrderStatusIn(1L, Arrays.asList(COOKING, MEAL));
 
         // then
         assertThat(actual).isEqualTo(expected);
@@ -162,14 +164,14 @@ class JdbcTemplateOrderRepositoryTest {
             boolean expected
     ) {
         // given
-        Order order1 = order_객체를_생성한다(orderTableId1, orderStatus1, LocalDateTime.now(), new ArrayList<>());
-        Order order2 = order_객체를_생성한다(orderTableId2, orderStatus2, LocalDateTime.now(), new ArrayList<>());
+        Order order1 = order_객체를_생성한다(orderTableId1, orderStatus1, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L)));
+        Order order2 = order_객체를_생성한다(orderTableId2, orderStatus2, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L)));
         orderRepository.save(order1);
         orderRepository.save(order2);
 
         // when
         boolean actual = orderRepository.existsByOrderTableIdInAndOrderStatusIn(Arrays.asList(1L, 2L),
-                Arrays.asList("COOKING", "MEAL"));
+                Arrays.asList(COOKING, MEAL));
 
         // then
         assertThat(actual).isEqualTo(expected);
@@ -181,7 +183,8 @@ class JdbcTemplateOrderRepositoryTest {
         Long menuId = 1L;
         Long quantity = 3L;
         OrderLineItem orderLineItem = new OrderLineItem(menuId, quantity);
-        order_객체를_생성한다(1L, COOKING, LocalDateTime.now(), Arrays.asList(orderLineItem));
+        Order order = order_객체를_생성한다(1L, COOKING, LocalDateTime.now(), Arrays.asList(orderLineItem));
+        orderRepository.save(order);
 
         // when
         List<Order> orders = orderRepository.findAllWithOrderLineItems();

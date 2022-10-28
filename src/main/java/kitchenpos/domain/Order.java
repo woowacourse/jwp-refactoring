@@ -4,12 +4,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.springframework.util.CollectionUtils;
@@ -27,7 +29,8 @@ public class Order {
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "order_id", updatable = false, nullable = false)
     private List<OrderLineItem> orderLineItems;
 
     public Order() {
@@ -81,7 +84,7 @@ public class Order {
     }
 
     public void changeOrderStatus(final OrderStatus status) {
-        if (status.isCompleted()) {
+        if (this.orderStatus.isCompleted()) {
             throw new IllegalArgumentException();
         }
 

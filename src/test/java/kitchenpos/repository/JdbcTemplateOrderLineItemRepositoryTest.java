@@ -2,6 +2,7 @@ package kitchenpos.repository;
 
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.tuple;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,8 +16,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@DataJdbcTest
+@DataJpaTest
 class JdbcTemplateOrderLineItemRepositoryTest {
 
     private final OrderLineItemRepository orderLineItemRepository;
@@ -38,7 +40,7 @@ class JdbcTemplateOrderLineItemRepositoryTest {
                 1L,
                 COOKING,
                 LocalDateTime.now(),
-                new ArrayList<>()
+                Arrays.asList(new OrderLineItem(1L, 3L))
         )).getId();
     }
 
@@ -54,15 +56,14 @@ class JdbcTemplateOrderLineItemRepositoryTest {
         Assertions.assertAll(
                 () -> assertThat(savedOrderLineItem.getSeq()).isNotNull(),
                 () -> assertThat(savedOrderLineItem.getQuantity()).isEqualTo(1L),
-                () -> assertThat(savedOrderLineItem.getMenuId()).isEqualTo(1L),
-                () -> assertThat(savedOrderLineItem.getOrderId()).isEqualTo(orderId)
+                () -> assertThat(savedOrderLineItem.getMenuId()).isEqualTo(1L)
         );
     }
 
     @Test
     void ID로_조회한다() {
         //before
-        orderRepository.save(new Order(null, 1L, COOKING, LocalDateTime.now(), new ArrayList<>()));
+        orderRepository.save(new Order(null, 1L, COOKING, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L))));
 
         // given
         OrderLineItem orderLineItem = new OrderLineItem(orderId, 1L, 1L);
@@ -97,42 +98,8 @@ class JdbcTemplateOrderLineItemRepositoryTest {
 
     @Test
     void 목록을_조회한다() {
-        // given
-        OrderLineItem orderLineItem1 = new OrderLineItem(orderId, 1L, 1L);
-        orderLineItemRepository.save(orderLineItem1);
-
-        OrderLineItem orderLineItem2 = new OrderLineItem(orderId, 2L, 3L);
-        orderLineItemRepository.save(orderLineItem2);
-
-        // when
         List<OrderLineItem> orderLineItems = orderLineItemRepository.findAll();
-
-        // then
-        assertThat(orderLineItems).hasSize(2)
-                .usingRecursiveComparison()
-                .ignoringFields("seq")
-                .isEqualTo(
-                        Arrays.asList(
-                                orderLineItem1, orderLineItem2
-                        )
-                );
-    }
-
-    @Test
-    void order_id로_조회한다() {
-        // given
-        OrderLineItem orderLineItem = new OrderLineItem(orderId, 1L, 1L);
-        orderLineItemRepository.save(orderLineItem);
-
-        // when
-        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(orderId);
-
-        // then
         assertThat(orderLineItems).hasSize(1)
-                .usingRecursiveComparison()
-                .ignoringFields("seq")
-                .isEqualTo(
-                        Arrays.asList(orderLineItem)
-                );
-    }
+                .extracting("menuId", "quantity")
+                .contains(tuple(1L, 3L));}
 }

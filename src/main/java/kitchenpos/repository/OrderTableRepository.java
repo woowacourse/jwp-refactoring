@@ -1,5 +1,6 @@
 package kitchenpos.repository;
 
+import java.util.Collection;
 import kitchenpos.domain.OrderTable;
 
 import java.util.List;
@@ -23,5 +24,5 @@ public interface OrderTableRepository extends Repository<OrderTable, Long> {
     @Query("SELECT ot FROM OrderTable ot WHERE ot.id IN :ids")
     List<OrderTable> findAllByOrderTableIdsIn(@Param("ids") List<Long> orderTableIds);
 
-    int saveAll(List<OrderTable> orderTables);
+    void saveAll(Iterable<OrderTable> orderTables);
 }

@@ -5,8 +5,8 @@ import kitchenpos.application.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.application.dto.request.OrderTableChangeStatusRequest;
 import kitchenpos.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
@@ -18,21 +18,21 @@ import java.util.Objects;
 
 @Service
 public class TableService {
-    private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
+        this.orderRepository = orderRepository;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public OrderTableResponse create(final OrderTableCreateRequest request) {
-        return OrderTableResponse.from(orderTableDao.save(request.toOrderTable()));
+        return OrderTableResponse.from(orderTableRepository.save(request.toOrderTable()));
     }
 
     public List<OrderTableResponse> list() {
-        List<OrderTable> orderTables = orderTableDao.findAll();
+        List<OrderTable> orderTables = orderTableRepository.findAll();
         return orderTables.stream()
                 .map(OrderTableResponse::from)
                 .collect(Collectors.toList());
@@ -40,35 +40,28 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeStatusRequest request) {
-        final OrderTable savedOrderTable = getOrderTableById(orderTableId);
+        final OrderTable orderTable = getOrderTableById(orderTableId);
 
         validateCompletionStatus(orderTableId);
-        savedOrderTable.setEmpty(request.isEmpty());
-
-        return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
+        orderTable.changeEmpty(request.isEmpty());
+        orderTableRepository.save(orderTable);
+        return OrderTableResponse.from(orderTableRepository.save(orderTable));
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableChangeNumberOfGuestsRequest request) {
         final int numberOfGuests = request.getNumberOfGuests();
-        validateNumberOfGuests(numberOfGuests);
 
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        validateOrderTableEmpty(savedOrderTable);
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
-        return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
-    }
-
-    private void validateNumberOfGuests(final int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderTableEmpty(orderTable);
+        orderTable.changeNumberOfGuests(numberOfGuests);
+        orderTableRepository.save(orderTable);
+        return OrderTableResponse.from(orderTableRepository.save(orderTable));
     }
 
     private OrderTable getOrderTableById(final Long orderTableId) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
@@ -78,8 +71,8 @@ public class TableService {
     }
 
     private void validateCompletionStatus(final Long orderTableId) {
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
+                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
     }

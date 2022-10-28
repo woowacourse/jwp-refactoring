@@ -9,11 +9,13 @@ import java.util.Optional;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@DataJdbcTest
+@DataJpaTest
 class JdbcTemplateOrderTableRepositoryTest {
 
     private final OrderTableRepository orderTableRepository;
@@ -30,6 +32,11 @@ class JdbcTemplateOrderTableRepositoryTest {
         this.tableGroupRepository = tableGroupRepository;
     }
 
+    @BeforeEach
+    void setup() {
+        TableGroup tableGroup = new TableGroup(null, LocalDateTime.now());
+        tableGroupId = tableGroupRepository.save(tableGroup).getId();
+    }
     @Test
     void 저장한다() {
         // given
@@ -73,6 +80,7 @@ class JdbcTemplateOrderTableRepositoryTest {
     void ID로_조회한다() {
         // given
         OrderTable orderTable = order_table을_생성한다(tableGroupId, numberOfGuests, empty);
+        orderTableRepository.save(orderTable);
 
         // when
         Optional<OrderTable> foundOrderTable = orderTableRepository.findById(orderTable.getId());
@@ -145,10 +153,6 @@ class JdbcTemplateOrderTableRepositoryTest {
 
     @Test
     void table_group_id로_조회할_수_있다() {
-        // before
-        TableGroup tableGroup = new TableGroup(null, LocalDateTime.now());
-        Long tableGroupId = tableGroupRepository.save(tableGroup).getId();
-
         // given
         OrderTable orderTable = order_table을_생성한다(tableGroupId, 10, true);
         orderTableRepository.save(orderTable);
@@ -168,7 +172,7 @@ class JdbcTemplateOrderTableRepositoryTest {
         List<OrderTable> orderTables = orderTableRepository.findAllByOrderTableIdsIn(Arrays.asList(1L, 2L, 9L));
 
         // then
-        assertThat(orderTables).hasSize(3);
+        assertThat(orderTables).hasSize(2);
     }
 
     @Test
@@ -178,9 +182,9 @@ class JdbcTemplateOrderTableRepositoryTest {
         OrderTable orderTable2 = order_table을_생성한다(tableGroupId, 7, empty);
 
         // when
-        int affectedQueryCount = orderTableRepository.saveAll(Arrays.asList(orderTable, orderTable2));
-
+        orderTableRepository.saveAll(Arrays.asList(orderTable, orderTable2));
+        List<OrderTable> orderTables = orderTableRepository.findAll();
         // then
-        assertThat(affectedQueryCount).isEqualTo(2);
+        assertThat(orderTables).hasSize(10);
     }
 }

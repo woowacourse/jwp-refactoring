@@ -6,9 +6,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.application.dto.request.MenuProductDto;
 
@@ -21,7 +23,8 @@ public class Menu {
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_id", updatable = false, nullable = false)
     private List<MenuProduct> menuProducts;
 
     public Menu() {

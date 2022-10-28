@@ -52,7 +52,7 @@ class MenuServiceTest {
 
         private final BigDecimal price = BigDecimal.valueOf(13000);
         private final Long menuGroupId = 11L;
-        private final MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L, 10L);
+        private final MenuProduct menuProduct = new MenuProduct(1L, 1L, 10L);
         private final List<MenuProduct> menuProducts = Arrays.asList(menuProduct);
 
         @Test
@@ -63,7 +63,6 @@ class MenuServiceTest {
             when(menuGroupDao.existsById(any(Long.class))).thenReturn(true);
             when(productDao.findById(any(Long.class))).thenReturn(
                     Optional.of(new Product(1L, "pasta", BigDecimal.valueOf(13000))));
-            when(menuProductDao.save(any(MenuProduct.class))).thenReturn(menuProduct);
 
             // when
             MenuResponse response = menuService.create(request);
@@ -121,7 +120,7 @@ class MenuServiceTest {
         void 상품이_존재하지_않으면_예외를_반환한다() {
             // given
             Long notExistProductId = 1001L;
-            MenuProduct menuProductWithNotExistProduct = new MenuProduct(1L, 1L, notExistProductId, 10L);
+            MenuProduct menuProductWithNotExistProduct = new MenuProduct(1L, notExistProductId, 10L);
             List<MenuProduct> menuProductsWithNotExistProducts = Arrays.asList(menuProductWithNotExistProduct);
 
             MenuCreateRequest request = 메뉴_생성_dto를_만든다(price, menuGroupId, menuProductsWithNotExistProducts);
@@ -141,14 +140,13 @@ class MenuServiceTest {
 
         private final BigDecimal price = BigDecimal.valueOf(13000);
         private final Long menuGroupId = 11L;
-        private final MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L, 10L);
+        private final MenuProduct menuProduct = new MenuProduct(1L, 1L, 10L);
         private final List<MenuProduct> menuProducts = Arrays.asList(menuProduct);
 
         @Test
         void 메뉴_목록을_조회한다() {
             // given
-            when(menuDao.findAll()).thenReturn(Arrays.asList(new Menu(1L, "pasta", price, menuGroupId, menuProducts)));
-            when(menuProductDao.findAllByMenuId(any(Long.class))).thenReturn(Arrays.asList(menuProduct));
+            when(menuDao.findAllWithMenuProducts()).thenReturn(Arrays.asList(new Menu(1L, "pasta", price, menuGroupId, menuProducts)));
 
             // when
             List<MenuResponse> responses = menuService.list();

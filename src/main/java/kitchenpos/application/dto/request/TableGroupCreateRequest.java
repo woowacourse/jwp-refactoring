@@ -34,6 +34,6 @@ public class TableGroupCreateRequest {
     }
 
     public TableGroup toTableGroup(final LocalDateTime createdDate) {
-        return new TableGroup();
+        return new TableGroup(null, createdDate);
     }
 }

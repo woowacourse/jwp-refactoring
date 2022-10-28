@@ -14,5 +14,5 @@ public interface OrderLineItemRepository extends Repository<OrderLineItem, Long>
 
     List<OrderLineItem> findAll();
 
-    List<OrderLineItem> findAllByOrderId(Long orderId);
+//    List<OrderLineItem> findAllByOrderId(Long orderId);
 }

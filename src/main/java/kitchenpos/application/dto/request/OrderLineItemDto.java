@@ -4,7 +4,6 @@ import kitchenpos.domain.OrderLineItem;
 
 public class OrderLineItemDto {
 
-    private Long orderId;
     private Long menuId;
     private long quantity;
 
@@ -12,13 +11,8 @@ public class OrderLineItemDto {
     }
 
     public OrderLineItemDto(final OrderLineItem orderLineItem) {
-        this.orderId = orderLineItem.getOrderId();
         this.menuId = orderLineItem.getMenuId();
         this.quantity = orderLineItem.getQuantity();
-    }
-
-    public Long getOrderId() {
-        return orderId;
     }
 
     public Long getMenuId() {
@@ -30,6 +24,6 @@ public class OrderLineItemDto {
     }
 
     public OrderLineItem toOrderLineItem() {
-        return new OrderLineItem(null, this.orderId, this.menuId, this.quantity);
+        return new OrderLineItem(null, this.menuId, this.quantity);
     }
 }

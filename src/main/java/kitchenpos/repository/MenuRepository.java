@@ -17,6 +17,6 @@ public interface MenuRepository extends Repository<Menu, Long> {
 
     long countByIdIn(List<Long> ids);
 
-    @Query("SELECT m FROM Menu m JOIN FETCH MenuProduct mp WHERE mp.menuId = m.id")
+    @Query("SELECT m FROM Menu m JOIN FETCH m.menuProducts")
     List<Menu> findAllWithMenuProducts();
 }

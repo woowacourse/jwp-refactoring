@@ -14,8 +14,8 @@ import kitchenpos.application.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.application.dto.request.OrderTableChangeStatusRequest;
 import kitchenpos.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,10 +28,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TableServiceTest {
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderDao;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableDao;
 
     @InjectMocks
     private TableService tableService;
@@ -100,7 +100,7 @@ class TableServiceTest {
             OrderTable orderTable = new OrderTable(orderTableId, null, 3, false);
             when(orderTableDao.findById(any(Long.class))).thenReturn(Optional.of(orderTable));
             when(orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId,
-                    Arrays.asList(COOKING.name(), MEAL.name()))).thenReturn(
+                    Arrays.asList(COOKING, MEAL))).thenReturn(
                     true);
 
             // when & then
@@ -115,7 +115,7 @@ class TableServiceTest {
             OrderTable orderTable = new OrderTable(orderTableId, null, 3, false);
             when(orderTableDao.findById(any(Long.class))).thenReturn(Optional.of(orderTable));
             when(orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId,
-                    Arrays.asList(COOKING.name(), MEAL.name()))).thenReturn(
+                    Arrays.asList(COOKING, MEAL))).thenReturn(
                     false);
             when(orderTableDao.save(any(OrderTable.class))).thenReturn(orderTable);
             // when

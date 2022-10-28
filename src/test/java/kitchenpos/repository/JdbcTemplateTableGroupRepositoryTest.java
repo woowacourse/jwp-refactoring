@@ -10,8 +10,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@DataJdbcTest
+@DataJpaTest
 class JdbcTemplateTableGroupRepositoryTest {
 
     private final TableGroupRepository tableGroupRepository;
@@ -68,9 +69,11 @@ class JdbcTemplateTableGroupRepositoryTest {
     void table_group_목록을_조회한다() {
         // given
         LocalDateTime now = LocalDateTime.now();
-        table_group을_생성한다(now);
+        TableGroup tableGroup1 = table_group을_생성한다(now);
+        tableGroupRepository.save(tableGroup1);
         LocalDateTime now2 = LocalDateTime.now();
-        table_group을_생성한다(now2);
+        TableGroup tableGroup2 = table_group을_생성한다(now2);
+        tableGroupRepository.save(tableGroup2);
 
         // when
         List<TableGroup> tableGroups = tableGroupRepository.findAll();
