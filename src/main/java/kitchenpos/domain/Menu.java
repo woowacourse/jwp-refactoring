@@ -11,6 +11,18 @@ public class Menu {
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
+    public Menu(final Long id,
+                final String name,
+                final BigDecimal price,
+                final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
+        this.id = id;
+        this.name = name;
+        this.price = new Price(price);
+        this.menuGroupId = menuGroupId;
+        this.menuProducts = menuProducts;
+    }
+
     public void checkIsAvailablePrice(final BigDecimal priceToSet) {
         if (price.getPrice().compareTo(priceToSet) > 0) {
             throw new IllegalArgumentException();
@@ -29,16 +41,8 @@ public class Menu {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public Price getPrice() {
         return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = new Price(price);
     }
 
     public Long getMenuGroupId() {

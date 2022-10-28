@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.fixture.OrderTableFactory;
@@ -16,7 +17,7 @@ class TableGroupTest {
         final List<OrderTable> emptyOrderTables = Collections.emptyList();
 
         assertThatThrownBy(
-                () -> new TableGroup(emptyOrderTables)
+                () -> new TableGroup(null, LocalDateTime.now(), emptyOrderTables)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -27,7 +28,7 @@ class TableGroupTest {
         final var oneInOrderTables = List.of(table);
 
         assertThatThrownBy(
-                () -> new TableGroup(oneInOrderTables)
+                () -> new TableGroup(null, LocalDateTime.now(), oneInOrderTables)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 }

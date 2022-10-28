@@ -13,15 +13,14 @@ class OrderTableTest {
         final var invalidNumberOfGuests = -1;
 
         assertThatThrownBy(
-                () -> new OrderTable(invalidNumberOfGuests)
+                () -> new OrderTable(null, null, invalidNumberOfGuests, true)
         );
     }
 
     @DisplayName("그룹 id를 갖고 있다면, 비어있는지 여부를 true로 변경할 수 없다")
     @Test
     void hasTableGroupId_changeEmptyToTrue_throwsException() {
-        final var table = new OrderTable(2);
-        table.setTableGroupId(1L);
+        final var table = new OrderTable(null, 1L, 2, true);
 
         assertThatThrownBy(
                 () -> table.changeEmptyTo(true)

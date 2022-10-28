@@ -7,11 +7,11 @@ public class OrderTable {
     private Guests numberOfGuests;
     private boolean empty;
 
-    public OrderTable() {
-    }
-
-    public OrderTable(final int numberOfGuests) {
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this.id = id;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = new Guests(numberOfGuests);
+        this.empty = empty;
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
@@ -60,10 +60,6 @@ public class OrderTable {
 
     public int getNumberOfGuests() {
         return numberOfGuests.value;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = new Guests(numberOfGuests);
     }
 
     public boolean isEmpty() {

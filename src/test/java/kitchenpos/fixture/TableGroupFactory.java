@@ -7,9 +7,6 @@ import kitchenpos.domain.TableGroup;
 public class TableGroupFactory {
 
     public static TableGroup tableGroup(final OrderTable... orderTables) {
-        final var tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(orderTables));
-
-        return tableGroup;
+        return new TableGroup(null, null, List.of(orderTables));
     }
 }

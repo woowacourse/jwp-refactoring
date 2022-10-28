@@ -18,6 +18,15 @@ public class Order {
         this.orderLineItems = new LineItems(orderLineItems);
     }
 
+    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
+        this.id = id;
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        this.orderLineItems = new LineItems(orderLineItems);
+    }
+
     public void changeStatus(final OrderStatus orderStatus) {
         validateNotCompleted();
         this.orderStatus = orderStatus;

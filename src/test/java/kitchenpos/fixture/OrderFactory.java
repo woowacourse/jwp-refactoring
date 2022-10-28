@@ -14,35 +14,20 @@ public class OrderFactory {
     public static Order order(final OrderTable table, final Menu... menus) {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (Menu menu : menus) {
-            final var orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(menu.getId());
-            orderLineItem.setQuantity(1);
+            final var orderLineItem = new OrderLineItem(null, null, menu.getId(), 1);
             orderLineItems.add(orderLineItem);
         }
 
-        final var order = new Order();
-        order.setOrderTableId(table.getId());
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderedTime(LocalDateTime.now());
-
-        return order;
+        return new Order(null, table.getId(), null, LocalDateTime.now(), orderLineItems);
     }
 
     public static Order order(final OrderTable table, final OrderStatus status, final Menu... menus) {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (Menu menu : menus) {
-            final var orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(menu.getId());
-            orderLineItem.setQuantity(1);
+            final var orderLineItem = new OrderLineItem(null, null, menu.getId(), 1);
             orderLineItems.add(orderLineItem);
         }
 
-        final var order = new Order();
-        order.setOrderTableId(table.getId());
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(status.name());
-
-        return order;
+        return new Order(null, table.getId(), status, LocalDateTime.now(), orderLineItems);
     }
 }

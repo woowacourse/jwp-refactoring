@@ -17,38 +17,23 @@ public class MenuFactory {
         var totalPrice = 0;
 
         for (Product product : products) {
-            final var menuProduct = new MenuProduct();
-            menuProduct.setQuantity(MENU_QUANTITY);
-            menuProduct.setProductId(product.getId());
+            final var menuProduct = new MenuProduct(null, null, product.getId(), MENU_QUANTITY);
             menuProducts.add(menuProduct);
             totalPrice += product.getPrice().getPrice().intValue() * menuProduct.getQuantity();
         }
 
-        final var menu = new Menu();
-        menu.setName(name);
-        menu.setMenuGroupId(group.getId());
-        menu.setPrice(new BigDecimal(totalPrice - 1));
-        menu.setMenuProducts(menuProducts);
-
-        return menu;
+        return new Menu(null, name, new BigDecimal(totalPrice - 1), group.getId(), menuProducts);
     }
 
-    public static Menu menu(final String name, final BigDecimal price, final MenuGroup group, final List<Product> products) {
+    public static Menu menu(final String name, final BigDecimal price, final MenuGroup group,
+                            final List<Product> products) {
         List<MenuProduct> menuProducts = new ArrayList<>();
 
         for (Product product : products) {
-            final var menuProduct = new MenuProduct();
-            menuProduct.setQuantity(MENU_QUANTITY);
-            menuProduct.setProductId(product.getId());
+            final var menuProduct = new MenuProduct(null, null, product.getId(), MENU_QUANTITY);
             menuProducts.add(menuProduct);
         }
 
-        final var menu = new Menu();
-        menu.setName(name);
-        menu.setMenuGroupId(group.getId());
-        menu.setPrice(price);
-        menu.setMenuProducts(menuProducts);
-
-        return menu;
+        return new Menu(null, name, price, group.getId(), menuProducts);
     }
 }

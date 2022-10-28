@@ -4,25 +4,15 @@ import kitchenpos.domain.OrderTable;
 
 public class OrderTableFactory {
 
-    public static OrderTable emptyTable(final Long id, final int guests) {
-        final var table = new OrderTable(guests);
-        table.setId(id);
-        table.setEmpty(true);
-
-        return table;
+    public static OrderTable emptyTable(final int guests) {
+        return new OrderTable(null, null, guests, true);
     }
 
-    public static OrderTable emptyTable(final int guests) {
-        final var table = new OrderTable(guests);
-        table.setEmpty(true);
-
-        return table;
+    public static OrderTable emptyTable(final Long id, final int guests) {
+        return new OrderTable(id, null, guests, true);
     }
 
     public static OrderTable notEmptyTable(final int guests) {
-        final var table = new OrderTable(guests);
-        table.setEmpty(false);
-
-        return table;
+        return new OrderTable(null, null, guests, false);
     }
 }
