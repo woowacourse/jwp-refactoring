@@ -22,10 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class TableGroupServiceTest extends ServiceTest {
-    private static OrderTable table() {
-        return new OrderTable(null, 0, true);
-    }
-
     @Autowired
     private TableGroupService tableGroupService;
     @Autowired
@@ -129,7 +125,7 @@ class TableGroupServiceTest extends ServiceTest {
         final var tableGroup = tableGroupService.create(tableGroupRequest);
 
         // when
-        tableGroupService.ungroup(tableGroup.getId());
+        tableGroupService.unGroup(tableGroup.getId());
         final var tables = tableService.list();
 
         // then
@@ -152,9 +148,9 @@ class TableGroupServiceTest extends ServiceTest {
             // when & then
             assertAll(
                     () -> assertThat(tableGroup.getId()).isEqualTo(1L),
-                    () -> assertThatThrownBy(() -> tableGroupService.ungroup(null))
+                    () -> assertThatThrownBy(() -> tableGroupService.unGroup(null))
                             .isInstanceOf(IllegalArgumentException.class),
-                    () -> assertThatThrownBy(() -> tableGroupService.ungroup(-1L))
+                    () -> assertThatThrownBy(() -> tableGroupService.unGroup(-1L))
                             .isInstanceOf(IllegalArgumentException.class)
             );
         }
@@ -167,7 +163,7 @@ class TableGroupServiceTest extends ServiceTest {
             orderRepository.save(new Order(tableA.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), null));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+            assertThatThrownBy(() -> tableGroupService.unGroup(tableGroup.getId()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -179,7 +175,7 @@ class TableGroupServiceTest extends ServiceTest {
             orderRepository.save(new Order(tableA.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), null));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+            assertThatThrownBy(() -> tableGroupService.unGroup(tableGroup.getId()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 

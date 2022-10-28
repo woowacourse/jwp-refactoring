@@ -32,7 +32,7 @@ public class TableGroupRestController {
 
     @DeleteMapping("/api/table-groups/{tableGroupId}")
     public ResponseEntity<Void> ungroup(@PathVariable final Long tableGroupId) {
-        tableGroupService.ungroup(tableGroupId);
+        tableGroupService.unGroup(tableGroupId);
 
         return ResponseEntity.noContent()
                 .build()
