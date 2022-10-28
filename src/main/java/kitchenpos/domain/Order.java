@@ -18,6 +18,13 @@ public class Order {
         this.orderLineItems = new LineItems(orderLineItems);
     }
 
+    public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
+        this(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         this.id = id;

@@ -18,6 +18,8 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.dao.TableGroupFakeDao;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
 
 public abstract class FakeSpringContext {
@@ -33,4 +35,6 @@ public abstract class FakeSpringContext {
     protected final MenuRepository menus = new MenuRepository(menuDao, menuProductDao);
     protected final ProductRepository products = new ProductRepository(productDao);
     protected final MenuGroupRepository menuGroups = new MenuGroupRepository(menuGroupDao);
+    protected final OrderTableRepository orderTables = new OrderTableRepository(orderTableDao);
+    protected final OrderRepository orders = new OrderRepository(orderDao, orderLineItemDao);
 }

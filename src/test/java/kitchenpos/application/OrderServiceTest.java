@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 class OrderServiceTest extends FakeSpringContext {
 
     private final OrderService orderService = new OrderService(
-            menuDao, orderDao, orderLineItemDao, orderTableDao);
+            menuDao, orderTables, orders);
 
     @DisplayName("주문 등록")
     @Test
@@ -41,9 +41,8 @@ class OrderServiceTest extends FakeSpringContext {
 
         final var result = orderService.create(order);
         assertAll(
-                () -> assertThat(result.getOrderedTime()).isEqualTo(order.getOrderedTime()),
                 () -> assertThat(result.getOrderTableId()).isEqualTo(order.getOrderTableId()),
-                () -> assertThat(result.getOrderStatus()).isEqualTo(order.getOrderStatus())
+                () -> assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.COOKING)
         );
     }
 

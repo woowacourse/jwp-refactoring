@@ -18,7 +18,7 @@ public class OrderFactory {
             orderLineItems.add(orderLineItem);
         }
 
-        return new Order(null, table.getId(), null, LocalDateTime.now(), orderLineItems);
+        return new Order(null, table.getId(), null, null, orderLineItems);
     }
 
     public static Order order(final OrderTable table, final OrderStatus status, final Menu... menus) {
