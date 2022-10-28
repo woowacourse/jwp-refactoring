@@ -1,25 +1,28 @@
 package kitchenpos.menu.domain.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+import javax.sql.DataSource;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.dao.MenuProductDao;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
-
 @Repository
 public class JdbcTemplateMenuProductDao implements MenuProductDao {
+
     private static final String TABLE_NAME = "menu_product";
-    private static final String KEY_COLUMN_NAME = "seq";
+
+    private static final String KEY_COLUMN = "seq";
+    private static final String MENU_ID_COLUMN = "menu_id";
+    private static final String PRODUCT_ID_COLUMN = "product_id";
+    private static final String QUANTITY_COLUMN = "quantity";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -27,16 +30,24 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
     public JdbcTemplateMenuProductDao(final DataSource dataSource) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
-                .withTableName(TABLE_NAME)
-                .usingGeneratedKeyColumns(KEY_COLUMN_NAME)
+            .withTableName(TABLE_NAME)
+            .usingGeneratedKeyColumns(KEY_COLUMN)
         ;
     }
 
     @Override
     public MenuProduct save(final MenuProduct entity) {
-        final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
-        final Number key = jdbcInsert.executeAndReturnKey(parameters);
+        final Number key = jdbcInsert.executeAndReturnKey(toMenuProductSqlSource(entity));
         return select(key.longValue());
+    }
+
+    private MapSqlParameterSource toMenuProductSqlSource(MenuProduct entity) {
+        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+        mapSqlParameterSource.addValue(KEY_COLUMN, entity.getId());
+        mapSqlParameterSource.addValue(MENU_ID_COLUMN, entity.getMenuId());
+        mapSqlParameterSource.addValue(PRODUCT_ID_COLUMN, entity.getProductId());
+        mapSqlParameterSource.addValue(QUANTITY_COLUMN, entity.getQuantity());
+        return mapSqlParameterSource;
     }
 
     @Override
@@ -51,30 +62,30 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
     @Override
     public List<MenuProduct> findAll() {
         final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product";
-        return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
+        return jdbcTemplate.query(sql, new MenuProductRowMapper());
     }
 
     @Override
     public List<MenuProduct> findAllByMenuId(final Long menuId) {
         final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product WHERE menu_id = (:menuId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("menuId", menuId);
-        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+            .addValue("menuId", menuId);
+        return jdbcTemplate.query(sql, parameters, new MenuProductRowMapper());
     }
 
     private MenuProduct select(final Long id) {
         final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product WHERE seq = (:seq)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("seq", id);
-        return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+            .addValue(KEY_COLUMN, id);
+        return jdbcTemplate.queryForObject(sql, parameters, new MenuProductRowMapper());
     }
 
-    private MenuProduct toEntity(final ResultSet resultSet) throws SQLException {
-        final MenuProduct entity = new MenuProduct();
-        entity.setSeq(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setMenuId(resultSet.getLong("menu_id"));
-        entity.setProductId(resultSet.getLong("product_id"));
-        entity.setQuantity(resultSet.getLong("quantity"));
-        return entity;
+    private static class MenuProductRowMapper implements RowMapper<MenuProduct> {
+
+        @Override
+        public MenuProduct mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new MenuProduct(rs.getLong(KEY_COLUMN), rs.getObject(MENU_ID_COLUMN, Long.class),
+                rs.getObject(PRODUCT_ID_COLUMN, Long.class), rs.getLong(QUANTITY_COLUMN));
+        }
     }
 }

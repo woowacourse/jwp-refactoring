@@ -1,6 +1,8 @@
 package kitchenpos.support.fixture.domain;
 
 import java.math.BigDecimal;
+import kitchenpos.common.domain.Name;
+import kitchenpos.common.domain.Price;
 import kitchenpos.menu.domain.Menu;
 
 public enum MenuFixture {
@@ -18,19 +20,10 @@ public enum MenuFixture {
     }
 
     public Menu getMenu(Long menuGroupId) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        return menu;
+        return new Menu(Name.of(name), Price.from(price), menuGroupId);
     }
 
     public Menu getMenu(Long id, Long menuGroupId) {
-        Menu menu = new Menu();
-        menu.setId(id);
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        return menu;
+        return new Menu(id, Name.of(name), Price.from(price), menuGroupId);
     }
 }
