@@ -1,8 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.request.OrderTableChangeRequest;
+import kitchenpos.application.dto.convertor.TableGroupConvertor;
 import kitchenpos.application.dto.request.TableGroupRequest;
-import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -34,7 +33,7 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest request) {
-        final TableGroup tableGroup = convertToTableGroup(request);
+        final TableGroup tableGroup = TableGroupConvertor.convertToTableGroup(request);
 
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
@@ -70,7 +69,7 @@ public class TableGroupService {
         }
         savedTableGroup.setOrderTables(savedOrderTables);
 
-        return convertToOrderTableResponse(savedTableGroup);
+        return TableGroupConvertor.convertToOrderTableResponse(savedTableGroup);
     }
 
     @Transactional
@@ -91,38 +90,5 @@ public class TableGroupService {
             orderTable.setEmpty(false);
             orderTableDao.save(orderTable);
         }
-    }
-
-    private TableGroup convertToTableGroup(final TableGroupRequest request) {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(convertToOrderTables(request.getOrderTables()));
-        return tableGroup;
-    }
-
-    private List<OrderTable> convertToOrderTables(final List<OrderTableChangeRequest> requests) {
-        return requests.stream()
-            .map(this::convertToOrderTable)
-            .collect(Collectors.toUnmodifiableList());
-    }
-
-    private OrderTable convertToOrderTable(final OrderTableChangeRequest request) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(request.getId());
-        orderTable.setNumberOfGuests(request.getNumberOfGuests());
-        orderTable.setEmpty(request.isEmpty());
-        return orderTable;
-    }
-
-    private TableGroupResponse convertToOrderTableResponse(final TableGroup orderTable) {
-        return new TableGroupResponse(
-            orderTable.getId(), orderTable.getCreatedDate(), convertToOrderTableResponses(orderTable.getOrderTables())
-        );
-    }
-
-    private List<OrderTableResponse> convertToOrderTableResponses(final List<OrderTable> orderTables) {
-        return orderTables.stream()
-            .map(orderTable -> new OrderTableResponse(orderTable.getId(), orderTable.getTableGroupId(),
-                orderTable.getNumberOfGuests(), orderTable.isEmpty()))
-            .collect(Collectors.toUnmodifiableList());
     }
 }

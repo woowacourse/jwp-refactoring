@@ -1,8 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.request.MenuProductRequest;
+import kitchenpos.application.dto.convertor.MenuConvertor;
 import kitchenpos.application.dto.request.MenuRequest;
-import kitchenpos.application.dto.response.MenuProductResponse;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -18,7 +17,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class MenuService {
@@ -41,7 +39,7 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest request) {
-        final Menu menu = convertToMenu(request);
+        final Menu menu = MenuConvertor.toMenu(request);
         final BigDecimal price = menu.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
@@ -75,54 +73,14 @@ public class MenuService {
         }
         savedMenu.setMenuProducts(savedMenuProducts);
 
-        return convertToMenuResponse(savedMenu);
+        return MenuConvertor.toMenuResponse(savedMenu);
     }
 
     public List<MenuResponse> list() {
         final List<Menu> menus = menuDao.findAll();
-
         for (final Menu menu : menus) {
             menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
         }
-
-        return convertToMenuResponses(menus);
-    }
-
-    private Menu convertToMenu(final MenuRequest request) {
-        final Menu menu = new Menu();
-        menu.setName(request.getName());
-        menu.setPrice(request.getPrice());
-        menu.setMenuGroupId(request.getMenuGroupId());
-        menu.setMenuProducts(convertToMenuProducts(request.getMenuProducts()));
-        return menu;
-    }
-
-    private MenuResponse convertToMenuResponse(final Menu menu) {
-        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), convertToMenuProductResponses(menu.getMenuProducts()));
-    }
-
-    private List<MenuResponse> convertToMenuResponses(final List<Menu> menus) {
-        return menus.stream()
-            .map(menu -> new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), convertToMenuProductResponses(menu.getMenuProducts())))
-            .collect(Collectors.toUnmodifiableList());
-    }
-
-    private List<MenuProduct> convertToMenuProducts(final List<MenuProductRequest> requests) {
-        return requests.stream()
-            .map(this::convertToMenuProduct)
-            .collect(Collectors.toUnmodifiableList());
-    }
-
-    private  MenuProduct convertToMenuProduct(final MenuProductRequest request) {
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(request.getProductId());
-        menuProduct.setQuantity(request.getQuantity());
-        return menuProduct;
-    }
-
-    private List<MenuProductResponse> convertToMenuProductResponses(final List<MenuProduct> menuProducts) {
-        return menuProducts.stream()
-            .map(menuProduct -> new MenuProductResponse(menuProduct.getSeq(), menuProduct.getMenuId(), menuProduct.getProductId(), menuProduct.getQuantity()))
-            .collect(Collectors.toUnmodifiableList());
+        return MenuConvertor.toMenuResponses(menus);
     }
 }

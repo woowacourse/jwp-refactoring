@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.convertor.TableConvertor;
 import kitchenpos.application.dto.request.OrderTableRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
@@ -12,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class TableService {
@@ -26,23 +26,23 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse create(final OrderTableRequest request) {
-        final OrderTable orderTable = convertToOrderTable(request);
+        final OrderTable orderTable = TableConvertor.convertToOrderTable(request);
 
         orderTable.setId(null);
         orderTable.setTableGroupId(null);
 
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        return convertToOrderTableResponse(savedOrderTable);
+        return TableConvertor.convertToOrderTableResponse(savedOrderTable);
     }
 
     public List<OrderTableResponse> list() {
         final List<OrderTable> orderTables = orderTableDao.findAll();
-        return convertToOrderTableResponses(orderTables);
+        return TableConvertor.convertToOrderTableResponses(orderTables);
     }
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest request) {
-        final OrderTable orderTable = convertToOrderTable(request);
+        final OrderTable orderTable = TableConvertor.convertToOrderTable(request);
 
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
@@ -59,12 +59,12 @@ public class TableService {
         savedOrderTable.setEmpty(orderTable.isEmpty());
 
         final OrderTable changedOrderTable = orderTableDao.save(savedOrderTable);
-        return convertToOrderTableResponse(changedOrderTable);
+        return TableConvertor.convertToOrderTableResponse(changedOrderTable);
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest request) {
-        final OrderTable orderTable = convertToOrderTable(request);
+        final OrderTable orderTable = TableConvertor.convertToOrderTable(request);
 
         final int numberOfGuests = orderTable.getNumberOfGuests();
 
@@ -82,26 +82,6 @@ public class TableService {
         savedOrderTable.setNumberOfGuests(numberOfGuests);
 
         final OrderTable changedOrderTable = orderTableDao.save(savedOrderTable);
-        return convertToOrderTableResponse(changedOrderTable);
-    }
-
-    private OrderTable convertToOrderTable(final OrderTableRequest request) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(request.isEmpty());
-        orderTable.setNumberOfGuests(request.getNumberOfGuests());
-        return orderTable;
-    }
-
-    private OrderTableResponse convertToOrderTableResponse(final OrderTable orderTable) {
-        return new OrderTableResponse(
-            orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(), orderTable.isEmpty()
-        );
-    }
-
-    private List<OrderTableResponse> convertToOrderTableResponses(final List<OrderTable> orderTables) {
-        return orderTables.stream()
-            .map(orderTable -> new OrderTableResponse(orderTable.getId(), orderTable.getTableGroupId(),
-                orderTable.getNumberOfGuests(), orderTable.isEmpty()))
-            .collect(Collectors.toUnmodifiableList());
+        return TableConvertor.convertToOrderTableResponse(changedOrderTable);
     }
 }
