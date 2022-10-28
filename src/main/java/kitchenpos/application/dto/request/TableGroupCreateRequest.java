@@ -33,7 +33,7 @@ public class TableGroupCreateRequest {
         return orderTableIdsDto;
     }
 
-    public TableGroup toTableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        return new TableGroup(id, createdDate, orderTables);
+    public TableGroup toTableGroup(final LocalDateTime createdDate) {
+        return new TableGroup();
     }
 }
