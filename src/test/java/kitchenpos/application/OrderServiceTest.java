@@ -61,4 +61,25 @@ class OrderServiceTest {
                 () -> assertThat(orderDto.getOrderTableId()).isEqualTo(orderTable.getId())
         );
     }
+
+    @DisplayName("주문 목록을 가져온다.")
+    @Test
+    void getOrders() {
+        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("menuGroup"));
+        final Product product = productDao.save(new Product("productName", BigDecimal.valueOf(1000L)));
+        final Menu menu = menuDao.save(new Menu("menuName", BigDecimal.valueOf(1500L),
+                menuGroup.getId(),
+                List.of(new MenuProduct(product, 2))));
+        final OrderTable orderTable = orderTableDao.save(new OrderTable(0, false));
+        final OrderCreationRequest orderCreationRequest = new OrderCreationRequest(orderTable.getId(),
+                List.of(new OrderLineItemReeust(menu.getId(), 2)));
+        final OrderDto orderDto = orderService.create(OrderCreationDto.from(orderCreationRequest));
+
+        final List<OrderDto> orders = orderService.getOrders();
+
+        assertAll(
+                () -> assertThat(orders.size()).isEqualTo(1),
+                () -> assertThat(orders.get(0).getId()).isEqualTo(orderDto.getId())
+        );
+    }
 }

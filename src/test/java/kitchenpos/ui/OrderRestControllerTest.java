@@ -74,9 +74,9 @@ class OrderRestControllerTest extends ControllerTest {
     @DisplayName("주문 항목을 가져온다.")
     @Test
     void getOrders() throws Exception {
-        when(orderService.list()).thenReturn(List.of(DomainFixture.getOrder()));
+        when(orderService.getOrders()).thenReturn(List.of(DtoFixture.getOrderDto()));
 
-        final ResultActions resultActions = mockMvc.perform(get("/api/orders")
+        final ResultActions resultActions = mockMvc.perform(get("/api/v2/orders")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());

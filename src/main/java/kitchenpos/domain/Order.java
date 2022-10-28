@@ -51,6 +51,7 @@ public class Order {
         return orderStatus.isCompletion();
     }
 
+    @JsonIgnore
     public List<Long> getOrderLineItemsMenuId() {
         return orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)

@@ -113,6 +113,7 @@ public class OrderService {
     }
 
 
+    @Deprecated
     public List<Order> list() {
         final List<Order> orders = orderDao.findAll();
 
@@ -121,6 +122,14 @@ public class OrderService {
         }
 
         return orders;
+    }
+
+    public List<OrderDto> getOrders() {
+        return orderDao.findAll()
+                .stream()
+                .map(order -> order.saveOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId())))
+                .map(OrderDto::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional

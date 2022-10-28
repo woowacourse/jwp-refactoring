@@ -12,12 +12,14 @@ import kitchenpos.acceptance.common.httpcommunication.MenuHttpCommunication;
 import kitchenpos.acceptance.common.httpcommunication.OrderHttpCommunication;
 import kitchenpos.acceptance.common.httpcommunication.OrderTableHttpCommunication;
 import kitchenpos.acceptance.common.httpcommunication.ProductHttpCommunication;
+import kitchenpos.application.dto.OrderDto;
 import kitchenpos.common.fixture.RequestBody;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.response.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -38,8 +40,8 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     @Test
     void getOrders() {
         order();
-        final List<Order> orders = OrderHttpCommunication.getOrders()
-                .getResponseBodyAsList(Order.class);
+        final List<OrderResponse> orders = OrderHttpCommunication.getOrders()
+                .getResponseBodyAsList(OrderResponse.class);
 
         assertThat(orders.size()).isEqualTo(1);
     }

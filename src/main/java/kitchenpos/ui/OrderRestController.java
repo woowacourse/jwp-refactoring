@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import java.util.stream.Collectors;
 import kitchenpos.application.OrderService;
 import kitchenpos.application.dto.OrderCreationDto;
 import kitchenpos.application.dto.OrderDto;
@@ -38,12 +39,24 @@ public class OrderRestController {
     }
 
 
+    @Deprecated
     @GetMapping("/api/orders")
     public ResponseEntity<List<Order>> list() {
         return ResponseEntity.ok()
                 .body(orderService.list())
                 ;
     }
+
+    @GetMapping("/api/v2/orders")
+    public ResponseEntity<List<OrderResponse>> getOrders() {
+        final List<OrderResponse> orderResponses = orderService.getOrders()
+                .stream()
+                .map(OrderResponse::from)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(orderResponses);
+    }
+
 
     @PutMapping("/api/orders/{orderId}/order-status")
     public ResponseEntity<Order> changeOrderStatus(

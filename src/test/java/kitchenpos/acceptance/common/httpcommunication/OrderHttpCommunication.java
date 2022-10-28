@@ -12,7 +12,7 @@ public class OrderHttpCommunication {
 
     public static HttpCommunication getOrders() {
         return HttpCommunication.request()
-                .get("/api/orders")
+                .get("/api/v2/orders")
                 .build();
     }
 
