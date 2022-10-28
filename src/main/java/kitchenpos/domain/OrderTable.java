@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -78,6 +79,8 @@ public class OrderTable {
     }
 
     public void mapTableGroup(final TableGroup tableGroup) {
+        validateCanGroup();
+
         if (this.tableGroup != null) {
             this.tableGroup.getOrderTables().remove(this);
         }
@@ -89,5 +92,15 @@ public class OrderTable {
         if (tableGroup != null) {
             throw new IllegalArgumentException();
         }
+    }
+
+    private void validateCanGroup() {
+        if (!empty || Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void updateToUsed() {
+        empty = false;
     }
 }

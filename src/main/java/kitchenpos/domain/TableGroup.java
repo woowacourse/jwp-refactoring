@@ -37,6 +37,17 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
+    public static TableGroup groupTables(final List<OrderTable> orderTables, final LocalDateTime localDateTime) {
+        final TableGroup tableGroup = new TableGroup(localDateTime);
+        orderTables.forEach(it -> {
+            it.mapTableGroup(tableGroup);
+            it.updateToUsed();
+        });
+
+        return tableGroup;
+
+    }
+
     public Long getId() {
         return id;
     }
