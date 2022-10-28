@@ -13,6 +13,7 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
@@ -27,6 +28,8 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.ProductFixture;
+import kitchenpos.ui.dto.OrderCreateRequest;
+import kitchenpos.ui.dto.OrderLineItemDto;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +74,9 @@ public class ServiceTestBase {
 
     @Autowired
     public TableGroupDao tableGroupDao;
+
+    @Autowired
+    public OrderLineItemDao orderLineItemDao;
 
     @Autowired
     public OrderTableDao orderTableDao;
@@ -124,7 +130,19 @@ public class ServiceTestBase {
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목(menu.getId()));
         Order order = new Order(null, orderTable.getId(), orderStatus, LocalDateTime.now());
         order.addOrderLineItems(orderLineItems);
-        orderService.create(order);
+        orderService.create(toRequest(order));
+    }
+
+    public OrderCreateRequest toRequest(final Order order) {
+        return new OrderCreateRequest(order.getId(), order.getOrderTableId(),
+                order.getOrderedTime(), toDtos(order));
+    }
+
+    private List<OrderLineItemDto> toDtos(final Order order) {
+        return order.getOrderLineItems()
+                .stream()
+                .map(it -> new OrderLineItemDto(it.getSeq(), it.getOrderId(), it.getMenuId(), it.getQuantity()))
+                .collect(Collectors.toList());
     }
 
     public Order 주문(final Long orderTableId, final List<OrderLineItem> orderLineItems) {

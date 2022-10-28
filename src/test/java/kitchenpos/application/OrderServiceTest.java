@@ -6,16 +6,20 @@ import static kitchenpos.fixture.ProductFixture.짜장맛_떡볶이;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.fixture.MenuGroupFixture;
+import kitchenpos.ui.dto.OrderCreateRequest;
+import kitchenpos.ui.dto.OrderLineItemDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -54,7 +58,7 @@ class OrderServiceTest extends ServiceTestBase {
         Order order = 주문(orderTableId, orderLineItems);
 
         // when
-        Order savedOrder = orderService.create(order);
+        Order savedOrder = orderService.create(toRequest(order));
 
         // then
         Optional<Order> actual = orderDao.findById(savedOrder.getId());
@@ -64,10 +68,10 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void 주문_항목_0개인_경우_실패() {
         // given
-        Order order = 주문(orderTableId, new ArrayList<>());
+        OrderCreateRequest request = new OrderCreateRequest(null, orderTableId, LocalDateTime.now(), new ArrayList<>());
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -78,7 +82,7 @@ class OrderServiceTest extends ServiceTestBase {
         Order order = 주문(orderTableId, orderLineItems);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(toRequest(order)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -87,7 +91,7 @@ class OrderServiceTest extends ServiceTestBase {
         // given
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
         Order order = 주문(orderTableId, orderLineItems);
-        Order savedOrder = orderService.create(order);
+        Order savedOrder = orderService.create(toRequest(order));
 
         // when
         List<Order> orders = orderService.list();
@@ -97,11 +101,6 @@ class OrderServiceTest extends ServiceTestBase {
                 .usingRecursiveComparison()
                 .ignoringFields("orderLineItems")
                 .isEqualTo(Collections.singletonList(savedOrder));
-
-        assertThat(orders.get(0).getOrderLineItems())
-                .usingRecursiveComparison()
-                .ignoringFields("seq")
-                .isEqualTo(orderLineItems);
     }
 
     @Test
@@ -109,7 +108,7 @@ class OrderServiceTest extends ServiceTestBase {
         // given
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
         Order order = 주문(orderTableId, orderLineItems);
-        Order savedOrder = orderService.create(order);
+        Order savedOrder = orderService.create(toRequest(order));
 
         OrderStatus changedStatus = OrderStatus.COOKING;
         savedOrder.changeOrderStatus(changedStatus);
@@ -128,7 +127,7 @@ class OrderServiceTest extends ServiceTestBase {
         // given
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
         Order order = 주문(orderTableId, orderLineItems);
-        orderService.create(order);
+        orderService.create(toRequest(order));
 
         // when & then
         assertThatThrownBy(() -> orderService.changeOrderStatus(100L, order.getOrderStatus()))
@@ -141,7 +140,7 @@ class OrderServiceTest extends ServiceTestBase {
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
         Order order = 주문(orderTableId, orderLineItems);
 
-        Order savedOrder = orderService.create(order);
+        Order savedOrder = orderService.create(toRequest(order));
         savedOrder.changeOrderStatus(OrderStatus.COMPLETION);
         orderDao.save(savedOrder);
 
@@ -157,4 +156,6 @@ class OrderServiceTest extends ServiceTestBase {
     private OrderLineItem 주문_항목() {
         return 주문_항목(menuId);
     }
+
+
 }
