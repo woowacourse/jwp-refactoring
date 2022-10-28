@@ -1,6 +1,6 @@
 package kitchenpos.domain;
 
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,15 +19,15 @@ public class OrderTable {
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
-    @Column(name = "number_of_guests")
-    private int numberOfGuests;
+    @Embedded
+    private NumberOfGuests numberOfGuests;
 
     private boolean empty;
 
     public OrderTable() {
     }
 
-    public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+    public OrderTable(final TableGroup tableGroup, final NumberOfGuests numberOfGuests, final boolean empty) {
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
@@ -49,10 +49,7 @@ public class OrderTable {
         this.tableGroup = null;
     }
 
-    public void updateNumberOfGuests(final int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
+    public void updateNumberOfGuests(final NumberOfGuests numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
 
@@ -65,7 +62,7 @@ public class OrderTable {
     }
 
     public int getNumberOfGuests() {
-        return numberOfGuests;
+        return numberOfGuests.getValue();
     }
 
     public void updateEmptyStatus(final boolean empty) {

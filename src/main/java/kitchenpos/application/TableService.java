@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.NumberOfGuests;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderTableEmptyRequest;
 import kitchenpos.dto.request.OrderTableNumberOfGuestsRequest;
@@ -71,7 +72,9 @@ public class TableService {
         final OrderTable orderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         validateEmpty(orderTable);
-        orderTable.updateNumberOfGuests(orderTableNumberOfGuestRequest.getNumberOfGuests());
+
+        final NumberOfGuests numberOfGuests = new NumberOfGuests(orderTableNumberOfGuestRequest.getNumberOfGuests());
+        orderTable.updateNumberOfGuests(numberOfGuests);
 
         return OrderTableResponse.of(orderTable);
     }
