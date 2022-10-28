@@ -40,10 +40,16 @@ public class OrderTable {
     }
 
     public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this(id, tableGroupId, numberOfGuests, empty, null);
+    }
+
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty,
+                      final List<Order> orders) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+        this.orders = orders;
     }
 
     public static OrderTable of(final int numberOfGuests, final boolean empty) {

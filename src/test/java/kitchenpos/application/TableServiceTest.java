@@ -4,12 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.EntityManager;
 import kitchenpos.RepositoryTest;
-import kitchenpos.application.request.OrderLineItemRequest;
-import kitchenpos.application.request.OrderRequest;
 import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
@@ -44,9 +40,6 @@ class TableServiceTest {
 
     @Autowired
     private OrderLineItemRepository orderLineItemRepository;
-
-    @Autowired
-    private EntityManager entityManager;
 
     @BeforeEach
     void setUp() {
@@ -90,28 +83,6 @@ class TableServiceTest {
                 );
     }
 
-    @DisplayName("테이블이 비어있는 상태가 되려면 주문 테이블이 조리 중이거나 식사중인 상태이면 안된다.")
-    @Test
-    void canNotChangeTableWhenCookingOrMeal() {
-        // given
-        final OrderTable orderTable = orderTableRepository.save(OrderTable.of(0, false));
-        final Long orderTableId = orderTable.getId();
-
-        final OrderLineItemRequest orderLineItem = createOrderLineItemRequest();
-        final OrderRequest orderRequest = new OrderRequest(orderTableId, "COOKING", LocalDateTime.now(),
-                List.of(orderLineItem));
-
-        orderService.create(orderRequest);
-        entityManager.flush();
-        entityManager.clear();
-
-        final OrderTableRequest orderTableRequest = new OrderTableRequest(orderTable);
-
-        // when & then
-        assertThatThrownBy(() -> sut.changeEmpty(orderTableId, orderTableRequest))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("주문 테이블의 조회결과가 없는 경우 테이블을 빈 상태로 변경할 수 없다.")
     @Test
     void changeEmptyWithEmptyOrderTable() {
@@ -122,9 +93,5 @@ class TableServiceTest {
         // when & then
         assertThatThrownBy(() -> sut.changeEmpty(invalidOrderTableId, orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    private OrderLineItemRequest createOrderLineItemRequest() {
-        return new OrderLineItemRequest(SEQUENCE, ORDER_ID, MENU_ID, QUANTITY);
     }
 }

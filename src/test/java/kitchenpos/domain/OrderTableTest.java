@@ -3,12 +3,16 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class OrderTableTest {
 
     private static final int INVALID_NUMBER_OF_GUESTS = -1;
+    private static final long ORDER_TABLE_ID = 1L;
+    private static final long TABLE_GROUP_ID = 1L;
 
     @DisplayName("손님이 음수인 경우로 테이블을 생성할 수 없다.")
     @Test
@@ -87,6 +91,18 @@ class OrderTableTest {
 
         // when & then'
         assertThatThrownBy(() -> orderTable.updateNumberOfGuests(1))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("테이블이 비어있는 상태가 되려면 주문 테이블이 조리 중이거나 식사중인 상태이면 안된다.")
+    @Test
+    void canNotChangeTableWhenCookingOrMeal() {
+        // given
+        final Order order = new Order(ORDER_TABLE_ID, "COOKING", LocalDateTime.now(), List.of());
+        final OrderTable orderTable = new OrderTable(1L, TABLE_GROUP_ID, 1, false, List.of(order));
+
+        // when & then
+        assertThatThrownBy(() -> orderTable.changeEmptyStatus(true))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
