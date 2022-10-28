@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
@@ -18,6 +19,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.ui.dto.OrderCreateRequest;
+import kitchenpos.ui.dto.OrderLineItemDto;
 import kitchenpos.ui.dto.OrderUpdateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -157,5 +159,17 @@ class OrderServiceTest extends ServiceTestBase {
 
     private OrderLineItem 주문_항목() {
         return 주문_항목(menuId);
+    }
+
+    private OrderCreateRequest toRequest(final Order order) {
+        return new OrderCreateRequest(order.getId(), order.getOrderTableId(),
+                order.getOrderedTime(), toDtos(order));
+    }
+
+    private List<OrderLineItemDto> toDtos(final Order order) {
+        return order.getOrderLineItems()
+                .stream()
+                .map(it -> new OrderLineItemDto(it.getSeq(), it.getOrderId(), it.getMenuId(), it.getQuantity()))
+                .collect(Collectors.toList());
     }
 }

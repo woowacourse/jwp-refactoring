@@ -28,8 +28,6 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.ProductFixture;
-import kitchenpos.ui.dto.OrderCreateRequest;
-import kitchenpos.ui.dto.OrderLineItemDto;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,26 +95,16 @@ public class ServiceTestBase {
     public Menu 분식_메뉴_생성() {
         MenuGroup menuGroup = menuGroupDao.save(MenuGroupFixture.분식.toEntity());
         Product product = productDao.save(불맛_떡볶이.toEntity());
-        List<MenuProduct> menuProducts = 메뉴_상품_목록_생성(product);
+        List<MenuProduct> menuProducts = 메뉴_상품_목록(product);
         Menu menu = 떡볶이.toEntity(menuGroup.getId(), menuProducts);
         return menuDao.save(menu);
     }
 
     public List<MenuProduct> 메뉴_상품_목록(final Product... products) {
-        return Arrays.stream(products)
-                .map(this::메뉴_상품)
-                .collect(Collectors.toList());
+        return 메뉴_상품_목록(3, products);
     }
 
-    public MenuProduct 메뉴_상품(final Product product) {
-        return new MenuProduct(null, null, product.getId(), 3);
-    }
-
-    public List<MenuProduct> 메뉴_상품_목록_생성(final Product... products) {
-        return 메뉴_상품_목록_생성(3, products);
-    }
-
-    public List<MenuProduct> 메뉴_상품_목록_생성(final long quantity, final Product... products) {
+    public List<MenuProduct> 메뉴_상품_목록(final long quantity, final Product... products) {
         return Arrays.stream(products)
                 .map(it -> 메뉴_상품(it, quantity))
                 .collect(Collectors.toList());
@@ -128,29 +116,16 @@ public class ServiceTestBase {
 
     public void 주문_생성(final Menu menu, final OrderTable orderTable, final OrderStatus orderStatus) {
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목(menu.getId()));
-        Order order = new Order(null, orderTable.getId(), orderStatus, LocalDateTime.now());
-        order.addOrderLineItems(orderLineItems);
-        orderService.create(toRequest(order));
-    }
-
-    public OrderCreateRequest toRequest(final Order order) {
-        return new OrderCreateRequest(order.getId(), order.getOrderTableId(),
-                order.getOrderedTime(), toDtos(order));
-    }
-
-    private List<OrderLineItemDto> toDtos(final Order order) {
-        return order.getOrderLineItems()
-                .stream()
-                .map(it -> new OrderLineItemDto(it.getSeq(), it.getOrderId(), it.getMenuId(), it.getQuantity()))
-                .collect(Collectors.toList());
-    }
-
-    public Order 주문(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        return new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+        Order order = new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), orderLineItems);
+        orderDao.save(order);
     }
 
     public OrderLineItem 주문_항목(final Long menuId) {
         return new OrderLineItem(null, null, menuId, 1);
+    }
+
+    public Order 주문(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        return new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
     public TableGroup 단체_지정_생성() {
@@ -186,8 +161,7 @@ public class ServiceTestBase {
     }
 
     public OrderTable 빈_주문_테이블_생성() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
+        OrderTable orderTable = new OrderTable(0, true);
         return orderTableDao.save(orderTable);
     }
 }

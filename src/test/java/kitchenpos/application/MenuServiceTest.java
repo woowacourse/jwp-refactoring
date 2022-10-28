@@ -25,7 +25,7 @@ class MenuServiceTest extends ServiceTestBase {
         // given
         MenuGroup menuGroup = menuGroupDao.save(MenuGroupFixture.분식.toEntity());
         Product product = productDao.save(불맛_떡볶이.toEntity());
-        List<MenuProduct> menuProducts = 메뉴_상품_목록_생성(product);
+        List<MenuProduct> menuProducts = 메뉴_상품_목록(product);
 
         MenuRequest menuRequest = 떡볶이.toRequest(menuGroup.getId(), menuProducts);
 
@@ -42,7 +42,7 @@ class MenuServiceTest extends ServiceTestBase {
         // given
         MenuGroup menuGroup = menuGroupDao.save(MenuGroupFixture.분식.toEntity());
         Product product = productDao.save(불맛_떡볶이.toEntity());
-        List<MenuProduct> menuProducts = 메뉴_상품_목록_생성(product);
+        List<MenuProduct> menuProducts = 메뉴_상품_목록(product);
 
         MenuRequest menuRequest = 떡볶이.toRequest(-1L, menuGroup.getId(), menuProducts);
 
@@ -55,7 +55,7 @@ class MenuServiceTest extends ServiceTestBase {
     void 존재하지_않는_메뉴_그룹으로_메뉴_생성_불가능() {
         // given
         Product product = productDao.save(불맛_떡볶이.toEntity());
-        List<MenuProduct> menuProducts = 메뉴_상품_목록_생성(product);
+        List<MenuProduct> menuProducts = 메뉴_상품_목록(product);
 
         MenuRequest request = 떡볶이.toRequest(100L, menuProducts);
 
@@ -69,7 +69,7 @@ class MenuServiceTest extends ServiceTestBase {
         // given
         MenuGroup menuGroup = menuGroupDao.save(MenuGroupFixture.분식.toEntity());
         Product product = productDao.save(공짜_어묵국물.toEntity());
-        List<MenuProduct> menuProducts = 메뉴_상품_목록_생성(product);
+        List<MenuProduct> menuProducts = 메뉴_상품_목록(product);
 
         MenuRequest menuRequest = 떡볶이.toRequest(menuGroup.getId(), menuProducts);
 
@@ -85,7 +85,7 @@ class MenuServiceTest extends ServiceTestBase {
         Product product = productDao.save(불맛_떡볶이.toEntity());
 
         long quantity = 4;
-        List<MenuProduct> menuProducts = 메뉴_상품_목록_생성(quantity, product);
+        List<MenuProduct> menuProducts = 메뉴_상품_목록(quantity, product);
         long menuProductsSum = product.getPrice().longValue() * quantity;
 
         MenuRequest menuRequest = 떡볶이.toRequest(
