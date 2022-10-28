@@ -17,7 +17,7 @@
         - 예시
             - Orders에는 OrderLineItem이 없으나 도메인에는 존재.
     - 목록
-        - [ ] MenuGroupRestController
+        - [x] MenuGroupRestController
         - [ ] MenuRestController
         - [x] OrderRestController
         - [ ] ProductRestController
