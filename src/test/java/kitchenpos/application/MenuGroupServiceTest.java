@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static kitchenpos.Fixture.MENU_GROUP;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -36,7 +37,10 @@ class MenuGroupServiceTest {
         MenuGroupResponseDto savedManuGroup = menuGroupService.create(dto);
 
         //then
-        assertThat(savedManuGroup).isEqualTo(MENU_GROUP);
+        assertAll(
+                () -> assertThat(savedManuGroup.getId()).isEqualTo(MENU_GROUP.getId()),
+                () -> assertThat(savedManuGroup.getName()).isEqualTo(MENU_GROUP.getName())
+        );
     }
 
     @Test

@@ -12,6 +12,7 @@ import static org.mockito.BDDMockito.given;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.application.dto.request.OrderCreateRequest;
+import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -54,7 +55,7 @@ class OrderServiceTest {
 
         //when
         OrderCreateRequest dto = new OrderCreateRequest(1L, List.of(new OrderLineItem(1L, 1L)));
-        Order savedOrder = orderService.create(dto);
+        OrderResponse savedOrder = orderService.create(dto);
 
         //then
         assertThat(savedOrder.getOrderStatus()).isNotNull();
@@ -69,7 +70,7 @@ class OrderServiceTest {
         given(orderDao.findAll()).willReturn(List.of(ORDER));
 
         //then
-        List<Order> orders = orderService.list();
+        List<OrderResponse> orders = orderService.list();
 
         //given
         assertThat(orders).hasSize(1);

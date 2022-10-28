@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static kitchenpos.Fixture.PRODUCT;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -39,7 +40,11 @@ class ProductServiceTest {
         ProductResponse savedProduct = productService.create(dto);
 
         //then
-        assertThat(savedProduct).isEqualTo(PRODUCT);
+        assertAll(
+                () -> assertThat(savedProduct.getId()).isEqualTo(PRODUCT.getId()),
+                () -> assertThat(savedProduct.getName()).isEqualTo(PRODUCT.getName()),
+                () -> assertThat(savedProduct.getPrice()).isEqualTo(PRODUCT.getPrice())
+        );
     }
 
     @DisplayName("제품 목록을 조회한다.")

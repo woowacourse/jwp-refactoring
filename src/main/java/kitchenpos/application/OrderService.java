@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.OrderChangeRequest;
 import kitchenpos.application.dto.request.OrderCreateRequest;
+import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -36,19 +37,21 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderCreateRequest dto) {
+    public OrderResponse create(final OrderCreateRequest dto) {
         final Long orderTableId = findOrderTableId(dto.getOrderTableId());
         final List<OrderLineItem> orderLineItems = getOrderLineItems(dto);
 
         final Order order = new Order(orderTableId, LocalDateTime.now(), orderLineItems);
         final Order savedOrder = orderDao.save(order);
-
         final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(orderLineItems, order.getId());
 
-        //TODO: 뷰에 의존적, Response 만들 때 setter 제거, jpa 사용?
-        savedOrder.setOrderLineItems(savedOrderLineItems);
-
-        return savedOrder;
+        return new OrderResponse(
+                savedOrder.getId(),
+                savedOrder.getOrderStatus(),
+                savedOrder.getOrderedTime(),
+                savedOrder.getOrderTableId(),
+                savedOrderLineItems
+        );
     }
 
     private List<OrderLineItem> saveOrderLineItems(List<OrderLineItem> orderLineItems, Long orderId) {
@@ -77,25 +80,31 @@ public class OrderService {
         return orderTable.getId();
     }
 
-    public List<Order> list() {
+    public List<OrderResponse> list() {
         final List<Order> orders = orderDao.findAll();
-
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
-        }
-
-        return orders;
+        return orders.stream()
+                .map(order -> new OrderResponse(
+                        order.getId(),
+                        order.getOrderStatus(),
+                        order.getOrderedTime(),
+                        order.getOrderTableId(),
+                        orderLineItemDao.findAllByOrderId(order.getId())
+                )).collect(Collectors.toList());
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderChangeRequest dto) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderChangeRequest dto) {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
         savedOrder.changeStatus(dto.getOrderStatus());
         orderDao.save(savedOrder);
 
-        //TODO: 뷰에 의존적, Response 만들 때 setter 제거, jpa 사용?
-        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
-        return savedOrder;
+        return new OrderResponse(
+                savedOrder.getId(),
+                savedOrder.getOrderStatus(),
+                savedOrder.getOrderedTime(),
+                savedOrder.getOrderTableId(),
+                orderLineItemDao.findAllByOrderId(orderId)
+        );
     }
 }

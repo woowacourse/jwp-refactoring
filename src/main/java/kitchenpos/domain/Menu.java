@@ -39,11 +39,6 @@ public class Menu {
             throw new IllegalArgumentException();
         }
     }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
-    }
-
     public Long getId() {
         return id;
     }
