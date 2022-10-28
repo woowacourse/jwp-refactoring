@@ -165,7 +165,7 @@ public class ServiceTestBase {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);
         orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(3);
+        orderTable.changeNumberOfGuests(3);
         return orderTableDao.save(orderTable);
     }
 

@@ -21,7 +21,7 @@ class TableServiceTest extends ServiceTestBase {
         // given
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(3);
+        orderTable.changeNumberOfGuests(3);
 
         // when
         OrderTable savedOrderTable = tableService.create(orderTable);
@@ -97,12 +97,11 @@ class TableServiceTest extends ServiceTestBase {
         // given
         OrderTable orderTable = 주문_테이블_생성();
         int changedNumberOfGuests = orderTable.getNumberOfGuests() + 1;
-        orderTable.setNumberOfGuests(changedNumberOfGuests);
 
         Long orderTableId = orderTable.getId();
 
         // when
-        tableService.changeNumberOfGuests(orderTableId, orderTable);
+        tableService.changeNumberOfGuests(orderTableId, changedNumberOfGuests);
 
         // then
         Optional<OrderTable> actual = orderTableDao.findById(orderTableId);
@@ -114,10 +113,9 @@ class TableServiceTest extends ServiceTestBase {
     void 방문한_손님_수_0_미만으로_변경_불가능() {
         // given
         OrderTable orderTable = 주문_테이블_생성();
-        orderTable.setNumberOfGuests(-1);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), -1))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -125,11 +123,10 @@ class TableServiceTest extends ServiceTestBase {
     void 존재하지_않는_주문_테이블의_손님_수는_변경_불가능() {
         // given
         OrderTable orderTable = 주문_테이블_생성();
-        orderTable.setNumberOfGuests(5);
         Long invalidOrderTableId = orderTable.getId() + 1;
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(invalidOrderTableId, orderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(invalidOrderTableId, 5))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -137,10 +134,9 @@ class TableServiceTest extends ServiceTestBase {
     void 비어있는_주문_테이블의_손님_수는_변경_불가능() {
         // given
         OrderTable orderTable = 빈_주문_테이블_생성();
-        orderTable.setNumberOfGuests(1);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), 1))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
