@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -13,11 +12,10 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderLineItemCreateRequest;
-import kitchenpos.dto.OrderResponse;
-import kitchenpos.dto.OrderStatusUpdateRequest;
-import org.aspectj.weaver.ast.Or;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.dto.request.OrderStatusUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;

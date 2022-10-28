@@ -1,7 +1,6 @@
-package kitchenpos.dto;
+package kitchenpos.dto.request;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;

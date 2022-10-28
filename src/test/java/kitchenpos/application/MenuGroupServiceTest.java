@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.MenuGroupCreateRequest;
-import kitchenpos.dto.MenuGroupResponse;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 
 class MenuGroupServiceTest extends ServiceTest {

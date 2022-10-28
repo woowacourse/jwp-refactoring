@@ -11,10 +11,10 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderLineItemCreateRequest;
-import kitchenpos.dto.OrderResponse;
-import kitchenpos.dto.OrderStatusUpdateRequest;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.dto.request.OrderStatusUpdateRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
