@@ -5,14 +5,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TableGroup {
+
     private final Long id;
     private final LocalDateTime createdDate;
     private final List<OrderTable> orderTables;
 
     public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+        validateEachTableStatus(orderTables);
+
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = new ArrayList<>(orderTables);
+    }
+
+    private void validateEachTableStatus(List<OrderTable> orderTables) {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.validateEmpty();
+            orderTable.validateNotInTableGroup();
+        }
     }
 
     public TableGroup(Long id, LocalDateTime createdDate) {
