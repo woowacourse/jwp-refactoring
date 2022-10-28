@@ -11,6 +11,7 @@ public class Menu {
     private List<MenuProduct> menuProducts;
 
     public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        validatePrice(menuProducts, price);
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
@@ -18,6 +19,21 @@ public class Menu {
     }
 
     public Menu() {
+    }
+
+    private static BigDecimal calculateSum(List<MenuProduct> menuProducts) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (MenuProduct menuProduct : menuProducts) {
+            sum.add(menuProduct.getPrice().multiply(new BigDecimal(menuProduct.getQuantity())));
+        }
+        return sum;
+    }
+
+    private void validatePrice(List<MenuProduct> menuProducts, BigDecimal price) {
+        BigDecimal sum = calculateSum(menuProducts);
+        if (sum.compareTo(price) < 0) {
+            throw new IllegalArgumentException("상품의 값의 합보다 메뉴의 값이 낮을 수 없습니다.");
+        }
     }
 
     public Long getId() {
