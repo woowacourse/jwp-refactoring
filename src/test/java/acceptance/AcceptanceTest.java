@@ -12,16 +12,15 @@ import kitchenpos.Application;
 import kitchenpos.application.dto.request.OrderCommand;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.common.DataClearExtension;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroupDto;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.ProductDto;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.request.MenuProductRequest;
 import kitchenpos.ui.dto.request.MenuRequest;
+import kitchenpos.ui.dto.request.OrderTableRequest;
 import kitchenpos.ui.dto.request.ProductRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -110,9 +109,7 @@ public class AcceptanceTest {
     }
 
     protected long 테이블을_생성한다(int numberOfGuests, boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
+        OrderTableRequest orderTable = new OrderTableRequest(numberOfGuests, empty);
 
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -133,19 +130,19 @@ public class AcceptanceTest {
                 .statusCode(HttpStatus.OK.value())
                 .extract().jsonPath().getList(".", OrderTable.class);
     }
-
-    protected OrderTable 테이블_상태를_변경한다(long orderTableId, boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(empty);
-
-        return RestAssured.given().log().all()
-                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(orderTable)
-                .when().log().all()
-                .put("/api/tables/{order_table_id}/empty", orderTableId)
-                .then().log().all()
-                .extract().as(OrderTable.class);
-    }
+//
+//    protected OrderTable 테이블_상태를_변경한다(long orderTableId, boolean empty) {
+//        OrderTable orderTable = new OrderTable();
+//        orderTable.setEmpty(empty);
+//
+//        return RestAssured.given().log().all()
+//                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+//                .body(orderTable)
+//                .when().log().all()
+//                .put("/api/tables/{order_table_id}/empty", orderTableId)
+//                .then().log().all()
+//                .extract().as(OrderTable.class);
+//    }
 
     protected TableGroup 테이블_그룹을_생성한다(List<OrderTable> orderTables) {
         TableGroup tableGroup = new TableGroup();
@@ -170,18 +167,18 @@ public class AcceptanceTest {
                 .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
-    protected OrderTable 테이블_방문자_수를_변경한다(long orderTableId, int numberOfGuests) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-
-        return RestAssured.given().log().all()
-                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(orderTable)
-                .when().log().all()
-                .put("/api/tables/{order_table_id}/number-of-guests", orderTableId)
-                .then().log().all()
-                .extract().as(OrderTable.class);
-    }
+//    protected OrderTable 테이블_방문자_수를_변경한다(long orderTableId, int numberOfGuests) {
+//        OrderTable orderTable = new OrderTable();
+//        orderTable.setNumberOfGuests(numberOfGuests);
+//
+//        return RestAssured.given().log().all()
+//                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+//                .body(orderTable)
+//                .when().log().all()
+//                .put("/api/tables/{order_table_id}/number-of-guests", orderTableId)
+//                .then().log().all()
+//                .extract().as(OrderTable.class);
+//    }
 
     protected long 주문을_생성한다(long table, List<OrderLineItem> orderLineItems) {
         OrderCommand order = new OrderCommand(table, orderLineItems);
