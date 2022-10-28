@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Test;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.menu.CreateMenuRequest;
 import kitchenpos.dto.menu.CreateMenuProductRequest;
+import kitchenpos.dto.menu.CreateMenuRequest;
 
 class MenuServiceTest extends ServiceTest {
 
@@ -84,13 +84,13 @@ class MenuServiceTest extends ServiceTest {
 
     private Product createAndSaveProduct() {
         Product product = new Product("product", new BigDecimal(1000));
-        return productDao.save(product);
+        return productRepository.save(product);
     }
 
     private MenuGroup createAndSaveMenuGroup() {
         MenuGroup menuGroup = new MenuGroup("menuGroup");
 
-        return menuGroupDao.save(menuGroup);
+        return menuGroupRepository.save(menuGroup);
     }
 
     private CreateMenuRequest createMenuCreateRequest(BigDecimal price, long menuGroupId,

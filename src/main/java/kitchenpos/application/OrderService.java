@@ -7,33 +7,29 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.order.ChangeOrderStatusRequest;
 import kitchenpos.dto.order.CreateOrderRequest;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 
 @Service
 public class OrderService {
-    private final MenuDao menuDao;
-    private final OrderDao orderDao;
-    private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
+    private final MenuRepository menuRepository;
+    private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
 
     public OrderService(
-        final MenuDao menuDao,
-        final OrderDao orderDao,
-        final OrderLineItemDao orderLineItemDao,
-        final OrderTableDao orderTableDao
+        final MenuRepository menuRepository,
+        final OrderRepository orderRepository,
+        final OrderTableRepository orderTableRepository
     ) {
-        this.menuDao = menuDao;
-        this.orderDao = orderDao;
-        this.orderLineItemDao = orderLineItemDao;
-        this.orderTableDao = orderTableDao;
+        this.menuRepository = menuRepository;
+        this.orderRepository = orderRepository;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
@@ -47,11 +43,11 @@ public class OrderService {
             ));
 
         Order order = new Order(orderTable, orderLineItems);
-        return orderDao.save(order);
+        return orderRepository.save(order);
     }
 
     public List<Order> list() {
-        final List<Order> orders = orderDao.findAll();
+        final List<Order> orders = orderRepository.findAll();
         return orders;
     }
 
@@ -64,17 +60,17 @@ public class OrderService {
     }
 
     private Menu findMenuById(Long id) {
-        return menuDao.findById(id)
+        return menuRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴입니다."));
     }
 
     private OrderTable findOrderTableById(Long id) {
-        return orderTableDao.findById(id)
+        return orderTableRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블 입니다."));
     }
 
     private Order findOrderById(Long id) {
-        return orderDao.findById(id)
+        return orderRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 주문입니다."));
     }
 }

@@ -135,19 +135,19 @@ class OrderServiceTest extends ServiceTest {
             put(savedMenu, 1L);
         }});
 
-        return orderDao.save(order);
+        return orderRepository.save(order);
     }
 
     private Menu createAndSaveMenu() {
-        MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("menuGroup"));
+        MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
         Menu menu = new Menu("menu", new BigDecimal(0), savedMenuGroup, new HashMap<>());
 
-        return menuDao.save(menu);
+        return menuRepository.save(menu);
     }
 
     private OrderTable createAndSaveOrderTable() {
         OrderTable orderTable = new OrderTable(10, false);
-        return orderTableDao.save(orderTable);
+        return orderTableRepository.save(orderTable);
     }
 
     private CreateOrderRequest createOrderCreateRequest(long orderTableId, long menuId, long quantity) {

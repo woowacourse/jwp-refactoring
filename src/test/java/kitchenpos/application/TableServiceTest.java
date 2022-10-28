@@ -93,7 +93,7 @@ class TableServiceTest extends ServiceTest {
             OrderTable savedOrderTable = createAndSaveOrderTable(true);
             Order order = createOrder(savedOrderTable);
             order.changeStatus(status);
-            orderDao.save(order);
+            orderRepository.save(order);
 
             ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(false);
 
@@ -139,15 +139,15 @@ class TableServiceTest extends ServiceTest {
 
     private OrderTable createAndSaveOrderTable(boolean empty) {
         OrderTable orderTable = new OrderTable(10, empty);
-        return orderTableDao.save(orderTable);
+        return orderTableRepository.save(orderTable);
     }
 
     private Order createOrder(OrderTable orderTable) {
-        Product product = productDao.save(new Product("product", new BigDecimal(5000)));
+        Product product = productRepository.save(new Product("product", new BigDecimal(5000)));
 
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("menuGroup"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
 
-        Menu menu = menuDao.save(new Menu(
+        Menu menu = menuRepository.save(new Menu(
             "menu",
             new BigDecimal(2000),
             menuGroup,

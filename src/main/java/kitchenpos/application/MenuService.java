@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
@@ -17,18 +17,17 @@ import kitchenpos.dto.menu.CreateMenuRequest;
 
 @Service
 public class MenuService {
-    private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
-    private final ProductDao productDao;
+    private final MenuRepository menuRepository;
+    private final MenuGroupRepository menuGroupRepository;
+    private final ProductRepository productRepository;
 
     public MenuService(
-        final MenuDao menuDao,
-        final MenuGroupDao menuGroupDao,
-        final ProductDao productDao
-    ) {
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
-        this.productDao = productDao;
+        MenuRepository menuRepository,
+        MenuGroupRepository menuGroupRepository,
+        ProductRepository productRepository) {
+        this.menuRepository = menuRepository;
+        this.menuGroupRepository = menuGroupRepository;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -43,20 +42,20 @@ public class MenuService {
             );
 
         final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup, menuProducts);
-        return menuDao.save(menu);
+        return menuRepository.save(menu);
     }
 
     public List<Menu> list() {
-        return menuDao.findAll();
+        return menuRepository.findAll();
     }
 
     private MenuGroup findMenuGroupById(Long id) {
-        return menuGroupDao.findById(id)
+        return menuGroupRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴그룹입니다."));
     }
 
     private Product findProductById(Long id) {
-        return productDao.findById(id)
+        return productRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 제품입니다."));
     }
 }

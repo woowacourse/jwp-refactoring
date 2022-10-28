@@ -82,7 +82,7 @@ class TableGroupServiceTest extends ServiceTest {
             tableGroupService.ungroup(savedGroupId);
 
             // then
-            assertThat(orderTableDao.findAllByTableGroupId(savedGroupId)).isEmpty();
+            assertThat(orderTableRepository.findByTableGroupId(savedGroupId)).isEmpty();
         }
 
         @ParameterizedTest
@@ -96,7 +96,7 @@ class TableGroupServiceTest extends ServiceTest {
 
             Order order = createOrder(orderTable1);
             order.changeStatus(status);
-            orderDao.save(order);
+            orderRepository.save(order);
 
             // when, then
             assertThatThrownBy(() -> tableGroupService.ungroup(savedGroupId))
@@ -108,7 +108,7 @@ class TableGroupServiceTest extends ServiceTest {
     private OrderTable createAndSaveOrderTable() {
         OrderTable orderTable = new OrderTable(10, true);
 
-        return orderTableDao.save(orderTable);
+        return orderTableRepository.save(orderTable);
     }
 
     private TableGroup createAndSaveTableGroup(OrderTable orderTable1, OrderTable orderTable2) {
@@ -123,11 +123,11 @@ class TableGroupServiceTest extends ServiceTest {
     }
 
     private Order createOrder(OrderTable orderTable) {
-        Product product = productDao.save(new Product("product", new BigDecimal(5000)));
+        Product product = productRepository.save(new Product("product", new BigDecimal(5000)));
 
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("menuGroup"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
 
-        Menu menu = menuDao.save(new Menu(
+        Menu menu = menuRepository.save(new Menu(
             "menu",
             new BigDecimal(2000),
             menuGroup,
