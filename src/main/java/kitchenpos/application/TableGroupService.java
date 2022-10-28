@@ -1,20 +1,20 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
+import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableGroupService {
@@ -22,40 +22,36 @@ public class TableGroupService {
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao, final TableGroupDao tableGroupDao) {
+    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao,
+                             final TableGroupDao tableGroupDao) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
-
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
+    public TableGroup create(final TableGroupRequest tableGroupRequest) {
+        final OrderTables orderTables = new OrderTables(toOrderTables(tableGroupRequest));
+        final List<Long> orderTableIds = orderTables.getOrderTableIds();
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
-        if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderTablesSize(orderTables, savedOrderTables);
 
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
-            }
-        }
-
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
+        return updateOrderTableIdAndTableGroupId(savedOrderTables, savedTableGroup);
+    }
+
+    private List<OrderTable> toOrderTables(TableGroupRequest tableGroupRequest) {
+        return tableGroupRequest.getOrderTables()
+                .stream()
+                .map(it -> new OrderTable(it.getId()))
+                .collect(Collectors.toList());
+    }
+
+    private TableGroup updateOrderTableIdAndTableGroupId(List<OrderTable> savedOrderTables,
+                                                         TableGroup savedTableGroup) {
         final Long tableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.setTableGroupId(tableGroupId);
@@ -63,8 +59,17 @@ public class TableGroupService {
             orderTableDao.save(savedOrderTable);
         }
         savedTableGroup.setOrderTables(savedOrderTables);
-
         return savedTableGroup;
+    }
+
+    private void validateOrderTablesSize(final OrderTables orderTables, final List<OrderTable> savedOrderTables) {
+        orderTables.validateIsSameSize(savedOrderTables);
+
+        for (final OrderTable savedOrderTable : savedOrderTables) {
+            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
+                throw new IllegalArgumentException();
+            }
+        }
     }
 
     @Transactional
