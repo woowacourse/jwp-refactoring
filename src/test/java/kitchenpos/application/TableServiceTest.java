@@ -123,7 +123,7 @@ class TableServiceTest {
     @DisplayName("테이블의 손님의 수를 변경한다")
     @Test
     void changeNumberOfGuests() {
-        final OrderTable orderTable = OrderTableFixture.새로운_테이블();
+        final OrderTable orderTable = OrderTableFixture.비어있지_않는_테이블();
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         int changedNumberOfGuests = 1;

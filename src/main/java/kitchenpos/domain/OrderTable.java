@@ -25,6 +25,11 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
+    public void group(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+        empty = false;
+    }
+
     private void validateNumberOfGuestsIsHigherZero(final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException(String.format("손님의 수는 0명 이하일 수 없습니다. [%s]", numberOfGuests));
@@ -63,6 +68,10 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
+    }
+
+    public boolean isNotEmpty() {
+        return !empty;
     }
 
     public void setEmpty(final boolean empty) {

@@ -74,7 +74,7 @@ class OrderServiceTest {
         );
 
         저장된_후라이드_치킨_세트_메뉴 = menuDao.save(menu);
-        저장된_주문_테이블 = orderTableDao.save(OrderTableFixture.새로운_테이블());
+        저장된_주문_테이블 = orderTableDao.save(OrderTableFixture.비어있지_않는_테이블());
     }
 
     @DisplayName("주문을 등록한다")

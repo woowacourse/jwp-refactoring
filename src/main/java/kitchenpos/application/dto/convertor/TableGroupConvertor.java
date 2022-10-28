@@ -16,9 +16,7 @@ public class TableGroupConvertor {
     }
 
     public static TableGroup convertToTableGroup(final TableGroupRequest request) {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(convertToOrderTables(request.getOrderTables()));
-        return tableGroup;
+        return new TableGroup(convertToOrderTables(request.getOrderTables()));
     }
 
     public static List<OrderTable> convertToOrderTables(final List<OrderTableChangeRequest> requests) {

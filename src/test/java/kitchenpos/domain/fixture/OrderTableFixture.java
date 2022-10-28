@@ -14,12 +14,15 @@ public class OrderTableFixture {
     }
 
     public static OrderTable 새로운_테이블() {
-        return 주문_테이블().build();
+        return 주문_테이블()
+            .빈_테이블(true)
+            .build();
     }
 
     public static OrderTable 새로운_테이블(final Long tableGroupId) {
         return 주문_테이블()
             .테이블_그룹_아이디(tableGroupId)
+            .빈_테이블(true)
             .build();
     }
 

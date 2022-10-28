@@ -10,7 +10,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -69,15 +68,6 @@ class TableGroupServiceTest {
         assertThat(response.getId()).isNotNull();
     }
 
-    @DisplayName("테이블 그룹 등록 시 주문 테이블의 수가 2이상이어야 한다")
-    @Test
-    void createNumberOfOrderTableIsLowerTwo() {
-        final TableGroupRequest request = new TableGroupRequest(Collections.emptyList());
-
-        assertThatThrownBy(() -> tableGroupService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("테이블 그룹 등록 시 등록하려는 테이블 그룹이 존재해야 한다")
     @Test
     void createOrderTableIsNotExist() {
@@ -100,10 +90,11 @@ class TableGroupServiceTest {
         );
 
         assertThatThrownBy(() -> tableGroupService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("존재하지 않는 테이블 정보가 포함되어 있습니다.");
     }
 
-    @DisplayName("테이블 그룹 등록 시 주문 테이블이 비어있으면 안된다")
+    @DisplayName("테이블 그룹 등록 시 주문 테이블이 비워져 있어야 한다")
     @Test
     void createOrderTableIsNotEmpty() {
         final OrderTable saved1 = orderTableDao.save(비어있지_않는_테이블());
@@ -120,14 +111,16 @@ class TableGroupServiceTest {
             orderTableChangeRequest2));
 
         assertThatThrownBy(() -> tableGroupService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("테이블이 비워져 있어야 합니다.");
     }
 
     @DisplayName("테이블 그룹 등록 시 테이블 그룹의 아이디가 null 이어야 한다")
     @Test
     void createOrderTableIsNotNull() {
-        final OrderTable saved1 = orderTableDao.save(새로운_테이블(null));
-        final OrderTable saved2 = orderTableDao.save(새로운_테이블());
+        final TableGroup savedTableGroup = tableGroupDao.save(새로운_테이블_그룹());
+        final OrderTable saved1 = orderTableDao.save(새로운_테이블(savedTableGroup.getId()));
+        final OrderTable saved2 = orderTableDao.save(새로운_테이블(savedTableGroup.getId()));
 
         final OrderTableChangeRequest orderTableChangeRequest1 = new OrderTableChangeRequest(
             saved1.getId(), saved1.getNumberOfGuests(), saved1.isEmpty()
@@ -140,7 +133,8 @@ class TableGroupServiceTest {
             orderTableChangeRequest2));
 
         assertThatThrownBy(() -> tableGroupService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("테이블 그룹의 아이디가 존재합니다.");
     }
 
     @DisplayName("테이블의 그룹을 해제한다")
@@ -164,6 +158,7 @@ class TableGroupServiceTest {
         orderDao.save(요리중인_주문(savedOrderTable.getId()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("테이블의 주문이 완료되지 않았습니다.");
     }
 }
