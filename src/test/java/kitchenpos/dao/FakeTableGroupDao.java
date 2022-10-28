@@ -8,17 +8,18 @@ import kitchenpos.domain.TableGroup;
 public class FakeTableGroupDao implements TableGroupDao {
 
     private final List<TableGroup> IN_MEMORY_TABLE_GROUP;
+    private Long id;
 
     public FakeTableGroupDao() {
         IN_MEMORY_TABLE_GROUP = new ArrayList<>();
+        id = 1L;
     }
 
     @Override
     public TableGroup save(TableGroup entity) {
-        IN_MEMORY_TABLE_GROUP.add(entity);
-        Long id = (long) IN_MEMORY_TABLE_GROUP.size();
-        entity.setId(id);
-        return entity;
+        TableGroup tableGroup = new TableGroup(id++, entity.getCreatedDate(), entity.getOrderTables());
+        IN_MEMORY_TABLE_GROUP.add(tableGroup);
+        return tableGroup;
     }
 
     @Override
