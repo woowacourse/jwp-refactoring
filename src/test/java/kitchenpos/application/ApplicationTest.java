@@ -15,6 +15,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -62,6 +63,10 @@ public class ApplicationTest {
 
     protected OrderTable 주문테이블_생성(OrderTable orderTable) {
         return orderTableDao.save(orderTable);
+    }
+
+    protected TableGroup 단체지정_생성(TableGroup tableGroup) {
+        return tableGroupDao.save(tableGroup);
     }
 
     protected OrderLineItem 주문아이템_생성(OrderLineItem orderLineItem) {

@@ -6,6 +6,8 @@ import java.util.Objects;
 import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.application.dto.TableEmptyRequest;
 import kitchenpos.application.dto.TableNumberOfGuestsRequest;
+import kitchenpos.common.exception.InvalidOrderException;
+import kitchenpos.common.exception.InvalidTableException;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
@@ -41,37 +43,36 @@ public class TableService {
 
     @Transactional
     public void changeEmpty(Long orderTableId, TableEmptyRequest tableEmptyRequest) {
-        OrderTable orderTable = orderTableDao.findById(orderTableId).orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.nonNull(orderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId,
-                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
+        OrderTable orderTable = getOrderTable(orderTableId);
+        validateTableGroup(orderTable);
+        validateOrderStatus(orderTable.getId());
 
         orderTableDao.save(
                 new OrderTable(orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(),
                         tableEmptyRequest.getEmpty()));
     }
 
+    private OrderTable getOrderTable(Long orderTableId) {
+        return orderTableDao.findById(orderTableId)
+                .orElseThrow(() -> new InvalidTableException("테이블이 존재하지 않습니다."));
+    }
+
+    private void validateTableGroup(OrderTable orderTable) {
+        if (Objects.nonNull(orderTable.getTableGroupId())) {
+            throw new InvalidTableException("단체 지정 정보가 존재합니다.");
+        }
+    }
+
+    private void validateOrderStatus(Long orderTableId) {
+        if (orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId,
+                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            throw new InvalidOrderException("주문이 완료 상태가 아닙니다.");
+        }
+    }
+
     @Transactional
     public void changeNumberOfGuests(Long orderTableId, TableNumberOfGuestsRequest tableNumberOfGuestsRequest) {
-        int numberOfGuests = tableNumberOfGuestsRequest.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        OrderTable orderTable = orderTableDao.findById(orderTableId).orElseThrow(IllegalArgumentException::new);
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        orderTableDao.save(
-                new OrderTable(orderTable.getId(), orderTable.getTableGroupId(), numberOfGuests, orderTable.isEmpty()));
+        OrderTable orderTable = getOrderTable(orderTableId);
+        orderTableDao.save(orderTable.updateNumberOfGuests(tableNumberOfGuestsRequest.getNumberOfGuests()));
     }
 }
