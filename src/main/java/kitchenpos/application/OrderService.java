@@ -60,8 +60,8 @@ public class OrderService {
         }
 
         order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
+        order.initOrderStatus();
+        order.initOrderedTime();
 
         final Order savedOrder = orderDao.save(order);
 

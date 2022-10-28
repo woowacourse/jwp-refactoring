@@ -58,16 +58,16 @@ public class Order {
         this.orderStatus = OrderStatus.valueOf(orderStatus).name();
     }
 
+    public void initOrderedTime() {
+        this.orderedTime = LocalDateTime.now();
+    }
+
     public void setOrderTableId(Long orderTableId) {
         this.orderTableId = orderTableId;
     }
 
-    public void setOrderStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
-    public void setOrderedTime(LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
+    public void initOrderStatus() {
+        this.orderStatus = OrderStatus.COOKING.name();
     }
 
     public void setOrderLineItems(List<OrderLineItem> orderLineItems) {

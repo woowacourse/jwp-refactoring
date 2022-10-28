@@ -31,8 +31,8 @@ public class TableGroup {
         return orderTables;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
+    public void resetCreatedTimeNow() {
+        this.createdDate = LocalDateTime.now();
     }
 
     public void setOrderTables(List<OrderTable> orderTables) {

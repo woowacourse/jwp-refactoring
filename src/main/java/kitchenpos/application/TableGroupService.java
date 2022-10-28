@@ -51,7 +51,7 @@ public class TableGroupService {
             }
         }
 
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        tableGroup.resetCreatedTimeNow();
 
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
