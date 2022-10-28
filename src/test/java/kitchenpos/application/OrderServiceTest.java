@@ -51,10 +51,10 @@ class OrderServiceTest extends ServiceTest {
 
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
 
-        MenuProduct menuProduct1 = new MenuProduct(product1.getId(), 1);
-        MenuProduct menuProduct2 = new MenuProduct(product2.getId(), 2);
-        MenuProduct menuProduct3 = new MenuProduct(product2.getId(), 2);
-        MenuProduct menuProduct4 = new MenuProduct(product2.getId(), 2);
+        MenuProduct menuProduct1 = new MenuProduct(product1, 1);
+        MenuProduct menuProduct2 = new MenuProduct(product2, 2);
+        MenuProduct menuProduct3 = new MenuProduct(product2, 2);
+        MenuProduct menuProduct4 = new MenuProduct(product2, 2);
 
         Menu menu1 = menuRepository.save(new Menu("메뉴1", new BigDecimal(40000), menuGroup,
                 List.of(menuProduct1, menuProduct2)));
@@ -93,10 +93,10 @@ class OrderServiceTest extends ServiceTest {
 
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
 
-        MenuProduct menuProduct1 = new MenuProduct(product1.getId(), 1);
-        MenuProduct menuProduct2 = new MenuProduct(product2.getId(), 2);
-        MenuProduct menuProduct3 = new MenuProduct(product2.getId(), 2);
-        MenuProduct menuProduct4 = new MenuProduct(product2.getId(), 2);
+        MenuProduct menuProduct1 = new MenuProduct(product1, 1);
+        MenuProduct menuProduct2 = new MenuProduct(product2, 2);
+        MenuProduct menuProduct3 = new MenuProduct(product2, 2);
+        MenuProduct menuProduct4 = new MenuProduct(product2, 2);
 
         Menu menu1 = menuRepository.save(new Menu("메뉴1", new BigDecimal(40000), menuGroup,
                 List.of(menuProduct1, menuProduct2)));

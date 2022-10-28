@@ -39,10 +39,29 @@ public class Menu {
 
     public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup,
                 final List<MenuProduct> menuProducts) {
+        validatePrice(price);
+        validateSumOfProducts(price, menuProducts);
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
+    }
+
+    private void validatePrice(final BigDecimal price) {
+        if (price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("메뉴의 가격은 음수일 수 없습니다.");
+        }
+    }
+
+    private void validateSumOfProducts(final BigDecimal price, final List<MenuProduct> menuProducts) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (final MenuProduct menuProduct : menuProducts) {
+            sum = sum.add(menuProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+        }
+
+        if (price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException("메뉴의 가격이 상품의 총 가격포다 클 수 없습니다.");
+        }
     }
 
     public Long getId() {

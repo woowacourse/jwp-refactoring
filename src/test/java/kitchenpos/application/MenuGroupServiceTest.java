@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.dto.MenuGroupRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,9 +19,9 @@ class MenuGroupServiceTest extends ServiceTest {
 
     @Test
     void 메뉴_그룹을_생성할_수_있다() {
-        MenuGroup menuGroup = new MenuGroup("메뉴그룹1");
+        MenuGroupRequest request = new MenuGroupRequest("메뉴그룹1");
 
-        MenuGroup actual = menuGroupService.create(menuGroup);
+        MenuGroup actual = menuGroupService.create(request);
 
         assertAll(() -> {
             assertThat(actual.getId()).isNotNull();
