@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
@@ -17,29 +17,33 @@ public class MenuService {
 
     private final MenuDao menuDao;
     private final MenuProductDao menuProductDao;
+    private final MenuGroupDao menuGroupDao;
+    private final ProductDao productDao;
 
-    public MenuService(final MenuDao menuDao, final MenuProductDao menuProductDao) {
+    public MenuService(final MenuDao menuDao, final MenuProductDao menuProductDao,
+                       MenuGroupDao menuGroupDao, ProductDao productDao) {
         this.menuDao = menuDao;
         this.menuProductDao = menuProductDao;
+        this.menuGroupDao = menuGroupDao;
+        this.productDao = productDao;
     }
 
     @Transactional
-    public Menu create(String name, Long price, MenuGroup menuGroup, Map<Product, Integer> productQuantity) {
-        Menu menu = menuDao.save(Menu.of(name, price, menuGroup, productQuantity));
-        setMenuProductInMenu(menu, productQuantity);
-        return menu;
+    public Menu create(String name, Long price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        menuGroupDao.findById(menuGroupId)
+                .orElseThrow(IllegalArgumentException::new);
+        updateMenuProductOfPrice(menuProducts);
+
+        Menu menu = new Menu(name, BigDecimal.valueOf(price), menuGroupId, menuProducts);
+        return menuDao.save(menu);
     }
 
-    private void setMenuProductInMenu(Menu menu, Map<Product, Integer> productQuantity) {
-        Long menuId = menu.getId();
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        for (Map.Entry<Product, Integer> entry : productQuantity.entrySet()) {
-            Product product = entry.getKey();
-            Integer quantity = entry.getValue();
-            MenuProduct menuProduct = menuProductDao.save(new MenuProduct(menuId, product.getId(), quantity));
-            menuProducts.add(menuProduct);
+    private void updateMenuProductOfPrice(List<MenuProduct> menuProducts) {
+        for (MenuProduct menuProduct : menuProducts) {
+            Product product = productDao.findById(menuProduct.getProductId())
+                    .orElseThrow(IllegalArgumentException::new);
+            menuProduct.updatePrice(product.getPrice());
         }
-        menu.setMenuProducts(menuProducts);
     }
 
     public List<Menu> list() {

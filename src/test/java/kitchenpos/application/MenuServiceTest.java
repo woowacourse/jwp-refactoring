@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -32,58 +32,44 @@ public class MenuServiceTest {
     private MenuProductDao menuProductDao = new MenuProductFakeDao();
     private ProductDao productDao = new ProductFakeDao();
 
-    private MenuService menuService = new MenuService(menuDao, menuProductDao);
+    private MenuService menuService = new MenuService(menuDao, menuProductDao, menuGroupDao, productDao);
 
     @DisplayName("메뉴를 생성할 때")
     @Nested
     class Create {
 
-        private Menu menu;
         private MenuGroup menuGroup;
-        private Map<Product, Integer> productQuantity;
+        private List<MenuProduct> menuProducts;
 
         @BeforeEach
         void setUp() {
             menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
-            Product product = productDao.save(new Product("상품1", BigDecimal.valueOf(1000)));
-            productQuantity.put(product, 2);
-            menu = new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), menuProducts);
+            productDao.save(new Product("상품1", BigDecimal.valueOf(1000)));
+            productDao.save(new Product("상품2", BigDecimal.valueOf(2000)));
+            menuProducts = productDao.findAll().stream()
+                    .map(product -> new MenuProduct(product.getId(), 2))
+                    .collect(Collectors.toList());
         }
 
         @DisplayName("성공")
         @Test
         void success() {
             // when
-            Menu actual = menuService.create(menu.getName(), menu.getPrice(), menuGroup, );
+            Menu actual = menuService.create("후라이드", 2000L, menuGroup.getId(), menuProducts);
 
             // then
             assertAll(
                     () -> assertThat(menuDao.findById(actual.getId())).isPresent(),
-                    () -> assertThat(actual.getPrice()).isEqualTo(BigDecimal.valueOf(1000)),
-                    () -> assertThat(actual.getMenuProducts()).hasSize(1),
-                    () -> assertThat(actual.getMenuProducts().get(0).getMenuId()).isEqualTo(actual.getId())
+                    () -> assertThat(actual.getPrice()).isEqualTo(BigDecimal.valueOf(2000L)),
+                    () -> assertThat(actual.getMenuProducts()).hasSize(2)
             );
         }
 
         @DisplayName("가격이 0보다 작으면 예외를 발생시킨다.")
         @Test
         void priceLessThanZero_exception() {
-            // given
-            menu.setPrice(BigDecimal.valueOf(-1));
-
             // then
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("가격이 null이면 예외를 발생시킨다.")
-        @Test
-        void priceIsNull_exception() {
-            // given
-            menu.setPrice(null);
-
-            // then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create("후라이드", -1L, menuGroup.getId(), menuProducts))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -94,21 +80,25 @@ public class MenuServiceTest {
             MenuProduct menuProduct = new MenuProduct(0L, 2);
             ArrayList<MenuProduct> menuProducts = new ArrayList<>();
             menuProducts.add(menuProduct);
-            menu.setMenuProducts(menuProducts);
 
             // then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create("후라이드", -1L, menuGroup.getId(), menuProducts))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("상품들의 (가격 * 개수) 합보다 메뉴의 가격이 크면 예외를 발생시킨다.")
         @Test
         void priceMoreThanSumOfProducts_exception() {
-            // given
-            menu.setPrice(BigDecimal.valueOf(2100));
-
             // then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create("후라이드", 6100L, menuGroup.getId(), menuProducts))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @DisplayName("메뉴 그룹이 존재하지 않으면 예외를 발생시킨다.")
+        @Test
+        void notExistMenuGroup_exception() {
+            // then
+            assertThatThrownBy(() -> menuService.create("후라이드", 5900L, 0L, menuProducts))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -119,7 +109,7 @@ public class MenuServiceTest {
         // given
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
         Product product = productDao.save(new Product("상품1", BigDecimal.valueOf(1000)));
-        MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
+        MenuProduct menuProduct = new MenuProduct(product.getId(), 2, BigDecimal.valueOf(1000));
         ArrayList<MenuProduct> menuProducts = new ArrayList<>();
         menuProducts.add(menuProduct);
         Menu menu = new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), menuProducts);
