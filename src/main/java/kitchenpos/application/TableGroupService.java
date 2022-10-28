@@ -80,15 +80,26 @@ public class TableGroupService {
     public void ungroup(Long tableGroupId) {
         List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
 
-        List<Long> orderTableIds = orderTables.stream()
+        List<Long> orderTableIds = getOrderTableIds(orderTables);
+        validateIsPossibleToUngroup(orderTableIds);
+
+        ungroupTables(orderTables);
+    }
+
+    private List<Long> getOrderTableIds(List<OrderTable> orderTables) {
+        return orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
+    }
 
+    private void validateIsPossibleToUngroup(List<Long> orderTableIds) {
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
+    }
 
+    private void ungroupTables(List<OrderTable> orderTables) {
         for (OrderTable orderTable : orderTables) {
             orderTable.leaveTableGroup();
             orderTable.changeEmptyStatus(false);
