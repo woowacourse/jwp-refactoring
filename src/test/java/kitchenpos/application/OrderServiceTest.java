@@ -23,6 +23,9 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -77,22 +80,14 @@ class OrderServiceTest extends ServiceTest {
     void create() {
         OrderTable newOrderTable = new OrderTable(4, false);
         OrderTable orderTable = orderTableDao.save(newOrderTable);
-        Order newOrder = new Order(orderTable.getId(), createOrderLineItem(menu.getId()));
+        OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
+                createOrderLineItemRequest(menu.getId()));
 
-        Order order = orderService.create(newOrder);
+        OrderResponse response = orderService.create(request);
 
-        assertThat(order).isNotNull();
-    }
-
-    @DisplayName("주문 등록 시 주문 항목이 비어있으면 예외가 발생한다.")
-    @Test
-    void createWithEmptyOrderLineItem() {
-        OrderTable newOrderTable = new OrderTable(4, false);
-        OrderTable orderTable = orderTableDao.save(newOrderTable);
-        Order newOrder = new Order(orderTable.getId(), new ArrayList<>());
-
-        assertThatThrownBy(() -> orderService.create(newOrder))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThat(response.getId()).isNotNull();
+        assertThat(response.getOrderStatus()).isEqualTo("COOKING");
+        assertThat(response.getOrderTableId()).isNotNull();
     }
 
     @DisplayName("주문 등록 시 주문항목의 메뉴에 등록되어 있지 않은 주문 항목이 있으면 예외가 발생한다.")
@@ -100,18 +95,19 @@ class OrderServiceTest extends ServiceTest {
     void createWithInvalidOrderLineItem() {
         OrderTable newOrderTable = new OrderTable(4, false);
         OrderTable orderTable = orderTableDao.save(newOrderTable);
-        Order newOrder = new Order(orderTable.getId(), createInvalidOrderLineItem());
+        OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
+                createInvalidOrderLineItemRequest());
 
-        assertThatThrownBy(() -> orderService.create(newOrder))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 등록 시 주문에서의 주문 테이블이 존재하지 않는 주문 테이블일 경우 예외가 발생한다.")
     @Test
     void createWithInvalidOrderTable() {
-        Order newOrder = new Order(9999L, createOrderLineItem());
+        OrderCreateRequest request = new OrderCreateRequest(9999L, createOrderLineItemRequest());
 
-        assertThatThrownBy(() -> orderService.create(newOrder))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -120,9 +116,10 @@ class OrderServiceTest extends ServiceTest {
     void createWithEmptyOrderTable() {
         OrderTable newOrderTable = new OrderTable(0, true);
         OrderTable orderTable = orderTableDao.save(newOrderTable);
-        Order newOrder = new Order(orderTable.getId(), createOrderLineItem());
+        OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
+                createOrderLineItemRequest());
 
-        assertThatThrownBy(() -> orderService.create(newOrder))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -190,10 +187,24 @@ class OrderServiceTest extends ServiceTest {
         return orderLineItems;
     }
 
+    private List<OrderLineItemRequest> createInvalidOrderLineItemRequest() {
+        List<OrderLineItemRequest> orderLineItems = new ArrayList<>();
+        orderLineItems.add(new OrderLineItemRequest(9999L, 10L));
+        return orderLineItems;
+    }
+
     private List<OrderLineItem> createOrderLineItem(Long... menuIds) {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (Long menuId : menuIds) {
             orderLineItems.add(new OrderLineItem(menuId, 10));
+        }
+        return orderLineItems;
+    }
+
+    private List<OrderLineItemRequest> createOrderLineItemRequest(Long... menuIds) {
+        List<OrderLineItemRequest> orderLineItems = new ArrayList<>();
+        for (Long menuId : menuIds) {
+            orderLineItems.add(new OrderLineItemRequest(menuId, 10L));
         }
         return orderLineItems;
     }

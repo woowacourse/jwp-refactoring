@@ -2,8 +2,11 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.util.CollectionUtils;
 
 public class Order {
+
     private Long id;
     private Long orderTableId;
     private String orderStatus;
@@ -13,19 +16,29 @@ public class Order {
     public Order() {
     }
 
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime,
+    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
+        validateEmpty(orderLineItems);
+        this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
 
+    private void validateEmpty(List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime,
+                 List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
+    }
+
     public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
-        this.orderTableId = orderTableId;
-        this.orderStatus = null;
-        this.orderedTime = null;
-        this.orderLineItems = orderLineItems;
+        this(null, orderTableId, null, null, orderLineItems);
     }
 
     public Long getId() {
@@ -66,5 +79,15 @@ public class Order {
 
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
+    }
+
+    public List<Long> getMenuIds() {
+        return orderLineItems.stream()
+                .map(OrderLineItem::getMenuId)
+                .collect(Collectors.toList());
+    }
+
+    public boolean hasValidCount(long menuCount) {
+        return orderLineItems.size() == menuCount;
     }
 }
