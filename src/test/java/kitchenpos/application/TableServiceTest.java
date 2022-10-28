@@ -83,7 +83,7 @@ class TableServiceTest {
     void changeEmpty_throwsException_whenHasGroup() {
         // given
         final TableGroup savedTableGroup = dataSupport.saveTableGroup();
-        final OrderTable savedOrderTable = dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0, true);
+        final OrderTable savedOrderTable = dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0);
         final Long orderTableId = savedOrderTable.getId();
 
         // when, then

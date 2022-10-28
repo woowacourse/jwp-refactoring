@@ -35,8 +35,8 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
         // given
         final TableGroup savedTableGroup = dataSupport.saveTableGroup();
         final Long savedTableGroupId = savedTableGroup.getId();
-        dataSupport.saveOrderTableWithGroup(savedTableGroupId, 2, false);
-        dataSupport.saveOrderTableWithGroup(savedTableGroupId, 2, false);
+        dataSupport.saveOrderTableWithGroup(savedTableGroupId, 2);
+        dataSupport.saveOrderTableWithGroup(savedTableGroupId, 2);
 
         // when
         final ValidatableResponse response = delete("/api/table-groups/" + savedTableGroupId);

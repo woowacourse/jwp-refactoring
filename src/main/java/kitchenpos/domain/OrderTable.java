@@ -23,6 +23,8 @@ public class OrderTable {
     }
 
     public void joinGroup(final Long tableGroupId) {
+        checkEmpty();
+        checkNotGrouped();
         this.tableGroupId = tableGroupId;
         this.empty = false;
     }
@@ -33,35 +35,41 @@ public class OrderTable {
     }
 
     public void acceptGuests(final int numberOfGuests) {
-        checkGuests(numberOfGuests);
-        checkEmpty();
+        checkMinGuests(numberOfGuests);
+        checkNotEmpty();
         acceptGuests();
         this.numberOfGuests = numberOfGuests;
     }
 
     public void acceptGuests() {
-        checkGroup();
+        checkNotGrouped();
         this.empty = false;
     }
 
     public void clear() {
-        checkGroup();
+        checkNotGrouped();
         this.empty = true;
     }
 
-    private void checkGuests(final int numberOfGuests) {
+    private void checkMinGuests(final int numberOfGuests) {
         if (numberOfGuests < MIN_NUMBER_OF_GUESTS) {
             throw new IllegalArgumentException();
         }
     }
 
-    private void checkGroup() {
+    private void checkNotGrouped() {
         if (Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException();
         }
     }
 
     private void checkEmpty() {
+        if (!empty) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void checkNotEmpty() {
         if (empty) {
             throw new IllegalArgumentException();
         }

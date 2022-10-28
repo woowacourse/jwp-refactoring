@@ -84,7 +84,7 @@ class TableGroupServiceTest {
         // given
         final TableGroup savedTableGroup = dataSupport.saveTableGroup();
         final OrderTable savedUngroupedTable = dataSupport.saveOrderTable(0, true);
-        final OrderTable savedGroupedTable = dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0, true);
+        final OrderTable savedGroupedTable = dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0);
 
         // when, then
         final TableGroupRequest request = RequestBuilder.ofTableGroup(savedUngroupedTable, savedGroupedTable);
@@ -98,8 +98,8 @@ class TableGroupServiceTest {
         // given
         final TableGroup savedTableGroup = dataSupport.saveTableGroup();
         final Long tableGroupId = savedTableGroup.getId();
-        dataSupport.saveOrderTableWithGroup(tableGroupId, 0, false);
-        dataSupport.saveOrderTableWithGroup(tableGroupId, 0, false);
+        dataSupport.saveOrderTableWithGroup(tableGroupId, 0);
+        dataSupport.saveOrderTableWithGroup(tableGroupId, 0);
 
         // when
         tableGroupService.ungroup(tableGroupId);
@@ -114,8 +114,8 @@ class TableGroupServiceTest {
     void ungroup_throwsException_ifCooking() {
         // given
         final TableGroup savedTableGroup = dataSupport.saveTableGroup();
-        final OrderTable groupedTable = dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0, false);
-        dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0, false);
+        final OrderTable groupedTable = dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0);
+        dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0);
         dataSupport.saveOrder(groupedTable.getId(), OrderStatus.COOKING.name());
 
         // when, then
@@ -128,8 +128,8 @@ class TableGroupServiceTest {
     void ungroup_throwsException_ifMeal() {
         // given
         final TableGroup savedTableGroup = dataSupport.saveTableGroup();
-        final OrderTable groupedTable = dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0, false);
-        dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0, false);
+        final OrderTable groupedTable = dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0);
+        dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0);
         dataSupport.saveOrder(groupedTable.getId(), OrderStatus.MEAL.name());
 
         // when, then

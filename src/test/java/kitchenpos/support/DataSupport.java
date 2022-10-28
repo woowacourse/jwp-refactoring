@@ -84,8 +84,8 @@ public class DataSupport {
         return orderTableDao.save(orderTable);
     }
 
-    public OrderTable saveOrderTableWithGroup(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        final OrderTable orderTable = OrderTable.ofNew(numberOfGuests, empty);
+    public OrderTable saveOrderTableWithGroup(final Long tableGroupId, final int numberOfGuests) {
+        final OrderTable orderTable = OrderTable.ofNew(numberOfGuests, true);
         orderTable.joinGroup(tableGroupId);
 
         return orderTableDao.save(orderTable);
