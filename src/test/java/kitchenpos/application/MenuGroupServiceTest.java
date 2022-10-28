@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import javax.transaction.Transactional;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.application.dto.MenuGroupRequest;
+import kitchenpos.application.dto.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,19 +21,18 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 생성한다")
     @Test
     void create() {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("반반");
+        final MenuGroupRequest menuGroupRequest = new MenuGroupRequest("반반");
 
-        final MenuGroup createdMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroupResponse menuGroupResponse = menuGroupService.create(menuGroupRequest);
 
-        assertThat(createdMenuGroup.getId()).isNotNull();
+        assertThat(menuGroupResponse.getId()).isNotNull();
     }
 
     @DisplayName("전체 메뉴 그룹을 조회한다")
     @Test
     void findAll() {
-        final List<MenuGroup> menuGroups = menuGroupService.list();
+        final List<MenuGroupResponse> menuGroupResponses = menuGroupService.list();
 
-        assertThat(menuGroups).hasSize(4);
+        assertThat(menuGroupResponses).hasSize(4);
     }
 }
