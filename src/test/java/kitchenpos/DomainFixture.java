@@ -36,10 +36,7 @@ public class DomainFixture {
                                   final int price,
                                   final MenuGroup menuGroup,
                                   final Product... products) {
-        final Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuGroupId(menuGroup.getId());
+        final Menu menu = Menu.ofNullId(name, BigDecimal.valueOf(price), menuGroup.getId(), List.of());
         setMenuProducts(menu, products);
         return menu;
     }
@@ -47,12 +44,10 @@ public class DomainFixture {
     private static void setMenuProducts(final Menu menu, final Product[] products) {
         final List<MenuProduct> menuProducts = new ArrayList<>();
         for (final Product product : products) {
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProductId(product.getId());
-            menuProduct.setQuantity(ONE_QUANTITY);
+            final MenuProduct menuProduct = MenuProduct.ofNullId(menu.getId(), product.getId(), ONE_QUANTITY);
             menuProducts.add(menuProduct);
         }
-        menu.setMenuProducts(menuProducts);
+        menu.addAllMenuProduct(menuProducts);
     }
 
     public static TableGroup createTableGroup(final OrderTable... orderTables) {

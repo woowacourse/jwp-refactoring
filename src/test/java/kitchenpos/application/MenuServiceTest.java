@@ -25,8 +25,7 @@ public class MenuServiceTest extends ServiceTest {
         // given
         final MenuGroup menuGroup = 메뉴그룹등록(메뉴그룹1);
         final Product product = 상품등록(피자);
-
-        final Menu menu = createMenu("후라이드치킨메", 10_000, menuGroup, product);
+        final Menu menu = createMenu("후라이드치킨메뉴", 1_000, menuGroup, product);
 
         // when
         final Menu createdMenu = menuService.create(menu);
@@ -37,20 +36,6 @@ public class MenuServiceTest extends ServiceTest {
                 () -> assertThat(createdMenuId).isNotNull(),
                 () -> assertThat(menuDao.findById(createdMenuId)).isPresent()
         );
-    }
-
-    @Test
-    @DisplayName("create -> 메뉴의 가격이 0원 미만이면 예외가 발생한다.")
-    void create_invalidPrice_throwException() {
-        // given
-        final MenuGroup menuGroup = 메뉴그룹등록(메뉴그룹1);
-        final Product product = 상품등록(피자);
-
-        final Menu menu = createMenu("양념치킨메뉴", -1, menuGroup, product);
-
-        // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -87,12 +72,12 @@ public class MenuServiceTest extends ServiceTest {
         // given
         final MenuGroup menuGroup1 = 메뉴그룹등록(메뉴그룹1);
         final Product product1 = 상품등록(후라이드치킨);
-        final Menu menu1 = createMenu("후라이드치킨메뉴", 8_000, menuGroup1, product1);
+        final Menu menu1 = createMenu("후라이드치킨메뉴", 1_000, menuGroup1, product1);
         메뉴등록(menu1);
 
         final MenuGroup menuGroup2 = 메뉴그룹등록(메뉴그룹2);
         final Product product2 = 상품등록(양념치킨);
-        final Menu menu2 = createMenu("양념치킨메뉴", 8_000, menuGroup2, product2);
+        final Menu menu2 = createMenu("양념치킨메뉴", 1_000, menuGroup2, product2);
         메뉴등록(menu2);
 
         // when
