@@ -4,10 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuGroupCreateRequest;
 import kitchenpos.dto.MenuGroupResponse;
-import kitchenpos.dto.MenuGroupsResponse;
 import org.junit.jupiter.api.Test;
 
 class MenuGroupServiceTest extends ServiceTest {
@@ -36,10 +36,10 @@ class MenuGroupServiceTest extends ServiceTest {
         MenuGroup menuGroup2 = 메뉴_그룹을_저장한다("추천 메뉴 2");
 
         // when
-        MenuGroupsResponse menuGroups = menuGroupService.list();
+        List<MenuGroupResponse> menuGroups = menuGroupService.list();
 
         // then
-        assertThat(menuGroups.getMenuGroups())
+        assertThat(menuGroups)
                 .extracting(MenuGroupResponse::getId, MenuGroupResponse::getName)
                 .contains(tuple(menuGroup1.getId(), menuGroup1.getName()),
                         tuple(menuGroup2.getId(), menuGroup2.getName()));

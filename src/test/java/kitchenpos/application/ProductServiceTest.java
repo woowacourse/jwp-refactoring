@@ -6,10 +6,10 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
+import java.util.List;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductCreateRequest;
 import kitchenpos.dto.ProductResponse;
-import kitchenpos.dto.ProductsResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -53,10 +53,10 @@ class ProductServiceTest extends ServiceTest {
         Product product2 = 상품을_저장한다("상품2", 20000);
 
         // when
-        ProductsResponse products = productService.list();
+        List<ProductResponse> products = productService.list();
 
         // then
-        assertThat(products.getProducts()).hasSize(2)
+        assertThat(products).hasSize(2)
                 .extracting(ProductResponse::getName, ProductResponse::getPrice)
                 .contains(tuple(product1.getName(), product1.getPrice()),
                         tuple(product2.getName(), product2.getPrice()));
