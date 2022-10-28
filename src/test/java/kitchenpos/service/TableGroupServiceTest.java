@@ -110,7 +110,8 @@ public class TableGroupServiceTest {
     @Test
     void ungroup() {
         preprocessWhenUngroup(new TableGroup(LocalDateTime.now()),
-                List.of(new OrderTable(1L, 1L, 4, false)),
+                List.of(new OrderTable(1L, 1L, 4, false),
+                        new OrderTable(2L, 1L, 4, false)),
                 List.of(new Order(1L, OrderStatus.COMPLETION, LocalDateTime.now())));
         tableGroupService.ungroup(1L);
 

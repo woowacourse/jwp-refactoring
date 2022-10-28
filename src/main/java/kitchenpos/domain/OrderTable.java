@@ -32,6 +32,10 @@ public class OrderTable {
         return new OrderTable(this.id, this.tableGroupId, numberOfGuests, this.empty);
     }
 
+    public OrderTable changeTableGroupId(Long tableGroupId) {
+        return new OrderTable(this.id, tableGroupId, this.numberOfGuests, false);
+    }
+
     public Long getId() {
         return id;
     }
@@ -46,9 +50,5 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setTableGroupId(Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
     }
 }
