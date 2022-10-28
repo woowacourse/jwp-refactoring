@@ -3,6 +3,8 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import kitchenpos.application.dto.MenuGroupRequest;
+import kitchenpos.application.dto.MenuGroupResponse;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.support.RollbackExtension;
 import kitchenpos.support.ServiceTest;
@@ -23,18 +25,18 @@ class MenuGroupServiceTest {
     @Test
     void create() {
         final String name = "신제품";
-        MenuGroup menuGroup = menuGroupService.create(new MenuGroup(name));
+        MenuGroupResponse actual = menuGroupService.create(new MenuGroupRequest(name));
 
         assertAll(
-                () -> assertThat(menuGroup.getId()).isNotNull(),
-                () -> assertThat(menuGroup.getName()).isEqualTo(name)
+                () -> assertThat(actual.getId()).isNotNull(),
+                () -> assertThat(actual.getName()).isEqualTo(name)
         );
     }
 
     @DisplayName("메뉴 그룹을 조회한다.")
     @Test
     void list() {
-        menuGroupService.create(new MenuGroup("신제품"));
+        menuGroupService.create(new MenuGroupRequest("신제품"));
 
         assertThat(menuGroupService.list()).hasSize(1);
     }

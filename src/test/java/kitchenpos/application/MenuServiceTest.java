@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Stream;
+import kitchenpos.application.dto.MenuRequest;
+import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
@@ -40,13 +42,13 @@ class MenuServiceTest {
     void create() {
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("A"));
 
-        Menu savedMenu = menuService.create(new Menu("신메뉴", BigDecimal.ZERO, menuGroup.getId(), List.of()));
+        MenuResponse actual = menuService.create(new MenuRequest("신메뉴", BigDecimal.ZERO, menuGroup.getId(), List.of()));
 
         assertAll(
-                () -> assertThat(savedMenu.getMenuGroupId()).isEqualTo(menuGroup.getId()),
-                () -> assertThat(savedMenu.getId()).isNotNull(),
-                () -> assertThat(savedMenu.getPrice().compareTo(BigDecimal.ZERO)).isZero(),
-                () -> assertThat(savedMenu.getMenuProducts()).isEmpty()
+                () -> assertThat(actual.getMenuGroupId()).isEqualTo(menuGroup.getId()),
+                () -> assertThat(actual.getId()).isNotNull(),
+                () -> assertThat(actual.getPrice().compareTo(BigDecimal.ZERO)).isZero(),
+                () -> assertThat(actual.getMenuProducts()).isEmpty()
         );
     }
 
@@ -58,7 +60,7 @@ class MenuServiceTest {
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("A"));
 
         assertThatThrownBy(
-                () -> menuService.create(new Menu("신메뉴", price, menuGroup.getId(), List.of())))
+                () -> menuService.create(new MenuRequest("신메뉴", price, menuGroup.getId(), List.of())))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
@@ -72,7 +74,7 @@ class MenuServiceTest {
         final Long noMenuGroupId = null;
 
         assertThatThrownBy(
-                () -> menuService.create(new Menu("신메뉴", BigDecimal.ZERO, noMenuGroupId, List.of())))
+                () -> menuService.create(new MenuRequest("신메뉴", BigDecimal.ZERO, noMenuGroupId, List.of())))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
@@ -83,7 +85,7 @@ class MenuServiceTest {
         Product product = productDao.save(new Product("제육볶음", BigDecimal.ONE));
 
         assertThatThrownBy(() -> menuService.create(
-                new Menu("신메뉴", BigDecimal.TEN, menuGroup.getId(), List.of(new MenuProduct(product.getId(), 3)))))
+                new MenuRequest("신메뉴", BigDecimal.TEN, menuGroup.getId(), List.of(new MenuProduct(product.getId(), 3)))))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
@@ -91,7 +93,7 @@ class MenuServiceTest {
     @Test
     void list() {
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("A"));
-        menuService.create(new Menu("신메뉴", BigDecimal.ZERO, menuGroup.getId(), List.of()));
+        menuService.create(new MenuRequest("신메뉴", BigDecimal.ZERO, menuGroup.getId(), List.of()));
 
         assertThat(menuService.list()).hasSize(1);
     }
