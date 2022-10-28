@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,7 +13,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private BigDecimal price;
+    private Price price;
 
     protected Product() {
     }
@@ -24,16 +23,13 @@ public class Product {
     }
 
     public Product(Long id, String name, BigDecimal price) {
-        validatePrice(price);
+        this(id, name, new Price(price));
+    }
+
+    public Product(Long id, String name, Price price) {
         this.id = id;
         this.name = name;
         this.price = price;
-    }
-
-    private void validatePrice(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("상품의 가격은 음수일 수 없습니다. : " + price);
-        }
     }
 
     public Long getId() {
@@ -45,7 +41,7 @@ public class Product {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getAmount();
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -20,7 +21,10 @@ public class Menu {
     private Long id;
 
     private String name;
-    private BigDecimal price;
+
+    @Embedded
+    private Price price;
+
     private Long menuGroupId;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -31,18 +35,15 @@ public class Menu {
     }
 
     public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        validatePriceZeroOrPositive(price);
-        validatePriceCheaperThanTotal(price, menuProducts);
+        this(name, new Price(price), menuGroupId, menuProducts);
+    }
+
+    public Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        validatePriceCheaperThanTotal(price.getAmount(), menuProducts);
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
-    }
-
-    private void validatePriceZeroOrPositive(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("메뉴의 가격은 0원 이상이어야 합니다.");
-        }
     }
 
     private void validatePriceCheaperThanTotal(BigDecimal price, List<MenuProduct> menuProducts) {
@@ -63,7 +64,7 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getAmount();
     }
 
     public Long getMenuGroupId() {

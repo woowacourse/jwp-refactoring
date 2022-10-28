@@ -41,8 +41,17 @@ public class OrderTable {
     }
 
     public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+        this(id, tableGroup, new ArrayList<>(), numberOfGuests, empty);
+    }
+
+    public OrderTable(TableGroup tableGroup, List<Order> orders, int numberOfGuests, boolean empty) {
+        this(null, tableGroup, orders, numberOfGuests, empty);
+    }
+
+    private OrderTable(Long id, TableGroup tableGroup, List<Order> orders, int numberOfGuests, boolean empty) {
         this.id = id;
         this.tableGroup = tableGroup;
+        this.orders = orders;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -76,6 +85,10 @@ public class OrderTable {
         }
     }
 
+    public void addOrder(Order order) {
+        this.orders.add(order);
+    }
+
     public void beGrouped(TableGroup tableGroup) {
         validateEmpty();
         this.empty = false;
@@ -84,7 +97,7 @@ public class OrderTable {
 
     private void validateEmpty() {
         if (!this.empty || this.tableGroup != null) {
-            throw new IllegalArgumentException();
+            throw new IllegalStateException();
         }
     }
 
