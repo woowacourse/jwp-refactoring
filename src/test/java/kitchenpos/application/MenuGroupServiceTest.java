@@ -49,7 +49,7 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void findAll() {
         // given
-        menuGroupDao.save(createMenuGroup("추천메뉴"));
+        menuGroupRepository.save(createMenuGroup("추천메뉴"));
 
         // when, then
         assertThat(menuGroupService.findAll()).hasSize(1);

@@ -1,10 +1,28 @@
 package kitchenpos.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class OrderTable {
-    private final Long id;
-    private final Long tableGroupId;
-    private final int numberOfGuests;
-    private final boolean empty;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Long tableGroupId;
+
+    @Column(nullable = false)
+    private int numberOfGuests;
+
+    @Column(nullable = false)
+    private boolean empty;
+
+    public OrderTable() {
+    }
 
     public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this(null, tableGroupId, numberOfGuests, empty);
@@ -36,11 +54,24 @@ public class OrderTable {
         return tableGroupId;
     }
 
+    public void changeTableGroupId(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+    }
+
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        validateNumberOfGuestsNegative(numberOfGuests);
+        this.numberOfGuests = numberOfGuests;
+    }
+
     public boolean isEmpty() {
         return empty;
+    }
+
+    public void changeEmpty(final boolean empty) {
+        this.empty = empty;
     }
 }

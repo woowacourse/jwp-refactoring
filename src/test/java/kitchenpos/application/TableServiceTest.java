@@ -8,13 +8,13 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 import java.time.LocalDateTime;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.ChangeTableEmptyRequest;
 import kitchenpos.dto.request.ChangeTableNumberOfGuestsRequest;
 import kitchenpos.dto.request.TableRequest;
 import kitchenpos.dto.response.TableResponse;
+import kitchenpos.repository.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ class TableServiceTest extends ServiceTest {
     private TableService tableService;
 
     @MockBean
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @BeforeEach
     void setUp() {
@@ -53,7 +53,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void findAll() {
         // given
-        orderTableDao.save(createOrderTable(4, false));
+        orderTableRepository.save(createOrderTable(4, false));
 
         // when, then
         assertThat(tableService.findAll()).hasSize(1);
@@ -63,7 +63,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeEmpty() {
         // given
-        final OrderTable orderTable = orderTableDao.save(new OrderTable(4, false));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(4, false));
 
         // when
         final ChangeTableEmptyRequest orderTableForUpdateRequest = createChangeEmptyRequest(true);
@@ -95,8 +95,8 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeEmpty_throwException_ifTableGrouping() {
         // given
-        final TableGroup tableGroup = tableGroupDao.save(createTableGroup(LocalDateTime.now()));
-        final OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 4, false));
+        final TableGroup tableGroup = tableGroupRepository.save(createTableGroup(LocalDateTime.now()));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 4, false));
 
         // when, then
         assertThatThrownBy(
@@ -109,9 +109,9 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeEmpty_throwException_ifOrderAlreadyOngoing() {
         // given
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
+        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
                 .willReturn(true);
-        final OrderTable orderTable = orderTableDao.save(new OrderTable(4, false));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(4, false));
 
         // when, then
         assertThatThrownBy(
@@ -124,7 +124,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeNumberOfGuests() {
         // given
-        final OrderTable orderTable = orderTableDao.save(new OrderTable(4, false));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(4, false));
 
         // when
         final ChangeTableNumberOfGuestsRequest orderTableForUpdate = createChangeNumberOfGuestsRequest(5);
@@ -145,7 +145,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeNumberOfGuests_throwException_ifNumberOfGuestsIsNegative() {
         // given
-        final OrderTable orderTable = orderTableDao.save(new OrderTable(4, false));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(4, false));
 
         // when, then
         final ChangeTableNumberOfGuestsRequest orderTableForUpdate = createChangeNumberOfGuestsRequest(-1);
@@ -173,7 +173,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeNumberOfGuests_throwException_ifTableEmpty() {
         // given
-        final OrderTable orderTable = orderTableDao.save(new OrderTable(0, true));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(0, true));
 
         // when, then
         final ChangeTableNumberOfGuestsRequest orderTableForUpdate = createChangeNumberOfGuestsRequest(5);

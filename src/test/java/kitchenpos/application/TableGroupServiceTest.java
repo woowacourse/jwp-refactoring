@@ -8,13 +8,13 @@ import static org.mockito.BDDMockito.given;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableForGroupingRequest;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.repository.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ class TableGroupServiceTest extends ServiceTest {
     private TableGroupDao tableGroupDao;
 
     @MockBean
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     private Long emptyOrderTableId1;
     private Long emptyOrderTableId2;
@@ -38,8 +38,8 @@ class TableGroupServiceTest extends ServiceTest {
     @BeforeEach
     void setUp() {
         databaseCleanUp.clear();
-        final OrderTable orderTable1 = this.orderTableDao.save(createOrderTable(0, true));
-        final OrderTable orderTable2 = this.orderTableDao.save(createOrderTable(0, true));
+        final OrderTable orderTable1 = this.orderTableRepository.save(createOrderTable(0, true));
+        final OrderTable orderTable2 = this.orderTableRepository.save(createOrderTable(0, true));
         emptyOrderTableId1 = orderTable1.getId();
         emptyOrderTableId2 = orderTable2.getId();
     }
@@ -90,7 +90,7 @@ class TableGroupServiceTest extends ServiceTest {
     void create_throwException_ifTableAlreadyGroup() {
         // given
         final TableGroup savedTableGroup = tableGroupDao.save(createTableGroup(LocalDateTime.now()));
-        final OrderTable orderTable = orderTableDao.save(createOrderTable(savedTableGroup.getId(), 0, true));
+        final OrderTable orderTable = orderTableRepository.save(createOrderTable(savedTableGroup.getId(), 0, true));
         final TableGroupRequest tableGroupRequest = createTableGroupRequest(
                 List.of(createOrderTableRequest(orderTable.getId()), createOrderTableRequest(emptyOrderTableId1)));
 
@@ -104,7 +104,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_throwException_ifTableNotEmpty() {
         // given
-        final OrderTable orderTable = orderTableDao.save(createOrderTable(4, false));
+        final OrderTable orderTable = orderTableRepository.save(createOrderTable(4, false));
         final TableGroupRequest tableGroupRequest = createTableGroupRequest(
                 List.of(createOrderTableRequest(orderTable.getId()), createOrderTableRequest(emptyOrderTableId1)));
 
@@ -129,7 +129,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void ungroup_throwException_ifOrderAlreadyOngoing() {
         // given
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
+        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
                 .willReturn(true);
         final TableGroup savedTableGroup = tableGroupDao.save(createTableGroup(LocalDateTime.now()));
 

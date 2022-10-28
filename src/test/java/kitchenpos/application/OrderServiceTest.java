@@ -28,10 +28,10 @@ class OrderServiceTest extends ServiceTest {
     @BeforeEach
     void setUp() {
         databaseCleanUp.clear();
-        final OrderTable orderTable = orderTableDao.save(createOrderTable(1, false));
+        final OrderTable orderTable = orderTableRepository.save(createOrderTable(1, false));
         validOrderTableId = orderTable.getId();
-        final MenuGroup menuGroup = menuGroupDao.save(createMenuGroup("추가메뉴"));
-        final Menu menu = menuDao.save(createMenu("후라후라후라", 27_000L, menuGroup.getId()));
+        final MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup("추가메뉴"));
+        final Menu menu = menuRepository.save(createMenu("후라후라후라", 27_000L, menuGroup.getId()));
         validMenuId = menu.getId();
     }
 
@@ -96,7 +96,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create_throwException_ifTableNotEmpty() {
         // given
-        final OrderTable emptyOrderTable = orderTableDao.save(createOrderTable(0, true));
+        final OrderTable emptyOrderTable = orderTableRepository.save(createOrderTable(0, true));
         final OrderLineItemRequest orderLineItemRequest = createOrderLineItemRequest(validMenuId, 2);
         final OrderRequest orderRequest = createOrderRequest(emptyOrderTable.getId(), List.of(orderLineItemRequest));
 

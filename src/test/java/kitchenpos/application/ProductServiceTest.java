@@ -66,7 +66,7 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void findAll() {
         // given
-        productDao.save(createProduct("후라이드", 10_000L));
+        productRepository.save(createProduct("후라이드", 10_000L));
 
         // when, then
         assertThat(productService.findAll()).hasSize(1);

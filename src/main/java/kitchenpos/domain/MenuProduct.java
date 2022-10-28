@@ -1,10 +1,29 @@
 package kitchenpos.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class MenuProduct {
-    private final Long seq;
-    private final Long menuId;
-    private final Long productId;
-    private final long quantity;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long seq;
+
+    @Column(nullable = false)
+    private Long menuId;
+
+    @Column(nullable = false)
+    private Long productId;
+
+    @Column(nullable = false)
+    private long quantity;
+
+    public MenuProduct() {
+    }
 
     public MenuProduct(final Long menuId, final Long productId, final long quantity) {
         this(null, menuId, productId, quantity);

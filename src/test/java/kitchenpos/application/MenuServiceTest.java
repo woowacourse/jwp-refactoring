@@ -27,9 +27,9 @@ class MenuServiceTest extends ServiceTest {
     @BeforeEach
     void setUp() {
         databaseCleanUp.clear();
-        final MenuGroup menuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
+        final MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup("추천메뉴"));
         validMenuGroupId = menuGroup.getId();
-        final Product product = productDao.save(createProduct("후라이드", 16_000L));
+        final Product product = productRepository.save(createProduct("후라이드", 16_000L));
         validProductId = product.getId();
     }
 
@@ -113,7 +113,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void findAll() {
         // given
-        menuDao.save(createMenu("후라후라후라", 19_000L, validMenuGroupId));
+        menuRepository.save(createMenu("후라후라후라", 19_000L, validMenuGroupId));
 
         // when, then
         assertThat(menuService.findAll()).hasSize(1);
