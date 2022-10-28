@@ -1,5 +1,7 @@
 package kitchenpos.dto.response;
 
+import kitchenpos.domain.MenuGroup;
+
 public class MenuGroupResponse {
 
     private Long id;
@@ -11,6 +13,10 @@ public class MenuGroupResponse {
     public MenuGroupResponse(final Long id, final String name) {
         this.id = id;
         this.name = name;
+    }
+    
+    public static MenuGroupResponse of(final MenuGroup menuGroup){
+        return new MenuGroupResponse(menuGroup.getId(), menuGroup.getName());
     }
 
     public Long getId() {

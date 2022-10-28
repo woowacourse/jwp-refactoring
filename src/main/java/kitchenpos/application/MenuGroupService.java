@@ -20,16 +20,15 @@ public class MenuGroupService {
 
     @Transactional
     public MenuGroupResponse create(final MenuGroupRequest request) {
-        final MenuGroup menuGroup = request.toEntity();
-        final MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        final MenuGroup savedMenuGroup = menuGroupDao.save(request.toEntity());
 
-        return new MenuGroupResponse(savedMenuGroup.getId(), savedMenuGroup.getName());
+        return MenuGroupResponse.of(savedMenuGroup);
     }
 
     public List<MenuGroupResponse> list() {
         return menuGroupDao.findAll()
                 .stream()
-                .map(it -> new MenuGroupResponse(it.getId(), it.getName()))
+                .map(MenuGroupResponse::of)
                 .collect(Collectors.toList());
     }
 }
