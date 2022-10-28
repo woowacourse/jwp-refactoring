@@ -18,7 +18,60 @@ public class ProductFixture {
         return new ProductRequest("간장 치킨", BigDecimal.valueOf(price));
     }
 
-    public static ProductRequest createProductRequest(final String name, final int price) {
-        return new ProductRequest(name, BigDecimal.valueOf(price));
+    public static WrapProductRequest createProductRequest(final String name, final int price) {
+        return new WrapProductRequest(name, BigDecimal.valueOf(price));
+    }
+
+    public static class WrapProductRequest extends ProductRequest {
+
+        public WrapProductRequest(final String name, final BigDecimal price) {
+            super(name, price);
+        }
+
+        public Long id() {
+            return super.getId();
+        }
+
+        public String name() {
+            return super.getName();
+        }
+
+        public BigDecimal price() {
+            return super.getPrice();
+        }
+
+        public double doublePrice() {
+            return super.getPrice().doubleValue();
+        }
+    }
+
+    public static class WrapProduct extends Product {
+
+        public WrapProduct() {
+        }
+
+        public WrapProduct(final String name, final BigDecimal price) {
+            super(name, price);
+        }
+
+        public Long id() {
+            return super.getId();
+        }
+
+        public String name() {
+            return super.getName();
+        }
+
+        public BigDecimal price() {
+            return super.getPrice();
+        }
+
+        public double doublePrice() {
+            return super.getPrice().doubleValue();
+        }
+
+        public int intPrice() {
+            return super.getPrice().intValue();
+        }
     }
 }
