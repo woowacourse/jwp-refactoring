@@ -12,7 +12,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +26,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderStatusRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -80,13 +80,13 @@ class OrderServiceTest extends ServiceTestBase {
         OrderTable orderTable2 = orderTableDao.save(주문_테이블_생성());
         TableGroup tableGroup = tableGroupDao.save(단체_지정_생성(orderTable1, orderTable2));
 
-        Order order1 = 주문_생성_및_저장(orderTable1);
-        OrderLineItem orderLineItem1 = 주문_항목_생성(order1, friedChicken, 1);
-        orderLineItemDao.save(orderLineItem1);
+        Order order1 = 주문_생성_및_저장(orderTable1, friedChicken, 1);
+//        OrderLineItem orderLineItem1 = 주문_항목_생성(order1, friedChicken, 1);
+//        orderLineItemDao.save(orderLineItem1);
 
-        Order order2 = 주문_생성_및_저장(orderTable2);
-        OrderLineItem orderLineItem2 = 주문_항목_생성(order2, friedChicken, 1);
-        orderLineItemDao.save(orderLineItem2);
+        Order order2 = 주문_생성_및_저장(orderTable2, friedChicken, 1);
+//        OrderLineItem orderLineItem2 = 주문_항목_생성(order2, friedChicken, 1);
+//        orderLineItemDao.save(orderLineItem2);
 
         // when
         List<Order> orders = orderService.list();
@@ -189,11 +189,11 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void updateStatusWithNotExistedOrder() {
         // given
-        Order order = 주문_상태_변경(OrderStatus.MEAL);
+        OrderStatusRequest orderStatusRequest = createOrderStatusRequest(OrderStatus.MEAL);
 
         // when & then
         assertThatThrownBy(
-                () -> orderService.changeOrderStatus(1L, order)
+                () -> orderService.changeOrderStatus(1L, orderStatusRequest)
         ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("존재하지 않는 주문번호입니다.");
     }
@@ -203,20 +203,23 @@ class OrderServiceTest extends ServiceTestBase {
     void updateStatusWithCompletedOrder() {
         // given
         OrderTable orderTable1 = orderTableDao.save(주문_테이블_생성());
-        OrderTable orderTable2 = orderTableDao.save(주문_테이블_생성());
-        TableGroup tableGroup = tableGroupDao.save(단체_지정_생성(orderTable1, orderTable2));
+//        OrderTable orderTable2 = orderTableDao.save(주문_테이블_생성());
+//        TableGroup tableGroup = tableGroupDao.save(단체_지정_생성(orderTable1, orderTable2));
 
-        Order order1 = 주문_생성_및_저장(orderTable1);
-        OrderLineItem orderLineItem1 = 주문_항목_생성(order1, friedChicken, 1);
-        orderLineItemDao.save(orderLineItem1);
+//        OrderLineItemRequest orderLineItem1 = createOrderLineItemRequest(friedChicken.getId(), 1);
+//        OrderLineItemRequest orderLineItem2 = createOrderLineItemRequest(seasonedChicken.getId(), 2);
+//        OrderCreateRequest orderRequest = createOrderCreateRequest(orderTable1.getId(),
+//                Arrays.asList(orderLineItem1, orderLineItem2));
 
-        Order order = 주문_상태_변경(OrderStatus.COMPLETION);
+        Order order1 = 주문_생성_및_저장(orderTable1, friedChicken, 1);
 
-        orderService.changeOrderStatus(order1.getId(), order);
+        OrderStatusRequest orderStatusRequest = createOrderStatusRequest(OrderStatus.COMPLETION);
+
+        orderService.changeOrderStatus(order1.getId(), orderStatusRequest);
 
         // when & then
         assertThatThrownBy(
-                () -> orderService.changeOrderStatus(order1.getId(), order)
+                () -> orderService.changeOrderStatus(order1.getId(), orderStatusRequest)
         ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("이미 완료된 주문입니다.");
     }
@@ -226,32 +229,25 @@ class OrderServiceTest extends ServiceTestBase {
     void updateOrderStatus() {
         // given
         OrderTable orderTable1 = orderTableDao.save(주문_테이블_생성());
-        OrderTable orderTable2 = orderTableDao.save(주문_테이블_생성());
-        TableGroup tableGroup = tableGroupDao.save(단체_지정_생성(orderTable1, orderTable2));
 
-        Order order1 = 주문_생성_및_저장(orderTable1);
-        OrderLineItem orderLineItem1 = 주문_항목_생성(order1, friedChicken, 1);
-        orderLineItemDao.save(orderLineItem1);
+        Order order1 = 주문_생성_및_저장(orderTable1, friedChicken, 1);
 
         // when
-        Order order = 주문_상태_변경(OrderStatus.COMPLETION);
-        Order changedOrder = orderService.changeOrderStatus(order1.getId(), order);
+        OrderStatusRequest orderStatusRequest = createOrderStatusRequest(OrderStatus.COMPLETION);
+        Order changedOrder = orderService.changeOrderStatus(order1.getId(), orderStatusRequest);
 
         //then
         assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
     }
 
-    private Order 주문_상태_변경(OrderStatus orderStatus) {
-        Order order = new Order();
-        order.setOrderStatus(orderStatus.name());
-        return order;
+    private OrderStatusRequest createOrderStatusRequest(OrderStatus orderStatus) {
+        return new OrderStatusRequest(orderStatus.name());
     }
 
-    private Order 주문_생성_및_저장(final OrderTable orderTable) {
-        Order order = 주문_생성(orderTable);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(OrderStatus.COOKING.name());
+    private Order 주문_생성_및_저장(final OrderTable orderTable, final Menu menu, final long quantity) {
+        List<OrderLineItem> orderLineItems = Collections.singletonList(new OrderLineItem(menu.getId(), quantity));
+        Order order = createOrder(orderTable.getId(), orderLineItems);
 
-        return jdbcTemplateOrderDao.save(order);
+        return orderRepository.save(order);
     }
 }

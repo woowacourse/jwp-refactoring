@@ -37,7 +37,15 @@ public class OrderRepository implements OrderDao {
 
     @Override
     public Optional<Order> findById(final Long id) {
-        return jdbcTemplateOrderDao.findById(id);
+        return jdbcTemplateOrderDao.findById(id)
+                .map(order -> new Order(
+                        order.getId(),
+                        order.getOrderTableId(),
+                        order.getOrderStatus(),
+                        order.getOrderedTime(),
+                        orderLineItemDao.findAllByOrderId(order.getId())
+                ));
+
     }
 
     @Override

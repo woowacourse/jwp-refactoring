@@ -26,6 +26,12 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
+    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
+        this(orderTableId, orderStatus, orderedTime, orderLineItems);
+        this.id = id;
+    }
+
     public static Order create(final Long orderTableId, final List<OrderLineItem> orderLineItems, long menuSize) {
         Order order = new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
         order.validateMenuSize(menuSize);
@@ -36,6 +42,15 @@ public class Order {
         if (orderLineItems.size() != menuSize) {
             throw new IllegalArgumentException("메뉴의 수가 부족합니다.");
         }
+    }
+
+    public void changeOrderStatus(final String orderStatus) {
+        OrderStatus orderStatusToChange = OrderStatus.valueOf(orderStatus);
+        if (OrderStatus.valueOf(this.orderStatus).isCompleted()) {
+            throw new IllegalArgumentException("이미 완료된 주문입니다.");
+        }
+
+        setOrderStatus(orderStatusToChange.name());
     }
 
     public Long getId() {

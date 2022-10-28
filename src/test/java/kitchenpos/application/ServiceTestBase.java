@@ -17,6 +17,8 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderRepository;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -35,6 +37,9 @@ public abstract class ServiceTestBase {
 
     @Autowired
     protected OrderDao jdbcTemplateOrderDao;
+
+    @Autowired
+    protected OrderRepository orderRepository;
 
     @Autowired
     protected ProductDao productDao;
@@ -150,27 +155,17 @@ public abstract class ServiceTestBase {
         return orderLineItem;
     }
 
+    protected Order createOrder(Long orderTableId, List<OrderLineItem> orderLineItems) {
+        return new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+    }
+
     protected OrderCreateRequest createOrderCreateRequest(Long orderTableId,
                                                           List<OrderLineItemRequest> orderLineItemRequests) {
         return new OrderCreateRequest(orderTableId, orderLineItemRequests);
     }
 
-    protected OrderLineItem createOrderLineItemRequest(final Order order, final Menu menu, final long quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(quantity);
-        orderLineItem.setOrderId(order.getId());
-
-        return orderLineItem;
-    }
-
-
-    protected OrderLineItem 주문_항목_생성(final Menu menu, final long quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(quantity);
-
-        return orderLineItem;
+    protected OrderLineItem createOrderLineItem(Long menuId, long quantity) {
+        return new OrderLineItem(menuId, quantity);
     }
 
     protected OrderLineItemRequest createOrderLineItemRequest(final Long menuId, final long quantity) {
