@@ -34,7 +34,7 @@ class JdbcTemplateMenuProductDaoTest extends JdbcTemplateTest {
 
             MenuProduct savedMenuProduct = jdbcTemplateMenuProductDao.save(menuProduct);
 
-            Long actual = savedMenuProduct.getSeq();
+            Long actual = savedMenuProduct.getId();
             assertThat(actual).isNotNull();
         }
     }
@@ -56,7 +56,7 @@ class JdbcTemplateMenuProductDaoTest extends JdbcTemplateTest {
         @Test
         @DisplayName("아이디로 메뉴 상품을 단일 조회한다.")
         void success() {
-            Long seq = menuProduct.getSeq();
+            Long seq = menuProduct.getId();
 
             MenuProduct foundMenuProduct = jdbcTemplateMenuProductDao.findById(seq)
                 .orElseThrow();

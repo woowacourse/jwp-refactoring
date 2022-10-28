@@ -15,26 +15,14 @@ public enum MenuProductFixture {
     }
 
     public MenuProduct getMenuProduct(Long productId) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+        return new MenuProduct(productId, quantity);
     }
 
     public MenuProduct getMenuProduct(Long menuId, Long productId) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+        return new MenuProduct(menuId, productId, quantity);
     }
 
-    public MenuProduct getMenuProduct(Long seq, Long menuId, Long productId) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setSeq(seq);
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+    public MenuProduct getMenuProduct(Long id, Long menuId, Long productId) {
+        return new MenuProduct(id, menuId, productId, quantity);
     }
 }
