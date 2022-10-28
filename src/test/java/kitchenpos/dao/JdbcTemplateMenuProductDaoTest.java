@@ -90,8 +90,7 @@ class JdbcTemplateMenuProductDaoTest {
                 assertThat(actual).isEmpty();
             }
 
-            private List<MenuProduct> asListByMenuId(final Map<Long, MenuProduct> menuProducts,
-                                                     final long menuId) {
+            private List<MenuProduct> asListByMenuId(final Map<Long, MenuProduct> menuProducts, final long menuId) {
                 return menuProducts.values()
                         .stream()
                         .filter(menuProduct -> menuProduct.getMenuId().equals(menuId))
