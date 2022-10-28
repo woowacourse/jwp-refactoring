@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import kitchenpos.domain.ordertable.OrderTable;
 
 @Table(name = "orders")
 @Entity

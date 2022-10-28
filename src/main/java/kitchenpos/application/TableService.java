@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Objects;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

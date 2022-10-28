@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.ordertable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,7 +19,7 @@ public class OrderTable {
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
-    @Column(name = "number_of_guests")
+    @Column(name = "number_of_guests", nullable = false)
     private int numberOfGuests;
 
     @Column(name = "empty")
@@ -71,5 +71,15 @@ public class OrderTable {
 
     public void setEmpty(final boolean empty) {
         this.empty = empty;
+    }
+
+    public void changeTableGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+        empty = false;
+    }
+
+    public void ungroup() {
+        this.tableGroup = null;
+        empty = false;
     }
 }

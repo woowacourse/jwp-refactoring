@@ -7,10 +7,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.TableGroupRepository;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.OrderTableRepository;
+import kitchenpos.domain.ordertable.TableGroup;
+import kitchenpos.domain.ordertable.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -57,9 +57,7 @@ public class TableGroupService {
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroup(savedTableGroup);
-            savedOrderTable.setEmpty(false);
-            orderTableRepository.save(savedOrderTable);
+            savedOrderTable.changeTableGroup(savedTableGroup);
         }
         savedTableGroup.setOrderTables(savedOrderTables);
 
@@ -80,9 +78,7 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(null);
-            orderTable.setEmpty(false);
-            orderTableRepository.save(orderTable);
+            orderTable.ungroup();
         }
     }
 }
