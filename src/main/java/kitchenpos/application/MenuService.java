@@ -39,11 +39,10 @@ public class MenuService {
     public Menu create(final MenuRequest request) {
         validateMenuGroupExists(request.getMenuGroupId());
         Menu menu = menuDao.save(request.toEntity());
+
         menu.setIdToMenuProducts();
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
-
         List<Product> products = findProducts(menuProducts);
-
         menu.validatePriceUnderProductsSum(products);
 
         for (final MenuProduct menuProduct : menuProducts) {

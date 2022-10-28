@@ -22,6 +22,8 @@ public class AcceptanceTest {
     @Value("${local.server.port}")
     int port;
 
+    protected static Long NO_ID = null;
+
     @BeforeEach
     public void setUp() {
         RestAssured.port = port;

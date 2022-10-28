@@ -1,7 +1,6 @@
 package kitchenpos.service;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.assertj.core.data.Percentage.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -31,7 +30,7 @@ public class ProductServiceTest extends ServiceTest {
         // then
         assertThat(savedProduct.getId()).isNotNull();
         assertThat(savedProduct.getName()).isEqualTo(request.getName());
-        assertThat(savedProduct.getPrice()).isCloseTo(request.getPrice(), withPercentage(0.0001));
+        assertPriceEqualTo(request.getPrice(), savedProduct.getPrice());
     }
 
     @Test
@@ -46,5 +45,9 @@ public class ProductServiceTest extends ServiceTest {
 
         // then
         assertThat(result).contains(savedProduct);
+    }
+
+    private void assertPriceEqualTo(final BigDecimal actual, final BigDecimal expected) {
+        assertThat(actual.compareTo(expected)).isEqualTo(0);
     }
 }

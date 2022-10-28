@@ -33,14 +33,18 @@ public class OrderService {
         final OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
 
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderTableNotEmpty(orderTable);
 
         final Order savedOrder = orderDao.save(new Order(orderTable.getId(), orderLineItems));
 
         savedOrder.setIdToOrderLineItems();
         return savedOrder;
+    }
+
+    private void validateOrderTableNotEmpty(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public List<Order> list() {

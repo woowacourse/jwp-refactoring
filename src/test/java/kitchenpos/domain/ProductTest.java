@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test;
 
 public class ProductTest {
 
-    private final Long noId = null;
-
     @Test
     @DisplayName("상품을 생성한다.")
     void create() {

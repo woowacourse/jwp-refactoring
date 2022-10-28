@@ -44,7 +44,7 @@ public class OrderTest {
     }
 
     private Order createOrder() {
-        OrderLineItem orderLineItem = new OrderLineItem(noId, noId, 1);
+        OrderLineItem orderLineItem = new OrderLineItem(noId, noId, noId, 1);
         return new Order(noId, List.of(orderLineItem));
     }
 }

@@ -55,7 +55,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         ProductCreateRequest product = new ProductCreateRequest("후라이드", BigDecimal.valueOf(16000));
         long productId = _상품등록_Id반환(product);
 
-        return new Menu("후라이드+후라이드+후라이드", new BigDecimal(48000), menuGroupId,
-            List.of(new MenuProduct(productId, 3)));
+        return new Menu(NO_ID, "후라이드+후라이드+후라이드", new BigDecimal(48000), menuGroupId,
+            List.of(new MenuProduct(NO_ID, NO_ID, productId, 3)));
     }
 }

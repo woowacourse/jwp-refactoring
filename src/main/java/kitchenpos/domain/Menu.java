@@ -47,16 +47,11 @@ public class Menu {
         validatePrice(price);
     }
 
+    protected Menu() {
+    }
+
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
         this(id, name, price, menuGroupId, Collections.emptyList());
-    }
-
-    public Menu(final String name, final BigDecimal price, final Long menuGroupId,
-        final List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
-    }
-
-    public Menu() {
     }
 
     private void validatePrice(final BigDecimal price) {

@@ -60,14 +60,14 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         ProductCreateRequest product = new ProductCreateRequest("후라이드", BigDecimal.valueOf(16000));
         long productId = _상품등록_Id반환(product);
 
-        Menu menu = new Menu("후라이드+후라이드+후라이드", new BigDecimal(48000), menuGroupId,
-            List.of(new MenuProduct(productId, 3)));
+        Menu menu = new Menu(NO_ID, "후라이드+후라이드+후라이드", new BigDecimal(48000), menuGroupId,
+            List.of(new MenuProduct(NO_ID, NO_ID, productId, 3)));
         long menuId = _메뉴등록_Id반환(menu);
 
         OrderTable orderTable = new OrderTable(1, false);
         long tableId = _테이블생성_Id반환(orderTable);
 
-        OrderLineItem orderLineItem = new OrderLineItem(1L, menuId, 1);
+        OrderLineItem orderLineItem = new OrderLineItem(1L, NO_ID, menuId, 1);
         return new Order(tableId, List.of(orderLineItem));
     }
 }

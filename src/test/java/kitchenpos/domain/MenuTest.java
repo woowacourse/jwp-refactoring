@@ -20,16 +20,16 @@ public class MenuTest {
     @DisplayName("메뉴를 생성한다.")
     void create() {
         // when, then
-        assertDoesNotThrow(() -> new Menu("후라이드+후라이드+후라이드", new BigDecimal(0), noId,
-            List.of(new MenuProduct(noId, 3))));
+        assertDoesNotThrow(() -> new Menu(noId, "후라이드+후라이드+후라이드", new BigDecimal(0), noId,
+            List.of(new MenuProduct(noId, noId, noId, 3))));
     }
 
     @Test
     @DisplayName("가격이 음수이면 예외를 던진다.")
     void create_price_negative() {
         // when, then
-        assertThatThrownBy(() -> new Menu("후라이드+후라이드+후라이드", new BigDecimal(-1), noId,
-            List.of(new MenuProduct(noId, 3))))
+        assertThatThrownBy(() -> new Menu(noId, "후라이드+후라이드+후라이드", new BigDecimal(-1), noId,
+            List.of(new MenuProduct(noId, noId, noId, 3))))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -80,7 +80,7 @@ public class MenuTest {
     }
 
     private Menu createMenu(final int priceValue) {
-        return new Menu("후라이드+양념", new BigDecimal(priceValue), noId,
-            List.of(new MenuProduct(1L, 2), new MenuProduct(2L, 3)));
+        return new Menu(noId, "후라이드+양념", new BigDecimal(priceValue), noId,
+            List.of(new MenuProduct(noId, noId, 1L, 2), new MenuProduct(noId, noId, 2L, 3)));
     }
 }
