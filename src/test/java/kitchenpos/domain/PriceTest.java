@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 class PriceTest {
 
@@ -35,11 +37,22 @@ class PriceTest {
 
     @Test
     void 가격의_곱연산을_할_수_있다() {
-        Price price1 = new Price(BigDecimal.valueOf(2));
+        Price price = new Price(BigDecimal.valueOf(2));
         long times = 5;
 
-        Price multiple = price1.multiply(times);
+        Price multiple = price.multiply(times);
 
         assertThat(multiple).isEqualTo(new Price(BigDecimal.TEN));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"0,true", "1,false"})
+    void 가격이_더_비싼지_판정할_수_있다(final long value, final boolean expected) {
+        Price price1 = new Price(BigDecimal.ONE);
+        Price price2 = new Price(BigDecimal.valueOf(value));
+
+        boolean actual = price1.isExpensiveThan(price2);
+
+        assertThat(actual).isEqualTo(expected);
     }
 }

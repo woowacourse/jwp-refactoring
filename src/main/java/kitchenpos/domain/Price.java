@@ -33,6 +33,10 @@ public class Price {
         return new Price(value.multiply(BigDecimal.valueOf(times)));
     }
 
+    public boolean isExpensiveThan(final Price price) {
+        return this.value.compareTo(price.value) > 0;
+    }
+
     public BigDecimal getValue() {
         return value;
     }
