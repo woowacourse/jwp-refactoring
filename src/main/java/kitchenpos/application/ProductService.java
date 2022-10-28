@@ -23,6 +23,7 @@ public class ProductService {
     public Product create(final Product product) {
         final BigDecimal price = product.getPrice();
 
+        // :todo Product 내에 price 라는 객체를 만들까
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new CustomIllegalArgumentException(INVALID_PRODUCT_PRICE_EXCEPTION);
         }
