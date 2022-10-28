@@ -10,8 +10,11 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.OrderTableDto;
+import kitchenpos.ui.dto.OrderTableRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Transactional(readOnly = true)
 @Service
@@ -29,7 +32,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup request) {
+    public TableGroup create(final OrderTableRequest request) {
         validateRequestOrderTablesSize(request);
 
         final List<OrderTable> orderTables = findOrderTables(request);
@@ -45,19 +48,24 @@ public class TableGroupService {
         return savedTableGroup;
     }
 
-    private void validateRequestOrderTablesSize(final TableGroup tableGroup) {
-        if (tableGroup.isInvalidOrderTablesSize()) {
+    private void validateRequestOrderTablesSize(final OrderTableRequest request) {
+        List<OrderTableDto> orderTables = request.getOrderTables();
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
         }
     }
 
-    private List<OrderTable> findOrderTables(final TableGroup tableGroup) {
-        final List<Long> orderTableIds = tableGroup.generateOrderTableIds();
+    private List<OrderTable> findOrderTables(final OrderTableRequest tableGroupRequest) {
+        final List<Long> orderTableIds = tableGroupRequest.getOrderTables()
+                .stream()
+                .map(OrderTableDto::getId)
+                .collect(Collectors.toList());
+
         return orderTableDao.findAllByIdIn(orderTableIds);
     }
 
-    private void validateOrderTablesSize(final TableGroup tableGroup, final List<OrderTable> savedOrderTables) {
-        if (tableGroup.isSameOrderTablesSize(savedOrderTables.size())) {
+    private void validateOrderTablesSize(final OrderTableRequest request, final List<OrderTable> savedOrderTables) {
+        if (request.getOrderTables().size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
     }
