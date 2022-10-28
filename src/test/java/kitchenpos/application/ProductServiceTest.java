@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
 
 import java.math.BigDecimal;
@@ -46,28 +45,6 @@ class ProductServiceTest {
                 .usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(productResponse);
-    }
-
-    @DisplayName("상품의 가격이 0보다 작으면 상품을 등록할 수 없다.")
-    @Test
-    void createWithMinusPrice() {
-        // given
-        final ProductRequest request = new ProductRequest("후라이드", BigDecimal.valueOf(-1));
-
-        // when & then
-        assertThatThrownBy(() -> sut.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("상품의 가격이 없는 경우 상품을 등록할 수 없다.")
-    @Test
-    void createWithNullPrice() {
-        // given
-        final ProductRequest request = new ProductRequest("후라이드", null);
-
-        // when & then
-        assertThatThrownBy(() -> sut.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("상품 목록을 전체 조회할 수 있다.")
