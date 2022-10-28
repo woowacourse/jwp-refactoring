@@ -1,14 +1,17 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.dao.TableRepository;
 import kitchenpos.domain.GuestNumber;
@@ -16,11 +19,14 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.Quantity;
+import kitchenpos.dto.OrderLineItemDto;
+import kitchenpos.dto.OrderRequest;
+import kitchenpos.dto.OrderResponse;
+import kitchenpos.exception.AlreadyCompletionOrderStatusException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,7 +43,7 @@ class OrderServiceTest extends ServiceTest {
     private TableRepository tableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -48,8 +54,10 @@ class OrderServiceTest extends ServiceTest {
     @Autowired
     private MenuRepository menuRepository;
 
-    private OrderLineItem orderLineItem1;
-    private OrderLineItem orderLineItem2;
+    private OrderLineItemDto orderLineItemDto1;
+    private OrderLineItemDto orderLineItemDto2;
+    private Menu menu1;
+    private Menu menu2;
 
     @BeforeEach
     void setUp() {
@@ -57,56 +65,58 @@ class OrderServiceTest extends ServiceTest {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
         MenuProduct menuProduct1 = new MenuProduct(null, product, Quantity.from(2L));
         MenuProduct menuProduct2 = new MenuProduct(null, product, Quantity.from(3L));
-        Menu menu1 = menuRepository.save(Menu.of("메뉴1", Price.from(new BigDecimal(5000.0)), menuGroup,
+        menu1 = menuRepository.save(Menu.of("메뉴1", Price.from(new BigDecimal(5000.0)), menuGroup,
                 List.of(menuProduct1, menuProduct2)));
-        Menu menu2 = menuRepository
+        menu2 = menuRepository
                 .save(Menu.of("메뉴2", Price.from(new BigDecimal(4500.0)), menuGroup, List.of(menuProduct2)));
 
-        orderLineItem1 = new OrderLineItem(menu1.getId(), 2);
-        orderLineItem2 = new OrderLineItem(menu2.getId(), 1);
+        orderLineItemDto1 = new OrderLineItemDto(menu1.getId(), 2L);
+        orderLineItemDto2 = new OrderLineItemDto(menu2.getId(), 1L);
     }
 
     @DisplayName("Order를 등록할 수 있다.")
     @Test
     void create() {
         OrderTable orderTable = tableRepository.save(new OrderTable(null, GUEST_NUMBER, false, null));
-        Order order = new Order(orderTable.getId(), "COOKING", List.of(orderLineItem1, orderLineItem2));
+        OrderRequest orderRequest = new OrderRequest(orderTable.getId(), null,
+                List.of(orderLineItemDto1, orderLineItemDto2));
 
-        orderService.create(order);
+        orderService.create(orderRequest);
 
-        assertThat(orderService.list()).hasSize(1);
+        assertThat(orderRepository.findAll()).hasSize(1);
     }
 
     @DisplayName("Menu 없이 Order를 등록하려고 하면 예외를 발생시킨다.")
     @Test
     void create_Exception_EmptyMenu() {
         OrderTable emptyOrderTable = tableRepository.save(new OrderTable(null, GUEST_NUMBER, true, null));
-        Order order = new Order(emptyOrderTable.getId(), "COOKING", Collections.emptyList());
+        OrderRequest orderRequest = new OrderRequest(emptyOrderTable.getId(), null, Collections.emptyList());
 
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("빈 테이블에 주문을 등록할 수 없습니다.");
+                .hasMessage("메뉴 없이 주문할 수 없습니다.");
     }
 
     @DisplayName("존재하지 않는 Menu로 Order를 등록하려고 하면 예외를 발생시킨다.")
     @Test
     void create_Exception_NotFoundMenu() {
-        OrderLineItem notFoundOrderLineItem = new OrderLineItem(1000L, 2);
-        OrderTable emptyOrderTable = tableRepository.save(new OrderTable(null, GUEST_NUMBER, true, null));
-        Order order = new Order(emptyOrderTable.getId(), "COOKING", List.of(notFoundOrderLineItem));
+        OrderLineItemDto notFoundOrderLineItem = new OrderLineItemDto(1000L, 2L);
+        OrderTable emptyOrderTable = tableRepository.save(new OrderTable(null, GUEST_NUMBER, false, null));
+        OrderRequest orderRequest = new OrderRequest(emptyOrderTable.getId(), null, List.of(notFoundOrderLineItem));
 
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("존재하지 않는 메뉴로 주문을 등록할 수 없습니다.");
+                .hasMessage("메뉴를 찾을 수 없습니다.");
     }
 
     @DisplayName("empty인 Table에 해당하는 Order를 등록하려고 하면 예외를 발생시킨다.")
     @Test
     void create_Exception_EmptyTable() {
         OrderTable emptyOrderTable = tableRepository.save(new OrderTable(null, GUEST_NUMBER, true, null));
-        Order order = new Order(emptyOrderTable.getId(), "COOKING", List.of(orderLineItem1, orderLineItem2));
+        OrderRequest orderRequest = new OrderRequest(emptyOrderTable.getId(), null,
+                List.of(orderLineItemDto1, orderLineItemDto2));
 
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("빈 테이블에 주문을 등록할 수 없습니다.");
     }
@@ -115,26 +125,25 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void changeOrderStatus() {
         OrderTable orderTable = tableRepository.save(new OrderTable(null, GUEST_NUMBER, false, null));
-        Order order = orderService.create(
-                new Order(orderTable.getId(), "COOKING", List.of(orderLineItem1, orderLineItem2)));
+        OrderResponse order = orderService.create(
+                new OrderRequest(orderTable.getId(), null, List.of(orderLineItemDto1, orderLineItemDto2)));
 
         orderService.changeOrderStatus(
-                order.getId(), new Order(orderTable.getId(), "MEAL", Collections.emptyList()));
+                order.getId(), new OrderRequest(orderTable.getId(), "MEAL", Collections.emptyList()));
 
-        Order changedOrder = orderService.list().get(0);
-        assertThat(changedOrder.getOrderStatus()).isEqualTo("MEAL");
+        Order changedOrder = orderRepository.findAll().get(0);
+        assertThat(changedOrder.getOrderStatus()).isEqualTo(MEAL);
     }
 
     @DisplayName("주문 상태가 COMPLETION인 주문의 상태를 변경하려고 하면 예외를 발생시킨다.")
     @Test
     void changeOrderStatus_Exception_AlreadyCompletionOrder() {
         OrderTable orderTable = tableRepository.save(new OrderTable(null, GUEST_NUMBER, false, null));
-        Order order = orderDao.save(
-                new Order(orderTable.getId(), "COMPLETION", List.of(orderLineItem1, orderLineItem2)));
+        Order order = orderRepository.save(
+                new Order(orderTable, COMPLETION, new ArrayList<>()));
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(
-                order.getId(), new Order(orderTable.getId(), "MEAL", Collections.emptyList())))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("이미 완료된 주문의 상태는 변경할 수 없습니다.");
+                order.getId(), new OrderRequest(orderTable.getId(), "MEAL", Collections.emptyList())))
+                .isInstanceOf(AlreadyCompletionOrderStatusException.class);
     }
 }

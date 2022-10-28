@@ -1,11 +1,11 @@
 spring:
-  flyway:
-    enabled: false
-
   jpa:
     hibernate:
       ddl-auto: validate
     show-sql: true
+  flyway:
+    baseline-on-migrate: true
+    enabled: true
 
   datasource:
     initialization-mode: always

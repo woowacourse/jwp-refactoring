@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import kitchenpos.exception.GuestNumberChangeDisabledException;
 import kitchenpos.exception.TableEmptyDisabledException;
 
@@ -30,6 +31,9 @@ public class OrderTable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "orderTable")
+    private Order order;
 
     protected OrderTable() {
     }
@@ -65,8 +69,16 @@ public class OrderTable {
     }
 
     public void setEmpty(boolean empty) {
+        validateOrderStatusIfExists();
         validateTableGroup();
         this.empty = empty;
+    }
+
+    private void validateOrderStatusIfExists() {
+        Order order = getOrder();
+        if (Objects.nonNull(order) && order.isNotCompletionOrderStatus()) {
+            throw new IllegalArgumentException("조리중이거나 식사중인 테이블의 empty를 변경할 수 없습니다.");
+        }
     }
 
     private void validateTableGroup() {
@@ -87,7 +99,18 @@ public class OrderTable {
         tableGroup = null;
     }
 
+    public Order getOrder() {
+        return order;
+    }
+
     public boolean hasTableGroup() {
         return Objects.nonNull(tableGroup);
+    }
+
+    public boolean isNotCompletionOrderTable() {
+        if (Objects.isNull(order)) {
+            return false;
+        }
+        return order.isNotCompletionOrderStatus();
     }
 }

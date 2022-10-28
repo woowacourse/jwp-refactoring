@@ -6,11 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.dao.TableRepository;
 import kitchenpos.domain.GuestNumber;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupDto;
@@ -39,7 +40,7 @@ class TableGroupServiceTest extends ServiceTest {
     private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     private OrderTable orderTable1;
 
@@ -126,12 +127,12 @@ class TableGroupServiceTest extends ServiceTest {
 
     @DisplayName("조리중이거나 식사중인 테이블이 존재하는 TableGroup을 그룹 해제할 수 없다.")
     @ParameterizedTest
-    @ValueSource(strings = {"COOKING", "MEAL"})
+    @ValueSource(strings = {"MEAL", "COOKING"})
     void ungroup_Exception_NotCompleteOrderTableStatus(String orderStatus) {
         OrderTable orderOrderTable2 = tableRepository.save(new OrderTable(null, GUEST_NUMBER, true, null));
         TableGroupDto tableGroupDto = tableGroupService.create(
                 new TableGroupDto(List.of(orderTable1.getId(), orderOrderTable2.getId())));
-        orderDao.save(new Order(orderOrderTable2.getId(), orderStatus, Collections.emptyList()));
+        orderRepository.save(new Order(orderOrderTable2, OrderStatus.from(orderStatus), Collections.emptyList()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupDto.getId()))
                 .isInstanceOf(IllegalArgumentException.class)

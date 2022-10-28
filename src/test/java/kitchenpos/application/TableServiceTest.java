@@ -5,11 +5,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Collections;
 import java.util.Optional;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.dao.TableRepository;
 import kitchenpos.domain.GuestNumber;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableDto;
@@ -35,7 +36,7 @@ class TableServiceTest extends ServiceTest {
     private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @DisplayName("Table을 생성할 수 있다.")
     @Test
@@ -86,10 +87,10 @@ class TableServiceTest extends ServiceTest {
 
     @DisplayName("COOKING, MEAL 상태인 Table의 상태를 변경하려고 하면 예외를 발생시킨다.")
     @ParameterizedTest
-    @ValueSource(strings = {"COOKING", "MEAL"})
+    @ValueSource(strings = {"MEAL", "COOKING"})
     void changeEmpty_Exception_NotCompleteOrderStatus(String orderStatus) {
         OrderTable orderTable = tableRepository.save(new OrderTable(null, GUEST_NUMBER, false, null));
-        orderDao.save(new Order(orderTable.getId(), orderStatus, Collections.emptyList()));
+        orderRepository.save(new Order(orderTable, OrderStatus.from(orderStatus), Collections.emptyList()));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new TableDto(null, 3, true)))
                 .isInstanceOf(IllegalArgumentException.class)

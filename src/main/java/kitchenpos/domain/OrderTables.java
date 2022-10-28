@@ -58,7 +58,16 @@ public class OrderTables {
     }
 
     public void ungroup() {
+        validateOrderStatus();
         values.forEach(OrderTable::ungroup);
+    }
+
+    private void validateOrderStatus() {
+        boolean notCompletion = values.stream()
+                .anyMatch(OrderTable::isNotCompletionOrderTable);
+        if (notCompletion) {
+            throw new IllegalArgumentException("조리중이거나 식사중인 테이블이 포함된 Table Group은 그룹 해제 할 수 없습니다.");
+        }
     }
 
     public void setEmpty() {

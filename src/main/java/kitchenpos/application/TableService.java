@@ -1,12 +1,10 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.TableRepository;
 import kitchenpos.domain.GuestNumber;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.TableDto;
 import kitchenpos.exception.OrderTableNotFoundException;
@@ -16,11 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableService {
 
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
     private final TableRepository tableRepository;
 
-    public TableService(OrderDao orderDao, TableRepository tableRepository) {
-        this.orderDao = orderDao;
+    public TableService(OrderRepository orderRepository, TableRepository tableRepository) {
+        this.orderRepository = orderRepository;
         this.tableRepository = tableRepository;
     }
 
@@ -43,14 +41,7 @@ public class TableService {
     public TableDto changeEmpty(Long orderTableId, TableDto table) {
         OrderTable savedOrderTable = tableRepository.findById(orderTableId)
                 .orElseThrow(OrderTableNotFoundException::new);
-
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("조리중이거나 식사중인 테이블의 empty를 변경할 수 없습니다.");
-        }
-
         savedOrderTable.setEmpty(table.isEmpty());
-
         return new TableDto(tableRepository.save(savedOrderTable));
     }
 
