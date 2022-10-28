@@ -3,14 +3,15 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.springframework.util.CollectionUtils;
 
 @Entity
 @Table(name = "orders")
@@ -29,18 +30,35 @@ public class Order {
     @Column(name = "ordered_time")
     private LocalDateTime orderedTime;
 
-    @OneToMany
-    @JoinColumn(name = "order_id")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     private List<OrderLineItem> orderLineItems;
 
-    public Order() {
+    protected Order() {
+    }
+
+    public Order(final Long id) {
+        this.id = id;
+    }
+
+    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        this(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
     }
 
     public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
         this(orderTableId, orderStatus, orderedTime, new ArrayList<>());
     }
 
+    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
+        this.id = id;
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+    }
+
     public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.setOrder(this);
+        }
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
@@ -85,5 +103,13 @@ public class Order {
 
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
+    }
+
+    public boolean isOrderLineItemEmpty() {
+        return CollectionUtils.isEmpty(orderLineItems);
+    }
+
+    public boolean isOrderLineItemsSizeEqualTo(final int size) {
+        return this.orderLineItems.size() == size;
     }
 }

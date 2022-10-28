@@ -1,5 +1,7 @@
 package kitchenpos.support;
 
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 
 public enum OrderLineItemFixture {
@@ -13,10 +15,10 @@ public enum OrderLineItemFixture {
     }
 
     public OrderLineItem 생성(final long menuId) {
-        return new OrderLineItem(null, menuId, quantity);
+        return new OrderLineItem(null, new Menu(menuId), quantity);
     }
 
-    public OrderLineItem 생성(final long orderId, final long menuId) {
-        return new OrderLineItem(orderId, menuId, quantity);
+    public OrderLineItem 생성(final Order order, final Menu menu) {
+        return new OrderLineItem(order, menu, quantity);
     }
 }

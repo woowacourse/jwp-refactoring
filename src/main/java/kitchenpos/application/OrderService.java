@@ -1,22 +1,21 @@
 package kitchenpos.application;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderMenuRequest;
+import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.response.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -38,55 +37,49 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
-
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
+    public OrderResponse create(final OrderRequest orderRequest) {
+        final List<Long> menuIds = orderRequest.getOrderMenus()
+                .stream()
+                .map(OrderMenuRequest::getMenuId)
                 .collect(Collectors.toList());
+        final List<Menu> menus = menuDao.findByIdIn(menuIds);
+        final Order order = orderRequest.toEntity(menus);
 
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderLineItemsEmpty(order);
+        validateMenusExist(menuIds, order);
 
-        order.setId(null);
-
-        final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
+        final OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
+        validateEmpty(orderTable);
+        orderDao.save(order);
+        return OrderResponse.of(order);
+    }
 
+    private static void validateEmpty(final OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-
-        final Order savedOrder = orderDao.save(order);
-
-        final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(orderId);
-            savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
-        }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
-
-        return savedOrder;
     }
 
-    public List<Order> list() {
+    private void validateMenusExist(final List<Long> menuIds, final Order order) {
+        if (!order.isOrderLineItemsSizeEqualTo(menuIds.size())) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateOrderLineItemsEmpty(final Order order) {
+        if (order.isOrderLineItemEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderResponse> list() {
         final List<Order> orders = orderDao.findAll();
 
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
-        }
-
-        return orders;
+        return orders.stream()
+                .map(OrderResponse::of)
+                .collect(Collectors.toList());
     }
 
     @Transactional

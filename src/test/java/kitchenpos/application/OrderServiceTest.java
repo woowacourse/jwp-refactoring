@@ -13,10 +13,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.dto.request.OrderMenuRequest;
+import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.response.OrderLineItemResponse;
+import kitchenpos.dto.response.OrderResponse;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -30,23 +37,24 @@ class OrderServiceTest extends ServiceTest {
                 .getId();
 
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성()).getId();
-        final Order order = ORDER_COOKING_1.생성(orderTableId, List.of(ORDER_LINE_ITEM_1.생성(menuId)));
+        final OrderRequest orderRequest = new OrderRequest(orderTableId,
+                List.of(new OrderMenuRequest(menuId, 1)));
 
         // when
-        final Order savedOrder = orderService.create(order);
+        final OrderResponse orderResponse = orderService.create(orderRequest);
 
         //then
-        assertThat(savedOrder.getId()).isEqualTo(1L);
+        assertThat(orderResponse.getId()).isEqualTo(1L);
     }
 
     @Test
     void 주문을_저장할_때_주문할_메뉴가_1개_이상이_아니면_예외를_반환한다() {
         // given
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성()).getId();
-        final Order order = ORDER_COOKING_1.주문항목_없이_생성(orderTableId);
+        final OrderRequest orderRequest = new OrderRequest(orderTableId, List.of());
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -54,13 +62,12 @@ class OrderServiceTest extends ServiceTest {
     void 주문을_저장할_때_존재하지_않는_메뉴를_주문하면_예외를_발생한다() {
         // given
         final long notExistMenuId = Long.MAX_VALUE;
-        final OrderLineItem orderLineItem = ORDER_LINE_ITEM_1.생성(notExistMenuId);
-
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성()).getId();
-        final Order order = ORDER_COOKING_1.생성(orderTableId, List.of(orderLineItem));
+        final OrderRequest orderRequest = new OrderRequest(orderTableId,
+                List.of(new OrderMenuRequest(notExistMenuId, 1)));
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -72,10 +79,11 @@ class OrderServiceTest extends ServiceTest {
                 .getId();
 
         final long notExistOrderTableId = Long.MAX_VALUE;
-        final Order order = ORDER_COOKING_1.생성(notExistOrderTableId, List.of(ORDER_LINE_ITEM_1.생성(menuId)));
+        final OrderRequest orderRequest = new OrderRequest(notExistOrderTableId,
+                List.of(new OrderMenuRequest(menuId, 1)));
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -87,10 +95,11 @@ class OrderServiceTest extends ServiceTest {
                 .getId();
 
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성()).getId();
-        final Order order = ORDER_COOKING_1.생성(orderTableId, List.of(ORDER_LINE_ITEM_1.생성(menuId)));
+        final OrderRequest orderRequest = new OrderRequest(orderTableId,
+                List.of(new OrderMenuRequest(menuId, 1)));
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -98,23 +107,27 @@ class OrderServiceTest extends ServiceTest {
     void 모든_주문을_조회할_때_주문한_메뉴도_함께_조회한다() {
         // given
         final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final Long menuId = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId))
-                .getId();
+        final Menu menu = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId));
 
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성()).getId();
         final Order savedOrder = 주문을_저장한다(ORDER_COOKING_1.주문항목_없이_생성(orderTableId));
-        final OrderLineItem savedOrderLineItem = 주문항목을_저장한다(ORDER_LINE_ITEM_1.생성(savedOrder.getId(), menuId));
+        final OrderLineItem savedOrderLineItem = 주문항목을_저장한다(ORDER_LINE_ITEM_1.생성(savedOrder, menu));
+
+        final OrderResponse expectedOrderResponse = OrderResponse.of(savedOrder);
+        final OrderLineItemResponse orderLineItemResponse = OrderLineItemResponse.of(savedOrderLineItem);
 
         // when
-        final List<Order> orders = orderService.list();
+        final List<OrderResponse> orderResponses = orderService.list();
 
         // then
         assertAll(
-                () -> assertThat(orders).usingRecursiveFieldByFieldElementComparator()
+                () -> assertThat(orderResponses).usingRecursiveFieldByFieldElementComparator()
                         .usingElementComparatorIgnoringFields("orderLineItems")
-                        .containsOnly(savedOrder),
-                () -> assertThat(orders.get(0).getOrderLineItems()).usingRecursiveFieldByFieldElementComparator()
-                        .containsOnly(savedOrderLineItem)
+                        .containsOnly(expectedOrderResponse),
+                () -> assertThat(orderResponses.get(0).getOrderLineItems())
+                        .usingRecursiveFieldByFieldElementComparator()
+                        .usingComparatorForType(Comparator.comparingInt(BigDecimal::intValue), BigDecimal.class)
+                        .containsOnly(orderLineItemResponse)
         );
     }
 

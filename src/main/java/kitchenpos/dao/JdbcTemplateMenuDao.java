@@ -60,6 +60,14 @@ public class JdbcTemplateMenuDao implements MenuDao {
         return jdbcTemplate.queryForObject(sql, parameters, Long.class);
     }
 
+    @Override
+    public List<Menu> findByIdIn(final List<Long> menuIds) {
+        final String sql = "SELECT id, name, price, menu_group_id FROM menu WHERE id IN (:ids)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("ids", menuIds);
+        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+    }
+
     private Menu select(final Long id) {
         final String sql = "SELECT id, name, price, menu_group_id FROM menu WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
