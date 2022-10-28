@@ -6,6 +6,7 @@ import kitchenpos.ui.request.MenuCreateRequest;
 import kitchenpos.ui.request.MenuProductDto;
 import kitchenpos.ui.request.OrderCreateRequest;
 import kitchenpos.ui.request.OrderLineItemDto;
+import kitchenpos.ui.request.TableCreateRequest;
 
 public class DtoFixture {
 
@@ -22,5 +23,13 @@ public class DtoFixture {
 
     private static List<OrderLineItemDto> getOrderLineItems(final Long menuId, final long quantity) {
         return List.of(new OrderLineItemDto(menuId, quantity));
+    }
+
+    public static TableCreateRequest getEmptyTableCreateRequest() {
+        return new TableCreateRequest(0, true);
+    }
+
+    public static TableCreateRequest getNotEmptyTableCreateRequest(final int numberOfGuests) {
+        return new TableCreateRequest(numberOfGuests, false);
     }
 }

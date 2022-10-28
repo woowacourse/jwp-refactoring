@@ -13,6 +13,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.request.MenuCreateRequest;
 import kitchenpos.ui.request.MenuProductDto;
 import kitchenpos.ui.request.OrderCreateRequest;
+import kitchenpos.ui.request.TableCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,8 +55,8 @@ public abstract class ServiceTest {
         return menuService.create(request);
     }
 
-    protected OrderTable 테이블_등록(final OrderTable table) {
-        return tableService.create(table);
+    protected OrderTable 테이블_등록(final TableCreateRequest request) {
+        return tableService.create(request);
     }
 
     protected TableGroup 단체_지정(final TableGroup tableGroup) {
