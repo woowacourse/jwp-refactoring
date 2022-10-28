@@ -2,10 +2,12 @@ package kitchenpos.ui;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
-import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderStatusUpdateRequest;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderStatusUpdateRequest;
+import kitchenpos.dto.request.response.OrderResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,26 +25,32 @@ public class OrderRestController {
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<Order> create(@RequestBody final OrderCreateRequest orderCreateRequest) {
+    public ResponseEntity<OrderResponse> create(@RequestBody final OrderCreateRequest orderCreateRequest) {
         final Order created = orderService.create(orderCreateRequest.toOrder());
+        final OrderResponse orderResponse = OrderResponse.from(created);
         final URI uri = URI.create("/api/orders/" + created.getId());
         return ResponseEntity.created(uri)
-                .body(created)
+                .body(orderResponse)
                 ;
     }
 
     @GetMapping("/api/orders")
-    public ResponseEntity<List<Order>> list() {
+    public ResponseEntity<List<OrderResponse>> list() {
+        final List<Order> orders = orderService.list();
+        final List<OrderResponse> orderResponses = orders.stream()
+                .map(OrderResponse::from)
+                .collect(Collectors.toList());
         return ResponseEntity.ok()
-                .body(orderService.list())
+                .body(orderResponses)
                 ;
     }
 
     @PutMapping("/api/orders/{orderId}/order-status")
-    public ResponseEntity<Order> changeOrderStatus(
+    public ResponseEntity<OrderResponse> changeOrderStatus(
             @PathVariable final Long orderId,
             @RequestBody final OrderStatusUpdateRequest orderStatusUpdateRequest
     ) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderStatusUpdateRequest.toOrder()));
+        final Order order = orderService.changeOrderStatus(orderId, orderStatusUpdateRequest.toOrder());
+        return ResponseEntity.ok(OrderResponse.from(order));
     }
 }
