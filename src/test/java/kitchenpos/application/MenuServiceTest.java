@@ -7,13 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Stream;
+import kitchenpos.application.dto.MenuProductRequest;
 import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayName;
@@ -22,8 +21,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @ServiceTest
 class MenuServiceTest {
@@ -85,7 +82,8 @@ class MenuServiceTest {
         Product product = productDao.save(new Product("제육볶음", BigDecimal.ONE));
 
         assertThatThrownBy(() -> menuService.create(
-                new MenuRequest("신메뉴", BigDecimal.TEN, menuGroup.getId(), List.of(new MenuProduct(product.getId(), 3)))))
+                new MenuRequest("신메뉴", BigDecimal.TEN, menuGroup.getId(),
+                        List.of(new MenuProductRequest.Create(product.getId(), 3)))))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
