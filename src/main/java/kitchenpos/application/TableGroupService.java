@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.OrderTableIdRequest;
+import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -29,7 +30,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupCreateRequestDto dto) {
+    public TableGroupResponse create(final TableGroupCreateRequestDto dto) {
         final List<OrderTableIdRequest> orderTables = dto.getOrderTables();
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(getRequestOrderTablesIds(orderTables));
 
@@ -38,7 +39,11 @@ public class TableGroupService {
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         mergeOrderTables(savedOrderTables, tableGroup);
-        return savedTableGroup;
+        return new TableGroupResponse(
+                savedTableGroup.getId(),
+                savedTableGroup.getCreatedDate(),
+                savedTableGroup.getOrderTables()
+        );
     }
 
     private List<Long> getRequestOrderTablesIds(List<OrderTableIdRequest> orderTables) {

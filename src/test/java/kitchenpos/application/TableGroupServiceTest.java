@@ -10,6 +10,7 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.List;
 import kitchenpos.application.dto.request.OrderTableIdRequest;
+import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -53,10 +54,9 @@ class TableGroupServiceTest {
         OrderTableIdRequest orderTableDto1 = new OrderTableIdRequest(1L);
         OrderTableIdRequest orderTableDto2 = new OrderTableIdRequest(2L);
         TableGroupCreateRequestDto dto = new TableGroupCreateRequestDto(List.of(orderTableDto1, orderTableDto2));
-        TableGroup savedTableGroup = tableGroupService.create(dto);
+        TableGroupResponse savedTableGroup = tableGroupService.create(dto);
 
         //then
-        assertThat(savedTableGroup).isEqualTo(TABLE_GROUP);
         assertThat(savedTableGroup.getOrderTables().get(0).getTableGroupId()).isEqualTo(TABLE_GROUP.getId());
         assertThat(savedTableGroup.getOrderTables().get(1).getTableGroupId()).isEqualTo(TABLE_GROUP.getId());
         assertThat(savedTableGroup.getOrderTables().get(0).isEmpty()).isFalse();
