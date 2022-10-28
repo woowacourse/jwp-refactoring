@@ -24,7 +24,7 @@ public class TableGroup {
     @OneToMany(mappedBy = "tableGroup", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     private List<OrderTable> orderTables = new ArrayList<>();
 
-    public TableGroup() {
+    protected TableGroup() {
     }
 
     public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
