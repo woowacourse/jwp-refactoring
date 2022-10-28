@@ -18,7 +18,7 @@
             - Orders에는 OrderLineItem이 없으나 도메인에는 존재.
     - 목록
         - [x] MenuGroupRestController
-        - [ ] MenuRestController
+        - [x] MenuRestController
         - [x] OrderRestController
         - [ ] ProductRestController
         - [ ] TableGroupRestController

@@ -23,12 +23,12 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.response.MenuResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -71,10 +71,10 @@ public class MenuServiceTest {
 
         MenuRequest 뿌링클_음료두개_세트 = generateMenuRequest("뿌링클 음료두개 세트", BigDecimal.valueOf(21000), 세트메뉴_1L, menuProducts);
         // when
-        Menu createdMenu = menuService.create(뿌링클_음료두개_세트);
+        MenuResponse menuResponse = menuService.create(뿌링클_음료두개_세트);
 
         // then
-        assertThat(createdMenu.getId()).isNotNull();
+        assertThat(menuResponse.getId()).isNotNull();
     }
 
     @Test
@@ -233,9 +233,9 @@ public class MenuServiceTest {
         menuService.create(맛초킹_음료세개_세트);
 
         // when
-        List<Menu> menus = menuService.list();
+        List<MenuResponse> menuResponses = menuService.list();
 
         // then
-        assertThat(menus.size()).isEqualTo(2);
+        assertThat(menuResponses.size()).isEqualTo(2);
     }
 }

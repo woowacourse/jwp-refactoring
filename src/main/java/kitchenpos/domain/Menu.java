@@ -1,7 +1,5 @@
 package kitchenpos.domain;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.dto.request.MenuRequest;
 
 public class Menu {
@@ -10,35 +8,22 @@ public class Menu {
     private final String name;
     private final Price price;
     private final Long menuGroupId;
-    private final List<MenuProduct> menuProducts;
 
-    public Menu(Long id, String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public Menu(Long id, String name, Price price, Long menuGroupId) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
-    }
-
-    public Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
     }
 
     public Menu(String name, Price price, Long menuGroupId) {
-        this(null, name, price, menuGroupId, null);
-    }
-
-    public Menu(Long id, String name, Price price, Long menuGroupId) {
-        this(null, name, price, menuGroupId, null);
+        this(null, name, price, menuGroupId);
     }
 
     public static Menu from(MenuRequest menuRequest) {
-        final List<MenuProduct> menuProducts = menuRequest.getMenuProducts().stream().map(MenuProduct::from)
-                .collect(Collectors.toList());
         return new Menu(menuRequest.getName(),
                 new Price(menuRequest.getPrice()),
-                menuRequest.getMenuGroupId(),
-                menuProducts);
+                menuRequest.getMenuGroupId());
     }
 
     public Long getId() {
@@ -55,9 +40,5 @@ public class Menu {
 
     public Long getMenuGroupId() {
         return menuGroupId;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
     }
 }
