@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.support.ProductFixture.WrapProductRequest;
 
 public abstract class MenuFixture {
 
@@ -32,6 +33,13 @@ public abstract class MenuFixture {
 
     public static Menu createMenuWithProduct(final int price, final long menuGroupId) {
         return new Menu("치킨은 살 안쪄요, 살은 내가 쪄요", BigDecimal.valueOf(price), menuGroupId, MENU_PRODUCTS);
+    }
+
+    public static WrapMenu createMenuRequest(final String name,
+                                             final int price,
+                                             final Long menuGroupId,
+                                             final List<MenuProduct> menuProducts) {
+        return new WrapMenu(name, BigDecimal.valueOf(price), menuGroupId, menuProducts);
     }
 
     public static class WrapMenu extends Menu {

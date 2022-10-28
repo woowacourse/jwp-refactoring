@@ -1,9 +1,9 @@
 package kitchenpos.e2e;
 
+import static java.lang.String.format;
 import static kitchenpos.e2e.E2eTest.AssertionPair.row;
 import static kitchenpos.support.AssertionsSupport.assertAll;
 
-import io.restassured.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
@@ -53,4 +53,53 @@ public class TableE2eTest extends E2eTest {
         );
     }
 
+    @Test
+    void changeEmpty() {
+
+        // given
+        final Long 주문테이블_ID =
+                POST_요청(ORDER_TABLE_URL, new OrderTable(0, true))
+                        .as(OrderTable.class)
+                        .getId();
+
+        // when
+        final ExtractableResponse<Response> 응답 = PUT_요청(
+                format("/api/tables/%s/empty", 주문테이블_ID.toString()), new OrderTable(0, false));
+
+        final OrderTable 바뀐_주문테이블 = 응답.as(OrderTable.class);
+
+        // then
+        assertAll(
+                단일_검증(바뀐_주문테이블.getId(), 주문테이블_ID),
+                단일_검증(바뀐_주문테이블.isEmpty(), false),
+                단일_검증(바뀐_주문테이블.getNumberOfGuests(), 0),
+                단일_검증(바뀐_주문테이블.getTableGroupId(), null)
+        );
+    }
+
+    @Test
+    void changeNumberOfGuests() {
+
+        // given
+        final Long 주문테이블_ID =
+                POST_요청(ORDER_TABLE_URL, new OrderTable(0, true))
+                        .as(OrderTable.class)
+                        .getId();
+
+
+        // when
+        final ExtractableResponse<Response> 응답 = PUT_요청(
+                format("/api/tables/{orderTableId}/number-of-guests", 주문테이블_ID.toString())
+                , new OrderTable(4, true));
+
+        final OrderTable 바뀐_주문테이블 = 응답.as(OrderTable.class);
+
+        // then
+        assertAll(
+                단일_검증(바뀐_주문테이블.getId(), 주문테이블_ID),
+                단일_검증(바뀐_주문테이블.isEmpty(), false),
+                단일_검증(바뀐_주문테이블.getNumberOfGuests(), 4),
+                단일_검증(바뀐_주문테이블.getTableGroupId(), null)
+        );
+    }
 }

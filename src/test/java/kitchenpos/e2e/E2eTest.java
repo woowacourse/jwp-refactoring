@@ -1,14 +1,27 @@
 package kitchenpos.e2e;
 
+import static java.time.LocalDateTime.now;
 import static java.util.Arrays.stream;
+import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.support.MenuFixture.createMenuRequest;
+import static kitchenpos.support.MenuGroupFixture.단짜_두_마리_메뉴;
+import static kitchenpos.support.ProductFixture.후라이드_치킨;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.restassured.RestAssured;
 import io.restassured.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.support.DbTableCleaner;
 import org.assertj.core.api.ListAssert;
@@ -34,6 +47,7 @@ public abstract class E2eTest {
 
     public static final String MENU_GROUP_URL = "/api/menu-groups";
     public static final String ORDER_TABLE_URL = "/api/tables";
+    public static final String ORDER_URL = "/api/orders";
 
     @LocalServerPort
     private int port;
@@ -49,6 +63,9 @@ public abstract class E2eTest {
         tableCleaner.clear();
     }
 
+    /**
+     * REST 요청 목록
+     */
     protected ExtractableResponse<Response> GET_요청(final String path) {
 
         return RestAssured.given().log().all()
@@ -58,7 +75,6 @@ public abstract class E2eTest {
                 .then().log().all()
                 .extract();
     }
-
 
     protected ExtractableResponse<Response> POST_요청(final String path, final Object requestBody) {
 
@@ -70,6 +86,33 @@ public abstract class E2eTest {
                 .then().log().all()
                 .extract();
     }
+
+    protected ExtractableResponse<Response> PUT_요청(final String path, final Object requestBody) {
+
+        return RestAssured.given().log().all()
+                .body(requestBody)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .put(path)
+                .then().log().all()
+                .extract();
+    }
+
+    protected ExtractableResponse<Response> PUT_요청(final String pathWithId, final Long id, final Object requestBody) {
+        final String path = String.format(pathWithId, id);
+
+        return RestAssured.given().log().all()
+                .body(requestBody)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .put(path)
+                .then().log().all()
+                .extract();
+    }
+
+    /**
+     * 검증 편의 메서드 목록
+     */
 
     protected Executable HTTP_STATUS_검증(final HttpStatus httpStatus, final ExtractableResponse<Response> response) {
 
@@ -150,4 +193,76 @@ public abstract class E2eTest {
             return () -> listAssert.extracting(fieldName).containsExactlyInAnyOrder(expected);
         }
     }
+
+    /**
+     * 생성 (API) 요청 편의 메서드 목록
+     */
+
+    protected Order 주문_생성(final OrderStatus orderStatus) {
+
+        final Long 메뉴_ID = 메뉴_생성_및_ID_반환();
+
+        final Long 주문테이블_ID = POST_요청(ORDER_TABLE_URL, new OrderTable(0, false)).as(OrderTable.class).getId();
+
+        final LocalDateTime 주문일시 = now().minusMinutes(1);
+
+        final Order 주문 = new Order(주문테이블_ID, orderStatus.name(), 주문일시, List.of(new OrderLineItem(메뉴_ID, 1)));
+
+        return POST_요청(ORDER_URL, 주문).as(Order.class);
+    }
+
+    protected Order 주문_생성(final Long 주문테이블_ID, final LocalDateTime 주문일시) {
+
+        final Long 메뉴_ID = 메뉴_생성_및_ID_반환();
+
+        final Order 주문 = new Order(주문테이블_ID, MEAL.name(), 주문일시, List.of(new OrderLineItem(메뉴_ID, 1)));
+
+        return POST_요청(ORDER_URL, 주문).as(Order.class);
+    }
+
+    protected Order 주문_생성() {
+
+        final Long 메뉴_ID = 메뉴_생성_및_ID_반환();
+
+        final Long 주문테이블_ID = POST_요청(ORDER_TABLE_URL, new OrderTable(0, false)).as(OrderTable.class).getId();
+
+        final LocalDateTime 주문일시 = now().minusMinutes(1);
+
+        final Order 주문 = new Order(주문테이블_ID, MEAL.name(), 주문일시, List.of(new OrderLineItem(메뉴_ID, 1)));
+
+        return POST_요청(ORDER_URL, 주문).as(Order.class);
+    }
+
+    protected Long 메뉴_생성_및_ID_반환() {
+
+        final Long 메뉴그룹_ID = 메뉴그룹_생성_및_ID_반환();
+
+        final Long 후라이드치킨_ID = 상품_생성_및_ID_반환();
+
+        final List<MenuProduct> 메뉴상품_리스트 = List.of(new MenuProduct(후라이드치킨_ID, 1));
+
+
+        return POST_요청(MENU_URL, createMenuRequest("단 치킨 한 마리", 15_000, 메뉴그룹_ID, 메뉴상품_리스트))
+                .as(Menu.class)
+                .getId();
+    }
+
+    protected Long 메뉴_생성_및_ID_반환(final Long 메뉴그룹_ID, final List<MenuProduct> 메뉴상품_리스트) {
+        return POST_요청(MENU_URL, createMenuRequest("단 치킨 한 마리", 15_000, 메뉴그룹_ID, 메뉴상품_리스트))
+                .as(Menu.class)
+                .getId();
+    }
+
+    protected Long 상품_생성_및_ID_반환() {
+        return POST_요청(PRODUCT_URL, 후라이드_치킨)
+                .as(Product.class)
+                .getId();
+    }
+
+    protected Long 메뉴그룹_생성_및_ID_반환() {
+        return POST_요청(MENU_GROUP_URL, 단짜_두_마리_메뉴)
+                .as(MenuGroup.class)
+                .getId();
+    }
+
 }
