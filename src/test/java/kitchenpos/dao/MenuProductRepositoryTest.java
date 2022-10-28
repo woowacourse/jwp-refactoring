@@ -11,6 +11,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.fixtures.MenuFixtures;
 import kitchenpos.fixtures.ProductFixtures;
+import kitchenpos.repositorysupport.MenuProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -13,6 +13,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.fixtures.MenuFixtures;
 import kitchenpos.fixtures.OrderFixtures;
 import kitchenpos.fixtures.OrderTableFixtures;
+import kitchenpos.repositorysupport.OrderLineItemRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
