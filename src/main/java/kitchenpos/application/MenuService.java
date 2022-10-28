@@ -3,7 +3,6 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -24,12 +23,10 @@ public class MenuService {
     private final MenuProductDao menuProductDao;
     private final ProductDao productDao;
 
-    public MenuService(
-            final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao,
-            final MenuProductDao menuProductDao,
-            final ProductDao productDao
-    ) {
+    public MenuService(final MenuDao menuDao,
+                       final MenuGroupDao menuGroupDao,
+                       final MenuProductDao menuProductDao,
+                       final ProductDao productDao) {
         this.menuDao = menuDao;
         this.menuGroupDao = menuGroupDao;
         this.menuProductDao = menuProductDao;
@@ -40,13 +37,8 @@ public class MenuService {
     public Menu create(final MenuRequest menuRequest) {
         final BigDecimal price = menuRequest.getPrice();
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        if (!menuGroupDao.existsById(menuRequest.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
+        final MenuGroup menuGroup = menuGroupDao.findById(menuRequest.getMenuGroupId())
+                .orElseThrow(IllegalArgumentException::new);
 
         final List<MenuProductRequest> menuProductsRequest = menuRequest.getMenuProducts();
 
@@ -60,10 +52,6 @@ public class MenuService {
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
-
-        final Long menuGroupId = menuRequest.getMenuGroupId();
-        final MenuGroup menuGroup = menuGroupDao.findById(menuGroupId)
-                .orElseThrow(() -> new IllegalArgumentException());
 
         final Menu menu = menuRequest.toEntity(menuGroup);
         final Menu savedMenu = menuDao.save(menu);
