@@ -3,8 +3,8 @@ package kitchenpos.application;
 import static kitchenpos.DomainFixture.getEmptyTable;
 import static kitchenpos.DomainFixture.getMenuGroup;
 import static kitchenpos.DomainFixture.getNotEmptyTable;
-import static kitchenpos.DomainFixture.getOrder;
 import static kitchenpos.DtoFixture.getMenuCreateRequest;
+import static kitchenpos.DtoFixture.getOrderCreateRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -87,7 +87,7 @@ class TableServiceTest extends ServiceTest {
         final OrderTable savedTable = 테이블_등록(getNotEmptyTable(0));
         final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroup());
         final Menu menu = 메뉴_등록(getMenuCreateRequest(menuGroup.getId(), createMenuProductDtos()));
-        주문_등록(getOrder(savedTable.getId(), menu.getId()));
+        주문_등록(getOrderCreateRequest(savedTable.getId(), menu.getId()));
 
         final OrderTable emptyTable = getEmptyTable();
 

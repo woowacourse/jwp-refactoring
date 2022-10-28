@@ -3,8 +3,8 @@ package kitchenpos.application;
 import static kitchenpos.DomainFixture.getEmptyTable;
 import static kitchenpos.DomainFixture.getMenuGroup;
 import static kitchenpos.DomainFixture.getNotEmptyTable;
-import static kitchenpos.DomainFixture.getOrder;
 import static kitchenpos.DtoFixture.getMenuCreateRequest;
+import static kitchenpos.DtoFixture.getOrderCreateRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -123,7 +123,7 @@ class TableGroupServiceTest extends ServiceTest {
         tableGroup.setOrderTables(List.of(table1, table2));
         final TableGroup savedTableGroup = 단체_지정(tableGroup);
 
-        주문_등록(getOrder(table1.getId(), menu.getId()));
+        주문_등록(getOrderCreateRequest(table1.getId(), menu.getId()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);

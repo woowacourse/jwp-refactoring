@@ -10,6 +10,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.request.OrderCreateRequest;
+import kitchenpos.ui.request.OrderLineItemDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,8 +33,8 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order request) {
-        final List<OrderLineItem> orderLineItems = request.getOrderLineItems();
+    public Order create(final OrderCreateRequest request) {
+        final List<OrderLineItemDto> orderLineItems = request.getOrderLineItems();
         validateOrderLineItems(orderLineItems);
 
         final Long orderTableId = request.getOrderTableId();
@@ -43,16 +45,16 @@ public class OrderService {
                         orderTableId,
                         OrderStatus.COOKING.name(),
                         LocalDateTime.now(),
-                        orderLineItems)
+                        mapToOrderLineItems(orderLineItems))
         );
     }
 
-    private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
+    private void validateOrderLineItems(final List<OrderLineItemDto> orderLineItemDtos) {
+        final List<Long> menuIds = orderLineItemDtos.stream()
+                .map(OrderLineItemDto::getMenuId)
                 .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+        if (orderLineItemDtos.size() != menuDao.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
     }
@@ -64,6 +66,12 @@ public class OrderService {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
+    }
+
+    private List<OrderLineItem> mapToOrderLineItems(final List<OrderLineItemDto> requests) {
+        return requests.stream()
+                .map(OrderLineItemDto::toEntity)
+                .collect(Collectors.toList());
     }
 
     public List<Order> list() {

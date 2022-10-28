@@ -3,8 +3,8 @@ package kitchenpos.application;
 import static kitchenpos.DomainFixture.getEmptyTable;
 import static kitchenpos.DomainFixture.getMenuGroup;
 import static kitchenpos.DomainFixture.getNotEmptyTable;
-import static kitchenpos.DomainFixture.getOrder;
 import static kitchenpos.DtoFixture.getMenuCreateRequest;
+import static kitchenpos.DtoFixture.getOrderCreateRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -13,9 +13,10 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.request.OrderCreateRequest;
+import kitchenpos.ui.request.OrderLineItemDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -31,9 +32,9 @@ class OrderServiceTest extends ServiceTest {
     void create() {
         final Menu menu = createMenu();
         final OrderTable orderTable = 테이블_등록(getNotEmptyTable(5));
-        final Order order = getOrder(orderTable.getId(), menu.getId());
+        final OrderCreateRequest request = getOrderCreateRequest(orderTable.getId(), menu.getId());
 
-        final Order savedOrder = 주문_등록(order);
+        final Order savedOrder = 주문_등록(request);
 
         assertAll(
                 () -> assertThat(savedOrder.getId()).isNotNull(),
@@ -47,11 +48,11 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create_exception_noSuchMenu() {
         final OrderTable orderTable = 테이블_등록(getNotEmptyTable(5));
-        final Order order = new Order(
+        final OrderCreateRequest request = new OrderCreateRequest(
                 orderTable.getId(),
-                List.of(new OrderLineItem(null, null, null, 1)));
+                List.of(new OrderLineItemDto(null, 1)));
 
-        assertThatThrownBy(() -> 주문_등록(order))
+        assertThatThrownBy(() -> 주문_등록(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -59,9 +60,9 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create_exception_noSuchTable() {
         final Menu menu = createMenu();
-        final Order order = getOrder(null, menu.getId());
+        final OrderCreateRequest request = getOrderCreateRequest(null, menu.getId());
 
-        assertThatThrownBy(() -> 주문_등록(order))
+        assertThatThrownBy(() -> 주문_등록(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -70,9 +71,9 @@ class OrderServiceTest extends ServiceTest {
     void create_exception_tableIsEmpty() {
         final Menu menu = createMenu();
         final OrderTable orderTable = 테이블_등록(getEmptyTable());
-        final Order order = getOrder(orderTable.getId(), menu.getId());
+        final OrderCreateRequest request = getOrderCreateRequest(orderTable.getId(), menu.getId());
 
-        assertThatThrownBy(() -> 주문_등록(order))
+        assertThatThrownBy(() -> 주문_등록(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -81,8 +82,8 @@ class OrderServiceTest extends ServiceTest {
     void list() {
         final Menu menu = createMenu();
         final OrderTable orderTable = 테이블_등록(getNotEmptyTable(5));
-        final Order order = getOrder(orderTable.getId(), menu.getId());
-        주문_등록(order);
+        final OrderCreateRequest request = getOrderCreateRequest(orderTable.getId(), menu.getId());
+        주문_등록(request);
 
         final List<Order> orders = orderService.list();
 
@@ -94,8 +95,8 @@ class OrderServiceTest extends ServiceTest {
     void changeOrderStatus() {
         final Menu menu = createMenu();
         final OrderTable orderTable = 테이블_등록(getNotEmptyTable(5));
-        final Order order = getOrder(orderTable.getId(), menu.getId());
-        final Order savedOrder = 주문_등록(order);
+        final OrderCreateRequest request = getOrderCreateRequest(orderTable.getId(), menu.getId());
+        final Order savedOrder = 주문_등록(request);
 
         final Order changeOrder = new Order();
         changeOrder.setOrderStatus(OrderStatus.MEAL.name());
@@ -125,8 +126,8 @@ class OrderServiceTest extends ServiceTest {
     void changeOrderStatus_statusIsCompletion() {
         final Menu menu = createMenu();
         final OrderTable orderTable = 테이블_등록(getNotEmptyTable(5));
-        final Order order = getOrder(orderTable.getId(), menu.getId());
-        final Order savedOrder = 주문_등록(order);
+        final OrderCreateRequest request = getOrderCreateRequest(orderTable.getId(), menu.getId());
+        final Order savedOrder = 주문_등록(request);
 
         final Order changeToComplete = new Order();
         changeToComplete.setOrderStatus(OrderStatus.COMPLETION.name());

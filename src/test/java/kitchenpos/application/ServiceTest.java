@@ -2,18 +2,17 @@ package kitchenpos.application;
 
 import static kitchenpos.DomainFixture.getProduct;
 
-import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.request.MenuCreateRequest;
 import kitchenpos.ui.request.MenuProductDto;
+import kitchenpos.ui.request.OrderCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,13 +62,8 @@ public abstract class ServiceTest {
         return tableGroupService.create(tableGroup);
     }
 
-    protected Order 주문_등록(final Order order) {
-        return orderService.create(order);
-    }
-
-    protected List<MenuProduct> createMenuProducts() {
-        final Product product = 상품_등록(getProduct());
-        return List.of(new MenuProduct(product.getId(), 1, BigDecimal.valueOf(800L)));
+    protected Order 주문_등록(final OrderCreateRequest request) {
+        return orderService.create(request);
     }
 
     protected List<MenuProductDto> createMenuProductDtos() {
