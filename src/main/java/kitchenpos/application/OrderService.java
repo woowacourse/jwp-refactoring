@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
@@ -13,6 +14,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemRequest;
+import kitchenpos.dto.response.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -37,21 +39,18 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderCreateRequest orderCreateRequest) {
-        final List<OrderLineItemRequest> orderLineItems = orderCreateRequest.getOrderLineItems();
+    public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
+        final List<OrderLineItemRequest> orderLineItemRequests = orderCreateRequest.getOrderLineItems();
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
+        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
             throw new IllegalArgumentException("주문 항목이 비어있을 수 없습니다.");
         }
-//        orderLineItems.stream()
-//                .map(orderLineItemRequest -> menuDao.findById(orderLineItemRequest.getMenuId()))
-//                .filter(Optional::isPresent)
-//                .collect(Collectors.toList());
-        final List<Long> menuIds = orderLineItems.stream()
+
+        final List<Long> menuIds = orderLineItemRequests.stream()
                 .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+        if (orderLineItemRequests.size() != menuDao.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("존재하지 않는 메뉴는 주문할 수 없습니다.");
         }
 
@@ -66,41 +65,37 @@ public class OrderService {
         final Order savedOrder = orderDao.save(order);
 
         final Long orderId = savedOrder.getId();
-        for (final OrderLineItemRequest orderLineItemRequest : orderLineItems) {
-            OrderLineItem orderLineItem = new OrderLineItem(orderId, orderLineItemRequest.getMenuId(),
-                    orderLineItemRequest.getQuantity());
-            order.addOrderLineItem(orderLineItemDao.save(orderLineItem));
-        }
 
-        return savedOrder;
+        List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
+                .map(orderLineItemRequest -> orderLineItemDao.save(new OrderLineItem(orderId,
+                        orderLineItemRequest.getMenuId(),
+                        orderLineItemRequest.getQuantity())))
+                .collect(Collectors.toList());
+
+        return OrderResponse.of(savedOrder, orderLineItems);
     }
 
-    public List<Order> list() {
+    public List<OrderResponse> list() {
         final List<Order> orders = orderDao.findAll();
 
-        // TODO: 2depth 수정
+        List<OrderResponse> orderResponses = new ArrayList<>();
         for (final Order order : orders) {
             List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(order.getId());
-            for (OrderLineItem item : orderLineItems) {
-                order.addOrderLineItem(item);
-            }
+            orderResponses.add(OrderResponse.of(order, orderLineItems));
         }
 
-        return orders;
+        return orderResponses;
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final String orderStatusName) {
+    public OrderResponse changeOrderStatus(final Long orderId, final String orderStatusName) {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
         savedOrder.changeOrderStatus(orderStatusName);
         orderDao.save(savedOrder);
         List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(orderId);
-        for (OrderLineItem item : orderLineItems) {
-            savedOrder.addOrderLineItem(item);
-        }
 
-        return savedOrder;
+        return OrderResponse.of(savedOrder, orderLineItems);
     }
 }

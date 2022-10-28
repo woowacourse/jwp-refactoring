@@ -14,12 +14,11 @@ public class OrderFixture {
         return new OrderCreateRequest(orderTableId, orderLineItems);
     }
 
-    public static Order generateOrder(LocalDateTime orderTime, Long orderTableId, String orderStatus, ArrayList<OrderLineItem> orderLineItems) {
+    public static Order generateOrder(LocalDateTime orderTime, Long orderTableId, String orderStatus) {
         Order order = new Order();
         order.setOrderedTime(orderTime);
         order.setOrderTableId(orderTableId);
         order.setOrderStatus(orderStatus);
-        order.setOrderLineItems(orderLineItems);
         return order;
     }
 }

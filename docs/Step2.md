@@ -17,12 +17,12 @@
         - 예시
             - Orders에는 OrderLineItem이 없으나 도메인에는 존재.
     - 목록
-        - [x] MenuGroupRestController
-        - [x] MenuRestController
+        - [ ] MenuGroupRestController
+        - [ ] MenuRestController
         - [x] OrderRestController
-        - [x] ProductRestController
-        - [x] TableGroupRestController
-        - [x] TableRestController
+        - [ ] ProductRestController
+        - [ ] TableGroupRestController
+        - [ ] TableRestController
 3. 서비스 로직 코드 분리
     - Domain의 예외 검증 로직을 Domain으로 이동
     - 목록

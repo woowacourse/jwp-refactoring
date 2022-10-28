@@ -14,7 +14,7 @@ public class OrderTest {
     @Test
     void changeOrderStatus() {
         // given
-        Order order = new Order(1L, 1L, "COOKING", LocalDateTime.now(), new ArrayList<>());
+        Order order = new Order(1L, 1L, "COOKING", LocalDateTime.now());
 
         // when
         order.changeOrderStatus("MEAL");
@@ -27,7 +27,7 @@ public class OrderTest {
     @Test
     void changeOrderStatus_WhenCompletionOrder() {
         // given
-        Order order = new Order(1L, 1L, "COMPLETION", LocalDateTime.now(), new ArrayList<>());
+        Order order = new Order(1L, 1L, "COMPLETION", LocalDateTime.now());
 
         // when & then
         assertThatThrownBy(() -> order.changeOrderStatus("MEAL"))
