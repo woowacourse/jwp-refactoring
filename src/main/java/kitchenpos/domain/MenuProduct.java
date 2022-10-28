@@ -45,4 +45,8 @@ public class MenuProduct {
     public void setQuantity(final long quantity) {
         this.quantity = quantity;
     }
+
+    public void addMenuId(Long menuId) {
+        this.menuId = menuId;
+    }
 }

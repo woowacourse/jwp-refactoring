@@ -32,6 +32,7 @@ public class Menu {
     }
 
     public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        validatePrice(price);
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
@@ -63,15 +64,21 @@ public class Menu {
         this.menuProducts = new ArrayList<>(menuProducts);
     }
 
-    public void validatePrice() {
+    public void validatePrice(final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
     }
 
-    public void isPriceGreaterThan(BigDecimal sum) {
+    public void isPriceGreaterThan(final BigDecimal sum) {
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
+        }
+    }
+
+    public void updateMenuIdInMenuProduct() {
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.setMenuId(id);
         }
     }
 }

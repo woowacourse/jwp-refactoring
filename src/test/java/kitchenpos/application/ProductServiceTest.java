@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,8 +34,9 @@ class ProductServiceTest {
         void create_success() {
             final ProductRequest productRequest = new ProductRequest("순삭치킨", BigDecimal.valueOf(10000));
 
-            assertThatThrownBy(() -> productService.create(productRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+            final Product savedProduct = productService.create(productRequest);
+
+            assertThat(savedProduct.getName()).isEqualTo("순삭치킨");
         }
     }
 
