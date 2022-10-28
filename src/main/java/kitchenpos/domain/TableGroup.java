@@ -18,7 +18,6 @@ public class TableGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @CreatedDate
     private LocalDateTime createdDate;
 
     @OneToMany
@@ -41,5 +40,9 @@ public class TableGroup {
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
+    }
+
+    public void deleteOrderTable(OrderTable orderTable) {
+        this.orderTables.remove(orderTable);
     }
 }
