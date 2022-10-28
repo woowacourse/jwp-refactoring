@@ -10,6 +10,11 @@ public class Product {
     public Product() {
     }
 
+    public Product(final String name, final BigDecimal price) {
+        this.name = name;
+        this.price = price;
+    }
+
     public Product(final String name, final long price) {
         this.name = name;
         this.price = new BigDecimal(price);
