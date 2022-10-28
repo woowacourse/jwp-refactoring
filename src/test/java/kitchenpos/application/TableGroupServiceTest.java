@@ -9,8 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 import javax.transaction.Transactional;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -36,23 +36,23 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private OrderDao orderDao;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Test
     @DisplayName("테이블 단체를 지정한다")
     void create() {
         // given
         final OrderTable orderTable1 = OrderTableFixtures.createEmptyTable(null);
-        final OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
+        final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
 
         final OrderTable orderTable2 = OrderTableFixtures.createEmptyTable(null);
-        final OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+        final OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
         final TableGroup tableGroup = TableGroupFixtures.createWithOrderTables(savedOrderTable1, savedOrderTable2);
 
@@ -66,8 +66,8 @@ class TableGroupServiceTest {
                 () -> assertThat(saved.getOrderTables()).extracting("id")
                         .hasSize(2)
                         .contains(savedOrderTable1.getId(), savedOrderTable2.getId()),
-                () -> assertThat(saved.getOrderTables()).extracting("tableGroupId")
-                        .containsExactly(saved.getId(), saved.getId()),
+                () -> assertThat(saved.getOrderTables()).extracting("tableGroup")
+                        .containsExactly(saved, saved),
                 () -> assertThat(saved.getOrderTables()).extracting("empty")
                         .containsExactly(false, false)
         );
@@ -114,9 +114,9 @@ class TableGroupServiceTest {
     void createWithNotEmptyOrderTables() {
         // given
         final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(null, 2);
-        final OrderTable NotEmptyOrderTable = orderTableDao.save(orderTable1);
+        final OrderTable NotEmptyOrderTable = orderTableRepository.save(orderTable1);
         final OrderTable orderTable2 = OrderTableFixtures.createEmptyTable(null);
-        final OrderTable emptyOrderTable = orderTableDao.save(orderTable2);
+        final OrderTable emptyOrderTable = orderTableRepository.save(orderTable2);
 
         final TableGroup tableGroup = TableGroupFixtures.createWithOrderTables(NotEmptyOrderTable, emptyOrderTable);
 
@@ -130,16 +130,16 @@ class TableGroupServiceTest {
     void createWithAlreadyGroupedOrderTables() {
         // given
         final TableGroup tableGroup = TableGroupFixtures.create();
-        final TableGroup alreadyGroupedTable = tableGroupDao.save(tableGroup);
+        final TableGroup alreadyGroupedTable = tableGroupRepository.save(tableGroup);
 
-        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(alreadyGroupedTable.getId(), 2);
-        final OrderTable alreadyGroupedOrderTable1 = orderTableDao.save(orderTable1);
+        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
+        final OrderTable alreadyGroupedOrderTable1 = orderTableRepository.save(orderTable1);
 
-        final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable.getId(), 2);
-        orderTableDao.save(orderTable2);
+        final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
+        orderTableRepository.save(orderTable2);
 
         final OrderTable orderTable3 = OrderTableFixtures.createWithGuests(null, 2);
-        final OrderTable orderTable = orderTableDao.save(orderTable3);
+        final OrderTable orderTable = orderTableRepository.save(orderTable3);
 
         final TableGroup newTableGroup = TableGroupFixtures.createWithOrderTables(orderTable,
                 alreadyGroupedOrderTable1);
@@ -154,13 +154,13 @@ class TableGroupServiceTest {
     void ungroup() {
         // given
         final TableGroup tableGroup = TableGroupFixtures.create();
-        final TableGroup alreadyGroupedTable = tableGroupDao.save(tableGroup);
+        final TableGroup alreadyGroupedTable = tableGroupRepository.save(tableGroup);
 
-        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(alreadyGroupedTable.getId(), 2);
-        final OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
+        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
+        final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
 
-        final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable.getId(), 2);
-        final OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+        final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
+        final OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
         final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableId(savedOrderTable1.getId());
         orderDao.save(order);
@@ -169,12 +169,12 @@ class TableGroupServiceTest {
         tableGroupService.ungroup(alreadyGroupedTable.getId());
 
         // then
-        final List<OrderTable> ungroupedOrderTable = orderTableDao.findAllByIdIn(
+        final List<OrderTable> ungroupedOrderTable = orderTableRepository.findAllByIdIn(
                 Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId()));
 
         assertAll(
                 () -> assertThat(ungroupedOrderTable).isNotEmpty(),
-                () -> assertThat(ungroupedOrderTable).extracting("tableGroupId")
+                () -> assertThat(ungroupedOrderTable).extracting("tableGroup")
                         .containsExactly(null, null),
                 () -> assertThat(ungroupedOrderTable).extracting("empty")
                         .containsExactly(false, false)
@@ -187,13 +187,13 @@ class TableGroupServiceTest {
     void ungroupExceptionNotCompletionOrder(final OrderFixtures orderFixtures) {
         // given
         final TableGroup tableGroup = TableGroupFixtures.create();
-        final TableGroup alreadyGroupedTable = tableGroupDao.save(tableGroup);
+        final TableGroup alreadyGroupedTable = tableGroupRepository.save(tableGroup);
 
-        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(alreadyGroupedTable.getId(), 2);
-        final OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
+        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
+        final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
 
-        final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable.getId(), 2);
-        orderTableDao.save(orderTable2);
+        final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
+        orderTableRepository.save(orderTable2);
 
         final Order order = orderFixtures.createWithOrderTableId(savedOrderTable1.getId());
         orderDao.save(order);

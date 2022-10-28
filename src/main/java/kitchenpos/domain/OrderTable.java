@@ -1,20 +1,44 @@
 package kitchenpos.domain;
 
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import kitchenpos.exception.AlreadyGroupedException;
 import kitchenpos.exception.CanNotGroupException;
 import kitchenpos.exception.NumberOfGuestsSizeException;
 import kitchenpos.exception.TableEmptyException;
 
+@Table(name = "order_table")
+@Entity
 public class OrderTable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long tableGroupId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
+
+    @Column(nullable = false)
     private int numberOfGuests;
+
+    @Column(nullable = false)
     private boolean empty;
 
-    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+    protected OrderTable() {
+    }
+
+    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
         this.id = id;
-        this.tableGroupId = tableGroupId;
+        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -31,7 +55,7 @@ public class OrderTable {
     }
 
     private void validateNotGrouping() {
-        if (Objects.nonNull(tableGroupId)) {
+        if (Objects.nonNull(tableGroup)) {
             throw new AlreadyGroupedException();
         }
     }
@@ -48,28 +72,28 @@ public class OrderTable {
         }
     }
 
-    public void groupTableBy(final Long tableGroupId) {
+    public void groupTableBy(final TableGroup tableGroup) {
         validateGroupable();
-        this.tableGroupId = tableGroupId;
+        this.tableGroup = tableGroup;
         this.empty = false;
     }
 
     private void validateGroupable() {
-        if (!empty | Objects.nonNull(tableGroupId)) {
+        if (!empty | Objects.nonNull(tableGroup)) {
             throw new CanNotGroupException();
         }
     }
 
     public void ungroup() {
-        this.tableGroupId = null;
+        this.tableGroup = null;
     }
 
     public Long getId() {
         return id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
     public int getNumberOfGuests() {

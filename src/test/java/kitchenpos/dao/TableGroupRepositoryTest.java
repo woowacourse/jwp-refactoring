@@ -6,22 +6,17 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import javax.sql.DataSource;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@JdbcTest
-class TableGroupDaoTest {
-
-    private final TableGroupDao tableGroupDao;
+@DataJpaTest
+class TableGroupRepositoryTest {
 
     @Autowired
-    private TableGroupDaoTest(final DataSource dataSource) {
-        this.tableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
-    }
+    private TableGroupRepository tableGroupRepository;
 
     @Test
     @DisplayName("테이블 단체를 저장한다")
@@ -30,7 +25,7 @@ class TableGroupDaoTest {
         final TableGroup tableGroup = new TableGroup(null, LocalDateTime.now());
 
         // when
-        final TableGroup saved = tableGroupDao.save(tableGroup);
+        final TableGroup saved = tableGroupRepository.save(tableGroup);
 
         // then
         assertAll(
@@ -44,10 +39,10 @@ class TableGroupDaoTest {
     void findById() {
         // given
         final TableGroup tableGroup = new TableGroup(null, LocalDateTime.now());
-        final TableGroup saved = tableGroupDao.save(tableGroup);
+        final TableGroup saved = tableGroupRepository.save(tableGroup);
 
         // when
-        final TableGroup foundTableGroup = tableGroupDao.findById(saved.getId())
+        final TableGroup foundTableGroup = tableGroupRepository.findById(saved.getId())
                 .get();
 
         // then
@@ -59,7 +54,7 @@ class TableGroupDaoTest {
     @DisplayName("id로 테이블 단체를 조회할 때 결과가 없다면 Optional.empty를 반환한다")
     void findByIdNotExist() {
         // when
-        final Optional<TableGroup> tableGroup = tableGroupDao.findById(-1L);
+        final Optional<TableGroup> tableGroup = tableGroupRepository.findById(-1L);
 
         // then
         assertThat(tableGroup).isEmpty();
@@ -70,10 +65,10 @@ class TableGroupDaoTest {
     void findAll() {
         // given
         final TableGroup tableGroup = new TableGroup(null, LocalDateTime.now());
-        final TableGroup saved = tableGroupDao.save(tableGroup);
+        final TableGroup saved = tableGroupRepository.save(tableGroup);
 
         // when
-        final List<TableGroup> tableGroups = tableGroupDao.findAll();
+        final List<TableGroup> tableGroups = tableGroupRepository.findAll();
 
         // then
         assertAll(

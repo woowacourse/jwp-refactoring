@@ -6,26 +6,22 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import javax.sql.DataSource;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.fixtures.TableGroupFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@JdbcTest
-class OrderTableDaoTest {
-
-    private final OrderTableDao orderTableDao;
-    private final TableGroupDao tableGroupDao;
+@DataJpaTest
+class OrderTableRepositoryTest {
 
     @Autowired
-    private OrderTableDaoTest(final DataSource dataSource) {
-        this.orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
-        this.tableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
-    }
+    private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
 
     @Test
     @DisplayName("주문 테이블을 저장한다")
@@ -34,14 +30,14 @@ class OrderTableDaoTest {
         final OrderTable orderTable = new OrderTable(null, null, 2, false);
 
         // when
-        final OrderTable saved = orderTableDao.save(orderTable);
+        final OrderTable saved = orderTableRepository.save(orderTable);
 
         // then
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
                 () -> assertThat(saved.getNumberOfGuests()).isEqualTo(2),
                 () -> assertThat(saved.isEmpty()).isFalse(),
-                () -> assertThat(saved.getTableGroupId()).isNull()
+                () -> assertThat(saved.getTableGroup()).isNull()
         );
     }
 
@@ -50,10 +46,10 @@ class OrderTableDaoTest {
     void findById() {
         // given
         final OrderTable orderTable = new OrderTable(null, null, 2, false);
-        final OrderTable saved = orderTableDao.save(orderTable);
+        final OrderTable saved = orderTableRepository.save(orderTable);
 
         // when
-        final OrderTable foundOrderTable = orderTableDao.findById(saved.getId())
+        final OrderTable foundOrderTable = orderTableRepository.findById(saved.getId())
                 .get();
 
         // then
@@ -65,7 +61,7 @@ class OrderTableDaoTest {
     @DisplayName("id로 주문 테이블을 조회할 때 결과가 없다면 Optional.empty를 반환한다")
     void findByIdNotExist() {
         // when
-        final Optional<OrderTable> orderTable = orderTableDao.findById(-1L);
+        final Optional<OrderTable> orderTable = orderTableRepository.findById(-1L);
 
         // then
         assertThat(orderTable).isEmpty();
@@ -76,10 +72,10 @@ class OrderTableDaoTest {
     void findAll() {
         // given
         final OrderTable orderTable = new OrderTable(null, null, 2, false);
-        final OrderTable saved = orderTableDao.save(orderTable);
+        final OrderTable saved = orderTableRepository.save(orderTable);
 
         // when
-        final List<OrderTable> orderTables = orderTableDao.findAll();
+        final List<OrderTable> orderTables = orderTableRepository.findAll();
 
         // then
         assertAll(
@@ -94,10 +90,11 @@ class OrderTableDaoTest {
     void findAllByIdIn() {
         // given
         final OrderTable orderTable = new OrderTable(null, null, 2, false);
-        final OrderTable saved = orderTableDao.save(orderTable);
+        final OrderTable saved = orderTableRepository.save(orderTable);
 
         // when
-        final List<OrderTable> orderTables = orderTableDao.findAllByIdIn(Collections.singletonList(saved.getId()));
+        final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(
+                Collections.singletonList(saved.getId()));
 
         // then
         assertAll(
@@ -114,13 +111,13 @@ class OrderTableDaoTest {
     void findAllByTableGroupId() {
         // given
         final TableGroup tableGroup = TableGroupFixtures.create();
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        final OrderTable orderTable = new OrderTable(null, savedTableGroup.getId(), 2, false);
-        final OrderTable saved = orderTableDao.save(orderTable);
+        final OrderTable orderTable = new OrderTable(null, savedTableGroup, 2, false);
+        final OrderTable saved = orderTableRepository.save(orderTable);
 
         // when
-        final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(savedTableGroup.getId());
+        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(savedTableGroup.getId());
 
         // then
         assertAll(

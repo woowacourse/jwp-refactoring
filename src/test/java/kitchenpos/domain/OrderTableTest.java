@@ -7,6 +7,7 @@ import kitchenpos.exception.CanNotGroupException;
 import kitchenpos.exception.NumberOfGuestsSizeException;
 import kitchenpos.exception.TableEmptyException;
 import kitchenpos.fixtures.OrderTableFixtures;
+import kitchenpos.fixtures.TableGroupFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -24,9 +25,10 @@ class OrderTableTest {
     @Test
     @DisplayName("주문 테이블이 이미 단체가 지정되어 있으면 단체로 지정하지 못한다")
     void validateGroupableWithAlreadyGrouping() {
-        final OrderTable orderTable = OrderTableFixtures.createWithGuests(1L, 3);
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 3);
+        final TableGroup tableGroup = TableGroupFixtures.create();
 
-        assertThatThrownBy(() -> orderTable.groupTableBy(2L))
+        assertThatThrownBy(() -> orderTable.groupTableBy(tableGroup))
                 .isExactlyInstanceOf(CanNotGroupException.class);
     }
 
@@ -34,15 +36,17 @@ class OrderTableTest {
     @DisplayName("주문 테이블에 이미 손님이 있다면 단체로 지정하지 못한다")
     void validateGroupableWithEmptyOrderTable() {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 3);
+        final TableGroup tableGroup = TableGroupFixtures.create();
 
-        assertThatThrownBy(() -> orderTable.groupTableBy(2L))
+        assertThatThrownBy(() -> orderTable.groupTableBy(tableGroup))
                 .isExactlyInstanceOf(CanNotGroupException.class);
     }
 
     @Test
     @DisplayName("주문 테이블이 단체로 지정되어 있다면 테이블을 비울 수 없다")
     void validateNotGrouping() {
-        final OrderTable orderTable = OrderTableFixtures.createWithGuests(1L, 3);
+        final TableGroup tableGroup = TableGroupFixtures.create();
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(tableGroup, 3);
 
         assertThatThrownBy(() -> orderTable.updateEmpty(true))
                 .isExactlyInstanceOf(AlreadyGroupedException.class);

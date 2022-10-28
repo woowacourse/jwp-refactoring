@@ -1,14 +1,15 @@
 package kitchenpos.fixtures;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 public class OrderTableFixtures {
 
-    public static OrderTable createWithGuests(final Long tableGroupId, final int numberOfGuests) {
-        return new OrderTable(null, tableGroupId, numberOfGuests, false);
+    public static OrderTable createWithGuests(final TableGroup TableGroup, final int numberOfGuests) {
+        return new OrderTable(null, TableGroup, numberOfGuests, false);
     }
 
-    public static OrderTable createEmptyTable(final Long tableGroupId) {
-        return new OrderTable(null, tableGroupId, 0, true);
+    public static OrderTable createEmptyTable(final TableGroup TableGroup) {
+        return new OrderTable(null, TableGroup, 0, true);
     }
 }

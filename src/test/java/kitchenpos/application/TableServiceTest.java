@@ -5,10 +5,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -36,13 +38,16 @@ class TableServiceTest {
     private TableService tableService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
     private OrderDao orderDao;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Test
     @DisplayName("주문 테이블을 생성한다")
@@ -57,7 +62,7 @@ class TableServiceTest {
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
                 () -> assertThat(saved.isEmpty()).isTrue(),
-                () -> assertThat(saved.getTableGroupId()).isNull()
+                () -> assertThat(saved.getTableGroup()).isNull()
         );
     }
 
@@ -83,7 +88,7 @@ class TableServiceTest {
     void changeEmpty() {
         // given
         final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final OrderTable notEmptyOrderTable = OrderTableFixtures.createWithGuests(null, 2);
 
@@ -96,7 +101,7 @@ class TableServiceTest {
         // then
         assertAll(
                 () -> assertThat(changedOrderTable.getId()).isEqualTo(savedOrderTable.getId()),
-                () -> assertThat(changedOrderTable.getTableGroupId()).isEqualTo(savedOrderTable.getTableGroupId()),
+                () -> assertThat(changedOrderTable.getTableGroup()).isEqualTo(savedOrderTable.getTableGroup()),
                 () -> assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(savedOrderTable.getNumberOfGuests()),
                 () -> assertThat(changedOrderTable.isEmpty()).isFalse()
         );
@@ -118,10 +123,10 @@ class TableServiceTest {
     void changeEmptyExceptionGroupedOrderTable() {
         // given
         final TableGroup tableGroup = TableGroupFixtures.create();
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        final OrderTable orderTable = OrderTableFixtures.createEmptyTable(savedTableGroup.getId());
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable orderTable = OrderTableFixtures.createEmptyTable(savedTableGroup);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final OrderTable notEmptyOrderTable = OrderTableFixtures.createWithGuests(null, 2);
 
@@ -136,7 +141,7 @@ class TableServiceTest {
     void changeEmptyExceptionNotCompletionOrder(final OrderFixtures orderFixtures) {
         // given
         final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final OrderTable notEmptyOrderTable = OrderTableFixtures.createWithGuests(null, 2);
 
@@ -153,7 +158,7 @@ class TableServiceTest {
     void changeNumberOfGuests() {
         // given
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final OrderTable threeGuestsOrderTable = OrderTableFixtures.createWithGuests(null, 3);
 
@@ -164,7 +169,7 @@ class TableServiceTest {
         // then
         assertAll(
                 () -> assertThat(changedOrderTable.getId()).isEqualTo(savedOrderTable.getId()),
-                () -> assertThat(changedOrderTable.getTableGroupId()).isEqualTo(savedOrderTable.getTableGroupId()),
+                () -> assertThat(changedOrderTable.getTableGroup()).isEqualTo(savedOrderTable.getTableGroup()),
                 () -> assertThat(changedOrderTable.isEmpty()).isFalse(),
                 () -> assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(3)
         );
@@ -175,7 +180,7 @@ class TableServiceTest {
     void changeNumberOfGuestsExceptionNegativeNumberOfGuests() {
         // given
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final OrderTable threeGuestsOrderTable = OrderTableFixtures.createWithGuests(null, -1);
 
@@ -200,7 +205,7 @@ class TableServiceTest {
     void changeNumberOfGuestsExceptionNotEmptyOrderTable() {
         // given
         final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final OrderTable threeGuestsOrderTable = OrderTableFixtures.createWithGuests(null, 1);
 

@@ -24,16 +24,17 @@ import org.springframework.dao.DataIntegrityViolationException;
 class OrderLineItemDaoTest {
 
     private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
     private final OrderDao orderDao;
 
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+    
     @Autowired
     private MenuRepository menuRepository;
 
     @Autowired
     private OrderLineItemDaoTest(final DataSource dataSource) {
         this.orderLineItemDao = new JdbcTemplateOrderLineItemDao(dataSource);
-        this.orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
         this.orderDao = new JdbcTemplateOrderDao(dataSource);
     }
 
@@ -42,7 +43,7 @@ class OrderLineItemDaoTest {
     void save() {
         // given
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
         final Order savedOrder = orderDao.save(order);
@@ -69,7 +70,7 @@ class OrderLineItemDaoTest {
     void saveExceptionNotExistOrder() {
         // given
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
-        orderTableDao.save(orderTable);
+        orderTableRepository.save(orderTable);
 
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuRepository.save(menu);
@@ -86,7 +87,7 @@ class OrderLineItemDaoTest {
     void saveExceptionNotExistMenu() {
         // given
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
         final Order savedOrder = orderDao.save(order);
@@ -103,7 +104,7 @@ class OrderLineItemDaoTest {
     void findById() {
         // given
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
         final Order savedOrder = orderDao.save(order);
@@ -138,7 +139,7 @@ class OrderLineItemDaoTest {
     void findByAll() {
         // given
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
         final Order savedOrder = orderDao.save(order);
@@ -165,7 +166,7 @@ class OrderLineItemDaoTest {
     void findByAllByOrderId() {
         // given
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
         final Order savedOrder = orderDao.save(order);

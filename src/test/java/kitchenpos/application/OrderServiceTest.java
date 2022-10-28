@@ -9,7 +9,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -39,7 +39,7 @@ class OrderServiceTest {
     private OrderDao orderDao;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private OrderLineItemDao orderLineItemDao;
@@ -51,7 +51,7 @@ class OrderServiceTest {
         final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
 
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
-        final OrderTable notEmptyOrderTable = orderTableDao.save(orderTable);
+        final OrderTable notEmptyOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(
                 notEmptyOrderTable.getId(), orderLineItem);
@@ -122,7 +122,7 @@ class OrderServiceTest {
     void list() {
         // given
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
-        final OrderTable notEmptyOrderTable = orderTableDao.save(orderTable);
+        final OrderTable notEmptyOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableId(notEmptyOrderTable.getId());
         final Order savedOrder = orderDao.save(order);

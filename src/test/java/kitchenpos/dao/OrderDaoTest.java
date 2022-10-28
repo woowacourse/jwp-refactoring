@@ -16,19 +16,20 @@ import kitchenpos.fixtures.OrderTableFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
-@JdbcTest
+@DataJpaTest
 class OrderDaoTest {
 
     private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private OrderDaoTest(final DataSource dataSource) {
         this.orderDao = new JdbcTemplateOrderDao(dataSource);
-        this.orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
     }
 
     @Test
@@ -36,7 +37,7 @@ class OrderDaoTest {
     void save() {
         // given
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
 
@@ -68,7 +69,7 @@ class OrderDaoTest {
     void findById() {
         // given
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
         final Order saved = orderDao.save(order);
@@ -97,7 +98,7 @@ class OrderDaoTest {
     void findAll() {
         // given
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
         final Order saved = orderDao.save(order);
@@ -118,7 +119,7 @@ class OrderDaoTest {
     void existsByOrderTableIdAndOrderStatusIn() {
         // given
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
         orderDao.save(order);
@@ -146,7 +147,7 @@ class OrderDaoTest {
     void existsByOrderTableIdInAndOrderStatusIn() {
         // given
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
         orderDao.save(order);
