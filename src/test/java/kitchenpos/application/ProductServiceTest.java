@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.given;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dto.request.ProductCreateRequest;
+import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +36,7 @@ class ProductServiceTest {
 
         //when
         ProductCreateRequest dto = new ProductCreateRequest("강정치킨", BigDecimal.valueOf(17000));
-        Product savedProduct = productService.create(dto);
+        ProductResponse savedProduct = productService.create(dto);
 
         //then
         assertThat(savedProduct).isEqualTo(PRODUCT);
@@ -49,7 +50,7 @@ class ProductServiceTest {
                 .willReturn(List.of(PRODUCT));
 
         //when
-        List<Product> products = productService.list();
+        List<ProductResponse> products = productService.list();
 
         //then
         assertThat(products).hasSize(1);
