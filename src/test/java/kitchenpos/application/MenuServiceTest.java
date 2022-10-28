@@ -108,15 +108,19 @@ class MenuServiceTest extends IntegrationServiceTest {
         @Nested
         class 정상적으로_메뉴를_생성가능한_경우 extends IntegrationServiceTest {
 
-            private final Menu menu = createMenuWithProduct(16_000, 1L);
+            private Menu menu;
 
             @BeforeEach
             void setUp() {
-                productRepository.save(new Product("후라이드", BigDecimal.valueOf(16_000)));
+
+                final Long productId = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16_000))).getId();
+
+                menu = createMenuWithProduct(productId, 16_000);
             }
 
             @Test
             void 저장된_메뉴가_반환된다() {
+
                 Menu savedMenu = menuService.create(menu);
 
                 assertAll(
@@ -129,7 +133,7 @@ class MenuServiceTest extends IntegrationServiceTest {
     }
 
     @Nested
-    class list_메서드는 extends IntegrationServiceTest{
+    class list_메서드는 extends IntegrationServiceTest {
 
         @Test
         void 메뉴목록을_반환한다() {

@@ -1,17 +1,19 @@
 package kitchenpos.e2e;
 
 import static kitchenpos.e2e.E2eTest.AssertionPair.row;
+import static kitchenpos.support.AssertionsSupport.assertAll;
 import static kitchenpos.support.MenuGroupFixture.단짜_두_마리_메뉴;
 import static kitchenpos.support.ProductFixture.간장_치킨;
 import static kitchenpos.support.ProductFixture.양념_치킨;
 import static kitchenpos.support.ProductFixture.후라이드_치킨;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
+import io.restassured.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
 import java.util.Map;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
@@ -28,7 +30,6 @@ public class MenuE2eTest extends E2eTest {
     private Long 양념_상품_ID = null;
 
     private Map<String, Object> 메뉴_그룹_요청바디_1;
-
     private Map<String, Object> 메뉴_그룹_요청바디_2;
 
     @BeforeEach
@@ -45,10 +46,7 @@ public class MenuE2eTest extends E2eTest {
                 "menuGroupId", 메뉴그룹_ID,
                 "menuProducts", List.of(
                         Map.of("productId", 후라이드_상품_ID,
-                                "quantity", 2
-                        )
-                )
-        );
+                                "quantity", 2)));
 
         메뉴_그룹_요청바디_2 = Map.of(
                 "name", "양념 + 간장",
@@ -56,13 +54,9 @@ public class MenuE2eTest extends E2eTest {
                 "menuGroupId", 메뉴그룹_ID,
                 "menuProducts", List.of(
                         Map.of("productId", 양념_상품_ID,
-                                "quantity", 1
-                        ),
+                                "quantity", 1),
                         Map.of("productId", 간장_상품_ID,
-                                "quantity", 1
-                        )
-                )
-        );
+                                "quantity", 1)));
     }
 
     @Test
@@ -83,13 +77,6 @@ public class MenuE2eTest extends E2eTest {
                 단일_검증(저장된_메뉴상품.getProductId(), 후라이드_상품_ID),
                 단일_검증(저장된_메뉴상품.getQuantity(), 2L)
         );
-
-        assertAll(
-                리스트_검증(List.of(저장된_메뉴),
-                        row("name", "후라이드 + 후라이드"),
-                        row("menuGroupId", 메뉴그룹_ID)
-                )
-        );
     }
 
     @Test
@@ -101,21 +88,21 @@ public class MenuE2eTest extends E2eTest {
 
         // when
         // TODO TypeRef를 이용해서 Mock객체로 불러오기, 가격정보만 Validation해서 들고오는 순간 체크
-        final List 메뉴그룹_리스트 = GET_요청(MENU_URL).body().as(List.class);
-        final List 메뉴상품_리스트_1 = (List) ((Map) 메뉴그룹_리스트.get(0)).get("menuProducts");
-        final List 메뉴상품_리스트_2 = (List) ((Map) 메뉴그룹_리스트.get(1)).get("menuProducts");
+        final ExtractableResponse<Response> 응답 = GET_요청(MENU_URL);
+
+        final List<Menu> 메뉴그룹_리스트 = 응답.body().as(new TypeRef<List<Menu>>() {
+        }); // TODO Refactor This Method
+        final List<MenuProduct> 메뉴상품_리스트_1 = 메뉴그룹_리스트.get(0).getMenuProducts();
+        final List<MenuProduct> 메뉴상품_리스트_2 = 메뉴그룹_리스트.get(1).getMenuProducts();
 
         // TODO 가격 추가
         assertAll(
+                HTTP_STATUS_검증(HttpStatus.OK, 응답),
+                () -> assertThat(메뉴상품_리스트_1).hasSize(1),
+                () -> assertThat(메뉴상품_리스트_2).hasSize(2),
                 리스트_검증(메뉴그룹_리스트,
                         row("name", "후라이드 + 후라이드", "양념 + 간장"),
-                        row("menuGroupId", 메뉴그룹_ID.intValue(), 메뉴그룹_ID.intValue())
-                )
-        );
-
-        assertAll(
-                () -> assertThat(메뉴상품_리스트_1).hasSize(1),
-                () -> assertThat(메뉴상품_리스트_2).hasSize(2)
+                        row("menuGroupId", 메뉴그룹_ID.longValue(), 메뉴그룹_ID.longValue()))
         );
     }
 }

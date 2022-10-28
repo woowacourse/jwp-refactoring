@@ -40,7 +40,7 @@ public class DbTableCleaner implements InitializingBean {
     /**
      * 모든 테이블의 내용을 지웁니다.
      */
-    public void clear() {
+    public void clearAll() {
 
         try (Connection connection = dataSource.getConnection()) {
             cleanUpDatabase(connection);
@@ -91,7 +91,6 @@ public class DbTableCleaner implements InitializingBean {
                     statement.executeUpdate("TRUNCATE TABLE " + tableName);
                     final String sql =
                             "ALTER TABLE " + tableName + " ALTER COLUMN " + pkName(tableName) + " RESTART WITH 1";
-                    System.out.println("sql = " + sql);
                     statement.executeUpdate(sql);
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);

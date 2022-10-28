@@ -20,7 +20,7 @@ class ProductServiceTest extends IntegrationServiceTest {
     class create_메서드는 {
 
         @Nested
-        class 상품가에_null을_입력할_경우 {
+        class 상품가에_null을_입력할_경우 extends IntegrationServiceTest {
 
             private final BigDecimal NULL_PRICE = null;
             private final ProductRequest productRequest = new ProductRequest("간장", NULL_PRICE);
@@ -35,7 +35,7 @@ class ProductServiceTest extends IntegrationServiceTest {
         }
 
         @Nested
-        class 상품가가_음수인_경우 {
+        class 상품가가_음수인_경우 extends IntegrationServiceTest {
 
             private final int MINUS_PRICE = -1;
 
@@ -51,7 +51,7 @@ class ProductServiceTest extends IntegrationServiceTest {
         }
 
         @Nested
-        class 상품을_정상적으로_생성가능한_경우 {
+        class 상품을_정상적으로_생성가능한_경우 extends IntegrationServiceTest {
 
             private final ProductRequest productRequest = createProductRequest(18_000);
 
@@ -69,6 +69,7 @@ class ProductServiceTest extends IntegrationServiceTest {
 
         @BeforeEach
         void setUp() {
+
             productRepository.save(createProduct("양념 치킨"));
             productRepository.save(createProduct("간장 치킨"));
             productRepository.save(createProduct("순살 바베큐 치킨"));

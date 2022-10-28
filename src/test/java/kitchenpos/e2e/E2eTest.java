@@ -51,6 +51,8 @@ public abstract class E2eTest {
     public static final String ORDER_URL = "/api/orders";
     public static final String TABLE_URL = "/api/tables";
     public static final String TABLE_GROUP_URL = "/api/table-groups";
+    public static final String TABLE_CHANGE_EMPTY_URL = "/api/tables/{orderTableId}/empty";
+    public static final String TABLE_GROUP_DELETE_URL =  "/api/table-groups/{tableGroupId}";
 
     @LocalServerPort
     private int port;
@@ -63,7 +65,7 @@ public abstract class E2eTest {
 
         RestAssured.port = port;
 
-        tableCleaner.clear();
+        tableCleaner.clearAll();
     }
 
     /**
@@ -143,7 +145,15 @@ public abstract class E2eTest {
 
     /**
      *
-     * assertThat 안에 사용하기 위한 구문
+     * assertAll 안에 사용하기 위한 구문
+     * <p/>
+     * 사용예시)
+     * <pre>
+     * 리스트_검증(상품_리스트,
+     *         row("id", 1, 2),
+     *         row("name", 단짜_두_마리_메뉴.getName(), 간장_양념_세_마리_메뉴.getName())
+     * )
+     * </pre>
      * <p/>
      * 아래와 같은 문장들을 만들어 줍니다
      * <pre>
@@ -213,13 +223,13 @@ public abstract class E2eTest {
         return POST_요청(ORDER_URL, 주문).as(Order.class);
     }
 
-    protected Order 주문_생성(final Long 주문테이블_ID, final LocalDateTime 주문일시) {
+    protected ExtractableResponse<Response> 주문_생성(final Long 주문테이블_ID, final LocalDateTime 주문일시) {
 
         final Long 메뉴_ID = 메뉴_생성_및_ID_반환();
 
         final Order 주문 = new Order(주문테이블_ID, MEAL.name(), 주문일시, List.of(new OrderLineItem(메뉴_ID, 1)));
 
-        return POST_요청(ORDER_URL, 주문).as(Order.class);
+        return POST_요청(ORDER_URL, 주문);
     }
 
     protected Order 주문_생성() {
@@ -235,13 +245,31 @@ public abstract class E2eTest {
         return POST_요청(ORDER_URL, 주문).as(Order.class);
     }
 
-    protected OrderTable 주문테이블_생성() {
-        return 주문테이블_생성(new OrderTable(0, true));
+    protected void 주문들_생성(final int size) {
+
+        for (int i = 0; i < size; i++) {
+            주문_생성();
+        }
     }
 
-    protected OrderTable 주문테이블_생성(final OrderTable orderTable) {
-        final ExtractableResponse<Response> 응답 = POST_요청(TABLE_URL, orderTable);
-        return 응답.body().as(OrderTable.class);
+    protected OrderTable 주문테이블_생성() {
+
+        return 주문테이블_생성_변환(new OrderTable(0, true));
+    }
+
+    protected ExtractableResponse<Response> 주문테이블_생성(final OrderTable orderTable) {
+
+        return POST_요청(TABLE_URL, orderTable);
+    }
+
+    protected OrderTable 주문테이블_생성_변환(final OrderTable orderTable) {
+
+        return 주문테이블_생성(orderTable).body().as(OrderTable.class);
+    }
+
+    protected Long 주문테이블_생성_ID반환(final OrderTable orderTable) {
+
+        return 주문테이블_생성(orderTable).body().as(OrderTable.class).getId();
     }
 
     protected List<OrderTable> 주문테이블들_생성(final int size) {
@@ -254,13 +282,14 @@ public abstract class E2eTest {
         List<OrderTable> orderTables = new ArrayList<>();
 
         for (int i = 0; i < size; i++) {
-            orderTables.add(주문테이블_생성(orderTable));
+            orderTables.add(주문테이블_생성_변환(orderTable));
         }
 
         return orderTables;
     }
 
     protected TableGroup 테이블그룹_생성(final TableGroup tableGroup) {
+
         final ExtractableResponse<Response> 응답 = POST_요청(TABLE_GROUP_URL, tableGroup);
         return 응답.body().as(TableGroup.class);
     }
@@ -268,11 +297,8 @@ public abstract class E2eTest {
     protected Long 메뉴_생성_및_ID_반환() {
 
         final Long 메뉴그룹_ID = 메뉴그룹_생성_및_ID_반환();
-
         final Long 후라이드치킨_ID = 상품_생성_및_ID_반환();
-
         final List<MenuProduct> 메뉴상품_리스트 = List.of(new MenuProduct(후라이드치킨_ID, 1));
-
 
         return POST_요청(MENU_URL, createMenuRequest("단 치킨 한 마리", 15_000, 메뉴그룹_ID, 메뉴상품_리스트))
                 .as(Menu.class)
@@ -280,18 +306,21 @@ public abstract class E2eTest {
     }
 
     protected Long 메뉴_생성_및_ID_반환(final Long 메뉴그룹_ID, final List<MenuProduct> 메뉴상품_리스트) {
+
         return POST_요청(MENU_URL, createMenuRequest("단 치킨 한 마리", 15_000, 메뉴그룹_ID, 메뉴상품_리스트))
                 .as(Menu.class)
                 .getId();
     }
 
     protected Long 상품_생성_및_ID_반환() {
+
         return POST_요청(PRODUCT_URL, 후라이드_치킨)
                 .as(Product.class)
                 .getId();
     }
 
     protected Long 메뉴그룹_생성_및_ID_반환() {
+
         return POST_요청(MENU_GROUP_URL, 단짜_두_마리_메뉴)
                 .as(MenuGroup.class)
                 .getId();

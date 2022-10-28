@@ -16,7 +16,7 @@ public class TableE2eTest extends E2eTest {
     void create() {
 
         // given & when
-        final ExtractableResponse<Response> 응답 = POST_요청(TABLE_URL, new OrderTable(0, true));
+        final ExtractableResponse<Response> 응답 = 주문테이블_생성(new OrderTable(0, true));
         final OrderTable 주문테이블 = 응답.body().as(OrderTable.class);
 
         // then
@@ -32,8 +32,8 @@ public class TableE2eTest extends E2eTest {
     void list() {
 
         // given
-        POST_요청(TABLE_URL, new OrderTable(0, true));
-        POST_요청(TABLE_URL, new OrderTable(2, false));
+        주문테이블_생성(new OrderTable(0, true));
+        주문테이블_생성(new OrderTable(2, false));
 
         // when
         final ExtractableResponse<Response> 응답 = GET_요청(TABLE_URL);
@@ -57,18 +57,17 @@ public class TableE2eTest extends E2eTest {
 
         // given
         final Long 주문테이블_ID =
-                POST_요청(TABLE_URL, new OrderTable(0, true))
-                        .as(OrderTable.class)
-                        .getId();
+                주문테이블_생성_ID반환(new OrderTable(0, true));
 
         // when
         final ExtractableResponse<Response> 응답 =
-                PUT_요청("/api/tables/{orderTableId}/empty", 주문테이블_ID, new OrderTable(0, false));
+                PUT_요청(TABLE_CHANGE_EMPTY_URL, 주문테이블_ID, new OrderTable(0, false));
 
         final OrderTable 바뀐_주문테이블 = 응답.as(OrderTable.class);
 
         // then
         assertAll(
+                HTTP_STATUS_검증(HttpStatus.OK, 응답),
                 단일_검증(바뀐_주문테이블.getId(), 주문테이블_ID),
                 단일_검증(바뀐_주문테이블.isEmpty(), false),
                 단일_검증(바뀐_주문테이블.getNumberOfGuests(), 0),
@@ -95,6 +94,7 @@ public class TableE2eTest extends E2eTest {
 
         // then
         assertAll(
+                HTTP_STATUS_검증(HttpStatus.OK, 응답),
                 단일_검증(바뀐_주문테이블.getId(), 주문테이블_ID),
                 단일_검증(바뀐_주문테이블.isEmpty(), false),
                 단일_검증(바뀐_주문테이블.getNumberOfGuests(), 4),

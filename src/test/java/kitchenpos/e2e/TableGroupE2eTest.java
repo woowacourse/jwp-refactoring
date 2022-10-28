@@ -45,7 +45,7 @@ public class TableGroupE2eTest extends E2eTest {
 
         // when
         final ExtractableResponse<Response> 응답 =
-                DELETE_요청("/api/table-groups/{tableGroupId}", 저장된_테이블그룹.getId(), new TableGroup(null, 주문테이블들));
+                DELETE_요청(TABLE_GROUP_DELETE_URL, 저장된_테이블그룹.getId(), new TableGroup(null, 주문테이블들));
         final List<OrderTable> 갱신된_주문테이블_리스트 = extractHttpBody(GET_요청(TABLE_URL));
 
         // then

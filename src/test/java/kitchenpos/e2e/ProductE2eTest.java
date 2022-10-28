@@ -1,8 +1,8 @@
 package kitchenpos.e2e;
 
 import static kitchenpos.e2e.E2eTest.AssertionPair.row;
+import static kitchenpos.support.AssertionsSupport.assertAll;
 import static kitchenpos.support.ProductFixture.createProductRequest;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -45,12 +45,13 @@ class ProductE2eTest extends E2eTest {
         POST_요청("/api/products", 간장_치킨);
 
         // when
-        final ExtractableResponse<Response> response = GET_요청("/api/products");
+        final ExtractableResponse<Response> 응답 = GET_요청("/api/products");
 
-        final List list = response.body().as(List.class);
+        final List list = 응답.body().as(List.class);
 
         // then
         assertAll(
+                HTTP_STATUS_검증(HttpStatus.OK, 응답),
                 리스트_검증(list,
                         row("id", 1, 2),
                         row("name", 양념_치킨.name(), 간장_치킨.name()),
