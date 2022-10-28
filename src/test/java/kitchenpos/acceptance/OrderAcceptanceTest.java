@@ -53,9 +53,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         final OrderTable savedTable = 손님이_있는_테이블_등록();
         final Menu savedMenu = 메뉴_등록();
 
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
-        orderLineItem.setQuantity(1);
+        final OrderLineItem orderLineItem = OrderLineItem.ofNew(savedMenu.getId(), 1);
         final Order savedOrder = dataSupport.saveOrder(savedTable.getId(), OrderStatus.COOKING.name(), orderLineItem);
 
         // when

@@ -114,9 +114,7 @@ class OrderServiceTest {
     @Test
     void list() {
         // given
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
-        orderLineItem.setQuantity(1);
+        final OrderLineItem orderLineItem = OrderLineItem.ofNew(savedMenu.getId(), 1);
 
         final Order savedOrder1 =
                 dataSupport.saveOrder(savedUnEmptyTable.getId(), OrderStatus.COOKING.name(), orderLineItem);

@@ -13,11 +13,7 @@ public class OrderLineItemRequest {
     }
 
     public OrderLineItem toEntity() {
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-
-        return orderLineItem;
+        return OrderLineItem.ofNew(menuId, quantity);
     }
 
     public Long getMenuId() {

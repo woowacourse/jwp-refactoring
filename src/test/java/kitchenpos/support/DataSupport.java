@@ -101,7 +101,7 @@ public class DataSupport {
         final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = Arrays.stream(orderLineItems)
                 .map(orderLineItem -> {
-                    orderLineItem.setOrderId(orderId);
+                    orderLineItem.order(orderId);
                     return orderLineItemDao.save(orderLineItem);
                 })
                 .collect(Collectors.toList());
