@@ -23,4 +23,9 @@ public class MenuGroupService {
     public List<MenuGroup> list() {
         return menuGroupDao.findAll();
     }
+
+    public MenuGroup search(long menuGroupId) {
+        return menuGroupDao.findById(menuGroupId)
+                .orElseThrow(IllegalArgumentException::new);
+    }
 }

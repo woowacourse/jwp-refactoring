@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -31,21 +32,21 @@ public class MenuServiceTest {
     private MenuProductDao menuProductDao = new MenuProductFakeDao();
     private ProductDao productDao = new ProductFakeDao();
 
-    private MenuService menuService = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
+    private MenuService menuService = new MenuService(menuDao, menuProductDao);
 
     @DisplayName("메뉴를 생성할 때")
     @Nested
     class Create {
 
         private Menu menu;
+        private MenuGroup menuGroup;
+        private Map<Product, Integer> productQuantity;
 
         @BeforeEach
         void setUp() {
-            MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
+            menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
             Product product = productDao.save(new Product("상품1", BigDecimal.valueOf(1000)));
-            MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
-            ArrayList<MenuProduct> menuProducts = new ArrayList<>();
-            menuProducts.add(menuProduct);
+            productQuantity.put(product, 2);
             menu = new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), menuProducts);
         }
 
@@ -53,7 +54,7 @@ public class MenuServiceTest {
         @Test
         void success() {
             // when
-            Menu actual = menuService.create(menu);
+            Menu actual = menuService.create(menu.getName(), menu.getPrice(), menuGroup, );
 
             // then
             assertAll(
