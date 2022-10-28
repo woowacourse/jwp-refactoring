@@ -24,6 +24,6 @@ public class MenuProductDto {
     }
 
     public MenuProduct toMenuProduct() {
-        return new MenuProduct(null, this.productId, this.quantity);
+        return new MenuProduct(this.productId, this.quantity);
     }
 }

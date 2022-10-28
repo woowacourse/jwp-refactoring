@@ -15,8 +15,8 @@ public class TableGroupCreateRequest {
         this.orderTables = orderTables;
     }
 
-    public TableGroup toTableGroup(final LocalDateTime createdDate) {
-        return new TableGroup(null, createdDate);
+    public TableGroup toTableGroup() {
+        return new TableGroup();
     }
 
     public List<OrderTableIdDto> getOrderTables() {

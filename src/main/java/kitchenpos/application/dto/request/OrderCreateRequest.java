@@ -1,11 +1,9 @@
 package kitchenpos.application.dto.request;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 
 public class OrderCreateRequest {
 
@@ -21,15 +19,8 @@ public class OrderCreateRequest {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order toOrder(final Long orderTableId,
-                         final OrderStatus orderStatus,
-                         final LocalDateTime orderedTime) {
-        return new Order(
-                orderTableId,
-                orderStatus,
-                orderedTime,
-                toOrderLineItems()
-        );
+    public Order toOrder() {
+        return new Order(this.orderTableId, toOrderLineItems());
     }
 
     public Long getOrderTableId() {

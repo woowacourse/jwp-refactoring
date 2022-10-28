@@ -12,18 +12,18 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
     private Long productId;
-    private long quantity;
+    private Long quantity;
 
     public MenuProduct() {
     }
 
-    public MenuProduct(final long productId, final int quantity) {
+    public MenuProduct(final Long productId, final Long quantity) {
         this(null, productId, quantity);
     }
 
     public MenuProduct(final Long seq,
                        final Long productId,
-                       final long quantity) {
+                       final Long quantity) {
         this.seq = seq;
         this.productId = productId;
         this.quantity = quantity;

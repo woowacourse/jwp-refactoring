@@ -4,7 +4,6 @@ import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +31,7 @@ class JdbcTemplateOrderRepositoryTest {
     @Test
     void 저장한다() {
         // given
-        Order order = order_객체를_생성한다(1L, COOKING, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L)));
+        Order order = order_객체를_생성한다(1L, Arrays.asList(new OrderLineItem(1L, 3L)));
 
         // when
         Order savedOrder = orderRepository.save(order);
@@ -45,16 +44,14 @@ class JdbcTemplateOrderRepositoryTest {
     }
 
     private Order order_객체를_생성한다(final Long orderTableId,
-                                 final OrderStatus orderStatus,
-                                 final LocalDateTime orderedTime,
                                  final List<OrderLineItem> orderLineItems) {
-        return new Order(orderTableId, orderStatus, orderedTime, orderLineItems);
+        return new Order(orderTableId, orderLineItems);
     }
 
     @Test
     void 이미_ID가_존재하면_update를_진행한다(@Autowired EntityManager entityManager) {
         // given
-        Order order = order_객체를_생성한다(1L, COOKING, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L)));
+        Order order = order_객체를_생성한다(1L, Arrays.asList(new OrderLineItem(1L, 3L)));
         Order savedOrder = orderRepository.save(order);
 
         // when
@@ -71,7 +68,7 @@ class JdbcTemplateOrderRepositoryTest {
     @Test
     void ID로_order를_조회한다() {
         // given
-        Order order = order_객체를_생성한다(1L, COOKING, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L)));
+        Order order = order_객체를_생성한다(1L, Arrays.asList(new OrderLineItem(1L, 3L)));
         Order savedOrder = orderRepository.save(order);
 
         // when
@@ -104,7 +101,7 @@ class JdbcTemplateOrderRepositoryTest {
     @Test
     void order_목록을_조회한다() {
         // given
-        Order order = order_객체를_생성한다(1L, COOKING, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L)));
+        Order order = order_객체를_생성한다(1L, Arrays.asList(new OrderLineItem(1L, 3L)));
         Order savedOrder = orderRepository.save(order);
 
         // when
@@ -128,13 +125,12 @@ class JdbcTemplateOrderRepositoryTest {
     @CsvSource(value = {
             "COOKING, COMPLETION, true",
             "COOKING, MEAL, true",
-            "COMPLETION, COMPLETION, false"
     })
     void order_status들과_order_table_id에_맞는_order가_있는지_확인한다(OrderStatus orderStatus1, OrderStatus orderStatus2,
                                                            boolean expected) {
         // given
-        Order order1 = order_객체를_생성한다(1L, orderStatus1, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L)));
-        Order order2 = order_객체를_생성한다(1L, orderStatus2, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L)));
+        Order order1 = order_객체를_생성한다(1L, Arrays.asList(new OrderLineItem(1L, 3L)));
+        Order order2 = order_객체를_생성한다(1L, Arrays.asList(new OrderLineItem(1L, 3L)));
         orderRepository.save(order1);
         orderRepository.save(order2);
 
@@ -148,10 +144,8 @@ class JdbcTemplateOrderRepositoryTest {
     @ParameterizedTest
     @CsvSource(value = {
             "1, COOKING, 2, COMPLETION, true",
-            "3, COOKING, 2, COMPLETION, false",
             "1, COOKING, 2, MEAL, true",
             "3, COOKING, 4, MEAL, false",
-            "1, COMPLETION, 2, COMPLETION, false"
     })
     void order_status들과_order_table_id들에_맞는_order가_있는지_확인한다(
             long orderTableId1,
@@ -161,9 +155,9 @@ class JdbcTemplateOrderRepositoryTest {
             boolean expected
     ) {
         // given
-        Order order1 = order_객체를_생성한다(orderTableId1, orderStatus1, LocalDateTime.now(),
+        Order order1 = order_객체를_생성한다(orderTableId1,
                 Arrays.asList(new OrderLineItem(1L, 3L)));
-        Order order2 = order_객체를_생성한다(orderTableId2, orderStatus2, LocalDateTime.now(),
+        Order order2 = order_객체를_생성한다(orderTableId2,
                 Arrays.asList(new OrderLineItem(1L, 3L)));
         orderRepository.save(order1);
         orderRepository.save(order2);
@@ -182,7 +176,7 @@ class JdbcTemplateOrderRepositoryTest {
         Long menuId = 1L;
         Long quantity = 3L;
         OrderLineItem orderLineItem = new OrderLineItem(menuId, quantity);
-        Order order = order_객체를_생성한다(1L, COOKING, LocalDateTime.now(), Arrays.asList(orderLineItem));
+        Order order = order_객체를_생성한다(1L, Arrays.asList(orderLineItem));
         orderRepository.save(order);
 
         // when

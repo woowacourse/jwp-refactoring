@@ -10,7 +10,7 @@ public class MenuGroupCreateRequest {
     }
 
     public MenuGroup toMenuGroup() {
-        return new MenuGroup(null, name);
+        return new MenuGroup(name);
     }
 
     public String getName() {

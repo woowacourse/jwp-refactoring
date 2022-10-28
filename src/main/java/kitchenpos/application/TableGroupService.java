@@ -39,7 +39,7 @@ public class TableGroupService {
                 extractOrderTableIds(request.getOrderTables()));
         validateEmptyOrderTable(orderTables);
 
-        final TableGroup savedTableGroup = tableGroupRepository.save(request.toTableGroup(LocalDateTime.now()));
+        final TableGroup savedTableGroup = tableGroupRepository.save(request.toTableGroup());
         fillOrderTableGroup(orderTables, savedTableGroup);
         orderTableRepository.saveAll(orderTables);
         return TableGroupResponse.from(savedTableGroup, orderTables);

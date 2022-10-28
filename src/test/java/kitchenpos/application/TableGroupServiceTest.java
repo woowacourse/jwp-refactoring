@@ -110,7 +110,7 @@ class TableGroupServiceTest {
             when(orderTableRepository.findAllByOrderTableIdsIn(any())).thenReturn(orderTables);
 
             when(tableGroupRepository.save(any(TableGroup.class))).thenReturn(
-                    request.toTableGroup(LocalDateTime.now()));
+                    request.toTableGroup());
 
             // when
             TableGroupResponse response = tableGroupService.create(request);

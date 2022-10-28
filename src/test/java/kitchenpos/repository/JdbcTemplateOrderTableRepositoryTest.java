@@ -40,7 +40,7 @@ class JdbcTemplateOrderTableRepositoryTest {
     @Test
     void 저장한다() {
         // given
-        OrderTable orderTable = order_table을_생성한다(tableGroupId, numberOfGuests, empty);
+        OrderTable orderTable = order_table을_생성한다(numberOfGuests, empty);
 
         // when
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
@@ -50,18 +50,18 @@ class JdbcTemplateOrderTableRepositoryTest {
                 () -> assertThat(savedOrderTable.getId()).isNotNull(),
                 () -> assertThat(savedOrderTable).usingRecursiveComparison()
                         .ignoringFields("id", "tableGroupId")
-                        .isEqualTo(new OrderTable(null, null, 3, true))
+                        .isEqualTo(new OrderTable( 3, true))
         );
     }
 
-    private OrderTable order_table을_생성한다(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        return new OrderTable(tableGroupId, numberOfGuests, empty);
+    private OrderTable order_table을_생성한다(final int numberOfGuests, final boolean empty) {
+        return new OrderTable(numberOfGuests, empty);
     }
 
     @Test
     void 이미_ID가_있으면_저장시_update를_진행한다() {
         // given
-        OrderTable orderTable = order_table을_생성한다(tableGroupId, numberOfGuests, empty);
+        OrderTable orderTable = order_table을_생성한다(numberOfGuests, empty);
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         OrderTable updatedOrderTable = new OrderTable(savedOrderTable.getId(), tableGroupId, 5, false);
 
@@ -79,7 +79,7 @@ class JdbcTemplateOrderTableRepositoryTest {
     @Test
     void ID로_조회한다() {
         // given
-        OrderTable orderTable = order_table을_생성한다(tableGroupId, numberOfGuests, empty);
+        OrderTable orderTable = order_table을_생성한다(numberOfGuests, empty);
         orderTableRepository.save(orderTable);
 
         // when
@@ -97,7 +97,7 @@ class JdbcTemplateOrderTableRepositoryTest {
     @Test
     void 일치하는_ID가_없는_경우_empty를_반환한다() {
         // given
-        OrderTable orderTable = order_table을_생성한다(tableGroupId, numberOfGuests, empty);
+        OrderTable orderTable = order_table을_생성한다(numberOfGuests, empty);
         orderTableRepository.save(orderTable);
         Long notExistId = -1L;
 
@@ -154,7 +154,8 @@ class JdbcTemplateOrderTableRepositoryTest {
     @Test
     void table_group_id로_조회할_수_있다() {
         // given
-        OrderTable orderTable = order_table을_생성한다(tableGroupId, 10, true);
+        OrderTable orderTable = order_table을_생성한다(10, true);
+        orderTable.fillOrderTableGroup(tableGroupId);
         orderTableRepository.save(orderTable);
 
         // when
@@ -163,8 +164,8 @@ class JdbcTemplateOrderTableRepositoryTest {
         // then
         assertThat(orderTables).hasSize(1)
                 .usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(Arrays.asList(new OrderTable(null, tableGroupId, 10, true)));
+                .ignoringFields("id", "tableGroupId")
+                .isEqualTo(Arrays.asList(new OrderTable( 10, false)));
     }
 
     @Test
@@ -178,8 +179,8 @@ class JdbcTemplateOrderTableRepositoryTest {
     @Test
     void 모두_save_한다() {
         // given
-        OrderTable orderTable = order_table을_생성한다(tableGroupId, numberOfGuests, empty);
-        OrderTable orderTable2 = order_table을_생성한다(tableGroupId, 7, empty);
+        OrderTable orderTable = order_table을_생성한다(numberOfGuests, empty);
+        OrderTable orderTable2 = order_table을_생성한다(7, empty);
 
         // when
         orderTableRepository.saveAll(Arrays.asList(orderTable, orderTable2));

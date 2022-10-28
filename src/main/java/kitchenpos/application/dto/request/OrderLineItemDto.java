@@ -16,7 +16,7 @@ public class OrderLineItemDto {
     }
 
     public OrderLineItem toOrderLineItem() {
-        return new OrderLineItem(null, this.menuId, this.quantity);
+        return new OrderLineItem(this.menuId, this.quantity);
     }
 
     public Long getMenuId() {

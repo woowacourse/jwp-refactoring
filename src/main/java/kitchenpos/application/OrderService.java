@@ -31,10 +31,7 @@ public class OrderService {
     public OrderResponse create(final OrderCreateRequest request) {
         final List<OrderLineItem> orderLineItems = extractOrderLineItemFrom(request.getOrderLineItems());
         validateOrderLineItemsCount(orderLineItems);
-        final Order savedOrder = orderRepository.save(request.toOrder(
-                request.getOrderTableId(),
-                OrderStatus.COOKING,
-                LocalDateTime.now()));
+        final Order savedOrder = orderRepository.save(request.toOrder());
         return OrderResponse.from(savedOrder);
     }
 

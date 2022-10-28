@@ -24,7 +24,7 @@ class JdbcTemplateMenuProductRepositoryTest {
     @Test
     void 저장한다() {
         // given
-        MenuProduct menuProduct = new MenuProduct(1L, 1L, 1);
+        MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L);
 
         // when
         MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
@@ -51,7 +51,7 @@ class JdbcTemplateMenuProductRepositoryTest {
                 () -> assertThat(menuProduct.get())
                         .usingRecursiveComparison()
                         .ignoringFields("seq")
-                        .isEqualTo(new MenuProduct(null, 1L, 1))
+                        .isEqualTo(new MenuProduct(null, 1L, 1L))
         );
     }
 
@@ -78,12 +78,12 @@ class JdbcTemplateMenuProductRepositoryTest {
                 .ignoringFields("seq")
                 .isEqualTo(
                         Arrays.asList(
-                                new MenuProduct(null, 1L, 1),
-                                new MenuProduct(null, 2L, 1),
-                                new MenuProduct(null, 3L, 1),
-                                new MenuProduct(null, 4L, 1),
-                                new MenuProduct(null, 5L, 1),
-                                new MenuProduct(null, 6L, 1)
+                                new MenuProduct(null, 1L, 1L),
+                                new MenuProduct(null, 2L, 1L),
+                                new MenuProduct(null, 3L, 1L),
+                                new MenuProduct(null, 4L, 1L),
+                                new MenuProduct(null, 5L, 1L),
+                                new MenuProduct(null, 6L, 1L)
                         )
                 );
     }

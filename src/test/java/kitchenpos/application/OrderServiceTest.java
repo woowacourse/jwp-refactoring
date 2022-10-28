@@ -78,7 +78,7 @@ class OrderServiceTest {
                     orderLineItems);
             when(menuRepository.countByIdIn(any())).thenReturn(Long.valueOf(orderLineItems.size()));
 
-            Order order = request.toOrder(orderTableId, orderStatus, orderedTime);
+            Order order = request.toOrder();
             when(orderRepository.save(any(Order.class))).thenReturn(order);
 
             // when
@@ -114,7 +114,7 @@ class OrderServiceTest {
         @Test
         void order_목록을_조회할_수_있다() {
             // given
-            Order order = new Order(1L, COOKING, LocalDateTime.now(), orderLineItems);
+            Order order = new Order(1L, orderLineItems);
             when(orderRepository.findAllWithOrderLineItems()).thenReturn(Arrays.asList(order));
 
             // when
@@ -141,8 +141,9 @@ class OrderServiceTest {
         @Test
         void 이미_완료상태이면_예외를_반환한다() {
             // given
-            Order order = order_객체를_생성한다(1L, COMPLETION, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L)));
+            Order order = order_객체를_생성한다(1L, Arrays.asList(new OrderLineItem(1L, 3L)));
             Long orderId = 1L;
+            order.changeOrderStatus(COMPLETION);
             when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
 
             // when & then
@@ -153,7 +154,7 @@ class OrderServiceTest {
         @Test
         void aorder_status를_변경할_수_있다() {
             // given
-            Order order = order_객체를_생성한다(1L, COOKING, LocalDateTime.now(), Arrays.asList(new OrderLineItem(1L, 3L)));
+            Order order = order_객체를_생성한다(1L, Arrays.asList(new OrderLineItem(1L, 3L)));
             when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
 
             // when
@@ -164,10 +165,8 @@ class OrderServiceTest {
         }
 
         private Order order_객체를_생성한다(final Long orderTableId,
-                                     final OrderStatus orderStatus,
-                                     final LocalDateTime orderedTime,
                                      final List<OrderLineItem> orderLineItems) {
-            return new Order(orderTableId, orderStatus, orderedTime, orderLineItems);
+            return new Order(orderTableId, orderLineItems);
         }
     }
 }

@@ -48,11 +48,8 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order(final long orderTableId,
-                 final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime,
-                 final List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
+    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
     public Long getId() {

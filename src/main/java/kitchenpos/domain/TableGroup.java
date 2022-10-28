@@ -15,6 +15,7 @@ public class TableGroup {
     private LocalDateTime createdDate;
 
     public TableGroup() {
+        this(null, LocalDateTime.now());
     }
 
     public TableGroup(final Long id, final LocalDateTime createdDate) {
