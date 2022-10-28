@@ -171,7 +171,8 @@ public class MenuServiceTest {
         MenuRequest 맛초킹_음료두개_세트 = generateMenuRequest("맛초킹 음료두개 세트", BigDecimal.valueOf(21000), 세트메뉴_1L, menuProducts);
         // when & then
         assertThatThrownBy(() -> menuService.create(맛초킹_음료두개_세트))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 상품입니다.");
     }
 
     @Test
@@ -195,7 +196,8 @@ public class MenuServiceTest {
         MenuRequest 뿌링클_음료두개_세트 = generateMenuRequest("뿌링클 음료두개 세트", BigDecimal.valueOf(22000), 세트메뉴_1L, menuProducts);
         // when & then
         assertThatThrownBy(() -> menuService.create(뿌링클_음료두개_세트))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴의 가격은 상품 수량 * 상품 가격의 합보다 클 수 없습니다.");
     }
 
     @Test

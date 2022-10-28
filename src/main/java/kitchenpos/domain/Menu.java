@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.math.BigDecimal;
 import kitchenpos.dto.request.MenuRequest;
 
 public class Menu {
@@ -24,6 +25,12 @@ public class Menu {
         return new Menu(menuRequest.getName(),
                 new Price(menuRequest.getPrice()),
                 menuRequest.getMenuGroupId());
+    }
+
+    public void validatePrice(BigDecimal sum) {
+        if (price.getValue().compareTo(sum) > 0) {
+            throw new IllegalArgumentException("메뉴의 가격은 상품 수량 * 상품 가격의 합보다 클 수 없습니다.");
+        }
     }
 
     public Long getId() {

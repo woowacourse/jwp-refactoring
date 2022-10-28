@@ -22,12 +22,10 @@ public class MenuService {
     private final MenuProductDao menuProductDao;
     private final ProductDao productDao;
 
-    public MenuService(
-            final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao,
-            final MenuProductDao menuProductDao,
-            final ProductDao productDao
-    ) {
+    public MenuService(final MenuDao menuDao,
+                       final MenuGroupDao menuGroupDao,
+                       final MenuProductDao menuProductDao,
+                       final ProductDao productDao) {
         this.menuDao = menuDao;
         this.menuGroupDao = menuGroupDao;
         this.menuProductDao = menuProductDao;
@@ -36,35 +34,45 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
-        Menu menu = Menu.from(menuRequest);
+        final Menu menu = Menu.from(menuRequest);
+        final List<MenuProduct> menuProducts = getMenuProducts(menuRequest);
 
-        final List<MenuProduct> menuProductResponses = menuRequest.getMenuProducts().stream()
-                .map(MenuProduct::from)
-                .collect(Collectors.toList());
-
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다.");
-        }
-
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProductResponses) {
-            final Product product = productDao.findById(menuProduct.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().getValue().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        if (menu.getPrice().getValue().compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
+        validateMenuGroup(menu);
+        menu.validatePrice(getSumOfMenuPrice(menuProducts));
 
         final Menu savedMenu = menuDao.save(menu);
+        final List<MenuProduct> savedMenuProducts = saveMenuProducts(menuProducts, savedMenu);
 
-        List<MenuProduct> menuProducts = menuProductResponses.stream()
+        return MenuResponse.of(savedMenu, savedMenuProducts);
+    }
+
+    private List<MenuProduct> saveMenuProducts(List<MenuProduct> menuProducts, Menu savedMenu) {
+        return menuProducts.stream()
                 .map(menuProduct -> menuProductDao.save(
                         new MenuProduct(savedMenu.getId(), menuProduct.getProductId(), menuProduct.getQuantity())))
                 .collect(Collectors.toList());
+    }
 
-        return MenuResponse.of(savedMenu, menuProducts);
+    private List<MenuProduct> getMenuProducts(MenuRequest menuRequest) {
+        return menuRequest.getMenuProducts().stream()
+                .map(MenuProduct::from)
+                .collect(Collectors.toList());
+    }
+
+    private BigDecimal getSumOfMenuPrice(List<MenuProduct> menuProducts) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (final MenuProduct menuProduct : menuProducts) {
+            final Product product = productDao.findById(menuProduct.getProductId())
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
+            sum = sum.add(product.multiply(menuProduct.getQuantity()));
+        }
+        return sum;
+    }
+
+    private void validateMenuGroup(Menu menu) {
+        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
+            throw new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다.");
+        }
     }
 
     public List<MenuResponse> list() {
