@@ -98,9 +98,9 @@ public class OrderService {
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        final Order updatedOrder = new Order(savedOrder.getId(), orderStatus.name(), savedOrder.getOrderedTime());
 
-        orderDao.save(savedOrder);
+        orderDao.save(updatedOrder);
 
         final List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(orderId);
 

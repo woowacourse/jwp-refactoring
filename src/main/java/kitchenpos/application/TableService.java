@@ -54,8 +54,10 @@ public class TableService {
             throw new IllegalArgumentException("이미 주문이 들어간 테이블입니다.");
         }
 
-        savedOrderTable.setEmpty(request.isEmpty());
-        final OrderTable updatedOrderTable = orderTableDao.save(savedOrderTable);
+        final OrderTable orderTable = new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
+                savedOrderTable.getNumberOfGuests(),
+                request.isEmpty());
+        final OrderTable updatedOrderTable = orderTableDao.save(orderTable);
 
         return TableResponse.from(updatedOrderTable);
     }
@@ -71,8 +73,9 @@ public class TableService {
             throw new IllegalArgumentException("사용 중이지 않은 테이블의 방문한 손님 수를 변경할 수 없습니다.");
         }
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-        final OrderTable updatedOrderTable = orderTableDao.save(savedOrderTable);
+        final OrderTable orderTable = new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
+                numberOfGuests, savedOrderTable.isEmpty());
+        final OrderTable updatedOrderTable = orderTableDao.save(orderTable);
 
         return TableResponse.from(updatedOrderTable);
     }
