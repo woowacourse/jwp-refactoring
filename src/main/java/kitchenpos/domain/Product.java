@@ -1,6 +1,8 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Product {
 
@@ -8,7 +10,7 @@ public class Product {
     private final String name;
     private final Price price;
 
-    public Product(final Long id, final String name, final  BigDecimal price) {
+    public Product(final Long id, final String name, final BigDecimal price) {
         this.id = id;
         this.name = name;
         this.price = new Price(price);
@@ -18,8 +20,12 @@ public class Product {
         return new Product(null, name, price);
     }
 
-    public Price calculatePrice(final long quantity) {
-        return price.multiply(quantity);
+    public static Price calculateTotalPrice(final List<Product> products) {
+        final List<Price> prices = products.stream()
+                .map(product -> product.price)
+                .collect(Collectors.toList());
+
+        return Price.sum(prices);
     }
 
     public Long getId() {
