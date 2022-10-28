@@ -46,7 +46,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         // given
         Order order = createOrderFixture();
         long orderId = _주문생성_Id반환(order);
-        order.setOrderStatus(OrderStatus.MEAL.name());
+        order.changeStatus(OrderStatus.MEAL.name());
 
         // when, then
         put("/api/orders/" + orderId + "/order-status", order).assertThat()

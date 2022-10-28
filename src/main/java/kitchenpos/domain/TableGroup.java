@@ -33,15 +33,15 @@ public class TableGroup {
     @OneToMany(mappedBy = "tableGroupId")
     private List<OrderTable> orderTables = new ArrayList<>();
 
-    public TableGroup() {
+    protected TableGroup() {
     }
 
     public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this.orderTables = List.copyOf(orderTables);
         this.id = id;
         this.createdDate = createdDate;
-        validateOrderTables(this.orderTables);
-        groupOrderTables(orderTables);
+        validateOrderTables();
+        groupOrderTables();
     }
 
     public TableGroup(final Long id, final LocalDateTime createdDate) {
@@ -56,18 +56,18 @@ public class TableGroup {
         this(LocalDateTime.now(), orderTables);
     }
 
-    private void validateOrderTables(final List<OrderTable> orderTables) {
-        validateOrderTablesSize(orderTables);
-        validateOrderTablesCanGroup(orderTables);
+    private void validateOrderTables() {
+        validateOrderTablesSize();
+        validateOrderTablesCanGroup();
     }
 
-    private void validateOrderTablesSize(final List<OrderTable> orderTables) {
+    private void validateOrderTablesSize() {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
         }
     }
 
-    private void validateOrderTablesCanGroup(final List<OrderTable> orderTables) {
+    private void validateOrderTablesCanGroup() {
         for (final OrderTable orderTable : orderTables) {
             if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId())) {
                 throw new IllegalArgumentException();
@@ -75,10 +75,15 @@ public class TableGroup {
         }
     }
 
-    private void groupOrderTables(final List<OrderTable> orderTables) {
+    private void groupOrderTables() {
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(id);
-            orderTable.setEmpty(false);
+            orderTable.group(id);
+        }
+    }
+
+    public void unGroupOrderTables() {
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.ungroup();
         }
     }
 
@@ -86,14 +91,7 @@ public class TableGroup {
         return id;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public List<OrderTable> getOrderTables() {
         return List.copyOf(orderTables);
-    }
-
-    public void unGroup() {
     }
 }
