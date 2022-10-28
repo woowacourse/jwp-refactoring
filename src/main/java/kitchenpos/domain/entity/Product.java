@@ -14,6 +14,27 @@ public class Product {
     @Column(name = "product_id")
     private Long id;
 
+    private String name;
+
+    private long price;
+
     protected Product() {
+    }
+
+    public Product(String name, long price) {
+        this.name = name;
+        this.price = price;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public long getPrice() {
+        return price;
     }
 }
