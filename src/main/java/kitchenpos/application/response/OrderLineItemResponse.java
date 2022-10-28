@@ -22,18 +22,6 @@ public class OrderLineItemResponse {
         this.quantity = quantity;
     }
 
-    public Long getSeq() {
-        return seq;
-    }
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public Long getMenuId() {
-        return menuId;
-    }
-
     public long getQuantity() {
         return quantity;
     }

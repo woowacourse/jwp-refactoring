@@ -38,10 +38,6 @@ public class TableGroupResponse {
         return id;
     }
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
     public List<OrderTableResponse> getOrderTables() {
         return orderTables;
     }

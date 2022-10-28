@@ -53,8 +53,4 @@ public class MenuResponse {
     public Long getMenuGroupId() {
         return menuGroupId;
     }
-
-    public List<MenuProductResponse> getMenuProducts() {
-        return menuProducts;
-    }
 }

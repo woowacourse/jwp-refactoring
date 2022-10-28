@@ -22,18 +22,6 @@ public class MenuProductResponse {
         this.quantity = quantity;
     }
 
-    public Long getSeq() {
-        return seq;
-    }
-
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
     public long getQuantity() {
         return quantity;
     }
