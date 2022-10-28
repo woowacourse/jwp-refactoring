@@ -56,7 +56,7 @@ class JdbcTemplateMenuGroupDaoTest {
         }
 
         @Test
-        void list() {
+        void findAll() {
             final var actual = menuGroupDao.findAll();
             final var expected = DaoUtils.asList(savedMenuGroups);
 
