@@ -66,20 +66,15 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
+        final List<Long> orderTableIds = collectTableIds(orderTables);
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
+        checkOrdersInProgress(orderTableIds);
+        saveOrderTablesWithTableGroupId(OrderTables.of(orderTables), null);
+    }
 
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, OrderStatus.collectInProgress())) {
+    private void checkOrdersInProgress(List<Long> orderTableIds) {
+        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, OrderStatus.collectInProgress())) {
             throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.updateEmpty(false);
-            orderTableDao.save(orderTable);
         }
     }
 }
