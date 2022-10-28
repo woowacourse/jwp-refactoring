@@ -14,11 +14,13 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuRepository;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
-import kitchenpos.domain.ProductRepository;
-import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,6 +35,9 @@ class OrderServiceTest {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -128,27 +133,25 @@ class OrderServiceTest {
 
                 OrderLineItemCommand orderLineItemCommand = new OrderLineItemCommand(menu.getId(), 2);
 
-                assertThatThrownBy(() -> orderService.create(new OrderCommand(orderTable.getId(), List.of(orderLineItemCommand))))
+                assertThatThrownBy(
+                        () -> orderService.create(new OrderCommand(orderTable.getId(), List.of(orderLineItemCommand))))
                         .hasMessage("빈 테이블입니다.");
             }
         }
     }
-//
-//    @Test
-//    @DisplayName("존재하는 주문을 모두 조회한다.")
-//    void list() {
-//        OrderLineItem orderLineItem = getOrderLineItem();
-//        OrderTable orderTable = createOrderTable(2, false);
-//
-//        createOrder(orderTable.getId(), List.of(orderLineItem));
-//        createOrder(orderTable.getId(), List.of(orderLineItem));
-//        createOrder(orderTable.getId(), List.of(orderLineItem));
-//
-//        ResponseEntity<List<Order>> response = orderRestController.list();
-//
-//        assertThat(response.getBody()).hasSize(3);
-//        assertThat(response.getStatusCodeValue()).isEqualTo(HttpStatus.OK.value());
-//    }
+
+    @Test
+    @DisplayName("존재하는 주문을 모두 조회한다.")
+    void list() {
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(2, true));
+        orderRepository.save(new Order(orderTable.getId()));
+        orderRepository.save(new Order(orderTable.getId()));
+        orderRepository.save(new Order(orderTable.getId()));
+
+        List<Order> orders = orderService.list();
+
+        assertThat(orders).hasSize(3);
+    }
 //
 //    @Nested
 //    @DisplayName("주문의 상태를 변경할 때")
