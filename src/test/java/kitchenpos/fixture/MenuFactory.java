@@ -17,7 +17,7 @@ public class MenuFactory {
         var totalPrice = 0;
 
         for (Product product : products) {
-            final var menuProduct = new MenuProduct(null, null, product.getId(), MENU_QUANTITY);
+            final var menuProduct = new MenuProduct(null, product, MENU_QUANTITY);
             menuProducts.add(menuProduct);
             totalPrice += product.getPrice().intValue() * menuProduct.getQuantity();
         }

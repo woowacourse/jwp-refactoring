@@ -1,17 +1,29 @@
 package kitchenpos.domain;
 
+import java.math.BigDecimal;
+
 public class MenuProduct {
 
     private Long seq;
     private Long menuId;
     private Long productId;
+    private Product product;
     private long quantity;
+
+    public MenuProduct(final Long menuId, final Product product, final long quantity) {
+        this(null, menuId, product.getId(), quantity);
+        this.product = product;
+    }
 
     public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity) {
         this.seq = seq;
         this.menuId = menuId;
         this.productId = productId;
         this.quantity = quantity;
+    }
+
+    public BigDecimal price() {
+        return BigDecimal.valueOf(quantity).multiply(product.getPrice());
     }
 
     public Long getSeq() {

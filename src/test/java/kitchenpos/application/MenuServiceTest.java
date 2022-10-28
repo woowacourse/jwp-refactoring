@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFactory.MENU_QUANTITY;
 import static kitchenpos.fixture.MenuFactory.menu;
 import static kitchenpos.fixture.MenuGroupFactory.menuGroup;
 import static kitchenpos.fixture.ProductFactory.product;
@@ -8,7 +7,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -21,8 +19,7 @@ import org.junit.jupiter.api.Test;
 
 class MenuServiceTest extends FakeSpringContext {
 
-    private final MenuService menuService = new MenuService(
-            menuDao, menuGroupDao, menuProductDao, productDao);
+    private final MenuService menuService = new MenuService(menus, products, menuGroups);
 
     @DisplayName("create 메서드는")
     @Nested
@@ -44,27 +41,6 @@ class MenuServiceTest extends FakeSpringContext {
                     () -> assertThat(result.getMenuGroupId()).isEqualTo(menu.getMenuGroupId()),
                     () -> assertThat(result.getPrice().compareTo(menu.getPrice())).isEqualTo(0)
             );
-        }
-
-        @DisplayName("가격이 각 상품의 수량과 가격을 곱한 값의 총합보다 크다면")
-        @Nested
-        class priceOverTotalOfMenuProducts {
-
-            private final BigDecimal pizzaTotalPrice = pizza.getPrice().multiply(new BigDecimal(MENU_QUANTITY));
-            private final BigDecimal cokeTotalPrice = coke.getPrice().multiply(new BigDecimal(MENU_QUANTITY));
-
-            private final BigDecimal invalidPrice = pizzaTotalPrice.add(cokeTotalPrice)
-                    .add(new BigDecimal(1));
-
-            @DisplayName("에외를 던진다")
-            @Test
-            void throwsException() {
-                final var invalidMenu = menu("피자와 콜라", invalidPrice, italian, List.of(pizza, coke));
-
-                assertThatThrownBy(
-                        () -> menuService.create(invalidMenu)
-                ).isInstanceOf(IllegalArgumentException.class);
-            }
         }
 
         @DisplayName("메뉴 그룹이 존재하지 않는 값이라면")

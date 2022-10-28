@@ -14,19 +14,41 @@ public class Menu {
     public Menu(final Long id,
                 final String name,
                 final BigDecimal price,
-                final Long menuGroupId,
-                final List<MenuProduct> menuProducts) {
+                final Long menuGroupId) {
         this.id = id;
         this.name = name;
         this.price = new Price(price);
         this.menuGroupId = menuGroupId;
+    }
+
+    public Menu(final Long id,
+                final String name,
+                final BigDecimal price,
+                final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
+        this.price = new Price(price);
+        validatePrice(menuProducts);
+        this.id = id;
+        this.name = name;
+        this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
     }
 
-    public void checkIsAvailablePrice(final BigDecimal priceToSet) {
-        if (price.getPrice().compareTo(priceToSet) > 0) {
+    public Menu(final String name,
+                final BigDecimal price,
+                final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroupId, menuProducts);
+    }
+
+    private void validatePrice(final List<MenuProduct> menuProducts) {
+        final var total = menuProducts.stream()
+                .map(MenuProduct::price)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        if (price.getPrice().compareTo(total) > 0) {
             throw new IllegalArgumentException();
         }
+
     }
 
     public Long getId() {
