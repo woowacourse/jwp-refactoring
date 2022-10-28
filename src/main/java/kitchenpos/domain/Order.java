@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 public class Order {
     private Long id;
@@ -27,12 +28,11 @@ public class Order {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public boolean isCooking() {
-        return orderStatus.equals(OrderStatus.COOKING.name());
-    }
-
-    public boolean isMeal() {
-        return orderStatus.equals(OrderStatus.MEAL.name());
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+            throw new IllegalArgumentException("완료된 주문의 상태는 변경할 수 없습니다.");
+        }
+        this.orderStatus = orderStatus.name();
     }
 
     public Long getId() {

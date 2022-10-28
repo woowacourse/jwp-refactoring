@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.SpringServiceTest;
+import kitchenpos.application.request.OrderStatusChangeRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -124,12 +125,12 @@ class OrderServiceTest {
         @Nested
         class 존재하지않는_주문_id를_입력받는_경우 extends SpringServiceTest {
 
-            private final Order order = new Order(1L, null, LocalDateTime.now(),
-                    createOrderLineItem(new OrderLineItem(1L, 1)));
+
+            private OrderStatusChangeRequest request = new OrderStatusChangeRequest(MEAL.name());
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> orderService.changeOrderStatus(0L, order))
+                assertThatThrownBy(() -> orderService.changeOrderStatus(0L, request))
                         .isInstanceOf(IllegalArgumentException.class);
             }
         }
@@ -138,17 +139,18 @@ class OrderServiceTest {
         class 이미_완료상태의_주문을_입력받는_경우 extends SpringServiceTest {
 
             private Long orderId;
-            private final Order changeOrder = new Order(null, MEAL.name(), LocalDateTime.now(), new ArrayList<>());
+            private final OrderStatusChangeRequest request = new OrderStatusChangeRequest(MEAL.name());
 
             @BeforeEach
             void setUp() {
                 orderId = orderDao.save(new Order(1L, COMPLETION.name(), LocalDateTime.now(), new ArrayList<>()))
                         .getId();
+                orderLineItemDao.save(new OrderLineItem(orderId, 1L, 2));
             }
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, changeOrder))
+                assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, request))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("완료된 주문의 상태는 변경할 수 없습니다.");
             }
@@ -158,17 +160,18 @@ class OrderServiceTest {
         class 정상적인_주문변경_요청할_경우 extends SpringServiceTest {
 
             private Long orderId;
-            private final Order changeOrder = new Order(null, MEAL.name(), LocalDateTime.now(), new ArrayList<>());
+            private final OrderStatusChangeRequest request = new OrderStatusChangeRequest(MEAL.name());
 
             @BeforeEach
             void setUp() {
                 orderId = orderDao.save(new Order(1L, COOKING.name(), LocalDateTime.now(), new ArrayList<>()))
                         .getId();
+                orderLineItemDao.save(new OrderLineItem(orderId, 1L, 2));
             }
 
             @Test
             void 주문변경_후_반환한다() {
-                Order actual = orderService.changeOrderStatus(orderId, changeOrder);
+                Order actual = orderService.changeOrderStatus(orderId, request);
                 assertThat(actual.getOrderStatus()).isEqualTo(MEAL.name());
             }
         }
