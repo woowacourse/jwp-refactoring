@@ -11,18 +11,15 @@ import kitchenpos.application.request.MenuRequest;
 import kitchenpos.application.response.MenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@SpringBootTest
-@Transactional
+@DataJpaTest
 class MenuServiceTest {
 
     private static final long MENU_ID = 1L;
@@ -40,12 +37,9 @@ class MenuServiceTest {
     @Autowired
     private ProductRepository productRepository;
 
-    @Autowired
-    private MenuProductRepository menuProductRepository;
-
     @BeforeEach
     void setUp() {
-        sut = new MenuService(menuRepository, menuGroupRepository, productRepository, menuProductRepository);
+        sut = new MenuService(menuRepository, menuGroupRepository, productRepository);
     }
 
     @DisplayName("새로운 메뉴를 등록할 수 있다.")
@@ -75,29 +69,6 @@ class MenuServiceTest {
         final long notExistMenuGroupId = -1L;
         final MenuProductRequest menuProduct = createMenuProductRequest();
         final MenuRequest request = new MenuRequest("후라이드치킨", BigDecimal.valueOf(16000), notExistMenuGroupId, List.of(menuProduct));
-
-        // when & then
-        assertThatThrownBy(() -> sut.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("메뉴의 가격이 상품(product)의 금액 총합(가격 * 수량) 보다 크면 안된다.")
-    @Test
-    void createWithLessPriceThenTotalProductPrice() {
-        // given
-        final MenuProductRequest menuProduct = createMenuProductRequest();
-        final MenuRequest request = new MenuRequest("후라이드치킨", BigDecimal.valueOf(16001), 2L, List.of(menuProduct));
-
-        // when & then
-        assertThatThrownBy(() -> sut.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("상품(Product)의 조회결과가 없는 경우 메뉴를 생성할 수 없다.")
-    @Test
-    void createMenuWithEmptyProduct() {
-        // given
-        final MenuRequest request = new MenuRequest("후라이드치킨", BigDecimal.valueOf(16000), 2L, List.of());
 
         // when & then
         assertThatThrownBy(() -> sut.create(request))

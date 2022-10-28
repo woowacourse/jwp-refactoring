@@ -7,9 +7,9 @@ import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 import io.restassured.RestAssured;
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.request.MenuProductRequest;
+import kitchenpos.application.request.MenuRequest;
 import kitchenpos.application.response.MenuResponse;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -25,24 +25,24 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @Test
     void create() {
         // given
-        final MenuProduct menuProduct = createMenuProduct();
-        final Menu menu = new Menu("메뉴 이름", BigDecimal.valueOf(1_000), MENU_GROUP_ID, List.of(menuProduct));
+        final MenuRequest menuRequest = new MenuRequest("메뉴 이름", BigDecimal.valueOf(1_000), MENU_GROUP_ID,
+                createMenuProducts());
 
         // when
-        final Menu response = RestAssured.given().log().all()
+        final MenuResponse response = RestAssured.given().log().all()
                 .contentType(APPLICATION_JSON_VALUE)
-                .body(menu)
+                .body(menuRequest)
                 .when().log().all()
                 .post("/api/menus")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
-                .extract().as(Menu.class);
+                .extract().as(MenuResponse.class);
 
         // then
         assertThat(response.getId()).isNotNull();
-        assertThat(response.getName()).isEqualTo(menu.getName());
-        assertThat(response.getPrice().longValue()).isEqualTo(menu.getPrice().longValue());
-        assertThat(response.getMenuGroupId()).isEqualTo(menu.getMenuGroupId());
+        assertThat(response.getName()).isEqualTo(menuRequest.getName());
+        assertThat(response.getPrice().longValue()).isEqualTo(menuRequest.getPrice().longValue());
+        assertThat(response.getMenuGroupId()).isEqualTo(menuRequest.getMenuGroupId());
     }
 
     @DisplayName("메뉴 전체 목록을 조회할 수 있다.")
@@ -73,7 +73,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
                 );
     }
 
-    private MenuProduct createMenuProduct() {
-        return new MenuProduct(MENU_ID, PRODUCT_ID, QUANTITY);
+    private List<MenuProductRequest> createMenuProducts() {
+        return List.of(new MenuProductRequest(MENU_ID, PRODUCT_ID, QUANTITY));
     }
 }

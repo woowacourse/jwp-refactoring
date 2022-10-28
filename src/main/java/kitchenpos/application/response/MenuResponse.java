@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.RelatedProduct;
 
 public class MenuResponse {
 
@@ -30,9 +31,9 @@ public class MenuResponse {
     }
 
     public static MenuResponse from(final Menu menu) {
-        final List<MenuProductResponse> menuProducts = menu.getMenuProducts()
-                .stream()
-                .map(MenuProductResponse::new)
+        final List<RelatedProduct> relatedProducts = menu.getMenuProducts().getRelatedProducts();
+        final List<MenuProductResponse> menuProducts = relatedProducts.stream()
+                .map(it -> new MenuProductResponse(menu.getId(), it.getProduct().getId(), it.getQuantity()))
                 .collect(toList());
 
         return new MenuResponse(menu, menuProducts);

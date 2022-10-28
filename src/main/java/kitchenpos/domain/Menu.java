@@ -6,14 +6,15 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Transient;
 
 @Entity
 public class Menu {
 
+    private static final int ZERO_PRICE = 0;
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -27,23 +28,28 @@ public class Menu {
     @Column(nullable = false)
     private Long menuGroupId;
 
-    @Transient
-    private List<MenuProduct> menuProducts;
+    @Embedded
+    private MenuProducts menuProducts;
 
     protected Menu() {
     }
 
     public Menu(final String name, final BigDecimal price, final Long menuGroupId,
-                final List<MenuProduct> menuProducts) {
+                final MenuProducts menuProducts) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
     }
 
-    public static Menu of(final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
+    public static Menu of(final String name, final BigDecimal price, final Long menuGroupId, final MenuProducts menuProducts) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("올바르지 않은 메뉴의 가격입니다.");
+        }
+
+        BigDecimal productSumPrice = calculateProductSum(menuProducts);
+        if (price.compareTo(productSumPrice) > ZERO_PRICE) {
+            throw new IllegalArgumentException("메뉴의 가격이 상품(product)의 금액 총합보다 크면 안됩니다.");
         }
 
         return new Menu(name, price, menuGroupId, menuProducts);
@@ -65,11 +71,16 @@ public class Menu {
         return menuGroupId;
     }
 
-    public List<MenuProduct> getMenuProducts() {
+    public MenuProducts getMenuProducts() {
         return menuProducts;
     }
 
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+    private static BigDecimal calculateProductSum(final MenuProducts menuProducts) {
+        BigDecimal sum = BigDecimal.ZERO;
+        final List<RelatedProduct> relatedProducts = menuProducts.getRelatedProducts();
+        for (RelatedProduct relatedProduct : relatedProducts) {
+            sum = sum.add(relatedProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(relatedProduct.getQuantity())));
+        }
+        return sum;
     }
 }
