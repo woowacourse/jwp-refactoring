@@ -72,11 +72,10 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문에_적혀있는_주문_테이블이_존재하지_않으면_예외가_발생한다() {
-        요리중_주문.getOrderTable().setId(0L);
         주문_항목을_추가한다(요리중_주문);
 
         assertThatThrownBy(
-                () -> orderService.create(요리중_주문)
+                () -> orderService.create(new Order(0L, 주문_테이블, OrderStatus.COOKING.name(), LocalDateTime.now()))
         ).isInstanceOf(IllegalArgumentException.class);
     }
 

@@ -47,6 +47,10 @@ public class Order {
         this(null, orderTable, orderStatus, orderedTime, orderLineItems);
     }
 
+    public Order(Long id, OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
+        this(id, orderTable, orderStatus, orderedTime, new ArrayList<>());
+    }
+
     public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
         this(null, orderTable, orderStatus, orderedTime, new ArrayList<>());
     }

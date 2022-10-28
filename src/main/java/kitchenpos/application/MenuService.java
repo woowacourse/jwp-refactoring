@@ -3,12 +3,12 @@ package kitchenpos.application;
 import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,15 +22,15 @@ public class MenuService {
     private final MenuDao menuDao;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductDao menuProductDao;
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
     public MenuService(MenuRepository menuRepository, MenuDao menuDao, MenuGroupRepository menuGroupRepository,
-                       MenuProductDao menuProductDao, ProductDao productDao) {
+                       MenuProductDao menuProductDao, ProductRepository productRepository) {
         this.menuRepository = menuRepository;
         this.menuDao = menuDao;
         this.menuGroupRepository = menuGroupRepository;
         this.menuProductDao = menuProductDao;
-        this.productDao = productDao;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -52,7 +52,7 @@ public class MenuService {
                     .orElseThrow(IllegalArgumentException::new));
             //menuProduct.setMenuId(menuId);
 
-            final Product product = productDao.findById(menuProduct.getProduct().getId())
+            final Product product = productRepository.findById(menuProduct.getProduct().getId())
                     .orElseThrow(IllegalArgumentException::new);
 
             final MenuProduct tempMenuProduct = menuProductDao.save(menuProduct);
