@@ -8,11 +8,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ class MenuServiceTest extends ServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -41,7 +41,7 @@ class MenuServiceTest extends ServiceTest {
 
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
 
-        Menu menu = new Menu("메뉴", new BigDecimal(35000), menuGroup.getId(),
+        Menu menu = new Menu("메뉴", new BigDecimal(35000), menuGroup,
                 new ArrayList<>(Arrays.asList(menuProduct1, menuProduct2)));
 
         Menu actual = menuService.create(menu);
@@ -50,7 +50,7 @@ class MenuServiceTest extends ServiceTest {
             assertThat(actual.getId()).isNotNull();
             assertThat(actual.getName()).isEqualTo("메뉴");
             assertThat(actual.getPrice().compareTo(new BigDecimal(35000))).isEqualTo(0);
-            assertThat(actual.getMenuGroupId()).isEqualTo(menuGroup.getId());
+            assertThat(actual.getMenuGroup().getId()).isEqualTo(menuGroup.getId());
             assertThat(actual.getMenuProducts()).hasSize(2);
         });
     }
@@ -59,14 +59,7 @@ class MenuServiceTest extends ServiceTest {
     void 메뉴의_가격이_음수인_경우_메뉴를_생성할_수_없다() {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
 
-        Menu menu = new Menu("메뉴", new BigDecimal(-1), menuGroup.getId(), new ArrayList<>());
-
-        assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 메뉴가_존재하는_메뉴_그룹에_속하지_않은_경우_메뉴를_생성할_수_없다() {
-        Menu menu = new Menu("메뉴", new BigDecimal(35000), 1L, new ArrayList<>());
+        Menu menu = new Menu("메뉴", new BigDecimal(-1), menuGroup, new ArrayList<>());
 
         assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -81,7 +74,7 @@ class MenuServiceTest extends ServiceTest {
 
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
 
-        Menu menu = new Menu("메뉴", new BigDecimal(50000), menuGroup.getId(),
+        Menu menu = new Menu("메뉴", new BigDecimal(50000), menuGroup,
                 new ArrayList<>(Arrays.asList(menuProduct1, menuProduct2)));
 
         assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
@@ -97,13 +90,13 @@ class MenuServiceTest extends ServiceTest {
 
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
 
-        Menu menu1 = new Menu("메뉴1", new BigDecimal(35000), menuGroup.getId(),
+        Menu menu1 = new Menu("메뉴1", new BigDecimal(35000), menuGroup,
                 new ArrayList<>(Arrays.asList(menuProduct1, menuProduct2)));
-        Menu menu2 = new Menu("메뉴2", new BigDecimal(38000), menuGroup.getId(),
+        Menu menu2 = new Menu("메뉴2", new BigDecimal(38000), menuGroup,
                 new ArrayList<>(Arrays.asList(menuProduct1, menuProduct2)));
 
-        menuDao.save(menu1);
-        menuDao.save(menu2);
+        menuRepository.save(menu1);
+        menuRepository.save(menu2);
 
         List<Menu> actual = menuService.list();
 

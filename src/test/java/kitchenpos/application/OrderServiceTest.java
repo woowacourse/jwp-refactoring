@@ -8,13 +8,13 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class OrderServiceTest extends ServiceTest {
-
     @Autowired
     private OrderService orderService;
 
@@ -38,7 +37,7 @@ class OrderServiceTest extends ServiceTest {
     private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
     private OrderTableDao orderTableDao;
@@ -53,9 +52,9 @@ class OrderServiceTest extends ServiceTest {
         MenuProduct menuProduct1 = new MenuProduct(1L, null, product1.getId(), 1);
         MenuProduct menuProduct2 = new MenuProduct(1L, null, product2.getId(), 2);
 
-        Menu menu1 = menuDao.save(new Menu("메뉴1", new BigDecimal(40000), menuGroup.getId(),
+        Menu menu1 = menuRepository.save(new Menu("메뉴1", new BigDecimal(40000), menuGroup,
                 new ArrayList<>(Arrays.asList(menuProduct1, menuProduct2))));
-        Menu menu2 = menuDao.save(new Menu("메뉴2", new BigDecimal(40000), menuGroup.getId(),
+        Menu menu2 = menuRepository.save(new Menu("메뉴2", new BigDecimal(40000), menuGroup,
                 new ArrayList<>(Arrays.asList(menuProduct1, menuProduct2))));
 
         OrderTable orderTable = orderTableDao.save(new OrderTable(null, 5, false));
@@ -94,9 +93,9 @@ class OrderServiceTest extends ServiceTest {
         MenuProduct menuProduct1 = new MenuProduct(1L, null, product1.getId(), 1);
         MenuProduct menuProduct2 = new MenuProduct(1L, null, product2.getId(), 2);
 
-        Menu menu1 = menuDao.save(new Menu("메뉴1", new BigDecimal(40000), menuGroup.getId(),
+        Menu menu1 = menuRepository.save(new Menu("메뉴1", new BigDecimal(40000), menuGroup,
                 new ArrayList<>(Arrays.asList(menuProduct1, menuProduct2))));
-        Menu menu2 = menuDao.save(new Menu("메뉴2", new BigDecimal(40000), menuGroup.getId(),
+        Menu menu2 = menuRepository.save(new Menu("메뉴2", new BigDecimal(40000), menuGroup,
                 new ArrayList<>(Arrays.asList(menuProduct1, menuProduct2))));
 
         OrderTable orderTable = orderTableDao.save(new OrderTable(null, 5, true));
