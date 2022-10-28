@@ -28,10 +28,6 @@ public class OrderCreateRequest {
         return orderTableId;
     }
 
-    public List<OrderLineItemRequest> getOrderLineItems() {
-        return orderLineItems;
-    }
-
     public List<OrderLineItem> getOrderLineItemEntities() {
         return orderLineItems.stream()
                 .map(OrderLineItemRequest::toEntity)

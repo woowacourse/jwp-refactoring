@@ -22,8 +22,4 @@ public class OrderLineItemRequest {
     public Long getMenuId() {
         return menuId;
     }
-
-    public long getQuantity() {
-        return quantity;
-    }
 }
