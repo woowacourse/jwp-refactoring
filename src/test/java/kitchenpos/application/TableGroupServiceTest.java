@@ -16,7 +16,10 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.orderTable.OrderTableResponse;
+import kitchenpos.dto.tablegroup.OrderTableRequest;
+import kitchenpos.dto.tablegroup.TableGroupCreateRequest;
+import kitchenpos.dto.tablegroup.TableGroupResponse;
 import org.assertj.core.data.TemporalUnitWithinOffset;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,15 +42,15 @@ class TableGroupServiceTest {
     @Test
     void 테이블_그룹을_생성한다() {
         // given
-        List<OrderTable> orderTables = 저장된_기본_주문_테이블들();
-        TableGroup tableGroup = new TableGroup(null, null, orderTables);
+        List<OrderTableRequest> orderTables = 저장된_기본_주문_테이블들_id_요청();
+        TableGroupCreateRequest request = new TableGroupCreateRequest(orderTables);
 
         // when
-        TableGroup actual = tableGroupService.create(tableGroup);
+        TableGroupResponse actual = tableGroupService.create(request);
 
         // then
-        OrderTable expectedOrderTable1 = new OrderTable(orderTables.get(0).getId(), actual.getId(), 0, false);
-        OrderTable expectedOrderTable2 = new OrderTable(orderTables.get(1).getId(), actual.getId(), 0, false);
+        OrderTableResponse response1 = new OrderTableResponse(orderTables.get(0).getId(), actual.getId(), 0, false);
+        OrderTableResponse response2 = new OrderTableResponse(orderTables.get(1).getId(), actual.getId(), 0, false);
 
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
@@ -55,16 +58,16 @@ class TableGroupServiceTest {
                         new TemporalUnitWithinOffset(1, ChronoUnit.SECONDS)),
                 () -> assertThat(actual.getOrderTables())
                         .usingRecursiveComparison()
-                        .isEqualTo(Arrays.asList(expectedOrderTable1, expectedOrderTable2))
+                        .isEqualTo(Arrays.asList(response1, response2))
         );
     }
 
     @Test
     void 주문_테이블_개수가_2개_미만이면_테이블_그룹으로_생성할_수_없다() {
         // given
-        List<OrderTable> invalidOrderTable = Collections.singletonList(new OrderTable(null, null, 0, false));
+        List<OrderTableRequest> invalidOrderTable = Collections.singletonList(new OrderTableRequest(1L));
 
-        TableGroup tableGroup = new TableGroup(null, null, invalidOrderTable);
+        TableGroupCreateRequest tableGroup = new TableGroupCreateRequest(invalidOrderTable);
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -74,39 +77,39 @@ class TableGroupServiceTest {
     @Test
     void 등록되지_않은_테이블은_테이블_그룹으로_생성할_수_없다() {
         // given
-        List<OrderTable> invalidOrderTables = 저장된_기본_주문_테이블들();
-        invalidOrderTables.add(new OrderTable(null, null, 0, false));
+        List<OrderTableRequest> invalidOrderTables = 저장된_기본_주문_테이블들_id_요청();
+        invalidOrderTables.add(new OrderTableRequest(-1L));
 
-        TableGroup tableGroup = new TableGroup(null, null, invalidOrderTables);
+        TableGroupCreateRequest request = new TableGroupCreateRequest(invalidOrderTables);
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문_테이블이_빈_상태가_아니면_테이블_그룹으로_생성할_수_없다() {
         // given
-        List<OrderTable> invalidOrderTables = 저장된_기본_주문_테이블들();
-        OrderTable invalidOrderTable = new OrderTable(null, null, 0, false);
-        invalidOrderTables.add(orderTableDao.save(invalidOrderTable));
+        final List<OrderTableRequest> invalidOrderTables = 저장된_기본_주문_테이블들_id_요청();
+        final OrderTable orderTable = orderTableDao.save(new OrderTable(null, null, 0, false));
+        invalidOrderTables.add(new OrderTableRequest(orderTable.getId()));
 
-        TableGroup tableGroup = new TableGroup(null, null, invalidOrderTables);
+        TableGroupCreateRequest request = new TableGroupCreateRequest(invalidOrderTables);
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문_테이블이_다른_테이블_그룹에_등록되어있다면_테이블_그룹으로_생성할_수_없다() {
         // given
-        List<OrderTable> orderTables = 저장된_기본_주문_테이블들();
-        TableGroup tableGroup = new TableGroup(null, null, orderTables);
-        TableGroup tableGroup1 = tableGroupService.create(tableGroup);
+        List<OrderTableRequest> orderTables = 저장된_기본_주문_테이블들_id_요청();
+        TableGroupCreateRequest tableGroup = new TableGroupCreateRequest(orderTables);
+        tableGroupService.create(tableGroup);
 
         // when
-        TableGroup tableGroup2 = new TableGroup(null, null, tableGroup1.getOrderTables());
+        TableGroupCreateRequest tableGroup2 = new TableGroupCreateRequest(orderTables);
 
         // then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup2))
@@ -116,13 +119,12 @@ class TableGroupServiceTest {
     @Test
     void 테이블_그룹을_삭제한다() {
         // given
-        List<OrderTable> orderTables = Arrays.asList(
-                getOrderedOrderTable(OrderStatus.COMPLETION.name()),
-                getOrderedOrderTable(OrderStatus.COMPLETION.name())
+        List<OrderTableRequest> orderTables = Arrays.asList(
+                생성된_orderTable_createRequest(OrderStatus.COMPLETION.name()),
+                생성된_orderTable_createRequest(OrderStatus.COMPLETION.name())
         );
 
-        TableGroup tableGroup = new TableGroup(null, null, orderTables);
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupResponse savedTableGroup = tableGroupService.create(new TableGroupCreateRequest(orderTables));
 
         // when
         tableGroupService.ungroup(savedTableGroup.getId());
@@ -132,10 +134,10 @@ class TableGroupServiceTest {
                 () -> assertThat(orderTableDao.findAllByTableGroupId(savedTableGroup.getId())).isEmpty(),
                 () -> assertThat(orderTableDao.findAllByIdIn(
                         orderTables.stream()
-                                .map(OrderTable::getId)
+                                .map(OrderTableRequest::getId)
                                 .collect(Collectors.toList())
                 )).isEqualTo(Arrays.asList(new OrderTable(orderTables.get(0).getId(), null, 0, false),
-                                new OrderTable(orderTables.get(1).getId(), null, 0, false)))
+                        new OrderTable(orderTables.get(1).getId(), null, 0, false)))
         );
     }
 
@@ -143,28 +145,30 @@ class TableGroupServiceTest {
     @ValueSource(strings = {"COOKING", "MEAL"})
     void 테이블_그룹에_속한_테이블이_조리중이거나_식사중인_상태라면_테이블_그룹을_삭제할_수_없다(String orderStatus) {
         // given
-        List<OrderTable> orderTables = Arrays.asList(
-                getOrderedOrderTable(orderStatus),
-                getOrderedOrderTable(OrderStatus.COMPLETION.name())
+        List<OrderTableRequest> orderTables = Arrays.asList(
+                생성된_orderTable_createRequest(orderStatus),
+                생성된_orderTable_createRequest(OrderStatus.COMPLETION.name())
         );
 
-        TableGroup tableGroup = new TableGroup(null, null, orderTables);
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupResponse savedTableGroup = tableGroupService.create(new TableGroupCreateRequest(orderTables));
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private List<OrderTable> 저장된_기본_주문_테이블들() {
+    private List<OrderTableRequest> 저장된_기본_주문_테이블들_id_요청() {
         OrderTable orderTable = new OrderTable(null, null, 0, true);
         OrderTable orderTable1 = orderTableDao.save(orderTable);
         OrderTable orderTable2 = orderTableDao.save(orderTable);
 
-        return new ArrayList<>(Arrays.asList(orderTable1, orderTable2));
+        return new ArrayList<>(Arrays.asList(
+                new OrderTableRequest(orderTable1.getId()),
+                new OrderTableRequest(orderTable2.getId())
+        ));
     }
 
-    private OrderTable getOrderedOrderTable(String orderStatus) {
+    private OrderTableRequest 생성된_orderTable_createRequest(String orderStatus) {
         OrderTable orderTable = new OrderTable(null, null, 0, true);
         OrderTable emptyOrderTable = orderTableDao.save(orderTable);
 
@@ -173,6 +177,6 @@ class TableGroupServiceTest {
         order.setOrderStatus(orderStatus);
         order.setOrderedTime(LocalDateTime.now());
         orderDao.save(order);
-        return emptyOrderTable;
+        return new OrderTableRequest(emptyOrderTable.getId());
     }
 }

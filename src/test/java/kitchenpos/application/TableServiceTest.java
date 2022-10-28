@@ -100,11 +100,12 @@ class TableServiceTest {
     @Test
     void 이미_테이블_그룹에_속한_주문_테이블의_상태를_변경할_수_없다() {
         // given
-        TableGroup tableGroup = new TableGroup(null, LocalDateTime.now(), null);
+        TableGroup tableGroup = new TableGroup(null, LocalDateTime.now());
         TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         OrderTable orderTable = new OrderTable(null, savedTableGroup.getId(), 0, false);
         OrderTable invalidOrderTable = orderTableDao.save(orderTable);
+
 
         // when & then
         assertThatThrownBy(
