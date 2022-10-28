@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class MenuService {
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
@@ -44,7 +45,7 @@ public class MenuService {
         final List<MenuProductRequest> menuProducts = request.getMenuProducts();
         if (request.getPrice()
                 .compareTo(getMenuProductTotalPrice(menuProducts)) > 0) {
-            throw new IllegalArgumentException("주문 가격은 음수가 될 수 없습니다.");
+            throw new IllegalArgumentException("주문 총 금액이 메뉴 가격보다 작습니다.");
         }
         return createMenu(request, menuProducts);
     }
