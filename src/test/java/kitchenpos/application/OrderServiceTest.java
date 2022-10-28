@@ -15,12 +15,12 @@ import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.application.response.OrderResponse;
 import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderLineItemRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,11 +50,14 @@ class OrderServiceTest {
     private OrderLineItemDao orderLineItemDao;
 
     @Autowired
+    private OrderLineItemRepository orderLineItemRepository;
+
+    @Autowired
     private OrderTableDao orderTableDao;
 
     @BeforeEach
     void setUp() {
-        sut = new OrderService(menuRepository, orderDao, orderLineItemDao, orderTableDao);
+        sut = new OrderService(menuRepository, orderDao, orderLineItemRepository, orderTableDao);
         tableService = new TableService(orderDao, orderTableDao);
     }
 
