@@ -91,11 +91,11 @@ class MenuServiceTest extends ServiceTest {
         void 상품들의_가격의_합이_메뉴_가격보다_크면_예외가_발생한다() {
             // given
             MenuProductCreateRequest menuProduct1 = new MenuProductCreateRequest(상품을_저장한다("상품 1", 1000).getId(), 1L);
-            MenuProductCreateRequest menuProduct2 = new MenuProductCreateRequest(상품을_저장한다("상품 2", 2000).getId(), 1L);
+            MenuProductCreateRequest menuProduct2 = new MenuProductCreateRequest(상품을_저장한다("상품 2", 2000).getId(), 3L);
             MenuGroup menuGroup = 메뉴_그룹을_저장한다("메뉴 그룹");
 
             MenuCreateRequest menu = new MenuCreateRequest(
-                    "메뉴", BigDecimal.valueOf(5000), menuGroup.getId(), List.of(menuProduct1, menuProduct2));
+                    "메뉴", BigDecimal.valueOf(8000), menuGroup.getId(), List.of(menuProduct1, menuProduct2));
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))

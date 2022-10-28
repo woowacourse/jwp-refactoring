@@ -23,12 +23,8 @@ public class MenuResponse {
     }
 
     public static MenuResponse from(Menu menu) {
-        return of(menu, menu.getMenuProducts());
-    }
-
-    public static MenuResponse of(Menu menu, List<MenuProduct> menuProducts) {
         return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(),
-                toMenuProductResponses(menuProducts));
+                toMenuProductResponses(menu.getMenuProducts()));
     }
 
     private static List<MenuProductResponse> toMenuProductResponses(List<MenuProduct> menuProducts) {

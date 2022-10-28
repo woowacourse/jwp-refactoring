@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuGroupService {
+
     private final MenuGroupDao menuGroupDao;
 
     public MenuGroupService(MenuGroupDao menuGroupDao) {
@@ -26,6 +27,10 @@ public class MenuGroupService {
     public List<MenuGroupResponse> list() {
         List<MenuGroup> menuGroups = menuGroupDao.findAll();
 
+        return toMenuGroupResponses(menuGroups);
+    }
+
+    private List<MenuGroupResponse> toMenuGroupResponses(List<MenuGroup> menuGroups) {
         return menuGroups.stream()
                 .map(MenuGroupResponse::from)
                 .collect(Collectors.toList());

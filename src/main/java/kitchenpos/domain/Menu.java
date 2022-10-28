@@ -3,8 +3,10 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Menu {
+
     private final Long id;
     private final String name;
     private final BigDecimal price;
@@ -12,11 +14,19 @@ public class Menu {
     private final List<MenuProduct> menuProducts;
 
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        validatePrice(price);
+
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts; // TODO: 불변으로
+        this.menuProducts = new ArrayList<>(menuProducts);
+    }
+
+    private void validatePrice(BigDecimal price) {
+        if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
