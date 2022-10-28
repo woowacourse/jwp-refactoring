@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.RepositoryTest;
 import kitchenpos.application.request.ProductRequest;
 import kitchenpos.application.response.ProductResponse;
 import kitchenpos.domain.Product;
@@ -13,9 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@DataJpaTest
+@RepositoryTest
 class ProductServiceTest {
 
     private ProductService sut;
