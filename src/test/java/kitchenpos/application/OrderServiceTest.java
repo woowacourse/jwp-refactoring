@@ -5,14 +5,20 @@ import static kitchenpos.application.fixture.OrderFixture.ORDER_LINE_ITEMS;
 import static kitchenpos.application.fixture.OrderFixture.ORDER_TABLE_EMPTY_ID;
 import static kitchenpos.application.fixture.OrderFixture.ORDER_TABLE_NOT_EMPTY_ID;
 import static kitchenpos.application.fixture.OrderFixture.UNSAVED_ORDER;
+import static kitchenpos.application.fixture.OrderTableFixture.NUMBER_OF_GUEST;
+import static kitchenpos.application.fixture.OrderTableFixture.makeOrderTable;
+import static kitchenpos.application.fixture.TableGroupFixture.TABLE_GROUP_ID_FOR_TEST;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Optional;
 import java.util.stream.Stream;
+import kitchenpos.application.fixture.OrderTableFixture;
+import kitchenpos.application.fixture.TableGroupFixture;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,10 +35,14 @@ class OrderServiceTest extends ServiceTest {
     @Autowired
     private OrderDao orderDao;
 
+    @Autowired
+    private TableService tableService;
+
     @DisplayName("주문을 생성한다.")
     @Test
     void create() {
-        Order savedOrder = orderService.create(UNSAVED_ORDER);
+        OrderTable savedOrderTable = tableService.create(makeOrderTable(NUMBER_OF_GUEST, false, TABLE_GROUP_ID_FOR_TEST));
+        Order savedOrder = orderService.create(new Order(savedOrderTable.getId(), ORDER_LINE_ITEMS));
         Optional<Order> foundOrder = orderDao.findById(savedOrder.getId());
 
         assertThat(foundOrder).isPresent();
@@ -42,7 +52,8 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void list() {
         int numberOfSavedOrderBeforeCreate = orderService.list().size();
-        orderService.create(UNSAVED_ORDER);
+        OrderTable savedOrderTable = tableService.create(makeOrderTable(NUMBER_OF_GUEST, false, TABLE_GROUP_ID_FOR_TEST));
+        orderService.create(new Order(savedOrderTable.getId(), ORDER_LINE_ITEMS));
 
         int numberOfSavedOrder = orderService.list().size();
 
@@ -76,7 +87,8 @@ class OrderServiceTest extends ServiceTest {
     @ParameterizedTest
     @CsvSource({"COOKING", "MEAL", "COMPLETION"})
     void changeOrderStatus(String orderStatus) {
-        Order savedOrder = orderService.create(UNSAVED_ORDER);
+        OrderTable savedOrderTable = tableService.create(makeOrderTable(NUMBER_OF_GUEST, false, TABLE_GROUP_ID_FOR_TEST));
+        Order savedOrder = orderService.create(new Order(savedOrderTable.getId(), ORDER_LINE_ITEMS));
         UNSAVED_ORDER.setOrderStatus(orderStatus);
         orderService.changeOrderStatus(savedOrder.getId(), UNSAVED_ORDER);
         Order foundOrder = orderService.list().stream()
@@ -89,7 +101,8 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 상태는 COOKING, MEAL, COMPLETION 뿐인다. 이외의 값은 예외가 발생한다.")
     @Test
     void changeOrderStatus_Exception_Invalid_Value() {
-        Order savedOrder = orderService.create(UNSAVED_ORDER);
+        OrderTable savedOrderTable = tableService.create(makeOrderTable(NUMBER_OF_GUEST, false, TABLE_GROUP_ID_FOR_TEST));
+        Order savedOrder = orderService.create(new Order(savedOrderTable.getId(), ORDER_LINE_ITEMS));
         UNSAVED_ORDER.setOrderStatus("WRONG_STATUS");
         assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), UNSAVED_ORDER))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -98,7 +111,8 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("완료 상태의 주문은 상태를 바꿀 수 없다.")
     @Test
     void changeOrderStatus_Excpetion_Change_Unavailable() {
-        Order savedOrder = orderService.create(UNSAVED_ORDER);
+        OrderTable savedOrderTable = tableService.create(makeOrderTable(NUMBER_OF_GUEST, false, TABLE_GROUP_ID_FOR_TEST));
+        Order savedOrder = orderService.create(new Order(savedOrderTable.getId(), ORDER_LINE_ITEMS));
         UNSAVED_ORDER.setOrderStatus(OrderStatus.COMPLETION.name());
         orderService.changeOrderStatus(savedOrder.getId(), UNSAVED_ORDER);
         UNSAVED_ORDER.equals(OrderStatus.COOKING.name());

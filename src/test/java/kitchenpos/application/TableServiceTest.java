@@ -1,11 +1,10 @@
 package kitchenpos.application;
 
 import static kitchenpos.application.fixture.OrderFixture.UNSAVED_ORDER;
-import static kitchenpos.application.fixture.OrderTableFixture.SAVED_ORDER_TABLE_EMPTY_FIRST;
-import static kitchenpos.application.fixture.OrderTableFixture.SAVED_ORDER_TABLE_NOT_EMPTY_FIRST;
-import static kitchenpos.application.fixture.OrderTableFixture.UNSAVED_ORDER_TABLE_EMPTY;
-import static kitchenpos.application.fixture.OrderTableFixture.UNSAVED_ORDER_TABLE_NOT_EMPTY;
-import static kitchenpos.application.fixture.TableGroupFixture.SAVED_TABLE_GROUP;
+import static kitchenpos.application.fixture.OrderTableFixture.INVALID_NUMBER_OF_GUEST;
+import static kitchenpos.application.fixture.OrderTableFixture.NUMBER_OF_GUEST;
+import static kitchenpos.application.fixture.OrderTableFixture.makeOrderTable;
+import static kitchenpos.application.fixture.TableGroupFixture.TABLE_GROUP_ID_FOR_TEST;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -43,8 +42,8 @@ class TableServiceTest extends ServiceTest {
 
     static Stream<Arguments> argsOfCreate() {
         return Stream.of(
-                Arguments.of(UNSAVED_ORDER_TABLE_EMPTY),
-                Arguments.of(UNSAVED_ORDER_TABLE_NOT_EMPTY)
+                Arguments.of(makeOrderTable(NUMBER_OF_GUEST, true, TABLE_GROUP_ID_FOR_TEST)),
+                Arguments.of(makeOrderTable(NUMBER_OF_GUEST, false, TABLE_GROUP_ID_FOR_TEST))
         );
     }
 
@@ -52,7 +51,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void list() {
         int numberOfSavedTableBeforeCreate = tableService.list().size();
-        tableService.create(UNSAVED_ORDER_TABLE_EMPTY);
+        tableService.create(makeOrderTable(NUMBER_OF_GUEST, true, TABLE_GROUP_ID_FOR_TEST));
 
         int numberOfSavedTable = tableService.list().size();
 
@@ -62,50 +61,61 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블을 empty상태로 바꾼다.")
     @Test
     void changeEmpty() {
-        OrderTable savedTable = tableService.create(UNSAVED_ORDER_TABLE_NOT_EMPTY);
-        tableService.changeEmpty(savedTable.getId(), UNSAVED_ORDER_TABLE_EMPTY);
+        OrderTable savedTable = tableService.create(makeOrderTable(NUMBER_OF_GUEST, false, TABLE_GROUP_ID_FOR_TEST));
+        OrderTable changedOrderTable = tableService.changeEmpty(savedTable.getId(),
+                makeOrderTable(NUMBER_OF_GUEST, true, null));
+
+        assertThat(changedOrderTable.isEmpty()).isTrue();
     }
 
     @DisplayName("테이블 그룹에 테이블이 속해있을떄 empty상태로 바꾸면 예외가 발생한다.")
     @Test
     void changeEmpty_Exception_TableGroup() {
-        UNSAVED_ORDER_TABLE_NOT_EMPTY.setTableGroupId(SAVED_TABLE_GROUP.getId());
-        OrderTable savedTable = orderTableDao.save(UNSAVED_ORDER_TABLE_NOT_EMPTY);
-        assertThatThrownBy(() -> tableService.changeEmpty(savedTable.getId(), UNSAVED_ORDER_TABLE_EMPTY))
+        OrderTable orderTable = makeOrderTable(NUMBER_OF_GUEST, false, TABLE_GROUP_ID_FOR_TEST);
+        OrderTable savedTable = orderTableDao.save(orderTable);
+        assertThatThrownBy(
+                () -> tableService.changeEmpty(savedTable.getId(), makeOrderTable(NUMBER_OF_GUEST, true, null)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블과 관련된 주문이 모두 완료상태가 아닐떄 테이블을 empty로 바꾸면 예외가 발생한다.")
     @Test
     void changeEmpty_Exception_Order_Not_Completion() {
-        UNSAVED_ORDER.setOrderTableId(SAVED_ORDER_TABLE_NOT_EMPTY_FIRST.getId());
+        OrderTable orderTable = makeOrderTable(NUMBER_OF_GUEST, false, null);
+        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        UNSAVED_ORDER.setOrderTableId(savedOrderTable.getId());
         orderService.create(UNSAVED_ORDER);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(SAVED_ORDER_TABLE_NOT_EMPTY_FIRST.getId(), SAVED_ORDER_TABLE_EMPTY_FIRST))
+        assertThatThrownBy(
+                () -> tableService.changeEmpty(orderTable.getId(), makeOrderTable(NUMBER_OF_GUEST, true, null)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블 손님 수를 변경한다.")
     @Test
     void changeNumberOfGuests() {
-        OrderTable changedOrderTable = tableService.changeNumberOfGuests(SAVED_ORDER_TABLE_NOT_EMPTY_FIRST.getId(),
-                UNSAVED_ORDER_TABLE_NOT_EMPTY);
+        OrderTable savedOrderTable = orderTableDao.save(makeOrderTable(NUMBER_OF_GUEST, false, null));
+        OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(),
+                makeOrderTable(NUMBER_OF_GUEST + 1, false, null));
 
-        assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(UNSAVED_ORDER_TABLE_NOT_EMPTY.getNumberOfGuests());
+        assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(NUMBER_OF_GUEST + 1);
     }
 
     @DisplayName("EMPTY상태의 테이블 손님 수를 변경하면 예외가 발생한다.")
     @Test
     void changeNumberOfGuests_Exception_Empty_Table() {
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(SAVED_ORDER_TABLE_EMPTY_FIRST.getId(), UNSAVED_ORDER_TABLE_NOT_EMPTY))
+        OrderTable orderTable = makeOrderTable(NUMBER_OF_GUEST, true, null);
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(),
+                makeOrderTable(NUMBER_OF_GUEST + 1, false, null)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블 손님 수를 0미만으로 변경하면 예외가 발생한다.")
     @Test
     void changeNumberOfGuests_Exception_Invalid_Number() {
-        UNSAVED_ORDER_TABLE_NOT_EMPTY.setNumberOfGuests(-1);
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(SAVED_ORDER_TABLE_NOT_EMPTY_FIRST.getId(), UNSAVED_ORDER_TABLE_NOT_EMPTY))
+        OrderTable orderTable = makeOrderTable(NUMBER_OF_GUEST, false, null);
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(),
+                makeOrderTable(INVALID_NUMBER_OF_GUEST, false, null)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
