@@ -9,7 +9,7 @@
         - [x] MenuRestController
         - [ ] OrderRestController
         - [x] ProductRestController
-        - [ ] TableGroupRestController
+        - [x] TableGroupRestController
         - [ ] TableRestController
 2. 서비스 로직 코드 분리
     - Domain의 예외 검증 로직을 Domain으로 이동

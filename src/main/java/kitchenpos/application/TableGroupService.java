@@ -75,9 +75,14 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
 
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
+        List<OrderTable> updateOrderTables = orderTables.stream()
+                .map(orderTable -> new OrderTable(orderTable.getId(),
+                        null,
+                        orderTable.getNumberOfGuests(),
+                        false))
+                .collect(Collectors.toList());
+
+        for (final OrderTable orderTable : updateOrderTables) {
             orderTableDao.save(orderTable);
         }
     }
