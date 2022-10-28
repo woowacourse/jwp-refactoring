@@ -70,6 +70,7 @@ public abstract class ServiceTest {
     @Autowired
     protected ProductDao productDao;
 
+    @Qualifier("tableGroupRepository")
     @Autowired
     protected TableGroupDao tableGroupDao;
 
