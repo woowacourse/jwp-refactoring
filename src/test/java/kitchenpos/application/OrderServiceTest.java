@@ -86,16 +86,15 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 상태를 변경한다.")
     @ParameterizedTest
     @CsvSource({"COOKING", "MEAL", "COMPLETION"})
-    void changeOrderStatus(String orderStatus) {
+    void changeOrderStatus(String orderStatusName) {
         OrderTable savedOrderTable = tableService.create(makeOrderTable(NUMBER_OF_GUEST, false, TABLE_GROUP_ID_FOR_TEST));
         Order savedOrder = orderService.create(new Order(savedOrderTable.getId(), ORDER_LINE_ITEMS));
-        UNSAVED_ORDER.setOrderStatus(orderStatus);
-        orderService.changeOrderStatus(savedOrder.getId(), UNSAVED_ORDER);
+        orderService.changeOrderStatus(savedOrder.getId(), orderStatusName);
         Order foundOrder = orderService.list().stream()
                 .filter(it -> savedOrder.getId().equals(it.getId()))
                 .findAny().get();
 
-        assertThat(foundOrder.getOrderStatus()).isEqualTo(orderStatus);
+        assertThat(foundOrder.getOrderStatus().getValue()).isEqualTo(orderStatusName);
     }
 
     @DisplayName("주문 상태는 COOKING, MEAL, COMPLETION 뿐인다. 이외의 값은 예외가 발생한다.")
@@ -103,8 +102,7 @@ class OrderServiceTest extends ServiceTest {
     void changeOrderStatus_Exception_Invalid_Value() {
         OrderTable savedOrderTable = tableService.create(makeOrderTable(NUMBER_OF_GUEST, false, TABLE_GROUP_ID_FOR_TEST));
         Order savedOrder = orderService.create(new Order(savedOrderTable.getId(), ORDER_LINE_ITEMS));
-        UNSAVED_ORDER.setOrderStatus("WRONG_STATUS");
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), UNSAVED_ORDER))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), "WRONG_ORDER_STATUS_NAME"))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -113,17 +111,16 @@ class OrderServiceTest extends ServiceTest {
     void changeOrderStatus_Excpetion_Change_Unavailable() {
         OrderTable savedOrderTable = tableService.create(makeOrderTable(NUMBER_OF_GUEST, false, TABLE_GROUP_ID_FOR_TEST));
         Order savedOrder = orderService.create(new Order(savedOrderTable.getId(), ORDER_LINE_ITEMS));
-        UNSAVED_ORDER.setOrderStatus(OrderStatus.COMPLETION.name());
-        orderService.changeOrderStatus(savedOrder.getId(), UNSAVED_ORDER);
+        orderService.changeOrderStatus(savedOrder.getId(), OrderStatus.COMPLETION.name());
         UNSAVED_ORDER.equals(OrderStatus.COOKING.name());
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), UNSAVED_ORDER))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), OrderStatus.MEAL.name()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("존재하지 않은 주문의 상태를 변경하려 하면 예외가 발생한다.")
     @Test
     void changeOrderStatus_Exception_Invalid_Order() {
-        assertThatThrownBy(() -> orderService.changeOrderStatus(INVALID_ORDER_ID, UNSAVED_ORDER))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(INVALID_ORDER_ID, OrderStatus.MEAL.name()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

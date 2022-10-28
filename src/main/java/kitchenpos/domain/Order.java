@@ -7,11 +7,11 @@ import java.util.Objects;
 public class Order {
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
+    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
@@ -20,11 +20,8 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
-        this.id = id;
-        this.orderTableId = orderTableId;
-        this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
+    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        this(id, orderTableId, orderStatus, orderedTime, null);
     }
 
     public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
@@ -39,7 +36,7 @@ public class Order {
         return orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
@@ -51,11 +48,11 @@ public class Order {
         return orderLineItems;
     }
 
-    public void changeOrderStatus(String orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
             throw new IllegalArgumentException();
         }
-        this.orderStatus = OrderStatus.valueOf(orderStatus).name();
+        this.orderStatus = orderStatus;
     }
 
     public void initOrderedTime() {
@@ -67,7 +64,7 @@ public class Order {
     }
 
     public void initOrderStatus() {
-        this.orderStatus = OrderStatus.COOKING.name();
+        this.orderStatus = OrderStatus.COOKING;
     }
 
     public void setOrderLineItems(List<OrderLineItem> orderLineItems) {

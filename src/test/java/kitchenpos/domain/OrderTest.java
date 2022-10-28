@@ -15,18 +15,18 @@ class OrderTest {
     @Test
     void changeOrderStatus() {
         Order order = new Order(ORDER_TABLE_NOT_EMPTY_ID, ORDER_LINE_ITEMS);
-        order.changeOrderStatus(OrderStatus.MEAL.name());
+        order.changeOrderStatus(OrderStatus.MEAL);
 
-        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+        assertThat(order.getOrderStatus().getValue()).isEqualTo(OrderStatus.MEAL.name());
     }
 
     @DisplayName("주문이 완료상태이면 상태변경을 할 수 없다.")
     @Test
     void changeOrderStatus_Exception_Already_Complete() {
         Order order = new Order(ORDER_TABLE_NOT_EMPTY_ID, ORDER_LINE_ITEMS);
-        order.changeOrderStatus(OrderStatus.COMPLETION.name());
+        order.changeOrderStatus(OrderStatus.COMPLETION);
 
-        assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.MEAL.name()))
+        assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.MEAL))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -34,7 +34,7 @@ class OrderTest {
     @Test
     void changeOrderStatus_Exception_Invalid_Status() {
         Order order = new Order(ORDER_TABLE_NOT_EMPTY_ID, ORDER_LINE_ITEMS);
-        assertThatThrownBy(() -> order.changeOrderStatus("WRONG_STATUS"))
+        assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.valueOf("WRONG_STATUS")))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

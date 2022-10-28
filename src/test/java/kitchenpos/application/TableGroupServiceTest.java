@@ -58,13 +58,13 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void ungroup() {
         Order completionOrder = mock(Order.class);
-        when(completionOrder.getOrderStatus()).thenReturn(OrderStatus.COMPLETION.name());
+        when(completionOrder.getOrderStatus()).thenReturn(OrderStatus.COMPLETION);
 
         List<OrderTable> orderTables = SAVED_TABLE_GROUP.getOrderTables();
         OrderTable orderTable = orderTables.get(0);
         Order order = new Order(orderTable.getId(), ORDER_LINE_ITEMS);
         Order savedOrder = orderService.create(order);
-        orderService.changeOrderStatus(savedOrder.getId(), completionOrder);
+        orderService.changeOrderStatus(savedOrder.getId(), completionOrder.getOrderStatus().name());
         tableGroupService.ungroup(SAVED_TABLE_GROUP.getId());
 
         List<OrderTable> ungroupOrderTables = SAVED_TABLE_GROUP.getOrderTables();
