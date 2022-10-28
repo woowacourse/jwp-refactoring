@@ -10,16 +10,16 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuGroupRepository;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
 import org.junit.jupiter.api.Test;
@@ -51,13 +51,15 @@ class OrderServiceTest extends ServiceTest {
 
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
 
-        MenuProduct menuProduct1 = new MenuProduct(1L, null, product1.getId(), 1);
-        MenuProduct menuProduct2 = new MenuProduct(1L, null, product2.getId(), 2);
+        MenuProduct menuProduct1 = new MenuProduct(product1.getId(), 1);
+        MenuProduct menuProduct2 = new MenuProduct(product2.getId(), 2);
+        MenuProduct menuProduct3 = new MenuProduct(product2.getId(), 2);
+        MenuProduct menuProduct4 = new MenuProduct(product2.getId(), 2);
 
         Menu menu1 = menuRepository.save(new Menu("메뉴1", new BigDecimal(40000), menuGroup,
                 List.of(menuProduct1, menuProduct2)));
         Menu menu2 = menuRepository.save(new Menu("메뉴2", new BigDecimal(40000), menuGroup,
-                List.of(menuProduct1, menuProduct2)));
+                List.of(menuProduct3, menuProduct4)));
 
         OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
 
@@ -91,13 +93,15 @@ class OrderServiceTest extends ServiceTest {
 
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
 
-        MenuProduct menuProduct1 = new MenuProduct(1L, null, product1.getId(), 1);
-        MenuProduct menuProduct2 = new MenuProduct(1L, null, product2.getId(), 2);
+        MenuProduct menuProduct1 = new MenuProduct(product1.getId(), 1);
+        MenuProduct menuProduct2 = new MenuProduct(product2.getId(), 2);
+        MenuProduct menuProduct3 = new MenuProduct(product2.getId(), 2);
+        MenuProduct menuProduct4 = new MenuProduct(product2.getId(), 2);
 
         Menu menu1 = menuRepository.save(new Menu("메뉴1", new BigDecimal(40000), menuGroup,
                 List.of(menuProduct1, menuProduct2)));
         Menu menu2 = menuRepository.save(new Menu("메뉴2", new BigDecimal(40000), menuGroup,
-                List.of(menuProduct1, menuProduct2)));
+                List.of(menuProduct3, menuProduct4)));
 
         OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, true));
 

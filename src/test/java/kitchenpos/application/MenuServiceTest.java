@@ -7,11 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuGroupRepository;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuRepository;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
 import org.junit.jupiter.api.Test;
@@ -35,10 +35,10 @@ class MenuServiceTest extends ServiceTest {
         Product product1 = productRepository.save(new Product("상품1", new BigDecimal(10000)));
         Product product2 = productRepository.save(new Product("상품2", new BigDecimal(20000)));
 
-        MenuProduct menuProduct1 = new MenuProduct(1L, null, product1.getId(), 2);
-        MenuProduct menuProduct2 = new MenuProduct(2L, null, product2.getId(), 1);
-
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
+
+        MenuProduct menuProduct1 = new MenuProduct(product1.getId(), 2);
+        MenuProduct menuProduct2 = new MenuProduct(product2.getId(), 1);
 
         Menu menu = new Menu("메뉴", new BigDecimal(35000), menuGroup, List.of(menuProduct1, menuProduct2));
 
@@ -67,8 +67,8 @@ class MenuServiceTest extends ServiceTest {
         Product product1 = productRepository.save(new Product("상품1", new BigDecimal(10000)));
         Product product2 = productRepository.save(new Product("상품2", new BigDecimal(20000)));
 
-        MenuProduct menuProduct1 = new MenuProduct(1L, null, product1.getId(), 2);
-        MenuProduct menuProduct2 = new MenuProduct(2L, null, product2.getId(), 1);
+        MenuProduct menuProduct1 = new MenuProduct(product1.getId(), 2);
+        MenuProduct menuProduct2 = new MenuProduct(product2.getId(), 1);
 
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
 
@@ -82,13 +82,15 @@ class MenuServiceTest extends ServiceTest {
         Product product1 = productRepository.save(new Product("상품1", new BigDecimal(10000)));
         Product product2 = productRepository.save(new Product("상품2", new BigDecimal(20000)));
 
-        MenuProduct menuProduct1 = new MenuProduct(1L, null, product1.getId(), 2);
-        MenuProduct menuProduct2 = new MenuProduct(2L, null, product2.getId(), 1);
-
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
 
+        MenuProduct menuProduct1 = new MenuProduct(product1.getId(), 2);
+        MenuProduct menuProduct2 = new MenuProduct(product2.getId(), 1);
+        MenuProduct menuProduct3 = new MenuProduct(product2.getId(), 1);
+        MenuProduct menuProduct4 = new MenuProduct(product2.getId(), 1);
+
         Menu menu1 = new Menu("메뉴1", new BigDecimal(35000), menuGroup, List.of(menuProduct1, menuProduct2));
-        Menu menu2 = new Menu("메뉴2", new BigDecimal(38000), menuGroup, List.of(menuProduct1, menuProduct2));
+        Menu menu2 = new Menu("메뉴2", new BigDecimal(38000), menuGroup, List.of(menuProduct3, menuProduct4));
 
         menuRepository.save(menu1);
         menuRepository.save(menu2);
