@@ -1,11 +1,11 @@
 package kitchenpos.application.dto.response;
 
-public class MenuGroupResponseDto {
+public class MenuGroupResponse {
 
     private final Long id;
     private final String name;
 
-    public MenuGroupResponseDto(Long id, String name) {
+    public MenuGroupResponse(Long id, String name) {
         this.id = id;
         this.name = name;
     }

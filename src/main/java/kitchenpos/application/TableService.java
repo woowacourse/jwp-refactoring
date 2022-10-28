@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.application.dto.request.OrderTableChangeNumberOfGuestRequest;
-import kitchenpos.application.dto.request.OrderTableCreateRequestDto;
+import kitchenpos.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
@@ -23,7 +23,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTableCreateRequestDto dto) {
+    public OrderTable create(final OrderTableCreateRequest dto) {
         final OrderTable orderTable = new OrderTable(dto.getNumberOfGuests(), dto.isEmpty());
         return orderTableDao.save(orderTable);
     }

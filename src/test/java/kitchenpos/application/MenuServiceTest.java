@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.application.dto.request.MenuCreateRequest;
-import kitchenpos.application.dto.response.MenuResponseDto;
+import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -63,7 +63,7 @@ class MenuServiceTest {
         //when
         MenuCreateRequest dto = new MenuCreateRequest("후라이드", BigDecimal.valueOf(19000), 1L,
                 List.of(MENU_PRODUCT));
-        MenuResponseDto savedMenu = menuService.create(dto);
+        MenuResponse savedMenu = menuService.create(dto);
 
         //then
         assertThat(savedMenu.getName()).isEqualTo(MENU.getName());
@@ -105,7 +105,7 @@ class MenuServiceTest {
         given(menuDao.findAll()).willReturn(List.of(MENU));
 
         //when
-        List<MenuResponseDto> menus = menuService.list();
+        List<MenuResponse> menus = menuService.list();
 
         //then
         assertThat(menus).hasSize(1);

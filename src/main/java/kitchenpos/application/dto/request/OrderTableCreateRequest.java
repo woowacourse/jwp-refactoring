@@ -1,12 +1,12 @@
 package kitchenpos.application.dto.request;
 
-public class OrderTableCreateRequestDto {
+public class OrderTableCreateRequest {
 
     private int numberOfGuests;
 
     private boolean empty;
 
-    public OrderTableCreateRequestDto(int numberOfGuests, boolean empty) {
+    public OrderTableCreateRequest(int numberOfGuests, boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }

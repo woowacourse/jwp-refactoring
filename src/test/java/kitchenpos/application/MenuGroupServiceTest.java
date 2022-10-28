@@ -8,7 +8,7 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.List;
 import kitchenpos.application.dto.request.MenuGroupCreateRequest;
-import kitchenpos.application.dto.response.MenuGroupResponseDto;
+import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class MenuGroupServiceTest {
 
         //when
         MenuGroupCreateRequest dto = new MenuGroupCreateRequest("추천메뉴");
-        MenuGroupResponseDto savedManuGroup = menuGroupService.create(dto);
+        MenuGroupResponse savedManuGroup = menuGroupService.create(dto);
 
         //then
         assertAll(
@@ -50,7 +50,7 @@ class MenuGroupServiceTest {
                 .willReturn(List.of(MENU_GROUP));
 
         //when
-        List<MenuGroupResponseDto> menuGroups = menuGroupService.list();
+        List<MenuGroupResponse> menuGroups = menuGroupService.list();
 
         //then
         assertThat(menuGroups).hasSize(1);

@@ -9,7 +9,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 import java.util.List;
-import kitchenpos.application.dto.request.OrderTableIdRequestDto;
+import kitchenpos.application.dto.request.OrderTableIdRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -50,8 +50,8 @@ class TableGroupServiceTest {
                 .willReturn(TABLE_GROUP);
 
         //when
-        OrderTableIdRequestDto orderTableDto1 = new OrderTableIdRequestDto(1L);
-        OrderTableIdRequestDto orderTableDto2 = new OrderTableIdRequestDto(2L);
+        OrderTableIdRequest orderTableDto1 = new OrderTableIdRequest(1L);
+        OrderTableIdRequest orderTableDto2 = new OrderTableIdRequest(2L);
         TableGroupCreateRequestDto dto = new TableGroupCreateRequestDto(List.of(orderTableDto1, orderTableDto2));
         TableGroup savedTableGroup = tableGroupService.create(dto);
 

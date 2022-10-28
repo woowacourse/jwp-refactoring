@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.MenuCreateRequest;
-import kitchenpos.application.dto.response.MenuResponseDto;
+import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -36,7 +36,7 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuResponseDto create(final MenuCreateRequest dto) {
+    public MenuResponse create(final MenuCreateRequest dto) {
         final List<MenuProduct> menuProducts = dto.getMenuProducts();
         isExistGroupId(dto);
         isLessThanTotalPrice(menuProducts, dto.getPrice());
@@ -45,7 +45,7 @@ public class MenuService {
         final Menu savedMenu = menuDao.save(menu);
 
         final List<MenuProduct> savedMenuProducts = saveMenuProduct(menuProducts, savedMenu.getId());
-        return new MenuResponseDto(
+        return new MenuResponse(
                 savedMenu.getId(),
                 savedMenu.getName(),
                 savedMenu.getPrice(),
@@ -86,10 +86,10 @@ public class MenuService {
         }
     }
 
-    public List<MenuResponseDto> list() {
+    public List<MenuResponse> list() {
         final List<Menu> menus = menuDao.findAll();
         return menus.stream()
-                .map(menu -> new MenuResponseDto(
+                .map(menu -> new MenuResponse(
                         menu.getId(),
                         menu.getName(),
                         menu.getPrice(),

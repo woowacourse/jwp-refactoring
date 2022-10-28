@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.application.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.application.dto.request.OrderTableChangeNumberOfGuestRequest;
-import kitchenpos.application.dto.request.OrderTableCreateRequestDto;
+import kitchenpos.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
@@ -40,7 +40,7 @@ class TableServiceTest {
                 .willReturn(ORDER_TABLE);
 
         //when
-        OrderTableCreateRequestDto dto = new OrderTableCreateRequestDto(0, true);
+        OrderTableCreateRequest dto = new OrderTableCreateRequest(0, true);
         OrderTable savedOrderTable = tableService.create(dto);
 
         //then

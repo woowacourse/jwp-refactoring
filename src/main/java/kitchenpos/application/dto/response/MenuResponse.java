@@ -5,21 +5,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.MenuProduct;
 
-public class MenuResponseDto {
+public class MenuResponse {
 
     private final Long id;
     private final String name;
     private final BigDecimal price;
     private final Long menuGroupId;
-    private final List<MenuProductResponseDto> menuProducts;
+    private final List<MenuProductResponse> menuProducts;
 
-    public MenuResponseDto(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public MenuResponse(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts.stream()
-                .map(menuProduct -> new MenuProductResponseDto(
+                .map(menuProduct -> new MenuProductResponse(
                         menuProduct.getProductId(),
                         menuProduct.getQuantity()
                 )).collect(Collectors.toList());
@@ -41,7 +41,7 @@ public class MenuResponseDto {
         return menuGroupId;
     }
 
-    public List<MenuProductResponseDto> getMenuProducts() {
+    public List<MenuProductResponse> getMenuProducts() {
         return menuProducts;
     }
 }
