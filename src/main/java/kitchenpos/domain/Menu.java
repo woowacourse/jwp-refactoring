@@ -39,10 +39,21 @@ public class Menu {
                 final BigDecimal price,
                 final MenuGroup menuGroup,
                 final List<MenuProduct> menuProducts) {
+        validateMenuPrice(menuProducts, price);
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
+    }
+
+    private void validateMenuPrice(final List<MenuProduct> menuProducts, final BigDecimal price) {
+        final BigDecimal totalPrice = menuProducts.stream()
+                .map(MenuProduct::getPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        if (price.compareTo(totalPrice) > 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {

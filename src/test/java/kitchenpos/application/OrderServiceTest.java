@@ -39,7 +39,7 @@ class OrderServiceTest {
         class 정상적인_주문이_입력되면 extends ServiceTest {
 
             private final MenuGroup menuGroup = 메뉴_그룹_생성("한마리메뉴");
-            private final Menu menu = 메뉴_생성("치킨", BigDecimal.valueOf(1_000L), 1L, new ArrayList<>());
+            private final Menu menu = 메뉴_생성("치킨", BigDecimal.valueOf(0L), 1L, new ArrayList<>());
             private final OrderTable orderTable = 주문_테이블_생성(null, 5, false);
             private final OrderLineItemRequest orderLineItemRequest = 주문_항목_요청(1L, 1L);
             private final OrderCreateRequest request = 주문_생성_요청(1L, List.of(orderLineItemRequest));
@@ -91,7 +91,7 @@ class OrderServiceTest {
         class 없는_주문_테이블로_주문을_입력하면 extends ServiceTest {
 
             private final MenuGroup menuGroup = 메뉴_그룹_생성("한마리메뉴");
-            private final Menu menu = 메뉴_생성("치킨", BigDecimal.valueOf(1_000L), 1L, new ArrayList<>());
+            private final Menu menu = 메뉴_생성("치킨", BigDecimal.valueOf(0L), 1L, new ArrayList<>());
             private final OrderLineItemRequest orderLineItemRequest = 주문_항목_요청(1L, 1L);
             private final OrderCreateRequest request = 주문_생성_요청(0L, List.of(orderLineItemRequest));
 
@@ -113,7 +113,7 @@ class OrderServiceTest {
         class 비어있는_주문_테이블로_주문을_입력하면 extends ServiceTest {
 
             private final MenuGroup menuGroup = 메뉴_그룹_생성("한마리메뉴");
-            private final Menu menu = 메뉴_생성("치킨", BigDecimal.valueOf(1_000L), 1L, new ArrayList<>());
+            private final Menu menu = 메뉴_생성("치킨", BigDecimal.valueOf(0L), 1L, new ArrayList<>());
             private final OrderTable orderTable = 주문_테이블_생성(null, 5, true);
             private final OrderLineItemRequest orderLineItemRequest = 주문_항목_요청(1L, 1L);
             private final OrderCreateRequest request = 주문_생성_요청(1L, List.of(orderLineItemRequest));
