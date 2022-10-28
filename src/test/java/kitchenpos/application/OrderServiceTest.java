@@ -230,11 +230,8 @@ class OrderServiceTest {
     }
 
     public Menu 후라이드_세트_메뉴() {
-        Menu menu = new Menu();
-        menu.setName("후라이드+후라이드");
-        menu.setPrice(BigDecimal.valueOf(19000));
-        menu.setMenuGroupId(추천메뉴().getId());
-        menu.setMenuProducts(Collections.singletonList(후라이드_세트_메뉴_상품()));
+        Menu menu = new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), 추천메뉴().getId(),
+                Collections.singletonList(후라이드_세트_메뉴_상품()));
 
         return menuDao.save(menu);
     }
@@ -244,15 +241,11 @@ class OrderServiceTest {
     }
 
     public MenuProduct 후라이드_세트_메뉴_상품() {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(후라이드().getId());
-        menuProduct.setQuantity(2);
-
-        return menuProduct;
+        return new MenuProduct(null, 후라이드().getId(), 2);
     }
 
 
     public Product 후라이드() {
-        return productDao.save(new Product(null, "후라이드", BigDecimal.valueOf(10000)));
+        return productDao.save(new Product("후라이드", BigDecimal.valueOf(10000)));
     }
 }
