@@ -7,7 +7,9 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +24,9 @@ public class MenuServiceTest {
 
     @Autowired
     private MenuService menuService;
+
+    @Autowired
+    private MenuGroupDao menuGroupDao;
 
     @DisplayName("menu 가격이 0보다 작은 경우 예외가 발생한다.")
     @Test
@@ -100,7 +105,8 @@ public class MenuServiceTest {
         final MenuProductRequest menuProduct1 = new MenuProductRequest(1L, 1);
         final MenuProductRequest menuProduct2 = new MenuProductRequest(2L, 1);
         final List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
-        final MenuRequest menu = new MenuRequest("메뉴1", BigDecimal.valueOf(32000), 1L, menuProducts);
+        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹1"));
+        final MenuRequest menu = new MenuRequest("메뉴1", BigDecimal.valueOf(32000), menuGroup.getId(), menuProducts);
 
         // when
         final Menu savedMenu = menuService.create(menu);

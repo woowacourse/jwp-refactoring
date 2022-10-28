@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
@@ -55,7 +56,9 @@ public class MenuRestControllerTest {
                         menuProductRequest.getQuantity()))
                 .collect(Collectors.toList());
 
-        final Menu savedMenu = new Menu(1L, "메뉴1", BigDecimal.valueOf(3000), 1L, menuProducts);
+        final MenuGroup menuGroup = new MenuGroup(1L, "메뉴그룹1");
+
+        final Menu savedMenu = new Menu(1L, "메뉴1", BigDecimal.valueOf(3000), menuGroup, menuProducts);
 
         given(menuService.create(any(MenuRequest.class))).willReturn(savedMenu);
 
@@ -76,7 +79,8 @@ public class MenuRestControllerTest {
         final MenuProduct menuProduct1 = new MenuProduct(1L, 3);
         final MenuProduct menuProduct2 = new MenuProduct(2L, 3);
         final List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
-        final Menu menu = new Menu("메뉴1", BigDecimal.valueOf(3000), 1L, menuProducts);
+        final MenuGroup menuGroup = new MenuGroup(1L, "메뉴 그룹1");
+        final Menu menu = new Menu("메뉴1", BigDecimal.valueOf(3000), menuGroup, menuProducts);
         final List<Menu> menus = Arrays.asList(menu);
 
         given(menuService.list()).willReturn(menus);

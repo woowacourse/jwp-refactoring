@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,12 +17,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 
-@Import(JdbcTemplateMenuDao.class)
+@Import({JdbcTemplateMenuDao.class, JdbcTemplateMenuGroupDao.class})
 @JdbcTest
 public class JdbcTemplateMenuDaoTest {
 
     @Autowired
     private JdbcTemplateMenuDao jdbcTemplateMenuDao;
+
+    @Autowired
+    private JdbcTemplateMenuGroupDao jdbcTemplateMenuGroupDao;
 
     @DisplayName("menu를 저장한다.")
     @Test
@@ -29,8 +33,11 @@ public class JdbcTemplateMenuDaoTest {
         // given
         final MenuProduct menuProduct1 = new MenuProduct(1L, 3);
         final MenuProduct menuProduct2 = new MenuProduct(2L, 3);
+        final MenuGroup menuGroup = new MenuGroup("메뉴 그룹1");
+        final MenuGroup savedMenuGroup = jdbcTemplateMenuGroupDao.save(menuGroup);
         final List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
-        final Menu menu = new Menu("김밥", BigDecimal.valueOf(20000), 2L, menuProducts);
+
+        final Menu menu = new Menu("김밥", BigDecimal.valueOf(20000), savedMenuGroup, menuProducts);
 
         // when
         final Menu savedMenu = jdbcTemplateMenuDao.save(menu);

@@ -9,6 +9,7 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuProductRequest;
@@ -59,7 +60,12 @@ public class MenuService {
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
-        final Menu menu = menuRequest.toEntity();
+
+        final Long menuGroupId = menuRequest.getMenuGroupId();
+        final MenuGroup menuGroup = menuGroupDao.findById(menuGroupId)
+                .orElseThrow(() -> new IllegalArgumentException());
+
+        final Menu menu = menuRequest.toEntity(menuGroup);
         final Menu savedMenu = menuDao.save(menu);
 
         final Long menuId = savedMenu.getId();
