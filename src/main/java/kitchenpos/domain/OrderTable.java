@@ -31,13 +31,19 @@ public class OrderTable {
     @Column(name = "empty")
     private boolean empty;
 
-    public OrderTable() {
+    protected OrderTable() {
+    }
+
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        validateNumberOfGuests(numberOfGuests);
+        this.id = id;
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
     }
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
-        validateNumberOfGuests(numberOfGuests);
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
+        this(null, null, numberOfGuests, empty);
     }
 
     private void validateNumberOfGuests(final int numberOfGuests) {
@@ -46,43 +52,44 @@ public class OrderTable {
         }
     }
 
+    public void group(final Long tableGroupId) {
+        changeEmpty(false);
+        this.tableGroupId = tableGroupId;
+    }
+
+    public void ungroup() {
+        this.tableGroupId = null;
+        changeEmpty(false);
+    }
+
     public void changeEmpty(final boolean empty) {
         if (Objects.nonNull(tableGroupId)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("could not change empty, table is now grouped");
         }
         this.empty = empty;
+    }
+
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
+        this.numberOfGuests = numberOfGuests;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Long getTableGroupId() {
         return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
     }
 
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 
     @Override
@@ -98,12 +105,5 @@ public class OrderTable {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    public void changeNumberOfGuests(final int numberOfGuests) {
-        if (empty) {
-            throw new IllegalArgumentException();
-        }
-        this.numberOfGuests = numberOfGuests;
     }
 }
