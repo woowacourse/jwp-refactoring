@@ -2,11 +2,9 @@ package kitchenpos.application;
 
 import static java.util.stream.Collectors.toList;
 
-import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.application.response.OrderTableResponse;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
@@ -27,8 +25,8 @@ public class TableService {
     @Transactional
     public OrderTableResponse create(final OrderTableRequest request) {
         final OrderTable orderTable = OrderTable.of(request.getNumberOfGuests(), request.isEmpty());
-
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+
         return new OrderTableResponse(savedOrderTable);
     }
 
@@ -44,12 +42,6 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest request) {
         final OrderTable foundOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("조리중이거나 식사중인 상태이면 테이블을 비울 수 없습니다.");
-        }
-
         foundOrderTable.changeEmptyStatus(request.isEmpty());
 
         return new OrderTableResponse(foundOrderTable);

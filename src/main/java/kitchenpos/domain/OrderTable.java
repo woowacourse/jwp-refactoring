@@ -56,6 +56,11 @@ public class OrderTable {
         if (Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException("테이블 상태 변경을 위해선 테이블이 그룹으로 묶여있으면 안됩니다.");
         }
+
+        if (containsCookingOrMealOrder()) {
+            throw new IllegalArgumentException("조리중이거나 식사중인 상태이면 테이블을 비울 수 없습니다.");
+        }
+
         this.empty = empty;
     }
 

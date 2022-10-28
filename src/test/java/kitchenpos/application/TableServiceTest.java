@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.EntityManager;
 import kitchenpos.RepositoryTest;
 import kitchenpos.application.request.OrderLineItemRequest;
 import kitchenpos.application.request.OrderRequest;
@@ -43,6 +44,9 @@ class TableServiceTest {
 
     @Autowired
     private OrderLineItemRepository orderLineItemRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @BeforeEach
     void setUp() {
@@ -96,7 +100,10 @@ class TableServiceTest {
         final OrderLineItemRequest orderLineItem = createOrderLineItemRequest();
         final OrderRequest orderRequest = new OrderRequest(orderTableId, "COOKING", LocalDateTime.now(),
                 List.of(orderLineItem));
+
         orderService.create(orderRequest);
+        entityManager.flush();
+        entityManager.clear();
 
         final OrderTableRequest orderTableRequest = new OrderTableRequest(orderTable);
 
