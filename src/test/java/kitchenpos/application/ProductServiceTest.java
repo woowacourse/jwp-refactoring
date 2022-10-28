@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.request.ProductCreateRequest;
 import kitchenpos.domain.product.Product;
+import kitchenpos.fixture.Fixture;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -68,10 +69,13 @@ class ProductServiceTest {
         @Nested
         class 호출하는_경우 extends ServiceTest {
 
-            private static final int EXPECT_SIZE = 6;
+            private static final int EXPECT_SIZE = 2;
 
             @Test
             void Product의_목록을_반환한다() {
+                productService.create(Fixture.후라이드상품_생성요청);
+                productService.create(Fixture.양념치킨상품_생성요청);
+
                 final List<Product> actual = productService.list();
 
                 assertThat(actual).hasSize(EXPECT_SIZE);

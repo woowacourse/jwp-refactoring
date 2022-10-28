@@ -1,5 +1,8 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.Fixture.양념치킨상품_생성요청;
+import static kitchenpos.fixture.Fixture.한마리메뉴_생성요청;
+import static kitchenpos.fixture.Fixture.후라이드상품_생성요청;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -9,6 +12,9 @@ import java.util.List;
 import kitchenpos.application.request.MenuCreateRequest;
 import kitchenpos.application.request.MenuProductRequest;
 import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.product.Product;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +26,13 @@ public class MenuServiceTest {
         @Nested
         class 가격이_null인_경우 extends ServiceTest {
 
-            private final MenuCreateRequest request = new MenuCreateRequest("메뉴", null, 1L, null);
+            private MenuCreateRequest request;
+
+            @BeforeEach
+            void setUp() {
+                final MenuGroup menuGroup = menuGroupService.create(한마리메뉴_생성요청);
+                request = new MenuCreateRequest("메뉴", null, menuGroup.getId(), null);
+            }
 
             @Test
             void 예외가_발생한다() {
@@ -35,8 +47,14 @@ public class MenuServiceTest {
 
             private static final int INVALID_PRICE = -1000;
 
-            private final MenuCreateRequest request = new MenuCreateRequest("메뉴", new BigDecimal(INVALID_PRICE), 1L,
-                    null);
+            private MenuCreateRequest request;
+
+            @BeforeEach
+            void setUp() {
+                final MenuGroup menuGroup = menuGroupService.create(한마리메뉴_생성요청);
+                request = new MenuCreateRequest("메뉴", new BigDecimal(INVALID_PRICE), menuGroup.getId(),
+                        null);
+            }
 
             @Test
             void 예외가_발생한다() {
@@ -67,8 +85,14 @@ public class MenuServiceTest {
 
             private static final long NOT_EXIST_PRODUCT_ID = -1L;
 
-            private final MenuCreateRequest request = new MenuCreateRequest("메뉴", new BigDecimal(1000), 1L,
-                    List.of(new MenuProductRequest(NOT_EXIST_PRODUCT_ID, 1L)));
+            private MenuCreateRequest request;
+
+            @BeforeEach
+            void setUp() {
+                final MenuGroup menuGroup = menuGroupService.create(한마리메뉴_생성요청);
+                request = new MenuCreateRequest("메뉴", new BigDecimal(1000), menuGroup.getId(),
+                        List.of(new MenuProductRequest(NOT_EXIST_PRODUCT_ID, 1L)));
+            }
 
             @Test
             void 예외가_발생한다() {
@@ -81,8 +105,17 @@ public class MenuServiceTest {
         @Nested
         class 입력받은_가격이_총_금액보다_큰_경우 extends ServiceTest {
 
-            private final MenuCreateRequest request = new MenuCreateRequest("메뉴", new BigDecimal(40000), 1L,
-                    List.of(new MenuProductRequest(1L, 1L), new MenuProductRequest(2L, 1L)));
+            private MenuCreateRequest request;
+
+            @BeforeEach
+            void setUp() {
+                final MenuGroup menuGroup = menuGroupService.create(한마리메뉴_생성요청);
+                final Product product1 = productService.create(후라이드상품_생성요청);
+                final Product product2 = productService.create(양념치킨상품_생성요청);
+                request = new MenuCreateRequest("메뉴", new BigDecimal(40000), menuGroup.getId(),
+                        List.of(new MenuProductRequest(product1.getId(), 1L),
+                                new MenuProductRequest(product2.getId(), 1L)));
+            }
 
             @Test
             void 예외가_발생한다() {
@@ -95,8 +128,17 @@ public class MenuServiceTest {
         @Nested
         class 정상적인_입력을_받을_경우 extends ServiceTest {
 
-            private final MenuCreateRequest request = new MenuCreateRequest("메뉴", new BigDecimal(32000), 1L,
-                    List.of(new MenuProductRequest(1L, 1L), new MenuProductRequest(2L, 1L)));
+            private MenuCreateRequest request;
+
+            @BeforeEach
+            void setUp() {
+                final MenuGroup menuGroup = menuGroupService.create(한마리메뉴_생성요청);
+                final Product product1 = productService.create(후라이드상품_생성요청);
+                final Product product2 = productService.create(양념치킨상품_생성요청);
+                request = new MenuCreateRequest("메뉴", new BigDecimal(32000), menuGroup.getId(),
+                        List.of(new MenuProductRequest(product1.getId(), 1L),
+                                new MenuProductRequest(product2.getId(), 1L)));
+            }
 
             @Test
             void Menu를_생성하고_반환한다() {
@@ -118,10 +160,24 @@ public class MenuServiceTest {
         @Nested
         class 호출하는_경우 extends ServiceTest {
 
-            private static final int EXPECT_SIZE = 6;
+            private static final int EXPECT_SIZE = 1;
+
+            private MenuCreateRequest request;
+
+            @BeforeEach
+            void setUp() {
+                final MenuGroup menuGroup = menuGroupService.create(한마리메뉴_생성요청);
+                final Product product1 = productService.create(후라이드상품_생성요청);
+                final Product product2 = productService.create(양념치킨상품_생성요청);
+                request = new MenuCreateRequest("메뉴", new BigDecimal(32000), menuGroup.getId(),
+                        List.of(new MenuProductRequest(product1.getId(), 1L),
+                                new MenuProductRequest(product2.getId(), 1L)));
+            }
 
             @Test
             void Menu의_목록을_반환한다() {
+                menuService.create(request);
+
                 final List<Menu> actual = menuService.list();
 
                 assertThat(actual).hasSize(EXPECT_SIZE);

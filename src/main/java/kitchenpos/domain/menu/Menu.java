@@ -1,5 +1,7 @@
 package kitchenpos.domain.menu;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -32,16 +34,16 @@ public class Menu {
     }
 
     public Menu(final Long id, final String name, final MenuPrice menuPrice, final Long menuGroupId,
-                final MenuProducts menuProducts) {
+                final List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.menuPrice = menuPrice;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this.menuProducts = new MenuProducts(menuProducts);
     }
 
     public Menu(final String name, final MenuPrice menuPrice, final Long menuGroupId) {
-        this(null, name, menuPrice, menuGroupId, null);
+        this(null, name, menuPrice, menuGroupId, new ArrayList<>());
     }
 
     public void updateProducts(final MenuProducts menuProducts) {

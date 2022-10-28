@@ -13,7 +13,11 @@ spring:
       hibernate:
         format_sql: true
         ddl-auto: validate
+  flyway:
+    enabled: false
+
 logging:
   level:
     org.hibernate.type.descriptor.sql:
       BasicBinder: TRACE
+

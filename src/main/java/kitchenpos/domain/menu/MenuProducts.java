@@ -1,6 +1,7 @@
 package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -12,13 +13,13 @@ import lombok.Getter;
 public class MenuProducts {
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
-    private List<MenuProduct> value;
+    private List<MenuProduct> value = new ArrayList<>();
 
     protected MenuProducts() {
     }
 
-    public MenuProducts(final List<MenuProduct> value) {
-        this.value = value;
+    public MenuProducts(final List<MenuProduct> menuProducts) {
+        value.addAll(menuProducts);
     }
 
     public BigDecimal calculateEntirePrice() {
