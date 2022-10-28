@@ -97,25 +97,24 @@ public class TableAcceptanceTest extends AcceptanceTest {
     void changNumberOfGuests(int numberOfGuests) {
         Long tableId = createTable(new OrderTable(null, 7, false));
 
-        Long updatedTableId = updateTableNumberOfGuests(tableId, numberOfGuests);
+        updateTableNumberOfGuests(tableId, numberOfGuests);
 
         List<OrderTable> tables = getTables();
         OrderTable table = tables.stream()
-                .filter(t -> updatedTableId.equals(t.getId()))
+                .filter(t -> tableId.equals(t.getId()))
                 .findFirst()
                 .orElseThrow();
 
         assertThat(table.getNumberOfGuests()).isEqualTo(numberOfGuests);
     }
 
-    private Long updateTableNumberOfGuests(Long tableId, int numberOfGuests) {
-        return RestAssured.given().log().all()
+    private void updateTableNumberOfGuests(Long tableId, int numberOfGuests) {
+        RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .body(Map.of("numberOfGuests", numberOfGuests))
                 .when().log().all()
                 .put("/api/tables/" + tableId + "/number-of-guests")
                 .then().log().all()
-                .statusCode(HttpStatus.OK.value())
-                .extract().jsonPath().getLong("id");
+                .statusCode(HttpStatus.OK.value());
     }
 }

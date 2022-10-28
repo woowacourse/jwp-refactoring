@@ -7,7 +7,7 @@ public class OrderStatusRequest {
     public OrderStatusRequest() {
     }
 
-    public OrderStatusRequest(final String orderStatus) {
+    public OrderStatusRequest(String orderStatus) {
         this.orderStatus = orderStatus;
     }
 

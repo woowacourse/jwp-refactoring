@@ -1,13 +1,13 @@
 package kitchenpos.application.dto;
 
-public class OrderTableEmptyRequest {
+public class TableEmptyRequest {
 
     private boolean empty;
 
-    public OrderTableEmptyRequest() {
+    public TableEmptyRequest() {
     }
 
-    public OrderTableEmptyRequest(boolean empty) {
+    public TableEmptyRequest(boolean empty) {
         this.empty = empty;
     }
 
