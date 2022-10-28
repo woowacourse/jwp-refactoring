@@ -1,20 +1,20 @@
 package kitchenpos.application;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.TableGroupRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class TableGroupService {
@@ -22,38 +22,33 @@ public class TableGroupService {
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao, final TableGroupDao tableGroupDao) {
+    public TableGroupService(final OrderDao orderDao,
+                             final OrderTableDao orderTableDao,
+                             final TableGroupDao tableGroupDao) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
-
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
+    public TableGroup create(final TableGroupRequest tableGroupRequest) {
+        final List<Long> orderTableIds = tableGroupRequest.getOrderTablesIds();
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
-        if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
+        if (orderTableIds.size() != savedOrderTables.size()) {
+            throw new IllegalArgumentException("요청 주문 테이블과 조회된 주문 테이블의 수는 같아야합니다.");
         }
 
+        final List<OrderTableRequest> orderTableRequests = tableGroupRequest.getOrderTables();
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("주문 테이블은 비어있을 수 없고 테이블 그룹은 비어있어야합니다.");
             }
         }
-
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
+        List<OrderTable> orderTables = orderTableRequests.stream()
+                .map(OrderTable::from)
+                .collect(Collectors.toList());
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         final Long tableGroupId = savedTableGroup.getId();
