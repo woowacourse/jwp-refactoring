@@ -75,8 +75,7 @@ public class DataSupport {
     }
 
     public TableGroup saveTableGroup() {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        final TableGroup tableGroup = TableGroup.ofNew();
         return tableGroupDao.save(tableGroup);
     }
 

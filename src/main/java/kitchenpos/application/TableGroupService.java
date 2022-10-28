@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -54,17 +53,13 @@ public class TableGroupService {
             }
         }
 
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
+        final TableGroup tableGroup = TableGroup.ofNew();
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
-        final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.joinGroup(tableGroupId);
-            orderTableDao.save(savedOrderTable);
+        final List<OrderTable> groupedTables = savedTableGroup.groupTables(savedOrderTables);
+        for (final OrderTable groupedTable : groupedTables) {
+            orderTableDao.save(groupedTable);
         }
-        savedTableGroup.setOrderTables(savedOrderTables);
 
         return savedTableGroup;
     }
