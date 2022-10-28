@@ -11,6 +11,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.support.DataSupport;
 import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,10 +50,10 @@ class MenuServiceTest {
     void create() {
         // given, when
         final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, savedProducts, PRICE);
-        final Menu savedMenu = menuService.create(request);
+        final MenuResponse response = menuService.create(request);
 
         // then
-        assertThat(savedMenu.getId()).isNotNull();
+        assertThat(response.getId()).isNotNull();
     }
 
     @DisplayName("메뉴를 등록할 때 상품이 존재하지 않으면 예외가 발생한다.")
@@ -111,14 +112,15 @@ class MenuServiceTest {
                 "치킨마요", PRICE, savedMenuGroup.getId(), menuProduct);
         final Menu savedMenu2 = dataSupport.saveMenu(
                 "할인된 치킨마요", discountedPrice, savedMenuGroup.getId(), menuProduct);
+        final List<MenuResponse> expected = MenuResponse.from(Arrays.asList(savedMenu1, savedMenu2));
 
         // when
-        final List<Menu> menus = menuService.list();
+        final List<MenuResponse> responses = menuService.list();
 
         // then
-        assertThat(menus)
+        assertThat(responses)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(Arrays.asList(savedMenu1, savedMenu2));
+                .isEqualTo(expected);
     }
 }

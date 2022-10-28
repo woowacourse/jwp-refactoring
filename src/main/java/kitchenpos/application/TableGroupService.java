@@ -9,6 +9,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.IdRequest;
 import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupRequest request) {
+    public TableGroupResponse create(final TableGroupRequest request) {
         final List<IdRequest> orderTableIdRequests = request.getOrderTables();
         final List<OrderTable> savedOrderTables = orderTableIdRequests.stream()
                 .map(this::getOrderTableFrom)
@@ -38,7 +39,7 @@ public class TableGroupService {
         final List<OrderTable> groupedTables = savedTableGroup.groupTables(savedOrderTables);
         orderTableRepository.saveAll(groupedTables);
 
-        return savedTableGroup;
+        return TableGroupResponse.from(savedTableGroup);
     }
 
     @Transactional
@@ -56,8 +57,8 @@ public class TableGroupService {
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.ungroup();
-            orderTableRepository.save(orderTable);
         }
+        orderTableRepository.saveAll(orderTables);
     }
 
     private OrderTable getOrderTableFrom(final IdRequest request) {

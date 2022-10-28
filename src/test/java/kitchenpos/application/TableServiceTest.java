@@ -9,6 +9,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.support.DataSupport;
 import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +32,7 @@ class TableServiceTest {
     void create() {
         // given, when
         final OrderTableRequest request = RequestBuilder.ofEmptyTable();
-        final OrderTable savedTable = tableService.create(request);
+        final OrderTableResponse savedTable = tableService.create(request);
 
         // then
         assertThat(savedTable.getId()).isNotNull();
@@ -43,15 +44,16 @@ class TableServiceTest {
         // given
         final OrderTable savedTable1 = dataSupport.saveOrderTable(0, true);
         final OrderTable savedTable2 = dataSupport.saveOrderTable(2, false);
+        final List<OrderTableResponse> expected = OrderTableResponse.from(Arrays.asList(savedTable1, savedTable2));
 
         // when
-        final List<OrderTable> orderTables = tableService.list();
+        final List<OrderTableResponse> responses = tableService.list();
 
         // then
-        assertThat(orderTables)
+        assertThat(responses)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(Arrays.asList(savedTable1, savedTable2));
+                .isEqualTo(expected);
     }
 
     @DisplayName("테이블이 비었는지 상태를 변경할 수 있다.")

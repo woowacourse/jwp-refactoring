@@ -8,6 +8,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.support.DataSupport;
 import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +35,7 @@ class TableGroupServiceTest {
 
         // when
         final TableGroupRequest request = RequestBuilder.ofTableGroup(savedOrderTable1, savedOrderTable2);
-        final TableGroup savedTableGroup = tableGroupService.create(request);
+        final TableGroupResponse savedTableGroup = tableGroupService.create(request);
 
         // then
         assertThat(savedTableGroup.getId()).isNotNull();

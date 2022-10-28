@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductRequest;
+import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.support.DataSupport;
 import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.DisplayName;
@@ -31,10 +32,10 @@ class ProductServiceTest {
     void create() {
         // given, when
         final ProductRequest request = RequestBuilder.ofProduct();
-        final Product savedProduct = productService.create(request);
+        final ProductResponse response = productService.create(request);
 
         // then
-        assertThat(savedProduct.getId()).isNotNull();
+        assertThat(response.getId()).isNotNull();
     }
 
     @DisplayName("상품을 등록할 때 상품 가격을 입력하지 않으면 예외가 발생한다.")
@@ -59,14 +60,15 @@ class ProductServiceTest {
         // given
         final Product savedProduct1 = dataSupport.saveProduct("치킨마요", 3500);
         final Product savedProduct2 = dataSupport.saveProduct("참치마요", 4000);
+        final List<ProductResponse> expected = ProductResponse.from(Arrays.asList(savedProduct1, savedProduct2));
 
         // when
-        final List<Product> products = productService.list();
+        final List<ProductResponse> responses = productService.list();
 
         // then
-        assertThat(products)
+        assertThat(responses)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(Arrays.asList(savedProduct1, savedProduct2));
+                .isEqualTo(expected);
     }
 }

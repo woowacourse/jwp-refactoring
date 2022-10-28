@@ -17,6 +17,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderStatusRequest;
+import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.support.DataSupport;
 import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,12 +57,12 @@ class OrderServiceTest {
     void create() {
         // given, when
         final OrderRequest request = RequestBuilder.ofOrder(savedMenu, savedUnEmptyTable);
-        final Order savedOrder = orderService.create(request);
+        final OrderResponse response = orderService.create(request);
 
         // then
         assertAll(
-                () -> assertThat(savedOrder.getId()).isNotNull(),
-                () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name())
+                () -> assertThat(response.getId()).isNotNull(),
+                () -> assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name())
         );
     }
 
@@ -121,15 +122,16 @@ class OrderServiceTest {
                 dataSupport.saveOrder(savedUnEmptyTable.getId(), OrderStatus.COOKING.name(), orderLineItem);
         final Order savedOrder2 =
                 dataSupport.saveOrder(savedUnEmptyTable.getId(), OrderStatus.COOKING.name(), orderLineItem);
+        final List<OrderResponse> expected = OrderResponse.from(Arrays.asList(savedOrder1, savedOrder2));
 
         // when
-        final List<Order> orders = orderService.list();
+        final List<OrderResponse> responses = orderService.list();
 
         // then
-        assertThat(orders)
+        assertThat(responses)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(Arrays.asList(savedOrder1, savedOrder2));
+                .isEqualTo(expected);
     }
 
     @DisplayName("주문 상태를 변경할 수 있다.")

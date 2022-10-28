@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.support.DataSupport;
 import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.DisplayName;
@@ -28,10 +29,10 @@ class MenuGroupServiceTest {
     void create() {
         // given, when
         final MenuGroupRequest request = RequestBuilder.ofMenuGroup();
-        final MenuGroup savedMenuGroup = menuGroupService.create(request);
+        final MenuGroupResponse response = menuGroupService.create(request);
 
         // then
-        assertThat(savedMenuGroup.getId()).isNotNull();
+        assertThat(response.getId()).isNotNull();
     }
 
     @DisplayName("메뉴 그룹의 전체 목록을 조회할 수 있다.")
@@ -40,14 +41,16 @@ class MenuGroupServiceTest {
         // given
         final MenuGroup savedMenuGroup1 = dataSupport.saveMenuGroup("추천 메뉴");
         final MenuGroup savedMenuGroup2 = dataSupport.saveMenuGroup("할인 메뉴");
+        final List<MenuGroupResponse> expected = MenuGroupResponse
+                .from(Arrays.asList(savedMenuGroup1, savedMenuGroup2));
 
         // when
-        final List<MenuGroup> menuGroups = menuGroupService.list();
+        final List<MenuGroupResponse> responses = menuGroupService.list();
 
         // then
-        assertThat(menuGroups)
+        assertThat(responses)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(Arrays.asList(savedMenuGroup1, savedMenuGroup2));
+                .isEqualTo(expected);
     }
 }

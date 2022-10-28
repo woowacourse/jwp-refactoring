@@ -8,7 +8,6 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class MenuRepository {
@@ -25,7 +24,6 @@ public class MenuRepository {
         this.menuProductDao = menuProductDao;
     }
 
-    @Transactional
     public Menu save(final Menu menu) {
         final Menu savedMenu = menuDao.save(menu);
         final Long menuId = savedMenu.getId();

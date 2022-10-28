@@ -8,6 +8,7 @@ import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.repository.MenuRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +26,7 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuRequest request) {
+    public MenuResponse create(final MenuRequest request) {
         final Menu menu = request.toEntity();
         if (!menuRepository.isGroupExist(menu)) {
             throw new IllegalArgumentException();
@@ -37,11 +38,13 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        return menuRepository.save(menu);
+        final Menu savedMenu = menuRepository.save(menu);
+        return MenuResponse.from(savedMenu);
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<MenuResponse> list() {
+        final List<Menu> menus = menuRepository.findAll();
+        return MenuResponse.from(menus);
     }
 
     private List<Product> getProducts(final MenuRequest request) {
