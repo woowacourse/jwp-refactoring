@@ -8,7 +8,7 @@ public class Menu {
 
     private final Long id;
     private final String name;
-    private final BigDecimal price;
+    private final Price price;
     private final Long menuGroupId;
     private final List<MenuProduct> menuProducts;
 
@@ -18,7 +18,7 @@ public class Menu {
                 final Long menuGroupId) {
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
         this.menuGroupId = menuGroupId;
         this.menuProducts = new ArrayList<>();
     }
@@ -42,7 +42,7 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 
     public Long getMenuGroupId() {
