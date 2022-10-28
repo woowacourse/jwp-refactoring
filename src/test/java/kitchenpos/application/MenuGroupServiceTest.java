@@ -1,11 +1,9 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuGroupFactory.createMenuGroup;
+import static kitchenpos.fixture.MenuGroupFactory.createMenuGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 class MenuGroupServiceTest {
 
     @Autowired
-    MenuGroupDao menuGroupDao;
+    MenuGroupRepository menuGroupRepository;
 
     @Autowired
     MenuGroupService sut;
@@ -26,23 +24,25 @@ class MenuGroupServiceTest {
     @DisplayName("MenuGroup을 생성한다")
     void delegateSaveAndReturnSavedEntity() {
         // given
-        MenuGroup expected = createMenuGroup();
+        var request = createMenuGroupRequest();
 
         // when
-        MenuGroup actual = sut.create(expected);
+        var actual = sut.create(request);
 
         // then
-        assertThat(actual).isNotNull();
         assertThat(actual.getId()).isNotNull();
+        assertThat(actual.getName()).isEqualTo(request.getName());
     }
 
     @Test
     @DisplayName("MenuGroup 목록을 조회한다")
     void returnAllSavedEntities() {
-        List<MenuGroup> expected = menuGroupDao.findAll();
+        var expected = menuGroupRepository.findAll();
 
-        List<MenuGroup> actual = sut.list();
+        var actual = sut.list();
 
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual)
+                .usingRecursiveComparison()
+                .isEqualTo(expected);
     }
 }
