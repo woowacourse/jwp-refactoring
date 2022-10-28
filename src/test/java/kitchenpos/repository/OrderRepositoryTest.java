@@ -74,7 +74,7 @@ class OrderRepositoryTest {
 
         // when
         final boolean exists = orderRepository
-                .existsByOrderTableIdInAndOrderStatusIn(List.of(3L),
+                .existsByOrderTableIdInAndOrderStatusIn(List.of(999L),
                         List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()));
 
         // then

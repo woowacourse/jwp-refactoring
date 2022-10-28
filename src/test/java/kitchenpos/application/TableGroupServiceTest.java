@@ -8,7 +8,6 @@ import static org.mockito.BDDMockito.given;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableForGroupingRequest;
@@ -25,9 +24,6 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
     private TableGroupService tableGroupService;
-
-    @Autowired
-    private TableGroupDao tableGroupDao;
 
     @MockBean
     private OrderRepository orderRepository;
@@ -89,7 +85,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_throwException_ifTableAlreadyGroup() {
         // given
-        final TableGroup savedTableGroup = tableGroupDao.save(createTableGroup(LocalDateTime.now()));
+        final TableGroup savedTableGroup = tableGroupRepository.save(createTableGroup(LocalDateTime.now()));
         final OrderTable orderTable = orderTableRepository.save(createOrderTable(savedTableGroup.getId(), 0, true));
         final TableGroupRequest tableGroupRequest = createTableGroupRequest(
                 List.of(createOrderTableRequest(orderTable.getId()), createOrderTableRequest(emptyOrderTableId1)));
@@ -118,7 +114,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void ungroup() {
         // given
-        final TableGroup savedTableGroup = tableGroupDao.save(createTableGroup(LocalDateTime.now()));
+        final TableGroup savedTableGroup = tableGroupRepository.save(createTableGroup(LocalDateTime.now()));
 
         // when, then
         assertThatCode(() -> tableGroupService.ungroup(savedTableGroup.getId()))
@@ -131,7 +127,7 @@ class TableGroupServiceTest extends ServiceTest {
         // given
         given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
                 .willReturn(true);
-        final TableGroup savedTableGroup = tableGroupDao.save(createTableGroup(LocalDateTime.now()));
+        final TableGroup savedTableGroup = tableGroupRepository.save(createTableGroup(LocalDateTime.now()));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
