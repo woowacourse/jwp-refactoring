@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -18,6 +17,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,7 +57,7 @@ abstract class ServiceTest {
     private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
     private OrderTableDao orderTableDao;
@@ -87,17 +87,10 @@ abstract class ServiceTest {
         return menuGroupRepository.save(menuGroup);
     }
 
-    protected List<MenuProduct> getMenuProducts(final Pair<Product, Long>... pairs) {
-        return Arrays.stream(pairs)
-                .map(pair -> new MenuProduct(pair.getFirst().getId(), pair.getSecond()))
-                .collect(Collectors.toList());
-    }
-
     protected Menu saveMenu(final String name, final BigDecimal price, final MenuGroup menuGroup,
-                            final Pair<Product, Long>... menuProductPairs) {
-        final List<MenuProduct> menuProducts = getMenuProducts(menuProductPairs);
-        final Menu menu = new Menu(name, price, menuGroup.getId(), menuProducts);
-        return menuDao.save(menu);
+                            final MenuProduct... menuProducts) {
+        final Menu menu = new Menu(name, price, menuGroup.getId(), List.of(menuProducts));
+        return menuRepository.save(menu);
     }
 
     protected OrderTable saveOrderTable(final int numberOfGuests, final boolean empty) {

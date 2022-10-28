@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.request.ChangeEmptyRequest;
@@ -105,7 +106,7 @@ class TableServiceTest extends ServiceTest {
             // given
             final Product product = saveProduct("감자튀김");
             final MenuGroup menuGroup = saveMenuGroup("감자");
-            final Menu menu = saveMenu("감자세트", BigDecimal.ONE, menuGroup, Pair.of(product, 1L));
+            final Menu menu = saveMenu("감자세트", BigDecimal.ONE, menuGroup, new MenuProduct(product.getId(), 1L));
             final OrderTable orderTable = saveOrderTable(10, false);
             saveOrder(orderTable, orderStatus, Pair.of(menu, 1L));
 

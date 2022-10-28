@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
 import kitchenpos.ui.dto.request.MenuProductRequest;
@@ -15,7 +16,6 @@ import kitchenpos.ui.dto.response.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.util.Pair;
 
 @DisplayName("MenuService의")
 class MenuServiceTest extends ServiceTest {
@@ -119,7 +119,6 @@ class MenuServiceTest extends ServiceTest {
                     )
             );
 
-
             // when & then
             assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -183,14 +182,17 @@ class MenuServiceTest extends ServiceTest {
             final Product chicken2 = saveProduct("앙념치킨");
             final MenuGroup chickenMenuGroup = saveMenuGroup("치킨");
             final Menu chickenMenu = saveMenu("반반치킨", BigDecimal.valueOf(10_000), chickenMenuGroup,
-                    Pair.of(chicken1, 2L), Pair.of(chicken2, 4L));
+                    new MenuProduct(chicken1.getId(), 2L),
+                    new MenuProduct(chicken2.getId(), 4L));
 
             final Product sushi1 = saveProduct("연어초밥");
             final Product sushi2 = saveProduct("광어초밥");
             final Product sushi3 = saveProduct("참치초밥");
             final MenuGroup sushiMenuGroup = saveMenuGroup("초밥");
             final Menu sushiMenu = saveMenu("모둠초밥", BigDecimal.valueOf(15_000), sushiMenuGroup,
-                    Pair.of(sushi1, 3L), Pair.of(sushi2, 2L), Pair.of(sushi3, 1L));
+                    new MenuProduct(sushi1.getId(), 3L),
+                    new MenuProduct(sushi2.getId(), 2L),
+                    new MenuProduct(sushi3.getId(), 1L));
 
             // when
             final List<MenuResponse> actual = menuService.list();
@@ -198,8 +200,8 @@ class MenuServiceTest extends ServiceTest {
             // then
             assertThat(actual).extracting("name", "price", "menuGroupId")
                     .containsExactly(
-                            tuple(chickenMenu.getName(), chickenMenu.getPrice(), chickenMenuGroup.getId()),
-                            tuple(sushiMenu.getName(), sushiMenu.getPrice(), sushiMenuGroup.getId())
+                            tuple(chickenMenu.getName(), new BigDecimal("10000.00"), chickenMenuGroup.getId()),
+                            tuple(sushiMenu.getName(), new BigDecimal("15000.00"), sushiMenuGroup.getId())
                     );
         }
     }

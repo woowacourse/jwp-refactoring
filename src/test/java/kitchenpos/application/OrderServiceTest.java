@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -124,7 +125,9 @@ class OrderServiceTest extends ServiceTest {
             final MenuGroup menuGroup = saveMenuGroup("치킨");
             final Product product1 = saveProduct("후라이드치킨");
             final Product product2 = saveProduct("양념치킨");
-            final Menu menu = saveMenu("치킨세트", BigDecimal.ONE, menuGroup, Pair.of(product1, 1L), Pair.of(product2, 2L));
+            final Menu menu = saveMenu("치킨세트", BigDecimal.ONE, menuGroup,
+                    new MenuProduct(product1.getId(), 1L),
+                    new MenuProduct(product2.getId(), 2L));
 
             final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 2L);
             final List<OrderLineItemRequest> requests = new ArrayList<>();
@@ -145,7 +148,8 @@ class OrderServiceTest extends ServiceTest {
             final Product chicken2 = saveProduct("앙념치킨");
             final MenuGroup chickenMenuGroup = saveMenuGroup("치킨");
             final Menu chickenMenu = saveMenu("반반치킨", BigDecimal.valueOf(10_000), chickenMenuGroup,
-                    Pair.of(chicken1, 2L), Pair.of(chicken2, 4L));
+                    new MenuProduct(chicken1.getId(), 2L),
+                    new MenuProduct(chicken2.getId(), 4L));
 
             final OrderTable orderTable1 = saveOrderTable(10, false);
             saveOrder(orderTable1, "COOKING", Pair.of(chickenMenu, 2L));
@@ -155,7 +159,9 @@ class OrderServiceTest extends ServiceTest {
             final Product sushi3 = saveProduct("참치초밥");
             final MenuGroup sushiMenuGroup = saveMenuGroup("초밥");
             final Menu sushiMenu = saveMenu("모둠초밥", BigDecimal.valueOf(15_000), sushiMenuGroup,
-                    Pair.of(sushi1, 3L), Pair.of(sushi2, 2L), Pair.of(sushi3, 1L));
+                    new MenuProduct(sushi1.getId(), 3L),
+                    new MenuProduct(sushi2.getId(), 2L),
+                    new MenuProduct(sushi3.getId(), 1L));
 
             final OrderTable orderTable2 = saveOrderTable(2, false);
             saveOrder(orderTable2, "MEAL", Pair.of(sushiMenu, 3L));
@@ -226,7 +232,8 @@ class OrderServiceTest extends ServiceTest {
             final Product chicken2 = saveProduct("앙념치킨");
             final MenuGroup chickenMenuGroup = saveMenuGroup("치킨");
             return saveMenu("반반치킨", BigDecimal.valueOf(10_000), chickenMenuGroup,
-                    Pair.of(chicken1, 2L), Pair.of(chicken2, 4L));
+                    new MenuProduct(chicken1.getId(), 2L),
+                    new MenuProduct(chicken2.getId(), 4L));
         }
     }
 }
