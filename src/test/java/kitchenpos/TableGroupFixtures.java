@@ -1,6 +1,7 @@
 package kitchenpos;
 
-import static kitchenpos.OrderTableFixtures.*;
+import static kitchenpos.OrderTableFixtures.createOrderTable;
+import static kitchenpos.OrderTableFixtures.createOrderTableResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;

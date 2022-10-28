@@ -2,11 +2,9 @@ package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.TableGroupFixtures;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.support.RepositoryTest;
 import org.junit.jupiter.api.Test;

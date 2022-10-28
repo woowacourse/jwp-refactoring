@@ -1,9 +1,8 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.OrderTable;
-
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.domain.OrderTable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;

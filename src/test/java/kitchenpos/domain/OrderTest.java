@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.OrderFixtures;
 import kitchenpos.OrderTableFixtures;
 import org.junit.jupiter.api.Test;
 

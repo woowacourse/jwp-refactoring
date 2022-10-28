@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
-import kitchenpos.OrderTableFixtures;
 import kitchenpos.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.dao.OrderRepository;

@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -41,7 +40,8 @@ public class Order {
     protected Order() {
     }
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
+                 List<OrderLineItem> orderLineItems) {
         validateOrderTable(orderTable);
         orderTable.addOrder(this);
         this.orderTable = orderTable;
