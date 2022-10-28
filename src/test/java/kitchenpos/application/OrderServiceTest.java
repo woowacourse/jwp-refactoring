@@ -35,7 +35,7 @@ class OrderServiceTest extends ServiceTest {
     @BeforeEach
     void setUp() {
         주문_테이블 = tableService.create(new OrderTableRequest( 3, false));
-        요리중_주문 = new Order(주문_테이블.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
+        요리중_주문 = new Order(주문_테이블, OrderStatus.COOKING.name(), LocalDateTime.now());
     }
 
     @Test
@@ -47,7 +47,7 @@ class OrderServiceTest extends ServiceTest {
         assertAll(
                 () -> assertThat(targetOrder.getId()).isNotNull(),
                 () -> assertThat(targetOrder.getOrderStatus()).isEqualTo(targetOrder.getOrderStatus()),
-                () -> assertThat(targetOrder.getOrderTableId()).isNotNull(),
+                () -> assertThat(targetOrder.getOrderTable().getId()).isNotNull(),
                 () -> assertThat(targetOrder.getOrderLineItems().size()).isEqualTo(2)
         );
     }
@@ -62,8 +62,8 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문_항목_수와_메뉴_수가_같지_않으면_예외가_발생한다() {
         Menu ramen = 메뉴를_생성한다("라면");
-        요리중_주문.addOrderLineItem(new OrderLineItem(요리중_주문.getId(), ramen.getId(), 1));
-        요리중_주문.addOrderLineItem(new OrderLineItem(요리중_주문.getId(), ramen.getId(), 1));
+        요리중_주문.addOrderLineItem(new OrderLineItem(요리중_주문, ramen.getId(), 1));
+        요리중_주문.addOrderLineItem(new OrderLineItem(요리중_주문, ramen.getId(), 1));
 
         assertThatThrownBy(
                 () -> orderService.create(요리중_주문)
@@ -72,7 +72,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문에_적혀있는_주문_테이블이_존재하지_않으면_예외가_발생한다() {
-        요리중_주문.setOrderTableId(0L);
+        요리중_주문.getOrderTable().setId(0L);
         주문_항목을_추가한다(요리중_주문);
 
         assertThatThrownBy(
@@ -83,7 +83,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문을_생성할_때_테이블이_비어있으면_예외가_발생한다() {
         주문_테이블 = tableService.create(new OrderTableRequest( 3, true));
-        요리중_주문.setOrderTableId(주문_테이블.getId());
+        요리중_주문.setOrderTable(주문_테이블);
         주문_항목을_추가한다(요리중_주문);
 
         assertThatThrownBy(
@@ -100,7 +100,7 @@ class OrderServiceTest extends ServiceTest {
 
         assertAll(
                 () -> assertThat(orders.size()).isOne(),
-                () -> assertThat(orders.get(0).getOrderTableId()).isEqualTo(주문_테이블.getId()),
+                () -> assertThat(orders.get(0).getOrderTable().getId()).isEqualTo(주문_테이블.getId()),
                 () -> assertThat(orders.get(0).getOrderStatus()).isEqualTo(요리중_주문.getOrderStatus())
         );
     }
@@ -110,7 +110,7 @@ class OrderServiceTest extends ServiceTest {
         주문_항목을_추가한다(요리중_주문);
 
         요리중_주문 = orderService.create(요리중_주문);
-        Order targetOrder = orderService.changeOrderStatus(요리중_주문.getId(), new Order(주문_테이블.getId(),
+        Order targetOrder = orderService.changeOrderStatus(요리중_주문.getId(), new Order(주문_테이블,
                 OrderStatus.MEAL.name(), LocalDateTime.now()));
 
         assertThat(targetOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
@@ -121,7 +121,7 @@ class OrderServiceTest extends ServiceTest {
         주문_항목을_추가한다(요리중_주문);
 
         assertThatThrownBy(
-                () -> orderService.changeOrderStatus(null, new Order(주문_테이블.getId(),
+                () -> orderService.changeOrderStatus(null, new Order(주문_테이블,
                         OrderStatus.MEAL.name(), LocalDateTime.now()))
         );
     }
@@ -132,11 +132,9 @@ class OrderServiceTest extends ServiceTest {
 
         Order targetOrder = orderService.create(요리중_주문);
         targetOrder.setOrderStatus(OrderStatus.COMPLETION.name());
-        orderService.changeOrderStatus(targetOrder.getId(), targetOrder);
 
         assertThatThrownBy(
-                () -> orderService.changeOrderStatus(targetOrder.getId(), new Order(주문_테이블.getId(),
-                        OrderStatus.MEAL.name(), LocalDateTime.now()))
+                () -> orderService.changeOrderStatus(targetOrder.getId(), targetOrder)
         );
     }
 }

@@ -92,8 +92,8 @@ class TableGroupServiceTest extends ServiceTest {
         List<OrderTable> tables = tableService.list();
 
         assertAll(
-                () -> assertThat(tables.get(0).getTableGroupId()).isNull(),
-                () -> assertThat(tables.get(1).getTableGroupId()).isNull()
+                () -> assertThat(tables.get(0).getTableGroup()).isNull(),
+                () -> assertThat(tables.get(1).getTableGroup()).isNull()
         );
     }
 
@@ -101,7 +101,7 @@ class TableGroupServiceTest extends ServiceTest {
     void 단체를_해제하려는_테이블의_상태가_식사_중이거나_요리_중이면_예외가_발생한다() {
         List<OrderTable> orderTables = 주문_테이블들(true, true);
 
-        Order 요리중_주문 = new Order(orderTables.get(0).getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
+        Order 요리중_주문 = new Order(orderTables.get(0), OrderStatus.COOKING.name(), LocalDateTime.now());
         주문_항목을_추가한다(요리중_주문);
 
         TableGroup 단체_테이블 = 단체_지정(orderTables);
@@ -114,8 +114,8 @@ class TableGroupServiceTest extends ServiceTest {
 
     private TableGroup 단체_지정(List<OrderTable> orderTables) {
         TableGroup tableGroup = tableGroupService.create(new TableGroup(LocalDateTime.now(), orderTables));
-        orderTables.get(0).setTableGroupId(tableGroup.getId());
-        orderTables.get(1).setTableGroupId(tableGroup.getId());
+        orderTables.get(0).setTableGroup(tableGroup);
+        orderTables.get(1).setTableGroup(tableGroup);
         return tableGroup;
     }
 }

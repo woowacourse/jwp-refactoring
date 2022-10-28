@@ -114,8 +114,8 @@ class MenuServiceTest {
         MenuGroup menuGroup = menuGroupService.create(면_메뉴_그룹());
         Menu ramen = menuService.create(new MenuRequest("라면", new BigDecimal(1200), menuGroup.getId(), 메뉴_상품들));
         Menu friedRice = menuService.create(new MenuRequest("짜파게티", new BigDecimal(1300), menuGroup.getId(), 메뉴_상품들));
-        메뉴_상품들.get(0).setMenuId(ramen.getId());
-        메뉴_상품들.get(1).setMenuId(friedRice.getId());
+        메뉴_상품들.get(0).setMenu(ramen);
+        메뉴_상품들.get(1).setMenu(friedRice);
 
         List<Menu> menus = menuService.list();
 

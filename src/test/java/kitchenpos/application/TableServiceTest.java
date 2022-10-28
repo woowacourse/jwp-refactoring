@@ -79,8 +79,8 @@ class TableServiceTest extends ServiceTest {
         List<OrderTable> 주문_테이블 = 주문_테이블들(true, true);
 
         TableGroup tableGroup = tableGroupService.create(new TableGroup(LocalDateTime.now(), 주문_테이블));
-        주문_테이블.get(0).setTableGroupId(tableGroup.getId());
-        주문_테이블.get(1).setTableGroupId(tableGroup.getId());
+        주문_테이블.get(0).setTableGroup(tableGroup);
+        주문_테이블.get(1).setTableGroup(tableGroup);
 
         assertThatThrownBy(
                 () -> tableService.changeEmpty(주문_테이블.get(0).getId(), 빈_주문_테이블_3인())
@@ -90,7 +90,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문_테이블을_빈_테이블로_변경하려_할_때_주문_테이블이_식사중이거나_요리중이면_예외가_발생한다() {
         OrderTable orderTable = tableService.create(주문_테이블_3인());
-        Order 요리중_주문 = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
+        Order 요리중_주문 = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
         주문_항목을_추가한다(요리중_주문);
 
         orderService.create(요리중_주문);

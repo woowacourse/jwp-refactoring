@@ -36,8 +36,8 @@ public class ServiceTest {
     protected void 주문_항목을_추가한다(Order order) {
         Menu ramen = 메뉴를_생성한다("라면");
         Menu chapagetti = 메뉴를_생성한다("짜파게티");
-        order.addOrderLineItem(new OrderLineItem(order.getId(), ramen.getId(), 1));
-        order.addOrderLineItem(new OrderLineItem(order.getId(), chapagetti.getId(), 1));
+        order.addOrderLineItem(new OrderLineItem(order, ramen.getId(), 1));
+        order.addOrderLineItem(new OrderLineItem(order, chapagetti.getId(), 1));
     }
 
     protected Menu 메뉴를_생성한다(String name) {
@@ -46,7 +46,7 @@ public class ServiceTest {
 
         MenuGroup menuGroup = menuGroupService.create(new MenuGroup("면"));
         Menu ramen = menuService.create(new MenuRequest(name, new BigDecimal(1200), menuGroup.getId(), menuProducts));
-        menuProducts.get(0).setMenuId(ramen.getId());
+        menuProducts.get(0).setMenu(ramen);
 
         return ramen;
     }
