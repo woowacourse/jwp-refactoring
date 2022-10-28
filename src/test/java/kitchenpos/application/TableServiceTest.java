@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -71,12 +70,7 @@ class TableServiceTest extends ServiceTest {
                 .changeEmpty(orderTable.getId(), orderTableForUpdateRequest);
 
         // then
-        assertAll(
-                () -> assertThat(updatedOrderTable.isEmpty()).isTrue(),
-                () -> assertThat(updatedOrderTable).usingRecursiveComparison()
-                        .ignoringFields("empty")
-                        .isEqualTo(orderTable)
-        );
+        assertThat(updatedOrderTable.isEmpty()).isTrue();
     }
 
     @DisplayName("테이블이 존재하지 않으면 사용 여부를 변경할 시 예외를 반환한다.")
@@ -96,7 +90,7 @@ class TableServiceTest extends ServiceTest {
     void changeEmpty_throwException_ifTableGrouping() {
         // given
         final TableGroup tableGroup = tableGroupRepository.save(createTableGroup(LocalDateTime.now()));
-        final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 4, false));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup, 4, false));
 
         // when, then
         assertThatThrownBy(
@@ -132,13 +126,8 @@ class TableServiceTest extends ServiceTest {
                 .changeNumberOfGuests(orderTable.getId(), orderTableForUpdate);
 
         // then
-        assertAll(
-                () -> assertThat(updatedOrderTable.getNumberOfGuests())
-                        .isEqualTo(orderTableForUpdate.getNumberOfGuests()),
-                () -> assertThat(updatedOrderTable).usingRecursiveComparison()
-                        .ignoringFields("numberOfGuests")
-                        .isEqualTo(orderTable)
-        );
+        assertThat(updatedOrderTable.getNumberOfGuests())
+                .isEqualTo(orderTableForUpdate.getNumberOfGuests());
     }
 
     @DisplayName("방문한 손님 수를 음수로 변경하면 예외를 반환한다.")

@@ -1,10 +1,13 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderTable {
@@ -13,7 +16,9 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long tableGroupId;
+    @ManyToOne
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
 
     @Column(nullable = false)
     private int numberOfGuests;
@@ -24,24 +29,29 @@ public class OrderTable {
     public OrderTable() {
     }
 
-    public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        this(null, tableGroupId, numberOfGuests, empty);
+    public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+        this(null, tableGroup, numberOfGuests, empty);
     }
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
         this(null, null, numberOfGuests, empty);
     }
 
-    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
         validateNumberOfGuestsNegative(numberOfGuests);
         this.id = id;
-        this.tableGroupId = tableGroupId;
+        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public void group(final Long tableGroupId) {
-        changeTableGroupId(tableGroupId);
+
+    public boolean isAlreadyGrouped() {
+        return Objects.nonNull(tableGroup);
+    }
+
+    public void group(final TableGroup tableGroup) {
+        changeTableGroupId(tableGroup);
         changeEmpty(false);
     }
 
@@ -60,12 +70,12 @@ public class OrderTable {
         return id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
-    public void changeTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public void changeTableGroupId(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
     }
 
     public int getNumberOfGuests() {

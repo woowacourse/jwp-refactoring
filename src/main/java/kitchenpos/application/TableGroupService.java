@@ -52,7 +52,7 @@ public class TableGroupService {
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
+            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
                 throw new IllegalArgumentException("이미 사용 중이거나 단체 지정된 테이블은 사용할 수 없습니다.");
             }
         }
@@ -60,7 +60,7 @@ public class TableGroupService {
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
 
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        savedOrderTables.forEach(orderTable -> orderTable.group(savedTableGroup.getId()));
+        savedOrderTables.forEach(orderTable -> orderTable.group(savedTableGroup));
 
         return TableGroupResponse.of(savedTableGroup, savedOrderTables);
     }

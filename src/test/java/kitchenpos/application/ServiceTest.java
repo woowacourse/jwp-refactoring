@@ -52,7 +52,11 @@ public class ServiceTest {
 
     protected OrderTable createOrderTable(final Long id, final Long tableGroupId, final int numberOfGuests,
                                           final boolean empty) {
-        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
+        TableGroup tableGroup = null;
+        if (tableGroupId != null) {
+            tableGroup = tableGroupRepository.findById(tableGroupId).get();
+        }
+        return new OrderTable(id, tableGroup, numberOfGuests, empty);
     }
 
     protected OrderTable createOrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
