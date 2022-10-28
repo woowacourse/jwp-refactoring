@@ -1,9 +1,8 @@
 package kitchenpos.repository;
 
-import kitchenpos.domain.TableGroup;
-
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.domain.TableGroup;
 import org.springframework.data.repository.Repository;
 
 public interface TableGroupRepository extends Repository<TableGroup, Long> {

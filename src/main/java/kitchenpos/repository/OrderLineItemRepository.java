@@ -1,9 +1,8 @@
 package kitchenpos.repository;
 
-import kitchenpos.domain.OrderLineItem;
-
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.domain.OrderLineItem;
 import org.springframework.data.repository.Repository;
 
 public interface OrderLineItemRepository extends Repository<OrderLineItem, Long> {
