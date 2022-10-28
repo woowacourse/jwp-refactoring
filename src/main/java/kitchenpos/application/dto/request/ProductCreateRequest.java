@@ -5,9 +5,9 @@ import java.util.Objects;
 
 public class ProductCreateRequest {
 
-    private String name;
+    private final String name;
 
-    private BigDecimal price;
+    private final BigDecimal price;
 
     public ProductCreateRequest(String name, BigDecimal price) {
         this.name = name;

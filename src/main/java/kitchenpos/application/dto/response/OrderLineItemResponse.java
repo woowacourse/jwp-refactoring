@@ -1,10 +1,10 @@
 package kitchenpos.application.dto.response;
 
 public class OrderLineItemResponse {
-    private Long seq;
-    private Long orderId;
-    private Long menuId;
-    private long quantity;
+    private final Long seq;
+    private final Long orderId;
+    private final Long menuId;
+    private final long quantity;
 
     public OrderLineItemResponse(Long seq, Long orderId, Long menuId, long quantity) {
         this.seq = seq;

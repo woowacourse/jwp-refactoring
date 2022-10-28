@@ -5,9 +5,9 @@ import kitchenpos.domain.OrderLineItem;
 
 public class OrderCreateRequest {
 
-    private Long orderTableId;
+    private final Long orderTableId;
 
-    private List<OrderLineItem> orderLineItems;
+    private final List<OrderLineItem> orderLineItems;
 
     public OrderCreateRequest(Long orderTableId, List<OrderLineItem> orderLineItems) {
         this.orderTableId = orderTableId;
