@@ -15,6 +15,16 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void belongToTableGroup(final long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+        this.empty = false;
+    }
+
+    public void unbelongToTableGroup() {
+        this.tableGroupId = null;
+        this.empty = false;
+    }
+
     public Long getId() {
         return id;
     }
@@ -43,7 +53,7 @@ public class OrderTable {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void changeEmptyStatusTo(final boolean empty) {
         this.empty = empty;
     }
 }

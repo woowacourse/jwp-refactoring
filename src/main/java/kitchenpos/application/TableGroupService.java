@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -29,37 +28,22 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
-
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException("2개 이상의 주문 테이블을 지정해야 합니다.");
-        }
-
-        final List<Long> orderTableIds = orderTables.stream()
+    public TableGroup create(final TableGroup request) {
+        final List<OrderTable> orderTableRequests = request.getOrderTables();
+        final List<Long> orderTableIds = orderTableRequests.stream()
                 .map(OrderTable::getId)
-                .collect(Collectors.toList());
+                .collect(Collectors.toUnmodifiableList());
+        validateOrderTablesMoreThanSingle(orderTableIds);
 
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
+        validateAllOrderTablesNotDuplicated(orderTableIds, savedOrderTables);
+        validateAllOrderTablesEmpty(savedOrderTables);
 
-        if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException("존재하지 않는 주문 테이블이 있습니다.");
-        }
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException("비어있지 않은 주문 테이블이 존재합니다.");
-            }
-        }
-
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
+        final TableGroup tableGroup = new TableGroup();
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-
         final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
-            savedOrderTable.setEmpty(false);
+        for (final var savedOrderTable : savedOrderTables) {
+            savedOrderTable.belongToTableGroup(tableGroupId);
             orderTableDao.save(savedOrderTable);
         }
         savedTableGroup.setOrderTables(savedOrderTables);
@@ -67,10 +51,38 @@ public class TableGroupService {
         return savedTableGroup;
     }
 
+    private void validateOrderTablesMoreThanSingle(final List<Long> orderTableIds) {
+        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
+            throw new IllegalArgumentException("2개 이상의 주문 테이블을 지정해야 합니다.");
+        }
+    }
+
+    private void validateAllOrderTablesNotDuplicated(final List<Long> orderTableIds, final List<OrderTable> savedOrderTables) {
+        if (orderTableIds.size() != savedOrderTables.size()) {
+            throw new IllegalArgumentException("중복되는 주문 테이블이 있습니다.");
+        }
+    }
+
+    private void validateAllOrderTablesEmpty(final List<OrderTable> savedOrderTables) {
+        for (final OrderTable savedOrderTable : savedOrderTables) {
+            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
+                throw new IllegalArgumentException("비어있지 않은 주문 테이블이 존재합니다.");
+            }
+        }
+    }
+
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
+        validateAllOrderTablesCompleted(orderTables);
 
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.unbelongToTableGroup();
+            orderTableDao.save(orderTable);
+        }
+    }
+
+    private void validateAllOrderTablesCompleted(final List<OrderTable> orderTables) {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
@@ -78,12 +90,6 @@ public class TableGroupService {
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException("계산이 완료되지 않은 테이블이 존재합니다.");
-        }
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
-            orderTableDao.save(orderTable);
         }
     }
 }

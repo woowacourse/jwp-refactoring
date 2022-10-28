@@ -90,16 +90,16 @@ class TableGroupServiceTest {
                     .hasMessage("2개 이상의 주문 테이블을 지정해야 합니다.");
         }
 
-        @DisplayName("존재하는 주문 테이블이어야 한다")
+        @DisplayName("주문 테이블은 중복되지 않아야 한다")
         @Test
-        void createWithUnsavedOrderTables() {
-            final var tableGroup = new TableGroup(LocalDateTime.now(), List.of(
-                    new OrderTable(null, 1, true),
-                    new OrderTable(null, 1, true)));
+        void createWithDuplicatedOrderTables() {
+            final var orderTable = new OrderTable(null, 1, true);
+            orderTable.setId(1L);
+            final var tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable, orderTable));
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("존재하지 않는 주문 테이블이 있습니다.");
+                    .hasMessage("중복되는 주문 테이블이 있습니다.");
         }
 
         @DisplayName("비어있는 주문 테이블이어야 한다")
