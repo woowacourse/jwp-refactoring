@@ -11,6 +11,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.OrderTableCreateRequest;
 import kitchenpos.ui.dto.TableChangeEmptyRequest;
+import kitchenpos.ui.dto.TableChangeNumberOfGuestsRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -100,7 +101,7 @@ class TableServiceTest extends ServiceTestBase {
         Long orderTableId = orderTable.getId();
 
         // when
-        tableService.changeNumberOfGuests(orderTableId, changedNumberOfGuests);
+        tableService.changeNumberOfGuests(orderTableId, new TableChangeNumberOfGuestsRequest(changedNumberOfGuests));
 
         // then
         Optional<OrderTable> actual = orderTableDao.findById(orderTableId);
@@ -114,7 +115,8 @@ class TableServiceTest extends ServiceTestBase {
         OrderTable orderTable = 주문_테이블_생성();
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), -1))
+        assertThatThrownBy(
+                () -> tableService.changeNumberOfGuests(orderTable.getId(), new TableChangeNumberOfGuestsRequest(-1)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -125,7 +127,8 @@ class TableServiceTest extends ServiceTestBase {
         Long invalidOrderTableId = orderTable.getId() + 1;
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(invalidOrderTableId, 5))
+        assertThatThrownBy(
+                () -> tableService.changeNumberOfGuests(invalidOrderTableId, new TableChangeNumberOfGuestsRequest(5)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -135,7 +138,8 @@ class TableServiceTest extends ServiceTestBase {
         OrderTable orderTable = 빈_주문_테이블_생성();
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), 1))
+        assertThatThrownBy(
+                () -> tableService.changeNumberOfGuests(orderTable.getId(), new TableChangeNumberOfGuestsRequest(1)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
