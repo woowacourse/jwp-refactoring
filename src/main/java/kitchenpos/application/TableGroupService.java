@@ -37,9 +37,7 @@ public class TableGroupService {
         List<TableIdRequest> orderTablesRequest = request.getOrderTables();
         List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(toTableRequestIds(orderTablesRequest));
 
-        TableGroup tableGroup = request.toEntity(savedOrderTables);
-        tableGroup.validateOrderTableGrouping(savedOrderTables.size());
-
+        TableGroup tableGroup = request.toEntity(savedOrderTables, savedOrderTables.size());
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         return TableGroupResponse.from(savedTableGroup);

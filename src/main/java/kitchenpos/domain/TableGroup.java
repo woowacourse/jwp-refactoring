@@ -27,27 +27,29 @@ public class TableGroup {
         this(null, createdDate, orderTables);
     }
 
-    public void validateOrderTableGrouping(int actualSize) {
-        validateOrderTableSize();
-        validateEachTableStatus();
-        validateOrderTableExistence(actualSize);
+    public static TableGroup create(List<OrderTable> orderTables, int actualSize) {
+        validateOrderTableSize(orderTables);
+        validateEachTableStatus(orderTables);
+        validateOrderTableExistence(orderTables.size(), actualSize);
+
+        return new TableGroup(null, orderTables);
     }
 
-    private void validateEachTableStatus() {
+    private static void validateEachTableStatus(List<OrderTable> orderTables) {
         for (OrderTable orderTable : orderTables) {
             orderTable.validateEmpty();
             orderTable.validateNotInTableGroup();
         }
     }
 
-    private void validateOrderTableSize() {
+    private static void validateOrderTableSize(List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
         }
     }
 
-    private void validateOrderTableExistence(int actualSize) {
-        if (orderTables.size() != actualSize) {
+    public static void validateOrderTableExistence(int orderTableSize, int actualSize) {
+        if (orderTableSize != actualSize) {
             throw new IllegalArgumentException();
         }
     }

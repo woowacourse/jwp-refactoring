@@ -19,7 +19,7 @@ public class TableGroupCreateRequest {
         return orderTables;
     }
 
-    public TableGroup toEntity(List<OrderTable> orderTables) {
-        return new TableGroup(null, orderTables);
+    public TableGroup toEntity(List<OrderTable> orderTables, int actualTablesSize) {
+        return TableGroup.create(orderTables, actualTablesSize);
     }
 }

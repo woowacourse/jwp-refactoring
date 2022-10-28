@@ -10,17 +10,16 @@ import org.junit.jupiter.api.Test;
 class TableGroupTest {
 
     @Nested
-    class validateOrderTableGrouping_메소드는 {
+    class create_정적_팩토리_메소드는 {
 
         @Test
         void 테이블이_모두_비어_있지_않다면_예외가_발생한다() {
             // given
             OrderTable orderTable1 = new OrderTable(null, 7, false);
             OrderTable orderTable2 = new OrderTable(null, 7, false);
-            TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
             // when & then
-            Assertions.assertThatThrownBy(() -> tableGroup.validateOrderTableGrouping(2))
+            Assertions.assertThatThrownBy(() -> TableGroup.create(List.of(orderTable1, orderTable2), 2))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -29,20 +28,16 @@ class TableGroupTest {
             // given
             OrderTable orderTable1 = new OrderTable(null, 7, false);
             OrderTable orderTable2 = new OrderTable(1L, 7, false);
-            TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
             // when & then
-            Assertions.assertThatThrownBy(() -> tableGroup.validateOrderTableGrouping(2))
+            Assertions.assertThatThrownBy(() -> TableGroup.create(List.of(orderTable1, orderTable2), 2))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 그룹화하려는_테이블이_없다면_예외가_발생한다() {
-            // given
-            TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Collections.emptyList());
-
             // when & then
-            Assertions.assertThatThrownBy(() -> tableGroup.validateOrderTableGrouping(0))
+            Assertions.assertThatThrownBy(() -> TableGroup.create(Collections.emptyList(), 0))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -50,10 +45,9 @@ class TableGroupTest {
         void 그룹화하려는_테이블이_2개_이하라면_예외가_발생한다() {
             // given
             OrderTable orderTable1 = new OrderTable(null, 7, false);
-            TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1));
 
             // when & then
-            Assertions.assertThatThrownBy(() -> tableGroup.validateOrderTableGrouping(1))
+            Assertions.assertThatThrownBy(() -> TableGroup.create(List.of(orderTable1), 2))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -63,10 +57,9 @@ class TableGroupTest {
             OrderTable orderTable1 = new OrderTable(null, 7, false);
             OrderTable orderTable2 = new OrderTable(null, 7, false);
             OrderTable orderTable3 = new OrderTable(null, 7, false);
-            TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2, orderTable3));
 
             // when & then
-            Assertions.assertThatThrownBy(() -> tableGroup.validateOrderTableGrouping(2))
+            Assertions.assertThatThrownBy(() -> TableGroup.create(List.of(orderTable1, orderTable2, orderTable3), 2))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
