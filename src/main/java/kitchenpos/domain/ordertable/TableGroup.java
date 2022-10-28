@@ -4,12 +4,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 public class TableGroup {
     @Id
@@ -17,6 +21,7 @@ public class TableGroup {
     @Column(name = "id")
     private Long id;
 
+    @CreatedDate
     @Column(name = "createdDate")
     private LocalDateTime createdDate;
 
