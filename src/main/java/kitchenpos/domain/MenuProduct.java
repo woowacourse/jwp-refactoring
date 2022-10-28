@@ -55,6 +55,10 @@ public class MenuProduct {
     }
 
     public void updateMenu(final Menu menu) {
+        if (this.menu != null) {
+            this.menu.getMenuProducts().remove(this);
+        }
         this.menu = menu;
+        this.menu.getMenuProducts().add(this);
     }
 }
