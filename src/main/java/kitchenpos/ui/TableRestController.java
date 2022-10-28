@@ -17,6 +17,7 @@ import kitchenpos.dto.OrderTableRequest;
 
 @RestController
 public class TableRestController {
+
     private final OrderTableService orderTableService;
 
     public TableRestController(final OrderTableService orderTableService) {
