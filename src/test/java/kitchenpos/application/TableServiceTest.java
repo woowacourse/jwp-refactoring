@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.application.dto.OrderTableRequest;
+import kitchenpos.application.dto.TableGroupRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -81,7 +82,11 @@ class TableServiceTest extends ServiceTest {
     void 주문_테이블을_빈_테이블로_변경하려_할_때_주문_테이블이_단체_지정이_되어_있으면_예외가_발생한다() {
         List<OrderTable> 주문_테이블 = 주문_테이블들(true, true);
 
-        TableGroup tableGroup = tableGroupService.create(new TableGroup(LocalDateTime.now(), 주문_테이블));
+        final List<Long> 주문_테이블_ID = 주문_테이블.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+
+        TableGroup tableGroup = tableGroupService.create(new TableGroupRequest(LocalDateTime.now(), 주문_테이블_ID));
         주문_테이블.get(0).setTableGroup(tableGroup);
         주문_테이블.get(1).setTableGroup(tableGroup);
 

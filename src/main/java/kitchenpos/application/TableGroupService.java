@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.TableGroupRequest;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -31,8 +32,13 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+    public TableGroup create(final TableGroupRequest tableGroupRequest) {
+        //new TableGroup(tableGroupRequest.getCreatedDate(), tableGroupRequest.getOrderTables());
+
+        final List<OrderTable> orderTables = tableGroupRequest.getOrderTables()
+                .stream()
+                .map(it -> orderTableRepository.findById(it).get())
+                .collect(Collectors.toList());
 
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
@@ -53,6 +59,8 @@ public class TableGroupService {
                 throw new IllegalArgumentException();
             }
         }
+
+        final TableGroup tableGroup = new TableGroup(tableGroupRequest.getCreatedDate(), orderTables);
 
         tableGroup.setCreatedDate(LocalDateTime.now());
 

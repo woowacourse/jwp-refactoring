@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderRequest;
+import kitchenpos.application.dto.TableGroupRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -51,17 +52,21 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable 테이블1 = tableService.create(빈_주문_테이블_3인());
         List<OrderTable> 주문_테이블  = Arrays.asList(테이블1);
 
+        final List<Long> 주문_테이블_ID = 주문_테이블.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+
         assertThatThrownBy(
-                () -> tableGroupService.create(new TableGroup(LocalDateTime.now(), 주문_테이블))
+                () -> tableGroupService.create(new TableGroupRequest(LocalDateTime.now(), 주문_테이블_ID))
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문하려는_테이블이_존재하지_않으면_예외가_발생한다() {
-        List<OrderTable> 주문_테이블 = new ArrayList<>();
+        List<Long> 주문_테이블 = new ArrayList<>();
 
         assertThatThrownBy(
-                () -> tableGroupService.create(new TableGroup(LocalDateTime.now(), 주문_테이블))
+                () -> tableGroupService.create(new TableGroupRequest(LocalDateTime.now(), 주문_테이블))
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -71,8 +76,12 @@ class TableGroupServiceTest extends ServiceTest {
         List<OrderTable> 주문_테이블 = Arrays.asList(테이블1);
         tableService.create(빈_주문_테이블_4인());
 
+        final List<Long> 주문_테이블_ID = 주문_테이블.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+
         assertThatThrownBy(
-                () -> tableGroupService.create(new TableGroup(LocalDateTime.now(), 주문_테이블))
+                () -> tableGroupService.create(new TableGroupRequest(LocalDateTime.now(), 주문_테이블_ID))
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -80,8 +89,12 @@ class TableGroupServiceTest extends ServiceTest {
     void 주문하려는_테이블이_빈_테이블이_아니면_예외가_발생한다() {
         List<OrderTable> orderTables = 주문_테이블들(false, true);
 
+        final List<Long> 주문_테이블_ID = orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+
         assertThatThrownBy(
-                () -> tableGroupService.create(new TableGroup(LocalDateTime.now(), orderTables))
+                () -> tableGroupService.create(new TableGroupRequest(LocalDateTime.now(), 주문_테이블_ID))
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -124,7 +137,11 @@ class TableGroupServiceTest extends ServiceTest {
     }
 
     private TableGroup 단체_지정(List<OrderTable> orderTables) {
-        TableGroup tableGroup = tableGroupService.create(new TableGroup(LocalDateTime.now(), orderTables));
+        final List<Long> 주문_테이블_ID = orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+
+        TableGroup tableGroup = tableGroupService.create(new TableGroupRequest(LocalDateTime.now(), 주문_테이블_ID));
         orderTables.get(0).setTableGroup(tableGroup);
         orderTables.get(1).setTableGroup(tableGroup);
         return tableGroup;
