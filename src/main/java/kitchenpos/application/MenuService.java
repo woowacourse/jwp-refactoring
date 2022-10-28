@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import java.util.Objects;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -36,12 +37,19 @@ public class MenuService {
 
     @Transactional
     public Menu create(final Menu menu) {
+        validateMenuPrice(menu.getPrice());
         validateMenuGroup(menu);
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
         validateMenuPrice(menu.getPrice(), calculateProductPrice(menuProducts));
         final Menu savedMenu = menuDao.save(menu);
         fillMenuIdToMenuProduct(menuProducts, savedMenu);
         return savedMenu;
+    }
+
+    private void validateMenuPrice(final BigDecimal menuPrice) {
+        if (Objects.isNull(menuPrice) || menuPrice.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("[ERROR] 부적절한 메뉴 가격입니다.");
+        }
     }
 
     private void validateMenuGroup(final Menu menu) {
@@ -70,7 +78,7 @@ public class MenuService {
         final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.fillMenuId(menuId);
+            menuProduct.updateMenuId(menuId);
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
         savedMenu.addAllMenuProduct(savedMenuProducts);

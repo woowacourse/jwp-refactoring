@@ -92,6 +92,6 @@ public abstract class ServiceTest {
     }
 
     protected void 주문상태변경(final Order order, final OrderStatus orderStatus) {
-        orderService.changeOrderStatus(order.getId(), forUpdateStatus(orderStatus));
+        orderService.changeOrderStatus(order.getId(), forUpdateStatus(orderStatus.name()));
     }
 }

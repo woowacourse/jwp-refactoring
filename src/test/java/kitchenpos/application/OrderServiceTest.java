@@ -9,13 +9,13 @@ import static kitchenpos.DomainFixture.메뉴그룹1;
 import static kitchenpos.DomainFixture.메뉴그룹2;
 import static kitchenpos.DomainFixture.피자;
 import static kitchenpos.DomainFixture.후라이드치킨;
-import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.DomainFixture;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -106,7 +106,7 @@ public class OrderServiceTest extends ServiceTest {
         final Order order = 주문등록(createOrder(table, menu));
 
         // when
-        final Order actual = orderService.changeOrderStatus(order.getId(), forUpdateStatus(MEAL));
+        final Order actual = orderService.changeOrderStatus(order.getId(), forUpdateStatus("MEAL"));
 
         // then
         assertThat(actual.getOrderStatus()).isEqualTo(MEAL.name());
@@ -122,7 +122,7 @@ public class OrderServiceTest extends ServiceTest {
         final Order notRegisteredOrder = createOrder(table, menu);
 
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(notRegisteredOrder.getId(), forUpdateStatus(MEAL)))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(notRegisteredOrder.getId(), forUpdateStatus("MEAL")))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -137,7 +137,7 @@ public class OrderServiceTest extends ServiceTest {
         주문상태변경(order, OrderStatus.COMPLETION);
 
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), forUpdateStatus(COOKING)))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), forUpdateStatus("COOKING")))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -150,8 +150,7 @@ public class OrderServiceTest extends ServiceTest {
 
         final Order order = 주문등록(createOrder(table, menu));
 
-        final Order forUpdate = new Order();
-        forUpdate.setOrderStatus("TEST");
+        final Order forUpdate = DomainFixture.forUpdateStatus("TEST");
 
         // when & then
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), forUpdate))

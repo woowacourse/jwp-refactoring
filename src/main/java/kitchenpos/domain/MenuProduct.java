@@ -17,7 +17,7 @@ public class MenuProduct {
         return new MenuProduct(null, menuId, productId, quantity);
     }
 
-    public void fillMenuId(final Long menuId) {
+    public void updateMenuId(final Long menuId) {
         this.menuId = menuId;
     }
 

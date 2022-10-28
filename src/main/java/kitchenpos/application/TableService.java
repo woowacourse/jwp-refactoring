@@ -34,12 +34,16 @@ public class TableService {
 
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        final OrderTable savedOrderTable = searchOrderTable(orderTableId);
         validateOrderTableAlreadyInGroup(savedOrderTable);
         validateOrderStatus(orderTableId);
         savedOrderTable.updateEmpty(orderTable.isEmpty());
         return orderTableDao.save(savedOrderTable);
+    }
+
+    private OrderTable searchOrderTable(final Long orderTableId) {
+        return orderTableDao.findById(orderTableId)
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] OrderTable 을 찾을 수 없습니다."));
     }
 
     private void validateOrderTableAlreadyInGroup(final OrderTable savedOrderTable) {
@@ -60,8 +64,7 @@ public class TableService {
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
         final int numberOfGuests = orderTable.getNumberOfGuests();
         validateNumberOfGuests(numberOfGuests);
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        final OrderTable savedOrderTable = searchOrderTable(orderTableId);
         validateEmptyOrderTable(savedOrderTable);
         savedOrderTable.updateNumberOfGuests(numberOfGuests);
         return orderTableDao.save(savedOrderTable);

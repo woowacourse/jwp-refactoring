@@ -9,7 +9,6 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -68,8 +67,7 @@ public class DomainFixture {
     }
 
     public static Order createOrder(final OrderTable orderTable, final Menu... menus) {
-        final Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
+        final Order order = Order.ofNullId(orderTable.getId(), "COOKING", LocalDateTime.now(), List.of());
         setOrderLineItems(order, menus);
         return order;
     }
@@ -77,17 +75,13 @@ public class DomainFixture {
     private static void setOrderLineItems(final Order order, final Menu[] menus) {
         final ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
         for (final Menu menu : menus) {
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(menu.getId());
-            orderLineItem.setQuantity(ONE_QUANTITY);
+            final OrderLineItem orderLineItem = OrderLineItem.ofNullSeq(order.getId(), menu.getId(), ONE_QUANTITY);
             orderLineItems.add(orderLineItem);
         }
-        order.setOrderLineItems(orderLineItems);
+        order.addAllOrderLineItems(orderLineItems);
     }
 
-    public static Order forUpdateStatus(final OrderStatus orderStatus) {
-        final Order order = new Order();
-        order.setOrderStatus(orderStatus.name());
-        return order;
+    public static Order forUpdateStatus(final String status) {
+        return Order.ofNullId(null, status, LocalDateTime.now(), List.of());
     }
 }

@@ -5,6 +5,7 @@ import static kitchenpos.DomainFixture.양념치킨;
 import static kitchenpos.DomainFixture.피자;
 import static kitchenpos.DomainFixture.후라이드치킨;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
@@ -29,6 +30,17 @@ public class ProductServiceTest extends ServiceTest {
                 () -> assertThat(actualId).isNotNull(),
                 () -> assertThat(productDao.findById(actualId)).isPresent()
         );
+    }
+
+    @Test
+    @DisplayName("create -> 상품의 가격이 0원 미만이면 예외가 발생한다.")
+    void create_invalidPrice_throwException() {
+        // given
+        final Product product = createProduct("김피탕", -1);
+
+        // when & then
+        assertThatThrownBy(() -> productService.create(product))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

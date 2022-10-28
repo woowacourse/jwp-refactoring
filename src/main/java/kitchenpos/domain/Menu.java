@@ -17,9 +17,6 @@ public class Menu {
                 final BigDecimal price,
                 final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("[ERROR] 부적절한 메뉴 가격입니다.");
-        }
         this.id = id;
         this.name = name;
         this.price = price;

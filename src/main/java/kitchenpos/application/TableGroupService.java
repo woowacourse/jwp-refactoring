@@ -38,20 +38,20 @@ public class TableGroupService {
         validateOrderTableAlreadyInGroup(savedOrderTables);
         tableGroup.updateCreatedDate(LocalDateTime.now());
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-        updateOrderTables(savedOrderTables, savedTableGroup);
+        updateTableGroupOfOrderTables(savedOrderTables, savedTableGroup);
         return savedTableGroup;
-    }
-
-    private List<Long> getOrderTableIds(final List<OrderTable> orderTables) {
-        return orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
     }
 
     private void validateOrderTablesSize(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException("[ERROR] 테이블이 두 개 미만이거나 비어있을 수 없습니다.");
         }
+    }
+
+    private List<Long> getOrderTableIds(final List<OrderTable> orderTables) {
+        return orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
     }
 
     private void validateOrderTablesSize(final List<OrderTable> orderTables, final List<OrderTable> savedOrderTables) {
@@ -68,7 +68,7 @@ public class TableGroupService {
         }
     }
 
-    private void updateOrderTables(final List<OrderTable> savedOrderTables, final TableGroup savedTableGroup) {
+    private void updateTableGroupOfOrderTables(final List<OrderTable> savedOrderTables, final TableGroup savedTableGroup) {
         final Long savedTableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.updateTableGroupId(savedTableGroupId);
