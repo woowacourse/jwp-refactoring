@@ -11,6 +11,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -126,7 +127,7 @@ class TableGroupServiceTest extends ServiceTest {
                     .stream()
                     .filter(table -> table.getId().equals(savedOrderTable1.getId()) ||
                             table.getId().equals(savedOrderTable2.getId()))
-                    .map(OrderTable::getTableGroupId)
+                    .map(TableResponse::getTableGroupId)
                     .collect(Collectors.toList());
 
             assertThat(findTableGroupIds).containsOnly((Long) null);

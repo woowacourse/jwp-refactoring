@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -52,6 +54,12 @@ public abstract class ServiceTest {
     @Autowired
     MenuDao menuDao;
 
+    @Autowired
+    OrderTableDao orderTableDao;
+
+    @Autowired
+    OrderDao orderDao;
+
     protected MenuProduct 메뉴_상품을_생성한다(String productName, int productPrice, Long quantity) {
         return 메뉴_상품을_생성한다(null, productName, productPrice, quantity);
     }
@@ -91,12 +99,12 @@ public abstract class ServiceTest {
 
     protected OrderTable 테이블을_저장한다(int numberOfGuests) {
         OrderTable orderTable = new OrderTable(numberOfGuests, false);
-        return tableService.create(orderTable);
+        return orderTableDao.save(orderTable);
     }
 
     protected OrderTable 빈_테이블을_저장한다() {
         OrderTable orderTable = new OrderTable(0, true);
-        return tableService.create(orderTable);
+        return orderTableDao.save(orderTable);
     }
 
     protected TableGroup 테이블_그룹을_저장한다(OrderTable... orderTables) {
