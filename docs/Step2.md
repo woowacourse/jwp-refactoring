@@ -20,7 +20,7 @@
         - [x] MenuGroupRestController
         - [x] MenuRestController
         - [x] OrderRestController
-        - [ ] ProductRestController
+        - [x] ProductRestController
         - [ ] TableGroupRestController
         - [ ] TableRestController
 3. 서비스 로직 코드 분리

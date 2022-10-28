@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import kitchenpos.dao.FakeProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,10 +27,10 @@ public class ProductServiceTest {
     @DisplayName("상품을 생성한다.")
     void create() {
         // when
-        Product newProduct = productService.create(뿌링클_19000_REQUEST);
+        ProductResponse productResponse = productService.create(뿌링클_19000_REQUEST);
 
         // then
-        assertThat(newProduct.getId()).isNotNull();
+        assertThat(productResponse.getId()).isNotNull();
     }
 
     @Test
@@ -59,9 +59,9 @@ public class ProductServiceTest {
         productService.create(맛초킹_20000_REQUEST);
 
         // when
-        List<Product> products = productService.list();
+        List<ProductResponse> productResponses = productService.list();
 
         // then
-        assertThat(products.size()).isEqualTo(2);
+        assertThat(productResponses.size()).isEqualTo(2);
     }
 }
