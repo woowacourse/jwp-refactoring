@@ -35,7 +35,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     @DisplayName("존재하지 않는 테이블에선 주문할 수 없다.")
     void createNoExistTable() {
-        final OrderTable notExistTable = new OrderTable();
+        final OrderTable notExistTable = OrderTable.create();
 
         assertThatThrownBy(() -> 주문_요청한다(notExistTable, 파스타한상.getId()))
                 .isInstanceOf(IllegalArgumentException.class);

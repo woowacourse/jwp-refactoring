@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.menu.MenuProductRepository;
 import kitchenpos.domain.menu.Menu;
@@ -117,18 +116,16 @@ public abstract class ServiceTest {
     }
 
     public OrderTable 테이블_등록() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = OrderTable.create();
         return tableService.create(orderTable);
     }
 
     public OrderTable 손님_채운_테이블_생성(final int numberOfGuests) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = OrderTable.create();
         OrderTable savedTable = tableService.create(orderTable);
         savedTable.setEmpty(false);
         savedTable = tableService.changeEmpty(savedTable.getId(), savedTable);
-        savedTable.setNumberOfGuests(numberOfGuests);
+        savedTable.enterGuests(numberOfGuests);
         return tableService.changeNumberOfGuests(savedTable.getId(), savedTable);
     }
 
@@ -137,29 +134,24 @@ public abstract class ServiceTest {
     }
 
     public OrderTable 테이블_손님_수_변경(final Long orderTableId, final int numberOfGuests) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
+        final OrderTable orderTable = OrderTable.create();
+        orderTable.enterGuests(numberOfGuests);
         return tableService.changeNumberOfGuests(orderTableId, orderTable);
     }
 
     public OrderTable 테이블_채움(final Long orderTableId) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(orderTableId);
+        final OrderTable orderTable = new OrderTable(orderTableId, null, 0, false);
         orderTable.setEmpty(false);
         return tableService.changeEmpty(orderTableId, orderTable);
     }
 
     public OrderTable 테이블_비움(final Long orderTableId) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(orderTableId);
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = new OrderTable(orderTableId, null, 0, false);
         return tableService.changeEmpty(orderTableId, orderTable);
     }
 
     public TableGroup 테이블을_그룹으로_묶는다(final OrderTable... tables) {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        tableGroup.setOrderTables(List.of(tables));
+        final TableGroup tableGroup = TableGroup.of(List.of(tables));
         return tableGroupService.create(tableGroup);
     }
 
