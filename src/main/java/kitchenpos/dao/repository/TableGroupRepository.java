@@ -1,20 +1,22 @@
-package kitchenpos.dao;
+package kitchenpos.dao.repository;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.dao.JdbcTemplateTableGroupDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class TableGroupRepository implements TableGroupDao{
+public class TableGroupRepository implements TableGroupDao {
 
     private final JdbcTemplateTableGroupDao tableGroupDao;
-    private final JdbcTemplateOrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableDao;
 
     public TableGroupRepository(final JdbcTemplateTableGroupDao tableGroupDao,
-                                final JdbcTemplateOrderTableDao orderTableDao) {
+                                final OrderTableRepository orderTableDao) {
         this.tableGroupDao = tableGroupDao;
         this.orderTableDao = orderTableDao;
     }

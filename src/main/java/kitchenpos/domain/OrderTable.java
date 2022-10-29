@@ -6,18 +6,29 @@ public class OrderTable {
     private int numberOfGuests;
     private boolean empty;
 
+    private OrderStatus orderStatus;
+
     public OrderTable(final Long id,
                       final Long tableGroupId,
                       final int numberOfGuests,
-                      final boolean empty) {
+                      final boolean empty,
+                      final OrderStatus orderStatus) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+        this.orderStatus = orderStatus;
+    }
+
+    public OrderTable(final Long id,
+                      final Long tableGroupId,
+                      final int numberOfGuests,
+                      final boolean empty) {
+        this(id, tableGroupId, numberOfGuests, empty, null);
     }
 
     public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        this(null, tableGroupId, numberOfGuests, empty);
+        this(null, tableGroupId, numberOfGuests, empty, null);
     }
 
     public Long getId() {
@@ -50,5 +61,18 @@ public class OrderTable {
 
     public void setEmpty(final boolean empty) {
         this.empty = empty;
+    }
+
+    public void changeOrderStatus(final String orderStatus) {
+        this.orderStatus = OrderStatus.valueOf(orderStatus);
+    }
+
+    public boolean isCooking() {
+        return orderStatus.isCooking();
+    }
+
+
+    public boolean isMeal() {
+        return orderStatus.isMeal();
     }
 }

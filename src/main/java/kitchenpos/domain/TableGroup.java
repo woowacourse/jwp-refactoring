@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import org.springframework.util.CollectionUtils;
@@ -65,5 +66,20 @@ public class TableGroup {
 
     public void setOrderTables(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
+    }
+
+    public void unGroup() {
+        for (final OrderTable orderTable : orderTables) {
+            validateOrderTableStatus(orderTable);
+            orderTable.changeTableGroup(null);
+            orderTable.setEmpty(false);
+        }
+        this.orderTables = new LinkedList<>();
+    }
+
+    private void validateOrderTableStatus(final OrderTable orderTable) {
+        if (orderTable.isCooking() || orderTable.isMeal()) {
+            throw new IllegalArgumentException("조리중이거나 식사중이면 그룹을 해제할 수 없습니다.");
+        }
     }
 }

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 class JdbcTemplateOrderTableDaoTest extends JdbcTemplateTest{
 
     private JdbcTemplateTableGroupDao tableGroupDao;
-    private OrderTableDao orderTableDao;
+    private JdbcTemplateOrderTableDao orderTableDao;
 
     @BeforeEach
     void setUp() {

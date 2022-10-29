@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class TableGroupTest {
 
@@ -54,10 +56,61 @@ class TableGroupTest {
     void createThenOrderTableHaveTableGroupId() {
         final List<OrderTable> orderTables = Arrays.asList(getOrderTable(null, true), getOrderTable(null, true));
         final TableGroup tableGroup = TableGroup.of(1L, LocalDateTime.now(), orderTables);
-        final List<OrderTable> actualOrdeTables = tableGroup.getOrderTables();
+        final List<OrderTable> actualOrderTables = tableGroup.getOrderTables();
+
         assertAll(
-                () -> assertThat(actualOrdeTables.get(0).getTableGroupId()).isEqualTo(1L),
-                () -> assertThat(actualOrdeTables.get(1).getTableGroupId()).isEqualTo(1L)
+                () -> assertThat(actualOrderTables.get(0).getTableGroupId()).isEqualTo(1L),
+                () -> assertThat(actualOrderTables.get(1).getTableGroupId()).isEqualTo(1L)
+        );
+    }
+
+    @ParameterizedTest(name = "주문 테이블이 {0} 상태아면 테이블 그룹을 해제할 수 없다.")
+    @ValueSource(strings = {"COOKING", "MEAL"})
+    void ungroupWithInvalidOrderTableStatus(final String orderStatus) {
+        final OrderTable cookingOrderTable = getOrderTable(null, true, orderStatus);
+        final OrderTable mealOrderTable = getOrderTable(null, true, orderStatus);
+        final List<OrderTable> orderTables = Arrays.asList(cookingOrderTable, mealOrderTable);
+        final TableGroup tableGroup = TableGroup.of(1L, LocalDateTime.now(), orderTables);
+        assertThatThrownBy(tableGroup::unGroup)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("조리중이거나 식사중이면 그룹을 해제할 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("테이블 그룹을 해제하면 주문 테이블들은 비어있지 않아야 한다.")
+    void ungroupThenOrderTableIsNotEmpty() {
+        // given
+        final OrderTable orderTable1 = getOrderTable(null, true, OrderStatus.COMPLETION.name());
+        final OrderTable orderTable2 = getOrderTable(null, true, OrderStatus.COMPLETION.name());
+        final List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
+        final TableGroup tableGroup = TableGroup.of(1L, LocalDateTime.now(), orderTables);
+
+        // when
+        tableGroup.unGroup();
+
+        // then
+        assertAll(
+                () -> assertThat(orderTable1.isEmpty()).isFalse(),
+                () -> assertThat(orderTable2.isEmpty()).isFalse()
+        );
+    }
+
+    @Test
+    @DisplayName("테이블 그룹을 해제하면 주문 테이블들은 테이블 그룹 id를 갖지 않아야 한다.")
+    void ungroupThenOrderTableDontHaveTableGroupId() {
+        // given
+        final OrderTable orderTable1 = getOrderTable(null, true, OrderStatus.COMPLETION.name());
+        final OrderTable orderTable2 = getOrderTable(null, true, OrderStatus.COMPLETION.name());
+        final List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
+        final TableGroup tableGroup = TableGroup.of(1L, LocalDateTime.now(), orderTables);
+
+        // when
+        tableGroup.unGroup();
+
+        // then
+        assertAll(
+                () -> assertThat(orderTable1.getTableGroupId()).isNull(),
+                () -> assertThat(orderTable2.getTableGroupId()).isNull()
         );
     }
 }
