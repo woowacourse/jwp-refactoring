@@ -25,17 +25,15 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     @DisplayName("메뉴 그룹 목록을 가져 온다.")
     void getMenuGroupList() {
-        final String oneMenu = "한마리메뉴";
         final String twoMenu = "두마리메뉴";
-        menuGroupService.create(new MenuGroupCreateRequest(oneMenu));
-        menuGroupService.create(new MenuGroupCreateRequest(twoMenu));
+        final String oneMenu = "한마리메뉴";
 
         final List<MenuGroupResponse> menuGroups = menuGroupService.list();
 
         assertAll(
                 () -> assertThat(menuGroups).hasSize(2),
-                () -> assertThat(menuGroups.get(0).getName()).isEqualTo(oneMenu),
-                () -> assertThat(menuGroups.get(1).getName()).isEqualTo(twoMenu)
+                () -> assertThat(menuGroups.get(0).getName()).isEqualTo(twoMenu),
+                () -> assertThat(menuGroups.get(1).getName()).isEqualTo(oneMenu)
         );
     }
 }
