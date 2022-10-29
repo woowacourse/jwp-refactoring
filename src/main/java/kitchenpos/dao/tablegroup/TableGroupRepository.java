@@ -27,7 +27,7 @@ public class TableGroupRepository implements TableGroupDao {
             savedOrderTables.add(orderTableDao.save(orderTable));
         }
         final TableGroup tableGroup = tableGroupDao.save(entity);
-        tableGroup.setOrderTables(savedOrderTables);
+        tableGroup.changeOrderTables(savedOrderTables);
         return tableGroup;
     }
 
@@ -40,7 +40,7 @@ public class TableGroupRepository implements TableGroupDao {
     public List<TableGroup> findAll() {
         final List<TableGroup> tableGroups = tableGroupDao.findAll();
         for (final TableGroup tableGroup : tableGroups) {
-            tableGroup.setOrderTables(orderTableDao.findAllByTableGroupId(tableGroup.getId()));
+            tableGroup.changeOrderTables(orderTableDao.findAllByTableGroupId(tableGroup.getId()));
         }
         return tableGroups;
     }

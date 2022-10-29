@@ -40,7 +40,7 @@ public class OrderService {
         validateExistMenus(orderLineItems);
 
         final Order savedOrder = orderDao.save(Order.of(orderRequest.getOrderTableId(), orderLineItems));
-        savedOrder.setOrderLineItems(getSavedOrderLineItems(orderLineItems, savedOrder));
+        savedOrder.changeOrderLineItems(getSavedOrderLineItems(orderLineItems, savedOrder));
         return savedOrder;
     }
 
@@ -85,7 +85,7 @@ public class OrderService {
         final List<Order> orders = orderDao.findAll();
 
         for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
+            order.changeOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
         }
 
         return orders;

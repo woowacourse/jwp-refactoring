@@ -36,9 +36,8 @@ class OrderServiceTest extends ServiceTest{
     void setUp() {
         final OrderTable orderTable = getOrderTable();
         order = getOrder();
-        order.setOrderLineItems(Arrays.asList(getOrderLineItem(order.getId())));
+        order.changeOrderLineItems(Arrays.asList(getOrderLineItem(order.getId())));
         final OrderLineItem orderLineItem = getOrderLineItem(order.getId());
-        orderLineItem.setSeq(1L);
 
         given(orderTableDao.findById(any())).willReturn(Optional.of(orderTable));
         given(orderLineItemDao.save(any())).willReturn(orderLineItem);
