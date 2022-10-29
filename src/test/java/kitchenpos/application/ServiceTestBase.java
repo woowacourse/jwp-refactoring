@@ -22,7 +22,6 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
 import kitchenpos.dto.MenuProductRequest;
@@ -93,15 +92,6 @@ public abstract class ServiceTestBase {
         return new Menu(name, price, menuGroupId, menuProducts);
     }
 
-    protected MenuProduct 메뉴_상품_생성(Menu menu, Product product, long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(menu.getId());
-        menuProduct.setProductId(product.getId());
-        menuProduct.setQuantity(quantity);
-
-        return menuProduct;
-    }
-
     protected MenuProduct createMenuProduct(final Long productId, final long quantity, final BigDecimal price) {
         return new MenuProduct(productId, quantity, price);
     }
@@ -157,15 +147,6 @@ public abstract class ServiceTestBase {
                 .map(orderTable -> new TableGroupOrderTableIdRequest(orderTable.getId()))
                 .collect(Collectors.toList());
         return new TableGroupCreateRequest(orderTableIds);
-    }
-
-    protected OrderLineItem 주문_항목_생성(final Order order, final Menu menu, final long quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(quantity);
-        orderLineItem.setOrderId(order.getId());
-
-        return orderLineItem;
     }
 
     protected Order createOrder(Long orderTableId, List<OrderLineItem> orderLineItems) {
