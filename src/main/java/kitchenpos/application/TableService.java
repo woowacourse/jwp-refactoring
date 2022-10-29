@@ -25,23 +25,9 @@ public class TableService {
         this.orderTableDao = orderTableDao;
     }
 
-    @Deprecated
-    @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-
-        return orderTableDao.save(orderTable);
-    }
-
     @Transactional
     public OrderTableDto createOrderTable(final OrderTableCreationDto orderTableCreationDto) {
         return OrderTableDto.from(orderTableDao.save(OrderTableCreationDto.toEntity(orderTableCreationDto)));
-    }
-
-    @Deprecated
-    public List<OrderTable> list() {
-        return orderTableDao.findAll();
     }
 
     @Transactional(readOnly = true)
@@ -50,26 +36,6 @@ public class TableService {
                 .stream()
                 .map(OrderTableDto::from)
                 .collect(Collectors.toList());
-    }
-
-    @Deprecated
-    @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setEmpty(orderTable.isEmpty());
-
-        return orderTableDao.save(savedOrderTable);
     }
 
     @Transactional
@@ -89,27 +55,6 @@ public class TableService {
         if (orderTable.isPartOfTableGroup() || (order.isPresent() && !order.get().isInCompletionStatus())) {
             throw new IllegalArgumentException();
         }
-    }
-
-    @Deprecated
-    @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
-        return orderTableDao.save(savedOrderTable);
     }
 
     @Transactional
