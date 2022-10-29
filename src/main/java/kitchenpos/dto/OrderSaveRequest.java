@@ -1,8 +1,10 @@
 package kitchenpos.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 
 public class OrderSaveRequest {
 
@@ -18,7 +20,7 @@ public class OrderSaveRequest {
     }
 
     public Order toEntity() {
-        return new Order(orderTableId, null, null, orderLineItems);
+        return new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
     }
 
     public Long getOrderTableId() {

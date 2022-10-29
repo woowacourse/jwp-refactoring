@@ -5,6 +5,7 @@ import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.dto.OrderSaveRequest;
 
 public class OrderFixtures {
 
@@ -33,5 +34,10 @@ public class OrderFixtures {
                                             final LocalDateTime orderedTime,
                                             final List<OrderLineItem> orderLineItems) {
         return new Order(orderTableId, orderStatus, orderedTime, orderLineItems);
+    }
+
+    public static final OrderSaveRequest generateOrderSaveRequest(final Long orderTableId,
+                                                                  final List<OrderLineItem> orderLineItems) {
+        return new OrderSaveRequest(orderTableId, orderLineItems);
     }
 }
