@@ -42,6 +42,19 @@ public class MenuService {
         if (!menuGroupDao.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException(String.format("존재하지 않는 메뉴 그룹입니다. [%s]", request.getMenuGroupId()));
         }
+        final Menu savedMenu = saveMenu(request);
+        return MenuConvertor.toMenuResponse(savedMenu);
+    }
+
+    public List<MenuResponse> list() {
+        final List<Menu> menus = menuDao.findAll();
+        for (final Menu menu : menus) {
+            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+        }
+        return MenuConvertor.toMenuResponses(menus);
+    }
+
+    private Menu saveMenu(final MenuRequest request) {
         final Menu savedMenu = menuDao.save(toMenu(request));
         final List<MenuProduct> menuProducts = toMenuProducts(request.getMenuProducts());
 
@@ -52,8 +65,7 @@ public class MenuService {
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
         savedMenu.setMenuProducts(savedMenuProducts);
-
-        return MenuConvertor.toMenuResponse(savedMenu);
+        return savedMenu;
     }
 
     private Menu toMenu(final MenuRequest request) {
@@ -77,13 +89,5 @@ public class MenuService {
             .orElseThrow(() ->
                 new IllegalArgumentException(String.format("존재하지 않는 상품입니다. [%s]", request.getProductId()))
             );
-    }
-
-    public List<MenuResponse> list() {
-        final List<Menu> menus = menuDao.findAll();
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
-        return MenuConvertor.toMenuResponses(menus);
     }
 }

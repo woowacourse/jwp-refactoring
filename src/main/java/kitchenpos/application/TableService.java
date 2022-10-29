@@ -39,34 +39,46 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest request) {
         final OrderTable orderTable = TableConvertor.convertToOrderTable(request);
-
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(() -> new IllegalArgumentException(String.format("존재하지 않는 테이블 입니다. [%s]", orderTableId)));
-
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException(String.format("테이블 그룹이 존재합니다. [%s]", savedOrderTable.getTableGroupId()));
-        }
-
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("테이블의 주문이 완료되지 않았습니다.");
-        }
-
-        savedOrderTable.changeEmpty(orderTable.isEmpty());
-
-        final OrderTable changedOrderTable = orderTableDao.save(savedOrderTable);
+        final OrderTable changedOrderTable = changeMenu(orderTableId, orderTable);
         return TableConvertor.convertToOrderTableResponse(changedOrderTable);
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest request) {
         final OrderTable orderTable = TableConvertor.convertToOrderTable(request);
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(() -> new IllegalArgumentException(String.format("존재하지 않는 테이블 입니다. [%s]", orderTableId)));
+        final OrderTable savedOrderTable = findOrderTableById(orderTableId);
 
         savedOrderTable.changeNumberOfGuests(orderTable.getNumberOfGuests());
 
         final OrderTable changedOrderTable = orderTableDao.save(savedOrderTable);
         return TableConvertor.convertToOrderTableResponse(changedOrderTable);
+    }
+
+    private OrderTable changeMenu(final Long orderTableId, final OrderTable orderTable) {
+        final OrderTable savedOrderTable = findOrderTableById(orderTableId);
+
+        validateOrderTableExists(savedOrderTable);
+        validateOrderStatusIsCompletion(orderTableId);
+
+        savedOrderTable.changeEmpty(orderTable.isEmpty());
+        return orderTableDao.save(savedOrderTable);
+    }
+
+    private OrderTable findOrderTableById(final Long orderTableId) {
+        return orderTableDao.findById(orderTableId)
+            .orElseThrow(() -> new IllegalArgumentException(String.format("존재하지 않는 테이블 입니다. [%s]", orderTableId)));
+    }
+
+    private void validateOrderTableExists(final OrderTable savedOrderTable) {
+        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
+            throw new IllegalArgumentException(String.format("테이블 그룹이 존재합니다. [%s]", savedOrderTable.getTableGroupId()));
+        }
+    }
+
+    private void validateOrderStatusIsCompletion(final Long orderTableId) {
+        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
+            orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            throw new IllegalArgumentException("테이블의 주문이 완료되지 않았습니다.");
+        }
     }
 }

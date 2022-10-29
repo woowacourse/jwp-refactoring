@@ -32,18 +32,46 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupRequest request) {
         final TableGroup tableGroup = TableGroupConvertor.convertToTableGroup(request);
+        final TableGroup savedTableGroup = saveTableGroup(tableGroup);
+        return TableGroupConvertor.convertToOrderTableResponse(savedTableGroup);
+    }
 
+    @Transactional
+    public void ungroup(final Long tableGroupId) {
+        final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
+        final List<Long> orderTableIds = getOrderTableIds(orderTables);
+
+        validateOrderStatusIsCompletion(orderTableIds);
+        ungroupOrderTables(orderTables);
+    }
+
+    private TableGroup saveTableGroup(final TableGroup tableGroup) {
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
+        final List<OrderTable> savedOrderTables = findAllOrderTablesByIdIn(orderTables);
+        validateOrderTableIsEmptyAndNotGrouped(savedOrderTables);
 
+        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+
+        saveOrderTables(savedOrderTables, savedTableGroup);
+        return savedTableGroup;
+    }
+
+    private List<OrderTable> findAllOrderTablesByIdIn(final List<OrderTable> orderTables) {
+        final List<Long> orderTableIds = getOrderTableIds(orderTables);
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-
         if (orderTables.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException("존재하지 않는 테이블 정보가 포함되어 있습니다.");
         }
+        return savedOrderTables;
+    }
 
+    private List<Long> getOrderTableIds(final List<OrderTable> orderTables) {
+        return orderTables.stream()
+            .map(OrderTable::getId)
+            .collect(Collectors.toList());
+    }
+
+    private void validateOrderTableIsEmptyAndNotGrouped(final List<OrderTable> savedOrderTables) {
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (savedOrderTable.isNotEmpty()) {
                 throw new IllegalArgumentException("테이블이 비워져 있어야 합니다.");
@@ -52,31 +80,24 @@ public class TableGroupService {
                 throw new IllegalArgumentException(String.format("테이블 그룹의 아이디가 존재합니다. [%s]", savedOrderTable.getTableGroupId()));
             }
         }
+    }
 
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-
+    private void saveOrderTables(final List<OrderTable> savedOrderTables, final TableGroup savedTableGroup) {
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.group(savedTableGroup.getId());
             orderTableDao.save(savedOrderTable);
         }
         savedTableGroup.setOrderTables(savedOrderTables);
-
-        return TableGroupConvertor.convertToOrderTableResponse(savedTableGroup);
     }
 
-    @Transactional
-    public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
-
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
+    private void validateOrderStatusIsCompletion(final List<Long> orderTableIds) {
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException("테이블의 주문이 완료되지 않았습니다.");
         }
+    }
 
+    private void ungroupOrderTables(final List<OrderTable> orderTables) {
         for (final OrderTable orderTable : orderTables) {
             orderTable.group(null);
             orderTableDao.save(orderTable);
