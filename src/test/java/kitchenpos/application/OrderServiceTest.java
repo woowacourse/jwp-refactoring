@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.Fixture.DomainFixture.GUEST_NUMBER;
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -9,12 +10,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.ProductRepository;
-import kitchenpos.dao.TableRepository;
-import kitchenpos.domain.GuestNumber;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -34,25 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 class OrderServiceTest extends ServiceTest {
 
-    private static final GuestNumber GUEST_NUMBER = GuestNumber.from(3);
-
     @Autowired
     private OrderService orderService;
-
-    @Autowired
-    private TableRepository tableRepository;
-
-    @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private MenuGroupRepository menuGroupRepository;
-
-    @Autowired
-    private MenuRepository menuRepository;
 
     private OrderLineItemDto orderLineItemDto1;
     private OrderLineItemDto orderLineItemDto2;

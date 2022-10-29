@@ -8,9 +8,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuProductRepository;
-import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProductDto;
 import kitchenpos.domain.Product;
@@ -29,15 +26,6 @@ class MenuServiceTest extends ServiceTest {
 
     @Autowired
     private MenuService menuService;
-
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private MenuGroupRepository menuGroupRepository;
-
-    @Autowired
-    private MenuProductRepository menuProductRepository;
 
     @DisplayName("Menu를 등록할 수 있다.")
     @Test

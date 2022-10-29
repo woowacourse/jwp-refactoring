@@ -1,15 +1,12 @@
 package kitchenpos.application;
 
+import static kitchenpos.Fixture.DomainFixture.GUEST_NUMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.TableGroupRepository;
-import kitchenpos.dao.TableRepository;
-import kitchenpos.domain.GuestNumber;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -28,19 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 class TableGroupServiceTest extends ServiceTest {
 
-    private static final GuestNumber GUEST_NUMBER = GuestNumber.from(5);
-
     @Autowired
     private TableGroupService tableGroupService;
-
-    @Autowired
-    private TableRepository tableRepository;
-
-    @Autowired
-    private TableGroupRepository tableGroupRepository;
-
-    @Autowired
-    private OrderRepository orderRepository;
 
     private OrderTable orderTable1;
 

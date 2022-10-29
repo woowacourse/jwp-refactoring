@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import static kitchenpos.Fixture.DomainFixture.GUEST_NUMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -9,8 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class OrderTableTest {
-
-    private static final GuestNumber GUEST_NUMBER = GuestNumber.from(5);
 
     @DisplayName("고객의 수를 변경할 수 있다.")
     @Test
@@ -28,7 +27,7 @@ class OrderTableTest {
     void changeGuestNumber_Exception_NotEmpty() {
         OrderTable orderTable = new OrderTable(null, GUEST_NUMBER, true, null);
 
-        assertThatThrownBy(() -> orderTable.changeGuestNumber(GuestNumber.from(3)))
+        assertThatThrownBy(() -> orderTable.changeGuestNumber(GuestNumber.from(10)))
                 .isInstanceOf(GuestNumberChangeDisabledException.class);
     }
 

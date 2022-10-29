@@ -1,14 +1,11 @@
 package kitchenpos.application;
 
+import static kitchenpos.Fixture.DomainFixture.GUEST_NUMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Collections;
 import java.util.Optional;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.TableGroupRepository;
-import kitchenpos.dao.TableRepository;
-import kitchenpos.domain.GuestNumber;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -24,19 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 class TableServiceTest extends ServiceTest {
 
-    private static final GuestNumber GUEST_NUMBER = GuestNumber.from(3);
-
     @Autowired
     private TableService tableService;
-
-    @Autowired
-    private TableRepository tableRepository;
-
-    @Autowired
-    private TableGroupRepository tableGroupRepository;
-
-    @Autowired
-    private OrderRepository orderRepository;
 
     @DisplayName("Table을 생성할 수 있다.")
     @Test
