@@ -11,23 +11,23 @@ public class Order {
 
     private final Long id;
     private final Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private final LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
-    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+    public Order(final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    private Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
+    private Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
 
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
@@ -42,15 +42,15 @@ public class Order {
 
     public static Order forEntity(final Long id, final Long orderTableId, final String orderStatus,
                                   final LocalDateTime orderedTime) {
-        return new Order(id, orderTableId, orderStatus, orderedTime);
+        return new Order(id, orderTableId, OrderStatus.valueOf(orderStatus), orderedTime);
     }
 
     public static Order proceed(final Long orderTableId, final List<OrderLineItem> items) {
-        return new Order(null, orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), items);
+        return new Order(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), items);
     }
 
-    public void changeOrderStatus(final String orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION, OrderStatus.valueOf(this.orderStatus))) {
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
             throw new IllegalArgumentException();
         }
 
@@ -75,7 +75,7 @@ public class Order {
         return orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 

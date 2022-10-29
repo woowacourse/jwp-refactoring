@@ -1,7 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.dto.OrderDtoFixture.forUpdateStatus;
-
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -12,7 +10,6 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderRepository;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -89,9 +86,5 @@ public abstract class ServiceTest {
 
     protected Order 주문등록(final Order order) {
         return orderRepository.save(order);
-    }
-
-    protected void 주문상태변경(final Long orderId, final OrderStatus orderStatus) {
-        orderService.changeOrderStatus(orderId, forUpdateStatus(orderStatus));
     }
 }

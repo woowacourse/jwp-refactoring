@@ -84,12 +84,12 @@ public class OrderServiceTest extends ServiceTest {
         final OrderTable table1 = 테이블등록(createOrderTable(3, false));
         final Menu menu1 = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
 
-        주문등록(createOrder(table1, menu1));
+        주문등록(createOrder(table1, OrderStatus.COOKING, menu1));
 
         final OrderTable table2 = 테이블등록(createOrderTable(3, false));
         final Menu menu2 = 메뉴등록(createMenu("짜장면_메뉴", 8_000, 메뉴그룹등록(메뉴그룹B), 상품등록(짜장면)));
 
-        주문등록(createOrder(table2, menu2));
+        주문등록(createOrder(table2, OrderStatus.COOKING, menu2));
 
         // when
         final List<OrderResponse> actual = orderService.list();
@@ -105,7 +105,7 @@ public class OrderServiceTest extends ServiceTest {
         final OrderTable table = 테이블등록(createOrderTable(3, false));
         final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
 
-        final Order order = 주문등록(createOrder(table, menu));
+        final Order order = 주문등록(createOrder(table, OrderStatus.COOKING, menu));
 
         // when
         final OrderResponse actual = orderService.changeOrderStatus(order.getId(), forUpdateStatus(MEAL));
@@ -129,8 +129,7 @@ public class OrderServiceTest extends ServiceTest {
         final OrderTable table = 테이블등록(createOrderTable(3, false));
         final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
 
-        final Order order = 주문등록(createOrder(table, menu));
-        주문상태변경(order.getId(), OrderStatus.COMPLETION);
+        final Order order = 주문등록(createOrder(table, OrderStatus.COMPLETION, menu));
 
         // when & then
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), forUpdateStatus(COOKING)))

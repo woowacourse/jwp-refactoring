@@ -55,7 +55,7 @@ public class TableService {
 
     private void validateExistsByOrderTableIdAndOrderStatusIn(final Long orderTableId) {
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+                orderTableId, List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
     }

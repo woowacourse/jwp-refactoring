@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.JdbcTemplateOrderDao;
 import kitchenpos.dao.JdbcTemplateOrderLineItemDao;
 import kitchenpos.dao.OrderDao;
@@ -52,12 +53,19 @@ public class OrderRepository {
         return orders;
     }
 
-    public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId, final List<String> orderStatuses) {
-        return orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatuses);
+    public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId,
+                                                        final List<OrderStatus> orderStatuses) {
+        final List<String> orderStatusNames = orderStatuses.stream()
+                .map(Enum::name)
+                .collect(Collectors.toList());
+        return orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatusNames);
     }
 
     public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds,
-                                                          final List<String> orderStatuses) {
-        return orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatuses);
+                                                          final List<OrderStatus> orderStatuses) {
+        final List<String> orderStatusNames = orderStatuses.stream()
+                .map(Enum::name)
+                .collect(Collectors.toList());
+        return orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatusNames);
     }
 }

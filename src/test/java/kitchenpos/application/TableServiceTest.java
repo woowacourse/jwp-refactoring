@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderTableRequest;
@@ -113,8 +112,7 @@ public class TableServiceTest extends ServiceTest {
         final OrderTable table = 테이블등록(createOrderTable(3, false));
         final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
 
-        final Order order = 주문등록(createOrder(table, menu));
-        주문상태변경(order.getId(), orderStatus);
+        주문등록(createOrder(table, orderStatus, menu));
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), forUpdateEmpty(true)))
