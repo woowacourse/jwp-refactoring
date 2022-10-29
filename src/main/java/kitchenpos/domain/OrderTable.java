@@ -33,6 +33,10 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void addTableGroupId(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+    }
+
     public void changeEmpty(final boolean empty) {
         this.empty = empty;
     }
@@ -51,6 +55,18 @@ public class OrderTable {
 
     private void validateNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateNotTableGroupId() {
+        if (tableGroupId == null) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateEmpty() {
+        if (!this.empty) {
             throw new IllegalArgumentException();
         }
     }

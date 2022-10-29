@@ -7,6 +7,7 @@ import io.restassured.RestAssured;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.springframework.http.HttpStatus;
@@ -17,11 +18,7 @@ public class TableGroupStepDefinition {
         final LocalDateTime createDate,
         final List<Long> orderTableIds) {
 
-        List<OrderTable> orderTables = orderTableIds.stream()
-            .map(orderTableId -> new OrderTable(orderTableId))
-            .collect(Collectors.toList());
-
-        TableGroup tableGroup = new TableGroup(createDate, orderTables);
+        TableGroupCreateRequest tableGroup = new TableGroupCreateRequest(orderTableIds);
 
         return RestAssured.given().log().all()
             .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)

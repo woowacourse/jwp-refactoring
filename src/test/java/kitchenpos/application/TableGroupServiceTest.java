@@ -15,10 +15,13 @@ import kitchenpos.application.dto.MenuProductCreateRequest;
 import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.application.dto.OrderLineItemRequest;
+import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.application.dto.OrderTableCreateRequest;
 import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.application.dto.ProductCreateRequest;
 import kitchenpos.application.dto.ProductResponse;
+import kitchenpos.application.dto.TableGroupCreateRequest;
+import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Nested;
@@ -36,10 +39,8 @@ class TableGroupServiceTest extends IntegrationTest {
             final OrderTableResponse orderTable2 = tableService.create(new OrderTableCreateRequest(2, true));
 
             // when
-            final TableGroup extract = tableGroupService.create(
-                new TableGroup(LocalDateTime.now(), List.of(
-                    new OrderTable(orderTable1.getId(), orderTable1.getTableGroupId(), orderTable1.getNumberOfGuests(), orderTable1.isEmpty()),
-                    new OrderTable(orderTable2.getId(), orderTable2.getTableGroupId(), orderTable2.getNumberOfGuests(), orderTable2.isEmpty()))));
+            final TableGroupResponse extract = tableGroupService.create(new TableGroupCreateRequest(List.of(orderTable1.getId(), orderTable2.getId())));
+
 
             // then
             assertThat(extract).isNotNull();
@@ -53,10 +54,7 @@ class TableGroupServiceTest extends IntegrationTest {
 
             // when & then
             assertThatThrownBy(
-                () -> tableGroupService.create(new TableGroup(LocalDateTime.now(), List.of(
-                    new OrderTable(orderTable1.getId(), orderTable1.getTableGroupId(), orderTable1.getNumberOfGuests(), orderTable1.isEmpty()),
-                    new OrderTable(orderTable2.getId(), orderTable2.getTableGroupId(), orderTable2.getNumberOfGuests(), orderTable2.isEmpty())
-                ))))
+                () -> tableGroupService.create(new TableGroupCreateRequest(List.of(orderTable1.getId(), orderTable2.getId()))))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -67,7 +65,7 @@ class TableGroupServiceTest extends IntegrationTest {
 
             // when & then
             assertThatThrownBy(
-                () -> tableGroupService.create(new TableGroup(LocalDateTime.now(), List.of(new OrderTable(orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(), orderTable.isEmpty())))))
+                () -> tableGroupService.create(new TableGroupCreateRequest(List.of(orderTable.getId()))))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -76,18 +74,12 @@ class TableGroupServiceTest extends IntegrationTest {
             // given
             final OrderTableResponse orderTable1 = tableService.create(new OrderTableCreateRequest(2, true));
             final OrderTableResponse orderTable2 = tableService.create(new OrderTableCreateRequest(2, true));
-            tableGroupService.create(
-                new TableGroup(LocalDateTime.now(), List.of(
-                    new OrderTable(orderTable1.getId(), orderTable1.getTableGroupId(), orderTable1.getNumberOfGuests(), orderTable1.isEmpty()),
-                    new OrderTable(orderTable2.getId(), orderTable2.getTableGroupId(), orderTable2.getNumberOfGuests(), orderTable2.isEmpty()))));
+            tableGroupService.create(new TableGroupCreateRequest(List.of(orderTable1.getId(), orderTable2.getId())));
 
             // when
-            final OrderTableResponse orderTable3 = tableService.create(new OrderTableCreateRequest(2,false));
+            final OrderTableResponse orderTable3 = tableService.create(new OrderTableCreateRequest(3, false));
             assertThatThrownBy(
-                () -> tableGroupService.create(new TableGroup(LocalDateTime.now(), List.of(
-                    new OrderTable(orderTable1.getId(), orderTable1.getTableGroupId(), orderTable1.getNumberOfGuests(), orderTable1.isEmpty()),
-                    new OrderTable(orderTable3.getId(), orderTable3.getTableGroupId(), orderTable3.getNumberOfGuests(), orderTable3.isEmpty())
-                    ))))
+                () -> tableGroupService.create(new TableGroupCreateRequest(List.of(orderTable1.getId(), orderTable3.getId()))))
                 .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -100,11 +92,7 @@ class TableGroupServiceTest extends IntegrationTest {
             // given
             final OrderTableResponse orderTable1 = tableService.create(new OrderTableCreateRequest(2, true));
             final OrderTableResponse orderTable2 = tableService.create(new OrderTableCreateRequest(3, true));
-            final TableGroup tableGroup = tableGroupService.create(
-                new TableGroup(LocalDateTime.now(), List.of(
-                    new OrderTable(orderTable1.getId(), orderTable1.getTableGroupId(), orderTable1.getNumberOfGuests(), orderTable1.isEmpty()),
-                    new OrderTable(orderTable2.getId(), orderTable2.getTableGroupId(), orderTable2.getNumberOfGuests(), orderTable2.isEmpty())
-                )));
+            final TableGroupResponse tableGroup = tableGroupService.create(new TableGroupCreateRequest(List.of(orderTable1.getId(), orderTable2.getId())));
 
             // when & then
             assertDoesNotThrow(() -> tableGroupService.ungroup(tableGroup.getId()));
@@ -119,11 +107,7 @@ class TableGroupServiceTest extends IntegrationTest {
                 List.of(new MenuProductCreateRequest(product.getId(), 1))));
             final OrderTableResponse orderTable1 = tableService.create(new OrderTableCreateRequest(2, true));
             final OrderTableResponse orderTable2 = tableService.create(new OrderTableCreateRequest(2, true));
-            final TableGroup tableGroup = tableGroupService.create(
-                new TableGroup(LocalDateTime.now(), List.of(
-                    new OrderTable(orderTable1.getId(), orderTable1.getTableGroupId(), orderTable1.getNumberOfGuests(), orderTable1.isEmpty()),
-                    new OrderTable(orderTable2.getId(), orderTable2.getTableGroupId(), orderTable2.getNumberOfGuests(), orderTable2.isEmpty())
-                )));
+            final TableGroupResponse tableGroup = tableGroupService.create(new TableGroupCreateRequest(List.of(orderTable1.getId(), orderTable2.getId())));
 
             orderService.create(new OrderCreateRequest(orderTable1.getId(), List.of(new OrderLineItemRequest(menu.getId(), 1))));
 
