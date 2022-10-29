@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class MenuService {
 
     private final MenuRepository menuRepository;
@@ -32,18 +33,16 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuResponse create(final MenuCreateRequest menuCreateRequest) {
-        List<MenuProduct> menuProducts = toEntity(menuCreateRequest);
-        Menu menu = new Menu(menuCreateRequest.getName(), menuCreateRequest.getPrice(),
-                menuCreateRequest.getMenuGroupId(), menuProducts);
-        validateExistMenuGroupInMenu(menu);
-        menu.validatePriceUnderThanSumOfProductPrice();
+    public MenuResponse create(final MenuCreateRequest request) {
+        Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), menuProducts(request));
+        menu.validate();
+        validateInMenuGroup(menu);
         menuRepository.save(menu);
         return MenuResponse.of(menu);
     }
 
-    private List<MenuProduct> toEntity(final MenuCreateRequest menuCreateRequest) {
-        return menuCreateRequest.getMenuProducts()
+    private List<MenuProduct> menuProducts(final MenuCreateRequest request) {
+        return request.getMenuProducts()
                 .stream()
                 .map(this::toMenuProduct)
                 .collect(Collectors.toList());
@@ -55,8 +54,9 @@ public class MenuService {
         return new MenuProduct(product, request.getQuantity());
     }
 
-    private void validateExistMenuGroupInMenu(final Menu menu) {
-        if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
+    private void validateInMenuGroup(final Menu menu) {
+        Long menuGroupId = menu.getMenuGroupId();
+        if (!menuGroupRepository.existsById(menuGroupId)) {
             throw new IllegalArgumentException();
         }
     }

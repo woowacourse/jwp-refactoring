@@ -13,10 +13,10 @@ public class MenuResponse {
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
-    public MenuResponse() {
+    private MenuResponse() {
     }
 
-    public MenuResponse(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
+    private MenuResponse(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
                         final List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;

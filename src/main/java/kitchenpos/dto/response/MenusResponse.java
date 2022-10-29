@@ -19,6 +19,7 @@ public class MenusResponse {
         List<MenuResponse> menuResponses = menu.stream()
                 .map(MenuResponse::of)
                 .collect(Collectors.toList());
+
         return new MenusResponse(menuResponses);
     }
 
