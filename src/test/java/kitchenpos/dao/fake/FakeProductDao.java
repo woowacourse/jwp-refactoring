@@ -14,11 +14,10 @@ public class FakeProductDao implements ProductDao {
     private final Map<Long, Product> products = new HashMap<>();
 
     @Override
-    public Product save(final Product entity) {
+    public Product save(final Product product) {
         long savedId = ++id;
-        products.put(savedId, entity);
-        entity.setId(savedId);
-        return entity;
+        products.put(savedId, product);
+        return new Product(savedId, product.getName(), product.getPrice());
     }
 
     @Override

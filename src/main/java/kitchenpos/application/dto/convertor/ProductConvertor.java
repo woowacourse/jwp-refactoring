@@ -13,10 +13,10 @@ public class ProductConvertor {
     }
 
     public static Product toProduct(final ProductRequest request) {
-        final Product product = new Product();
-        product.setName(request.getName());
-        product.setPrice(request.getPrice());
-        return product;
+        return new Product(
+            request.getName(),
+            request.getPrice()
+        );
     }
 
     public static ProductResponse toProductResponse(final Product product) {

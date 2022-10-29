@@ -36,10 +36,6 @@ public class ProductFixture {
     }
 
     private Product build() {
-        final Product product = new Product();
-        product.setId(id);
-        product.setName(name);
-        product.setPrice(price);
-        return product;
+        return new Product(id, name, price);
     }
 }
