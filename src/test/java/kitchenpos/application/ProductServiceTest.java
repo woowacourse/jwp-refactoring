@@ -49,7 +49,8 @@ class ProductServiceTest {
             final var request = new ProductRequest("탕수육", BigDecimal.valueOf(negativePrice));
 
             assertThatThrownBy(() -> productService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("가격은 양수여야 합니다.");
         }
     }
 

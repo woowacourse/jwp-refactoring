@@ -71,7 +71,7 @@ class MenuServiceTest {
 
             assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("메뉴 가격은 양수여야 합니다.");
+                    .hasMessage("가격은 양수여야 합니다.");
         }
 
         @DisplayName("메뉴 가격이 상품 전체 금액보다 작거나 같아야 한다")

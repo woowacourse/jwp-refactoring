@@ -10,6 +10,7 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,8 +40,7 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest request) {
-        final BigDecimal price = request.getPrice();
-        validatePriceNotNegative(price);
+        final Price price = new Price(request.getPrice());
 
         validateMenuGroupExist(request.getMenuGroupId());
         final List<MenuProduct> menuProducts = request.getMenuProducts()
@@ -51,6 +50,8 @@ public class MenuService {
         validatePriceIsNotLowerThanTotalPriceOfProducts(price, menuProducts);
 
         final var menu = asMenu(request, menuProducts);
+
+
         final Menu savedMenu = menuDao.save(menu);
         final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
@@ -79,7 +80,8 @@ public class MenuService {
         return menu;
     }
 
-    private void validatePriceIsNotLowerThanTotalPriceOfProducts(BigDecimal price, List<MenuProduct> menuProducts) {
+    private void validatePriceIsNotLowerThanTotalPriceOfProducts(final Price price,
+                                                                 final List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = productDao.findById(menuProduct.getProductId())
@@ -95,12 +97,6 @@ public class MenuService {
     private void validateMenuGroupExist(Long menuGroupId) {
         if (!menuGroupDao.existsById(menuGroupId)) {
             throw new IllegalArgumentException("메뉴 그룹을 찾을 수 없습니다.");
-        }
-    }
-
-    private void validatePriceNotNegative(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("메뉴 가격은 양수여야 합니다.");
         }
     }
 

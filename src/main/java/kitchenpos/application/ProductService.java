@@ -4,13 +4,12 @@ import kitchenpos.application.request.product.ProductRequest;
 import kitchenpos.application.response.ResponseAssembler;
 import kitchenpos.application.response.product.ProductResponse;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class ProductService {
@@ -25,8 +24,7 @@ public class ProductService {
 
     @Transactional
     public ProductResponse create(final ProductRequest request) {
-        final BigDecimal price = request.getPrice();
-        validatePriceNotNegative(price);
+        final var price = new Price(request.getPrice());
 
         final var product = asProduct(request);
         final var savedProduct =  productDao.save(product);
@@ -39,12 +37,6 @@ public class ProductService {
         product.setName(request.getName());
         product.setPrice(request.getPrice());
         return product;
-    }
-
-    private void validatePriceNotNegative(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public List<ProductResponse> list() {
