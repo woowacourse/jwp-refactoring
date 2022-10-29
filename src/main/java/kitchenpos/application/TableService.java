@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 
+@Transactional
 @Service
 public class TableService {
 
@@ -31,12 +32,12 @@ public class TableService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    @Transactional
     public OrderTableResponse create(final OrderTableCreateRequest request) {
         final OrderTable orderTable = new OrderTable(null, request.getNumberOfGuests(), request.isEmpty());
         return OrderTableResponse.createResponse(orderTableRepository.save(orderTable));
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTableResponse> list() {
         return orderTableRepository.findAll()
             .stream()
@@ -44,7 +45,6 @@ public class TableService {
             .collect(Collectors.toList());
     }
 
-    @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
@@ -59,7 +59,6 @@ public class TableService {
         return OrderTableResponse.createResponse(orderTable);
     }
 
-    @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableChangeNumberOfGuestsRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);

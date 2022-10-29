@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Transactional
 @Service
 public class MenuGroupService {
     private final MenuGroupDao menuGroupDao;
@@ -18,12 +19,12 @@ public class MenuGroupService {
         this.menuGroupDao = menuGroupDao;
     }
 
-    @Transactional
     public MenuGroupResponse create(final MenuGroupRequest request) {
         MenuGroup menuGroup = menuGroupDao.save(request.toEntity());
         return MenuGroupResponse.createResponse(menuGroup);
     }
 
+    @Transactional(readOnly = true)
     public List<MenuGroupResponse> list() {
         return menuGroupDao.findAll().stream()
             .map(MenuGroupResponse::createResponse)
