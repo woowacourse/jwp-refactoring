@@ -4,11 +4,11 @@ import static kitchenpos.fixture.domain.MenuFixture.createMenu;
 import static kitchenpos.fixture.domain.MenuGroupFixture.메뉴그룹A;
 import static kitchenpos.fixture.domain.OrderTableFixture.createOrderTable;
 import static kitchenpos.fixture.domain.ProductFixture.탕수육;
+import static kitchenpos.fixture.domain.TableGroupFixture.createTableGroup;
 import static kitchenpos.fixture.dto.OrderDtoFixture.createOrderRequest;
 import static kitchenpos.fixture.dto.OrderTableDtoFixture.createOrderTableRequest;
 import static kitchenpos.fixture.dto.OrderTableDtoFixture.forUpdateEmpty;
 import static kitchenpos.fixture.dto.OrderTableDtoFixture.forUpdateGuestNumber;
-import static kitchenpos.fixture.dto.TableGroupDtoFixture.createTableGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -98,7 +98,7 @@ public class TableServiceTest extends ServiceTest {
         // given
         final OrderTable table = 테이블등록(createOrderTable(3, true));
         final OrderTable table2 = 테이블등록(createOrderTable(3, true));
-        단체지정(createTableGroupRequest(table, table2));
+        단체지정(createTableGroup(table, table2));
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), forUpdateEmpty(false)))

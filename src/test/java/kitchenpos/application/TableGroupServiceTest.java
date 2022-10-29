@@ -1,12 +1,14 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixture.domain.OrderTableFixture.createOrderTable;
+import static kitchenpos.fixture.domain.TableGroupFixture.createTableGroup;
 import static kitchenpos.fixture.dto.TableGroupDtoFixture.createTableGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,7 +65,7 @@ public class TableGroupServiceTest extends ServiceTest {
         // given
         final OrderTable groupedTable1 = 테이블등록(createOrderTable(3, true));
         final OrderTable groupedTable2 = 테이블등록(createOrderTable(3, true));
-        단체지정(createTableGroupRequest(groupedTable1, groupedTable2));
+        단체지정(createTableGroup(groupedTable1, groupedTable2));
 
         final OrderTable table = 테이블등록(createOrderTable(5, true));
 
@@ -78,7 +80,7 @@ public class TableGroupServiceTest extends ServiceTest {
         // given
         final OrderTable groupedTable1 = 테이블등록(createOrderTable(3, true));
         final OrderTable groupedTable2 = 테이블등록(createOrderTable(3, true));
-        final TableGroupResponse group = 단체지정(createTableGroupRequest(groupedTable1, groupedTable2));
+        final TableGroup group = 단체지정(createTableGroup(groupedTable1, groupedTable2));
 
         // when
         tableGroupService.ungroup(group.getId());
