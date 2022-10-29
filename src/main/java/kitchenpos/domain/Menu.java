@@ -61,10 +61,6 @@ public class Menu implements Entity{
         return menuGroupId;
     }
 
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
-    }
-
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
@@ -85,7 +81,7 @@ public class Menu implements Entity{
 
     private void validatePrice(final List<MenuProduct> menuProducts) {
         final var total = menuProducts.stream()
-                .map(MenuProduct::price)
+                .map(MenuProduct::amount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         if (price.getPrice().compareTo(total) > 0) {
             throw new IllegalArgumentException();

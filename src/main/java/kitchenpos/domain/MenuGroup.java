@@ -14,6 +14,15 @@ public class MenuGroup implements Entity {
         this.name = name;
     }
 
+    @Override
+    public boolean isNew() {
+        return id == null;
+    }
+
+    @Override
+    public void validateOnCreate() {
+    }
+
     public Long getId() {
         return id;
     }
@@ -24,14 +33,5 @@ public class MenuGroup implements Entity {
 
     public String getName() {
         return name;
-    }
-
-    @Override
-    public boolean isNew() {
-        return id == null;
-    }
-
-    @Override
-    public void validateOnCreate() {
     }
 }

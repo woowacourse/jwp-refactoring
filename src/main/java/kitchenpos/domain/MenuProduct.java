@@ -10,19 +10,24 @@ public class MenuProduct implements Entity {
     private Product product;
     private long quantity;
 
-    public MenuProduct(final Long menuId, final Product product, final long quantity) {
+    public MenuProduct(final Long menuId,
+                       final Product product,
+                       final long quantity) {
         this(null, menuId, product.getId(), quantity);
         this.product = product;
     }
 
-    public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity) {
+    public MenuProduct(final Long seq,
+                       final Long menuId,
+                       final Long productId,
+                       final long quantity) {
         this.seq = seq;
         this.menuId = menuId;
         this.productId = productId;
         this.quantity = quantity;
     }
 
-    public BigDecimal price() {
+    public BigDecimal amount() {
         return BigDecimal.valueOf(quantity).multiply(product.getPrice());
     }
 

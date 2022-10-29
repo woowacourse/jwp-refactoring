@@ -2,7 +2,7 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 
-public class Product {
+public class Product implements Entity {
 
     private Long id;
     private String name;
@@ -11,18 +11,21 @@ public class Product {
     public Product() {
     }
 
-    public Product(final String name, final BigDecimal price) {
-        this(null, name, price);
-    }
-
-    public Product(final Long id, final String name, final BigDecimal price) {
+    public Product(final Long id,
+                   final String name,
+                   final BigDecimal price) {
         this.id = id;
         this.name = name;
         this.price = new Price(price);
     }
 
-    public BigDecimal calculateTotalPrice(final long quantity) {
-        return price.getPrice().multiply(new BigDecimal(quantity));
+    @Override
+    public boolean isNew() {
+        return id == null;
+    }
+
+    @Override
+    public void validateOnCreate() {
     }
 
     public Long getId() {

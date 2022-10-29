@@ -62,6 +62,29 @@ public class Order implements Entity {
         }
     }
 
+    @Override
+    public boolean isNew() {
+        return id == null;
+    }
+
+    @Override
+    public void validateOnCreate() {
+        validateOrderLineItemsNotEmpty();
+        validateOrderTableNotEmpty();
+    }
+
+    private void validateOrderTableNotEmpty() {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateOrderLineItemsNotEmpty() {
+        if (orderLineItems.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -78,30 +101,11 @@ public class Order implements Entity {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = OrderStatus.valueOf(orderStatus);
-    }
-
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    @Override
-    public boolean isNew() {
-        return id == null;
-    }
-
-    @Override
-    public void validateOnCreate() {
-        if (orderLineItems.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
     }
 }

@@ -21,7 +21,7 @@ class ProductRestControllerTest {
     @Test
     void create() {
         final var response = productRestController.create(
-                new Product("콜라", BigDecimal.valueOf(1000)));
+                new Product(null, "콜라", BigDecimal.valueOf(1000)));
 
         assertAll(
                 () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED),

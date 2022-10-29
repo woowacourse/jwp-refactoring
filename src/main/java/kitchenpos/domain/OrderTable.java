@@ -3,7 +3,7 @@ package kitchenpos.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderTable {
+public class OrderTable implements Entity {
 
     private Long id;
     private Long tableGroupId;
@@ -11,15 +11,22 @@ public class OrderTable {
     private boolean empty;
     private List<Order> orders;
 
-    public OrderTable(final int numberOfGuests, final boolean empty) {
+    public OrderTable(final int numberOfGuests,
+                      final boolean empty) {
         this(null, null, numberOfGuests, empty, new ArrayList<>());
     }
 
-    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+    public OrderTable(final Long id,
+                      final Long tableGroupId,
+                      final int numberOfGuests,
+                      final boolean empty) {
         this(id, tableGroupId, numberOfGuests, empty, new ArrayList<>());
     }
 
-    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty,
+    public OrderTable(final Long id,
+                      final Long tableGroupId,
+                      final int numberOfGuests,
+                      final boolean empty,
                       final List<Order> orders) {
         this.id = id;
         this.tableGroupId = tableGroupId;
@@ -45,13 +52,10 @@ public class OrderTable {
         this.empty = status;
     }
 
-    public boolean canBeUngrouped() {
-        return isAllOrderCompleted();
-    }
-
-    private boolean isAllOrderCompleted() {
-        return orders.stream()
-                .noneMatch(order -> order.getOrderStatus() != OrderStatus.COMPLETION);
+    private void validateNotGrouped() {
+        if (tableGroupId != null) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private void validateAllOrderCompleted() {
@@ -60,14 +64,26 @@ public class OrderTable {
         }
     }
 
-    private void validateNotGrouped() {
-        if (tableGroupId != null) {
-            throw new IllegalArgumentException();
-        }
+    private boolean isAllOrderCompleted() {
+        return orders.stream()
+                .noneMatch(order -> order.getOrderStatus() != OrderStatus.COMPLETION);
+    }
+
+    public boolean canBeUngrouped() {
+        return isAllOrderCompleted();
     }
 
     public boolean canBeGrouped() {
         return empty && tableGroupId == null;
+    }
+
+    @Override
+    public boolean isNew() {
+        return id == null;
+    }
+
+    @Override
+    public void validateOnCreate() {
     }
 
     public Long getId() {
@@ -82,20 +98,12 @@ public class OrderTable {
         return tableGroupId;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests.value;
     }
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 
     public List<Order> getOrders() {

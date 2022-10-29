@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -25,8 +26,13 @@ public class OrderRepository {
         final var savedOrderLineItems = order.getOrderLineItems()
                 .stream()
                 .map(orderLineItem -> {
-                    orderLineItem.setOrderId(savedOrder.getId());
-                    return orderLineItemDao.save(orderLineItem);
+                    final var entity = new OrderLineItem(
+                            null,
+                            savedOrder.getId(),
+                            orderLineItem.getMenuId(),
+                            orderLineItem.getQuantity()
+                    );
+                    return orderLineItemDao.save(entity);
                 })
                 .collect(Collectors.toList());
 

@@ -29,9 +29,13 @@ public class MenuRepository {
             menuProduct.setMenuId(menuId);
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
-        savedMenu.setMenuProducts(savedMenuProducts);
 
-        return savedMenu;
+        return new Menu(
+                savedMenu.getId(),
+                savedMenu.getName(),
+                savedMenu.getPrice(),
+                savedMenu.getMenuGroupId(),
+                savedMenuProducts);
     }
 
     public List<Menu> getAll() {

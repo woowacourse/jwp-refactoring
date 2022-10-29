@@ -11,11 +11,13 @@ public class TableGroup implements Entity {
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
 
-    public TableGroup(final Long id, final LocalDateTime createdDate) {
+    public TableGroup(final Long id,
+                      final LocalDateTime createdDate) {
         this(id, createdDate, new ArrayList<>());
     }
 
-    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+    public TableGroup(final LocalDateTime createdDate,
+                      final List<OrderTable> orderTables) {
         this(null, createdDate, orderTables);
     }
 

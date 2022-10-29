@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -52,8 +53,7 @@ class MenuServiceTest extends FakeSpringContext {
             @DisplayName("예외를 던진다")
             @Test
             void throwsException() {
-                final var menu = menu("피자와 콜라", italian, List.of(pizza, coke));
-                menu.setMenuGroupId(notExistMenuGroupId);
+                final var menu = new Menu(null, "피자와 콜라", BigDecimal.valueOf(0), notExistMenuGroupId);
 
                 assertThatThrownBy(
                         () -> menuService.create(menu)
