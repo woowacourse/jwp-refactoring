@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static kitchenpos.fixture.ProductFixture.newProduct;
+
 public class FakeProductDao implements ProductDao {
 
     private final Map<Long, Product> products = new HashMap<>();
@@ -17,8 +19,12 @@ public class FakeProductDao implements ProductDao {
 
     @Override
     public Product save(final Product product) {
-        product.setId(id);
-        products.put(id++, product);
+        final var newProduct = newProduct(
+                id++,
+                product.getName(),
+                product.getPrice()
+        );
+        products.put(id++, newProduct);
         return product;
     }
 
