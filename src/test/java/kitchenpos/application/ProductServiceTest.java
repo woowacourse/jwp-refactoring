@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.ProductFixture.createProduct;
-import static kitchenpos.support.ProductFixture.createProductRequest;
+import static kitchenpos.support.ProductFixture.product;
+import static kitchenpos.support.ProductFixture.productRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -10,6 +10,7 @@ import java.util.List;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.support.IntegrationServiceTest;
+import kitchenpos.support.ProductFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ class ProductServiceTest extends IntegrationServiceTest {
 
             private final int MINUS_PRICE = -1;
 
-            private final ProductRequest productRequest = createProductRequest(MINUS_PRICE);
+            private final ProductRequest productRequest = ProductFixture.productRequest(MINUS_PRICE);
 
             @Test
             void 예외가_발생한다() {
@@ -53,7 +54,7 @@ class ProductServiceTest extends IntegrationServiceTest {
         @Nested
         class 상품을_정상적으로_생성가능한_경우 extends IntegrationServiceTest {
 
-            private final ProductRequest productRequest = createProductRequest(18_000);
+            private final ProductRequest productRequest = ProductFixture.productRequest(18_000);
 
             @Test
             void 저장된_상품이_반환된다() {
@@ -70,9 +71,9 @@ class ProductServiceTest extends IntegrationServiceTest {
         @BeforeEach
         void setUp() {
 
-            productRepository.save(createProduct("양념 치킨"));
-            productRepository.save(createProduct("간장 치킨"));
-            productRepository.save(createProduct("순살 바베큐 치킨"));
+            productRepository.save(product("양념 치킨"));
+            productRepository.save(product("간장 치킨"));
+            productRepository.save(product("순살 바베큐 치킨"));
         }
 
         @Test

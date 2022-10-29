@@ -2,7 +2,7 @@ package kitchenpos.e2e;
 
 import static kitchenpos.e2e.E2eTest.AssertionPair.row;
 import static kitchenpos.support.AssertionsSupport.assertAll;
-import static kitchenpos.support.MenuFixture.createMenuRequest;
+import static kitchenpos.support.MenuFixture.menuRequest;
 import static kitchenpos.support.MenuGroupFixture.단짜_두_마리_메뉴;
 import static kitchenpos.support.MenuProductFixture.menuProductOne;
 import static kitchenpos.support.MenuProductFixture.menuProducts;
@@ -19,6 +19,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.support.MenuFixture;
 import kitchenpos.support.MenuFixture.WrapMenu;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,8 +43,8 @@ public class MenuE2eTest extends KitchenPosE2eTest {
         간장_상품_ID = POST_요청(PRODUCT_URL, 간장_치킨).body().as(Product.class).getId();
         양념_상품_ID = POST_요청(PRODUCT_URL, 양념_치킨).body().as(Product.class).getId();
 
-        메뉴_요청바디_1 = createMenuRequest("후라이드 + 후라이드", 19_000, 메뉴그룹_ID, menuProductOne(후라이드_상품_ID, 2L));
-        메뉴_요청바디_2 = createMenuRequest("양념 + 간장", 21_000, 메뉴그룹_ID, menuProducts(후라이드_상품_ID, 2, 간장_상품_ID, 1));
+        메뉴_요청바디_1 = MenuFixture.menu("후라이드 + 후라이드", 19_000, 메뉴그룹_ID, menuProductOne(후라이드_상품_ID, 2L));
+        메뉴_요청바디_2 = MenuFixture.menu("양념 + 간장", 21_000, 메뉴그룹_ID, menuProducts(후라이드_상품_ID, 2, 간장_상품_ID, 1));
     }
 
     @Test
@@ -61,7 +62,7 @@ public class MenuE2eTest extends KitchenPosE2eTest {
                 HTTP_STATUS_검증(HttpStatus.CREATED, 응답),
                 NOT_NULL_검증(저장된_메뉴.id()),
                 단일_검증(저장된_메뉴.intPrice(), 19_000),
-                단일_검증(저장된_메뉴상품.getProductId(), 후라이드_상품_ID),
+                단일_검증(저장된_메뉴상품.getProduct().getId(), 후라이드_상품_ID),
                 단일_검증(저장된_메뉴상품.getQuantity(), 2L)
         );
     }

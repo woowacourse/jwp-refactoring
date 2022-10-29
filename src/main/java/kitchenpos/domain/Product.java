@@ -13,19 +13,26 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     private BigDecimal price;
 
     public Product() {
     }
 
-    public Product(final String name, final BigDecimal price) {
-        validatePosiivePrice(price);
+    public Product(String name,  BigDecimal price) {
+        this(null, name, price);
+        validatePositivePrice();
+    }
+
+    public Product(Long id, String name, BigDecimal price) {
+        this.id = id;
         this.name = name;
         this.price = price;
     }
 
-    private void validatePosiivePrice(final BigDecimal price) {
+    private void validatePositivePrice() {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("가격은 양의 정수이어야 합니다.");
         }
@@ -35,7 +42,7 @@ public class Product {
         return id;
     }
 
-    public void setId(final Long id) {
+    public void setId( Long id) {
         this.id = id;
     }
 
@@ -43,7 +50,7 @@ public class Product {
         return name;
     }
 
-    public void setName(final String name) {
+    public void setName( String name) {
         this.name = name;
     }
 
@@ -51,7 +58,7 @@ public class Product {
         return price;
     }
 
-    public void setPrice(final BigDecimal price) {
+    public void setPrice( BigDecimal price) {
         this.price = price;
     }
 

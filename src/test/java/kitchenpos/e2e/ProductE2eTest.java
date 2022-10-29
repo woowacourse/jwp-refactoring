@@ -2,7 +2,7 @@ package kitchenpos.e2e;
 
 import static kitchenpos.e2e.E2eTest.AssertionPair.row;
 import static kitchenpos.support.AssertionsSupport.assertAll;
-import static kitchenpos.support.ProductFixture.createProductRequest;
+import static kitchenpos.support.ProductFixture.productRequest;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -18,7 +18,7 @@ class ProductE2eTest extends KitchenPosE2eTest {
     void create() {
 
         // given
-        WrapProductRequest requestBody = createProductRequest("양념 치킨", 10_000);
+        WrapProductRequest requestBody = productRequest("양념 치킨", 10_000);
 
         // when
         ExtractableResponse<Response> 응답 = POST_요청("/api/products", requestBody);
@@ -38,8 +38,8 @@ class ProductE2eTest extends KitchenPosE2eTest {
     void list() {
 
         // given
-        WrapProductRequest 양념_치킨 = createProductRequest("양념 치킨", 10_000);
-        WrapProductRequest 간장_치킨 = createProductRequest("간장 치킨", 10_000);
+        WrapProductRequest 양념_치킨 = productRequest("양념 치킨", 10_000);
+        WrapProductRequest 간장_치킨 = productRequest("간장 치킨", 10_000);
 
         POST_요청("/api/products", 양념_치킨);
         POST_요청("/api/products", 간장_치킨);

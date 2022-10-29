@@ -6,13 +6,13 @@ import kitchenpos.application.OrderService;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
-import kitchenpos.dao.MenuProductDao;
+import kitchenpos.dao.jpa.MenuGroupRepository;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductRepository;
 import kitchenpos.dao.TableGroupDao;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.dao.jpa.MenuProductRepository;
+import kitchenpos.dao.jpa.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,7 +68,10 @@ abstract public class IntegrationServiceTest {
     protected TableGroupDao tableGroupDao;
 
     @Autowired
-    protected MenuProductDao menuProductDao;
+    protected MenuProductRepository menuProductRepository;
+
+    @Autowired
+    protected MenuGroupRepository menuGroupRepository;
 
 
     // Support's

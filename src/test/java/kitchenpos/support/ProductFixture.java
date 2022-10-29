@@ -6,25 +6,33 @@ import kitchenpos.dto.request.ProductRequest;
 
 public abstract class ProductFixture {
 
-    public static Product createProduct(String name) {
+    public static Product product(String name) {
         return new Product(name, BigDecimal.valueOf(20_000));
     }
 
-    public static Product createProduct(int price) {
+    public static Product product(int price) {
         return new Product("간장 치킨", BigDecimal.valueOf(price));
     }
 
-    public static ProductRequest createProductRequest(int price) {
+    public static Product product(String name, int price) {
+        return new Product(name, BigDecimal.valueOf(price));
+    }
+
+    public static Product product(Long id, String name, int price) {
+        return new Product(id, name, BigDecimal.valueOf(price));
+    }
+
+    public static ProductRequest productRequest(int price) {
         return new ProductRequest("간장 치킨", BigDecimal.valueOf(price));
     }
 
-    public static WrapProductRequest createProductRequest(String name, int price) {
+    public static WrapProductRequest productRequest(String name, int price) {
         return new WrapProductRequest(name, BigDecimal.valueOf(price));
     }
 
-    public static final WrapProductRequest 후라이드_치킨 = createProductRequest("후라이드 치킨", 16_000);
-    public static final WrapProductRequest 간장_치킨 = createProductRequest("간장 치킨", 17_000);
-    public static final WrapProductRequest 양념_치킨 = createProductRequest("양념 치킨", 17_000);
+    public static final WrapProductRequest 후라이드_치킨 = productRequest("후라이드 치킨", 16_000);
+    public static final WrapProductRequest 간장_치킨 = productRequest("간장 치킨", 17_000);
+    public static final WrapProductRequest 양념_치킨 = productRequest("양념 치킨", 17_000);
 
     public static class WrapProductRequest extends ProductRequest {
 

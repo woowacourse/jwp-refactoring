@@ -1,18 +1,20 @@
 package kitchenpos.application;
 
-import static java.util.Arrays.asList;
-import static kitchenpos.support.MenuFixture.createMenu;
-import static kitchenpos.support.MenuFixture.createMenuWithProduct;
+import static kitchenpos.support.MenuFixture.menuRequest;
+import static kitchenpos.support.MenuGroupFixture.menuGroup;
+import static kitchenpos.support.MenuGroupFixture.메뉴_그룹;
+import static kitchenpos.support.ProductFixture.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.util.Lists.emptyList;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.support.IntegrationServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -28,11 +30,11 @@ class MenuServiceTest extends IntegrationServiceTest {
 
             private final BigDecimal NULL_PRICE = null;
 
-            private final Menu menu = new Menu("후라이드치킨", NULL_PRICE, 1L, emptyList());
+            private final MenuRequest menuRequest = menuRequest(NULL_PRICE);
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> menuService.create(menu))
+                assertThatThrownBy(() -> menuService.create(menuRequest))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("가격은 양의 정수이어야 합니다.");
             }
@@ -43,29 +45,39 @@ class MenuServiceTest extends IntegrationServiceTest {
 
             private final int MINUS_PRICE = -1;
 
-            private final Menu menu = createMenu(MINUS_PRICE);
-
+            private final MenuRequest menuRequest = menuRequest(MINUS_PRICE);
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> menuService.create(menu))
+                assertThatThrownBy(() -> menuService.create(menuRequest))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("가격은 양의 정수이어야 합니다.");
             }
         }
 
         @Nested
-        class 없는_메뉴_그룹의_id가_입력될_경우 extends IntegrationServiceTest {
+        class 없는_메뉴_그룹의_ID가_입력될_경우 extends IntegrationServiceTest {
 
             private final long NOT_EXIST_MENU_GROUP_ID = -1L;
 
-            private final Menu menu = createMenu(10_000, NOT_EXIST_MENU_GROUP_ID);
+            private MenuRequest menuRequest;
 
+            @BeforeEach
+            void setUp() {
+                final Product 양념_치칸 = productRepository.save(product("양념 치칸", 16_000));
+
+                menuRequest = MenuRequest.builder()
+                        .name("양념 치킨 메뉴")
+                        .intPrice(16_000)
+                        .menuGroup(menuGroup(NOT_EXIST_MENU_GROUP_ID))
+                        .menuProducts(List.of(new MenuProduct(양념_치칸, 1L)))
+                        .build();
+            }
 
             @Test
             void 예외가_발생한다() {
 
-                assertThatThrownBy(() -> menuService.create(menu))
+                assertThatThrownBy(() -> menuService.create(menuRequest))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("존재하지 않는 메뉴 그룹의 id입니다.");
             }
@@ -76,15 +88,25 @@ class MenuServiceTest extends IntegrationServiceTest {
 
             private static final long NOT_EXIST_MENU_PRODUCT_NUMBER = -1L;
 
-            private final List<MenuProduct> ERROR_MENU_PRODUCTS = asList(
-                    new MenuProduct(NOT_EXIST_MENU_PRODUCT_NUMBER, 1));
+            private List<MenuProduct> ERROR_MENU_PRODUCTS;
 
-            private final Menu menu = createMenu(16_000, ERROR_MENU_PRODUCTS);
+            private MenuRequest menuRequest;
 
+            @BeforeEach
+            void setUp() {
+                MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
+                productRepository.save(new Product("후라이드", BigDecimal.valueOf(16_000)));
+                final Product 존재하지않는_product = product(NOT_EXIST_MENU_PRODUCT_NUMBER, "존재 하지 않는 Product", 16_000);
+                final MenuProduct 존재하지않는_menuProduct = new MenuProduct(존재하지않는_product, 1);
+
+                ERROR_MENU_PRODUCTS = List.of(존재하지않는_menuProduct);
+                menuRequest = menuRequest(menuGroup, ERROR_MENU_PRODUCTS, 16_000);
+            }
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> menuService.create(menu))
+
+                assertThatThrownBy(() -> menuService.create(menuRequest))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("메뉴상품의 상품ID가 존재하지 않습니다.");
             }
@@ -93,13 +115,30 @@ class MenuServiceTest extends IntegrationServiceTest {
         @Nested
         class 메뉴_가격이_상품가격과_메뉴상품양의_곱보다_큰_경우 extends IntegrationServiceTest {
 
-            private final int ERROR_MENU_PRICE = 9_900_000;
+            private final int LARGER_MENU_PRICE = 40_000;
 
-            private final Menu menu = createMenu(ERROR_MENU_PRICE);
+            private MenuRequest menuRequest;
+
+            @BeforeEach
+            void setUp() {
+
+                final MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹);
+
+                Product 후라이드_치킨 = productRepository.save(product("후라이드 치킨", 18_000));
+                Product 간장_치킨 = productRepository.save(product("간장 치킨", 19_000));
+
+                menuRequest = MenuRequest.builder()
+                        .name("간장 후라이드 세트 메뉴")
+                        .intPrice(LARGER_MENU_PRICE)
+                        .menuGroup(menuGroup)
+                        .menuProducts(new MenuProduct(후라이드_치킨, 1L), new MenuProduct(간장_치킨, 1L))
+                        .build();
+            }
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> menuService.create(menu))
+
+                assertThatThrownBy(() -> menuService.create(menuRequest))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("메뉴의 가격은 상품들의 총 가격보다 클 수 없습니다.");
             }
@@ -108,24 +147,24 @@ class MenuServiceTest extends IntegrationServiceTest {
         @Nested
         class 정상적으로_메뉴를_생성가능한_경우 extends IntegrationServiceTest {
 
-            private Menu menu;
+            private MenuRequest menuRequest;
 
             @BeforeEach
             void setUp() {
 
-                final Long productId = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16_000))).getId();
-
-                menu = createMenuWithProduct(productId, 16_000);
+                final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
+                final Product product = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16_000)));
+                menuRequest = menuRequest(menuGroup, product, 16_000);
             }
 
             @Test
             void 저장된_메뉴가_반환된다() {
 
-                Menu savedMenu = menuService.create(menu);
+                Menu savedMenu = menuService.create(menuRequest);
 
                 assertAll(
                         () -> assertThat(savedMenu).isNotNull(),
-                        () -> assertThat(menu.getId()).isNull(),
+                        () -> assertThat(menuRequest.getId()).isNull(),
                         () -> assertThat(savedMenu.getId()).isNotNull()
                 );
             }
@@ -135,11 +174,26 @@ class MenuServiceTest extends IntegrationServiceTest {
     @Nested
     class list_메서드는 extends IntegrationServiceTest {
 
+        @BeforeEach
+        void setUp() {
+
+            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
+
+            final Product product1 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16_000)));
+            final Product product2 = productRepository.save(new Product("양념치킨", BigDecimal.valueOf(16_000)));
+            final Product product3 = productRepository.save(new Product("반반치킨", BigDecimal.valueOf(16_000)));
+
+            menuService.create(menuRequest(menuGroup, product1, 16_000));
+            menuService.create(menuRequest(menuGroup, product2, 16_000));
+            menuService.create(menuRequest(menuGroup, product3, 16_000));
+        }
+
         @Test
         void 메뉴목록을_반환한다() {
+
             List<Menu> actual = menuService.list();
 
-            assertThat(actual).hasSize(6);
+            assertThat(actual).hasSize(3);
         }
     }
 }

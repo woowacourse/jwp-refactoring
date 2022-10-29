@@ -2,7 +2,7 @@ package kitchenpos.e2e;
 
 import static java.time.LocalDateTime.now;
 import static kitchenpos.domain.OrderStatus.MEAL;
-import static kitchenpos.support.MenuFixture.createMenuRequest;
+import static kitchenpos.support.MenuFixture.menuRequest;
 import static kitchenpos.support.MenuGroupFixture.단짜_두_마리_메뉴;
 import static kitchenpos.support.ProductFixture.후라이드_치킨;
 
@@ -20,6 +20,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.support.MenuFixture;
 
 public abstract class KitchenPosE2eTest extends E2eTest {
 
@@ -126,19 +127,25 @@ public abstract class KitchenPosE2eTest extends E2eTest {
     protected Long 메뉴_생성_및_ID_반환() {
 
         final Long 메뉴그룹_ID = 메뉴그룹_생성_및_ID_반환();
-        final Long 후라이드치킨_ID = 상품_생성_및_ID_반환();
-        final List<MenuProduct> 메뉴상품_리스트 = List.of(new MenuProduct(후라이드치킨_ID, 1));
+        final Product 후라이드치킨 = 상품_생성();
+        final List<MenuProduct> 메뉴상품_리스트 = List.of(new MenuProduct(후라이드치킨, 1));
 
-        return POST_요청(MENU_URL, createMenuRequest("단 치킨 한 마리", 15_000, 메뉴그룹_ID, 메뉴상품_리스트))
+        return POST_요청(MENU_URL, MenuFixture.menu("단 치킨 한 마리", 15_000, 메뉴그룹_ID, 메뉴상품_리스트))
                 .as(Menu.class)
                 .getId();
     }
 
     protected Long 메뉴_생성_및_ID_반환(final Long 메뉴그룹_ID, final List<MenuProduct> 메뉴상품_리스트) {
 
-        return POST_요청(MENU_URL, createMenuRequest("단 치킨 한 마리", 15_000, 메뉴그룹_ID, 메뉴상품_리스트))
+        return POST_요청(MENU_URL, MenuFixture.menu("단 치킨 한 마리", 15_000, 메뉴그룹_ID, 메뉴상품_리스트))
                 .as(Menu.class)
                 .getId();
+    }
+
+    protected Product 상품_생성() {
+
+        return POST_요청(PRODUCT_URL, 후라이드_치킨)
+                .as(Product.class);
     }
 
     protected Long 상품_생성_및_ID_반환() {

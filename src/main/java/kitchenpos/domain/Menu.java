@@ -1,42 +1,93 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
+@Entity
 public class Menu {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     private BigDecimal price;
-    private Long menuGroupId;
+
+    @JoinColumn(name = "menu_group_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private MenuGroup menuGroup;
+
+    @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts;
 
-    public Menu() {
+    protected Menu() {
     }
 
-    public Menu(final String name,
-                final BigDecimal price,
-                final Long menuGroupId,
-                final List<MenuProduct> menuProducts) {
+    public Menu(String name,
+                BigDecimal price,
+                MenuGroup menuGroup,
+                List<MenuProduct> menuProducts) {
         this.name = name;
         this.price = price;
-        this.menuGroupId = menuGroupId;
+        this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
+        validate();
+    }
+
+    private void validate() {
+        validatePrice();
+        validatePriceBetweenSelfAndProducts();
+    }
+
+    private void validatePrice() {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("가격은 양의 정수이어야 합니다.");
+        }
+    }
+
+    public List<Product> products() {
+
+        return menuProducts.stream()
+                .map(menuProduct -> menuProduct.getProduct())
+                .collect(Collectors.toList());
+    }
+
+    public void validatePriceBetweenSelfAndProducts() {
+
+        if (price.compareTo(totalProductsPrice()) > 0) {
+            throw new IllegalArgumentException("메뉴의 가격은 상품들의 총 가격보다 클 수 없습니다.");
+        }
+    }
+
+    protected BigDecimal totalProductsPrice() {
+
+        BigDecimal sum = BigDecimal.ZERO;
+        for (MenuProduct menuProduct : menuProducts) {
+            sum = sum.add(menuProduct.priceSum());
+        }
+        return sum;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -44,23 +95,23 @@ public class Menu {
         return price;
     }
 
-    public void setPrice(final BigDecimal price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
+    public void setMenuGroup(MenuGroup menuGroup) {
+        this.menuGroup = menuGroup;
     }
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
 
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
+    public void setMenuProducts(List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
     }
 
@@ -70,7 +121,6 @@ public class Menu {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", price=" + price +
-                ", menuGroupId=" + menuGroupId +
                 ", menuProducts=" + menuProducts +
                 '}';
     }

@@ -1,23 +1,22 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.ProductRepository;
+import java.util.List;
+import kitchenpos.dao.jpa.MenuRepository;
+import kitchenpos.dao.jpa.ProductRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @Transactional(readOnly = true)
 public class ProductService {
     private final ProductRepository productRepository;
-    private final MenuDao menuDao;
+    private final MenuRepository menuRepository;
 
-    public ProductService(final ProductRepository productRepository, final MenuDao menuDao) {
+    public ProductService(ProductRepository productRepository, MenuRepository menuRepository) {
         this.productRepository = productRepository;
-        this.menuDao = menuDao;
+        this.menuRepository = menuRepository;
     }
 
     @Transactional
