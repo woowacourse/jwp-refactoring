@@ -70,10 +70,10 @@ public class OrderService {
         return OrderResponse.of(order, createOrderLineItems(orderLineItems, orderId));
     }
 
-    private static List<OrderLineItem> createOrderLineItems(final List<OrderLineItem> orderLineItems,
+    private List<OrderLineItem> createOrderLineItems(final List<OrderLineItem> orderLineItems,
                                                             final Long orderId) {
         return orderLineItems.stream()
-                .map(it -> OrderLineItem.of(it.getSeq(), orderId, it.getMenuId(), it.getQuantity()))
+                .map(it -> new OrderLineItem(it.getSeq(), orderId, it.getMenuId(), it.getQuantity()))
                 .collect(Collectors.toList());
     }
 
@@ -90,6 +90,6 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("order가 존재하지 않습니다."));
         order.changeStatus(request.getOrderStatus());
         Order savedOrder = orderDao.save(order);
-        return OrderResponse.of(order, order.getOrderLineItems());
+        return OrderResponse.of(savedOrder, savedOrder.getOrderLineItems());
     }
 }

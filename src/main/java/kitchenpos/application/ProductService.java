@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class ProductService {
     private final ProductDao productDao;
 
@@ -18,13 +18,12 @@ public class ProductService {
         this.productDao = productDao;
     }
 
-
+    @Transactional
     public ProductResponse create(final ProductRequest request) {
         Product product = productDao.save(new Product(request.getName(), request.getPrice()));
         return ProductResponse.from(product);
     }
 
-    @Transactional(readOnly = true)
     public List<ProductResponse> list() {
         List<Product> products = productDao.findAll();
         return products.stream()

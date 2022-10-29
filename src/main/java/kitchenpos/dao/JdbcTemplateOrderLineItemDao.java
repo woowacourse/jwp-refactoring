@@ -68,7 +68,7 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
     }
 
     private OrderLineItem toEntity(final ResultSet resultSet) throws SQLException {
-        return OrderLineItem.of(
+        return new OrderLineItem(
                 resultSet.getLong(KEY_COLUMN_NAME),
                 resultSet.getLong("order_id"),
                 resultSet.getLong("menu_id"),

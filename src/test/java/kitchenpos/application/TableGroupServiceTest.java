@@ -67,7 +67,7 @@ class TableGroupServiceTest {
 
     @Test
     void createThrowExceptionAlreadyReservationOrderTable() {
-        Long tableGroupId = tableGroupDao.save(TableGroup.of(LocalDateTime.now(), new ArrayList<>()))
+        Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
                 .getId();
         OrderTable orderTable1 = orderTableDao.save(OrderTable.of(tableGroupId, 10, true));
         OrderTable orderTable2 = orderTableDao.save(OrderTable.of(tableGroupId, 10, true));
@@ -81,7 +81,7 @@ class TableGroupServiceTest {
 
     @Test
     void createThrowExceptionNotEmptyTable() {
-        Long tableGroupId = tableGroupDao.save(TableGroup.of(LocalDateTime.now(), new ArrayList<>()))
+        Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
                 .getId();
         OrderTable orderTable1 = orderTableDao.save(OrderTable.of(tableGroupId, 10, false));
         OrderTable orderTable2 = orderTableDao.save(OrderTable.of(tableGroupId, 10, true));
@@ -97,7 +97,7 @@ class TableGroupServiceTest {
     void ungroup() {
         OrderTable orderTable1 = orderTableDao.save(OrderTable.of(null, 10, true));
         OrderTable orderTable2 = orderTableDao.save(OrderTable.of(null, 10, true));
-        Long tableGroupId = tableGroupDao.save(TableGroup.of(LocalDateTime.now(), List.of(orderTable1, orderTable2)))
+        Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)))
                 .getId();
 
         tableGroupService.ungroup(tableGroupId);
@@ -109,7 +109,7 @@ class TableGroupServiceTest {
 
     @Test
     void ungroupThrowExceptionWhenStillCookingOrderTable() {
-        Long tableGroupId = tableGroupDao.save(TableGroup.of(LocalDateTime.now(), new ArrayList<>()))
+        Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
                 .getId();
         OrderTable orderTable = orderTableDao.save(OrderTable.of(tableGroupId, 10, true));
         orderDao.save(Order.of(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
@@ -121,7 +121,7 @@ class TableGroupServiceTest {
 
     @Test
     void ungroupThrowExceptionWhenStillMeal() {
-        Long tableGroupId = tableGroupDao.save(TableGroup.of(LocalDateTime.now(), new ArrayList<>()))
+        Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
                 .getId();
         OrderTable orderTable = orderTableDao.save(OrderTable.of(tableGroupId, 10, true));
         orderDao.save(Order.of(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), new ArrayList<>()));

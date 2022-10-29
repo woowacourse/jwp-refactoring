@@ -42,18 +42,19 @@ public class MenuService {
         if (!menuGroupDao.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException("menuGroup이 존재하지 않습니다.");
         }
+
         final List<MenuProductRequest> menuProducts = request.getMenuProducts();
         if (request.getPrice()
                 .compareTo(getMenuProductTotalPrice(menuProducts)) > 0) {
             throw new IllegalArgumentException("주문 총 금액이 메뉴 가격보다 작습니다.");
         }
-        return createMenu(request, menuProducts);
+        return createMenuResponse(request, menuProducts);
     }
 
-    private MenuResponse createMenu(final MenuRequest request, final List<MenuProductRequest> menuProducts) {
+    private MenuResponse createMenuResponse(final MenuRequest request, final List<MenuProductRequest> menuProducts) {
         final Menu menu = menuDao.save(new Menu(request.getName(), request.getPrice(), request.getMenuGroupId()));
         List<MenuProduct> savedMenuProducts = menuProducts.stream()
-                .map(it -> MenuProduct.of(menu.getId(), it.getProductId(), it.getQuantity()))
+                .map(it -> new MenuProduct(menu.getId(), it.getProductId(), it.getQuantity()))
                 .collect(Collectors.toList());
         return MenuResponse.from(menu, savedMenuProducts);
     }

@@ -18,12 +18,12 @@ public class TableGroup {
         this(null, LocalDateTime.now(), null);
     }
 
-    public static TableGroup of(final Long id, final LocalDateTime createdDate) {
-        return new TableGroup(id, createdDate, null);
+    public TableGroup (final Long id, final LocalDateTime createdDate) {
+        this(id, createdDate, null);
     }
 
-    public static TableGroup of(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        return new TableGroup(null, createdDate, orderTables);
+    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        this(null, createdDate, orderTables);
     }
 
     public Long getId() {

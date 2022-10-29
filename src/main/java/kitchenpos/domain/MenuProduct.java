@@ -13,12 +13,8 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public static MenuProduct of(final Long seq, final Long menuId, final Long productId, final long quantity) {
-        return new MenuProduct(seq, menuId, productId, quantity);
-    }
-
-    public static MenuProduct of(final Long menuId, final Long productId, final long quantity) {
-        return new MenuProduct(null, menuId, productId, quantity);
+    public MenuProduct(final Long menuId, final Long productId, final long quantity) {
+        this(null, menuId, productId, quantity);
     }
 
     public Long getSeq() {
