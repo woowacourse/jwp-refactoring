@@ -1,22 +1,20 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.OrderTableIdDto;
 import kitchenpos.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
@@ -35,60 +33,31 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByOrderTableIdsIn(
-                extractOrderTableIds(request.getOrderTables()));
-        validateEmptyOrderTable(orderTables);
-
-        final TableGroup savedTableGroup = tableGroupRepository.save(request.toTableGroup());
-        fillOrderTableGroup(orderTables, savedTableGroup);
-        orderTableRepository.saveAll(orderTables);
-        return TableGroupResponse.from(savedTableGroup, orderTables);
+        final OrderTables orderTables = getOrderTables(request.getOrderTables());
+        final TableGroup tableGroup = tableGroupRepository.save(request.toTableGroup());
+        orderTables.fillTableGroup(tableGroup);
+        orderTableRepository.saveAll(orderTables.getValues());
+        return TableGroupResponse.from(tableGroup, orderTables);
     }
 
-    private void fillOrderTableGroup(final List<OrderTable> orderTables, final TableGroup savedTableGroup) {
-        for (OrderTable orderTable : orderTables) {
-            orderTable.fillOrderTableGroup(savedTableGroup.getId());
-        }
+    private OrderTables getOrderTables(final List<OrderTableIdDto> orderTableIdDtos) {
+        List<OrderTable> orderTables = orderTableRepository.findAllByOrderTableIdsIn(
+                extractOrderTableIds(orderTableIdDtos));
+        return OrderTables.fromCreate(orderTables);
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-        validateCompletion(orderTableIds);
-        ungroupAll(orderTables);
-    }
-
-    private void ungroupAll(final List<OrderTable> orderTables) {
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.clear();
-            orderTableRepository.save(orderTable);
-        }
-    }
-
-    private void validateOrderTableSize(final List<Long> orderTableIds) {
-        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
-            throw new IllegalArgumentException();
-        }
+        OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
+        validateCompletion(orderTables.getOrderIds());
+        orderTables.upgroup();
+        orderTableRepository.saveAll(orderTables.getValues());
     }
 
     private List<Long> extractOrderTableIds(final List<OrderTableIdDto> orderTableIdsDto) {
-        final List<Long> orderTableIds = orderTableIdsDto.stream()
+        return orderTableIdsDto.stream()
                 .map(OrderTableIdDto::getId)
                 .collect(Collectors.toList());
-
-        validateOrderTableSize(orderTableIds);
-        return orderTableIds;
-    }
-
-    private void validateEmptyOrderTable(final List<OrderTable> savedOrderTables) {
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
-            }
-        }
     }
 
     private void validateCompletion(final List<Long> orderTableIds) {
