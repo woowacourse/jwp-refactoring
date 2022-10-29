@@ -2,10 +2,10 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.request.CreateTableGroupDto;
 import kitchenpos.application.dto.response.TableGroupDto;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTables;
 import kitchenpos.domain.table.TableGroup;
@@ -20,21 +20,21 @@ public class TableGroupService {
 
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
-    private final TableGroupDao tableGroupDao;
+    private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(OrderRepository orderRepository,
                              OrderTableRepository orderTableRepository,
-                             TableGroupDao tableGroupDao) {
+                             TableGroupRepository tableGroupRepository) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
-        this.tableGroupDao = tableGroupDao;
+        this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
     public TableGroupDto create(CreateTableGroupDto createTableGroupDto) {
         final List<Long> tableIds = createTableGroupDto.getOrderTableIds();
         final OrderTables orderTables = findValidOrderTables(tableIds);
-        final TableGroup tableGroup = tableGroupDao.save(new TableGroup());
+        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
         orderTables.group(tableGroup.getId());
         List<OrderTable> groupedTables = orderTables.getValue();
         for (final OrderTable savedOrderTable : groupedTables) {
