@@ -17,6 +17,12 @@ public class Product {
         this.price = price;
     }
 
+    public Product(final Long id, final String name, final BigDecimal price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
+
     private void validateProductPrice(final BigDecimal price) {
         if (isPriceNullOrMinus(price)) {
             throw new IllegalArgumentException("상품의 가격은 비어있거나 0보다 작을 수 없습니다.");
@@ -30,27 +36,12 @@ public class Product {
     public Long getId() {
         return id;
     }
-
-    @Deprecated
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
+    
     public String getName() {
         return name;
     }
 
-    @Deprecated
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public BigDecimal getPrice() {
         return price;
-    }
-
-    @Deprecated
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
     }
 }
