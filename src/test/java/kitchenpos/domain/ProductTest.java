@@ -21,4 +21,11 @@ class ProductTest {
                 () -> assertThat(product.getPrice()).isEqualTo(price)
         );
     }
+
+    @Test
+    void 구매_수량을_곱할_수_있다() {
+        Product product = new Product(id, name, new Price(price));
+        BigDecimal multipliedValue = product.multiply(BigDecimal.valueOf(3));
+        assertThat(multipliedValue).isEqualTo(BigDecimal.valueOf(39000));
+    }
 }

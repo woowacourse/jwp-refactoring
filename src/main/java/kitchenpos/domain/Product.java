@@ -39,4 +39,8 @@ public class Product {
     public BigDecimal getPrice() {
         return price.getValue();
     }
+
+    public BigDecimal multiply(final BigDecimal quantity) {
+        return quantity.multiply(this.price.getValue());
+    }
 }
