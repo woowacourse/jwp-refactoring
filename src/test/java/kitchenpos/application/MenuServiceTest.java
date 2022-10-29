@@ -5,13 +5,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.ProductResponse;
-import kitchenpos.fixtures.domain.MenuFixture.MenuRequestBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -42,12 +43,12 @@ class MenuServiceTest extends ServiceTest {
             // given
             MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
 
-            MenuRequest request = new MenuRequestBuilder()
-                    .name("세트1")
-                    .price(20_000)
-                    .menuGroupId(savedMenuGroup.getId())
-                    .menuProducts(menuProduct)
-                    .build();
+            MenuRequest request = new MenuRequest(
+                    "세트1",
+                    BigDecimal.valueOf(20_000),
+                    savedMenuGroup.getId(),
+                    List.of(new MenuProductRequest(menuProduct))
+            );
 
             // when
             MenuResponse actual = menuService.create(request);
@@ -66,10 +67,12 @@ class MenuServiceTest extends ServiceTest {
             // given
             MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
 
-            MenuRequest request = new MenuRequestBuilder()
-                    .menuGroupId(savedMenuGroup.getId() + 1)
-                    .menuProducts(menuProduct)
-                    .build();
+            MenuRequest request = new MenuRequest(
+                    "세트1",
+                    BigDecimal.valueOf(20_000),
+                    savedMenuGroup.getId() + 1,
+                    List.of(new MenuProductRequest(menuProduct))
+            );
 
             // when & then
             assertThatThrownBy(() -> menuService.create(request))
@@ -82,10 +85,12 @@ class MenuServiceTest extends ServiceTest {
             // given
             MenuProduct notSavedMenuProduct = createMenuProduct(savedProduct.getId() + 1, 1L);
 
-            MenuRequest request = new MenuRequestBuilder()
-                    .menuGroupId(savedMenuGroup.getId())
-                    .menuProducts(notSavedMenuProduct)
-                    .build();
+            MenuRequest request = new MenuRequest(
+                    "세트1",
+                    BigDecimal.valueOf(20_000),
+                    savedMenuGroup.getId(),
+                    List.of(new MenuProductRequest(notSavedMenuProduct))
+            );
 
             // when
             assertThatThrownBy(() -> menuService.create(request))
@@ -98,11 +103,12 @@ class MenuServiceTest extends ServiceTest {
             // given
             MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
 
-            MenuRequest request = new MenuRequestBuilder()
-                    .price(1_000_000)
-                    .menuGroupId(savedMenuGroup.getId())
-                    .menuProducts(menuProduct)
-                    .build();
+            MenuRequest request = new MenuRequest(
+                    "세트1",
+                    BigDecimal.valueOf(1_000_000),
+                    savedMenuGroup.getId(),
+                    List.of(new MenuProductRequest(menuProduct))
+            );
 
             // when & then
             assertThatThrownBy(() -> menuService.create(request))
@@ -125,11 +131,12 @@ class MenuServiceTest extends ServiceTest {
 
             int expected = 4;
             for (int i = 0; i < expected; i++) {
-                MenuRequest request = new MenuRequestBuilder()
-                        .name("menu " + i)
-                        .menuGroupId(menuGroup.getId())
-                        .menuProducts(menuProduct)
-                        .build();
+                MenuRequest request = new MenuRequest(
+                        "세트 " + i,
+                        BigDecimal.valueOf(20_000),
+                        menuGroup.getId(),
+                        List.of(new MenuProductRequest(menuProduct))
+                );
 
                 menuService.create(request);
             }
