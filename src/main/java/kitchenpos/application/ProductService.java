@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductCreateRequest;
