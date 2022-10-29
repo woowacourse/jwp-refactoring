@@ -57,6 +57,7 @@ public class MenuService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     private List<MenuProduct> saveMenuProductsd(final Long menuId, final List<MenuProduct> menuProducts) {
         return menuProducts.stream()
                 .map(menuProduct -> menuProductDao.save(
@@ -64,6 +65,7 @@ public class MenuService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<MenuDto> getMenus() {
         final List<Menu> menus = menuDao.findAll();
 

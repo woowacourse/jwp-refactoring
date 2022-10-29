@@ -1,9 +1,7 @@
 package kitchenpos.application;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderCreationDto;
 import kitchenpos.application.dto.OrderDto;
@@ -17,7 +15,6 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
@@ -71,6 +68,7 @@ public class OrderService {
     }
 
 
+    @Transactional(readOnly = true)
     public List<OrderDto> getOrders() {
         return orderDao.findAll()
                 .stream()

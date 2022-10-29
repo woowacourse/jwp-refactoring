@@ -58,6 +58,7 @@ public class TableGroupService {
         return TableGroupDto.from(savedTableGroup.addTableGroups(orderTables));
     }
 
+    @Transactional
     public void ungroupTable(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
 
