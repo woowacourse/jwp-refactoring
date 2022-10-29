@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.ordertable.OrderTable;
 import org.springframework.stereotype.Service;
@@ -9,11 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
-    private final OrderDao orderDao;
+
     private final OrderTableDao orderTableDao;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
+    public TableService(final OrderTableDao orderTableDao) {
         this.orderTableDao = orderTableDao;
     }
 
@@ -34,7 +32,7 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+        savedOrderTable.changeEmpty(orderTable.isEmpty());
         return orderTableDao.save(savedOrderTable);
     }
 
@@ -44,22 +42,9 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
-        return orderTableDao.save(savedOrderTable);
+    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTableRequest) {
+        final OrderTable orderTable = getOrderTable(orderTableId);
+        orderTable.changeNumberOfGuests(orderTableRequest.getNumberOfGuests());
+        return orderTableDao.save(orderTable);
     }
 }

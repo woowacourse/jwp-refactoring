@@ -55,7 +55,14 @@ public class OrderTable {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        if (this.isEmpty()) {
+            throw new IllegalArgumentException("주문 테이블이 비어있으면 손님 수를 변경할 수 없습니다.");
+        }
+
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("주문 테이블의 손님 수는 음수로 변경할 수 없습니다.");
+        }
         this.numberOfGuests = numberOfGuests;
     }
 
@@ -63,7 +70,7 @@ public class OrderTable {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void changeEmpty(final boolean empty) {
         if (tableGroupId != null) {
             throw new IllegalArgumentException("그룹이 있다면 주문 테이블의 비운 상태를 수정할 수 없습니다.");
         }

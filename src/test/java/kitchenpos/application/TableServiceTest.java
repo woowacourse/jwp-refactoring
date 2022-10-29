@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import static kitchenpos.fixture.TableFixture.getOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -51,41 +50,5 @@ class TableServiceTest extends ServiceTest{
 
         // then
         assertThat(updateOrderTable.getNumberOfGuests()).isEqualTo(5);
-    }
-
-    @Test
-    @DisplayName("주문 테이블이 비어있을 경우 테이블의 guest 수를 변경하면 예외가 발생한다.")
-    void changeNumberOfGuestsWithEmptyOrderTable() {
-        // given
-        final OrderTable orderTable = getOrderTable(true);
-        given(orderTableDao.findById(any())).willReturn(Optional.of(orderTable));
-
-        // when
-        final OrderTable updateOrderTable = getOrderTable(10);
-
-        // then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), updateOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("테이블의 손님 수를 0으로 바꾼다.")
-    void changeNumberOfGuestsZero() {
-        // given
-        final OrderTable newStatusOrderTable = getOrderTable(0);
-
-        // when
-        final OrderTable updateOrderTable = tableService.changeNumberOfGuests(1L, newStatusOrderTable);
-
-        // then
-        assertThat(updateOrderTable.getNumberOfGuests()).isEqualTo(0);
-    }
-
-    @Test
-    @DisplayName("테이블의 손님수는 0 미만으로 바꿀 수 없다.")
-    void changeNumberOfGuestsWithInvalid() {
-        final OrderTable newStatusOrderTable = getOrderTable(-1);
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, newStatusOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 }
