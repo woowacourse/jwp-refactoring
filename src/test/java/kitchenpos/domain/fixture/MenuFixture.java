@@ -18,20 +18,6 @@ public class MenuFixture {
     private MenuFixture() {
     }
 
-    public static Menu 후라이드_치킨_세트() {
-        return 메뉴()
-            .이름("후라이드")
-            .가격(new BigDecimal(15_000))
-            .build();
-    }
-
-    public static Menu 후라이드_치킨_세트(final Long menuGroupId) {
-        return 메뉴()
-            .메뉴_그룹_아이디(menuGroupId)
-            .이름("후라이드")
-            .build();
-    }
-
     public static Menu 후라이드_치킨_세트의_가격과_메뉴_상품_리스트는(final Long menuGroupId, final BigDecimal price, final List<MenuProduct> menuProducts) {
         return 메뉴()
             .메뉴_그룹_아이디(menuGroupId)
@@ -65,12 +51,6 @@ public class MenuFixture {
     }
 
     private Menu build() {
-        final Menu menu = new Menu();
-        menu.setId(id);
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-        return menu;
+        return new Menu(id, name, price, menuGroupId, menuProducts);
     }
 }
