@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -37,6 +38,13 @@ public class OrderTable {
         this.tableGroupId = tableGroupId;
     }
 
+    public void changeSingleEmpty(final boolean empty) {
+        if (Objects.nonNull(this.getTableGroupId())) {
+            throw new IllegalArgumentException();
+        }
+        this.empty = empty;
+    }
+
     public void changeEmpty(final boolean empty) {
         this.empty = empty;
     }
@@ -71,27 +79,19 @@ public class OrderTable {
         }
     }
 
-    public boolean isEmpty() {
-        return empty;
-    }
-
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public Long getTableGroupId() {
         return tableGroupId;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 }

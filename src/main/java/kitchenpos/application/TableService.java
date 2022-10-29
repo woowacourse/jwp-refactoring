@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.application.dto.OrderTableChangeNumberOfGuestsRequest;
@@ -56,11 +55,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        // Dao를 사용하는 곳이 있어서 도메인 이동 불가능, JPA 마이그레이션 완료 후, 도메인 로직으로..
-        if (Objects.nonNull(orderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
-        orderTable.changeEmpty(request.isEmpty());
+        orderTable.changeSingleEmpty(request.isEmpty());
         return OrderTableResponse.createResponse(orderTable);
     }
 
