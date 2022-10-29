@@ -6,8 +6,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.sql.DataSource;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -59,23 +61,28 @@ public class JdbcTemplateOrderRepository implements OrderRepository {
     }
 
     @Override
-    public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId, final List<String> orderStatuses) {
+    public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId,
+                                                        final List<OrderStatus> orderStatuses) {
         final String sql = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END" +
                 " FROM orders WHERE order_table_id = (:orderTableId) AND order_status IN (:orderStatuses)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("orderTableId", orderTableId)
-                .addValue("orderStatuses", orderStatuses);
+                .addValue("orderStatuses", orderStatuses.stream()
+                        .map(Enum::name)
+                        .collect(Collectors.toList()));
         return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
     }
 
     @Override
     public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds,
-                                                          final List<String> orderStatuses) {
+                                                          final List<OrderStatus> orderStatuses) {
         final String sql = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END" +
                 " FROM orders WHERE order_table_id IN (:orderTableIds) AND order_status IN (:orderStatuses)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("orderTableIds", orderTableIds)
-                .addValue("orderStatuses", orderStatuses);
+                .addValue("orderStatuses", orderStatuses.stream()
+                        .map(Enum::name)
+                        .collect(Collectors.toList()));
         return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
     }
 
@@ -98,7 +105,7 @@ public class JdbcTemplateOrderRepository implements OrderRepository {
         final Order entity = new Order();
         entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
         entity.setOrderTableId(resultSet.getLong("order_table_id"));
-        entity.changeOrderStatus(resultSet.getString("order_status"));
+        entity.changeOrderStatus(OrderStatus.valueOf(resultSet.getString("order_status")));
         entity.setOrderedTime(resultSet.getObject("ordered_time", LocalDateTime.class));
         return entity;
     }

@@ -61,7 +61,7 @@ public class OrderService {
         }
 
         order.setOrderTableId(orderTable.getId());
-        order.changeOrderStatus(OrderStatus.COOKING.name());
+        order.changeOrderStatus(OrderStatus.COOKING);
         order.setOrderedTime(LocalDateTime.now());
 
         final Order savedOrder = orderRepository.save(order);
@@ -94,8 +94,7 @@ public class OrderService {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
-        savedOrder.changeOrderStatus(orderStatus.name());
+        savedOrder.changeOrderStatus(request.getOrderStatus());
 
         orderRepository.save(savedOrder);
 

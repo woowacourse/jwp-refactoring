@@ -75,7 +75,7 @@ class OrderServiceTest extends ServiceTest {
             // then
             assertAll(() -> {
                 assertThat(actual.getId()).isNotNull();
-                assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+                assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
             });
         }
 
@@ -169,7 +169,7 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("주문의 주문 상태를 변경한다.")
         @ValueSource(strings = {"MEAL", "COMPLETION"})
         @ParameterizedTest
-        void Should_ChangeOrderStatus(final String after) {
+        void Should_ChangeOrderStatus(final OrderStatus after) {
             // given
             Order oldOrder = orderRepository.save(
                     createOrder(savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
@@ -192,7 +192,7 @@ class OrderServiceTest extends ServiceTest {
                     createOrder(savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
                             List.of(createdOrderLineItem)));
 
-            OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(OrderStatus.MEAL.name());
+            OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(OrderStatus.MEAL);
 
             // when & then
             assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId() + 1, request))
@@ -207,7 +207,7 @@ class OrderServiceTest extends ServiceTest {
                     createOrder(savedOrderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
                             List.of(createdOrderLineItem)));
 
-            OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(OrderStatus.MEAL.name());
+            OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(OrderStatus.MEAL);
 
             // when & then
             assertThatThrownBy(() -> orderService.changeOrderStatus(completionOrder.getId(), request))

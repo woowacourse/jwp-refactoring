@@ -16,7 +16,7 @@ public class OrderFixture {
                                     final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
         Order order = new Order();
         order.setOrderTableId(orderTableId);
-        order.changeOrderStatus(orderStatus.name());
+        order.changeOrderStatus(orderStatus);
         order.setOrderedTime(orderedTime);
         order.setOrderLineItems(orderLineItems);
 
@@ -28,7 +28,7 @@ public class OrderFixture {
         private final List<OrderLineItem> orderLineItems = new ArrayList<>();
 
         private Long orderTableId;
-        private String orderStatus = OrderStatus.COOKING.name();
+        private OrderStatus orderStatus = OrderStatus.COOKING;
         private LocalDateTime orderedTime = LocalDateTime.now();
 
         public OrderRequestBuilder orderTableId(final Long orderTableId) {
@@ -36,13 +36,8 @@ public class OrderFixture {
             return this;
         }
 
-        public OrderRequestBuilder orderStatus(final String orderStatus) {
-            this.orderStatus = orderStatus;
-            return this;
-        }
-
         public OrderRequestBuilder orderStatus(final OrderStatus orderStatus) {
-            this.orderStatus = orderStatus.name();
+            this.orderStatus = orderStatus;
             return this;
         }
 

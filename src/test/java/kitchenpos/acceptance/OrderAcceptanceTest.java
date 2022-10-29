@@ -35,7 +35,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
     static ExtractableResponse<Response> 주문의_주문_상태를_변경한다(final Long orderTableId, final OrderStatus orderStatus) {
         return put("/api/orders/" + orderTableId + "/order-status", Map.of(
-                "orderStatus", orderStatus.name()
+                "orderStatus", orderStatus
         ));
     }
 

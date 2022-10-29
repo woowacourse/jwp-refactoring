@@ -30,10 +30,10 @@ class OrderTest {
         void Should_ThrowIAE_When_OrderStatusIsCompletion() {
             // given
             OrderLineItem orderLineItem = new OrderLineItem(1L, 1L);
-            Order order = new Order(1L, 1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(), List.of(orderLineItem));
+            Order order = new Order(1L, 1L, OrderStatus.COMPLETION, LocalDateTime.now(), List.of(orderLineItem));
 
             // when & then
-            assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.COOKING.name()))
+            assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.COOKING))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

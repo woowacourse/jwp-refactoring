@@ -1,17 +1,19 @@
 package kitchenpos.dto.request;
 
+import kitchenpos.domain.order.OrderStatus;
+
 public class OrderStatusUpdateRequest {
 
-    private String orderStatus;
+    private OrderStatus orderStatus;
 
     private OrderStatusUpdateRequest() {
     }
 
-    public OrderStatusUpdateRequest(final String orderStatus) {
+    public OrderStatusUpdateRequest(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 }
