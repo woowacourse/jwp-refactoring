@@ -12,6 +12,7 @@ import java.util.List;
 import kitchenpos.TableGroupFixtures;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.dto.request.TableGroupCreateRequest;
+import kitchenpos.application.dto.request.TableGroupIdRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -33,9 +34,10 @@ class TableGroupRestControllerTest extends ControllerTest {
         given(tableGroupService.create(any())).willReturn(TableGroupFixtures.createTableGroupResponse());
 
         // when
+        List<TableGroupIdRequest> orderTableIds = List.of(new TableGroupIdRequest(1L), new TableGroupIdRequest(2L));
         ResultActions actions = mockMvc.perform(post("/api/table-groups")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(new TableGroupCreateRequest(List.of(1L, 2L))))
+                .content(objectMapper.writeValueAsString(new TableGroupCreateRequest(orderTableIds)))
         );
 
         // then

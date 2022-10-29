@@ -10,14 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import kitchenpos.application.dto.request.TableGroupCreateRequest;
+import kitchenpos.application.dto.request.TableGroupIdRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ class TableGroupServiceTest {
     @Test
     void create() {
         // given
-        List<Long> orderTableIds = List.of(1L, 2L);
+        List<TableGroupIdRequest> orderTableIds = List.of(new TableGroupIdRequest(1L), new TableGroupIdRequest(2L));
         TableGroupCreateRequest request = new TableGroupCreateRequest(orderTableIds);
 
         // when
@@ -69,7 +70,8 @@ class TableGroupServiceTest {
     @Test
     void createWithOneOrderTable() {
         // given
-        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(1L));
+        List<TableGroupIdRequest> orderTableIds = List.of(new TableGroupIdRequest(1L));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(orderTableIds);
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(request))
@@ -80,7 +82,8 @@ class TableGroupServiceTest {
     void createWithWrongOrderTable() {
         // given
         long wrongOrderTableId = 999L;
-        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(1L, wrongOrderTableId));
+        List<TableGroupIdRequest> orderTableIds = List.of(new TableGroupIdRequest(wrongOrderTableId));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(orderTableIds);
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(request))
@@ -91,7 +94,11 @@ class TableGroupServiceTest {
     void createWithNotEmptyOrderTable() {
         // given
         OrderTable emptyOrderTable = orderTableRepository.save(new OrderTable(1L, null, 2, false));
-        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(emptyOrderTable.getId(), 2L));
+        List<TableGroupIdRequest> orderTableIds = List.of(
+                new TableGroupIdRequest(emptyOrderTable.getId()),
+                new TableGroupIdRequest(2L)
+        );
+        TableGroupCreateRequest request = new TableGroupCreateRequest(orderTableIds);
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(request))

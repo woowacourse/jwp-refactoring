@@ -39,7 +39,7 @@ public class MenuService {
                 request.getName(),
                 request.getPrice(),
                 request.getMenuGroupId(),
-                createMenuProduct(request.getProductRequests())
+                createMenuProduct(request.getMenuProducts())
         );
         return MenuResponse.from(menuRepository.save(menu));
     }

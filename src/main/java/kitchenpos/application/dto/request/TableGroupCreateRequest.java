@@ -4,17 +4,17 @@ import java.util.List;
 
 public class TableGroupCreateRequest {
 
-    private final List<Long> orderTableIds;
+    private final List<TableGroupIdRequest> orderTableIds;
 
     private TableGroupCreateRequest() {
         this(null);
     }
 
-    public TableGroupCreateRequest(List<Long> orderTableIds) {
+    public TableGroupCreateRequest(List<TableGroupIdRequest> orderTableIds) {
         this.orderTableIds = orderTableIds;
     }
 
-    public List<Long> getOrderTableIds() {
+    public List<TableGroupIdRequest> getOrderTableIds() {
         return orderTableIds;
     }
 }
