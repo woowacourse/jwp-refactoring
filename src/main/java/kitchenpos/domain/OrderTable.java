@@ -7,10 +7,15 @@ public class OrderTable {
     private boolean empty;
 
     public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+        validateGuestNumber(numberOfGuests);
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
+        this(null, tableGroupId, numberOfGuests, empty);
     }
 
     public OrderTable(int numberOfGuests, boolean empty) {
@@ -18,6 +23,12 @@ public class OrderTable {
     }
 
     public OrderTable() {
+    }
+
+    public void validateGuestNumber(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -48,7 +59,7 @@ public class OrderTable {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void changeEmpty(final boolean empty) {
         this.empty = empty;
     }
 }
