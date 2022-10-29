@@ -2,6 +2,8 @@ package kitchenpos.domain.order;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import org.springframework.util.CollectionUtils;
 
 public class Order {
     private Long id;
@@ -19,11 +21,19 @@ public class Order {
 
     public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
+        validateOrderLineItems(orderLineItems);
+
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+    }
+
+    private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -46,7 +56,11 @@ public class Order {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void changeOrderStatus(final String orderStatus) {
+        if (Objects.equals(this.orderStatus, OrderStatus.COMPLETION.name())) {
+            throw new IllegalArgumentException();
+        }
+
         this.orderStatus = orderStatus;
     }
 
