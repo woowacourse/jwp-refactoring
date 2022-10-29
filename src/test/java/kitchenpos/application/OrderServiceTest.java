@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixtures.domain.OrderFixture.createOrder;
-import static kitchenpos.fixtures.domain.OrderLineItemFixture.createOrderLineItem;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -52,7 +51,7 @@ class OrderServiceTest extends ServiceTest {
         savedMenu = saveMenu("메뉴", 10_000, savedMenuGroup.toEntity(), List.of(
                 new MenuProduct(savedProduct.getId(), 10)
         ));
-        createdOrderLineItem = createOrderLineItem(savedMenu.getId(), 10);
+        createdOrderLineItem = new OrderLineItem(savedMenu.getId(), 10);
 
     }
 
@@ -96,7 +95,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_MenuDoesNotExist() {
             // given
-            OrderLineItem orderLineItemHasNotSavedMenu = createOrderLineItem(savedMenu.getId() + 1, 1L);
+            OrderLineItem orderLineItemHasNotSavedMenu = new OrderLineItem(savedMenu.getId() + 1, 1L);
 
             OrderRequest request = new OrderRequestBuilder()
                     .orderTableId(savedOrderTable.getId())
