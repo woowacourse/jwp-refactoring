@@ -45,11 +45,17 @@ public class OrderTable {
         this.empty = status;
     }
 
-    private void validateAllOrderCompleted() {
-        final var uncompletedOrderExists = orders.stream()
-                .anyMatch(order -> order.getOrderStatus() != OrderStatus.COMPLETION);
+    public boolean canBeUngrouped() {
+        return isAllOrderCompleted();
+    }
 
-        if (uncompletedOrderExists) {
+    private boolean isAllOrderCompleted() {
+        return orders.stream()
+                .noneMatch(order -> order.getOrderStatus() != OrderStatus.COMPLETION);
+    }
+
+    private void validateAllOrderCompleted() {
+        if (!isAllOrderCompleted()) {
             throw new IllegalArgumentException();
         }
     }
@@ -60,10 +66,8 @@ public class OrderTable {
         }
     }
 
-    public void validateCanBeGrouped() {
-        if (!empty || tableGroupId != null) {
-            throw new IllegalArgumentException();
-        }
+    public boolean canBeGrouped() {
+        return empty && tableGroupId == null;
     }
 
     public Long getId() {
@@ -92,6 +96,10 @@ public class OrderTable {
 
     public void setEmpty(final boolean empty) {
         this.empty = empty;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
     }
 
     private static class Guests {

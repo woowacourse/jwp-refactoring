@@ -19,9 +19,9 @@ public class OrderTableRepository {
     }
 
     public OrderTable get(final Long id) {
-        final var orders = orderDao.findByOrderTableId(id);
         final var orderTable = orderTableDao.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
+        final var orders = orderDao.findByOrderTableId(orderTable.getId());
 
         return new OrderTable(
                 orderTable.getId(),

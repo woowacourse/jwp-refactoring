@@ -4,7 +4,6 @@ import static kitchenpos.fixture.MenuFactory.menu;
 import static kitchenpos.fixture.MenuGroupFactory.menuGroup;
 import static kitchenpos.fixture.OrderFactory.order;
 import static kitchenpos.fixture.OrderTableFactory.emptyTable;
-import static kitchenpos.fixture.OrderTableFactory.notEmptyTable;
 import static kitchenpos.fixture.ProductFactory.product;
 import static kitchenpos.fixture.TableGroupFactory.tableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,7 +19,7 @@ import org.junit.jupiter.api.Test;
 
 class TableGroupServiceTest extends FakeSpringContext {
 
-    private final TableGroupService tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
+    private final TableGroupService tableGroupService = new TableGroupService(orderTableDao, tableGroups);
 
     @DisplayName("테이블 그룹 등록")
     @Test
@@ -32,35 +31,6 @@ class TableGroupServiceTest extends FakeSpringContext {
 
         final var result = tableGroupService.create(tableGroup);
         assertThat(result.getOrderTables().size()).isEqualTo(tableGroup.getOrderTables().size());
-    }
-
-    @DisplayName("주문 테이블 중 하나라도 빈 상태가 아니라면, 테이블 그룹 등록 시 예외 발생")
-    @Test
-    void create_containsNotEmptyTable_throwsException() {
-        final var notEmptyTable = orderTableDao.save(notEmptyTable(2));
-        final var emptyTable = orderTableDao.save(emptyTable(2));
-
-        final var tableGroup = tableGroup(notEmptyTable, emptyTable);
-
-        assertThatThrownBy(
-                () -> tableGroupService.create(tableGroup)
-        ).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("주문 테이블 중 하나라도 이미 단체 id를 갖고 있다면, 테이블 그룹 등록 시 예외 발생")
-    @Test
-    void create_containsAlreadyGroupedTable_throwsException() {
-        final var singleTable = orderTableDao.save(emptyTable(1));
-        final var coupleTable = orderTableDao.save(emptyTable(2));
-        final var tripleTable = orderTableDao.save(emptyTable(3));
-
-        createTableGroupAndSave(singleTable, coupleTable);
-
-        final var tableGroup = tableGroup(singleTable, tripleTable);
-
-        assertThatThrownBy(
-                () -> tableGroupService.create(tableGroup)
-        ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블 그룹 해제")
