@@ -9,8 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.ui.request.MenuCreateRequest;
-import kitchenpos.ui.request.MenuProductDto;
+import kitchenpos.ui.request.menu.MenuCreateRequest;
+import kitchenpos.ui.request.menu.MenuProductDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

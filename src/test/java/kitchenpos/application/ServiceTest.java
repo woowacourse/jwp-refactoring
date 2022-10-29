@@ -1,7 +1,8 @@
 package kitchenpos.application;
 
-import static kitchenpos.DomainFixture.getProduct;
+import static kitchenpos.DtoFixture.getProductCreateRequest;
 
+import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
@@ -10,10 +11,12 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.ui.request.MenuCreateRequest;
-import kitchenpos.ui.request.MenuProductDto;
-import kitchenpos.ui.request.OrderCreateRequest;
-import kitchenpos.ui.request.TableCreateRequest;
+import kitchenpos.ui.request.menu.MenuCreateRequest;
+import kitchenpos.ui.request.menu.MenuProductDto;
+import kitchenpos.ui.request.order.OrderCreateRequest;
+import kitchenpos.ui.request.prodcut.ProductCreateRequest;
+import kitchenpos.ui.request.table.TableCreateRequest;
+import kitchenpos.ui.request.tablegroup.TableGroupCreatRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,8 +46,8 @@ public abstract class ServiceTest {
     @Autowired
     protected OrderTableDao orderTableDao;
 
-    protected Product 상품_등록(final Product product) {
-        return productService.create(product);
+    protected Product 상품_등록(final ProductCreateRequest request) {
+        return productService.create(request);
     }
 
     protected MenuGroup 메뉴_그룹_등록(final MenuGroup menuGroup) {
@@ -59,8 +62,8 @@ public abstract class ServiceTest {
         return tableService.create(request);
     }
 
-    protected TableGroup 단체_지정(final TableGroup tableGroup) {
-        return tableGroupService.create(tableGroup);
+    protected TableGroup 단체_지정(final TableGroupCreatRequest request) {
+        return tableGroupService.create(request);
     }
 
     protected Order 주문_등록(final OrderCreateRequest request) {
@@ -68,7 +71,7 @@ public abstract class ServiceTest {
     }
 
     protected List<MenuProductDto> createMenuProductDtos() {
-        final Product product = 상품_등록(getProduct());
+        final Product product = 상품_등록(getProductCreateRequest("마이쮸", BigDecimal.valueOf(800)));
         return List.of(new MenuProductDto(product.getId(), 1));
     }
 }

@@ -1,4 +1,4 @@
-package kitchenpos.ui.request;
+package kitchenpos.ui.request.menu;
 
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;

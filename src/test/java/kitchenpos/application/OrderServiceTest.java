@@ -15,9 +15,9 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.ui.request.OrderCreateRequest;
-import kitchenpos.ui.request.OrderLineItemDto;
-import kitchenpos.ui.request.OrderStatusChangeRequest;
+import kitchenpos.ui.request.order.OrderCreateRequest;
+import kitchenpos.ui.request.order.OrderLineItemDto;
+import kitchenpos.ui.request.order.OrderStatusChangeRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

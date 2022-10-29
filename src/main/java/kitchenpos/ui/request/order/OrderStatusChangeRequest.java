@@ -1,4 +1,4 @@
-package kitchenpos.ui.request;
+package kitchenpos.ui.request.order;
 
 public class OrderStatusChangeRequest {
 

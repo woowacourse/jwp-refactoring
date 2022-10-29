@@ -30,7 +30,8 @@ public class Order {
         this(null, orderTableId, null, null, orderLineItems);
     }
 
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 

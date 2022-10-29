@@ -40,8 +40,4 @@ public class MenuRepository {
 
         return menus;
     }
-
-    public long countByIdIn(final List<Long> ids) {
-        return menuDao.countByIdIn(ids);
-    }
 }

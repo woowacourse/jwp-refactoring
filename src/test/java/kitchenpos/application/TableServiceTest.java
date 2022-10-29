@@ -1,12 +1,13 @@
 package kitchenpos.application;
 
 import static kitchenpos.DomainFixture.getMenuGroup;
-import static kitchenpos.DomainFixture.getNotEmptyTable;
 import static kitchenpos.DtoFixture.getEmptyTableCreateRequest;
 import static kitchenpos.DtoFixture.getMenuCreateRequest;
 import static kitchenpos.DtoFixture.getNotEmptyTableCreateRequest;
 import static kitchenpos.DtoFixture.getOrderCreateRequest;
 import static kitchenpos.DtoFixture.getTableChangeEmptyRequest;
+import static kitchenpos.DtoFixture.getTableChangeNumberOfGuestsRequest;
+import static kitchenpos.DtoFixture.getTableCreateRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -17,10 +18,11 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.ui.request.OrderStatusChangeRequest;
-import kitchenpos.ui.request.TableChangeEmptyRequest;
-import kitchenpos.ui.request.TableCreateRequest;
+import kitchenpos.ui.request.order.OrderStatusChangeRequest;
+import kitchenpos.ui.request.table.TableChangeEmptyRequest;
+import kitchenpos.ui.request.table.TableChangeNumberOfGuestsRequest;
+import kitchenpos.ui.request.table.TableCreateRequest;
+import kitchenpos.ui.request.tablegroup.TableGroupCreatRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -56,7 +58,8 @@ class TableServiceTest extends ServiceTest {
         final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroup());
         final Menu menu = 메뉴_등록(getMenuCreateRequest(menuGroup.getId(), createMenuProductDtos()));
         final Order savedOrder = 주문_등록(getOrderCreateRequest(savedTable.getId(), menu.getId()));
-        final OrderStatusChangeRequest statusChangeRequest = new OrderStatusChangeRequest(OrderStatus.COMPLETION.name());
+        final OrderStatusChangeRequest statusChangeRequest = new OrderStatusChangeRequest(
+                OrderStatus.COMPLETION.name());
         orderService.changeOrderStatus(savedOrder.getId(), statusChangeRequest);
 
         final TableChangeEmptyRequest request = getTableChangeEmptyRequest(true);
@@ -84,9 +87,9 @@ class TableServiceTest extends ServiceTest {
         final OrderTable orderTable = 테이블_등록(getEmptyTableCreateRequest());
         final OrderTable anotherTable = 테이블_등록(getEmptyTableCreateRequest());
 
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(orderTable, anotherTable));
-        tableGroupService.create(tableGroup);
+        final TableGroupCreatRequest groupCreatRequest = getTableCreateRequest(
+                List.of(orderTable.getId(), anotherTable.getId()));
+        tableGroupService.create(groupCreatRequest);
 
         final TableChangeEmptyRequest request = getTableChangeEmptyRequest(true);
 
@@ -112,13 +115,13 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeNumberOfGuests() {
         final OrderTable savedTable = 테이블_등록(getNotEmptyTableCreateRequest(0));
-        final OrderTable changeTable = getNotEmptyTable(5);
+        final TableChangeNumberOfGuestsRequest request = getTableChangeNumberOfGuestsRequest(5);
 
-        final OrderTable changedTable = tableService.changeNumberOfGuests(savedTable.getId(), changeTable);
+        final OrderTable changedTable = tableService.changeNumberOfGuests(savedTable.getId(), request);
 
         assertAll(
                 () -> assertThat(changedTable.getId()).isEqualTo(savedTable.getId()),
-                () -> assertThat(changedTable.getNumberOfGuests()).isEqualTo(changeTable.getNumberOfGuests()),
+                () -> assertThat(changedTable.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests()),
                 () -> assertThat(changedTable.isEmpty()).isFalse()
         );
     }
@@ -127,18 +130,18 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeNumberOfGuests_exception_numberOfGuestsIsLessThanZero() {
         final OrderTable savedTable = 테이블_등록(getNotEmptyTableCreateRequest(0));
-        final OrderTable changeTable = getNotEmptyTable(-1);
+        final TableChangeNumberOfGuestsRequest request = getTableChangeNumberOfGuestsRequest(-1);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedTable.getId(), changeTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedTable.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("방문한 손님 수를 변경한다. - 존재하지 않는 주문 테이블이면 예외를 반환한다.")
     @Test
     void changeNumberOfGuests_exception_noSuchTable() {
-        final OrderTable changeTable = getNotEmptyTable(5);
+        final TableChangeNumberOfGuestsRequest request = getTableChangeNumberOfGuestsRequest(5);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(null, changeTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(null, request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -146,9 +149,9 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeNumberOfGuests_exception_tableIsEmpty() {
         final OrderTable savedTable = 테이블_등록(getEmptyTableCreateRequest());
-        final OrderTable changeTable = getNotEmptyTable(5);
+        final TableChangeNumberOfGuestsRequest request = getTableChangeNumberOfGuestsRequest(5);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedTable.getId(), changeTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedTable.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
