@@ -151,7 +151,7 @@ class OrderServiceTest extends ServiceTest {
         final Order newOrder = new Order(orderTable.getId(), "COOKING", LocalDateTime.now(),
                 createOrderLineItem(menu.getId()));
         final Order order = orderRepository.save(newOrder);
-        final  OrderUpdateRequest request = new OrderUpdateRequest("MEAL");
+        final OrderUpdateRequest request = new OrderUpdateRequest("MEAL");
 
         orderService.changeOrderStatus(order.getId(), request);
         final Order foundOrder = orderRepository.findById(order.getId()).get();

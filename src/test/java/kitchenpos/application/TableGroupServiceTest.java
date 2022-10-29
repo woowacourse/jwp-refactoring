@@ -15,7 +15,6 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -27,6 +26,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.TableGroupCreateRequest;
 import kitchenpos.dto.TableGroupResponse;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ class TableGroupServiceTest extends ServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
     private OrderTableDao orderTableDao;
@@ -127,7 +127,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void createWithOrderTableExistingTableGroup() {
         List<OrderTable> orderTables = Arrays.asList(firstOrderTable, secondOrderTable);
-        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), orderTables));
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), orderTables));
         firstOrderTable.setTableGroupId(tableGroup.getId());
         firstOrderTable.setEmpty(false);
         secondOrderTable.setTableGroupId(tableGroup.getId());
@@ -147,7 +147,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void ungroup() {
         List<OrderTable> orderTables = Arrays.asList(firstOrderTable, secondOrderTable);
-        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), orderTables));
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), orderTables));
         firstOrderTable.setTableGroupId(tableGroup.getId());
         firstOrderTable.setEmpty(false);
         secondOrderTable.setTableGroupId(tableGroup.getId());
@@ -177,7 +177,7 @@ class TableGroupServiceTest extends ServiceTest {
                 new Order(firstOrderTable.getId(), orderStatus, LocalDateTime.now(),
                         createOrderLineItem(menu.getId())));
         List<OrderTable> orderTables = Arrays.asList(firstOrderTable, secondOrderTable);
-        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), orderTables));
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), orderTables));
         firstOrderTable.setTableGroupId(tableGroup.getId());
         firstOrderTable.setEmpty(false);
         secondOrderTable.setTableGroupId(tableGroup.getId());

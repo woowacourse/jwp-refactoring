@@ -12,7 +12,7 @@ class TableGroupTest {
     @DisplayName("테이블 그룹 생성 시 테이블 그룹에 등록된 테이블이 2개 미만이면 예외가 발생한다.")
     @Test
     void constructWithLessThanTwoOrderTable() {
-        assertThatThrownBy(() -> new TableGroup(1L, LocalDateTime.now(), Arrays.asList(new OrderTable())))
+        assertThatThrownBy(() -> new TableGroup(1L, LocalDateTime.now(), Arrays.asList(new OrderTable(4, false))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

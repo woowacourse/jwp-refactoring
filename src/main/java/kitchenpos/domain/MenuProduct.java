@@ -10,7 +10,8 @@ public class MenuProduct {
     private final long quantity;
     private BigDecimal price;
 
-    public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity, final BigDecimal price) {
+    public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity,
+                       final BigDecimal price) {
         this.seq = seq;
         this.menuId = menuId;
         this.productId = productId;
@@ -30,7 +31,7 @@ public class MenuProduct {
         this(null, null, productId, quantity, null);
     }
 
-    public MenuProduct(final Long productId, final long quantity,final BigDecimal price) {
+    public MenuProduct(final Long productId, final long quantity, final BigDecimal price) {
         this(null, null, productId, quantity, price);
     }
 

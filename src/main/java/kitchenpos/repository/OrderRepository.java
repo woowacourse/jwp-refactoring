@@ -8,8 +8,6 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.dto.OrderLineItemResponse;
-import kitchenpos.dto.OrderResponse;
 import org.springframework.stereotype.Repository;
 
 @Repository
