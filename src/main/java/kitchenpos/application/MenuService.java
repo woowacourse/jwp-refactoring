@@ -2,11 +2,11 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuRequest;
 import org.springframework.stereotype.Service;
@@ -14,12 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
-    private final MenuDao menuRepository;
+    private final MenuRepository menuRepository;
     private final MenuGroupDao menuGroupDao;
     private final ProductDao productDao;
 
     public MenuService(
-            final MenuDao menuRepository,
+            final MenuRepository menuRepository,
             final MenuGroupDao menuGroupDao,
             final ProductDao productDao
     ) {

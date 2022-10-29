@@ -1,17 +1,15 @@
 package kitchenpos.application;
 
 import static kitchenpos.application.fixture.MenuGroupFixture.치킨;
-import static kitchenpos.application.fixture.MenuGroupFixture.피자;
 import static kitchenpos.application.fixture.ProductFixture.양념_치킨;
-import static kitchenpos.application.fixture.ProductFixture.포테이토_피자;
 import static kitchenpos.application.fixture.ProductFixture.후라이드_치킨;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.util.Collections;
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
-import kitchenpos.application.fixture.MenuFixture;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -34,9 +32,7 @@ class TableServiceTest extends ServiceTestBase {
     @Autowired
     private TableService tableService;
 
-    private Menu friedChicken;
-    private Menu seasonedChicken;
-    private Menu potatoPizza;
+    private Menu friedAndSeasonedChicken;
 
     @DisplayName("메뉴 및 메뉴 그룹 생성")
     @BeforeEach
@@ -45,27 +41,15 @@ class TableServiceTest extends ServiceTestBase {
         Product productChicken2 = productDao.save(양념_치킨());
         MenuGroup chickenMenuGroup = menuGroupDao.save(치킨());
 
-        Menu menuChicken1 = MenuFixture.후라이드_치킨(chickenMenuGroup);
-        Menu menuChicken2 = MenuFixture.양념_치킨(chickenMenuGroup);
+        MenuProduct menuProductChicken1 = createMenuProduct(productChicken1.getId(), 1, productChicken1.getPrice());
+        MenuProduct menuProductChicken2 = createMenuProduct(productChicken2.getId(), 1, productChicken2.getPrice());
 
-        MenuProduct menuProductChicken1 = 메뉴_상품_생성(menuChicken1, productChicken1, 1);
-        MenuProduct menuProductChicken2 = 메뉴_상품_생성(menuChicken2, productChicken2, 1);
+        Menu twoChickens = createMenu("후라이드+양념",
+                BigDecimal.valueOf(35000),
+                chickenMenuGroup.getId(),
+                Arrays.asList(menuProductChicken1, menuProductChicken2));
 
-        menuChicken1.setMenuProducts(Collections.singletonList(menuProductChicken1));
-        menuChicken2.setMenuProducts(Collections.singletonList(menuProductChicken2));
-
-        friedChicken = jdbcTemplateMenuDao.save(menuChicken1);
-        seasonedChicken = jdbcTemplateMenuDao.save(menuChicken2);
-
-        Product productPizza = productDao.save(포테이토_피자());
-        MenuGroup pizzaMenuGroup = menuGroupDao.save(피자());
-
-        Menu menuPizza = MenuFixture.포테이토_피자(pizzaMenuGroup);
-        MenuProduct menuProductPizza = 메뉴_상품_생성(menuPizza, productPizza, 1);
-
-        menuPizza.setMenuProducts(Collections.singletonList(menuProductPizza));
-
-        potatoPizza = jdbcTemplateMenuDao.save(menuPizza);
+        friedAndSeasonedChicken = menuRepository.save(twoChickens);
     }
 
     @DisplayName("Table의 전체 목록을 조회한다.")
@@ -140,7 +124,7 @@ class TableServiceTest extends ServiceTestBase {
         OrderTable orderTable1 = 빈_주문_테이블_생성();
         OrderTable savedTable = orderTableDao.save(orderTable1);
 
-        Order order1 = 주문_생성_및_저장(savedTable, friedChicken, 1);
+        Order order1 = 주문_생성_및_저장(savedTable, friedAndSeasonedChicken, 1);
 
         OrderTableEmptyStatusRequest emptyStatusRequest = createOrderTableEmptyStatusRequest(false);
 
@@ -156,7 +140,7 @@ class TableServiceTest extends ServiceTestBase {
     void updateEmpty() {
         // given
         OrderTable savedTable = orderTableDao.save(빈_주문_테이블_생성());
-        Order order1 = 주문_생성_및_저장(savedTable, friedChicken, 1);
+        Order order1 = 주문_생성_및_저장(savedTable, friedAndSeasonedChicken, 1);
         order1.changeOrderStatus(OrderStatus.COMPLETION.name());
         orderRepository.save(order1);
 

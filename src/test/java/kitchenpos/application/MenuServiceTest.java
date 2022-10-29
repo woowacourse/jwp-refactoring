@@ -1,13 +1,8 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.fixture.MenuFixture.양념_치킨;
-import static kitchenpos.application.fixture.MenuFixture.포테이토_피자;
-import static kitchenpos.application.fixture.MenuFixture.후라이드_치킨;
 import static kitchenpos.application.fixture.MenuGroupFixture.여러마리_메뉴_그룹;
 import static kitchenpos.application.fixture.MenuGroupFixture.치킨;
-import static kitchenpos.application.fixture.MenuGroupFixture.피자;
 import static kitchenpos.application.fixture.ProductFixture.양념_치킨;
-import static kitchenpos.application.fixture.ProductFixture.포테이토_피자;
 import static kitchenpos.application.fixture.ProductFixture.후라이드_치킨;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -16,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Menu;
@@ -45,24 +41,33 @@ class MenuServiceTest extends ServiceTestBase {
         Product productChicken2 = productDao.save(양념_치킨());
         MenuGroup chickenMenuGroup = menuGroupDao.save(치킨());
 
-        Menu menuChicken1 = jdbcTemplateMenuDao.save(후라이드_치킨(chickenMenuGroup));
-        Menu menuChicken2 = jdbcTemplateMenuDao.save(양념_치킨(chickenMenuGroup));
+        MenuProduct menuProductChicken1 = createMenuProduct(productChicken1.getId(), 1, productChicken1.getPrice());
+        MenuProduct menuProductChicken2 = createMenuProduct(productChicken2.getId(), 1, productChicken2.getPrice());
 
-        MenuProduct menuProductChicken1 = 메뉴_상품_생성(menuChicken1, productChicken1, 1);
-        MenuProduct menuProductChicken2 = 메뉴_상품_생성(menuChicken2, productChicken2, 1);
+        Menu twoChickens = createMenu("두마리메뉴",
+                BigDecimal.valueOf(35000),
+                chickenMenuGroup.getId(),
+                Arrays.asList(menuProductChicken1, menuProductChicken2));
 
-        Product productPizza = productDao.save(포테이토_피자());
-        MenuGroup pizzaMenuGroup = menuGroupDao.save(피자());
+        Menu oneChicken = createMenu("한마리메뉴",
+                BigDecimal.valueOf(18000),
+                chickenMenuGroup.getId(),
+                Collections.singletonList(menuProductChicken1));
+        menuRepository.save(twoChickens);
+        menuRepository.save(oneChicken);
 
-        Menu menuPizza = jdbcTemplateMenuDao.save(포테이토_피자(pizzaMenuGroup));
-        MenuProduct menuProductPizza = 메뉴_상품_생성(menuPizza, productPizza, 1);
+//        Product productPizza = productDao.save(포테이토_피자());
+//        MenuGroup pizzaMenuGroup = menuGroupDao.save(피자());
+//
+//        Menu menuPizza = jdbcTemplateMenuDao.save(포테이토_피자(pizzaMenuGroup));
+//        MenuProduct menuProductPizza = 메뉴_상품_생성(menuPizza, productPizza, 1);
 
         // when
         List<Menu> menus = menuService.list();
 
         //then
         assertAll(
-                () -> assertThat(menus).hasSize(3),
+                () -> assertThat(menus).hasSize(2),
                 () -> assertThat(menus).extracting("menuProducts").isNotNull()
         );
     }

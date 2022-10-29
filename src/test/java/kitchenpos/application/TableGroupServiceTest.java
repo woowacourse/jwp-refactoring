@@ -1,27 +1,15 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.fixture.MenuGroupFixture.치킨;
-import static kitchenpos.application.fixture.MenuGroupFixture.피자;
-import static kitchenpos.application.fixture.ProductFixture.양념_치킨;
-import static kitchenpos.application.fixture.ProductFixture.포테이토_피자;
-import static kitchenpos.application.fixture.ProductFixture.후라이드_치킨;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import kitchenpos.application.fixture.MenuFixture;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupCreateRequest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,40 +21,7 @@ class TableGroupServiceTest extends ServiceTestBase {
 
     @Autowired
     private TableGroupService tableGroupService;
-
-    private Menu friedChicken;
-    private Menu seasonedChicken;
-    private Menu potatoPizza;
-
-    @DisplayName("메뉴 및 메뉴 그룹 생성")
-    @BeforeEach
-    void setUp() {
-        Product productChicken1 = productDao.save(후라이드_치킨());
-        Product productChicken2 = productDao.save(양념_치킨());
-        MenuGroup chickenMenuGroup = menuGroupDao.save(치킨());
-
-        Menu menuChicken1 = MenuFixture.후라이드_치킨(chickenMenuGroup);
-        Menu menuChicken2 = MenuFixture.양념_치킨(chickenMenuGroup);
-
-        MenuProduct menuProductChicken1 = 메뉴_상품_생성(menuChicken1, productChicken1, 1);
-        MenuProduct menuProductChicken2 = 메뉴_상품_생성(menuChicken2, productChicken2, 1);
-
-        menuChicken1.setMenuProducts(Collections.singletonList(menuProductChicken1));
-        menuChicken2.setMenuProducts(Collections.singletonList(menuProductChicken2));
-
-        friedChicken = jdbcTemplateMenuDao.save(menuChicken1);
-        seasonedChicken = jdbcTemplateMenuDao.save(menuChicken2);
-
-        Product productPizza = productDao.save(포테이토_피자());
-        MenuGroup pizzaMenuGroup = menuGroupDao.save(피자());
-
-        Menu menuPizza = MenuFixture.포테이토_피자(pizzaMenuGroup);
-        MenuProduct menuProductPizza = 메뉴_상품_생성(menuPizza, productPizza, 1);
-
-        menuPizza.setMenuProducts(Collections.singletonList(menuProductPizza));
-
-        potatoPizza = jdbcTemplateMenuDao.save(menuPizza);
-    }
+    
 
     @DisplayName("단체 주문에 대해 포함된 주문 중 완료가 아닌 주문이 존재하면 예외를 발생한다.")
     @ParameterizedTest

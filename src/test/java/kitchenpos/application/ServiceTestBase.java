@@ -16,6 +16,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderRepository;
@@ -61,6 +62,9 @@ public abstract class ServiceTestBase {
     protected MenuDao jdbcTemplateMenuDao;
 
     @Autowired
+    protected MenuRepository menuRepository;
+
+    @Autowired
     protected OrderLineItemDao orderLineItemDao;
 
     @Autowired
@@ -80,9 +84,13 @@ public abstract class ServiceTestBase {
 
     protected MenuRequest createMenuRequest(final String name, final BigDecimal price,
                                             final Long menuGroupId, final List<MenuProductRequest> menuProducts) {
-        MenuRequest menu = new MenuRequest(name, price, menuGroupId, menuProducts);
 
-        return menu;
+        return new MenuRequest(name, price, menuGroupId, menuProducts);
+    }
+
+    protected Menu createMenu(final String name, final BigDecimal price,
+                              final Long menuGroupId, final List<MenuProduct> menuProducts) {
+        return new Menu(name, price, menuGroupId, menuProducts);
     }
 
     protected MenuProduct 메뉴_상품_생성(Menu menu, Product product, long quantity) {
@@ -92,6 +100,10 @@ public abstract class ServiceTestBase {
         menuProduct.setQuantity(quantity);
 
         return menuProduct;
+    }
+
+    protected MenuProduct createMenuProduct(final Long productId, final long quantity, final BigDecimal price) {
+        return new MenuProduct(productId, quantity, price);
     }
 
     protected OrderTable 주문_테이블_생성() {

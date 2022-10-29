@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import kitchenpos.dao.JdbcTemplateMenuDao;
 import kitchenpos.dao.JdbcTemplateMenuProductDao;
 import kitchenpos.dao.MenuDao;
@@ -29,9 +30,9 @@ public class MenuRepository implements MenuDao {
             menuProduct.setMenuId(menuId);
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
-        savedMenu.setMenuProducts(savedMenuProducts);
 
-        return savedMenu;
+        return new Menu(savedMenu.getId(), savedMenu.getName(), savedMenu.getPrice(),
+                savedMenu.getMenuGroupId(), savedMenuProducts);
     }
 
     @Override
@@ -42,11 +43,11 @@ public class MenuRepository implements MenuDao {
     @Override
     public List<Menu> findAll() {
         List<Menu> menus = menuDao.findAll();
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
 
-        return menus;
+        return menus.stream()
+                .map(menu -> new Menu(menu.getId(), menu.getName(), menu.getPrice(),
+                        menu.getMenuGroupId(), menuProductDao.findAllByMenuId(menu.getId())))
+                .collect(Collectors.toList());
     }
 
     @Override

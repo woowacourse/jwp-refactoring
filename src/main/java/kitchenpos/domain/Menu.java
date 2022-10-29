@@ -14,6 +14,11 @@ public class Menu {
     public Menu() {
     }
 
+    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
+        this(name, price, menuGroupId);
+        this.id = id;
+    }
+
     public Menu(final String name, final BigDecimal price, final Long menuGroupId) {
         this.name = name;
         this.price = price;
@@ -22,9 +27,7 @@ public class Menu {
 
     public Menu(final String name, final BigDecimal price, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
-        this.name = name;
-        this.price = price;
-        this.menuGroupId = menuGroupId;
+        this(name, price, menuGroupId);
         this.menuProducts = menuProducts;
 
         if (isPriceEmpty(price)) {
@@ -34,6 +37,15 @@ public class Menu {
         if (isMenuPriceExpensiveThanSumOfEachProductPrice(price)) {
             throw new IllegalArgumentException("가격이 유효하지 않습니다.");
         }
+    }
+
+    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.menuGroupId = menuGroupId;
+        this.menuProducts = menuProducts;
     }
 
     private boolean isPriceEmpty(final BigDecimal price) {
@@ -56,43 +68,19 @@ public class Menu {
         return id;
     }
 
-    @Deprecated
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    @Deprecated
-    public void setName(final String name) {
-        this.name = name;
     }
 
     public BigDecimal getPrice() {
         return price;
     }
 
-    @Deprecated
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
-    }
-
     public Long getMenuGroupId() {
         return menuGroupId;
     }
 
-    @Deprecated
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
-    }
-
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
     }
 }
