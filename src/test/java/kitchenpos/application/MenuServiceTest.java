@@ -60,24 +60,6 @@ class MenuServiceTest extends ServiceTest {
             });
         }
 
-        @DisplayName("메뉴 가격이 null이라면 IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_PriceOfMenuIsNull() {
-            // given
-            MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
-
-            MenuRequest request = new MenuRequestBuilder()
-                    .price(null)
-                    .menuGroupId(savedMenuGroup.getId())
-                    .menuProducts(menuProduct)
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() -> menuService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-
         @DisplayName("메뉴의 메뉴 그룹이 존재하지 않는다면 IAE를 던진다.")
         @Test
         void Should_ThrowIAE_When_MenuGroupDoesNotExist() {
