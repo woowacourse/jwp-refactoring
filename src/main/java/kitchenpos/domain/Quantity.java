@@ -6,7 +6,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Quantity {
 
-    @Column(name = "quantity")
+    @Column(name = "quantity", nullable = false)
     private long volume;
 
     protected Quantity() {
