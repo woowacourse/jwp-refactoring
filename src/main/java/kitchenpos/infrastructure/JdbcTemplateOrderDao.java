@@ -1,6 +1,12 @@
 package kitchenpos.infrastructure;
 
-import kitchenpos.dao.OrderDao;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.sql.DataSource;
 import kitchenpos.domain.Order;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -10,16 +16,8 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
 @Repository
-public class JdbcTemplateOrderDao implements OrderDao {
+public class JdbcTemplateOrderDao {
     private static final String TABLE_NAME = "orders";
     private static final String KEY_COLUMN_NAME = "id";
 
@@ -34,7 +32,6 @@ public class JdbcTemplateOrderDao implements OrderDao {
         ;
     }
 
-    @Override
     public Order save(final Order entity) {
         if (Objects.isNull(entity.getId())) {
             final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
@@ -45,7 +42,6 @@ public class JdbcTemplateOrderDao implements OrderDao {
         return entity;
     }
 
-    @Override
     public Optional<Order> findById(final Long id) {
         try {
             return Optional.of(select(id));
@@ -54,13 +50,11 @@ public class JdbcTemplateOrderDao implements OrderDao {
         }
     }
 
-    @Override
     public List<Order> findAll() {
         final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    @Override
     public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId, final List<String> orderStatuses) {
         final String sql = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END" +
                 " FROM orders WHERE order_table_id = (:orderTableId) AND order_status IN (:orderStatuses)";
@@ -70,7 +64,6 @@ public class JdbcTemplateOrderDao implements OrderDao {
         return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
     }
 
-    @Override
     public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds,
                                                           final List<String> orderStatuses) {
         final String sql = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END" +
