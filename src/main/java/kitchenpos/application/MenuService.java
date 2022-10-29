@@ -1,5 +1,8 @@
 package kitchenpos.application;
 
+import kitchenpos.application.request.MenuRequest;
+import kitchenpos.application.response.MenuResponse;
+import kitchenpos.application.response.ResponseAssembler;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -23,28 +26,26 @@ public class MenuService {
     private final MenuGroupDao menuGroupDao;
     private final MenuProductDao menuProductDao;
     private final ProductDao productDao;
+    private final ResponseAssembler responseAssembler;
 
-    public MenuService(
-            final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao,
-            final MenuProductDao menuProductDao,
-            final ProductDao productDao
-    ) {
+    public MenuService(final MenuDao menuDao, final MenuGroupDao menuGroupDao, final MenuProductDao menuProductDao,
+                       final ProductDao productDao, final ResponseAssembler responseAssembler) {
         this.menuDao = menuDao;
         this.menuGroupDao = menuGroupDao;
         this.menuProductDao = menuProductDao;
         this.productDao = productDao;
+        this.responseAssembler = responseAssembler;
     }
 
     @Transactional
-    public Menu create(final Menu request) {
+    public MenuResponse create(final MenuRequest request) {
         final BigDecimal price = request.getPrice();
         validatePriceNotNegative(price);
 
-        validateMenuGroupExist(request);
+        validateMenuGroupExist(request.getMenuGroupId());
         final List<MenuProduct> menuProducts = request.getMenuProducts()
                 .stream()
-                .map(menuProduct -> new MenuProduct(menuProduct.getMenuId(), menuProduct.getProductId(), menuProduct.getQuantity()))
+                .map(menuProduct -> new MenuProduct(menuProduct.getProductId(), menuProduct.getQuantity()))
                 .collect(Collectors.toUnmodifiableList());
         validatePriceIsNotLowerThanTotalPriceOfProducts(price, menuProducts);
 
@@ -58,7 +59,7 @@ public class MenuService {
         }
         savedMenu.setMenuProducts(savedMenuProducts);
 
-        return savedMenu;
+        return responseAssembler.menuResponse(savedMenu);
     }
 
     private void validatePriceIsNotLowerThanTotalPriceOfProducts(BigDecimal price, List<MenuProduct> menuProducts) {
@@ -74,8 +75,8 @@ public class MenuService {
         }
     }
 
-    private void validateMenuGroupExist(Menu request) {
-        if (!menuGroupDao.existsById(request.getMenuGroupId())) {
+    private void validateMenuGroupExist(Long menuGroupId) {
+        if (!menuGroupDao.existsById(menuGroupId)) {
             throw new IllegalArgumentException("메뉴 그룹을 찾을 수 없습니다.");
         }
     }
@@ -86,13 +87,12 @@ public class MenuService {
         }
     }
 
-    public List<Menu> list() {
+    public List<MenuResponse> list() {
         final List<Menu> menus = menuDao.findAll();
-
         for (final Menu menu : menus) {
             menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
         }
 
-        return menus;
+        return responseAssembler.menuResponses(menus);
     }
 }

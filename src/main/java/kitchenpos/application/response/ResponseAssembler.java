@@ -1,5 +1,7 @@
 package kitchenpos.application.response;
 
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import org.springframework.stereotype.Component;
@@ -33,6 +35,33 @@ public class ResponseAssembler {
                         orderLineItem.getOrderId(),
                         orderLineItem.getMenuId(),
                         orderLineItem.getQuantity()
+                ))
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    public List<MenuResponse> menuResponses(final List<Menu> menus) {
+        return menus.stream()
+                .map(this::menuResponse)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    public MenuResponse menuResponse(final Menu menu) {
+        return new MenuResponse(
+                menu.getId(),
+                menu.getName(),
+                menu.getPrice(),
+                menu.getMenuGroupId(),
+                menuProductResponses(menu.getMenuProducts())
+        );
+    }
+
+    private List<MenuProductResponse> menuProductResponses(final List<MenuProduct> menuProducts) {
+        return menuProducts.stream()
+                .map(menuProduct -> new MenuProductResponse(
+                        menuProduct.getSeq(),
+                        menuProduct.getMenuId(),
+                        menuProduct.getProductId(),
+                        menuProduct.getQuantity()
                 ))
                 .collect(Collectors.toUnmodifiableList());
     }
