@@ -5,9 +5,9 @@ import kitchenpos.application.dto.request.CreateTableDto;
 import kitchenpos.application.dto.request.EmptyTableDto;
 import kitchenpos.application.dto.response.TableDto;
 import kitchenpos.application.dto.request.UpdateGuestNumberDto;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.table.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,11 +17,11 @@ import java.util.List;
 @Service
 public class TableService {
 
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
     private final OrderTableDao orderTableDao;
 
-    public TableService(OrderDao orderDao, OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
+    public TableService(OrderRepository orderRepository, OrderTableDao orderTableDao) {
+        this.orderRepository = orderRepository;
         this.orderTableDao = orderTableDao;
     }
 
@@ -42,7 +42,7 @@ public class TableService {
     public TableDto changeEmpty(EmptyTableDto emptyTableDto) {
         Long orderTableId = emptyTableDto.getOrderTableId();
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, OrderStatus.getOngoingStatuses())) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, OrderStatus.getOngoingStatuses())) {
             throw new IllegalArgumentException();
         }
         savedOrderTable.changeEmpty(emptyTableDto.getEmpty());

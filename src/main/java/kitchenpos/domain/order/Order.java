@@ -1,14 +1,36 @@
 package kitchenpos.domain.order;
 
 import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import kitchenpos.domain.table.OrderTable;
 
+@Table(name = "orders")
+@Entity
 public class Order {
 
-    private final Long id;
-    private final Long orderTableId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column
+    private Long orderTableId;
+
+    @Column
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
-    private final LocalDateTime orderedTime;
+
+    @Column
+    private LocalDateTime orderedTime;
+
+    protected Order() {
+    }
 
     public Order(Long id,
                  Long orderTableId,

@@ -7,7 +7,7 @@ public enum OrderStatus {
 
     COOKING, MEAL, COMPLETION;
 
-    public static List<String> getOngoingStatuses() {
-        return Arrays.asList(COOKING.name(), MEAL.name());
+    public static List<OrderStatus> getOngoingStatuses() {
+        return Arrays.asList(COOKING, MEAL);
     }
 }
