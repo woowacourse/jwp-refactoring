@@ -6,21 +6,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.domain.Entity;
 
-public abstract class BaseFakeDao<T> {
+public abstract class BaseFakeDao<T extends Entity> {
 
     protected final HashMap<Long, T> entities = new HashMap<>();
     private Long key = 1L;
 
     public T save(T entity) {
-        final var primaryKey = findPrimaryKey(entity);
-        if (primaryKey.isPresent()) {
-            entities.put(primaryKey.get(), entity);
+        if (entity.isNew()) {
+            setPrimaryKey(entity);
+            entities.put(key, entity);
+            key += 1;
             return entity;
         }
-        setPrimaryKey(entity);
-        entities.put(key, entity);
-        key += 1;
+        final var primaryKey = findPrimaryKey(entity);
+        entities.put(primaryKey.get(), entity);
         return entity;
     }
 
