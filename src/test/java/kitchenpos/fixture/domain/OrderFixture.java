@@ -1,5 +1,6 @@
 package kitchenpos.fixture.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Menu;
@@ -13,7 +14,7 @@ public class OrderFixture {
     private static final int QUANTITY = 1;
 
     public static Order createOrder(final OrderTable orderTable, final Menu... menus) {
-        return new Order(orderTable.getId(), createOrderLineItems(menus));
+        return new Order(orderTable.getId(), "COOKING", LocalDateTime.now(), createOrderLineItems(menus));
     }
 
     private static List<OrderLineItem> createOrderLineItems(final Menu[] menus) {

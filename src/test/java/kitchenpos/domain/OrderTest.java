@@ -15,7 +15,7 @@ public class OrderTest {
     @DisplayName("주문 항목이 비어있으면 예외를 던진다.")
     void orderLineItems_empty_throwException() {
         // when & then
-        assertThatThrownBy(() -> new Order(1L, Collections.emptyList()))
+        assertThatThrownBy(() -> new Order(1L, "COOKING", LocalDateTime.now(), Collections.emptyList()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -24,8 +24,8 @@ public class OrderTest {
     void getOrderMenuIds() {
         // given
         final Order order = new Order(1L,
-                List.of(new OrderLineItem(1L, 3),
-                        new OrderLineItem(2L, 5)));
+                "COOKING", LocalDateTime.now(), List.of(new OrderLineItem(1L, 3),
+                new OrderLineItem(2L, 5)));
 
         // when
         final List<Long> menuIds = order.getMenuIds();
@@ -39,8 +39,8 @@ public class OrderTest {
     void getItemSize() {
         // given
         final Order order = new Order(1L,
-                List.of(new OrderLineItem(1L, 3),
-                        new OrderLineItem(2L, 5)));
+                "COOKING", LocalDateTime.now(), List.of(new OrderLineItem(1L, 3),
+                new OrderLineItem(2L, 5)));
 
         // when
         final int itemSize = order.getItemSize();

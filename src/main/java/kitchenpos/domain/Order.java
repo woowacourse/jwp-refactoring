@@ -9,14 +9,15 @@ import org.springframework.util.CollectionUtils;
 
 public class Order {
 
-    private Long id;
-    private Long orderTableId;
+    private final Long id;
+    private final Long orderTableId;
     private String orderStatus;
-    private LocalDateTime orderedTime;
+    private final LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
-    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, null, null, orderLineItems);
+    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
     private Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {

@@ -10,14 +10,13 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuRepository;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
-import kitchenpos.dto.request.OrderRequest;
-import kitchenpos.dto.response.OrderResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,8 +87,8 @@ public abstract class ServiceTest {
         return tableGroupRepository.save(tableGroup);
     }
 
-    protected OrderResponse 주문등록(final OrderRequest order) {
-        return orderService.create(order);
+    protected Order 주문등록(final Order order) {
+        return orderRepository.save(order);
     }
 
     protected void 주문상태변경(final Long orderId, final OrderStatus orderStatus) {

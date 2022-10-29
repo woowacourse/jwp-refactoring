@@ -2,10 +2,10 @@ package kitchenpos.application;
 
 import static kitchenpos.fixture.domain.MenuFixture.createMenu;
 import static kitchenpos.fixture.domain.MenuGroupFixture.메뉴그룹A;
+import static kitchenpos.fixture.domain.OrderFixture.createOrder;
 import static kitchenpos.fixture.domain.OrderTableFixture.createOrderTable;
 import static kitchenpos.fixture.domain.ProductFixture.탕수육;
 import static kitchenpos.fixture.domain.TableGroupFixture.createTableGroup;
-import static kitchenpos.fixture.dto.OrderDtoFixture.createOrderRequest;
 import static kitchenpos.fixture.dto.OrderTableDtoFixture.createOrderTableRequest;
 import static kitchenpos.fixture.dto.OrderTableDtoFixture.forUpdateEmpty;
 import static kitchenpos.fixture.dto.OrderTableDtoFixture.forUpdateGuestNumber;
@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderTableRequest;
-import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -113,7 +113,7 @@ public class TableServiceTest extends ServiceTest {
         final OrderTable table = 테이블등록(createOrderTable(3, false));
         final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
 
-        final OrderResponse order = 주문등록(createOrderRequest(table, menu));
+        final Order order = 주문등록(createOrder(table, menu));
         주문상태변경(order.getId(), orderStatus);
 
         // when & then
