@@ -1,5 +1,7 @@
 package kitchenpos.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import kitchenpos.domain.Menu;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -19,12 +21,6 @@ import java.util.Optional;
 public class JdbcTemplateMenuDao {
     private static final String TABLE_NAME = "menu";
     private static final String KEY_COLUMN_NAME = "id";
-    private static final RowMapper<Menu> MENU_ROW_MAPPER = (rs, rowNum) -> new Menu(
-            rs.getLong("id"),
-            rs.getString("name"),
-            rs.getBigDecimal("price"),
-            rs.getLong("menu_group_id")
-    );
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -53,7 +49,7 @@ public class JdbcTemplateMenuDao {
 
     public List<Menu> findAll() {
         final String sql = "SELECT id, name, price, menu_group_id FROM menu ";
-        return jdbcTemplate.query(sql, MENU_ROW_MAPPER);
+        return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     public long countByIdIn(final List<Long> ids) {
@@ -67,6 +63,15 @@ public class JdbcTemplateMenuDao {
         final String sql = "SELECT id, name, price, menu_group_id FROM menu WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
-        return jdbcTemplate.queryForObject(sql, parameters, MENU_ROW_MAPPER);
+        return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+    }
+
+    private Menu toEntity(final ResultSet resultSet) throws SQLException {
+        final Menu entity = new Menu();
+        entity.setId(resultSet.getLong("id"));
+        entity.setName(resultSet.getString("name"));
+        entity.setPrice(resultSet.getBigDecimal("price"));
+        entity.setMenuGroupId(resultSet.getLong("menu_group_id"));
+        return entity;
     }
 }

@@ -22,8 +22,9 @@ public class MenuRepository implements MenuDao {
     }
 
     @Override
-    public Menu save(final Menu menu) {
-        final List<MenuProduct> menuProducts = menu.getMenuProducts()
+    public Menu save(final Menu entity) {
+        final Menu menu = jdbcTemplateMenuDao.save(entity);
+        final List<MenuProduct> menuProducts = entity.getMenuProducts()
                 .stream()
                 .map(menuProduct -> new MenuProduct(
                         menu.getId(),

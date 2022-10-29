@@ -12,6 +12,9 @@ public class Menu {
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
+    public Menu() {
+    }
+
     public Menu(final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
     }
@@ -41,9 +44,25 @@ public class Menu {
         final BigDecimal sum = menuProducts.stream()
                 .map(MenuProduct::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        if (price.compareTo(sum) > 0) {
+        if (!sum.equals(BigDecimal.ZERO) && price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public void setPrice(final BigDecimal price) {
+        this.price = price;
+    }
+
+    public void setMenuGroupId(final Long menuGroupId) {
+        this.menuGroupId = menuGroupId;
     }
 
     public Long getId() {
