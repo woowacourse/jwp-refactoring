@@ -13,9 +13,7 @@ public class MenuGroupConvertor {
     }
 
     public static MenuGroup convertToMenuGroup(final MenuGroupRequest request) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(request.getName());
-        return menuGroup;
+        return new MenuGroup(request.getName());
     }
 
     public static MenuGroupResponse convertToMenuGroupResponse(final MenuGroup menuGroup) {

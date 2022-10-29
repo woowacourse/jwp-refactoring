@@ -27,9 +27,6 @@ public class MenuGroupFixture {
     }
 
     private MenuGroup build() {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(id);
-        menuGroup.setName(name);
-        return menuGroup;
+        return new MenuGroup(id, name);
     }
 }
