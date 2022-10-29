@@ -1,5 +1,8 @@
 package kitchenpos.application;
 
+import kitchenpos.application.request.tablegroup.OrderTableIdRequest;
+import kitchenpos.application.request.tablegroup.TableGroupRequest;
+import kitchenpos.application.response.tablegroup.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -7,6 +10,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import org.aspectj.weaver.ast.Or;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -52,40 +56,23 @@ class TableGroupServiceTest {
         @DisplayName("단체 지정을 한다")
         @Test
         void create() {
-            final var expected = new TableGroup(LocalDateTime.now(), saveOrderTableAsTimes(ORDER_TABLE_COUNT_LIMIT));
-            final var actual = tableGroupService.create(expected);
+            orderTableDao.save(new OrderTable(null, 1, true));
+            orderTableDao.save(new OrderTable(null, 1, true));
 
-            final var tableGroupId = actual.getId();
-            final var orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
-            actual.setOrderTables(orderTables);
+            final var request = new TableGroupRequest(new OrderTableIdRequest(1L), new OrderTableIdRequest(2L));
+            final var actual = tableGroupService.create(request);
 
             assertThat(actual.getId()).isPositive();
-            assertThat(actual.getCreatedDate()).isEqualToIgnoringNanos(expected.getCreatedDate());
-            assertOrderTablesAssigned(tableGroupId, actual.getOrderTables(), expected.getOrderTables());
-        }
-
-        private void assertOrderTablesAssigned(final long tableGroupId, final List<OrderTable> actualOrderTables,
-                                               final List<OrderTable> expectedOrderTables) {
-            final var expectedOrderTableSize = expectedOrderTables.size();
-            assertThat(actualOrderTables).hasSize(expectedOrderTableSize);
-
-            for (int i = 0; i < expectedOrderTableSize; i++) {
-                final var actual = actualOrderTables.get(i);
-                final var expected = expectedOrderTables.get(i);
-
-                assertThat(actual.getTableGroupId()).isEqualTo(tableGroupId);
-                assertThat(actual.getNumberOfGuests()).isEqualTo(expected.getNumberOfGuests());
-                assertThat(actual.isEmpty()).isFalse();
-            }
         }
 
         @DisplayName("2개 이상의 주문 테이블을 지정해야 한다")
-        @ParameterizedTest
-        @ValueSource(ints = {0, 1})
-        void createWithEmptyOrSingleOrderTable(final int orderTableCount) {
-            final var tableGroup = new TableGroup(LocalDateTime.now(), saveOrderTableAsTimes(orderTableCount));
+        @Test
+        void createWithEmptyOrSingleOrderTable() {
+            orderTableDao.save(new OrderTable(null, 1, true));
+            orderTableDao.save(new OrderTable(null, 1, true));
+            final var request = new TableGroupRequest(new OrderTableIdRequest(1L));
 
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("2개 이상의 주문 테이블을 지정해야 합니다.");
         }
@@ -93,11 +80,12 @@ class TableGroupServiceTest {
         @DisplayName("주문 테이블은 중복되지 않아야 한다")
         @Test
         void createWithDuplicatedOrderTables() {
-            final var orderTable = new OrderTable(null, 1, true);
-            orderTable.setId(1L);
-            final var tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable, orderTable));
+            orderTableDao.save(new OrderTable(null, 1, true));
+            orderTableDao.save(new OrderTable(null, 1, true));
 
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            final var request = new TableGroupRequest(new OrderTableIdRequest(1L),new OrderTableIdRequest(1L));
+
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("중복되는 주문 테이블이 있습니다.");
         }
@@ -105,11 +93,12 @@ class TableGroupServiceTest {
         @DisplayName("비어있는 주문 테이블이어야 한다")
         @Test
         void createWithNonEmptyOrderTable() {
-            final var tableGroup = new TableGroup(LocalDateTime.now(), saveOrderTables(
-                    new OrderTable(null, 1, false),
-                    new OrderTable(null, 1, true)));
+            orderTableDao.save(new OrderTable(null, 1, false));
+            orderTableDao.save(new OrderTable(null, 1, true));
 
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            final var request = new TableGroupRequest(new OrderTableIdRequest(1L), new OrderTableIdRequest(2L));
+
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("비어있지 않은 주문 테이블이 존재합니다.");
         }
@@ -117,20 +106,15 @@ class TableGroupServiceTest {
         @DisplayName("단체 지정되지 않은 주문 테이블이어야 한다")
         @Test
         void createWithAlreadyGroupAssignedOrderTable() {
-            final var tableGroup = new TableGroup(LocalDateTime.now(), saveOrderTables(
-                    new OrderTable(1L, 1, false),
-                    new OrderTable(null, 1, true)));
+            orderTableDao.save(new OrderTable(1L, 1, true));
+            orderTableDao.save(new OrderTable(null, 1, true));
 
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            final var request = new TableGroupRequest(new OrderTableIdRequest(1L), new OrderTableIdRequest(2L));
+
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("비어있지 않은 주문 테이블이 존재합니다.");
         }
-    }
-
-    private List<OrderTable> saveOrderTables(final OrderTable... orderTables) {
-        return Stream.of(orderTables)
-                .map(orderTableDao::save)
-                .collect(Collectors.toUnmodifiableList());
     }
 
     private List<OrderTable> saveOrderTableAsTimes(final int times) {
@@ -161,35 +145,18 @@ class TableGroupServiceTest {
             tableGroupService.ungroup(savedTableGroup.getId());
 
             final var actual = orderTableDao.findAllByIdIn(savedOrderTableIds);
-            assertOrderTablesUnassigned(actual, expected);
-        }
-
-        private void assertOrderTablesUnassigned(final List<OrderTable> actualOrderTables,
-                                                 final List<OrderTable> expectedOrderTables) {
-            final var expectedOrderTableSize = expectedOrderTables.size();
-            assertThat(actualOrderTables).hasSize(expectedOrderTableSize);
-
-            for (int i = 0; i < expectedOrderTableSize; i++) {
-                final var actual = actualOrderTables.get(i);
-                final var expected = expectedOrderTables.get(i);
-
-                assertThat(actual.getTableGroupId()).isNull();
-                assertThat(actual.getNumberOfGuests()).isEqualTo(expected.getNumberOfGuests());
-                assertThat(actual.isEmpty()).isTrue();
-            }
+            assertThat(actual).hasSize(expected.size());
         }
 
         @DisplayName("지정된 주문 테이블의 모든 계산이 완료되어 있어야 한다")
         @ParameterizedTest
         @ValueSource(strings = {"COOKING", "MEAL"})
         void ungroupWithUnreadyOrderTable(final String orderStatus) {
-            final var savedOrderTables = saveOrderTableAsTimes(ORDER_TABLE_COUNT_LIMIT);
-            final var savedTableGroup = tableGroupService.create(new TableGroup(LocalDateTime.now(), savedOrderTables));
+            final var tableGroupId = tableGroupDao.save(new TableGroup()).getId();
+            orderTableDao.save(new OrderTable(tableGroupId, 1, true));
+            orderTableDao.save(new OrderTable(tableGroupId, 1, true));
+            orderDao.save(new Order(tableGroupId, orderStatus, LocalDateTime.now()));
 
-            final var firstOrderTable = savedOrderTables.get(0);
-            orderDao.save(new Order(firstOrderTable.getId(), orderStatus, LocalDateTime.now(), Collections.emptyList()));
-
-            final var tableGroupId = savedTableGroup.getId();
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("계산이 완료되지 않은 테이블이 존재합니다.");

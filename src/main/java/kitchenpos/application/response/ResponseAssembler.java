@@ -6,6 +6,8 @@ import kitchenpos.application.response.menugroup.MenuGroupResponse;
 import kitchenpos.application.response.order.OrderLineItemResponse;
 import kitchenpos.application.response.order.OrderResponse;
 import kitchenpos.application.response.product.ProductResponse;
+import kitchenpos.application.response.tablegroup.OrderTableResponse;
+import kitchenpos.application.response.tablegroup.TableGroupResponse;
 import kitchenpos.domain.*;
 import org.springframework.stereotype.Component;
 
@@ -78,7 +80,8 @@ public class ResponseAssembler {
     public MenuGroupResponse menuGroupResponse(final MenuGroup menuGroup) {
         return new MenuGroupResponse(
                 menuGroup.getId(),
-                menuGroup.getName());
+                menuGroup.getName()
+        );
     }
 
     public List<ProductResponse> productResponses(final List<Product> products) {
@@ -88,6 +91,29 @@ public class ResponseAssembler {
     }
 
     public ProductResponse productResponse(final Product product) {
-        return new ProductResponse(product.getId(), product.getName(), product.getPrice());
+        return new ProductResponse(
+                product.getId(),
+                product.getName(),
+                product.getPrice()
+        );
+    }
+
+    public TableGroupResponse tableGroupResponse(final TableGroup tableGroup) {
+        return new TableGroupResponse(
+                tableGroup.getId(),
+                tableGroup.getCreatedDate(),
+                orderTableResponses(tableGroup.getOrderTables())
+        );
+    }
+
+    private List<OrderTableResponse> orderTableResponses(final List<OrderTable> orderTables) {
+        return orderTables.stream()
+                .map(orderTable -> new OrderTableResponse(
+                        orderTable.getId(),
+                        orderTable.getTableGroupId(),
+                        orderTable.getNumberOfGuests(),
+                        orderTable.isEmpty()
+                ))
+                .collect(Collectors.toUnmodifiableList());
     }
 }

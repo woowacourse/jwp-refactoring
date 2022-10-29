@@ -1,5 +1,9 @@
 package kitchenpos.application;
 
+import kitchenpos.application.request.tablegroup.OrderTableIdRequest;
+import kitchenpos.application.request.tablegroup.TableGroupRequest;
+import kitchenpos.application.response.ResponseAssembler;
+import kitchenpos.application.response.tablegroup.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -17,21 +21,25 @@ import java.util.stream.Collectors;
 
 @Service
 public class TableGroupService {
+
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
+    private final ResponseAssembler responseAssembler;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao, final TableGroupDao tableGroupDao) {
+    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao,
+                             final TableGroupDao tableGroupDao, final ResponseAssembler responseAssembler) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
+        this.responseAssembler = responseAssembler;
     }
 
     @Transactional
-    public TableGroup create(final TableGroup request) {
-        final List<OrderTable> orderTableRequests = request.getOrderTables();
-        final List<Long> orderTableIds = orderTableRequests.stream()
-                .map(OrderTable::getId)
+    public TableGroupResponse create(final TableGroupRequest request) {
+        final List<Long> orderTableIds = request.getOrderTables()
+                .stream()
+                .map(OrderTableIdRequest::getId)
                 .collect(Collectors.toUnmodifiableList());
         validateOrderTablesMoreThanSingle(orderTableIds);
 
@@ -48,7 +56,7 @@ public class TableGroupService {
         }
         savedTableGroup.setOrderTables(savedOrderTables);
 
-        return savedTableGroup;
+        return responseAssembler.tableGroupResponse(savedTableGroup);
     }
 
     private void validateOrderTablesMoreThanSingle(final List<Long> orderTableIds) {
