@@ -52,14 +52,6 @@ public class TableGroup {
         }
     }
 
-    public void addCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public void addOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
-    }
-
     public Long getId() {
         return id;
     }

@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,13 +25,12 @@ public class OrderTableTest {
 
     @DisplayName("이미 단체로 지정된 테이블은 테이블 상대를 변경할 수 없다.")
     @Test
-    @Disabled
     void changeAlreadyGroupTableStatus() {
-        final OrderTable sut = new OrderTable(5, false);
+        final OrderTable sut = new OrderTable(5, true);
         final TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now());
         sut.groupTable(tableGroup);
 
-        assertThatThrownBy(() -> sut.changeEmpty(true))
+        assertThatThrownBy(() -> sut.changeEmpty(false))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
