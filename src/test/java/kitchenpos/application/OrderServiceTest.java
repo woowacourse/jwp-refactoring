@@ -13,11 +13,12 @@ import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderResponse;
+import kitchenpos.application.dto.OrderTableCreateRequest;
+import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.application.dto.OrderUpdateRequest;
 import kitchenpos.application.dto.ProductCreateRequest;
 import kitchenpos.application.dto.ProductResponse;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +33,7 @@ class OrderServiceTest extends IntegrationTest {
             final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 1000));
             final MenuResponse menu = menuService.create(new MenuCreateRequest("짜장면", BigDecimal.valueOf(1000), menuGroup.getId(),
                 List.of(new MenuProductCreateRequest(product.getId(), 1))));
-            final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+            final OrderTableResponse orderTable = tableService.create(new OrderTableCreateRequest(2, false));
 
             // when
             final OrderResponse extract = orderService.create(new OrderCreateRequest(orderTable.getId(),
@@ -49,7 +50,7 @@ class OrderServiceTest extends IntegrationTest {
             final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 1000));
             final MenuResponse menu = menuService.create(new MenuCreateRequest("짜장면", BigDecimal.valueOf(1000), menuGroup.getId(),
                 List.of(new MenuProductCreateRequest(product.getId(), 1))));
-            final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+            final OrderTableResponse orderTable = tableService.create(new OrderTableCreateRequest(2, false));
 
             // when & then
             assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(orderTable.getId(), null)))
@@ -62,7 +63,7 @@ class OrderServiceTest extends IntegrationTest {
             menuGroupService.create(new MenuGroupRequest("1인 메뉴"));
             productService.create(new ProductCreateRequest("짜장면", 1000));
             final Long notRegisterMenuId = 100L;
-            final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+            final OrderTableResponse orderTable = tableService.create(new OrderTableCreateRequest(2, false));
 
             // when & then
             assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(orderTable.getId(), List.of(new OrderLineItemRequest(notRegisterMenuId, 1)))))
@@ -93,7 +94,7 @@ class OrderServiceTest extends IntegrationTest {
             final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 1000));
             final MenuResponse menu = menuService.create(new MenuCreateRequest("짜장면", BigDecimal.valueOf(1000), menuGroup.getId(),
                 List.of(new MenuProductCreateRequest(product.getId(), 1))));
-            final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+            final OrderTableResponse orderTable = tableService.create(new OrderTableCreateRequest(2, false));
             final OrderResponse order = orderService.create(new OrderCreateRequest(orderTable.getId(),
                 List.of(new OrderLineItemRequest(menu.getId(), 1))));
 
@@ -114,7 +115,7 @@ class OrderServiceTest extends IntegrationTest {
             final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 1000));
             final MenuResponse menu = menuService.create(new MenuCreateRequest("짜장면", BigDecimal.valueOf(1000), menuGroup.getId(),
                 List.of(new MenuProductCreateRequest(product.getId(), 1))));
-            final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+            final OrderTableResponse orderTable = tableService.create(new OrderTableCreateRequest(2, false));
             final OrderResponse order = orderService.create(new OrderCreateRequest(orderTable.getId(), List.of(new OrderLineItemRequest(menu.getId(), 1))));
 
             // when
@@ -131,7 +132,7 @@ class OrderServiceTest extends IntegrationTest {
             final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 1000));
             final MenuResponse menu = menuService.create(new MenuCreateRequest("짜장면", BigDecimal.valueOf(1000), menuGroup.getId(),
                 List.of(new MenuProductCreateRequest(product.getId(), 1))));
-            final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+            final OrderTableResponse orderTable = tableService.create(new OrderTableCreateRequest(2, false));
             final OrderResponse order =  orderService.create(new OrderCreateRequest(orderTable.getId(), List.of(new OrderLineItemRequest(menu.getId(), 1))));
             orderService.changeOrderStatus(order.getId(), new OrderUpdateRequest(OrderStatus.COMPLETION.name()));
 
@@ -147,7 +148,7 @@ class OrderServiceTest extends IntegrationTest {
             final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 1000));
             final MenuResponse menu = menuService.create(new MenuCreateRequest("짜장면", BigDecimal.valueOf(1000), menuGroup.getId(),
                 List.of(new MenuProductCreateRequest(product.getId(), 1))));
-            final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+            final OrderTableResponse orderTable = tableService.create(new OrderTableCreateRequest(2, false));
             final OrderResponse order =  orderService.create(new OrderCreateRequest(orderTable.getId(), List.of(new OrderLineItemRequest(menu.getId(), 1))));
 
             // when & then

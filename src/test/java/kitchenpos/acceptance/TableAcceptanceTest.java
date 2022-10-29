@@ -8,6 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.List;
+import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
         테이블을_생성한다(3, false);
 
         // when
-        List<OrderTable> extract = 테이블을_조회한다();
+        List<OrderTableResponse> extract = 테이블을_조회한다();
 
         // then
         assertThat(extract).hasSize(3);

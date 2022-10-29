@@ -5,6 +5,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import io.restassured.RestAssured;
 import java.util.List;
+import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.application.dto.OrderTableChangeNumberOfGuestsRequest;
+import kitchenpos.application.dto.OrderTableCreateRequest;
+import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
 import org.springframework.http.HttpStatus;
 
@@ -14,7 +18,7 @@ public class TableStepDefinition {
        final int numberOfGuests,
        final boolean empty
     ) {
-        OrderTable orderTable = new OrderTable(null, numberOfGuests, empty);
+        OrderTableCreateRequest orderTable = new OrderTableCreateRequest(numberOfGuests, empty);
 
         return RestAssured.given().log().all()
             .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -26,20 +30,20 @@ public class TableStepDefinition {
             .extract().body().jsonPath().getLong("id");
     }
 
-    public static List<OrderTable> 테이블을_조회한다() {
+    public static List<OrderTableResponse> 테이블을_조회한다() {
         return RestAssured.given().log().all()
             .when().log().all()
             .get("/api/tables")
             .then().log().all()
             .statusCode(HttpStatus.OK.value())
-            .extract().body().jsonPath().getList(".", OrderTable.class);
+            .extract().body().jsonPath().getList(".", OrderTableResponse.class);
     }
 
     public static void 테이블의_상태를_변경한다(
         final long orderTableId
         ) {
 
-        OrderTable orderTable = new OrderTable(null, 0, true);
+        OrderTableChangeEmptyRequest orderTable = new OrderTableChangeEmptyRequest(true);
 
         RestAssured.given().log().all()
             .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -54,7 +58,7 @@ public class TableStepDefinition {
         final long orderTableId,
         final int numberOfGuests) {
 
-        OrderTable orderTable = new OrderTable(null, numberOfGuests, false);
+        OrderTableChangeNumberOfGuestsRequest orderTable = new OrderTableChangeNumberOfGuestsRequest(numberOfGuests);
 
         RestAssured.given().log().all()
             .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)

@@ -33,10 +33,30 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void changeEmpty(final boolean empty) {
+        this.empty = empty;
+    }
+
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        validateNotEmpty();
+        validateNumberOfGuests(numberOfGuests);
+        this.numberOfGuests = numberOfGuests;
+    }
+
     public void validateNotEmpty() {
         if (this.empty) {
             throw new IllegalArgumentException();
         }
+    }
+
+    private void validateNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 
     public Long getId() {
@@ -57,17 +77,5 @@ public class OrderTable {
 
     public int getNumberOfGuests() {
         return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    public boolean isEmpty() {
-        return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 }

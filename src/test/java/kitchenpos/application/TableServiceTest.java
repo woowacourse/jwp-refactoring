@@ -13,6 +13,10 @@ import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderResponse;
+import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.application.dto.OrderTableChangeNumberOfGuestsRequest;
+import kitchenpos.application.dto.OrderTableCreateRequest;
+import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.application.dto.OrderUpdateRequest;
 import kitchenpos.application.dto.ProductCreateRequest;
 import kitchenpos.application.dto.ProductResponse;
@@ -30,10 +34,10 @@ class TableServiceTest {
         @Test
         void 요청을_할_수_있다() {
             // given
-            final OrderTable orderTable = new OrderTable(null, 0, true);
+            final OrderTableCreateRequest orderTable = new OrderTableCreateRequest(2, false);
 
             // when
-            final OrderTable extract = tableService.create(orderTable);
+            final OrderTableResponse extract = tableService.create(orderTable);
 
             // then
             assertThat(extract).isNotNull();
@@ -45,11 +49,11 @@ class TableServiceTest {
         @Test
         void 요청을_할_수_있다() {
             // given
-            final OrderTable orderTable = new OrderTable(null, 0, true);
+            final OrderTableCreateRequest orderTable = new OrderTableCreateRequest(2, false);
             tableService.create(orderTable);
 
             // when
-            final List<OrderTable> extract = tableService.list();
+            final List<OrderTableResponse> extract = tableService.list();
 
             // then
             assertThat(extract).hasSize(1);
@@ -66,23 +70,23 @@ class TableServiceTest {
             final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 1000));
             final MenuResponse menu = menuService.create(new MenuCreateRequest("짜장면", BigDecimal.valueOf(1000), menuGroup.getId(),
                 List.of(new MenuProductCreateRequest(product.getId(), 1))));
-            final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+            final OrderTableResponse orderTable = tableService.create(new OrderTableCreateRequest(2, false));
             final OrderResponse order = orderService.create(new OrderCreateRequest(orderTable.getId(), List.of(new OrderLineItemRequest(menu.getId(), 1))));
             orderService.changeOrderStatus(order.getId(), new OrderUpdateRequest(orderStatus.name()));
 
             // when & then
             assertThatThrownBy(
-                () -> tableService.changeEmpty(orderTable.getId(), new OrderTable(orderTable.getId(), 2, false)))
+                () -> tableService.changeEmpty(orderTable.getId(), new OrderTableChangeEmptyRequest(false)))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 요청에서_테이블의_손님의_수를_변경할_수_있다() {
             // given
-            final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+            final OrderTableResponse orderTable = tableService.create(new OrderTableCreateRequest(2, false));
 
             // when
-            final OrderTable extract = tableService.changeNumberOfGuests(orderTable.getId(), new OrderTable(null, 3, false));
+            final OrderTableResponse extract = tableService.changeNumberOfGuests(orderTable.getId(), new OrderTableChangeNumberOfGuestsRequest(3));
 
             // then
             assertThat(extract.getNumberOfGuests()).isEqualTo(3);
@@ -91,20 +95,21 @@ class TableServiceTest {
         @Test
         void 요청에서_테이블의_손님의_수를_0원_미만으로_변경하면_예외가_발생한다() {
             // given
-            final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
+            final OrderTableResponse orderTable = tableService.create(new OrderTableCreateRequest(2, false));
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), new OrderTable(null, -1, false)))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), new OrderTableChangeNumberOfGuestsRequest(-1)))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 요청에서_비어있는_테이블에_손님의_수를_변경할_경우_예외가_발생한다() {
             // given
-            final OrderTable extract = tableService.create(new OrderTable(null, 0, true));
+            final OrderTableResponse orderTable = tableService.create(new OrderTableCreateRequest(2, false));
+            tableService.changeEmpty(orderTable.getId(), new OrderTableChangeEmptyRequest(true));
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(extract.getId(), new OrderTable(null, 1, true)))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), new OrderTableChangeNumberOfGuestsRequest(1)))
                 .isInstanceOf(IllegalArgumentException.class);
         }
     }
