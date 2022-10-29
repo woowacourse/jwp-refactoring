@@ -1,5 +1,9 @@
 package kitchenpos.application;
 
+import kitchenpos.application.request.ChangeOrderStatusRequest;
+import kitchenpos.application.request.OrderRequest;
+import kitchenpos.application.response.OrderResponse;
+import kitchenpos.application.response.ResponseAssembler;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -24,24 +28,22 @@ public class OrderService {
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
+    private final ResponseAssembler responseAssembler;
 
-    public OrderService(
-            final MenuDao menuDao,
-            final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
-            final OrderTableDao orderTableDao
-    ) {
+    public OrderService(final MenuDao menuDao, final OrderDao orderDao, final OrderLineItemDao orderLineItemDao,
+                        final OrderTableDao orderTableDao, final ResponseAssembler responseAssembler) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
         this.orderTableDao = orderTableDao;
+        this.responseAssembler = responseAssembler;
     }
 
     @Transactional
-    public Order create(final Order request) {
+    public OrderResponse create(final OrderRequest request) {
         final var orderLineItems = request.getOrderLineItems()
                 .stream()
-                .map(item -> new OrderLineItem(item.getOrderId(), item.getMenuId(), item.getQuantity()))
+                .map(item -> new OrderLineItem(item.getMenuId(), item.getQuantity()))
                 .collect(Collectors.toUnmodifiableList());
         validateOrderLineItemsNotEmpty(orderLineItems);
         validateMenuNotDuplicated(orderLineItems);
@@ -49,7 +51,7 @@ public class OrderService {
         final var orderTableId = request.getOrderTableId();
         final OrderTable orderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("주문 테이블을 찾을 수 없습니다."));
-        validateOrderTableEmpty(orderTable);
+        validateOrderTableNotEmpty(orderTable);
 
         final var order = new Order(request.getOrderTableId(), orderLineItems);
         final Order savedOrder = orderDao.save(order);
@@ -61,7 +63,7 @@ public class OrderService {
         }
         savedOrder.setOrderLineItems(savedOrderLineItems);
 
-        return savedOrder;
+        return responseAssembler.orderResponse(savedOrder);
     }
 
     private void validateOrderLineItemsNotEmpty(List<OrderLineItem> orderLineItems) {
@@ -80,24 +82,24 @@ public class OrderService {
         }
     }
 
-    private void validateOrderTableEmpty(OrderTable orderTable) {
+    private void validateOrderTableNotEmpty(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("주문 테이블이 비어 있습니다.");
         }
     }
 
-    public List<Order> list() {
+    public List<OrderResponse> list() {
         final List<Order> orders = orderDao.findAll();
 
         for (final Order order : orders) {
             order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
         }
 
-        return orders;
+        return responseAssembler.orderResponses(orders);
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public OrderResponse changeOrderStatus(final Long orderId, final ChangeOrderStatusRequest order) {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
         validateOrderNotYestCompleted(savedOrder);
@@ -108,7 +110,7 @@ public class OrderService {
         orderDao.save(savedOrder);
         savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
 
-        return savedOrder;
+        return responseAssembler.orderResponse(savedOrder);
     }
 
     private void validateOrderNotYestCompleted(Order savedOrder) {
