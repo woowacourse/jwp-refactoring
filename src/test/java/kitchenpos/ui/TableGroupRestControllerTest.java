@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -19,13 +20,13 @@ class TableGroupRestControllerTest extends RestControllerTest {
 
     @Test
     void 단체_지정에_성공한다() throws Exception {
-        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(1L, 2L));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(1L, 2L);
         OrderTableResponse orderTable1 = new OrderTableResponse(1L, null, 1, false);
         OrderTableResponse orderTable2 = new OrderTableResponse(1L, null, 1, false);
         TableGroupResponse expected =
                 new TableGroupResponse(1L, LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
-        when(tableGroupService.create(List.of(1L, 2L))).thenReturn(expected);
+        when(tableGroupService.create(any(TableGroupCreateRequest.class))).thenReturn(expected);
 
         mockMvc.perform(post("/api/table-groups")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)

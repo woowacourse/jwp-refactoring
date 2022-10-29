@@ -21,6 +21,7 @@ import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +45,9 @@ class TableGroupServiceTest {
         OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
         OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 2, true));
 
-        TableGroupResponse response =
-                tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(orderTable1.getId(), orderTable2.getId());
+
+        TableGroupResponse response = tableGroupService.create(request);
 
         assertAll(
                 () -> assertThat(response.getId()).isNotNull(),
@@ -59,16 +61,18 @@ class TableGroupServiceTest {
     void 단체_지정하려는_테이블이_2개_미만이면_예외를_반환한다() {
         OrderTable orderTable = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
 
-        assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable.getId()))).isInstanceOf(
-                IllegalArgumentException.class);
+        TableGroupCreateRequest request = new TableGroupCreateRequest(orderTable.getId());
+
+        assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 단체_지정하려는_테이블이_존재하지_않으면_예외를_반환한다() {
-        OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
+        OrderTable orderTable = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
 
-        assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable1.getId(), 0L)))
-                .isInstanceOf(IllegalArgumentException.class);
+        TableGroupCreateRequest request = new TableGroupCreateRequest(orderTable.getId());
+
+        assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -76,25 +80,31 @@ class TableGroupServiceTest {
         OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
         OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 2, false));
 
-        assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId())))
-                .isInstanceOf(IllegalArgumentException.class);
+        TableGroupCreateRequest request = new TableGroupCreateRequest(orderTable1.getId(), orderTable2.getId());
+
+        assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 이미_지정된_테이블을_단체_지정할_수_없다() {
         OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
         OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 2, true));
-        tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()));
 
-        assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId())))
-                .isInstanceOf(IllegalArgumentException.class);
+        TableGroupCreateRequest request = new TableGroupCreateRequest(orderTable1.getId(), orderTable2.getId());
+
+        tableGroupService.create(request);
+
+        assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 테이블의_단체_지정을_해제할_수_있다() {
         OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
         OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 2, true));
-        Long tableGroupId = tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()))
+
+        TableGroupCreateRequest request = new TableGroupCreateRequest(orderTable1.getId(), orderTable2.getId());
+
+        Long tableGroupId = tableGroupService.create(request)
                 .getId();
 
         assertDoesNotThrow(() -> tableGroupService.ungroup(tableGroupId));
@@ -104,7 +114,10 @@ class TableGroupServiceTest {
     void 단체_지정하려는_테이블의_주문_목록_중_식사_중인_주문이_있을_경우_예외를_반환한다() {
         OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
         OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 2, true));
-        Long tableGroupId = tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()))
+
+        TableGroupCreateRequest request = new TableGroupCreateRequest(orderTable1.getId(), orderTable2.getId());
+
+        Long tableGroupId = tableGroupService.create(request)
                 .getId();
         Long menuGroupId = menuGroupRepository.save(메뉴_그룹을_생성한다("메뉴 그룹"))
                 .getId();
