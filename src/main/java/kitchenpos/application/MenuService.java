@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.jpa.MenuGroupRepository;
 import kitchenpos.dao.jpa.MenuProductRepository;
@@ -18,19 +17,19 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final MenuProductRepository menuProductDao;
+    private final MenuProductRepository menuProductRepository;
     private final ProductRepository productRepository;
     private final MenuSpecification menuSpecification;
 
     public MenuService(MenuRepository menuRepository,
                        MenuGroupRepository menuGroupRepository,
-                       MenuProductRepository menuProductDao,
+                       MenuProductRepository menuProductRepository,
                        ProductRepository productRepository,
                        MenuSpecification menuSpecification) {
 
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.menuProductDao = menuProductDao;
+        this.menuProductRepository = menuProductRepository;
         this.productRepository = productRepository;
         this.menuSpecification = menuSpecification;
     }
@@ -41,15 +40,14 @@ public class MenuService {
         final Menu menu = menuRequest.toDomain();
         menuSpecification.validateCreate(menu);
 
-        final Menu savedMenu = menuRepository.save(menu);
-        return savedMenu;
+        return menuRepository.save(menu);
     }
 
     public List<Menu> list() {
         final List<Menu> menus = menuRepository.findAll();
 
         for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+            menu.setMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
         }
 
         return menus;

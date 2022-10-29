@@ -23,8 +23,8 @@ public class MenuSpecification {
 
     public void validateCreate(Menu menu) {
 
-        if (!menuGroupRepository.existsById(menu.getMenuGroup().getId())) {
-            throw new IllegalArgumentException("존재하지 않는 메뉴 그룹의 id입니다.");
+        if (!menuGroupRepository.existsBy(menu.getMenuGroup())) {
+            throw new IllegalArgumentException("존재하지 않는 메뉴 그룹의 ID입니다.");
         }
 
         if (!productRepository.existsByIn(menu.products())) {

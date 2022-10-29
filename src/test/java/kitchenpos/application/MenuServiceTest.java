@@ -79,7 +79,7 @@ class MenuServiceTest extends IntegrationServiceTest {
 
                 assertThatThrownBy(() -> menuService.create(menuRequest))
                         .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("존재하지 않는 메뉴 그룹의 id입니다.");
+                        .hasMessage("존재하지 않는 메뉴 그룹의 ID입니다.");
             }
         }
 
@@ -87,8 +87,6 @@ class MenuServiceTest extends IntegrationServiceTest {
         class 메뉴상품의_상품ID가_존재하지_않는_경우 extends IntegrationServiceTest {
 
             private static final long NOT_EXIST_MENU_PRODUCT_NUMBER = -1L;
-
-            private List<MenuProduct> ERROR_MENU_PRODUCTS;
 
             private MenuRequest menuRequest;
 
@@ -99,8 +97,11 @@ class MenuServiceTest extends IntegrationServiceTest {
                 final Product 존재하지않는_product = product(NOT_EXIST_MENU_PRODUCT_NUMBER, "존재 하지 않는 Product", 16_000);
                 final MenuProduct 존재하지않는_menuProduct = new MenuProduct(존재하지않는_product, 1);
 
-                ERROR_MENU_PRODUCTS = List.of(존재하지않는_menuProduct);
-                menuRequest = menuRequest(menuGroup, ERROR_MENU_PRODUCTS, 16_000);
+                menuRequest = MenuRequest.builder()
+                        .menuGroup(menuGroup)
+                        .menuProducts(존재하지않는_menuProduct)
+                        .intPrice(16_000)
+                        .build();
             }
 
             @Test
@@ -152,9 +153,18 @@ class MenuServiceTest extends IntegrationServiceTest {
             @BeforeEach
             void setUp() {
 
-                final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
-                final Product product = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16_000)));
-                menuRequest = menuRequest(menuGroup, product, 16_000);
+                final MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹);
+                final Product 후라이드_치킨 = productRepository.save(product("후라이드 치킨", 18_000));
+                final Product 양념_치킨 = productRepository.save(product("양념 치킨", 19_000));
+                final MenuProduct 후라이드_두마리 = new MenuProduct(후라이드_치킨, 2L);
+                final MenuProduct 양념_한마리 = new MenuProduct(양념_치킨, 1L);
+
+                menuRequest = MenuRequest.builder()
+                        .name("[할인] 후라이드 양념 치킨 세 마리 세트")
+                        .intPrice(50_000) // 정가 18,000 * 2 + 19,000 = 55,000원
+                        .menuProducts(후라이드_두마리, 양념_한마리)
+                        .menuGroup(menuGroup)
+                        .build();
             }
 
             @Test
