@@ -49,7 +49,7 @@ public class MenuRepository {
         return menuProducts.stream()
             .map(menuProduct -> menuProductDao.save(
                 new MenuProduct(
-                    menuId, menuProduct.getProductId(), menuProduct.getQuantity(), menuProduct.getPrice()
+                    menuId, menuProduct.getProductId(), menuProduct.getQuantity()
                 )
             ))
             .collect(Collectors.toUnmodifiableList());

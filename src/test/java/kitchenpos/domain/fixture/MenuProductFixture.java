@@ -52,12 +52,6 @@ public class MenuProductFixture {
     }
 
     private MenuProduct build() {
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setSeq(seq);
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        menuProduct.setPrice(price);
-        return menuProduct;
+        return new MenuProduct(seq, menuId, productId, quantity, price);
     }
 }

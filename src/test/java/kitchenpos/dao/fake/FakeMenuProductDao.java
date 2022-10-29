@@ -18,8 +18,7 @@ public class FakeMenuProductDao implements MenuProductDao {
     public MenuProduct save(final MenuProduct entity) {
         long savedId = ++id;
         menuProducts.put(savedId, entity);
-        entity.setSeq(savedId);
-        return entity;
+        return new MenuProduct(savedId, entity.getMenuId(), entity.getProductId(), entity.getQuantity());
     }
 
     @Override
