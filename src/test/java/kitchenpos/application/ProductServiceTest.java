@@ -7,8 +7,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @DisplayName("상품을 생성한다.")
     @Test
@@ -35,7 +35,7 @@ class ProductServiceTest {
         Product savedProduct = productService.create(product);
 
         // then
-        Product dbProduct = productDao.findById(savedProduct.getId())
+        Product dbProduct = productRepository.findById(savedProduct.getId())
                 .orElseThrow(NoSuchElementException::new);
         assertThat(dbProduct.getName()).isEqualTo(product.getName());
     }
@@ -66,7 +66,7 @@ class ProductServiceTest {
     @Test
     void list_success() {
         // given
-        Product product = productDao.save(createProduct("강정치킨", 17_000L));
+        Product product = productRepository.save(createProduct("강정치킨", 17_000L));
 
         // when
         List<Product> products = productService.list();

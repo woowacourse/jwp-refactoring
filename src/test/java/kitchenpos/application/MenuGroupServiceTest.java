@@ -6,8 +6,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ class MenuGroupServiceTest {
     private MenuGroupService menuGroupService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @DisplayName("메뉴그룹을 생성한다.")
     @Test
@@ -34,7 +34,7 @@ class MenuGroupServiceTest {
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
         // then
-        MenuGroup dbMenuGroup = menuGroupDao.findById(savedMenuGroup.getId())
+        MenuGroup dbMenuGroup = menuGroupRepository.findById(savedMenuGroup.getId())
                 .orElseThrow(NoSuchElementException::new);
         assertThat(dbMenuGroup.getName()).isEqualTo(menuGroup.getName());
     }

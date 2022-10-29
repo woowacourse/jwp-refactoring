@@ -11,10 +11,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,24 +29,24 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @DisplayName("단체 지정을 생성한다.")
     @Test
     void create_success() {
         // given
-        OrderTable orderTable1 = orderTableDao.save(createOrderTable(4, true));
-        OrderTable orderTable2 = orderTableDao.save(createOrderTable(4, true));
+        OrderTable orderTable1 = orderTableRepository.save(createOrderTable(4, true));
+        OrderTable orderTable2 = orderTableRepository.save(createOrderTable(4, true));
         TableGroup tableGroup = createTableGroup(Arrays.asList(orderTable1, orderTable2));
 
         // when
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         // then
-        TableGroup dbTableGroup = tableGroupDao.findById(savedTableGroup.getId())
+        TableGroup dbTableGroup = tableGroupRepository.findById(savedTableGroup.getId())
                 .orElseThrow(NoSuchElementException::new);
         assertThat(dbTableGroup.getId()).isEqualTo(savedTableGroup.getId());
     }
@@ -66,7 +66,7 @@ class TableGroupServiceTest {
     @Test
     void create_fail_if_orderTable_is_one() {
         // given
-        OrderTable orderTable = orderTableDao.save(createOrderTable(4, true));
+        OrderTable orderTable = orderTableRepository.save(createOrderTable(4, true));
         TableGroup tableGroup = createTableGroup(Collections.singletonList(orderTable));
 
         // when, then
@@ -90,7 +90,7 @@ class TableGroupServiceTest {
     @Test
     void create_fail_if_orderTable_not_empty() {
         // given
-        OrderTable orderTable = orderTableDao.save(createOrderTable(4, false));
+        OrderTable orderTable = orderTableRepository.save(createOrderTable(4, false));
         TableGroup tableGroup = createTableGroup(Collections.singletonList(orderTable));
 
         // when, then
@@ -102,12 +102,12 @@ class TableGroupServiceTest {
     @Test
     void create_fail_if_orderTable_has_orderTableGroup() {
         // given
-        OrderTable orderTable1 = orderTableDao.save(createOrderTable(4, true));
-        OrderTable orderTable2 = orderTableDao.save(createOrderTable(4, true));
+        OrderTable orderTable1 = orderTableRepository.save(createOrderTable(4, true));
+        OrderTable orderTable2 = orderTableRepository.save(createOrderTable(4, true));
         TableGroup tableGroup = createTableGroup(Arrays.asList(orderTable1, orderTable2));
         tableGroupService.create(tableGroup);
 
-        OrderTable orderTable3 = orderTableDao.save(createOrderTable(4, true));
+        OrderTable orderTable3 = orderTableRepository.save(createOrderTable(4, true));
         TableGroup newTableGroup = createTableGroup(Arrays.asList(orderTable1, orderTable3));
 
         // when, then
@@ -119,16 +119,16 @@ class TableGroupServiceTest {
     @Test
     void ungroup_success() {
         // given
-        OrderTable orderTable1 = orderTableDao.save(createOrderTable(4, true));
-        OrderTable orderTable2 = orderTableDao.save(createOrderTable(4, true));
-        TableGroup savedTableGroup = tableGroupDao.save(createTableGroup(
+        OrderTable orderTable1 = orderTableRepository.save(createOrderTable(4, true));
+        OrderTable orderTable2 = orderTableRepository.save(createOrderTable(4, true));
+        TableGroup savedTableGroup = tableGroupRepository.save(createTableGroup(
                 LocalDateTime.now(), Arrays.asList(orderTable1, orderTable2)));
 
         // when
         tableGroupService.ungroup(savedTableGroup.getId());
 
         // then
-        List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(savedTableGroup.getId());
+        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(savedTableGroup.getId());
         assertThat(orderTables).isEmpty();
     }
 }

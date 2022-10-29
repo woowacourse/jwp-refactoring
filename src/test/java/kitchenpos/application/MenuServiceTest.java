@@ -13,13 +13,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.exception.NotFoundException;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.dto.CreateMenuProductsRequest;
 import kitchenpos.ui.dto.CreateMenuRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -41,16 +41,16 @@ class MenuServiceTest {
     private MenuRepository menuRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @DisplayName("메뉴를 생성한다.")
     @Test
     void create_success() {
         // given
-        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
+        MenuGroup newMenuGroup = menuGroupRepository.save(createMenuGroup("추천메뉴"));
         CreateMenuRequest request = createMenuRequest("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
                 Collections.singletonList(createMenuProductRequest(1L, 2)));
 
@@ -71,7 +71,7 @@ class MenuServiceTest {
     @Test
     void create_fail_if_price_is_negative() {
         // given
-        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
+        MenuGroup newMenuGroup = menuGroupRepository.save(createMenuGroup("추천메뉴"));
         CreateMenuRequest request = createMenuRequest("후라이드+후라이드", -1L, newMenuGroup.getId(),
                 Collections.singletonList(createMenuProductRequest(1L, 2)));
 
@@ -96,8 +96,8 @@ class MenuServiceTest {
     @Test
     void create_success_if_amount_is_smaller_than_menuPriceSum() {
         // given
-        Product 후라이드 = productDao.save(createProduct("후라이드", 10_000L));
-        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
+        Product 후라이드 = productRepository.save(createProduct("후라이드", 10_000L));
+        MenuGroup newMenuGroup = menuGroupRepository.save(createMenuGroup("추천메뉴"));
         CreateMenuRequest request = createMenuRequest("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
                 Arrays.asList(createMenuProductRequest(후라이드.getId(), 1), createMenuProductRequest(후라이드.getId(), 1)));
 
@@ -110,8 +110,8 @@ class MenuServiceTest {
     @ParameterizedTest
     void create_fail_if_amount_is_bigger_than_menuPriceSum(long price) {
         // given
-        Product 후라이드 = productDao.save(createProduct("후라이드", 10_000L));
-        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
+        Product 후라이드 = productRepository.save(createProduct("후라이드", 10_000L));
+        MenuGroup newMenuGroup = menuGroupRepository.save(createMenuGroup("추천메뉴"));
         CreateMenuRequest request = createMenuRequest("후라이드+후라이드", price, newMenuGroup.getId(),
                 Arrays.asList(createMenuProductRequest(후라이드.getId(), 1), createMenuProductRequest(후라이드.getId(), 1)));
 
@@ -124,7 +124,7 @@ class MenuServiceTest {
     @Test
     void create_fail_if_productId_is_null() {
         // given
-        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
+        MenuGroup newMenuGroup = menuGroupRepository.save(createMenuGroup("추천메뉴"));
         CreateMenuRequest request = createMenuRequest("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
                 Collections.singletonList(createMenuProductRequest(9999999L, 2)));
 
@@ -137,7 +137,7 @@ class MenuServiceTest {
     @Test
     void list_success() {
         // given
-        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
+        MenuGroup newMenuGroup = menuGroupRepository.save(createMenuGroup("추천메뉴"));
         CreateMenuRequest request = createMenuRequest("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
                 Collections.singletonList(createMenuProductRequest(1L, 2)));
         Menu savedMenu = menuService.create(request);

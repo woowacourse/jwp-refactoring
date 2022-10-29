@@ -13,13 +13,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,27 +36,31 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private MenuRepository menuRepository;
 
     @Autowired
-    private OrderTableDao tableDao;
+    private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private OrderLineItemRepository orderLineItemRepository;
 
     @DisplayName("주문을 생성한다.")
     @Test
     void create_success() {
         // given
         Menu menu = menuRepository.save(createMenu());
-        OrderTable orderTable = tableDao.save(createOrderTable());
-        Order order = createOrder(orderTable.getId(), Collections.singletonList(createOrderLineItem(menu.getId(), 1)));
+        OrderTable orderTable = orderTableRepository.save(createOrderTable());
+        OrderLineItem orderLineItem = orderLineItemRepository.save(createOrderLineItem(menu.getId(), 1));
+        Order order = createOrder(orderTable.getId(), Collections.singletonList(orderLineItem));
 
         // when
         Order savedOrder = orderService.create(order);
 
         // then
-        Order dbOrder = orderDao.findById(savedOrder.getId())
+        Order dbOrder = orderRepository.findById(savedOrder.getId())
                 .orElseThrow(RuntimeException::new);
         assertThat(dbOrder.getOrderTableId()).isEqualTo(order.getOrderTableId());
     }
@@ -63,7 +69,7 @@ class OrderServiceTest {
     @Test
     void create_fail_if_orderLineItems_is_empty() {
         // given
-        OrderTable orderTable = tableDao.save(createOrderTable());
+        OrderTable orderTable = orderTableRepository.save(createOrderTable());
         Order order = createOrder(orderTable.getId(), new ArrayList<>());
 
         // when, then
@@ -75,7 +81,7 @@ class OrderServiceTest {
     @Test
     void create_fail_if_not_exist_menu() {
         // given
-        OrderTable orderTable = tableDao.save(new OrderTable());
+        OrderTable orderTable = orderTableRepository.save(new OrderTable());
         Order order = createOrder(orderTable.getId(), Collections.singletonList(createOrderLineItem(9999999L, 1)));
 
         // when, then
@@ -99,7 +105,7 @@ class OrderServiceTest {
     @Test
     void create_fail_if_menu_id_duplicate() {
         // given
-        OrderTable orderTable = tableDao.save(new OrderTable());
+        OrderTable orderTable = orderTableRepository.save(new OrderTable());
         Menu menu = menuRepository.save(createMenu());
         Order order = createOrder(orderTable.getId(),
                 Arrays.asList(createOrderLineItem(menu.getId(), 1), createOrderLineItem(menu.getId(), 1)));
@@ -113,7 +119,7 @@ class OrderServiceTest {
     @Test
     void create_fail_if_orderTable_is_empty() {
         // given
-        OrderTable orderTable = tableDao.save(createOrderTable(false));
+        OrderTable orderTable = orderTableRepository.save(createOrderTable(false));
         Menu menu = menuRepository.save(createMenu());
         Order order = createOrder(orderTable.getId(),
                 Arrays.asList(createOrderLineItem(menu.getId(), 1), createOrderLineItem(menu.getId(), 1)));
@@ -128,8 +134,8 @@ class OrderServiceTest {
     void list_success() {
         // given
         Menu menu = menuRepository.save(createMenu());
-        OrderTable orderTable = tableDao.save(createOrderTable());
-        Order order = orderDao.save(createOrder(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
+        OrderTable orderTable = orderTableRepository.save(createOrderTable());
+        Order order = orderRepository.save(createOrder(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
                 Collections.singletonList(createOrderLineItem(menu.getId(), 1))));
 
         // when
@@ -147,17 +153,17 @@ class OrderServiceTest {
     void changeOrderStatus_success() {
         // given
         Menu menu = menuRepository.save(createMenu());
-        OrderTable orderTable = tableDao.save(createOrderTable());
+        OrderTable orderTable = orderTableRepository.save(createOrderTable());
         Order order = createOrder(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
                 Collections.singletonList(createOrderLineItem(menu.getId(), 1)));
-        Order savedOrder = orderDao.save(order);
+        Order savedOrder = orderRepository.save(order);
 
         // when
         String changedOrderStatus = OrderStatus.MEAL.name();
         orderService.changeOrderStatus(savedOrder.getId(), createOrder(changedOrderStatus));
 
         // then
-        Order dbOrder = orderDao.findById(savedOrder.getId())
+        Order dbOrder = orderRepository.findById(savedOrder.getId())
                 .orElseThrow(RuntimeException::new);
         assertThat(dbOrder.getOrderStatus()).isEqualTo(changedOrderStatus);
     }
@@ -167,10 +173,10 @@ class OrderServiceTest {
     void changeOrderStatus_fail_if_exist_orderStatus_is_COMPLETION() {
         // given
         Menu menu = menuRepository.save(createMenu());
-        OrderTable orderTable = tableDao.save(createOrderTable());
+        OrderTable orderTable = orderTableRepository.save(createOrderTable());
         Order order = createOrder(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(),
                 Collections.singletonList(createOrderLineItem(menu.getId(), 1)));
-        Order savedOrder = orderDao.save(order);
+        Order savedOrder = orderRepository.save(order);
 
         // when, then
         assertThatThrownBy(
