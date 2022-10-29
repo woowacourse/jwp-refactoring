@@ -1,13 +1,16 @@
-package kitchenpos.domain;
+package kitchenpos.ui.dto;
 
-public class MenuGroup {
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+
+public class MenuGroupRequest {
     private Long id;
     private String name;
 
-    public MenuGroup() {
+    public MenuGroupRequest() {
     }
 
-    public MenuGroup(final Long id, final String name) {
+    public MenuGroupRequest(final Long id, final String name) {
         this.id = id;
         this.name = name;
     }
@@ -26,5 +29,9 @@ public class MenuGroup {
 
     public void setName(final String name) {
         this.name = name;
+    }
+
+    public MenuGroup toMenuGroup() {
+        return new MenuGroup(id, name);
     }
 }
