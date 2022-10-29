@@ -2,7 +2,7 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 
-public class MenuProduct {
+public class MenuProduct implements Entity {
 
     private Long seq;
     private Long menuId;
@@ -48,5 +48,14 @@ public class MenuProduct {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    @Override
+    public boolean isNew() {
+        return seq == null;
+    }
+
+    @Override
+    public void validateOnCreate() {
     }
 }

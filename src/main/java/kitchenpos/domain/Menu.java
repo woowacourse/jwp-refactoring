@@ -1,9 +1,10 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Menu {
+public class Menu implements Entity{
 
     private Long id;
     private String name;
@@ -14,24 +15,8 @@ public class Menu {
     public Menu(final Long id,
                 final String name,
                 final BigDecimal price,
-                final Long menuGroupId) {
-        this.id = id;
-        this.name = name;
-        this.price = new Price(price);
-        this.menuGroupId = menuGroupId;
-    }
-
-    public Menu(final Long id,
-                final String name,
-                final BigDecimal price,
-                final Long menuGroupId,
-                final List<MenuProduct> menuProducts) {
-        this.price = new Price(price);
-        validatePrice(menuProducts);
-        this.id = id;
-        this.name = name;
-        this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+                Long menuGroupId) {
+        this(id, name, price, menuGroupId, new ArrayList<>());
     }
 
     public Menu(final String name,
@@ -41,14 +26,19 @@ public class Menu {
         this(null, name, price, menuGroupId, menuProducts);
     }
 
-    private void validatePrice(final List<MenuProduct> menuProducts) {
-        final var total = menuProducts.stream()
-                .map(MenuProduct::price)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        if (price.getPrice().compareTo(total) > 0) {
-            throw new IllegalArgumentException();
+    public Menu(final Long id,
+                final String name,
+                final BigDecimal price,
+                final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
+        this.price = new Price(price);
+        this.id = id;
+        this.name = name;
+        this.menuGroupId = menuGroupId;
+        this.menuProducts = menuProducts;
+        if (isNew()) {
+            validateOnCreate();
         }
-
     }
 
     public Long getId() {
@@ -81,5 +71,24 @@ public class Menu {
 
     public void setMenuProducts(final List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
+    }
+
+    @Override
+    public boolean isNew() {
+        return id == null;
+    }
+
+    @Override
+    public void validateOnCreate() {
+        validatePrice(menuProducts);
+    }
+
+    private void validatePrice(final List<MenuProduct> menuProducts) {
+        final var total = menuProducts.stream()
+                .map(MenuProduct::price)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        if (price.getPrice().compareTo(total) > 0) {
+            throw new IllegalArgumentException();
+        }
     }
 }

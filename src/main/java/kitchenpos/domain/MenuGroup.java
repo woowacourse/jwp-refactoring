@@ -1,6 +1,6 @@
 package kitchenpos.domain;
 
-public class MenuGroup {
+public class MenuGroup implements Entity {
 
     private Long id;
     private String name;
@@ -24,5 +24,14 @@ public class MenuGroup {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public boolean isNew() {
+        return id == null;
+    }
+
+    @Override
+    public void validateOnCreate() {
     }
 }
