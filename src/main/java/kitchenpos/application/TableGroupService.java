@@ -54,19 +54,23 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        List<Long> orderTableIds = this.getOrderTableIds(orderTables);
+        validateOrderTableNotCompleted(orderTableIds);
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.ungroup();
+        }
+    }
 
-        List<Long> orderTableIds = orderTables.stream()
+    private List<Long> getOrderTableIds(final List<OrderTable> orderTables) {
+        return orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
+    }
 
+    private void validateOrderTableNotCompleted(final List<Long> orderTableIds) {
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.designateTableGroup(null);
-            orderTable.changeEmpty(false);
         }
     }
 }
