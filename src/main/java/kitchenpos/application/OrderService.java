@@ -1,5 +1,10 @@
 package kitchenpos.application;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -10,13 +15,6 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -38,45 +36,51 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+    public Order create(final Order orderRequest) {
+        final List<OrderLineItem> orderLineItems = orderRequest.getOrderLineItems();
+        validateOrderTableEmpty(orderRequest.getOrderTableId());
+        validateExistMenus(orderLineItems);
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
+        final Order savedOrder = orderDao.save(Order.of(orderRequest.getOrderTableId(), orderLineItems));
+        savedOrder.setOrderLineItems(getSavedOrderLineItems(orderLineItems, savedOrder));
+        return savedOrder;
+    }
+
+    private void validateOrderTableEmpty(final Long orderTableId) {
+        final OrderTable orderTable = orderTableDao.findById(orderTableId)
+                .orElseThrow(NoSuchElementException::new);
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("주문 테이블이 비워져있으면 주문을 생성할 수 없습니다.");
         }
+    }
 
+    private void validateExistMenus(final List<OrderLineItem> orderLineItems) {
+        validateExistOrderLineItems(orderLineItems);
         final List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
 
         if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 상품 목록의 메뉴가 존재하지 않습니다.");
         }
+    }
 
-        order.setId(null);
-
-        final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+    private void validateExistOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        if (orderLineItems == null) {
+            throw new IllegalArgumentException("주문 상품 목록이 없으면 주문을 생성할 수 없습니다.");
         }
+    }
 
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-
-        final Order savedOrder = orderDao.save(order);
-
-        final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
+    private List<OrderLineItem> getSavedOrderLineItems(final List<OrderLineItem> orderLineItems, final Order savedOrder) {
+        final List<OrderLineItem> savedOrderLineItems = new LinkedList<>();
         for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(orderId);
-            savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
+            savedOrderLineItems.add(orderLineItemDao.save(new OrderLineItem(
+                    savedOrder.getId(),
+                    orderLineItem.getMenuId(),
+                    orderLineItem.getQuantity()
+            )));
         }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
-
-        return savedOrder;
+        return savedOrderLineItems;
     }
 
     public List<Order> list() {
@@ -99,7 +103,7 @@ public class OrderService {
         }
 
         final OrderStatus orderStatus = OrderStatus.from(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        savedOrder.changeOrderStatus(orderStatus.name());
 
         orderDao.save(savedOrder);
 

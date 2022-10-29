@@ -13,6 +13,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import kitchenpos.domain.Order;
@@ -48,17 +49,19 @@ class OrderServiceTest extends ServiceTest{
     }
 
     @Test
-    @DisplayName("주문을 하면 COOKING 상태로 바뀌어야 한다.")
-    void changeStatus() {
-        final Order savedOrder = orderService.create(order);
-        assertThat(savedOrder.getOrderStatus()).isEqualTo(COOKING.name());
-    }
+    @DisplayName("주문을 생성하면 주문 상품 목록들의 orderId가 할당되어야 한다.")
+    void createWithOrderLineItems() {
+        // given
+        final OrderTable orderTable = getOrderTable(false);
+        given(orderTableDao.findById(1L)).willReturn(Optional.of(orderTable));
 
-    @Test
-    @DisplayName("주문시간이 등록되어야 한다.")
-    void createCurrentOrderDate() {
-        final Order savedOrder = orderService.create(order);
-        assertThat(savedOrder.getOrderedTime()).isNotNull();
+        // when
+        order = getOrderRequest(1L, Arrays.asList(getOrderLineItemRequest()));
+        final Order savedOrder = orderService.create(this.order);
+
+        // then
+        final List<OrderLineItem> orderLineItems = savedOrder.getOrderLineItems();
+        assertThat(orderLineItems.get(0).getOrderId()).isEqualTo(savedOrder.getId());
     }
 
     @ParameterizedTest(name = "{1} 주문을 생성하면 예외가 발생한다.")
@@ -70,9 +73,7 @@ class OrderServiceTest extends ServiceTest{
 
     private static Stream<Arguments> invalidParams() {
         return Stream.of(
-                Arguments.of(new Order(1L, null),
-                        "아이템 목록이 비어있을 경우"),
-                Arguments.of(new Order(1L, Arrays.asList(getOrderLineItemRequest(), getOrderLineItemRequest())),
+                Arguments.of(Order.of(1L, Arrays.asList(getOrderLineItemRequest(), getOrderLineItemRequest())),
                         "주문 상품 목록에 등록되지 않은 메뉴가 존재할 경우")
         );
     }
@@ -89,7 +90,8 @@ class OrderServiceTest extends ServiceTest{
 
         // when
         assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블이 비워져있으면 주문을 생성할 수 없습니다.");
     }
 
     @Test

@@ -3,7 +3,7 @@ package kitchenpos.fixture;
 import static kitchenpos.domain.OrderStatus.COOKING;
 
 import java.time.LocalDateTime;
-import java.util.LinkedList;
+import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -11,30 +11,30 @@ import kitchenpos.domain.OrderLineItem;
 public class OrderFixture {
 
     public static Order getOrderRequest(final Long orderTableId) {
-        return getOrderRequest(orderTableId, COOKING.name(), LocalDateTime.now(), new LinkedList<>());
+        return getOrderRequest(orderTableId, Arrays.asList(getOrderLineItemRequest()));
     }
 
     public static Order getOrderRequest(final String orderStatus) {
-        return getOrderRequest(1L, orderStatus, LocalDateTime.now(), new LinkedList<>());
+        final Order orderRequest = getOrderRequest(1L, Arrays.asList(getOrderLineItemRequest()));
+        orderRequest.changeOrderStatus(orderStatus);
+        return orderRequest;
     }
 
     public static Order getOrderRequest() {
-        return getOrderRequest(1L, COOKING.name(), LocalDateTime.now(), new LinkedList<>());
+        return getOrderRequest(1L, Arrays.asList(getOrderLineItemRequest()));
     }
 
     public static Order getOrderRequest(final Long orderTableId,
-                                        final String orderStatus,
-                                        final LocalDateTime localDateTime,
                                         final List<OrderLineItem> orderLineItems) {
-        return new Order(orderTableId, orderStatus, localDateTime, orderLineItems);
+        return Order.of(orderTableId, orderLineItems);
     }
 
     public static Order getOrder(final String OrderStatus) {
-        return getOrder(1L, 1L, OrderStatus, LocalDateTime.now(), new LinkedList<>());
+        return getOrder(1L, 1L, OrderStatus, LocalDateTime.now(), Arrays.asList(getOrderLineItemRequest()));
     }
 
     public static Order getOrder() {
-        return getOrder(1L, 1L, COOKING.name(), LocalDateTime.now(), new LinkedList<>());
+        return getOrder(1L, 1L, COOKING.name(), LocalDateTime.now(), Arrays.asList(getOrderLineItemRequest()));
     }
 
     public static Order getOrder(final Long id,
@@ -42,7 +42,7 @@ public class OrderFixture {
                                  final String orderStatus,
                                  final LocalDateTime orderedTime,
                                  final List<OrderLineItem> orderLineItems) {
-        return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
+        return Order.of(id, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
     public static OrderLineItem getOrderLineItem(final Long orderId) {
