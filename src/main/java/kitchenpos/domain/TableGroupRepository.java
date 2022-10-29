@@ -1,9 +1,10 @@
-package kitchenpos.dao;
+package kitchenpos.domain;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.dao.JdbcTemplateOrderTableDao;
+import kitchenpos.dao.JdbcTemplateTableGroupDao;
+import kitchenpos.dao.TableGroupDao;
 import org.springframework.stereotype.Component;
 
 @Component
