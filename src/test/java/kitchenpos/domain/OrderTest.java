@@ -40,7 +40,7 @@ class OrderTest {
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
     }
 
-    @DisplayName("주문 상태를 변경한다. - 주문 상태가 COMPLETION이면 true를 반환한다.")
+    @DisplayName("주문 상태를 변경한다. - 주문 상태가 COMPLETION이면 예외를 반환한다.")
     @Test
     void changeOrderStatus_exception_orderStatusIsCompletion() {
         final Order order = new Order(
@@ -52,5 +52,35 @@ class OrderTest {
 
         assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.MEAL))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문 상태가 COOKING인지 반환한다.")
+    @Test
+    void isStatusCooking() {
+        final Order order = new Order(
+                1L,
+                OrderStatus.COOKING.name(),
+                LocalDateTime.now(),
+                getOrderLineItems(1L, 1)
+        );
+
+        final boolean result = order.isStatusCooking();
+
+        assertThat(result).isTrue();
+    }
+
+    @DisplayName("주문 상태가 MEAL인지 반환한다.")
+    @Test
+    void isStatusMeal() {
+        final Order order = new Order(
+                1L,
+                OrderStatus.MEAL.name(),
+                LocalDateTime.now(),
+                getOrderLineItems(1L, 1)
+        );
+
+        final boolean result = order.isStatusMeal();
+
+        assertThat(result).isTrue();
     }
 }

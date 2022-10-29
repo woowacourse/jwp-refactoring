@@ -61,6 +61,14 @@ public class Order {
         return Objects.equals(OrderStatus.COMPLETION.name(), orderStatus);
     }
 
+    public boolean isStatusCooking() {
+        return Objects.equals(OrderStatus.COOKING.name(), orderStatus);
+    }
+
+    public boolean isStatusMeal() {
+        return Objects.equals(OrderStatus.MEAL.name(), orderStatus);
+    }
+
     public Long getId() {
         return id;
     }

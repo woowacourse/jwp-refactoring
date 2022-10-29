@@ -14,8 +14,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.request.OrderStatusChangeRequest;
 import kitchenpos.ui.request.TableChangeEmptyRequest;
 import kitchenpos.ui.request.TableCreateRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -49,13 +52,19 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("빈 테이블로 변경한다.")
     @Test
     void changeEmpty() {
-        final OrderTable orderTable = 테이블_등록(getNotEmptyTableCreateRequest(0));
+        final OrderTable savedTable = 테이블_등록(getNotEmptyTableCreateRequest(0));
+        final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroup());
+        final Menu menu = 메뉴_등록(getMenuCreateRequest(menuGroup.getId(), createMenuProductDtos()));
+        final Order savedOrder = 주문_등록(getOrderCreateRequest(savedTable.getId(), menu.getId()));
+        final OrderStatusChangeRequest statusChangeRequest = new OrderStatusChangeRequest(OrderStatus.COMPLETION.name());
+        orderService.changeOrderStatus(savedOrder.getId(), statusChangeRequest);
+
         final TableChangeEmptyRequest request = getTableChangeEmptyRequest(true);
 
-        final OrderTable changedTable = tableService.changeEmpty(orderTable.getId(), request);
+        final OrderTable changedTable = tableService.changeEmpty(savedTable.getId(), request);
 
         assertAll(
-                () -> assertThat(changedTable.getId()).isEqualTo(orderTable.getId()),
+                () -> assertThat(changedTable.getId()).isEqualTo(savedTable.getId()),
                 () -> assertThat(changedTable.isEmpty()).isTrue()
         );
     }
@@ -79,7 +88,6 @@ class TableServiceTest extends ServiceTest {
         tableGroup.setOrderTables(List.of(orderTable, anotherTable));
         tableGroupService.create(tableGroup);
 
-//        final OrderTable emptyTable = 테이블_등록(getEmptyTableCreateRequest());
         final TableChangeEmptyRequest request = getTableChangeEmptyRequest(true);
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
