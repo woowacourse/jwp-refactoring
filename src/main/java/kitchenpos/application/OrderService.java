@@ -3,8 +3,11 @@ package kitchenpos.application;
 import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderResponse;
+import kitchenpos.application.dto.OrderUpdateRequest;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.MenuRepository;
@@ -16,7 +19,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -36,40 +38,31 @@ public class OrderService {
     }
 
     public OrderResponse create(final OrderCreateRequest request) {
-        validateOrder(request);
-
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderCreateRequest(request);
 
         final Order order = orderRepository.save(new Order(request.getOrderTableId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
-        order.addOrderLineItems(request.getOrderLineItemRequests()
+        order.addOrderLineItems(new OrderLineItems(request.getOrderLineItems()
             .stream()
             .map(orderLineItem -> createOrderLineItem(order, orderLineItem))
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList())));
 
         return OrderResponse.createResponse(order);
     }
 
-    private void validateOrder(final OrderCreateRequest request) {
-        if (CollectionUtils.isEmpty(request.getOrderLineItemRequests())) {
+    private void validateOrderCreateRequest(final OrderCreateRequest request) {
+        if (CollectionUtils.isEmpty(request.getOrderLineItems())) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> menuIds = request.getOrderLineItemRequests().stream()
-                .map(OrderLineItemRequest::getMenuId)
-                .collect(Collectors.toList());
-
-        if (request.getOrderLineItemRequests().size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
+        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
+                .orElseThrow(IllegalArgumentException::new);
+        orderTable.validateNotEmpty();
     }
 
     private OrderLineItem createOrderLineItem(final Order order, final OrderLineItemRequest request) {
-        return new OrderLineItem(order.getId(), request.getMenuId(), request.getQuantity());
+        final Menu menu = menuRepository.findById(request.getMenuId())
+            .orElseThrow(IllegalArgumentException::new);
+        return new OrderLineItem(order.getId(), menu.getId(), request.getQuantity());
     }
 
     @Transactional(readOnly = true)
@@ -81,16 +74,10 @@ public class OrderService {
             .collect(Collectors.toList());
     }
 
-    public OrderResponse changeOrderStatus(final Long orderId, final Order order) {
-        final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.changeOrderStatus(orderStatus.name());
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderUpdateRequest request) {
+        final Order order = orderRepository.findById(orderId)
+            .orElseThrow(IllegalArgumentException::new)
+            .changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
 
         return OrderResponse.createResponse(order);
     }

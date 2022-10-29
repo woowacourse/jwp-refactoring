@@ -13,7 +13,7 @@ import static kitchenpos.support.fixture.ProductFixtures.후라이드상품;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.Order;
+import kitchenpos.application.dto.OrderResponse;
 import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +31,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         주문을_생성한다(테이블, List.of(후라이드_메뉴), 1);
 
         // when
-        List<Order> extract = 주문을_조회한다();
+        List<OrderResponse> extract = 주문을_조회한다();
 
         // then
         assertThat(extract).hasSize(1);

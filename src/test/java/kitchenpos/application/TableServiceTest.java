@@ -13,6 +13,7 @@ import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderResponse;
+import kitchenpos.application.dto.OrderUpdateRequest;
 import kitchenpos.application.dto.ProductCreateRequest;
 import kitchenpos.application.dto.ProductResponse;
 import kitchenpos.domain.OrderStatus;
@@ -57,7 +58,7 @@ class TableServiceTest {
 
     @Nested
     class 테이블_상태_변경 extends IntegrationTest {
-        @ParameterizedTest(name = "[{index}] 주문의 상태가 {0} 인 경")
+        @ParameterizedTest(name = "[{index}] 주문의 상태가 {0} 인 경우")
         @CsvSource(value = {"COOKING", "MEAL"})
         void 요청에서_테이블이_비어있는_상태로_변경할때_주문의_상태가_완료상태가_아니면_예외가_발생한다(final OrderStatus orderStatus) {
             // given
@@ -67,6 +68,7 @@ class TableServiceTest {
                 List.of(new MenuProductCreateRequest(product.getId(), 1))));
             final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
             final OrderResponse order = orderService.create(new OrderCreateRequest(orderTable.getId(), List.of(new OrderLineItemRequest(menu.getId(), 1))));
+            orderService.changeOrderStatus(order.getId(), new OrderUpdateRequest(orderStatus.name()));
 
             // when & then
             assertThatThrownBy(

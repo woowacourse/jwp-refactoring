@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.application.dto.OrderLineItemRequest;
+import kitchenpos.application.dto.OrderResponse;
+import kitchenpos.application.dto.OrderUpdateRequest;
 import kitchenpos.domain.Order;
 import org.springframework.http.HttpStatus;
 
@@ -34,20 +36,20 @@ public class OrderStepDefinition {
             .extract().body().jsonPath().getLong("id");
     }
 
-    public static List<Order> 주문을_조회한다() {
+    public static List<OrderResponse> 주문을_조회한다() {
         return RestAssured.given().log().all()
             .when().log().all()
             .get("/api/orders")
             .then().log().all()
             .statusCode(HttpStatus.OK.value())
-            .extract().body().jsonPath().getList(".", Order.class);
+            .extract().body().jsonPath().getList(".", OrderResponse.class);
     }
 
     public static void 주문의_상태를_변경한다(
         final long orderId,
         final String orderStatus) {
 
-        Order order = new Order(null, orderStatus);
+        OrderUpdateRequest order = new OrderUpdateRequest(orderStatus);
 
         RestAssured.given().log().all()
             .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)

@@ -16,7 +16,9 @@ public class OrderResponse {
     protected OrderResponse() {
     }
 
-    public OrderResponse(final Long id, final Long orderTableId, final String orderStatus,
+    public OrderResponse(final Long id,
+                         final Long orderTableId,
+                         final String orderStatus,
                          final LocalDateTime orderedTime,
                          final List<OrderLineItemResponse> orderLineItems) {
         this.id = id;
@@ -32,7 +34,8 @@ public class OrderResponse {
             order.getOrderTableId(),
             order.getOrderStatus(),
             order.getOrderedTime(),
-            order.getOrderLineItems().stream()
+            order.getOrderLineItems()
+                .getOrderLineItems().stream()
                 .map(OrderLineItemResponse::createResponse)
                 .collect(Collectors.toList()));
     }

@@ -13,9 +13,9 @@ import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderResponse;
+import kitchenpos.application.dto.OrderUpdateRequest;
 import kitchenpos.application.dto.ProductCreateRequest;
 import kitchenpos.application.dto.ProductResponse;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Nested;
@@ -118,8 +118,7 @@ class OrderServiceTest extends IntegrationTest {
             final OrderResponse order = orderService.create(new OrderCreateRequest(orderTable.getId(), List.of(new OrderLineItemRequest(menu.getId(), 1))));
 
             // when
-            final OrderResponse extract = orderService.changeOrderStatus(order.getId(),
-                new Order(orderTable.getId(), OrderStatus.MEAL.name()));
+            final OrderResponse extract = orderService.changeOrderStatus(order.getId(), new OrderUpdateRequest(OrderStatus.MEAL.name()));
 
             // then
             assertThat(extract.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
@@ -134,10 +133,10 @@ class OrderServiceTest extends IntegrationTest {
                 List.of(new MenuProductCreateRequest(product.getId(), 1))));
             final OrderTable orderTable = tableService.create(new OrderTable(null, 2, false));
             final OrderResponse order =  orderService.create(new OrderCreateRequest(orderTable.getId(), List.of(new OrderLineItemRequest(menu.getId(), 1))));
-            orderService.changeOrderStatus(order.getId(), new Order(orderTable.getId(), OrderStatus.COMPLETION.name()));
+            orderService.changeOrderStatus(order.getId(), new OrderUpdateRequest(OrderStatus.COMPLETION.name()));
 
             // when & then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), new Order(orderTable.getId(), OrderStatus.MEAL.name())))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), new OrderUpdateRequest(OrderStatus.MEAL.name())))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -152,7 +151,7 @@ class OrderServiceTest extends IntegrationTest {
             final OrderResponse order =  orderService.create(new OrderCreateRequest(orderTable.getId(), List.of(new OrderLineItemRequest(menu.getId(), 1))));
 
             // when & then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), new Order(orderTable.getId(), "Not Registered OrderStatus")))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), new OrderUpdateRequest("Not Registered OrderStatus")))
                 .isInstanceOf(IllegalArgumentException.class);
         }
     }

@@ -33,6 +33,12 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void validateNotEmpty() {
+        if (this.empty) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Long getId() {
         return id;
     }
