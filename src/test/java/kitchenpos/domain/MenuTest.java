@@ -14,7 +14,7 @@ class MenuTest {
 
     @DisplayName("메뉴 생성 시 메뉴의 가격이 null이면 예외가 발생한다.")
     @Test
-    void createWithNullPrice() {
+    void constructWithNullPrice() {
         assertThatThrownBy(
                 () -> new Menu("1번 메뉴", null, 1L,
                         Arrays.asList(new MenuProduct(1L, 1L, BigDecimal.valueOf(10000))))
@@ -24,16 +24,16 @@ class MenuTest {
     @DisplayName("메뉴 생성 시 메뉴의 가격이 0보다 작으면 예외가 발생한다.")
     @ParameterizedTest
     @ValueSource(ints = {-1, -5})
-    void createWithInvalidPrice(int price) {
+    void constructWithInvalidPrice(int price) {
         assertThatThrownBy(
                 () -> new Menu("1번 메뉴", BigDecimal.valueOf(price), 1L,
                         Arrays.asList(new MenuProduct(1L, 1L, BigDecimal.valueOf(10000))))
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("메뉴 등록 시 메뉴상품이 비어 있으면 예외가 발생한다.")
+    @DisplayName("메뉴 생성 시 메뉴상품이 비어 있으면 예외가 발생한다.")
     @Test
-    void createWithNoMenuProduct() {
+    void constructWithNoMenuProduct() {
         assertThatThrownBy(() -> new Menu("1번 메뉴", BigDecimal.valueOf(10000), 1L, new ArrayList<>()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -41,7 +41,7 @@ class MenuTest {
     @DisplayName("메뉴 생성 시 메뉴의 가격이 메뉴 상품의 총합 보다 크면 예외가 발생한다.")
     @ValueSource(ints = {10001, 50000})
     @ParameterizedTest
-    void createWithPriceMoreThanMenuProductSum(int price) {
+    void constructWithPriceMoreThanMenuProductSum(int price) {
         assertThatThrownBy(
                 () -> new Menu("1번 메뉴", BigDecimal.valueOf(price), 1L,
                         Arrays.asList(new MenuProduct(1L, 1L, BigDecimal.valueOf(10000))))

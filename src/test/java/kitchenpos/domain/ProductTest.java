@@ -29,7 +29,7 @@ class ProductTest {
 
     @DisplayName("상품 생성 시, 상품의 가격이 null이면 예외가 발생한다.")
     @Test
-    void createWithNullPrice() {
+    void constructWithNullPrice() {
         assertThatThrownBy(() -> new Product("치킨", null))
                 .isInstanceOf(IllegalArgumentException.class);
     }

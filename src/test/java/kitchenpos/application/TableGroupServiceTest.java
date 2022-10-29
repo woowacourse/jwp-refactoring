@@ -24,6 +24,9 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -74,35 +77,35 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("테이블 그룹을 등록할 수 있다.")
     @Test
     void create() {
-        List<OrderTable> orderTables = createOrderTable(firstOrderTable, secondOrderTable);
+        List<OrderTableRequest> request = Arrays.asList(
+                new OrderTableRequest(firstOrderTable.getId()),
+                new OrderTableRequest(secondOrderTable.getId())
+        );
 
-        TableGroup tableGroup = tableGroupService.create(new TableGroup(orderTables));
+        TableGroupResponse response = tableGroupService.create(new TableGroupCreateRequest(request));
 
-        assertThat(tableGroup).isNotNull();
+        assertAll(
+                () -> assertThat(response.getId()).isNotNull(),
+                () -> assertThat(response.getOrderTables()).isNotEmpty()
+        );
     }
 
     @DisplayName("테이블 그룹 등록 시 테이블 그룹에 등록된 테이블이 없으면 예외가 발생한다.")
     @Test
     void createWithInvalidOrderTable() {
-        assertThatThrownBy(() -> tableGroupService.create(new TableGroup(new ArrayList<>())))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("테이블 그룹 등록 시 테이블 그룹에 등록된 테이블이 2개 미만이면 예외가 발생한다.")
-    @Test
-    void createWithLessThanTwoOrderTable() {
-        List<OrderTable> orderTables = createOrderTable(firstOrderTable);
-
-        assertThatThrownBy(() -> tableGroupService.create(new TableGroup(orderTables)))
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest(new ArrayList<>())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블 그룹 등록 시 존재하지 않는 테이블이 있는 경우 예외가 발생한다.")
     @Test
     void createWithNotExistOrderTable() {
-        List<OrderTable> orderTables = createOrderTable(firstOrderTable, new OrderTable());
+        List<OrderTableRequest> request = Arrays.asList(
+                new OrderTableRequest(firstOrderTable.getId()),
+                new OrderTableRequest(999L)
+        );
 
-        assertThatThrownBy(() -> tableGroupService.create(new TableGroup(orderTables)))
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest(request)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -110,16 +113,20 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void createWithNotEmptyOrderTable() {
         OrderTable thirdOrderTable = orderTableDao.save(new OrderTable(4, false));
-        List<OrderTable> orderTables = createOrderTable(firstOrderTable, secondOrderTable, thirdOrderTable);
+        List<OrderTableRequest> request = Arrays.asList(
+                new OrderTableRequest(firstOrderTable.getId()),
+                new OrderTableRequest(secondOrderTable.getId()),
+                new OrderTableRequest(thirdOrderTable.getId())
+        );
 
-        assertThatThrownBy(() -> tableGroupService.create(new TableGroup(orderTables)))
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest(request)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블 그룹 등록 시 테이블의 테이블 그룹이 존재하면 예외가 발생한다.")
     @Test
     void createWithOrderTableExistingTableGroup() {
-        List<OrderTable> orderTables = createOrderTable(firstOrderTable, secondOrderTable);
+        List<OrderTable> orderTables = Arrays.asList(firstOrderTable, secondOrderTable);
         TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), orderTables));
         firstOrderTable.setTableGroupId(tableGroup.getId());
         firstOrderTable.setEmpty(false);
@@ -127,15 +134,19 @@ class TableGroupServiceTest extends ServiceTest {
         secondOrderTable.setEmpty(false);
         orderTableDao.save(firstOrderTable);
         orderTableDao.save(secondOrderTable);
+        List<OrderTableRequest> request = Arrays.asList(
+                new OrderTableRequest(firstOrderTable.getId()),
+                new OrderTableRequest(secondOrderTable.getId())
+        );
 
-        assertThatThrownBy(() -> tableGroupService.create(new TableGroup(orderTables)))
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest(request)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블 그룹을 해제할 수 있다.")
     @Test
     void ungroup() {
-        List<OrderTable> orderTables = createOrderTable(firstOrderTable, secondOrderTable);
+        List<OrderTable> orderTables = Arrays.asList(firstOrderTable, secondOrderTable);
         TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), orderTables));
         firstOrderTable.setTableGroupId(tableGroup.getId());
         firstOrderTable.setEmpty(false);
@@ -165,7 +176,7 @@ class TableGroupServiceTest extends ServiceTest {
         orderDao.save(
                 new Order(firstOrderTable.getId(), orderStatus, LocalDateTime.now(),
                         createOrderLineItem(menu.getId())));
-        List<OrderTable> orderTables = createOrderTable(firstOrderTable, secondOrderTable);
+        List<OrderTable> orderTables = Arrays.asList(firstOrderTable, secondOrderTable);
         TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), orderTables));
         firstOrderTable.setTableGroupId(tableGroup.getId());
         firstOrderTable.setEmpty(false);
@@ -176,10 +187,6 @@ class TableGroupServiceTest extends ServiceTest {
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    private List<OrderTable> createOrderTable(OrderTable... orderTables) {
-        return new ArrayList<>(Arrays.asList(orderTables));
     }
 
     private List<MenuProduct> createMenuProducts(Long... productIds) {
