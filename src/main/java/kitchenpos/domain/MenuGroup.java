@@ -9,6 +9,10 @@ public class MenuGroup {
         this.name = name;
     }
 
+    public MenuGroup(final String name) {
+        this(null, name);
+    }
+
     public static MenuGroup of(final Long id, final String name) {
         return new MenuGroup(id, name);
     }
