@@ -2,19 +2,28 @@ package kitchenpos.domain;
 
 public class OrderLineItem {
 
-    private Long seq;
-    private Long orderId;
-    private Long menuId;
-    private long quantity;
+    private final Long seq;
+    private final Long orderId;
+    private final Long menuId;
+    private final long quantity;
 
+    /**
+     * DB 에 저장되지 않은 객체
+     */
     public OrderLineItem(final Long menuId, final long quantity) {
         this(null, null, menuId, quantity);
     }
 
+    /**
+     * DB 애 저장하기 위한 객체
+     */
     public OrderLineItem(final Long orderId, final Long menuId, final long quantity) {
         this(null, orderId, menuId, quantity);
     }
 
+    /**
+     * DB 에 저장된 객체
+     */
     public OrderLineItem(final Long seq, final Long orderId, final Long menuId, final long quantity) {
         this.seq = seq;
         this.orderId = orderId;
@@ -26,31 +35,15 @@ public class OrderLineItem {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
-
     public Long getOrderId() {
         return orderId;
-    }
-
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
     }
 
     public Long getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }
