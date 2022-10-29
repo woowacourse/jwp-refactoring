@@ -71,13 +71,25 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
 
     @Override
     public List<MenuProduct> findAll() {
-        final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product";
+        final String sql =
+                "SELECT mp.seq, mp.menu_id, mp.product_id, mp.quantity, p.name, p.price, m.name, m.price, m.menu_group_id, "
+                        + "(select name from menu_group where m.menu_group_id = id) "
+                        + "FROM menu_product mp "
+                        + "JOIN Product p on mp.product_id = p.id "
+                        + "JOIN Menu m on mp.menu_id = m.id "
+                        + "WHERE mp.seq = (:seq)";
         return jdbcTemplate.query(sql, ROW_MAPPER);
     }
 
     @Override
     public List<MenuProduct> findAllByMenuId(final Long menuId) {
-        final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product WHERE menu_id = (:menuId)";
+        final String sql =
+                "SELECT mp.seq, mp.menu_id, mp.product_id, mp.quantity, p.name, p.price, m.name, m.price, m.menu_group_id, "
+                        + "(select name from menu_group where m.menu_group_id = id) "
+                        + "FROM menu_product mp "
+                        + "JOIN Product p on mp.product_id = p.id "
+                        + "JOIN Menu m on mp.menu_id = m.id "
+                        + "WHERE menu_id = (:menuId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("menuId", menuId);
         return jdbcTemplate.query(sql, parameters, ROW_MAPPER);

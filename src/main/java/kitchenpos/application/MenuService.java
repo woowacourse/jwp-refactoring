@@ -1,7 +1,5 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -35,36 +33,22 @@ public class MenuService {
 
     @Transactional
     public Menu create(final MenuRequest menuRequest) {
-        final BigDecimal price = menuRequest.getPrice();
-
         final MenuGroup menuGroup = menuGroupDao.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
 
+        final Menu menu = menuDao.save(new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup));
+
         final List<MenuProductRequest> menuProductsRequest = menuRequest.getMenuProducts();
-
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProductRequest menuProduct : menuProductsRequest) {
-            final Product product = productDao.findById(menuProduct.getProductId())
+        for (MenuProductRequest menuProductRequest : menuProductsRequest) {
+            final Product product = productDao.findById(menuProductRequest.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+            final MenuProduct menuProduct = menuProductDao.save(
+                    new MenuProduct(menu, product, menuProductRequest.getQuantity()));
+            menu.addProduct(menuProduct);
         }
+        menu.checkPrice();
 
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final Menu menu = null;
-
-        final Menu savedMenu = menuDao.save(menu);
-
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menu.getMenuProducts()) {
-            menuProduct.setMenu(savedMenu);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
-        }
-        savedMenu.setMenuProducts(savedMenuProducts);
-
-        return savedMenu;
+        return menu;
     }
 
     public List<Menu> list() {

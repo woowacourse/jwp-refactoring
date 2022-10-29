@@ -1,36 +1,45 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Menu {
     private Long id;
     private String name;
-    private BigDecimal price;
+    private Price price;
     private MenuGroup menuGroup;
     private List<MenuProduct> menuProducts;
 
     public Menu(final Long id, final String name, final BigDecimal price, final MenuGroup menuGroup,
                 final List<MenuProduct> menuProducts) {
-        validatePrice(price);
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
     }
 
     public Menu(final Long id, final String name, final BigDecimal price, final MenuGroup menuGroup) {
-        this(id, name, price, menuGroup, null);
+        this(id, name, price, menuGroup, new ArrayList<>());
     }
 
-    public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup, final List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroup, menuProducts);
+    public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup) {
+        this(null, name, price, menuGroup, new ArrayList<>());
     }
 
-    private void validatePrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+    public void addProduct(final MenuProduct menuProduct) {
+        this.menuProducts.add(menuProduct);
+    }
+
+    public void checkPrice() {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (MenuProduct menuProduct : menuProducts) {
+            final BigDecimal price = menuProduct.calculateTotalPrice();
+            sum = sum.add(price);
+        }
+
+        if (price.getValue().compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
     }
@@ -44,7 +53,7 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 
     public Long getMenuGroupId() {
