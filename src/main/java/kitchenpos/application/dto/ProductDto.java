@@ -5,11 +5,9 @@ import kitchenpos.domain.product.Product;
 
 public class ProductDto {
 
-    private Long id;
-    private String name;
-    private BigDecimal price;
-
-    private ProductDto() {}
+    private final Long id;
+    private final String name;
+    private final BigDecimal price;
 
     private ProductDto(final Long id, final String name, final BigDecimal price) {
         this.id = id;
@@ -18,7 +16,7 @@ public class ProductDto {
     }
 
     public static ProductDto from(final Product product) {
-        return new  ProductDto(product.getId(), product.getName(), product.getPrice());
+        return new ProductDto(product.getId(), product.getName(), product.getPrice());
     }
 
     public Long getId() {

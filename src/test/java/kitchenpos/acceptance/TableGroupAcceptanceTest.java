@@ -8,8 +8,6 @@ import io.restassured.response.Response;
 import kitchenpos.acceptance.common.httpcommunication.OrderTableHttpCommunication;
 import kitchenpos.acceptance.common.httpcommunication.TableGroupHttpCommunication;
 import kitchenpos.common.fixture.RequestBody;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.response.OrderTableResponse;
 import kitchenpos.ui.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +25,7 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
         final OrderTableResponse orderTable2 = OrderTableHttpCommunication.create(RequestBody.ORDER_TABLE_2)
                 .getResponseBodyAsObject(OrderTableResponse.class);
         final ExtractableResponse<Response> response = TableGroupHttpCommunication.create(
-                        RequestBody.getOrderTableGroups(orderTable1.getId(), orderTable2.getId())) .getResponse();
+                RequestBody.getOrderTableGroups(orderTable1.getId(), orderTable2.getId())).getResponse();
 
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),

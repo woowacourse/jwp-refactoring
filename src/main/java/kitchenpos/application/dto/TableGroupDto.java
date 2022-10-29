@@ -7,9 +7,9 @@ import kitchenpos.domain.TableGroup;
 
 public class TableGroupDto {
 
-    private Long id;
-    private LocalDateTime createdDate;
-    private List<OrderTableDto> orderTables;
+    private final Long id;
+    private final LocalDateTime createdDate;
+    private final List<OrderTableDto> orderTables;
 
     public TableGroupDto(final Long id,
                          final LocalDateTime createdDate,

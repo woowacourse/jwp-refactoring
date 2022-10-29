@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class JdbcTemplateMenuProductDao implements MenuProductDao {
+
     private static final String TABLE_NAME = "menu_product";
     private static final String KEY_COLUMN_NAME = "id";
 

@@ -4,7 +4,8 @@ public class OrderStatusRequest {
 
     private String orderStatus;
 
-    private OrderStatusRequest() {}
+    private OrderStatusRequest() {
+    }
 
     public OrderStatusRequest(final String orderStatus) {
         this.orderStatus = orderStatus;

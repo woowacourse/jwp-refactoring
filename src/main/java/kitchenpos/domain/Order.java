@@ -25,12 +25,6 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        if (orderLineItems != null && orderLineItems.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     public Order(final Long orderTableId,
                  final OrderStatus orderStatus,
                  final LocalDateTime orderedTime,
@@ -47,6 +41,12 @@ public class Order {
 
     public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, null, null, orderLineItems);
+    }
+
+    private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        if (orderLineItems != null && orderLineItems.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public boolean isInCompletionStatus() {

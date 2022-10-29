@@ -5,7 +5,6 @@ import java.util.List;
 import kitchenpos.application.TableService;
 import kitchenpos.application.dto.OrderTableCreationDto;
 import kitchenpos.application.dto.OrderTableDto;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.request.OrderTableCreationRequest;
 import kitchenpos.ui.dto.request.TableChangeEmptyRequest;
 import kitchenpos.ui.dto.request.TableChangeNumberOfGuestsRequest;

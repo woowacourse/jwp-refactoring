@@ -12,7 +12,7 @@ public class TableGroupCreationDto {
         this.orderTableIds = orderTableIds;
     }
 
-    public static TableGroupCreationDto from (final TableGroupCreationRequest tableGroupCreationRequest) {
+    public static TableGroupCreationDto from(final TableGroupCreationRequest tableGroupCreationRequest) {
         final List<OrderTableIdDto> orderTableIdDtos = tableGroupCreationRequest.getOrderTables()
                 .stream()
                 .map(OrderTableIdDto::from)

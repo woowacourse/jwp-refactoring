@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.ui.dto.request.OrderCreationRequest;
-import kitchenpos.ui.dto.request.OrderLineItemReeust;
 
 public class OrderCreationDto {
 
@@ -13,7 +12,7 @@ public class OrderCreationDto {
     private final List<OrderLineItemCreationDto> orderLineItems;
 
     private OrderCreationDto(final Long orderTableId,
-                            final List<OrderLineItemCreationDto> orderLineItems) {
+                             final List<OrderLineItemCreationDto> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
     }

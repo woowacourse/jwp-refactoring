@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import kitchenpos.application.OrderService;
 import kitchenpos.application.dto.OrderCreationDto;
 import kitchenpos.application.dto.OrderDto;
-import kitchenpos.domain.Order;
 import kitchenpos.ui.dto.request.OrderCreationRequest;
 import kitchenpos.ui.dto.request.OrderStatusRequest;
 import kitchenpos.ui.dto.response.OrderResponse;

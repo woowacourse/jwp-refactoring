@@ -13,7 +13,8 @@ public class MenuResponse {
     private Long menuGroupId;
     private List<MenuProductResponse> menuProducts;
 
-    public MenuResponse() {}
+    public MenuResponse() {
+    }
 
     private MenuResponse(final Long id,
                          final String name,

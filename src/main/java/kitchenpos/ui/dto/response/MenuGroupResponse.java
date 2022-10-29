@@ -1,6 +1,5 @@
 package kitchenpos.ui.dto.response;
 
-import kitchenpos.application.dto.MenuGroupCreationDto;
 import kitchenpos.application.dto.MenuGroupDto;
 
 public class MenuGroupResponse {
@@ -8,7 +7,8 @@ public class MenuGroupResponse {
     private Long id;
     private String name;
 
-    private MenuGroupResponse() {}
+    private MenuGroupResponse() {
+    }
 
     public MenuGroupResponse(final Long id, final String name) {
         this.id = id;

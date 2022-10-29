@@ -2,29 +2,30 @@ package kitchenpos.ui.dto.request;
 
 public class OrderTableCreationRequest {
 
-   private int numberOfGuests;
-   private boolean empty;
+    private int numberOfGuests;
+    private boolean empty;
 
-   private OrderTableCreationRequest() {}
+    private OrderTableCreationRequest() {
+    }
 
-   public OrderTableCreationRequest(final int numberOfGuests, final boolean empty) {
-      this.numberOfGuests = numberOfGuests;
-      this.empty = empty;
-   }
+    public OrderTableCreationRequest(final int numberOfGuests, final boolean empty) {
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
 
-   public int getNumberOfGuests() {
-      return numberOfGuests;
-   }
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
 
-   public boolean isEmpty() {
-      return empty;
-   }
+    public boolean isEmpty() {
+        return empty;
+    }
 
-   @Override
-   public String toString() {
-      return "OrderTableCreationRequest{" +
-              "numberOfGuests=" + numberOfGuests +
-              ", empty=" + empty +
-              '}';
-   }
+    @Override
+    public String toString() {
+        return "OrderTableCreationRequest{" +
+                "numberOfGuests=" + numberOfGuests +
+                ", empty=" + empty +
+                '}';
+    }
 }

@@ -20,6 +20,14 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
+    public TableGroup(final List<OrderTable> orderTables, final LocalDateTime localDateTime) {
+        this(null, localDateTime, orderTables);
+    }
+
+    public TableGroup(final Long id, final LocalDateTime createdDate) {
+        this(id, createdDate, null);
+    }
+
     private void validateOrderTable(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
@@ -30,14 +38,6 @@ public class TableGroup {
                 throw new IllegalArgumentException();
             }
         }
-    }
-
-    public TableGroup(final List<OrderTable> orderTables, final LocalDateTime localDateTime) {
-        this(null, localDateTime, orderTables);
-    }
-
-    public TableGroup(final Long id, final LocalDateTime createdDate) {
-        this(id, createdDate, null);
     }
 
     public TableGroup addTableGroups(final List<OrderTable> orderTables) {

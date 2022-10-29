@@ -5,9 +5,7 @@ import kitchenpos.ui.dto.request.MenuGroupCreationRequest;
 
 public class MenuGroupCreationDto {
 
-    private String name;
-
-    private MenuGroupCreationDto() {}
+    private final String name;
 
     private MenuGroupCreationDto(final String name) {
         this.name = name;

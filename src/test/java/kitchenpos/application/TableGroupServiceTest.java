@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.time.LocalDateTime;
@@ -51,7 +50,8 @@ class TableGroupServiceTest {
     void unGroupTable() {
         final OrderTable orderTable1 = orderTableDao.save(new OrderTable(0, true));
         final OrderTable orderTable2 = orderTableDao.save(new OrderTable(0, true));
-        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(List.of(orderTable1, orderTable2), LocalDateTime.now()));
+        final TableGroup tableGroup = tableGroupDao.save(
+                new TableGroup(List.of(orderTable1, orderTable2), LocalDateTime.now()));
 
         assertDoesNotThrow(() -> tableGroupService.ungroupTable(tableGroup.getId()));
     }

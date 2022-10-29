@@ -5,7 +5,8 @@ public class OrderLineItemReeust {
     private Long menuId;
     private int quantity;
 
-    private OrderLineItemReeust() {}
+    private OrderLineItemReeust() {
+    }
 
     public OrderLineItemReeust(final Long menuId, final int quantity) {
         this.menuId = menuId;

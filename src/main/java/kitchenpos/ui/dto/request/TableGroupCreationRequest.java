@@ -6,7 +6,8 @@ public class TableGroupCreationRequest {
 
     private List<OrderTableIdDto> orderTables;
 
-    private TableGroupCreationRequest() {}
+    private TableGroupCreationRequest() {
+    }
 
     public TableGroupCreationRequest(final List<OrderTableIdDto> orderTables) {
         this.orderTables = orderTables;

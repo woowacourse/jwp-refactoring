@@ -4,7 +4,8 @@ public class MenuGroupCreationRequest {
 
     private String name;
 
-    private MenuGroupCreationRequest() {}
+    private MenuGroupCreationRequest() {
+    }
 
     public MenuGroupCreationRequest(final String name) {
         this.name = name;

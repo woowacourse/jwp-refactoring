@@ -12,11 +12,6 @@ import kitchenpos.acceptance.common.httpcommunication.OrderHttpCommunication;
 import kitchenpos.acceptance.common.httpcommunication.OrderTableHttpCommunication;
 import kitchenpos.acceptance.common.httpcommunication.ProductHttpCommunication;
 import kitchenpos.common.fixture.RequestBody;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.product.Product;
-import kitchenpos.ui.dto.request.OrderLineItemReeust;
 import kitchenpos.ui.dto.response.MenuGroupResponse;
 import kitchenpos.ui.dto.response.MenuResponse;
 import kitchenpos.ui.dto.response.OrderResponse;
@@ -64,7 +59,7 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
 
         final MenuResponse menu = MenuHttpCommunication.create(
                         RequestBody.getMenuProductFixture(product.getId(), menuGroup.getId()))
-                        .getResponseBodyAsObject(MenuResponse.class);
+                .getResponseBodyAsObject(MenuResponse.class);
 
         final OrderResponse order = OrderHttpCommunication.create(
                         RequestBody.getOrder(menu.getId(), orderTable.getId()))
@@ -106,7 +101,8 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
         final Map<String, Object> requestBody = Map.of(
                 "numberOfGuests", 3,
                 "empty", nonEmptyOrderTable.isEmpty());
-        final OrderTableResponse result = OrderTableHttpCommunication.changeNumberOfGuests(orderTable.getId(), requestBody)
+        final OrderTableResponse result = OrderTableHttpCommunication.changeNumberOfGuests(orderTable.getId(),
+                        requestBody)
                 .getResponseBodyAsObject(OrderTableResponse.class);
 
         assertThat(result.getNumberOfGuests()).isEqualTo(3);

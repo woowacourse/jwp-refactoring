@@ -6,10 +6,8 @@ import kitchenpos.ui.dto.request.ProductCreationRequest;
 
 public class ProductCreationDto {
 
-    private String name;
-    private int price;
-
-    private ProductCreationDto() {}
+    private final String name;
+    private final int price;
 
     private ProductCreationDto(final String name, final int price) {
         this.name = name;

@@ -48,10 +48,10 @@ public class DtoFixture {
         return OrderDto.from(order);
     }
 
-   public static TableGroupDto getTableGroupDto() {
-       final OrderTable orderTable1 = new OrderTable(1L, 1L, 0, true);
-       final OrderTable orderTable2 = new OrderTable(2L, 1L, 0, true);
-       return new TableGroupDto(1L, LocalDateTime.now(),
-               List.of(OrderTableDto.from(orderTable1), OrderTableDto.from(orderTable2)));
-   }
+    public static TableGroupDto getTableGroupDto() {
+        final OrderTable orderTable1 = new OrderTable(1L, 1L, 0, true);
+        final OrderTable orderTable2 = new OrderTable(2L, 1L, 0, true);
+        return new TableGroupDto(1L, LocalDateTime.now(),
+                List.of(OrderTableDto.from(orderTable1), OrderTableDto.from(orderTable2)));
+    }
 }

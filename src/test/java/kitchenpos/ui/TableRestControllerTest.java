@@ -19,11 +19,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 import java.util.Map;
-import kitchenpos.application.dto.OrderTableCreationDto;
-import kitchenpos.common.fixture.RequestBody;
 import kitchenpos.application.TableService;
+import kitchenpos.application.dto.OrderTableCreationDto;
 import kitchenpos.common.ControllerTest;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.common.fixture.RequestBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -41,7 +40,8 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("주문 테이블을 생성한다.")
     @Test
     void createOrderTable() throws Exception {
-        when(tableService.createOrderTable(any(OrderTableCreationDto.class))).thenReturn(DtoFixture.getOrderTableDto(true));
+        when(tableService.createOrderTable(any(OrderTableCreationDto.class))).thenReturn(
+                DtoFixture.getOrderTableDto(true));
 
         final ResultActions resultActions = mockMvc.perform(post("/api/v2/tables")
                         .content(objectMapper.writeValueAsString(RequestBody.ORDER_TABLE_1))

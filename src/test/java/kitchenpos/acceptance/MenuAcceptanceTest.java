@@ -9,8 +9,6 @@ import kitchenpos.acceptance.common.httpcommunication.MenuGroupHttpCommunication
 import kitchenpos.acceptance.common.httpcommunication.MenuHttpCommunication;
 import kitchenpos.acceptance.common.httpcommunication.ProductHttpCommunication;
 import kitchenpos.common.fixture.RequestBody;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.product.Product;
 import kitchenpos.ui.dto.response.MenuGroupResponse;
 import kitchenpos.ui.dto.response.MenuResponse;
 import kitchenpos.ui.dto.response.ProductResponse;

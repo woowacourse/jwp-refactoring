@@ -1,8 +1,6 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderTableCreationDto;
@@ -10,13 +8,13 @@ import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
+
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
 

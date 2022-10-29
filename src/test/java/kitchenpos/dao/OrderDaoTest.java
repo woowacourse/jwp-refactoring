@@ -1,11 +1,9 @@
 package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.common.annotation.SpringTestWithData;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;

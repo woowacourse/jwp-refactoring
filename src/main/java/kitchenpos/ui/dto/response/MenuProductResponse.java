@@ -1,7 +1,6 @@
 package kitchenpos.ui.dto.response;
 
 import kitchenpos.application.dto.MenuProductDto;
-import kitchenpos.domain.MenuProduct;
 
 public class MenuProductResponse {
 
@@ -10,7 +9,8 @@ public class MenuProductResponse {
     private Long productId;
     private long quantity;
 
-    private MenuProductResponse() {}
+    private MenuProductResponse() {
+    }
 
     private MenuProductResponse(final Long id, final Long menuId, final Long productId, final long quantity) {
         this.id = id;

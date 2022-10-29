@@ -14,10 +14,10 @@ public class MenuDto {
     private final List<MenuProductDto> menuProducts;
 
     private MenuDto(final Long id,
-                   final String name,
-                   final BigDecimal price,
-                   final Long menuGroupId,
-                   final List<MenuProductDto> menuProducts) {
+                    final String name,
+                    final BigDecimal price,
+                    final Long menuGroupId,
+                    final List<MenuProductDto> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;

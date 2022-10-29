@@ -4,7 +4,8 @@ public class TableChangeNumberOfGuestsRequest {
 
     private Integer numberOfGuests;
 
-    private TableChangeNumberOfGuestsRequest() {}
+    private TableChangeNumberOfGuestsRequest() {
+    }
 
     public TableChangeNumberOfGuestsRequest(final Integer numberOfGuests) {
         this.numberOfGuests = numberOfGuests;

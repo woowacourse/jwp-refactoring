@@ -14,7 +14,8 @@ public class OrderTableCreationDto {
     }
 
     public static OrderTableCreationDto from(final OrderTableCreationRequest orderTableCreationRequest) {
-        return new OrderTableCreationDto(orderTableCreationRequest.getNumberOfGuests(), orderTableCreationRequest.isEmpty());
+        return new OrderTableCreationDto(orderTableCreationRequest.getNumberOfGuests(),
+                orderTableCreationRequest.isEmpty());
     }
 
     public static OrderTable toEntity(final OrderTableCreationDto orderTableCreationDto) {
