@@ -24,6 +24,7 @@ import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dto.request.OrderTableIdRequest;
 import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -60,13 +61,13 @@ class TableGroupServiceTest extends ServiceTest {
         TableGroupRequest request = new TableGroupRequest(
                 List.of(new OrderTableIdRequest(orderTable1.getId()), new OrderTableIdRequest(orderTable2.getId())));
 
-        TableGroup actual = tableGroupService.create(request);
+        TableGroupResponse actual = tableGroupService.create(request);
 
         assertAll(() -> {
             assertThat(actual.getId()).isNotNull();
             assertThat(actual.getCreatedDate()).isNotNull();
             assertThat(actual.getOrderTables()).hasSize(2)
-                    .extracting("tableGroup")
+                    .extracting("tableGroupId")
                     .isNotNull();
         });
     }

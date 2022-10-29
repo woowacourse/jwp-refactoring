@@ -10,6 +10,7 @@ import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.response.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +29,7 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuRequest request) {
+    public MenuResponse create(final MenuRequest request) {
         MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
         List<MenuProduct> menuProducts = request.getMenuProducts().stream()
@@ -36,8 +37,7 @@ public class MenuService {
                 .collect(Collectors.toList());
 
         Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup, menuProducts);
-
-        return menuRepository.save(menu);
+        return new MenuResponse(menuRepository.save(menu));
     }
 
     private MenuProduct getMenuProduct(MenuProductRequest request) {
@@ -45,7 +45,9 @@ public class MenuService {
                 .orElseThrow(IllegalArgumentException::new), request.getQuantity());
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<MenuResponse> list() {
+        return menuRepository.findAll().stream()
+                .map(MenuResponse::new)
+                .collect(Collectors.toList());
     }
 }

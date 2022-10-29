@@ -7,6 +7,7 @@ import java.util.List;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,7 +22,7 @@ class MenuGroupServiceTest extends ServiceTest {
     void 메뉴_그룹을_생성할_수_있다() {
         MenuGroupRequest request = new MenuGroupRequest("메뉴그룹1");
 
-        MenuGroup actual = menuGroupService.create(request);
+        MenuGroupResponse actual = menuGroupService.create(request);
 
         assertAll(() -> {
             assertThat(actual.getId()).isNotNull();
@@ -37,7 +38,7 @@ class MenuGroupServiceTest extends ServiceTest {
         menuGroupRepository.save(menuGroup1);
         menuGroupRepository.save(menuGroup2);
 
-        List<MenuGroup> actual = menuGroupService.list();
+        List<MenuGroupResponse> actual = menuGroupService.list();
 
         assertThat(actual).hasSize(2);
     }

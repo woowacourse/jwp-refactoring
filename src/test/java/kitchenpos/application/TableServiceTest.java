@@ -21,6 +21,7 @@ import kitchenpos.domain.ordertable.OrderTableRepository;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -50,7 +51,7 @@ class TableServiceTest extends ServiceTest {
     void 테이블을_생성할_수_있다() {
         OrderTableRequest request = new OrderTableRequest(5, false);
 
-        OrderTable actual = tableService.create(request);
+        OrderTableResponse actual = tableService.create(request);
 
         assertAll(() -> {
             assertThat(actual.getId()).isNotNull();
@@ -67,7 +68,7 @@ class TableServiceTest extends ServiceTest {
         orderTableRepository.save(orderTable1);
         orderTableRepository.save(orderTable2);
 
-        List<OrderTable> actual = tableService.list();
+        List<OrderTableResponse> actual = tableService.list();
 
         assertThat(actual).hasSize(2);
     }
@@ -77,7 +78,7 @@ class TableServiceTest extends ServiceTest {
         OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
         OrderTableRequest request = new OrderTableRequest(0, true);
 
-        OrderTable actual = tableService.changeEmpty(orderTable.getId(), request);
+        OrderTableResponse actual = tableService.changeEmpty(orderTable.getId(), request);
 
         assertThat(actual.isEmpty()).isTrue();
     }
@@ -106,7 +107,7 @@ class TableServiceTest extends ServiceTest {
         OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, false));
         OrderTableRequest request = new OrderTableRequest(5, false);
 
-        OrderTable actual = tableService.changeNumberOfGuests(orderTable.getId(), request);
+        OrderTableResponse actual = tableService.changeNumberOfGuests(orderTable.getId(), request);
 
         assertThat(actual.getNumberOfGuests()).isEqualTo(5);
     }

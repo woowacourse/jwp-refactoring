@@ -16,6 +16,7 @@ import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.response.MenuResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -45,13 +46,13 @@ class MenuServiceTest extends ServiceTest {
         MenuRequest request = new MenuRequest("메뉴", new BigDecimal(35000), menuGroup.getId(),
                 List.of(menuProductRequest1, menuProductRequest2));
 
-        Menu actual = menuService.create(request);
+        MenuResponse actual = menuService.create(request);
 
         assertAll(() -> {
             assertThat(actual.getId()).isNotNull();
             assertThat(actual.getName()).isEqualTo("메뉴");
             assertThat(actual.getPrice().compareTo(new BigDecimal(35000))).isEqualTo(0);
-            assertThat(actual.getMenuGroup().getId()).isEqualTo(menuGroup.getId());
+            assertThat(actual.getMenuGroupId()).isEqualTo(menuGroup.getId());
             assertThat(actual.getMenuProducts()).hasSize(2);
         });
     }
@@ -99,7 +100,7 @@ class MenuServiceTest extends ServiceTest {
         menuRepository.save(menu1);
         menuRepository.save(menu2);
 
-        List<Menu> actual = menuService.list();
+        List<MenuResponse> actual = menuService.list();
 
         assertAll(() -> {
             assertThat(actual).hasSize(2);

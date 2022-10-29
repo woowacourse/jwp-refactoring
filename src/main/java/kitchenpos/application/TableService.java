@@ -2,11 +2,13 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
 import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,17 +24,19 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTableRequest request) {
+    public OrderTableResponse create(final OrderTableRequest request) {
         OrderTable orderTable = new OrderTable(null, request.getNumberOfGuests(), request.isEmpty());
-        return orderTableRepository.save(orderTable);
+        return new OrderTableResponse(orderTableRepository.save(orderTable));
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<OrderTableResponse> list() {
+        return orderTableRepository.findAll().stream()
+                .map(OrderTableResponse::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTableRequest request) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -42,15 +46,15 @@ public class TableService {
         }
 
         savedOrderTable.changeEmpty(request.isEmpty());
-        return savedOrderTable;
+        return new OrderTableResponse(savedOrderTable);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTableRequest request) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
-        return savedOrderTable;
+        return new OrderTableResponse(savedOrderTable);
     }
 }

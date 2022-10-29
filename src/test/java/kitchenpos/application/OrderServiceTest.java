@@ -25,6 +25,7 @@ import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderStatusRequest;
+import kitchenpos.dto.response.OrderResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -72,7 +73,7 @@ class OrderServiceTest extends ServiceTest {
         OrderRequest request = new OrderRequest(orderTable.getId(),
                 List.of(orderLineItemRequest1, orderLineItemRequest2));
 
-        Order actual = orderService.create(request);
+        OrderResponse actual = orderService.create(request);
 
         assertAll(() -> {
             assertThat(actual.getId()).isNotNull();
@@ -138,7 +139,7 @@ class OrderServiceTest extends ServiceTest {
         orderRepository.save(order1);
         orderRepository.save(order2);
 
-        List<Order> actual = orderService.list();
+        List<OrderResponse> actual = orderService.list();
 
         assertThat(actual).hasSize(2);
     }
@@ -157,7 +158,7 @@ class OrderServiceTest extends ServiceTest {
         Order order = orderRepository.save(new Order(orderTable, COOKING, List.of(orderLineItem)));
         OrderStatusRequest request = new OrderStatusRequest(MEAL);
 
-        Order actual = orderService.changeOrderStatus(order.getId(), request);
+        OrderResponse actual = orderService.changeOrderStatus(order.getId(), request);
 
         assertThat(actual.getOrderStatus()).isEqualTo(MEAL);
     }
