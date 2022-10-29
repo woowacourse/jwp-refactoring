@@ -1,7 +1,5 @@
 package kitchenpos.application.dto.request;
 
-import kitchenpos.domain.OrderTable;
-
 public class OrderTableCreateReqeust {
 
     private int numberOfGuests;

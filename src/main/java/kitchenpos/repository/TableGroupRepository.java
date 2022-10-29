@@ -24,9 +24,7 @@ public class TableGroupRepository implements TableGroupDao {
 
     @Override
     public TableGroup save(final TableGroup entity) {
-        System.out.println("11111111");
         final TableGroup tableGroup = jdbcTemplateTableGroupDao.save(entity);
-        System.out.println("222222");
         final List<OrderTable> orderTables = entity.getOrderTables()
                 .stream()
                 .map(orderTable -> new OrderTable(
@@ -37,7 +35,6 @@ public class TableGroupRepository implements TableGroupDao {
                 ))
                 .map(jdbcTemplateOrderTableDao::save)
                 .collect(Collectors.toList());
-        System.out.println("33333");
         return new TableGroup(tableGroup.getId(), tableGroup.getCreatedDate(), orderTables);
     }
 
