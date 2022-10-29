@@ -31,33 +31,21 @@ public class Product {
         validateCorrectPrice();
     }
 
-    public Long getId() {
-        return id;
+    public void validateCorrectPrice() {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public BigDecimal getPrice() {
         return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
-    }
-
-    public void validateCorrectPrice() {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
     }
 }
