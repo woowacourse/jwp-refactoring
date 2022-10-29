@@ -28,7 +28,6 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTable request) {
         final OrderTable orderTable = orderTables.get(orderTableId);
-
         orderTable.changeEmptyTo(request.isEmpty());
 
         return orderTables.add(orderTable);
@@ -37,7 +36,6 @@ public class TableService {
     @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable request) {
         final OrderTable orderTable = orderTables.get(orderTableId);
-
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
 
         return orderTables.add(orderTable);
