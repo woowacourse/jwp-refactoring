@@ -21,11 +21,6 @@ public class TableGroup {
     protected TableGroup() {
     }
 
-    public TableGroup(final LocalDateTime createdDate, final OrderTables orderTables) {
-        this(null, createdDate, orderTables);
-    }
-
-
     public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this(id, createdDate, new OrderTables(orderTables));
     }
@@ -44,23 +39,15 @@ public class TableGroup {
 
     public void changeOrderTablesOfGroups(final List<OrderTable> orderTables) {
         this.orderTables = new OrderTables(orderTables);
-        this.orderTables.changeGroup(id);
+        this.orderTables.changeGroups(id);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
     }
 
     public OrderTables getOrderTables() {

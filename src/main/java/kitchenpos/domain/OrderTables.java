@@ -21,7 +21,7 @@ public class OrderTables {
         this.orderTables = orderTables;
     }
 
-    public void changeGroup(final Long tableGroupId) {
+    public void changeGroups(final Long tableGroupId) {
         for (OrderTable orderTable : orderTables) {
             orderTable.validateEmpty();
             orderTable.addTableGroupId(tableGroupId);
@@ -39,20 +39,15 @@ public class OrderTables {
 
     private void validateOrderTables(final List<OrderTable> orderTables) {
         validateSize(orderTables);
-        validateOrderTable(orderTables);
-
+        for (OrderTable orderTable : orderTables) {
+            orderTable.validateNotEmpty();
+            orderTable.validateNotTableGroupId();
+        }
     }
 
     private void validateSize(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateOrderTable(final List<OrderTable> orderTables) {
-        for (OrderTable orderTable : orderTables) {
-            orderTable.validateNotEmpty();
-            orderTable.validateNotTableGroupId();
         }
     }
 
