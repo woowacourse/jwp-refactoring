@@ -6,18 +6,20 @@ import java.util.List;
 public class TableGroup {
     private Long id;
     private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
-
-    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
-        this.createdDate = createdDate;
-        this.orderTables = orderTables;
-    }
+    private OrderTables orderTables;
 
     public TableGroup(List<OrderTable> orderTables) {
-        this(null, orderTables);
+        this.createdDate = LocalDateTime.now();
+        this.orderTables = new OrderTables(orderTables);
     }
 
     public TableGroup() {
+    }
+
+    public void checkOrderTableSize(int orderTableSize) {
+        if (orderTables.equalSize(orderTableSize)) {
+            throw new IllegalArgumentException("주문 테이블의 수가 맞지 않습니다.");
+        }
     }
 
     public Long getId() {
@@ -37,10 +39,10 @@ public class TableGroup {
     }
 
     public List<OrderTable> getOrderTables() {
-        return orderTables;
+        return orderTables.getOrderTables();
     }
 
     public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+        this.orderTables = new OrderTables(orderTables);
     }
 }

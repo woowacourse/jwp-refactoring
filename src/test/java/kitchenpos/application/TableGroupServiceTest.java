@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -26,15 +27,13 @@ class TableGroupServiceTest extends ServiceTest {
     void 테이블그룹을_생성한다() {
         TableGroup tableGroup = 테이블집합(빈테이블을_생성(), 빈테이블을_생성());
 
-        TableGroup actual = tableGroupService.create(tableGroup);
+        TableGroupResponse actual = tableGroupService.create(tableGroup);
         assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
     }
 
     @Test
     void 테이블그룹을_생성할때_테이블이_없는_경우_예외를_발생시킨다() {
-        TableGroup tableGroup = new TableGroup(null);
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroup(null)))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
@@ -57,7 +56,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void 테이블그룹을_생성할때_테이블이_비어있지_않은_경우_예외를_발생시킨다() {
         OrderTable orderTable = 빈테이블을_생성();
-        orderTable.setEmpty(false);
+        orderTable.changeEmpty(false);
         tableService.changeEmpty(orderTable.getId(), orderTable);
         TableGroup tableGroup = 테이블집합(orderTable, 빈테이블을_생성());
 
@@ -76,7 +75,7 @@ class TableGroupServiceTest extends ServiceTest {
     void 테이블그룹을_해제할때_조리중인_주문이_있는_경우_예외를_발생시킨다() {
         OrderTable orderTable = 빈테이블을_생성();
         TableGroup tableGroup = 테이블집합(orderTable, 빈테이블을_생성());
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupResponse savedTableGroup = tableGroupService.create(tableGroup);
         주문_생성(orderTable.getId());
 
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
@@ -87,7 +86,7 @@ class TableGroupServiceTest extends ServiceTest {
     void 테이블그룹을_해제할때_식사중인_주문이_있는_경우_예외를_발생시킨다() {
         OrderTable orderTable = 빈테이블을_생성();
         TableGroup tableGroup = 테이블집합(orderTable, 빈테이블을_생성());
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupResponse savedTableGroup = tableGroupService.create(tableGroup);
         Order savedOrder = 주문_생성(orderTable.getId());
         savedOrder.setOrderStatus("MEAL");
         orderService.changeOrderStatus(savedOrder.getId(), savedOrder);
