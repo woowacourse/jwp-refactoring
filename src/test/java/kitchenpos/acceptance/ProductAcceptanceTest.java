@@ -1,5 +1,7 @@
 package kitchenpos.acceptance;
 
+import static kitchenpos.acceptance.RequestUtil.get;
+import static kitchenpos.acceptance.RequestUtil.post;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import io.restassured.response.ExtractableResponse;
@@ -13,6 +15,18 @@ import org.junit.jupiter.api.TestFactory;
 import org.springframework.http.HttpStatus;
 
 public class ProductAcceptanceTest extends AcceptanceTest {
+
+    static ExtractableResponse<Response> 상품을_생성한다(final String name, final int price) {
+        Product product = new Product();
+        product.setName(name);
+        product.setPrice(BigDecimal.valueOf(price));
+
+        return post("/api/products", product);
+    }
+
+    static ExtractableResponse<Response> 모든_상품을_조회한다() {
+        return get("/api/products");
+    }
 
     @DisplayName("상품을 관리한다.")
     @TestFactory
@@ -35,17 +49,5 @@ public class ProductAcceptanceTest extends AcceptanceTest {
                     리스트_길이를_검증한다(response, ".", 1);
                 })
         );
-    }
-
-    ExtractableResponse<Response> 상품을_생성한다(final String name, final int price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
-
-        return post("/api/products", product);
-    }
-
-    ExtractableResponse<Response> 모든_상품을_조회한다() {
-        return get("/api/products");
     }
 }

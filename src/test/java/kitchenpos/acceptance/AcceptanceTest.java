@@ -13,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 abstract class AcceptanceTest {
@@ -28,41 +27,6 @@ abstract class AcceptanceTest {
     void setUp() throws SQLException {
         RestAssured.port = port;
         databaseCleaner.clean();
-    }
-
-    protected ExtractableResponse<Response> get(final String uri) {
-        return RestAssured.given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when().get(uri)
-                .then().log().all()
-                .extract();
-    }
-
-    protected ExtractableResponse<Response> post(final String uri, final Object body) {
-        return RestAssured.given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(body)
-                .when().post(uri)
-                .then().log().all()
-                .extract();
-    }
-
-    protected ExtractableResponse<Response> put(final String uri, final Object body) {
-        return RestAssured.given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(body)
-                .when().put(uri)
-                .then().log().all()
-                .extract();
-    }
-
-    protected ExtractableResponse<Response> delete(final String uri, final Object body) {
-        return RestAssured.given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(body)
-                .when().delete(uri)
-                .then().log().all()
-                .extract();
     }
 
     protected void 상태코드를_검증한다(final ExtractableResponse<Response> response, final HttpStatus httpStatus) {

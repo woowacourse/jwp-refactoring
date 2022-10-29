@@ -1,5 +1,7 @@
 package kitchenpos.acceptance;
 
+import static kitchenpos.acceptance.RequestUtil.get;
+import static kitchenpos.acceptance.RequestUtil.post;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
@@ -13,6 +15,17 @@ import org.junit.jupiter.api.TestFactory;
 import org.springframework.http.HttpStatus;
 
 public class MenuGroupAcceptanceTest extends AcceptanceTest {
+
+    static ExtractableResponse<Response> 메뉴_그룹을_생성한다(final String name) {
+        MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setName(name);
+
+        return post("/api/menu-groups", menuGroup);
+    }
+
+    static ExtractableResponse<Response> 모든_메뉴_그룹을_조회한다() {
+        return get("/api/menu-groups");
+    }
 
     @DisplayName("메뉴 그룹을 관리한다.")
     @TestFactory
@@ -37,16 +50,5 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
                     });
                 })
         );
-    }
-
-    ExtractableResponse<Response> 메뉴_그룹을_생성한다(final String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-
-        return post("/api/menu-groups", menuGroup);
-    }
-
-    ExtractableResponse<Response> 모든_메뉴_그룹을_조회한다() {
-        return get("/api/menu-groups");
     }
 }
