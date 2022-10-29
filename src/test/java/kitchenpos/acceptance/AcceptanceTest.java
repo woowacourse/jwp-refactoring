@@ -40,4 +40,14 @@ abstract class AcceptanceTest {
     protected void 필드가_Null이_아닌지_검증한다(final ExtractableResponse<Response> response, final String jsonPath) {
         assertThat(response.jsonPath().getLong(jsonPath)).isNotNull();
     }
+
+    protected void 숫자_필드값을_검증한다(final ExtractableResponse<Response> response, final String jsonPath,
+                                final long expected) {
+        assertThat(response.jsonPath().getLong(jsonPath)).isEqualTo(expected);
+    }
+
+    protected void Boolean_필드값을_검증한다(final ExtractableResponse<Response> response, final String jsonPath,
+                                     final boolean expected) {
+        assertThat(response.jsonPath().getBoolean(jsonPath)).isEqualTo(expected);
+    }
 }
