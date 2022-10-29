@@ -2,15 +2,13 @@ package kitchenpos.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 
 public class MenuSaveRequest {
 
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+    private List<MenuProductSaveRequest> menuProducts;
 
     private MenuSaveRequest() {
     }
@@ -18,15 +16,11 @@ public class MenuSaveRequest {
     public MenuSaveRequest(final String name,
                            final BigDecimal price,
                            final Long menuGroupId,
-                           final List<MenuProduct> menuProducts) {
+                           final List<MenuProductSaveRequest> menuProducts) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
-    }
-
-    public Menu toEntity() {
-        return new Menu(name, price, menuGroupId, menuProducts);
     }
 
     public String getName() {
@@ -41,7 +35,7 @@ public class MenuSaveRequest {
         return menuGroupId;
     }
 
-    public List<MenuProduct> getMenuProducts() {
+    public List<MenuProductSaveRequest> getMenuProducts() {
         return menuProducts;
     }
 }
