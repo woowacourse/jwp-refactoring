@@ -98,7 +98,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
+        final OrderStatus orderStatus = OrderStatus.from(order.getOrderStatus());
         savedOrder.setOrderStatus(orderStatus.name());
 
         orderDao.save(savedOrder);

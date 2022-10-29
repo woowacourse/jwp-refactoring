@@ -1,7 +1,5 @@
 package kitchenpos.fixture;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -13,15 +11,15 @@ import kitchenpos.domain.tablegroup.TableGroup;
 public class TableFixture {
 
     public static OrderTable getOrderTable() {
-        return getOrderTable(1L, null, 2, false, COOKING.name());
+        return getOrderTable(1L, null, 2, false, null);
     }
 
     public static OrderTable getOrderTable(final Long tableGroupId) {
-        return getOrderTable(1L, tableGroupId, 2, false, COOKING.name());
+        return getOrderTable(1L, tableGroupId, 2, false, null);
     }
 
     public static OrderTable getOrderTable(final Long tableGroupId, final boolean empty) {
-        return getOrderTable(1L, tableGroupId, 2, empty, COOKING.name());
+        return getOrderTable(1L, tableGroupId, 2, empty, null);
     }
 
     public static OrderTable getOrderTable(final Long tableGroupId, final boolean empty, final String orderStatus) {
@@ -29,11 +27,11 @@ public class TableFixture {
     }
 
     public static OrderTable getOrderTable(final int numberOfGuests) {
-        return getOrderTable(1L, null, numberOfGuests, false, COOKING.name());
+        return getOrderTable(1L, null, numberOfGuests, false, null);
     }
 
     public static OrderTable getOrderTable(final boolean empty) {
-        return getOrderTable(1L, null, 1, empty, COOKING.name());
+        return getOrderTable(1L, null, 1, empty, null);
     }
 
     public static OrderTable getOrderTable(final Long id,
@@ -41,7 +39,7 @@ public class TableFixture {
                                            final int numberOfGuests,
                                            final boolean empty,
                                            final String orderStatus) {
-        return new OrderTable(id, tableGroupId, numberOfGuests, empty, OrderStatus.valueOf(orderStatus));
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty, OrderStatus.from(orderStatus));
     }
 
     public static TableGroup getTableGroupRequest() {
@@ -63,13 +61,12 @@ public class TableFixture {
     }
 
     public static OrderTable getOrderTableRequest() {
-        return getOrderTableRequest(1L, null, 2, true);
+        return getOrderTableRequest(null, 2, true);
     }
 
-    public static OrderTable getOrderTableRequest(final Long id,
-                                                  final Long tableGroupId,
+    public static OrderTable getOrderTableRequest(final Long tableGroupId,
                                                   final int numberOfGuests,
                                                   final boolean empty) {
-        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
+        return new OrderTable(tableGroupId, numberOfGuests, empty);
     }
 }

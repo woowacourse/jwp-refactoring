@@ -69,13 +69,20 @@ class TableGroupTest {
     @ParameterizedTest(name = "주문 테이블이 {0} 상태아면 테이블 그룹을 해제할 수 없다.")
     @ValueSource(strings = {"COOKING", "MEAL"})
     void ungroupWithInvalidOrderTableStatus(final String orderStatus) {
-        final OrderTable cookingOrderTable = getOrderTable(null, true, orderStatus);
-        final OrderTable mealOrderTable = getOrderTable(null, true, orderStatus);
-        final List<OrderTable> orderTables = Arrays.asList(cookingOrderTable, mealOrderTable);
+        // given
+        final OrderTable orderTable1 = getOrderTable(null, true);
+        final OrderTable orderTable2 = getOrderTable(null, true);
+        final List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
         final TableGroup tableGroup = TableGroup.of(1L, LocalDateTime.now(), orderTables);
+
+        // when
+        orderTable1.changeOrderStatus(orderStatus);
+        orderTable2.changeOrderStatus(orderStatus);
+
+        // then
         assertThatThrownBy(tableGroup::unGroup)
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("조리중이거나 식사중이면 그룹을 해제할 수 없습니다.");
+                .hasMessage("조리중이거나 식사중이면 주문 테이블의 비운 상태를 수정할 수 없습니다.");
     }
 
     @Test

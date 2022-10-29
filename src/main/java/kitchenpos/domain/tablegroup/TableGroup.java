@@ -21,8 +21,8 @@ public class TableGroup {
     public static TableGroup of(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         validate(orderTables);
         for (final OrderTable orderTable : orderTables) {
-            orderTable.changeTableGroup(id);
             orderTable.setEmpty(false);
+            orderTable.changeTableGroup(id);
         }
         return new TableGroup(id, createdDate, orderTables);
     }
@@ -71,16 +71,9 @@ public class TableGroup {
 
     public void unGroup() {
         for (final OrderTable orderTable : orderTables) {
-            validateOrderTableStatus(orderTable);
             orderTable.changeTableGroup(null);
             orderTable.setEmpty(false);
         }
         this.orderTables = new LinkedList<>();
-    }
-
-    private void validateOrderTableStatus(final OrderTable orderTable) {
-        if (orderTable.isCooking() || orderTable.isMeal()) {
-            throw new IllegalArgumentException("조리중이거나 식사중이면 그룹을 해제할 수 없습니다.");
-        }
     }
 }

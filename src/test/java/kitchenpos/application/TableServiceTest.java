@@ -41,35 +41,6 @@ class TableServiceTest extends ServiceTest{
     }
 
     @Test
-    @DisplayName("테이블 그룹이 존재할 경우 테이블의 비운상태를 수정하면 예외가 발생한다.")
-    void changeEmptyWithTableGroup() {
-        // given
-        final OrderTable orderTable = getOrderTable(1L);
-        given(orderTableDao.findById(1L)).willReturn(Optional.of(orderTable));
-
-        // when
-        final OrderTable newStatusOrderTable = getOrderTable(false);
-
-        // then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), newStatusOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("주문상태가 COOKING 이거나 MEAL일 경우 테이블의 비운상태를 수정하면 예외가 발생한다.")
-    void changeEmptyWithCooking() {
-        // given
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any())).willReturn(true);
-
-        // when
-        final OrderTable newStatusOrderTable = getOrderTable(false);
-
-        // then
-        assertThatThrownBy(() -> tableService.changeEmpty(1L, newStatusOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     @DisplayName("테이블의 손님 수를 바꾼다.")
     void changeNumberOfGuests() {
         // given
