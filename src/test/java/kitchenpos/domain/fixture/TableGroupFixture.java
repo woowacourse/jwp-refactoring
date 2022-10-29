@@ -44,10 +44,9 @@ public class TableGroupFixture {
     }
 
     private TableGroup build() {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(id);
-        tableGroup.setCreatedDate(createdDate);
-        tableGroup.setOrderTables(orderTables);
-        return tableGroup;
+        if (orderTables == null) {
+            return new TableGroup(id, createdDate);
+        }
+        return new TableGroup(id, createdDate, orderTables);
     }
 }

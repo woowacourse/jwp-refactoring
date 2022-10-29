@@ -7,16 +7,29 @@ import org.springframework.util.CollectionUtils;
 
 public class TableGroup {
 
-    private Long id;
-    private LocalDateTime createdDate;
+    private final Long id;
+    private final LocalDateTime createdDate;
     private List<OrderTable> orderTables;
 
-    public TableGroup() {
+    /**
+     * DB 에 저장되지 않은 객체
+     */
+    public TableGroup(final List<OrderTable> orderTables) {
+        this(null, null, orderTables);
     }
 
-    public TableGroup(final List<OrderTable> orderTables) {
+    /**
+     * DB 에 저장된 객체
+     */
+    public TableGroup(final Long id, final LocalDateTime createdDate) {
+        this.id = id;
+        this.createdDate = createdDate;
+    }
+
+    public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         validateOrderTableSizeIsValid(orderTables);
-        this.createdDate = LocalDateTime.now();
+        this.id = id;
+        this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
 
@@ -30,16 +43,8 @@ public class TableGroup {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
     }
 
     public List<OrderTable> getOrderTables() {
