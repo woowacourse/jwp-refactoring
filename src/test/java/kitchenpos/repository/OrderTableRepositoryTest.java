@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import static kitchenpos.OrderTableFixtures.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
