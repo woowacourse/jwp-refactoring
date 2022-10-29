@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 @Primary
 public class OrderRepository implements OrderDao {
 
-    private final JdbcTemplateOrderDao orderDao;
+    private final OrderDao orderDao;
     private final MenuDao menuDao;
     private final OrderTableDao orderTableDao;
     private final OrderLineItemDao orderLineItemDao;
@@ -33,6 +33,11 @@ public class OrderRepository implements OrderDao {
         List<OrderLineItem> orderLineItems = entity.getOrderLineItems();
         if (orderLineItems.size() != getMenuCount(entity)) {
             throw new IllegalArgumentException();
+        }
+
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            menuDao.findById(orderLineItem.getMenuId())
+                    .orElseThrow(IllegalArgumentException::new);
         }
 
         Order order = orderDao.save(entity);
@@ -63,7 +68,12 @@ public class OrderRepository implements OrderDao {
 
     @Override
     public List<Order> findAll() {
-        return null;
+        List<Order> orders = orderDao.findAll();
+        for (Order order : orders) {
+            List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(order.getId());
+            order.setOrderLineItems(orderLineItems);
+        }
+        return orders;
     }
 
     @Override
