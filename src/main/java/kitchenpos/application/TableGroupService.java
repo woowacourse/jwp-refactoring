@@ -31,9 +31,9 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest request) {
-        final TableGroup tableGroup = TableGroupConvertor.convertToTableGroup(request);
+        final TableGroup tableGroup = TableGroupConvertor.toTableGroup(request);
         final TableGroup savedTableGroup = saveTableGroup(tableGroup);
-        return TableGroupConvertor.convertToOrderTableResponse(savedTableGroup);
+        return TableGroupConvertor.toOrderTableResponse(savedTableGroup);
     }
 
     @Transactional

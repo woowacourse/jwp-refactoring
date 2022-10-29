@@ -47,18 +47,18 @@ public class OrderService {
         validateOrderLineItemIsExist(order);
 
         final Order savedOrder = orderRepository.save(order);
-        return OrderConvertor.convertToOrderResponse(savedOrder);
+        return OrderConvertor.toOrderResponse(savedOrder);
     }
 
     public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
-        return OrderConvertor.convertToOrderResponse(orders);
+        return OrderConvertor.toOrderResponses(orders);
     }
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderChangeRequest request) {
         final Order changedOrder = changeStatus(orderId, request.getOrderStatus());
-        return OrderConvertor.convertToOrderResponse(changedOrder);
+        return OrderConvertor.toOrderResponse(changedOrder);
     }
 
     private void validateOrderTableIsNotEmpty(final OrderTable orderTable) {

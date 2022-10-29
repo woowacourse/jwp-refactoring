@@ -20,13 +20,13 @@ public class MenuGroupService {
 
     @Transactional
     public MenuGroupResponse create(final MenuGroupRequest request) {
-        final MenuGroup menuGroup = MenuGroupConvertor.convertToMenuGroup(request);
+        final MenuGroup menuGroup = MenuGroupConvertor.toMenuGroup(request);
         final MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
-        return MenuGroupConvertor.convertToMenuGroupResponse(savedMenuGroup);
+        return MenuGroupConvertor.toMenuGroupResponse(savedMenuGroup);
     }
 
     public List<MenuGroupResponse> list() {
         final List<MenuGroup> menuGroups = menuGroupDao.findAll();
-        return MenuGroupConvertor.convertToMenuGroupResponses(menuGroups);
+        return MenuGroupConvertor.toMenuGroupResponses(menuGroups);
     }
 }

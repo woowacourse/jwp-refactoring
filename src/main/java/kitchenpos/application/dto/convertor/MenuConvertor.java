@@ -23,7 +23,7 @@ public class MenuConvertor {
             .collect(Collectors.toUnmodifiableList());
     }
 
-    public static List<MenuProductResponse> toMenuProductResponses(final List<MenuProduct> menuProducts) {
+    private static List<MenuProductResponse> toMenuProductResponses(final List<MenuProduct> menuProducts) {
         return menuProducts.stream()
             .map(menuProduct -> new MenuProductResponse(menuProduct.getSeq(), menuProduct.getMenuId(), menuProduct.getProductId(), menuProduct.getQuantity()))
             .collect(Collectors.toUnmodifiableList());

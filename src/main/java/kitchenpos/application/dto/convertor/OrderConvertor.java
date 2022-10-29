@@ -11,14 +11,14 @@ public class OrderConvertor {
     private OrderConvertor() {
     }
 
-    public static OrderResponse convertToOrderResponse(final Order savedOrder) {
+    public static OrderResponse toOrderResponse(final Order savedOrder) {
         return new OrderResponse(savedOrder.getId(), savedOrder.getOrderTableId(), savedOrder.getOrderStatus(),
             savedOrder.getOrderedTime(), savedOrder.getOrderLineItems());
     }
 
-    public static List<OrderResponse> convertToOrderResponse(final List<Order> orders) {
+    public static List<OrderResponse> toOrderResponses(final List<Order> orders) {
         return orders.stream()
-            .map(OrderConvertor::convertToOrderResponse)
+            .map(OrderConvertor::toOrderResponse)
             .collect(Collectors.toUnmodifiableList());
     }
 }

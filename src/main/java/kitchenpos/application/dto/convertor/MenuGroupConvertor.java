@@ -12,15 +12,15 @@ public class MenuGroupConvertor {
     private MenuGroupConvertor() {
     }
 
-    public static MenuGroup convertToMenuGroup(final MenuGroupRequest request) {
+    public static MenuGroup toMenuGroup(final MenuGroupRequest request) {
         return new MenuGroup(request.getName());
     }
 
-    public static MenuGroupResponse convertToMenuGroupResponse(final MenuGroup menuGroup) {
+    public static MenuGroupResponse toMenuGroupResponse(final MenuGroup menuGroup) {
         return new MenuGroupResponse(menuGroup.getId(), menuGroup.getName());
     }
 
-    public static List<MenuGroupResponse> convertToMenuGroupResponses(final List<MenuGroup> menuGroups) {
+    public static List<MenuGroupResponse> toMenuGroupResponses(final List<MenuGroup> menuGroups) {
         return menuGroups.stream()
             .map(menuGroup -> new MenuGroupResponse(menuGroup.getId(), menuGroup.getName()))
             .collect(Collectors.toUnmodifiableList());

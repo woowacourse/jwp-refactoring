@@ -26,32 +26,32 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse create(final OrderTableRequest request) {
-        final OrderTable orderTable = TableConvertor.convertToOrderTable(request);
+        final OrderTable orderTable = TableConvertor.toOrderTable(request);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        return TableConvertor.convertToOrderTableResponse(savedOrderTable);
+        return TableConvertor.toOrderTableResponse(savedOrderTable);
     }
 
     public List<OrderTableResponse> list() {
         final List<OrderTable> orderTables = orderTableDao.findAll();
-        return TableConvertor.convertToOrderTableResponses(orderTables);
+        return TableConvertor.toOrderTableResponses(orderTables);
     }
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest request) {
-        final OrderTable orderTable = TableConvertor.convertToOrderTable(request);
+        final OrderTable orderTable = TableConvertor.toOrderTable(request);
         final OrderTable changedOrderTable = changeEmptyOfTable(orderTableId, orderTable);
-        return TableConvertor.convertToOrderTableResponse(changedOrderTable);
+        return TableConvertor.toOrderTableResponse(changedOrderTable);
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest request) {
-        final OrderTable orderTable = TableConvertor.convertToOrderTable(request);
+        final OrderTable orderTable = TableConvertor.toOrderTable(request);
         final OrderTable savedOrderTable = findOrderTableById(orderTableId);
 
         savedOrderTable.changeNumberOfGuests(orderTable.getNumberOfGuests());
 
         final OrderTable changedOrderTable = orderTableDao.save(savedOrderTable);
-        return TableConvertor.convertToOrderTableResponse(changedOrderTable);
+        return TableConvertor.toOrderTableResponse(changedOrderTable);
     }
 
     private OrderTable changeEmptyOfTable(final Long orderTableId, final OrderTable orderTable) {
