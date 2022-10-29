@@ -16,6 +16,8 @@ import kitchenpos.domain.Quantity;
 import kitchenpos.dto.OrderLineItemDto;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderResponse;
+import kitchenpos.exception.EmptyTableOrderException;
+import kitchenpos.exception.MenuNotEnoughException;
 import kitchenpos.exception.MenuNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,7 +68,7 @@ public class OrderService {
 
     private void validateOrderTableEmptiness(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("빈 테이블에 주문을 등록할 수 없습니다.");
+            throw new EmptyTableOrderException();
         }
     }
 
@@ -77,7 +79,7 @@ public class OrderService {
 
     private void validateMenuCount(List<OrderLineItemDto> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("메뉴 없이 주문할 수 없습니다.");
+            throw new MenuNotEnoughException();
         }
     }
 

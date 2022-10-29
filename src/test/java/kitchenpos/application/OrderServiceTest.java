@@ -22,6 +22,8 @@ import kitchenpos.dto.OrderLineItemDto;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.exception.AlreadyCompletionOrderStatusException;
+import kitchenpos.exception.EmptyTableOrderException;
+import kitchenpos.exception.MenuNotEnoughException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -71,8 +73,7 @@ class OrderServiceTest extends ServiceTest {
         OrderRequest orderRequest = new OrderRequest(emptyOrderTable.getId(), null, Collections.emptyList());
 
         assertThatThrownBy(() -> orderService.create(orderRequest))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("메뉴 없이 주문할 수 없습니다.");
+                .isInstanceOf(MenuNotEnoughException.class);
     }
 
     @DisplayName("존재하지 않는 Menu로 Order를 등록하려고 하면 예외를 발생시킨다.")
@@ -95,8 +96,7 @@ class OrderServiceTest extends ServiceTest {
                 List.of(orderLineItemDto1, orderLineItemDto2));
 
         assertThatThrownBy(() -> orderService.create(orderRequest))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("빈 테이블에 주문을 등록할 수 없습니다.");
+                .isInstanceOf(EmptyTableOrderException.class);
     }
 
     @DisplayName("주문 상태를 변경할 수 있다.")

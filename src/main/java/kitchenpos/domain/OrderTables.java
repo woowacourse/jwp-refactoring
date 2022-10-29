@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.util.List;
 import kitchenpos.exception.GroupTableNotEnoughException;
 import kitchenpos.exception.GroupedTableNotEmptyException;
+import kitchenpos.exception.NotCompleteTableUngroupException;
 import kitchenpos.exception.TableAlreadyGroupedException;
 import org.springframework.util.CollectionUtils;
 
@@ -66,7 +67,7 @@ public class OrderTables {
         boolean notCompletion = values.stream()
                 .anyMatch(OrderTable::isNotCompletionOrderTable);
         if (notCompletion) {
-            throw new IllegalArgumentException("조리중이거나 식사중인 테이블이 포함된 Table Group은 그룹 해제 할 수 없습니다.");
+            throw new NotCompleteTableUngroupException();
         }
     }
 

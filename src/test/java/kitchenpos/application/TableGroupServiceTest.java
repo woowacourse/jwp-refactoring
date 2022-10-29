@@ -14,6 +14,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupDto;
 import kitchenpos.exception.GroupTableNotEnoughException;
 import kitchenpos.exception.GroupedTableNotEmptyException;
+import kitchenpos.exception.NotCompleteTableUngroupException;
 import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.exception.TableAlreadyGroupedException;
 import org.junit.jupiter.api.BeforeEach;
@@ -121,7 +122,6 @@ class TableGroupServiceTest extends ServiceTest {
         orderRepository.save(new Order(orderOrderTable2, OrderStatus.from(orderStatus), Collections.emptyList()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupDto.getId()))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("조리중이거나 식사중인 테이블이 포함된 Table Group은 그룹 해제 할 수 없습니다.");
+                .isInstanceOf(NotCompleteTableUngroupException.class);
     }
 }
