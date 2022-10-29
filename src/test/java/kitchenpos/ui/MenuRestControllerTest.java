@@ -14,8 +14,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
-import kitchenpos.dto.response.MenuCreateResponse;
-import kitchenpos.dto.response.MenuProductCreateResponse;
 import kitchenpos.dto.response.MenuProductResponse;
 import kitchenpos.dto.response.MenuResponse;
 import org.junit.jupiter.api.Test;
@@ -26,19 +24,19 @@ class MenuRestControllerTest extends RestControllerTest {
 
     @Test
     void 메뉴_생성에_성공한다() throws Exception {
-        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(1L, 1);
-        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("메뉴", BigDecimal.valueOf(1_000), 1L,
-                List.of(menuProductCreateRequest));
-        MenuProductCreateResponse expectedMenuProduct =
-                new MenuProductCreateResponse(1L, 1L, 1);
-        MenuCreateResponse expected =
-                new MenuCreateResponse(1L, "메뉴", BigDecimal.valueOf(1_000), 1L, List.of(expectedMenuProduct));
+        MenuProductCreateRequest menuProductRequest = new MenuProductCreateRequest(1L, 1);
+        MenuCreateRequest menuRequest = new MenuCreateRequest("메뉴", BigDecimal.valueOf(1_000), 1L,
+                List.of(menuProductRequest));
+        MenuProductResponse expectedMenuProduct =
+                new MenuProductResponse(1L, 1L, 1);
+        MenuResponse expected =
+                new MenuResponse(1L, "메뉴", BigDecimal.valueOf(1_000), 1L, List.of(expectedMenuProduct));
 
         when(menuService.create(any(MenuCreateRequest.class))).thenReturn(expected);
 
         mockMvc.perform(post("/api/menus")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsString(menuCreateRequest)))
+                        .content(objectMapper.writeValueAsString(menuRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
                 .andDo(print());
@@ -57,11 +55,11 @@ class MenuRestControllerTest extends RestControllerTest {
                 .andDo(print())
                 .andReturn();
 
-        List<MenuResponse> menuResponses = objectMapper.readValue(mvcResult.getResponse().getContentAsByteArray(),
+        List<MenuResponse> content = objectMapper.readValue(mvcResult.getResponse().getContentAsByteArray(),
                 new TypeReference<List<MenuResponse>>() {
                 });
 
-        assertThat(menuResponses).hasSize(1)
+        assertThat(content).hasSize(1)
                 .extracting("id")
                 .containsExactly(1L);
     }

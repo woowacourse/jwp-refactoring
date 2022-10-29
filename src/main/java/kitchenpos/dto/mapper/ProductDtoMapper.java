@@ -3,7 +3,6 @@ package kitchenpos.dto.mapper;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.response.ProductCreateResponse;
 import kitchenpos.dto.response.ProductResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -12,7 +11,7 @@ import org.mapstruct.Mapping;
 public interface ProductDtoMapper {
 
     @Mapping(target = "price", expression = "java(product.getPrice().getValue())")
-    ProductCreateResponse toProductCreateResponse(Product product);
+    ProductResponse toProductResponse(Product product);
 
     default List<ProductResponse> toProductResponses(List<Product> product) {
         return product.stream()

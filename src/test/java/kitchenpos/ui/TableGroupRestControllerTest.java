@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.dto.response.OrderTableResponse;
-import kitchenpos.dto.response.TableGroupCreateResponse;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
@@ -19,17 +19,17 @@ class TableGroupRestControllerTest extends RestControllerTest {
 
     @Test
     void 단체_지정에_성공한다() throws Exception {
-        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(1L, 2L));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(1L, 2L));
         OrderTableResponse orderTable1 = new OrderTableResponse(1L, null, 1, false);
         OrderTableResponse orderTable2 = new OrderTableResponse(1L, null, 1, false);
-        TableGroupCreateResponse tableGroupCreateResponse =
-                new TableGroupCreateResponse(1L, LocalDateTime.now(), List.of(orderTable1, orderTable2));
+        TableGroupResponse expected =
+                new TableGroupResponse(1L, LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
-        when(tableGroupService.create(List.of(1L, 2L))).thenReturn(tableGroupCreateResponse);
+        when(tableGroupService.create(List.of(1L, 2L))).thenReturn(expected);
 
         mockMvc.perform(post("/api/table-groups")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsString(tableGroupCreateRequest)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
                 .andDo(print());

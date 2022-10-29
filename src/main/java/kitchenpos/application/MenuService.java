@@ -8,12 +8,11 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
-import kitchenpos.dto.request.MenuCreateRequest;
-import kitchenpos.dto.request.MenuProductCreateRequest;
-import kitchenpos.dto.response.MenuCreateResponse;
-import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.mapper.MenuDtoMapper;
 import kitchenpos.dto.mapper.MenuMapper;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.dto.response.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,13 +36,13 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuCreateResponse create(final MenuCreateRequest menuCreateRequest) {
+    public MenuResponse create(final MenuCreateRequest menuCreateRequest) {
         if (!menuGroupRepository.existsById(menuCreateRequest.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
         List<MenuProduct> menuProducts = createMenuProducts(menuCreateRequest);
         Menu menu = menuMapper.toMenu(menuCreateRequest, menuProducts);
-        return menuDtoMapper.toMenuCreateResponse(menuRepository.save(menu));
+        return menuDtoMapper.toMenuResponse(menuRepository.save(menu));
     }
 
     private List<MenuProduct> createMenuProducts(final MenuCreateRequest menuCreateRequest) {

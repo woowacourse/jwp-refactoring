@@ -1,9 +1,9 @@
 package kitchenpos.dto.mapper;
 
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.response.TableGroupCreateResponse;
+import kitchenpos.dto.response.TableGroupResponse;
 
 public interface TableGroupDtoMapper {
 
-    TableGroupCreateResponse toTableGroupCreateResponse(TableGroup tableGroup);
+    TableGroupResponse toTableGroupCreateResponse(TableGroup tableGroup);
 }

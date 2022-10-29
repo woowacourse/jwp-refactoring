@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.List;
 import kitchenpos.dto.request.MenuGroupCreateRequest;
-import kitchenpos.dto.response.MenuGroupCreateResponse;
 import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -22,13 +21,13 @@ class MenuGroupRestControllerTest extends RestControllerTest {
 
     @Test
     void 메뉴_그룹_생성에_성공한다() throws Exception {
-        MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest("메뉴 그룹");
-        when(menuGroupService.create(refEq(menuGroupCreateRequest)))
-                .thenReturn(new MenuGroupCreateResponse(1L, "메뉴 그룹"));
+        MenuGroupCreateRequest request = new MenuGroupCreateRequest("메뉴 그룹");
+        when(menuGroupService.create(refEq(request)))
+                .thenReturn(new MenuGroupResponse(1L, "메뉴 그룹"));
 
         mockMvc.perform(post("/api/menu-groups")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsBytes(menuGroupCreateRequest)))
+                        .content(objectMapper.writeValueAsBytes(request)))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
                 .andDo(print());

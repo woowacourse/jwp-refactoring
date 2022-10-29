@@ -23,9 +23,7 @@ import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.dto.request.OrderTableCreateRequest;
-import kitchenpos.dto.response.OrderTableCreateResponse;
 import kitchenpos.dto.response.OrderTableResponse;
-import kitchenpos.dto.response.OrderTableUpdateResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -47,11 +45,11 @@ class TableServiceTest {
 
     @Test
     void 주문_테이블을_생성할_수_있다() {
-        OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(1, false);
+        OrderTableCreateRequest request = new OrderTableCreateRequest(1, false);
 
-        OrderTableCreateResponse savedOrderTable = tableService.create(orderTableCreateRequest);
+        OrderTableResponse response = tableService.create(request);
 
-        assertThat(savedOrderTable.getId()).isNotNull();
+        assertThat(response.getId()).isNotNull();
     }
 
     @Test
@@ -73,9 +71,9 @@ class TableServiceTest {
         Long orderTableId = tableService.create(new OrderTableCreateRequest(1, false))
                 .getId();
 
-        OrderTableUpdateResponse orderTableUpdateResponse = tableService.changeEmpty(orderTableId, true);
+        OrderTableResponse response = tableService.changeEmpty(orderTableId, true);
 
-        assertThat(orderTableUpdateResponse.isEmpty()).isTrue();
+        assertThat(response.isEmpty()).isTrue();
     }
 
     @Test
@@ -129,9 +127,9 @@ class TableServiceTest {
         Long orderTableId = tableService.create(new OrderTableCreateRequest(1, false))
                 .getId();
 
-        OrderTableUpdateResponse orderTableUpdateResponse = tableService.changeNumberOfGuests(orderTableId, 1);
+        OrderTableResponse response = tableService.changeNumberOfGuests(orderTableId, 1);
 
-        assertThat(orderTableUpdateResponse.getNumberOfGuests()).isOne();
+        assertThat(response.getNumberOfGuests()).isOne();
     }
 
     @Test

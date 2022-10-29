@@ -13,7 +13,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dto.request.ProductCreateRequest;
-import kitchenpos.dto.response.ProductCreateResponse;
 import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -23,14 +22,14 @@ class ProductRestControllerTest extends RestControllerTest {
 
     @Test
     void 상품_생성에_성공한다() throws Exception {
-        ProductCreateRequest productCreateRequest = new ProductCreateRequest("상품", BigDecimal.valueOf(1_000));
-        ProductCreateResponse expected = new ProductCreateResponse(1L, "상품", BigDecimal.valueOf(1_000));
+        ProductCreateRequest request = new ProductCreateRequest("상품", BigDecimal.valueOf(1_000));
+        ProductResponse expected = new ProductResponse(1L, "상품", BigDecimal.valueOf(1_000));
 
         when(productService.create(any(ProductCreateRequest.class))).thenReturn(expected);
 
         mockMvc.perform(post("/api/products")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsString(productCreateRequest)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
                 .andDo(print());
@@ -47,11 +46,11 @@ class ProductRestControllerTest extends RestControllerTest {
                 .andDo(print())
                 .andReturn();
 
-        List<ProductResponse> productResponses = objectMapper.readValue(mvcResult.getResponse().getContentAsByteArray(),
+        List<ProductResponse> content = objectMapper.readValue(mvcResult.getResponse().getContentAsByteArray(),
                 new TypeReference<List<ProductResponse>>() {
                 });
 
-        assertThat(productResponses).hasSize(1)
+        assertThat(content).hasSize(1)
                 .extracting("id")
                 .containsExactly(1L);
     }

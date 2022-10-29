@@ -44,11 +44,11 @@ class OrderServiceTest {
                 .getId();
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
-        OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(menuId, 1);
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTableId,
-                List.of(orderLineItemCreateRequest));
+        OrderLineItemCreateRequest orderLineItemRequest = new OrderLineItemCreateRequest(menuId, 1);
+        OrderCreateRequest orderRequest = new OrderCreateRequest(orderTableId,
+                List.of(orderLineItemRequest));
 
-        OrderResponse orderResponse = orderService.create(orderCreateRequest);
+        OrderResponse orderResponse = orderService.create(orderRequest);
 
         assertAll(
                 () -> assertThat(orderResponse.getId()).isNotNull(),
@@ -60,9 +60,9 @@ class OrderServiceTest {
     void 생성하려는_주문에_주문_항목이_없으면_예외를_반환한다() {
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTableId, List.of());
+        OrderCreateRequest orderRequest = new OrderCreateRequest(orderTableId, List.of());
 
-        assertThatThrownBy(() -> orderService.create(orderCreateRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(orderRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -71,11 +71,11 @@ class OrderServiceTest {
                 .getId();
         Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, new ArrayList<>()))
                 .getId();
-        OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(menuId, 1);
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(0L,
-                List.of(orderLineItemCreateRequest));
+        OrderLineItemCreateRequest orderLineItemRequest = new OrderLineItemCreateRequest(menuId, 1);
+        OrderCreateRequest orderRequest = new OrderCreateRequest(0L,
+                List.of(orderLineItemRequest));
 
-        assertThatThrownBy(() -> orderService.create(orderCreateRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(orderRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -86,11 +86,11 @@ class OrderServiceTest {
                 .getId();
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true))
                 .getId();
-        OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(menuId, 1);
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTableId,
-                List.of(orderLineItemCreateRequest));
+        OrderLineItemCreateRequest orderLineItemRequest = new OrderLineItemCreateRequest(menuId, 1);
+        OrderCreateRequest orderRequest = new OrderCreateRequest(orderTableId,
+                List.of(orderLineItemRequest));
 
-        assertThatThrownBy(() -> orderService.create(orderCreateRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(orderRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -101,10 +101,10 @@ class OrderServiceTest {
                 .getId();
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
-        OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(menuId, 1);
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTableId,
-                List.of(orderLineItemCreateRequest));
-        Long orderId = orderService.create(orderCreateRequest)
+        OrderLineItemCreateRequest orderLineItemRequest = new OrderLineItemCreateRequest(menuId, 1);
+        OrderCreateRequest orderRequest = new OrderCreateRequest(orderTableId,
+                List.of(orderLineItemRequest));
+        Long orderId = orderService.create(orderRequest)
                 .getId();
 
         List<OrderResponse> actual = orderService.list();
@@ -122,10 +122,10 @@ class OrderServiceTest {
                 .getId();
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
-        OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(menuId, 1);
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTableId,
-                List.of(orderLineItemCreateRequest));
-        Long orderId = orderService.create(orderCreateRequest)
+        OrderLineItemCreateRequest orderLineItemRequest = new OrderLineItemCreateRequest(menuId, 1);
+        OrderCreateRequest orderRequest = new OrderCreateRequest(orderTableId,
+                List.of(orderLineItemRequest));
+        Long orderId = orderService.create(orderRequest)
                 .getId();
 
         OrderResponse changed = orderService.changeOrderStatus(orderId, new OrderStatusChangeRequest(MEAL.name()));
@@ -147,10 +147,10 @@ class OrderServiceTest {
                 .getId();
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
-        OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(menuId, 1);
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTableId,
-                List.of(orderLineItemCreateRequest));
-        Long orderId = orderService.create(orderCreateRequest)
+        OrderLineItemCreateRequest orderLineItemRequest = new OrderLineItemCreateRequest(menuId, 1);
+        OrderCreateRequest orderRequest = new OrderCreateRequest(orderTableId,
+                List.of(orderLineItemRequest));
+        Long orderId = orderService.create(orderRequest)
                 .getId();
         orderService.changeOrderStatus(orderId, new OrderStatusChangeRequest(COMPLETION.name()));
 

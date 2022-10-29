@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import kitchenpos.TransactionalTest;
 import kitchenpos.dto.request.MenuGroupCreateRequest;
-import kitchenpos.dto.response.MenuGroupCreateResponse;
 import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +18,13 @@ class MenuGroupServiceTest {
 
     @Test
     void 메뉴_그룹을_생성할_수_있다() {
-        MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest("메뉴 그룹");
+        MenuGroupCreateRequest request = new MenuGroupCreateRequest("메뉴 그룹");
 
-        MenuGroupCreateResponse menuGroupCreateResponse = menuGroupService.create(menuGroupCreateRequest);
+        MenuGroupResponse response = menuGroupService.create(request);
 
         assertAll(
-                () -> assertThat(menuGroupCreateResponse.getId()).isNotNull(),
-                () -> assertThat(menuGroupCreateResponse.getName()).isEqualTo(menuGroupCreateRequest.getName())
+                () -> assertThat(response.getId()).isNotNull(),
+                () -> assertThat(response.getName()).isEqualTo(request.getName())
         );
     }
 

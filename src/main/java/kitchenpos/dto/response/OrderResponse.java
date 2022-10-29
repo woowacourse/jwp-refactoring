@@ -9,14 +9,14 @@ public class OrderResponse {
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItemCreateResponse> orderLineItems;
+    private List<OrderLineItemResponse> orderLineItems;
 
     private OrderResponse() {
     }
 
     public OrderResponse(final Long id, final Long orderTableId, final String orderStatus,
                          final LocalDateTime orderedTime,
-                         final List<OrderLineItemCreateResponse> orderLineItems) {
+                         final List<OrderLineItemResponse> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -40,7 +40,7 @@ public class OrderResponse {
         return orderedTime;
     }
 
-    public List<OrderLineItemCreateResponse> getOrderLineItems() {
+    public List<OrderLineItemResponse> getOrderLineItems() {
         return orderLineItems;
     }
 }

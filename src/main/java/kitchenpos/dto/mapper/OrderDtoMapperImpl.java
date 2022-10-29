@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.dto.response.OrderLineItemCreateResponse;
+import kitchenpos.dto.response.OrderLineItemResponse;
 import kitchenpos.dto.response.OrderResponse;
 import org.springframework.stereotype.Component;
 
@@ -13,16 +13,16 @@ public class OrderDtoMapperImpl implements OrderDtoMapper {
 
     @Override
     public OrderResponse toOrderResponse(final Order order) {
-        List<OrderLineItemCreateResponse> orderLineItemCreateResponses = order.getOrderLineItems()
+        List<OrderLineItemResponse> orderLineItemRespons = order.getOrderLineItems()
                 .stream()
                 .map(this::toOrderLineItemResponse)
                 .collect(Collectors.toList());
         return new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus(),
-                order.getOrderedTime(), orderLineItemCreateResponses);
+                order.getOrderedTime(), orderLineItemRespons);
     }
 
-    private OrderLineItemCreateResponse toOrderLineItemResponse(final OrderLineItem orderLineItem) {
-        return new OrderLineItemCreateResponse(orderLineItem.getSeq(), orderLineItem.getMenuId(),
+    private OrderLineItemResponse toOrderLineItemResponse(final OrderLineItem orderLineItem) {
+        return new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getMenuId(),
                 orderLineItem.getQuantity());
     }
 

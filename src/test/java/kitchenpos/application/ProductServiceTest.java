@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.TransactionalTest;
 import kitchenpos.dto.request.ProductCreateRequest;
-import kitchenpos.dto.response.ProductCreateResponse;
 import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +19,11 @@ class ProductServiceTest {
 
     @Test
     void 상품을_생성할_수_있다() {
-        ProductCreateRequest productCreateRequest = new ProductCreateRequest("상품", BigDecimal.ZERO);
+        ProductCreateRequest request = new ProductCreateRequest("상품", BigDecimal.ZERO);
 
-        ProductCreateResponse productCreateResponse = productService.create(productCreateRequest);
+        ProductResponse response = productService.create(request);
 
-        assertThat(productCreateResponse.getId()).isNotNull();
+        assertThat(response.getId()).isNotNull();
     }
 
     @Test
@@ -39,9 +38,9 @@ class ProductServiceTest {
         Long productId = productService.create(new ProductCreateRequest("상품", BigDecimal.ZERO))
                 .getId();
 
-        List<ProductResponse> products = productService.list();
+        List<ProductResponse> actual = productService.list();
 
-        assertThat(products).hasSize(1)
+        assertThat(actual).hasSize(1)
                 .extracting("id")
                 .containsOnly(productId);
     }

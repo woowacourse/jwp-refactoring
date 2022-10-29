@@ -5,14 +5,14 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.response.OrderTableResponse;
-import kitchenpos.dto.response.TableGroupCreateResponse;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TableGroupDtoMapperImpl implements TableGroupDtoMapper {
 
     @Override
-    public TableGroupCreateResponse toTableGroupCreateResponse(final TableGroup tableGroup) {
+    public TableGroupResponse toTableGroupCreateResponse(final TableGroup tableGroup) {
         if (tableGroup == null) {
             return null;
         }
@@ -22,7 +22,7 @@ public class TableGroupDtoMapperImpl implements TableGroupDtoMapper {
                 .map(this::toOrderTableResponse)
                 .collect(Collectors.toList());
 
-        return new TableGroupCreateResponse(tableGroup.getId(), tableGroup.getCreatedDate(), orderTableResponses);
+        return new TableGroupResponse(tableGroup.getId(), tableGroup.getCreatedDate(), orderTableResponses);
     }
 
     private OrderTableResponse toOrderTableResponse(final OrderTable orderTable) {

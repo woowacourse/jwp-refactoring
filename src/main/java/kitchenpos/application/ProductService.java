@@ -6,7 +6,6 @@ import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.dto.mapper.ProductDtoMapper;
 import kitchenpos.dto.mapper.ProductMapper;
 import kitchenpos.dto.request.ProductCreateRequest;
-import kitchenpos.dto.response.ProductCreateResponse;
 import kitchenpos.dto.response.ProductResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +25,9 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductCreateResponse create(final ProductCreateRequest productCreateRequest) {
+    public ProductResponse create(final ProductCreateRequest productCreateRequest) {
         Product product = productMapper.toProduct(productCreateRequest);
-        return productDtoMapper.toProductCreateResponse(productRepository.save(product));
+        return productDtoMapper.toProductResponse(productRepository.save(product));
     }
 
     public List<ProductResponse> list() {

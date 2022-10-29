@@ -8,9 +8,7 @@ import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.dto.mapper.OrderTableDtoMapper;
 import kitchenpos.dto.mapper.OrderTableMapper;
 import kitchenpos.dto.request.OrderTableCreateRequest;
-import kitchenpos.dto.response.OrderTableCreateResponse;
 import kitchenpos.dto.response.OrderTableResponse;
-import kitchenpos.dto.response.OrderTableUpdateResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,9 +29,9 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableCreateResponse create(final OrderTableCreateRequest orderTableCreateRequest) {
+    public OrderTableResponse create(final OrderTableCreateRequest orderTableCreateRequest) {
         OrderTable orderTable = orderTableRepository.save(orderTableMapper.toOrderTable(orderTableCreateRequest));
-        return orderTableDtoMapper.toOrderTableCreateResponse(orderTable);
+        return orderTableDtoMapper.toOrderTableResponse(orderTable);
     }
 
     public List<OrderTableResponse> list() {
@@ -42,7 +40,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableUpdateResponse changeEmpty(final Long orderTableId, final boolean empty) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final boolean empty) {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
@@ -50,14 +48,14 @@ public class TableService {
             throw new IllegalArgumentException();
         }
         savedOrderTable.changeEmpty(empty);
-        return orderTableDtoMapper.toOrderTableUpdateResponse(savedOrderTable);
+        return orderTableDtoMapper.toOrderTableResponse(savedOrderTable);
     }
 
     @Transactional
-    public OrderTableUpdateResponse changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
-        return orderTableDtoMapper.toOrderTableUpdateResponse(savedOrderTable);
+        return orderTableDtoMapper.toOrderTableResponse(savedOrderTable);
     }
 }

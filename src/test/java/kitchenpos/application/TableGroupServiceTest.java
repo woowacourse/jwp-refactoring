@@ -21,7 +21,7 @@ import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.dto.response.TableGroupCreateResponse;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -44,12 +44,12 @@ class TableGroupServiceTest {
         OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
         OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 2, true));
 
-        TableGroupCreateResponse tableGroupCreateResponse =
+        TableGroupResponse response =
                 tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()));
 
         assertAll(
-                () -> assertThat(tableGroupCreateResponse.getId()).isNotNull(),
-                () -> assertThat(tableGroupCreateResponse.getOrderTables())
+                () -> assertThat(response.getId()).isNotNull(),
+                () -> assertThat(response.getOrderTables())
                         .extracting("id")
                         .containsExactly(orderTable1.getId(), orderTable2.getId())
         );

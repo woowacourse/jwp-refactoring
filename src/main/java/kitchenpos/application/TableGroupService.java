@@ -10,7 +10,7 @@ import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.dto.mapper.TableGroupDtoMapper;
-import kitchenpos.dto.response.TableGroupCreateResponse;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +32,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroupCreateResponse create(final List<Long> orderTableIds) {
+    public TableGroupResponse create(final List<Long> orderTableIds) {
         List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();

@@ -3,17 +3,17 @@ package kitchenpos.dto.response;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class TableGroupCreateResponse {
+public class TableGroupResponse {
 
     private Long id;
     private LocalDateTime createdDate;
     private List<OrderTableResponse> orderTables;
 
-    private TableGroupCreateResponse() {
+    private TableGroupResponse() {
     }
 
-    public TableGroupCreateResponse(final Long id, final LocalDateTime createdDate,
-                                    final List<OrderTableResponse> orderTables) {
+    public TableGroupResponse(final Long id, final LocalDateTime createdDate,
+                              final List<OrderTableResponse> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
