@@ -137,4 +137,38 @@ getter, setter 를 줄여본다. 현재 객체의 변경 포인트가 분산되�
 - [ ] 기존 Repository JPA CRUD 로 마이그레이션
 
 
+### controller 변경에 따른 검증 테스트 코드 보강
+- [ ] MenuGroupRestController
+- [ ] MenuRestController
+- [ ] OrderRestController
+- [ ] ProductRestController
+- [ ] TableGroupRestController
+- [ ] TableRestController
+= 총 15개 API 에 대한 테스트 필요
+
+### 인수테스트 테스트 코드 보강
+- [ ] MenuGroupRestController
+  - `post: create /api/menu-groups`
+  - `get: list /api/menu-groups`
+- [ ] MenuRestController
+  - `post: create /api/menus`
+  - `get: get /api/menus`
+- [ ] OrderRestController
+  - `post: create /api/orders`
+  - `get: list /api/orders`
+  - `put: changeOrderStatus /api/orders/{orderId}/order-status`
+- [ ] ProductRestController
+  - `post: create /api/products`
+  - `get: list /api/products`
+- [ ] TableGroupRestController
+  - `post: create /api/table-groups`
+  - `delete: ungroup /api/table-groups/{tableGroupId}`
+- [ ] TableRestController
+  - `post: create /api/tables` 
+  - `get: list /api/tables`
+  - `put: changeEmpty /api/tables/{orderTableId}/empty`
+  - `put: changeNumberOfGuests /api/tables/{orderTableId}/number-of-guests`
+    = 총 15개 API 에 대한 테스트 필요
+
+
   
