@@ -28,19 +28,19 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final TableGroup request) {
-        final List<OrderTable> orderTables = request.getOrderTables();
-        final List<Long> orderTableIds = collectIds(orderTables);
+        final List<OrderTable> savedOrderTables = mapToOrderTables(request.getOrderTables());
+        final var tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
+        return tableGroups.add(tableGroup);
+    }
 
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-
-        // 중복 테이블이 있으면 안된다 && 테이블이 모두 DB에 존재해야 한다
-        if (orderTables.size() != savedOrderTables.size()) {
+    // - 비즈니스 오류 (x)
+    // - 논리적 오류 (o)
+    private List<OrderTable> mapToOrderTables(final List<OrderTable> requests) {
+        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(collectIds(requests));
+        if (requests.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
-
-        final var tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
-
-        return tableGroups.add(tableGroup);
+        return savedOrderTables;
     }
 
     private List<Long> collectIds(final List<OrderTable> orderTables) {
