@@ -101,7 +101,7 @@ class TableServiceTest {
         Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, List.of()))
                 .getId();
         OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
-        orderRepository.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), List.of(orderLineItem)));
+        orderRepository.save(주문을_생성한다(orderTableId, COOKING, LocalDateTime.now(), List.of(orderLineItem)));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, true))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -116,7 +116,7 @@ class TableServiceTest {
         Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, List.of()))
                 .getId();
         OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
-        orderRepository.save(주문을_생성한다(orderTableId, MEAL.name(), LocalDateTime.now(), List.of(orderLineItem)));
+        orderRepository.save(주문을_생성한다(orderTableId, MEAL, LocalDateTime.now(), List.of(orderLineItem)));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, true))
                 .isInstanceOf(IllegalArgumentException.class);

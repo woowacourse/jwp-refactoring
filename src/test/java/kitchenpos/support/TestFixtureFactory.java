@@ -8,6 +8,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
@@ -35,7 +36,8 @@ public class TestFixtureFactory {
         return new MenuProduct(null, null, productId, quantity, price);
     }
 
-    public static Order 주문을_생성한다(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+    public static Order 주문을_생성한다(final Long orderTableId, final OrderStatus orderStatus,
+                                 final LocalDateTime orderedTime,
                                  List<OrderLineItem> orderLineItems) {
         return new Order(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }

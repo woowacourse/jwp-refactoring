@@ -125,7 +125,7 @@ class TableGroupServiceTest {
                 .getId();
         OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
         orderRepository.save(
-                주문을_생성한다(orderTable1.getId(), COOKING.name(), LocalDateTime.now(), List.of(orderLineItem)));
+                주문을_생성한다(orderTable1.getId(), COOKING, LocalDateTime.now(), List.of(orderLineItem)));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId)).isInstanceOf(IllegalArgumentException.class);
     }

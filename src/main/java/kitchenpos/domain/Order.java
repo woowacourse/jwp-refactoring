@@ -1,11 +1,15 @@
 package kitchenpos.domain;
 
+import static kitchenpos.domain.OrderStatus.COMPLETION;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,8 +26,9 @@ public class Order {
     private Long id;
     @Column(name = "order_table_id", nullable = false)
     private Long orderTableId;
+    @Enumerated(value = EnumType.STRING)
     @Column(name = "order_status", nullable = false)
-    private String orderStatus;
+    private OrderStatus orderStatus;
     @Column(name = "ordered_time", nullable = false)
     private LocalDateTime orderedTime;
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
@@ -32,7 +37,7 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         mapOrderLineItems(orderLineItems);
         this.id = id;
@@ -57,12 +62,11 @@ public class Order {
 
     public void changeOrderStatus(final String orderStatusName) {
         validateNotCompleted();
-        OrderStatus.valueOf(orderStatusName);
-        this.orderStatus = orderStatusName;
+        this.orderStatus = OrderStatus.valueOf(orderStatusName);
     }
 
     private void validateNotCompleted() {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+        if (orderStatus == COMPLETION) {
             throw new IllegalArgumentException();
         }
     }
@@ -75,7 +79,7 @@ public class Order {
         return orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 

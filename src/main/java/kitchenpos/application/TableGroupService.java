@@ -60,7 +60,7 @@ public class TableGroupService {
                 .collect(Collectors.toList());
 
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+                orderTableIds, List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
 

@@ -42,7 +42,7 @@ class OrderRepositoryTest {
         Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, List.of()))
                 .getId();
         OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
-        Order order = 주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), List.of(orderLineItem));
+        Order order = 주문을_생성한다(orderTableId, COOKING, LocalDateTime.now(), List.of(orderLineItem));
 
         Order savedOrder = orderRepository.save(order);
 
@@ -64,7 +64,7 @@ class OrderRepositoryTest {
                 .getId();
         OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
         Order order = orderRepository
-                .save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), List.of(orderLineItem)));
+                .save(주문을_생성한다(orderTableId, COOKING, LocalDateTime.now(), List.of(orderLineItem)));
 
         Order actual = orderRepository.findById(order.getId())
                 .orElseGet(Assertions::fail);
@@ -91,9 +91,9 @@ class OrderRepositoryTest {
         OrderLineItem orderLineItem1 = 주문_항목을_생성한다(null, menuId, 1);
         OrderLineItem orderLineItem2 = 주문_항목을_생성한다(null, menuId, 1);
         Order order1 = orderRepository.save(
-                주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), List.of(orderLineItem1)));
+                주문을_생성한다(orderTableId, COOKING, LocalDateTime.now(), List.of(orderLineItem1)));
         Order order2 = orderRepository.save(
-                주문을_생성한다(orderTableId, MEAL.name(), LocalDateTime.now(), List.of(orderLineItem2)));
+                주문을_생성한다(orderTableId, MEAL, LocalDateTime.now(), List.of(orderLineItem2)));
 
         List<Order> actual = orderRepository.findAll();
 
@@ -111,9 +111,9 @@ class OrderRepositoryTest {
         Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, List.of()))
                 .getId();
         OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
-        orderRepository.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), List.of(orderLineItem)));
+        orderRepository.save(주문을_생성한다(orderTableId, COOKING, LocalDateTime.now(), List.of(orderLineItem)));
 
-        boolean actual = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING.name()));
+        boolean actual = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING));
 
         assertThat(actual).isTrue();
     }
@@ -123,7 +123,7 @@ class OrderRepositoryTest {
         Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
                 .getId();
 
-        boolean actual = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING.name()));
+        boolean actual = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING));
 
         assertThat(actual).isFalse();
     }
@@ -137,10 +137,10 @@ class OrderRepositoryTest {
         Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, List.of()))
                 .getId();
         OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
-        orderRepository.save(주문을_생성한다(orderTableId, COOKING.name(), LocalDateTime.now(), List.of(orderLineItem)));
+        orderRepository.save(주문을_생성한다(orderTableId, COOKING, LocalDateTime.now(), List.of(orderLineItem)));
 
         boolean actual = orderRepository.existsByOrderTableIdInAndOrderStatusIn(List.of(orderTableId),
-                List.of(COOKING.name()));
+                List.of(COOKING));
 
         assertThat(actual).isTrue();
     }
@@ -151,7 +151,7 @@ class OrderRepositoryTest {
                 .getId();
 
         boolean actual = orderRepository.existsByOrderTableIdInAndOrderStatusIn(List.of(orderTableId),
-                List.of(COOKING.name()));
+                List.of(COOKING));
 
         assertThat(actual).isFalse();
     }

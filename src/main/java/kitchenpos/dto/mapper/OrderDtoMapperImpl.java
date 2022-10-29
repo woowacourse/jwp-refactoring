@@ -17,7 +17,7 @@ public class OrderDtoMapperImpl implements OrderDtoMapper {
                 .stream()
                 .map(this::toOrderLineItemResponse)
                 .collect(Collectors.toList());
-        return new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus(),
+        return new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus().name(),
                 order.getOrderedTime(), orderLineItemRespons);
     }
 

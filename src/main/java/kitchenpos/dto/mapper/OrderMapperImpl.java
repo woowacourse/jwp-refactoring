@@ -20,7 +20,7 @@ public class OrderMapperImpl implements OrderMapper {
         return new Order(
                 null,
                 orderCreateRequest.getOrderTableId(),
-                OrderStatus.COOKING.name(),
+                OrderStatus.COOKING,
                 LocalDateTime.now(),
                 orderLineItems
         );
