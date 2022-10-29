@@ -1,6 +1,5 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -11,12 +10,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.sql.DataSource;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static kitchenpos.fixture.TableGroupFixture.newTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DaoTest
@@ -97,16 +95,5 @@ class JdbcTemplateTableGroupDaoTest {
     private void assertEquals(final TableGroup actual, final TableGroup expected) {
         assertThat(actual.getId()).isEqualTo(expected.getId());
         assertThat(actual.getCreatedDate()).isEqualTo(expected.getCreatedDate());
-    }
-
-    private static TableGroup newTableGroup(final LocalDateTime createdDate, final OrderTable... orderTables) {
-        final var tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(createdDate);
-        tableGroup.setOrderTables(List.of(orderTables));
-        return tableGroup;
-    }
-
-    private static TableGroup newTableGroup(final OrderTable... orderTables) {
-        return newTableGroup(LocalDateTime.now(), orderTables);
     }
 }

@@ -1,7 +1,6 @@
 package kitchenpos.dao;
 
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -12,12 +11,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.sql.DataSource;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static kitchenpos.fixture.OrderFixture.newOrder;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DaoTest
@@ -167,19 +166,5 @@ class JdbcTemplateOrderDaoTest {
         assertThat(actual.getOrderTableId()).isEqualTo(expected.getOrderTableId());
         assertThat(actual.getOrderStatus()).isEqualTo(expected.getOrderStatus());
         assertThat(actual.getOrderedTime()).isEqualTo(expected.getOrderedTime());
-    }
-
-    private static Order newOrder(final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime localDateTime,
-                           final OrderLineItem... orderLineItems) {
-        final var order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus.name());
-        order.setOrderedTime(localDateTime);
-        order.setOrderLineItems(List.of(orderLineItems));
-        return order;
-    }
-
-    private static Order newOrder(final Long orderTableId, final OrderStatus orderStatus, final OrderLineItem... orderLineItems) {
-        return newOrder(orderTableId, orderStatus, LocalDateTime.now(), orderLineItems);
     }
 }

@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static kitchenpos.dao.DaoUtils.asList;
+import static kitchenpos.fixture.OrderLineItemFixture.newOrderLineItem;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DaoTest
@@ -138,13 +139,5 @@ class JdbcTemplateOrderLineItemDaoTest {
         assertThat(actual.getOrderId()).isEqualTo(expected.getOrderId());
         assertThat(actual.getMenuId()).isEqualTo(expected.getMenuId());
         assertThat(actual.getQuantity()).isEqualTo(expected.getQuantity());
-    }
-
-    private static OrderLineItem newOrderLineItem(final Long orderId, final Long menuId, final long quantity) {
-        final var orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-        return orderLineItem;
     }
 }

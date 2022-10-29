@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static kitchenpos.dao.DaoUtils.asList;
+import static kitchenpos.fixture.OrderTableFixture.newOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DaoTest
@@ -149,13 +150,5 @@ class JdbcTemplateOrderTableDaoTest {
         assertThat(actual.getNumberOfGuests()).isEqualTo(expected.getNumberOfGuests());
         assertThat(actual.getTableGroupId()).isEqualTo(expected.getTableGroupId());
         assertThat(actual.isEmpty()).isEqualTo(expected.isEmpty());
-    }
-
-    private static OrderTable newOrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        final var orderTable = new OrderTable();
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.updateNumberOfGuests(numberOfGuests);
-        orderTable.changeEmptyStatusTo(empty);
-        return orderTable;
     }
 }

@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.fixture.MenuGroupFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static kitchenpos.fixture.MenuGroupFixture.newMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DaoTest
@@ -50,7 +52,7 @@ class JdbcTemplateMenuGroupDaoTest {
 
         private Map<Long, MenuGroup> saveMenuGroups(final List<String> names) {
             return names.stream()
-                    .map(JdbcTemplateMenuGroupDaoTest::newMenuGroup)
+                    .map(MenuGroupFixture::newMenuGroup)
                     .map(menuGroupDao::save)
                     .collect(Collectors.toMap(MenuGroup::getId, menuGroup -> menuGroup));
         }
@@ -115,11 +117,5 @@ class JdbcTemplateMenuGroupDaoTest {
     private void assertEquals(final MenuGroup actual, final MenuGroup expected) {
         assertThat(actual.getId()).isEqualTo(expected.getId());
         assertThat(actual.getName()).isEqualTo(expected.getName());
-    }
-
-    private static MenuGroup newMenuGroup(final String name) {
-        final var menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        return menuGroup;
     }
 }

@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static kitchenpos.dao.DaoUtils.asList;
+import static kitchenpos.fixture.MenuProductFixture.newMenuProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DaoTest
@@ -136,13 +137,5 @@ class JdbcTemplateMenuProductDaoTest {
         assertThat(actual.getMenuId()).isEqualTo(expected.getMenuId());
         assertThat(actual.getProductId()).isEqualTo(expected.getProductId());
         assertThat(actual.getQuantity()).isEqualTo(expected.getQuantity());
-    }
-
-    private static MenuProduct newMenuProduct(final Long menuId, final Long productId, final long quantity) {
-        final var menuProduct = new MenuProduct();
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
     }
 }

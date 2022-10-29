@@ -10,11 +10,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.sql.DataSource;
-import java.math.BigDecimal;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static kitchenpos.fixture.ProductFixture.newProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DaoTest
@@ -97,12 +97,5 @@ class JdbcTemplateProductDaoTest {
         assertThat(actual.getId()).isEqualTo(expected.getId());
         assertThat(actual.getName()).isEqualTo(expected.getName());
         assertThat(actual.getPrice()).isEqualByComparingTo(expected.getPrice());
-    }
-
-    private static Product newProduct(final String name, final int price) {
-        final var product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
-        return product;
     }
 }
