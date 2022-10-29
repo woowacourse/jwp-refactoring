@@ -55,7 +55,7 @@ public class OrderTables {
     }
 
     public void group(TableGroup tableGroup) {
-        values.forEach(orderTable -> orderTable.setTableGroup(tableGroup));
+        values.forEach(orderTable -> orderTable.group(tableGroup));
     }
 
     public void ungroup() {

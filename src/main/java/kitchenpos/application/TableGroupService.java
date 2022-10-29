@@ -40,7 +40,6 @@ public class TableGroupService {
         TableGroup tableGroup = new TableGroup(orderTables.getValues());
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
         orderTables.group(savedTableGroup);
-        savedTableGroup.setOrderTables(orderTables.getValues());
         return savedTableGroup;
     }
 

@@ -92,7 +92,7 @@ public class OrderTable {
         return tableGroup;
     }
 
-    public void setTableGroup(TableGroup tableGroup) {
+    public void group(TableGroup tableGroup) {
         this.tableGroup = tableGroup;
     }
 

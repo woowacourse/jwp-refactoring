@@ -18,8 +18,7 @@ class MenuGroupServiceTest extends ServiceTest {
     @DisplayName("메뉴 그룹을 생성할 수 있다.")
     @Test
     void create() {
-        MenuGroupDto menuGroupDto = new MenuGroupDto();
-        menuGroupDto.setName("햄버거");
+        MenuGroupDto menuGroupDto = new MenuGroupDto("햄버거");
 
         menuGroupService.create(menuGroupDto);
 
