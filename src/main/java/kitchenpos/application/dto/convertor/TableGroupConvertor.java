@@ -26,11 +26,11 @@ public class TableGroupConvertor {
     }
 
     public static OrderTable convertToOrderTable(final OrderTableChangeRequest request) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(request.getId());
-        orderTable.setNumberOfGuests(request.getNumberOfGuests());
-        orderTable.setEmpty(request.isEmpty());
-        return orderTable;
+        return new OrderTable(
+            request.getId(),
+            request.getNumberOfGuests(),
+            request.isEmpty()
+        );
     }
 
     public static TableGroupResponse convertToOrderTableResponse(final TableGroup orderTable) {

@@ -6,6 +6,7 @@ import static kitchenpos.domain.fixture.OrderTableFixture.비어있는_테이블
 import static kitchenpos.domain.fixture.OrderTableFixture.비어있지_않는_테이블;
 import static kitchenpos.domain.fixture.OrderTableFixture.새로운_테이블;
 import static kitchenpos.domain.fixture.TableGroupFixture.새로운_테이블_그룹;
+import static kitchenpos.domain.fixture.TableGroupFixture.테이블_그룹의_주문_테이블들은;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -115,12 +116,12 @@ class TableGroupServiceTest {
             .hasMessageContaining("테이블이 비워져 있어야 합니다.");
     }
 
-    @DisplayName("테이블 그룹 등록 시 테이블 그룹의 아이디가 null 이어야 한다")
+    @DisplayName("테이블 그룹 등록 시 테이블의 테이블 그룹 아이디가 null 이어야 한다")
     @Test
     void createOrderTableIsNotNull() {
-        final TableGroup savedTableGroup = tableGroupDao.save(새로운_테이블_그룹());
-        final OrderTable saved1 = orderTableDao.save(새로운_테이블(savedTableGroup.getId()));
-        final OrderTable saved2 = orderTableDao.save(새로운_테이블(savedTableGroup.getId()));
+        final OrderTable saved1 = orderTableDao.save(새로운_테이블(1L));
+        final OrderTable saved2 = orderTableDao.save(새로운_테이블(1L));
+        tableGroupDao.save(테이블_그룹의_주문_테이블들은(List.of(saved1, saved2)));
 
         final OrderTableChangeRequest orderTableChangeRequest1 = new OrderTableChangeRequest(
             saved1.getId(), saved1.getNumberOfGuests(), saved1.isEmpty()
@@ -129,8 +130,7 @@ class TableGroupServiceTest {
             saved2.getId(), saved2.getNumberOfGuests(), saved2.isEmpty()
         );
 
-        final TableGroupRequest request = new TableGroupRequest(List.of(orderTableChangeRequest1,
-            orderTableChangeRequest2));
+        final TableGroupRequest request = new TableGroupRequest(List.of(orderTableChangeRequest1, orderTableChangeRequest2));
 
         assertThatThrownBy(() -> tableGroupService.create(request))
             .isInstanceOf(IllegalArgumentException.class)

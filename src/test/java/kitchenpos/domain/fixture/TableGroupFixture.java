@@ -25,6 +25,7 @@ public class TableGroupFixture {
     public static TableGroup 테이블_그룹의_주문_테이블들은(final List<OrderTable> orderTables) {
         return 테이블_그룹()
             .주문_테이블들(orderTables)
+            .그룹화한_시간(LocalDateTime.now())
             .build();
     }
 

@@ -1,10 +1,10 @@
 package kitchenpos.dao.fake;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
@@ -17,9 +17,11 @@ public class FakeOrderTableDao implements OrderTableDao {
     @Override
     public OrderTable save(final OrderTable entity) {
         long savedId = ++id;
-        orderTables.put(savedId, entity);
-        entity.setId(savedId);
-        return entity;
+        final OrderTable savedOrderTable = new OrderTable(
+            savedId, entity.getTableGroupId(), entity.getNumberOfGuests(), entity.isEmpty()
+        );
+        orderTables.put(savedId, savedOrderTable);
+        return savedOrderTable;
     }
 
     @Override
@@ -34,23 +36,15 @@ public class FakeOrderTableDao implements OrderTableDao {
 
     @Override
     public List<OrderTable> findAllByIdIn(final List<Long> ids) {
-        final List<OrderTable> savedOrderTables = new ArrayList<>();
-        for (OrderTable orderTable : orderTables.values()) {
-            if (ids.contains(orderTable.getId())) {
-                savedOrderTables.add(orderTable);
-            }
-        }
-        return savedOrderTables;
+        return orderTables.values().stream()
+            .filter(orderTable -> ids.contains(orderTable.getId()))
+            .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
     public List<OrderTable> findAllByTableGroupId(final Long tableGroupId) {
-        final List<OrderTable> savedOrderTables = new ArrayList<>();
-        for (OrderTable orderTable : orderTables.values()) {
-            if (orderTable.getTableGroupId().equals(tableGroupId)) {
-                savedOrderTables.add(orderTable);
-            }
-        }
-        return savedOrderTables;
+        return orderTables.values().stream()
+            .filter(orderTable -> orderTable.getTableGroupId().equals(tableGroupId))
+            .collect(Collectors.toUnmodifiableList());
     }
 }

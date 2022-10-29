@@ -2,15 +2,31 @@ package kitchenpos.domain;
 
 public class OrderTable {
 
-    private Long id;
+    private final Long id;
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTable() {
+    /**
+     * DB 에 저장되지 않은 객체
+     */
+    public OrderTable(final int numberOfGuests, final boolean empty) {
+        this(null, null, numberOfGuests, empty);
     }
 
-    public OrderTable(final int numberOfGuests, final boolean empty) {
+    /**
+     * OrderTable 정보를 수정하기 위한 객체
+     */
+    public OrderTable(final Long id, final int numberOfGuests, final boolean empty) {
+        this(id, null, numberOfGuests, empty);
+    }
+
+    /**
+     * DB 에 저장된 객체
+     */
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this.id = id;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -46,24 +62,12 @@ public class OrderTable {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Long getTableGroupId() {
         return tableGroupId;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
     }
 
     public boolean isEmpty() {
@@ -72,9 +76,5 @@ public class OrderTable {
 
     public boolean isNotEmpty() {
         return !empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 }
