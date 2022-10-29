@@ -8,11 +8,7 @@ import kitchenpos.domain.MenuProduct;
 public class MenuFixtures {
 
     public static final Menu generateMenu(final String name, final BigDecimal price, final Long menuGroupId) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        return menu;
+        return generateMenu(null, name, price, menuGroupId, List.of());
     }
 
     public static final Menu generateMenu(final String name,
@@ -31,12 +27,6 @@ public class MenuFixtures {
                                           final BigDecimal price,
                                           final Long menuGroupId,
                                           final List<MenuProduct> menuProducts) {
-        Menu menu = new Menu();
-        menu.setId(id);
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-        return menu;
+        return new Menu(name, price, menuGroupId, menuProducts);
     }
 }

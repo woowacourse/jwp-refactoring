@@ -13,9 +13,6 @@ public class MenuGroupFixtures {
     }
 
     public static final MenuGroup generateMenuGroup(final Long id, final String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(id);
-        menuGroup.setName(name);
-        return menuGroup;
+        return new MenuGroup(name);
     }
 }

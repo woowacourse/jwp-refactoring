@@ -18,10 +18,6 @@ public class ProductFixtures {
     }
 
     public static final Product generateProduct(final Long id, final String name, final BigDecimal price) {
-        Product product = new Product();
-        product.setId(id);
-        product.setName(name);
-        product.setPrice(price);
-        return product;
+        return new Product(name, price);
     }
 }

@@ -32,12 +32,6 @@ public class OrderFixtures {
                                             final String orderStatus,
                                             final LocalDateTime orderedTime,
                                             final List<OrderLineItem> orderLineItems) {
-        Order order = new Order();
-        order.setId(id);
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(orderedTime);
-        order.setOrderLineItems(orderLineItems);
-        return order;
+        return new Order(orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 }
