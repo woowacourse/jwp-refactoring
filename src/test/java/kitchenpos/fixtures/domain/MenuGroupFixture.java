@@ -6,10 +6,7 @@ import kitchenpos.dto.request.MenuGroupRequest;
 public class MenuGroupFixture {
 
     public static MenuGroup createMenuGroup(final String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-
-        return menuGroup;
+        return new MenuGroup(name);
     }
 
     public static MenuGroupRequest createMenuGroupRequest() {
