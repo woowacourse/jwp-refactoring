@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -28,15 +30,15 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void Should_CreateMenuGroup() {
             // given
-            MenuGroup menuGroup = createMenuGroupRequest();
+            MenuGroupRequest request = createMenuGroupRequest();
 
             // when
-            MenuGroup actual = menuGroupService.create(menuGroup);
+            MenuGroupResponse actual = menuGroupService.create(request);
 
             // then
             assertAll(() -> {
                 assertThat(actual.getId()).isNotNull();
-                assertThat(actual.getName()).isEqualTo(menuGroup.getName());
+                assertThat(actual.getName()).isEqualTo(request.getName());
             });
         }
     }
@@ -57,7 +59,7 @@ class MenuGroupServiceTest extends ServiceTest {
             menuGroupRepository.save(menuGroup3);
 
             // when
-            List<MenuGroup> actual = menuGroupService.list();
+            List<MenuGroupResponse> actual = menuGroupService.list();
 
             // then
             assertThat(actual).hasSize(3);

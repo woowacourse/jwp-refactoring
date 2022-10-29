@@ -1,6 +1,7 @@
 package kitchenpos.fixtures.domain;
 
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.MenuGroupRequest;
 
 public class MenuGroupFixture {
 
@@ -11,11 +12,11 @@ public class MenuGroupFixture {
         return menuGroup;
     }
 
-    public static MenuGroup createMenuGroupRequest() {
-        return createMenuGroup("분식");
+    public static MenuGroupRequest createMenuGroupRequest() {
+        return createMenuGroupRequest("분식");
     }
 
-    public static MenuGroup createMenuGroupRequest(final String name) {
-        return createMenuGroup(name);
+    public static MenuGroupRequest createMenuGroupRequest(final String name) {
+        return new MenuGroupRequest(name);
     }
 }
