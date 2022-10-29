@@ -1,4 +1,4 @@
-package kitchenpos.ui;
+package kitchenpos.ui.dto.request;
 
 public class TableChangeNumberOfGuestsRequest {
 

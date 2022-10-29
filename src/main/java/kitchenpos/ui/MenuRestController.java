@@ -17,20 +17,11 @@ import java.util.List;
 
 @RestController
 public class MenuRestController {
+
     private final MenuService menuService;
 
     public MenuRestController(final MenuService menuService) {
         this.menuService = menuService;
-    }
-
-    @Deprecated
-    @PostMapping("/api/menus")
-    public ResponseEntity<Menu> create(@RequestBody final Menu menu) {
-        final Menu created = menuService.create(menu);
-        final URI uri = URI.create("/api/menus/" + created.getId());
-        return ResponseEntity.created(uri)
-                .body(created)
-                ;
     }
 
     @PostMapping("/api/v2/menus")
@@ -39,15 +30,6 @@ public class MenuRestController {
         final MenuResponse menuResponse = MenuResponse.from(created);
         final URI uri = URI.create("/api/v2/menus/" + menuResponse.getId());
         return ResponseEntity.created(uri).body(menuResponse);
-    }
-
-
-    @Deprecated
-    @GetMapping("/api/menus")
-    public ResponseEntity<List<Menu>> list() {
-        return ResponseEntity.ok()
-                .body(menuService.list())
-                ;
     }
 
     @GetMapping("/api/v2/menus")

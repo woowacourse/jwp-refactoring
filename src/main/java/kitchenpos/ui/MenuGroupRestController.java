@@ -24,16 +24,6 @@ public class MenuGroupRestController {
         this.menuGroupService = menuGroupService;
     }
 
-    @Deprecated
-    @PostMapping("/api/menu-groups")
-    public ResponseEntity<MenuGroup> create(@RequestBody final MenuGroup menuGroup) {
-        final MenuGroup created = menuGroupService.create(menuGroup);
-        final URI uri = URI.create("/api/menu-groups/" + created.getId());
-        return ResponseEntity.created(uri)
-                .body(created)
-                ;
-    }
-
     @PostMapping("/api/v2/menu-groups")
     public ResponseEntity<MenuGroupResponse> create(@RequestBody final MenuGroupCreationRequest menuGroup) {
         final MenuGroupDto created = menuGroupService.create(MenuGroupCreationDto.from(menuGroup));
@@ -42,15 +32,6 @@ public class MenuGroupRestController {
         return ResponseEntity.created(uri).body(menuGroupResponse);
     }
 
-    @Deprecated
-    @GetMapping("/api/menu-groups")
-    public ResponseEntity<List<MenuGroup>> list() {
-        return ResponseEntity.ok()
-                .body(menuGroupService.list())
-                ;
-    }
-
-    @Deprecated
     @GetMapping("/api/v2/menu-groups")
     public ResponseEntity<List<MenuGroupResponse>> getMenuGroups() {
         final List<MenuGroupResponse> menuGroupResponses = menuGroupService.getMenuGroups()

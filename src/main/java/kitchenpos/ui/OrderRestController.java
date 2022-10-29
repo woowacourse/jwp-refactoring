@@ -26,30 +26,11 @@ public class OrderRestController {
         this.orderService = orderService;
     }
 
-    @Deprecated
-    @PostMapping("/api/orders")
-    public ResponseEntity<Order> create(@RequestBody final Order order) {
-        final Order created = orderService.create(order);
-        final URI uri = URI.create("/api/orders/" + created.getId());
-        return ResponseEntity.created(uri)
-                .body(created)
-                ;
-    }
-
     @PostMapping("/api/v2/orders")
     public ResponseEntity<OrderResponse> create(@RequestBody final OrderCreationRequest orderCreationRequest) {
         final OrderDto created = orderService.create(OrderCreationDto.from(orderCreationRequest));
         final URI uri = URI.create("/api/orders/" + created.getId());
         return ResponseEntity.created(uri).body(OrderResponse.from(created));
-    }
-
-
-    @Deprecated
-    @GetMapping("/api/orders")
-    public ResponseEntity<List<Order>> list() {
-        return ResponseEntity.ok()
-                .body(orderService.list())
-                ;
     }
 
     @GetMapping("/api/v2/orders")
@@ -60,15 +41,6 @@ public class OrderRestController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok().body(orderResponses);
-    }
-
-    @Deprecated
-    @PutMapping("/api/orders/{orderId}/order-status")
-    public ResponseEntity<Order> changeOrderStatus(
-            @PathVariable final Long orderId,
-            @RequestBody final Order order
-    ) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, order));
     }
 
     @PutMapping("/api/v2/orders/{orderId}/order-status")
