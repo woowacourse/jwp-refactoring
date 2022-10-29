@@ -26,11 +26,11 @@ class ProductServiceTest extends ServiceTest {
     @DisplayName("상품을 등록할 수 있다.")
     @Test
     void create() {
-        String name = "치킨";
-        BigDecimal price = BigDecimal.valueOf(10000);
-        ProductCreateRequest request = new ProductCreateRequest(name, price);
+        final String name = "치킨";
+        final BigDecimal price = BigDecimal.valueOf(10000);
+        final ProductCreateRequest request = new ProductCreateRequest(name, price);
 
-        ProductResponse response = productService.create(request);
+        final ProductResponse response = productService.create(request);
 
         assertAll(
                 () -> assertThat(response.getId()).isNotNull(),
@@ -45,7 +45,7 @@ class ProductServiceTest extends ServiceTest {
         productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
         productDao.save(new Product("피자", BigDecimal.valueOf(8000)));
 
-        List<ProductResponse> response = productService.list();
+        final List<ProductResponse> response = productService.list();
 
         assertThat(response).hasSize(2);
     }

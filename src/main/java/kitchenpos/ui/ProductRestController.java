@@ -31,6 +31,6 @@ public class ProductRestController {
 
     @GetMapping
     public ResponseEntity<List<ProductResponse>> list() {
-        return ResponseEntity.ok().body(productService.list());
+        return ResponseEntity.ok(productService.list());
     }
 }
