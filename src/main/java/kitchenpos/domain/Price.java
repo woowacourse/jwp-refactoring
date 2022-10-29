@@ -29,8 +29,8 @@ public class Price {
         return this.amount.compareTo(other) > 0;
     }
 
-    public BigDecimal multiply(long other) {
-        return amount.multiply(BigDecimal.valueOf(other));
+    public BigDecimal multiply(Quantity quantity) {
+        return amount.multiply(BigDecimal.valueOf(quantity.getVolume()));
     }
 
     public BigDecimal getAmount() {

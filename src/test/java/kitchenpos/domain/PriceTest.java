@@ -52,7 +52,7 @@ class PriceTest {
         // given
         Price price = new Price(BigDecimal.valueOf(1000));
         // when
-        BigDecimal actual = price.multiply(2);
+        BigDecimal actual = price.multiply(new Quantity(2));
         // then
         assertThat(actual).isEqualTo(BigDecimal.valueOf(1000 * 2));
     }
