@@ -223,3 +223,5 @@ Controller에서 받아온 객체를 그대로 save하거나, 해당 객체의 �
 
 9. MenuService 리팩터링
 10. OrderService 리팩터링
+11. JPA 적용
+    - [x] OrderTable 과 TableGroup
