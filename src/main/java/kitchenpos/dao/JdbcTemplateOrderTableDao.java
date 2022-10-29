@@ -1,6 +1,5 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderTable;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -12,8 +11,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,7 +37,6 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         ;
     }
 
-    @Override
     public OrderTable save(final OrderTable entity) {
         if (Objects.isNull(entity.getId())) {
             final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
@@ -51,7 +47,6 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         return entity;
     }
 
-    @Override
     public Optional<OrderTable> findById(final Long id) {
         try {
             return Optional.of(select(id));
@@ -60,13 +55,11 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         }
     }
 
-    @Override
     public List<OrderTable> findAll() {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table";
         return jdbcTemplate.query(sql, ORDER_TABLE_ROW_MAPPER);
     }
 
-    @Override
     public List<OrderTable> findAllByIdIn(final List<Long> ids) {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id IN (:ids)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
@@ -74,7 +67,6 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         return jdbcTemplate.query(sql, parameters, ORDER_TABLE_ROW_MAPPER);
     }
 
-    @Override
     public List<OrderTable> findAllByTableGroupId(final Long tableGroupId) {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty" +
                 " FROM order_table WHERE table_group_id = (:tableGroupId)";
