@@ -8,6 +8,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.application.dto.request.OrderTableCreateReqeust;
+import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
@@ -35,14 +37,13 @@ class TableServiceTest {
     @DisplayName("테이블을 생성한다.")
     void createTable() {
         final int actualNumberOfGuests = 2;
-        final OrderTable orderTable = OrderTableFixture.createOrderTable(actualNumberOfGuests, true);
+        final OrderTableCreateReqeust request = OrderTableFixture.createOrderTable(actualNumberOfGuests, true);
 
-        final OrderTable actual = tableService.create(orderTable);
+        final OrderTableResponse actual = tableService.create(request);
 
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertThat(actual.getNumberOfGuests()).isEqualTo(actualNumberOfGuests),
-                () -> assertThat(actual.getTableGroupId()).isNull(),
                 () -> assertThat(actual.isEmpty()).isTrue()
         );
     }
@@ -50,9 +51,9 @@ class TableServiceTest {
     @Test
     @DisplayName("테이블 목록들을 조회한다.")
     void getTables() {
-        final List<OrderTable> expectedOrderTables = orderTableDao.findAll();
+        final List<OrderTableResponse> expectedOrderTables = OrderTableFixture.setUp().getFixtures();
 
-        final List<OrderTable> orderTables = tableService.list();
+        final List<OrderTableResponse> orderTables = tableService.list();
 
         assertAll(
                 () -> assertThat(orderTables).hasSameSizeAs(expectedOrderTables),
@@ -68,84 +69,36 @@ class TableServiceTest {
         final OrderTable orderTable = orderTableDao.findById(테이블그룹이_존재하지_않는_테이블)
                 .orElseThrow();
 
-        final OrderTable emptyTable = OrderTableFixture.createEmptyTable();
-
-        final OrderTable changedOrderTable = tableService.changeEmpty(orderTable.getId(), emptyTable);
+        final OrderTableResponse changedOrderTable = tableService.changeEmpty(orderTable.getId(), true);
 
         assertThat(changedOrderTable.isEmpty()).isTrue();
     }
 
     @Test
-    @DisplayName("주문 테이블이 기존 테이블 그룹에 포함되어 있는 경우 예외 발생")
-    void whenOrderTableIsIncludeInTableGroup() {
-        final OrderTable emptyTable = OrderTableFixture.createEmptyTable();
-
-        assertThatThrownBy(() -> tableService.changeEmpty(주문가능_테이블, emptyTable))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     @DisplayName("주문 테이블의 주문의 상태가 조리 상태면 예외 발생")
     void whenOrderTableWithCookingStatus() {
-        final OrderTable savedOrderTableId = orderTableDao.save(OrderTableFixture.createOrderTableByEmpty(false));
+        final OrderTable savedOrderTableId = orderTableDao.save(new OrderTable(null, 3, false));
         orderDao.save(OrderFixture.createOrder(savedOrderTableId.getId(), OrderStatus.COOKING.name()));
-        final OrderTable emptyTable = OrderTableFixture.createEmptyTable();
 
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableId.getId(), emptyTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableId.getId(), true))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("주문 테이블의 주문의 상태가 식사 상태면 예외 발생")
     void whenOrderTableWithMealStatus() {
-        final OrderTable savedOrderTableId = orderTableDao.save(OrderTableFixture.createOrderTableByEmpty(false));
+        final OrderTable savedOrderTableId = orderTableDao.save(new OrderTable(null, 3, false));
         orderDao.save(OrderFixture.createOrder(savedOrderTableId.getId(), OrderStatus.MEAL.name()));
-        final OrderTable emptyTable = OrderTableFixture.createEmptyTable();
 
-        assertThatThrownBy(() -> tableService.changeEmpty(두명인_테이블, emptyTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(두명인_테이블, true))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("주문 테이블의 손님 수를 변경한다.")
     void changeNumberOrGuests() {
-        final OrderTable orderTable = OrderTableFixture.createOrderTable(3, false);
-        final OrderTable savedOrderTable = tableService.create(orderTable);
-
-        final OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(),
-                OrderTableFixture.createOrderTable(5));
+        final OrderTableResponse changedOrderTable = tableService.changeNumberOfGuests(주문가능_테이블, 5);
 
         assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(5);
-    }
-
-    @Test
-    @DisplayName("손님의 수가 음수이면 예외 발생")
-    void whenNumberOfGuestsIsNegative() {
-        final OrderTable orderTable = OrderTableFixture.createOrderTable(3, false);
-        final OrderTable savedOrderTable = tableService.create(orderTable);
-
-        final OrderTable changedOrderTable = OrderTableFixture.createOrderTable(-1);
-
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), changedOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("기존의 주문 테이블이 존재하지 않을 경우 예외 발생")
-    void whenInvalidOrderTableId() {
-        final OrderTable changedOrderTable = OrderTableFixture.createOrderTable(5, false);
-
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(99999L, changedOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("기존의 주문 테이블이 존재하지 않을 경우 예외 발생")
-    void whenOrderTableIsEmpty() {
-        final OrderTable savedOrderTable = orderTableDao.save(OrderTableFixture.createOrderTableByEmpty(true));
-        final OrderTable changedOrderTable = OrderTableFixture.createOrderTable(5, false);
-
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), changedOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 }

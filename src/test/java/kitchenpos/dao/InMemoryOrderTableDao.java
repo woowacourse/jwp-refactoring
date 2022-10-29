@@ -1,5 +1,6 @@
 package kitchenpos.dao;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
+import org.springframework.util.ReflectionUtils;
 
 public class InMemoryOrderTableDao implements OrderTableDao {
 
@@ -28,7 +30,9 @@ public class InMemoryOrderTableDao implements OrderTableDao {
     @Override
     public OrderTable save(final OrderTable entity) {
         long entityId = checkEntityIdCondition(entity);
-        entity.setId(entityId);
+        final Field field = ReflectionUtils.findField(OrderTable.class, "id");
+        field.setAccessible(true);
+        ReflectionUtils.setField(field, entity, entityId);
         database.put(entityId, entity);
         return entity;
     }
