@@ -19,10 +19,6 @@ public class OrderTable {
     protected OrderTable() {
     }
 
-    public OrderTable(final Long id) {
-        this(id, null, 0, false);
-    }
-
     public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this(null, tableGroupId, numberOfGuests, empty);
     }
@@ -38,6 +34,7 @@ public class OrderTable {
         this.tableGroupId = tableGroupId;
     }
 
+    // Todo: Refactor!
     public void changeSingleEmpty(final boolean empty) {
         if (Objects.nonNull(this.getTableGroupId())) {
             throw new IllegalArgumentException();
@@ -61,6 +58,12 @@ public class OrderTable {
         }
     }
 
+    public void validateEmpty() {
+        if (!this.empty) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     private void validateNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
@@ -69,12 +72,6 @@ public class OrderTable {
 
     public void validateNotTableGroupId() {
         if (tableGroupId == null) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    public void validateEmpty() {
-        if (!this.empty) {
             throw new IllegalArgumentException();
         }
     }
