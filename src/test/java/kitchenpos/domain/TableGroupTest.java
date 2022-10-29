@@ -76,8 +76,8 @@ class TableGroupTest {
         final TableGroup tableGroup = TableGroup.of(1L, LocalDateTime.now(), orderTables);
 
         // when
-        orderTable1.changeOrderStatus(orderStatus);
-        orderTable2.changeOrderStatus(orderStatus);
+        orderTable1.changeOrderStatus(OrderStatus.from(orderStatus));
+        orderTable2.changeOrderStatus(OrderStatus.from(orderStatus));
 
         // then
         assertThatThrownBy(tableGroup::unGroup)
@@ -89,8 +89,8 @@ class TableGroupTest {
     @DisplayName("테이블 그룹을 해제하면 주문 테이블들은 비어있지 않아야 한다.")
     void ungroupThenOrderTableIsNotEmpty() {
         // given
-        final OrderTable orderTable1 = getOrderTable(null, true, OrderStatus.COMPLETION.name());
-        final OrderTable orderTable2 = getOrderTable(null, true, OrderStatus.COMPLETION.name());
+        final OrderTable orderTable1 = getOrderTable(null, true, OrderStatus.COMPLETION);
+        final OrderTable orderTable2 = getOrderTable(null, true, OrderStatus.COMPLETION);
         final List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
         final TableGroup tableGroup = TableGroup.of(1L, LocalDateTime.now(), orderTables);
 
@@ -108,8 +108,8 @@ class TableGroupTest {
     @DisplayName("테이블 그룹을 해제하면 주문 테이블들은 테이블 그룹 id를 갖지 않아야 한다.")
     void ungroupThenOrderTableDontHaveTableGroupId() {
         // given
-        final OrderTable orderTable1 = getOrderTable(null, true, OrderStatus.COMPLETION.name());
-        final OrderTable orderTable2 = getOrderTable(null, true, OrderStatus.COMPLETION.name());
+        final OrderTable orderTable1 = getOrderTable(null, true, OrderStatus.COMPLETION);
+        final OrderTable orderTable2 = getOrderTable(null, true, OrderStatus.COMPLETION);
         final List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
         final TableGroup tableGroup = TableGroup.of(1L, LocalDateTime.now(), orderTables);
 

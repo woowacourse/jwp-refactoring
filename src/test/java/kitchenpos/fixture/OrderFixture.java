@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 
 public class OrderFixture {
 
@@ -16,7 +17,7 @@ public class OrderFixture {
 
     public static Order getOrderRequest(final String orderStatus) {
         final Order orderRequest = getOrderRequest(1L, Arrays.asList(getOrderLineItemRequest()));
-        orderRequest.changeOrderStatus(orderStatus);
+        orderRequest.changeOrderStatus(OrderStatus.from(orderStatus));
         return orderRequest;
     }
 
@@ -29,17 +30,17 @@ public class OrderFixture {
         return Order.of(orderTableId, orderLineItems);
     }
 
-    public static Order getOrder(final String OrderStatus) {
+    public static Order getOrder(final OrderStatus OrderStatus) {
         return getOrder(1L, 1L, OrderStatus, LocalDateTime.now(), Arrays.asList(getOrderLineItemRequest()));
     }
 
     public static Order getOrder() {
-        return getOrder(1L, 1L, COOKING.name(), LocalDateTime.now(), Arrays.asList(getOrderLineItemRequest()));
+        return getOrder(1L, 1L, COOKING, LocalDateTime.now(), Arrays.asList(getOrderLineItemRequest()));
     }
 
     public static Order getOrder(final Long id,
                                  final Long orderTableId,
-                                 final String orderStatus,
+                                 final OrderStatus orderStatus,
                                  final LocalDateTime orderedTime,
                                  final List<OrderLineItem> orderLineItems) {
         return Order.of(id, orderTableId, orderStatus, orderedTime, orderLineItems);

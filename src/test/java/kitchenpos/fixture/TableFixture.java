@@ -22,7 +22,7 @@ public class TableFixture {
         return getOrderTable(1L, tableGroupId, 2, empty, null);
     }
 
-    public static OrderTable getOrderTable(final Long tableGroupId, final boolean empty, final String orderStatus) {
+    public static OrderTable getOrderTable(final Long tableGroupId, final boolean empty, final OrderStatus orderStatus) {
         return getOrderTable(1L, tableGroupId, 2, empty, orderStatus);
     }
 
@@ -38,8 +38,8 @@ public class TableFixture {
                                            final Long tableGroupId,
                                            final int numberOfGuests,
                                            final boolean empty,
-                                           final String orderStatus) {
-        return new OrderTable(id, tableGroupId, numberOfGuests, empty, OrderStatus.from(orderStatus));
+                                           final OrderStatus orderStatus) {
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty, orderStatus);
     }
 
     public static TableGroup getTableGroupRequest() {

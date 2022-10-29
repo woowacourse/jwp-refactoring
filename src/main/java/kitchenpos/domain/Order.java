@@ -7,13 +7,13 @@ import java.util.List;
 public class Order {
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
     private Order(final Long id,
                  final Long orderTableId,
-                 final String orderStatus,
+                 final OrderStatus orderStatus,
                  final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         this.id = id;
@@ -25,7 +25,7 @@ public class Order {
 
     public static Order of(final Long id,
                            final Long orderTableId,
-                           final String orderStatus,
+                           final OrderStatus orderStatus,
                            final LocalDateTime orderedTime,
                            final List<OrderLineItem> orderLineItems) {
         if (orderLineItems == null) {
@@ -38,14 +38,14 @@ public class Order {
     }
 
     public static Order of(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        return of(null, orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+        return of(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
     public static Order createForEntity(final Long id,
                                         final Long orderTableId,
                                         final String orderStatus,
                                         final LocalDateTime orderedTime) {
-        return new Order(id, orderTableId, orderStatus, orderedTime, new LinkedList<>());
+        return new Order(id, orderTableId, OrderStatus.from(orderStatus), orderedTime, new LinkedList<>());
     }
 
     public Long getId() {
@@ -56,11 +56,14 @@ public class Order {
         return orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void changeOrderStatus(final String orderStatus) {
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        if (this.orderStatus.isCompletion()) {
+            throw new IllegalArgumentException("COMPLETION 상태에서는 주문 상태를 변경할 수 없습니다.");
+        }
         this.orderStatus = orderStatus;
     }
 

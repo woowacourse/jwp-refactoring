@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.fixture.OrderFixture.getOrder;
 import static kitchenpos.fixture.OrderFixture.getOrderLineItem;
 import static kitchenpos.fixture.OrderFixture.getOrderLineItemRequest;
@@ -99,25 +98,12 @@ class OrderServiceTest extends ServiceTest{
     void changeOrderStatus() {
         // given
         final Order savedOrder = orderService.create(order);
-        final Order newStatusOrder = getOrderRequest(COMPLETION.name());
+        final Order newStatusOrder = getOrderRequest(MEAL.name());
 
         // when
         final Order updateOrder = orderService.changeOrderStatus(savedOrder.getId(), newStatusOrder);
 
         // then
-        assertThat(updateOrder.getOrderStatus()).isEqualTo(COMPLETION.name());
-    }
-
-    @Test
-    @DisplayName("COMPLETION 상태에서는 주문 상태를 변경할 수 없다.")
-    void changeInvalidOrderStatus() {
-        // given
-        final Order savedOrder = getOrder(COMPLETION.name());
-        final Order newStatusOrder = getOrderRequest(COOKING.name());
-        given(orderDao.findById(1L)).willReturn(Optional.of(savedOrder));
-
-        // then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), newStatusOrder))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThat(updateOrder.getOrderStatus()).isEqualTo(MEAL);
     }
 }

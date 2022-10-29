@@ -7,7 +7,6 @@ public class OrderTable {
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
-
     private OrderStatus orderStatus;
 
     public OrderTable(final Long id,
@@ -81,8 +80,8 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void changeOrderStatus(final String orderStatus) {
-        this.orderStatus = OrderStatus.from(orderStatus);
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
     }
 
     public boolean isCooking() {
