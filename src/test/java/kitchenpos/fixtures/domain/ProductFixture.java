@@ -7,15 +7,7 @@ import kitchenpos.dto.request.ProductRequest;
 public class ProductFixture {
 
     public static Product createProduct(final String name, final BigDecimal price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-
-        return product;
-    }
-
-    public static Product createProductCreate(final String name, final BigDecimal price) {
-        return createProduct(name, price);
+        return new Product(name, price);
     }
 
     public static class ProductRequestBuilder {
