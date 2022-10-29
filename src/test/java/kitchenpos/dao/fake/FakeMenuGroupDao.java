@@ -15,9 +15,9 @@ public class FakeMenuGroupDao implements MenuGroupDao {
 
     @Override
     public MenuGroup save(final MenuGroup entity) {
-        long savedId = ++id;
-        menuGroups.put(savedId, entity);
-        return new MenuGroup(savedId, entity.getName());
+        final MenuGroup savedMenuGroup = new MenuGroup(++id, entity.getName());
+        menuGroups.put(savedMenuGroup.getId(), savedMenuGroup);
+        return savedMenuGroup;
     }
 
     @Override

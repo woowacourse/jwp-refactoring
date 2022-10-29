@@ -15,9 +15,9 @@ public class FakeProductDao implements ProductDao {
 
     @Override
     public Product save(final Product product) {
-        long savedId = ++id;
-        products.put(savedId, product);
-        return new Product(savedId, product.getName(), product.getPrice());
+        final Product savedProduct = new Product(++id, product.getName(), product.getPrice());
+        products.put(savedProduct.getId(), savedProduct);
+        return savedProduct;
     }
 
     @Override

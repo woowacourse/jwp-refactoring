@@ -16,11 +16,10 @@ public class FakeOrderTableDao implements OrderTableDao {
 
     @Override
     public OrderTable save(final OrderTable entity) {
-        long savedId = ++id;
         final OrderTable savedOrderTable = new OrderTable(
-            savedId, entity.getTableGroupId(), entity.getNumberOfGuests(), entity.isEmpty()
+            ++id, entity.getTableGroupId(), entity.getNumberOfGuests(), entity.isEmpty()
         );
-        orderTables.put(savedId, savedOrderTable);
+        orderTables.put(savedOrderTable.getId(), savedOrderTable);
         return savedOrderTable;
     }
 
