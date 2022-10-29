@@ -26,10 +26,11 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    private void validateEmpty(List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
+    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+        this.id = id;
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
     }
 
     public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime,
@@ -39,6 +40,12 @@ public class Order {
 
     public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, null, null, orderLineItems);
+    }
+
+    private void validateEmpty(List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public boolean hasValidSize(long size) {
@@ -61,24 +68,16 @@ public class Order {
         return orderTableId;
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
-    }
-
     public String getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void updateOrderStatus(final String orderStatus) {
         this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
     }
 
     public List<OrderLineItem> getOrderLineItems() {

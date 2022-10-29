@@ -11,7 +11,6 @@ import java.util.List;
 import kitchenpos.common.DatabaseCleaner;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
@@ -27,6 +26,7 @@ import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderUpdateRequest;
+import kitchenpos.repository.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ class OrderServiceTest extends ServiceTest {
     private OrderTableDao orderTableDao;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private ProductDao productDao;
@@ -79,24 +79,26 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문을 등록할 수 있다.")
     @Test
     void create() {
-        OrderTable newOrderTable = new OrderTable(4, false);
-        OrderTable orderTable = orderTableDao.save(newOrderTable);
-        OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
+        final OrderTable newOrderTable = new OrderTable(4, false);
+        final OrderTable orderTable = orderTableDao.save(newOrderTable);
+        final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
                 createOrderLineItemRequest(menu.getId()));
 
-        OrderResponse response = orderService.create(request);
+        final OrderResponse response = orderService.create(request);
 
-        assertThat(response.getId()).isNotNull();
-        assertThat(response.getOrderStatus()).isEqualTo("COOKING");
-        assertThat(response.getOrderTableId()).isNotNull();
+        assertAll(
+                () -> assertThat(response.getId()).isNotNull(),
+                () -> assertThat(response.getOrderStatus()).isEqualTo("COOKING"),
+                () -> assertThat(response.getOrderTableId()).isNotNull()
+        );
     }
 
     @DisplayName("주문 등록 시 주문항목의 메뉴에 등록되어 있지 않은 주문 항목이 있으면 예외가 발생한다.")
     @Test
     void createWithInvalidOrderLineItem() {
-        OrderTable newOrderTable = new OrderTable(4, false);
-        OrderTable orderTable = orderTableDao.save(newOrderTable);
-        OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
+        final OrderTable newOrderTable = new OrderTable(4, false);
+        final OrderTable orderTable = orderTableDao.save(newOrderTable);
+        final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
                 createInvalidOrderLineItemRequest());
 
         assertThatThrownBy(() -> orderService.create(request))
@@ -106,7 +108,7 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 등록 시 주문에서의 주문 테이블이 존재하지 않는 주문 테이블일 경우 예외가 발생한다.")
     @Test
     void createWithInvalidOrderTable() {
-        OrderCreateRequest request = new OrderCreateRequest(9999L, createOrderLineItemRequest());
+        final OrderCreateRequest request = new OrderCreateRequest(9999L, createOrderLineItemRequest());
 
         assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -115,9 +117,9 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 등록 시 주문에서의 주문 테이블이 비어있으면 예외가 발생한다.")
     @Test
     void createWithEmptyOrderTable() {
-        OrderTable newOrderTable = new OrderTable(0, true);
-        OrderTable orderTable = orderTableDao.save(newOrderTable);
-        OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
+        final OrderTable newOrderTable = new OrderTable(0, true);
+        final OrderTable orderTable = orderTableDao.save(newOrderTable);
+        final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
                 createOrderLineItemRequest());
 
         assertThatThrownBy(() -> orderService.create(request))
@@ -127,13 +129,13 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문들을 조회할 수 있다.")
     @Test
     void list() {
-        OrderTable newOrderTable = new OrderTable(4, false);
-        OrderTable orderTable = orderTableDao.save(newOrderTable);
-        Order newOrder = new Order(orderTable.getId(), "COOKING", LocalDateTime.now(),
+        final OrderTable newOrderTable = new OrderTable(4, false);
+        final OrderTable orderTable = orderTableDao.save(newOrderTable);
+        final Order newOrder = new Order(orderTable.getId(), "COOKING", LocalDateTime.now(),
                 createOrderLineItem(menu.getId()));
-        Order order = orderDao.save(newOrder);
+        final Order order = orderRepository.save(newOrder);
         orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 10));
-        List<OrderResponse> response = orderService.list();
+        final List<OrderResponse> response = orderService.list();
 
         assertAll(
                 () -> assertThat(response.size()).isEqualTo(1L),
@@ -144,15 +146,15 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문의 상태를 수정할 수 있다.")
     @Test
     void changeOrderStatus() {
-        OrderTable newOrderTable = new OrderTable(4, false);
-        OrderTable orderTable = orderTableDao.save(newOrderTable);
-        Order newOrder = new Order(orderTable.getId(), "COOKING", LocalDateTime.now(),
+        final OrderTable newOrderTable = new OrderTable(4, false);
+        final OrderTable orderTable = orderTableDao.save(newOrderTable);
+        final Order newOrder = new Order(orderTable.getId(), "COOKING", LocalDateTime.now(),
                 createOrderLineItem(menu.getId()));
-        Order order = orderDao.save(newOrder);
-        OrderUpdateRequest request = new OrderUpdateRequest("MEAL");
+        final Order order = orderRepository.save(newOrder);
+        final  OrderUpdateRequest request = new OrderUpdateRequest("MEAL");
 
         orderService.changeOrderStatus(order.getId(), request);
-        Order foundOrder = orderDao.findById(order.getId()).get();
+        final Order foundOrder = orderRepository.findById(order.getId()).get();
 
         assertThat(foundOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
     }
@@ -160,7 +162,7 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 수정 시 존재하지 않는 주문일 경우 예외가 발생한다.")
     @Test
     void changeOrderStatusWithInvalidOrder() {
-        OrderUpdateRequest request = new OrderUpdateRequest("MEAL");
+        final OrderUpdateRequest request = new OrderUpdateRequest("MEAL");
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(9999L, request))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -169,12 +171,12 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 수정 시 주문 상태가 계산 완료인 경우 예외가 발생한다.")
     @Test
     void changeOrderStatusWithCompletionOrderStatus() {
-        OrderTable newOrderTable = new OrderTable(4, false);
-        OrderTable orderTable = orderTableDao.save(newOrderTable);
-        Order newOrder = new Order(orderTable.getId(), "COOKING", LocalDateTime.now(),
+        final OrderTable newOrderTable = new OrderTable(4, false);
+        final OrderTable orderTable = orderTableDao.save(newOrderTable);
+        final Order newOrder = new Order(orderTable.getId(), "COOKING", LocalDateTime.now(),
                 createOrderLineItem(menu.getId()));
-        Order order = orderDao.save(newOrder);
-        OrderUpdateRequest request = new OrderUpdateRequest("COMPLETION");
+        final Order order = orderRepository.save(newOrder);
+        final OrderUpdateRequest request = new OrderUpdateRequest("COMPLETION");
 
         orderService.changeOrderStatus(order.getId(), request);
 
@@ -182,20 +184,14 @@ class OrderServiceTest extends ServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private List<OrderLineItem> createInvalidOrderLineItem() {
-        List<OrderLineItem> orderLineItems = new ArrayList<>();
-        orderLineItems.add(new OrderLineItem(9999L, 10));
-        return orderLineItems;
-    }
-
     private List<OrderLineItemRequest> createInvalidOrderLineItemRequest() {
-        List<OrderLineItemRequest> orderLineItems = new ArrayList<>();
+        final List<OrderLineItemRequest> orderLineItems = new ArrayList<>();
         orderLineItems.add(new OrderLineItemRequest(9999L, 10L));
         return orderLineItems;
     }
 
     private List<OrderLineItem> createOrderLineItem(Long... menuIds) {
-        List<OrderLineItem> orderLineItems = new ArrayList<>();
+        final List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (Long menuId : menuIds) {
             orderLineItems.add(new OrderLineItem(menuId, 10));
         }
@@ -203,7 +199,7 @@ class OrderServiceTest extends ServiceTest {
     }
 
     private List<OrderLineItemRequest> createOrderLineItemRequest(Long... menuIds) {
-        List<OrderLineItemRequest> orderLineItems = new ArrayList<>();
+        final List<OrderLineItemRequest> orderLineItems = new ArrayList<>();
         for (Long menuId : menuIds) {
             orderLineItems.add(new OrderLineItemRequest(menuId, 10L));
         }

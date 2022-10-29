@@ -23,7 +23,7 @@ class OrderTest {
     @Test
     void hasValidSize() {
         Order order = new Order(1L, "COOKING", LocalDateTime.now(),
-                Arrays.asList(new OrderLineItem(), new OrderLineItem()));
+                Arrays.asList(new OrderLineItem(1L, 1L, 1L, 10), new OrderLineItem(2L, 1L, 2L, 10)));
 
         assertThat(order.hasValidSize(2L)).isTrue();
     }
@@ -32,7 +32,7 @@ class OrderTest {
     @Test
     void hasStatus() {
         Order order = new Order(1L, "COOKING", LocalDateTime.now(),
-                Arrays.asList(new OrderLineItem(), new OrderLineItem()));
+                Arrays.asList(new OrderLineItem(1L, 1L, 1L, 10), new OrderLineItem(2L, 1L, 2L, 10)));
 
         assertAll(
                 () -> assertThat(order.hasStatus(OrderStatus.COOKING)).isTrue(),

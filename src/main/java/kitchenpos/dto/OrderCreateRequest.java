@@ -1,9 +1,11 @@
 package kitchenpos.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 
 public class OrderCreateRequest {
 
@@ -27,7 +29,7 @@ public class OrderCreateRequest {
     }
 
     public Order toOrder() {
-        return new Order(orderTableId, toOrderLineItem());
+        return new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), toOrderLineItem());
     }
 
     private List<OrderLineItem> toOrderLineItem() {
