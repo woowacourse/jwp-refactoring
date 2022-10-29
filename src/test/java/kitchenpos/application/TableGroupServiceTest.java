@@ -26,11 +26,15 @@ class TableGroupServiceTest extends ServiceTest {
     private Long tableGroupId;
     private Long orderTableId1;
     private Long orderTableId2;
+    private Long notIncludeOrderTable1;
+    private Long notIncludeOrderTable2;
 
     @BeforeEach
     void setUp() {
-        orderTableDao.save(new OrderTable(null, null, 0, true));
-        orderTableDao.save(new OrderTable(null, null, 0, true));
+        notIncludeOrderTable1 = orderTableDao.save(new OrderTable(null, null, 0, true))
+                .getId();
+        notIncludeOrderTable2 = orderTableDao.save(new OrderTable(null, null, 0, true))
+                .getId();
         final OrderTable orderTable1 = orderTableDao.save(new OrderTable(null, null, 0, true));
         final OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, null, 0, true));
         tableGroupId = tableGroupDao.save(new TableGroup(List.of(orderTable1, orderTable2))).getId();
@@ -54,7 +58,7 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("주문 테이블의 상태가 주문 테이블로 변경된다.")
     void createTableGroupIsChangeOrderTableStatus() {
         final TableGroupCreateRequest request = new TableGroupCreateRequest(
-                List.of(new OrderTableGroupRequest(3L), new OrderTableGroupRequest(4L)));
+                List.of(new OrderTableGroupRequest(notIncludeOrderTable1), new OrderTableGroupRequest(notIncludeOrderTable2)));
 
         final TableGroupResponse response = tableGroupService.create(request);
         final List<OrderTableResponse> actualOrderTables = response.getOrderTables();

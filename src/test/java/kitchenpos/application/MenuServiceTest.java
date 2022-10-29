@@ -9,7 +9,6 @@ import java.util.List;
 import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.request.MenuProductCreateRequest;
 import kitchenpos.application.dto.response.MenuResponse;
-import kitchenpos.fixture.MenuFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +17,7 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴를 생성한다.")
     void createMenu() {
         final BigDecimal menuPrice = BigDecimal.valueOf(16000L);
-        final MenuCreateRequest request = MenuFixture.createMenuRequest("후라이드치킨", menuPrice, 2L,
+        final MenuCreateRequest request = new MenuCreateRequest("후라이드치킨", menuPrice, 2L,
                 List.of(new MenuProductCreateRequest(1L, 1L)));
 
         final MenuResponse menuResponse = menuService.create(request);
@@ -34,7 +33,8 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴 그룹이 올바르지 않은 경우 예외 발생")
     void whenInvalidMenuGroup() {
         long invalidMenuGroupId = 99999L;
-        final MenuCreateRequest request = MenuFixture.createMenuRequest(invalidMenuGroupId);
+        final MenuCreateRequest request = new MenuCreateRequest("후라이드치킨", BigDecimal.valueOf(16000L),
+                invalidMenuGroupId, List.of(new MenuProductCreateRequest(1L, 1L)));
 
         assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);

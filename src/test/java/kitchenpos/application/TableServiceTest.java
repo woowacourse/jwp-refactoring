@@ -12,7 +12,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.fixture.OrderTableFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +21,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블을 생성한다.")
     void createTable() {
         final int actualNumberOfGuests = 2;
-        final OrderTableCreateReqeust request = OrderTableFixture.createOrderTable(actualNumberOfGuests, true);
+        final OrderTableCreateReqeust request = new OrderTableCreateReqeust(actualNumberOfGuests, true);
 
         final OrderTableResponse actual = tableService.create(request);
 
