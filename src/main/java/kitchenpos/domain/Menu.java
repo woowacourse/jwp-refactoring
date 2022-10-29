@@ -38,18 +38,18 @@ public class Menu {
     }
 
     public Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        validatePriceCheaperThanTotal(price.getAmount(), menuProducts);
+        validatePriceCheaperThanTotal(price, menuProducts);
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
     }
 
-    private void validatePriceCheaperThanTotal(BigDecimal price, List<MenuProduct> menuProducts) {
+    private void validatePriceCheaperThanTotal(Price price, List<MenuProduct> menuProducts) {
         BigDecimal sum = menuProducts.stream()
                 .map(MenuProduct::calculatePrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        if (price.compareTo(sum) > 0) {
+        if (price.isMoreExpensiveThan(sum)) {
             throw new IllegalArgumentException("메뉴의 가격은 메뉴 상품 가격의 합계보다 비쌀 수 없습니다.");
         }
     }

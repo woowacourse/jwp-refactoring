@@ -40,8 +40,8 @@ public class Product {
         return name;
     }
 
-    public BigDecimal getPrice() {
-        return price.getAmount();
+    public Price getPrice() {
+        return price;
     }
 
     @Override

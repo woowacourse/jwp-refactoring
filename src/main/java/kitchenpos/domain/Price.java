@@ -25,6 +25,14 @@ public class Price {
         }
     }
 
+    public boolean isMoreExpensiveThan(BigDecimal other) {
+        return this.amount.compareTo(other) > 0;
+    }
+
+    public BigDecimal multiply(long other) {
+        return amount.multiply(BigDecimal.valueOf(other));
+    }
+
     public BigDecimal getAmount() {
         return amount;
     }

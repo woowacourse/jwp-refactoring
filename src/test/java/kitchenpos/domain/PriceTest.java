@@ -36,4 +36,24 @@ class PriceTest {
         assertThatThrownBy(() -> new Price(amount))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    void isMoreExpensiveThan() {
+        // given
+        Price price = new Price(BigDecimal.valueOf(1000));
+        // when
+        boolean actual = price.isMoreExpensiveThan(BigDecimal.valueOf(800));
+        // then
+        assertThat(actual).isTrue();
+    }
+
+    @Test
+    void mulitply() {
+        // given
+        Price price = new Price(BigDecimal.valueOf(1000));
+        // when
+        BigDecimal actual = price.multiply(2);
+        // then
+        assertThat(actual).isEqualTo(BigDecimal.valueOf(1000 * 2));
+    }
 }
