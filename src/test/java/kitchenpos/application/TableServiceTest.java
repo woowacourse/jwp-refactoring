@@ -5,13 +5,21 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dto.OrderTableRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,6 +36,15 @@ class TableServiceTest extends ServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
 
     @Test
     void 테이블을_생성할_수_있다() {
@@ -68,11 +85,17 @@ class TableServiceTest extends ServiceTest {
     @ParameterizedTest
     @EnumSource(mode = EXCLUDE, names = {"COMPLETION"})
     void 기존_테이블의_주문_상태가_완료_상태가_아니면_빈_테이블로_변경할_수_없다(OrderStatus orderStatus) {
-        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
-        OrderTableRequest request = new OrderTableRequest(0, true);
+        Product product = productRepository.save(new Product("상품", new BigDecimal(10000)));
+        MenuProduct menuProduct = new MenuProduct(product, 1);
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
+        Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(10000), menuGroup, List.of(menuProduct)));
 
-        Order order = new Order(orderTable, orderStatus, new ArrayList<>());
-        orderRepository.save(order);
+        OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2);
+
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
+        orderRepository.save(new Order(orderTable, orderStatus, List.of(orderLineItem)));
+
+        OrderTableRequest request = new OrderTableRequest(0, true);
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class);

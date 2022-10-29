@@ -51,7 +51,7 @@ public class TableGroup {
         }
     }
 
-    private static void validateOrderTable(final OrderTable orderTable) {
+    private void validateOrderTable(final OrderTable orderTable) {
         if (!orderTable.isEmpty()) {
             throw new IllegalArgumentException("그룹으로 지정할 테이블이 비어있지 않습니다.");
         }

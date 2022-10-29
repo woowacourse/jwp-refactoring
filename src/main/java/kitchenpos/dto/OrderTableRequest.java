@@ -1,12 +1,7 @@
 package kitchenpos.dto;
 
-import com.sun.istack.NotNull;
-
 public class OrderTableRequest {
-    @NotNull
     private int numberOfGuests;
-
-    @NotNull
     private boolean empty;
 
     public OrderTableRequest() {
