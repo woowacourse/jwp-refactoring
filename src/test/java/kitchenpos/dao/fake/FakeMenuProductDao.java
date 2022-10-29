@@ -18,7 +18,7 @@ public class FakeMenuProductDao implements MenuProductDao {
 
     @Override
     public MenuProduct save(final MenuProduct entity) {
-        MenuProduct menuProduct = MenuProductFixtures.generateMenuProduct(++id, entity);
+        MenuProduct menuProduct = MenuProductFixtures.generateMenuProduct(++id, entity.getProductId());
         stores.put(id, menuProduct);
         return menuProduct;
     }
