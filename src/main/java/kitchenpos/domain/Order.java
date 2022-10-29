@@ -5,6 +5,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,7 +25,8 @@ public class Order {
     private Long orderTableId;
 
     @Column(name = "order_status", nullable = false)
-    private String orderStatus;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
     @Column(name = "ordered_time", nullable = false)
     private LocalDateTime orderedTime;
@@ -36,7 +39,7 @@ public class Order {
     protected Order() {
     }
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
+    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
@@ -46,7 +49,7 @@ public class Order {
     }
 
     public static Order createFrom(Long orderTableId) {
-        return new Order(null, orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), null);
+        return new Order(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), null);
     }
 
     public Long getId() {
@@ -57,7 +60,7 @@ public class Order {
         return orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
@@ -69,7 +72,7 @@ public class Order {
         return orderLineItems;
     }
 
-    public void setOrderStatus(String orderStatus) {
+    public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 

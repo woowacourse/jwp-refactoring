@@ -68,7 +68,7 @@ class OrderServiceTest extends ServiceTest {
 
             request = new OrderCreateRequest(ORDER_TABLE_ID, Arrays.asList(orderLineItemA, orderLineItemB));
 
-            Order savedOrder = new Order(1L, ORDER_TABLE_ID, OrderStatus.COOKING.name(),
+            Order savedOrder = new Order(1L, ORDER_TABLE_ID, OrderStatus.COOKING,
                     LocalDateTime.now(), Arrays.asList(orderLineItemA, orderLineItemB));
 
             given(orderDao.save(any(Order.class)))
@@ -92,7 +92,7 @@ class OrderServiceTest extends ServiceTest {
             assertAll(
                     () -> assertThat(actual.getId()).isNotNull(),
                     () -> assertThat(actual.getOrderLineItems()).hasSize(2),
-                    () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name())
+                    () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING)
             );
         }
 
@@ -170,7 +170,7 @@ class OrderServiceTest extends ServiceTest {
             Order actual = orderService.changeOrderStatus(ORDER_ID, request);
 
             //then
-            assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+            assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
         }
 
         @Test
@@ -189,7 +189,7 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("주문이 완료상태이면, 예외를 던진다.")
         void fail_completedOrder() {
             //given
-            savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
+            savedOrder.setOrderStatus(OrderStatus.COMPLETION);
 
             //when & then
             assertThatThrownBy(() -> orderService.changeOrderStatus(ORDER_ID, request))

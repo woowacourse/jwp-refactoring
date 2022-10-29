@@ -11,7 +11,7 @@ public enum OrderStatus {
         return Arrays.asList(COOKING.name(), MEAL.name());
     }
 
-    public static boolean isCompleted(String orderStatus) {
-        return Objects.equals(COMPLETION.name(), orderStatus);
+    public static boolean isCompleted(OrderStatus orderStatus) {
+        return Objects.equals(COMPLETION, orderStatus);
     }
 }

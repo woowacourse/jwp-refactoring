@@ -78,7 +78,7 @@ public class OrderService {
         savedOrder.checkUpdatable();
 
         final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        savedOrder.setOrderStatus(orderStatus);
 
         orderDao.save(savedOrder);
 

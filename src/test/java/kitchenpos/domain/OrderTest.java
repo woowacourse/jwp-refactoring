@@ -20,7 +20,7 @@ class OrderTest {
         @Test
         @DisplayName("상태를 변경할 수 있다.")
         void success() {
-            Order order = new Order(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(),
+            Order order = new Order(1L, 1L, OrderStatus.COOKING, LocalDateTime.now(),
                     Arrays.asList(createOrderLineItem(), createOrderLineItem()));
             assertDoesNotThrow(order::checkUpdatable);
         }
@@ -28,7 +28,7 @@ class OrderTest {
         @Test
         @DisplayName("주문이 완료 상태이면, 예외를 던진다.")
         void fail_completed() {
-            Order order = new Order(1L, 1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(),
+            Order order = new Order(1L, 1L, OrderStatus.COMPLETION, LocalDateTime.now(),
                     Arrays.asList(createOrderLineItem(), createOrderLineItem()));
             assertThatThrownBy(order::checkUpdatable)
                     .isInstanceOf(IllegalArgumentException.class);

@@ -31,7 +31,7 @@ class OrderStatusTest {
         @Test
         @DisplayName("완료 상태를 받으면, 참을 반환한다.")
         void success() {
-            String status = OrderStatus.COMPLETION.name();
+            OrderStatus status = OrderStatus.COMPLETION;
             assertThat(OrderStatus.isCompleted(status)).isTrue();
         }
 
@@ -39,7 +39,7 @@ class OrderStatusTest {
         @EnumSource(value = OrderStatus.class, names = {"COMPLETION"}, mode = Mode.EXCLUDE)
         @DisplayName("완료가 아닌 상태를 받으면, 거짓을 반환한다.")
         void fail_notCompleted() {
-            String status = OrderStatus.COMPLETION.name();
+            OrderStatus status = OrderStatus.COMPLETION;
             assertThat(OrderStatus.isCompleted(status)).isTrue();
         }
     }
