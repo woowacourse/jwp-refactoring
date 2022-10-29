@@ -9,21 +9,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.fake.FakeMenuDao;
-import kitchenpos.dao.fake.FakeMenuGroupDao;
-import kitchenpos.dao.fake.FakeMenuProductDao;
-import kitchenpos.dao.fake.FakeProductDao;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuResponse;
 import kitchenpos.dto.MenuSaveRequest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -52,14 +45,6 @@ class MenuServiceTest {
         this.menuGroupDao = menuGroupDao;
         this.productDao = productDao;
         this.menuService = menuService;
-    }
-
-    @BeforeEach
-    void setUp() {
-        FakeMenuDao.deleteAll();
-        FakeMenuGroupDao.deleteAll();
-        FakeMenuProductDao.deleteAll();
-        FakeProductDao.deleteAll();
     }
 
     @Test
