@@ -76,12 +76,18 @@ class JdbcTemplateMenuRepositoryTest {
                         .ignoringFields("price", "menuProducts")
                         .isEqualTo(
                                 Arrays.asList(
-                                        new Menu(1L, "후라이드치킨",new Price( BigDecimal.valueOf(16000)), 2L, new ArrayList<>()),
-                                        new Menu(2L, "양념치킨",new Price( BigDecimal.valueOf(16000)), 2L, new ArrayList<>()),
-                                        new Menu(3L, "반반치킨",new Price( BigDecimal.valueOf(16000)), 2L, new ArrayList<>()),
-                                        new Menu(4L, "통구이",new Price( BigDecimal.valueOf(16000)), 2L, new ArrayList<>()),
-                                        new Menu(5L, "간장치킨",new Price( BigDecimal.valueOf(17000)), 2L, new ArrayList<>()),
-                                        new Menu(6L, "순살치킨",new Price( BigDecimal.valueOf(17000)), 2L, new ArrayList<>())
+                                        new Menu(1L, "후라이드치킨", new Price(BigDecimal.valueOf(16000)), 2L,
+                                                new ArrayList<>()),
+                                        new Menu(2L, "양념치킨", new Price(BigDecimal.valueOf(16000)), 2L,
+                                                new ArrayList<>()),
+                                        new Menu(3L, "반반치킨", new Price(BigDecimal.valueOf(16000)), 2L,
+                                                new ArrayList<>()),
+                                        new Menu(4L, "통구이", new Price(BigDecimal.valueOf(16000)), 2L,
+                                                new ArrayList<>()),
+                                        new Menu(5L, "간장치킨", new Price(BigDecimal.valueOf(17000)), 2L,
+                                                new ArrayList<>()),
+                                        new Menu(6L, "순살치킨", new Price(BigDecimal.valueOf(17000)), 2L,
+                                                new ArrayList<>())
                                 )
                         )
         );

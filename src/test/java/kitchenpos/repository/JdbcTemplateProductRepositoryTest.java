@@ -44,12 +44,12 @@ class JdbcTemplateProductRepositoryTest {
                 .usingRecursiveComparison()
                 .ignoringFields("price")
                 .isEqualTo(Arrays.asList(
-                                new Product(1L, "후라이드",new Price( BigDecimal.valueOf(16000))),
-                                new Product(2L, "양념치킨",new Price( BigDecimal.valueOf(16000))),
-                                new Product(3L, "반반치킨",new Price( BigDecimal.valueOf(16000))),
-                                new Product(4L, "통구이",new Price( BigDecimal.valueOf(16000))),
-                                new Product(5L, "간장치킨",new Price( BigDecimal.valueOf(17000))),
-                                new Product(6L, "순살치킨",new Price( BigDecimal.valueOf(17000)))
+                                new Product(1L, "후라이드", new Price(BigDecimal.valueOf(16000))),
+                                new Product(2L, "양념치킨", new Price(BigDecimal.valueOf(16000))),
+                                new Product(3L, "반반치킨", new Price(BigDecimal.valueOf(16000))),
+                                new Product(4L, "통구이", new Price(BigDecimal.valueOf(16000))),
+                                new Product(5L, "간장치킨", new Price(BigDecimal.valueOf(17000))),
+                                new Product(6L, "순살치킨", new Price(BigDecimal.valueOf(17000)))
                         )
                 );
     }

@@ -13,7 +13,6 @@ import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.ProductRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,7 +40,8 @@ class ProductServiceTest {
         void 상품을_생성할_수_있다() {
             // given
             ProductCreateRequest request = 상품_생성_dto를_만든다(id, name, price);
-            when(productRepository.save(any(Product.class))).thenReturn(request.toProduct(new Price(request.getPrice())));
+            when(productRepository.save(any(Product.class))).thenReturn(
+                    request.toProduct(new Price(request.getPrice())));
 
             // when
             ProductResponse response = productService.create(request);

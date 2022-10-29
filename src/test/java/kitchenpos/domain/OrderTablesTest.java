@@ -3,12 +3,10 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.groups.Tuple.tuple;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
-import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.Test;
 
 class OrderTablesTest {

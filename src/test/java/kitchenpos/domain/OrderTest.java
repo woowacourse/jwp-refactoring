@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ import org.junit.jupiter.api.Test;
 class OrderTest {
 
     private Long id = 1L;
-private Long orderTableId = 11L;
+    private Long orderTableId = 11L;
     private OrderStatus orderStatus = OrderStatus.COOKING;
     private LocalDateTime orderedTime = LocalDateTime.now();
     private OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 3L);

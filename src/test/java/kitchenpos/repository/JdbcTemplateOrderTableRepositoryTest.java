@@ -50,7 +50,7 @@ class JdbcTemplateOrderTableRepositoryTest {
                 () -> assertThat(savedOrderTable.getId()).isNotNull(),
                 () -> assertThat(savedOrderTable).usingRecursiveComparison()
                         .ignoringFields("id", "tableGroupId")
-                        .isEqualTo(new OrderTable( 3, true))
+                        .isEqualTo(new OrderTable(3, true))
         );
     }
 
@@ -165,7 +165,7 @@ class JdbcTemplateOrderTableRepositoryTest {
         assertThat(orderTables).hasSize(1)
                 .usingRecursiveComparison()
                 .ignoringFields("id", "tableGroupId")
-                .isEqualTo(Arrays.asList(new OrderTable( 10, false)));
+                .isEqualTo(Arrays.asList(new OrderTable(10, false)));
     }
 
     @Test

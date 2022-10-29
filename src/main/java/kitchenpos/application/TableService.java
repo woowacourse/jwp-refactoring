@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.application.dto.request.OrderTableChangeStatusRequest;
