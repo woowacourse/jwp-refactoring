@@ -1,7 +1,7 @@
 package kitchenpos.repository;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
@@ -24,11 +24,7 @@ public class MenuRepository {
         final Menu savedMenu = menuDao.save(menu);
 
         final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menu.getMenuProducts()) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
-        }
+        final var savedMenuProducts = saveAllMenuProducts(menu.getMenuProducts(), menuId);
 
         return new Menu(
                 savedMenu.getId(),
@@ -36,6 +32,17 @@ public class MenuRepository {
                 savedMenu.getPrice(),
                 savedMenu.getMenuGroupId(),
                 savedMenuProducts);
+    }
+
+    private List<MenuProduct> saveAllMenuProducts(final List<MenuProduct> menuProducts, final Long menuId) {
+        return menuProducts.stream()
+                .map(menuProduct -> {
+                    final var entity = new MenuProduct(
+                            menuId,
+                            menuProduct.getProduct(),
+                            menuProduct.getQuantity());
+                    return menuProductDao.save(entity);
+                }).collect(Collectors.toList());
     }
 
     public List<Menu> getAll() {

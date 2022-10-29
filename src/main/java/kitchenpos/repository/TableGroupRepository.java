@@ -26,22 +26,26 @@ public class TableGroupRepository {
 
     public TableGroup add(final TableGroup tableGroup) {
         final var savedTableGroup = tableGroupDao.save(tableGroup);
-        final var orderTables = tableGroup.getOrderTables()
-                .stream()
-                .map(orderTable -> {
-                    final var groupedOrderTable = new OrderTable(
-                            orderTable.getId(),
-                            savedTableGroup.getId(),
-                            orderTable.getNumberOfGuests(),
-                            false,
-                            orderTable.getOrders());
-                    return orderTableDao.save(groupedOrderTable);
-                }).collect(Collectors.toList());
+        final var orderTables = fetchAllOrderTables(tableGroup.getOrderTables(), savedTableGroup.getId());
+
         return new TableGroup(
                 savedTableGroup.getId(),
                 savedTableGroup.getCreatedDate(),
                 orderTables
         );
+    }
+
+    private List<OrderTable> fetchAllOrderTables(final List<OrderTable> orderTables, final Long tableGroupId) {
+        return orderTables.stream()
+                .map(orderTable -> {
+                    final var entity = new OrderTable(
+                            orderTable.getId(),
+                            tableGroupId,
+                            orderTable.getNumberOfGuests(),
+                            false,
+                            orderTable.getOrders());
+                    return orderTableDao.save(entity);
+                }).collect(Collectors.toList());
     }
 
     public TableGroup get(final Long id) {

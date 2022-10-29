@@ -23,18 +23,7 @@ public class OrderRepository {
     public Order add(final Order order) {
         final Order savedOrder = orderDao.save(order);
 
-        final var savedOrderLineItems = order.getOrderLineItems()
-                .stream()
-                .map(orderLineItem -> {
-                    final var entity = new OrderLineItem(
-                            null,
-                            savedOrder.getId(),
-                            orderLineItem.getMenuId(),
-                            orderLineItem.getQuantity()
-                    );
-                    return orderLineItemDao.save(entity);
-                })
-                .collect(Collectors.toList());
+        final var savedOrderLineItems = saveAllOrderLineItems(order.getOrderLineItems(), savedOrder.getId());
 
         return new Order(
                 savedOrder.getId(),
@@ -43,6 +32,19 @@ public class OrderRepository {
                 savedOrder.getOrderedTime(),
                 savedOrderLineItems
         );
+    }
+
+    private List<OrderLineItem> saveAllOrderLineItems(final List<OrderLineItem> orderLineItems, final Long orderId) {
+        return orderLineItems.stream()
+                .map(orderLineItem -> {
+                    final var entity = new OrderLineItem(
+                            orderId,
+                            orderLineItem.getMenuId(),
+                            orderLineItem.getQuantity()
+                    );
+                    return orderLineItemDao.save(entity);
+                })
+                .collect(Collectors.toList());
     }
 
     public Order get(final Long id) {

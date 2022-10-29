@@ -47,6 +47,10 @@ public class MenuProduct implements Entity {
         this.menuId = menuId;
     }
 
+    public Product getProduct() {
+        return product;
+    }
+
     public Long getProductId() {
         return productId;
     }
