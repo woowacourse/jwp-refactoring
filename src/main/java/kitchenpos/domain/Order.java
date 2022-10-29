@@ -7,17 +7,14 @@ import org.springframework.util.CollectionUtils;
 
 public class Order {
 
-    private Long id;
-    private Long orderTableId;
+    private final Long id;
+    private final Long orderTableId;
     private String orderStatus;
-    private LocalDateTime orderedTime;
+    private final LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
-    public Order() {
-    }
-
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
-                 List<OrderLineItem> orderLineItems) {
+    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
         validateEmpty(orderLineItems);
         this.id = id;
         this.orderTableId = orderTableId;
@@ -26,42 +23,38 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
 
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime,
-                 List<OrderLineItem> orderLineItems) {
+    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
+    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, null, null, orderLineItems);
     }
 
-    private void validateEmpty(List<OrderLineItem> orderLineItems) {
+    private void validateEmpty(final List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
         }
     }
 
-    public boolean hasValidSize(long size) {
+    public boolean hasValidSize(final long size) {
         return orderLineItems.size() == size;
     }
 
-    public boolean hasStatus(OrderStatus status) {
+    public boolean hasStatus(final OrderStatus status) {
         return orderStatus.equals(status.name());
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public Long getOrderTableId() {

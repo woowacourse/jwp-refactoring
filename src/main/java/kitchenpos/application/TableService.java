@@ -66,8 +66,8 @@ public class TableService {
         if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        savedOrderTable.updateNumberOfGuests(numberOfGuests);
+        final OrderTable orderTable = savedOrderTable.updateNumberOfGuests(numberOfGuests);
 
-        return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
+        return OrderTableResponse.from(orderTableRepository.save(orderTable));
     }
 }

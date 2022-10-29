@@ -10,6 +10,7 @@ public class OrderTable {
     private boolean empty;
 
     public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        validatePositive(numberOfGuests);
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
@@ -20,11 +21,17 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
+    private void validatePositive(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public OrderTable ungroup() {
         return new OrderTable(id, null, numberOfGuests, false);
     }
 
-    public OrderTable(Long id) {
+    public OrderTable(final Long id) {
         this.id = id;
     }
 
@@ -48,15 +55,8 @@ public class OrderTable {
         return numberOfGuests;
     }
 
-    public void updateNumberOfGuests(final int numberOfGuests) {
-        validatePositive(numberOfGuests);
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    private void validatePositive(int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
+    public OrderTable updateNumberOfGuests(final int numberOfGuests) {
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 
     public boolean isEmpty() {
