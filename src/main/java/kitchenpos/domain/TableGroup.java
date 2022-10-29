@@ -25,8 +25,8 @@ public class TableGroup {
     protected TableGroup() {
     }
 
-    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        this.createdDate = createdDate;
+    public TableGroup(final List<OrderTable> orderTables) {
+        this.createdDate = LocalDateTime.now();
         this.orderTables = orderTables;
     }
 
