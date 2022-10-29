@@ -1,20 +1,17 @@
 package kitchenpos.fixture;
 
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
-import kitchenpos.domain.MenuProductRepository;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.TableGroupRepository;
 import org.springframework.boot.test.context.TestComponent;
 
 @TestComponent
@@ -22,23 +19,18 @@ public class ServiceDependencies {
     private final ProductRepository productRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuRepository menuRepository;
-    private final MenuProductRepository menuProductRepository;
     private final OrderTableRepository orderTableRepository;
-    private final TableGroupDao tableGroupDao;
-    private final OrderLineItemDao orderLineItemDao;
+    private final TableGroupRepository tableGroupRepository;
     private final OrderRepository orderRepository;
 
     public ServiceDependencies(final ProductRepository productRepository, final MenuGroupRepository menuGroupRepository,
-                               final MenuRepository menuRepository, final MenuProductRepository menuProductRepository,
-                               final OrderTableRepository orderTableRepository, final TableGroupDao tableGroupDao,
-                               final OrderLineItemDao orderLineItemDao, final OrderRepository orderRepository) {
+                               final MenuRepository menuRepository, final OrderTableRepository orderTableRepository,
+                               final TableGroupRepository tableGroupRepository, final OrderRepository orderRepository) {
         this.productRepository = productRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.menuRepository = menuRepository;
-        this.menuProductRepository = menuProductRepository;
         this.orderTableRepository = orderTableRepository;
-        this.tableGroupDao = tableGroupDao;
-        this.orderLineItemDao = orderLineItemDao;
+        this.tableGroupRepository = tableGroupRepository;
         this.orderRepository = orderRepository;
     }
 
@@ -55,7 +47,7 @@ public class ServiceDependencies {
     }
 
     public TableGroup save(final TableGroup tableGroup) {
-        return tableGroupDao.save(tableGroup);
+        return tableGroupRepository.save(tableGroup);
     }
 
     public Menu save(final Menu menu) {
@@ -64,9 +56,5 @@ public class ServiceDependencies {
 
     public Order save(final Order order) {
         return orderRepository.save(order);
-    }
-
-    public OrderLineItem save(final OrderLineItem orderLineItem) {
-        return orderLineItemDao.save(orderLineItem);
     }
 }

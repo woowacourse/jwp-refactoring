@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,6 +19,7 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "table_group_id")
     private Long tableGroupId;
     private int numberOfGuests;
     @OneToOne(mappedBy = "orderTable")
@@ -34,6 +36,15 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
         this.order = order;
         this.empty = empty;
+    }
+
+    public boolean isNotCompleted() {
+        return order != null && order.isNotComplete();
+    }
+
+    public void releaseGroup() {
+        this.tableGroupId = null;
+        this.empty = false;
     }
 
     public Long getId() {
