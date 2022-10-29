@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -19,7 +20,8 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private BigDecimal price;
+    @Embedded
+    private Price price;
     private Long menuGroupId;
     @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id", updatable = false, nullable = false)
@@ -29,7 +31,7 @@ public class Menu {
     }
 
     public Menu(final String name,
-                final BigDecimal price,
+                final Price price,
                 final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
@@ -37,10 +39,9 @@ public class Menu {
 
     public Menu(final Long id,
                 final String name,
-                final BigDecimal price,
+                final Price price,
                 final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
-        validatePrice(price);
         this.id = id;
         this.name = name;
         this.price = price;
@@ -57,7 +58,7 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 
     public Long getMenuGroupId() {
@@ -66,11 +67,5 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    private void validatePrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
     }
 }

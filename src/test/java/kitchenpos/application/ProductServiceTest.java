@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.dto.request.ProductCreateRequest;
 import kitchenpos.application.dto.response.ProductResponse;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.Assertions;
@@ -40,7 +41,7 @@ class ProductServiceTest {
         void 상품을_생성할_수_있다() {
             // given
             ProductCreateRequest request = 상품_생성_dto를_만든다(id, name, price);
-            when(productRepository.save(any(Product.class))).thenReturn(request.toProduct());
+            when(productRepository.save(any(Product.class))).thenReturn(request.toProduct(new Price(request.getPrice())));
 
             // when
             ProductResponse response = productService.create(request);
@@ -76,7 +77,7 @@ class ProductServiceTest {
 
         @Test
         void 상품_목록을_조회할_수_있다() {
-            Product product = new Product(1L, "pasta", BigDecimal.valueOf(13000));
+            Product product = new Product(1L, "pasta", new Price(BigDecimal.valueOf(13000)));
             when(productRepository.findAll()).thenReturn(Arrays.asList(product));
             List<ProductResponse> responses = productService.list();
 

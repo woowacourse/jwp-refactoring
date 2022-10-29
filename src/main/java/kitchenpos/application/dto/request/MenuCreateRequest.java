@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 
 public class MenuCreateRequest {
 
@@ -42,10 +43,10 @@ public class MenuCreateRequest {
         return menuProducts;
     }
 
-    public Menu toMenu() {
+    public Menu toMenu(final Price price) {
         return new Menu(
                 this.name,
-                this.price,
+                price,
                 this.menuGroupId,
                 toMenuProducts());
     }

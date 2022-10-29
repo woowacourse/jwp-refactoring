@@ -15,6 +15,7 @@ import kitchenpos.application.dto.request.MenuProductDto;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
@@ -55,10 +56,10 @@ class MenuServiceTest {
             // given
             MenuCreateRequest request = 메뉴_생성_dto를_만든다(price, menuGroupId, menuProducts);
             when(menuRepository.save(any(Menu.class))).thenReturn(
-                    new Menu(1L, "pasta", price, menuGroupId, menuProducts));
+                    new Menu(1L, "pasta", new Price(price), menuGroupId, menuProducts));
             when(menuGroupRepository.existsById(any(Long.class))).thenReturn(true);
             when(productRepository.findById(any(Long.class))).thenReturn(
-                    Optional.of(new Product(1L, "pasta", BigDecimal.valueOf(13000))));
+                    Optional.of(new Product(1L, "pasta", new Price(BigDecimal.valueOf(13000)))));
 
             // when
             MenuResponse response = menuService.create(request);
@@ -135,7 +136,7 @@ class MenuServiceTest {
     @Nested
     class list는 {
 
-        private final BigDecimal price = BigDecimal.valueOf(13000);
+        private final Price price = new Price(BigDecimal.valueOf(13000));
         private final Long menuGroupId = 11L;
         private final MenuProduct menuProduct = new MenuProduct(1L, 1L, 10L);
         private final List<MenuProduct> menuProducts = Arrays.asList(menuProduct);

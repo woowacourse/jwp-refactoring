@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ class JdbcTemplateProductRepositoryTest {
 
     @Test
     void 저장한다() {
-        Product product = new Product("pasta", BigDecimal.valueOf(13000));
+        Product product = new Product("pasta", new Price(BigDecimal.valueOf(13000)));
         Product savedProduct = productRepository.save(product);
 
         Assertions.assertAll(
@@ -43,12 +44,12 @@ class JdbcTemplateProductRepositoryTest {
                 .usingRecursiveComparison()
                 .ignoringFields("price")
                 .isEqualTo(Arrays.asList(
-                                new Product(1L, "후라이드", BigDecimal.valueOf(16000)),
-                                new Product(2L, "양념치킨", BigDecimal.valueOf(16000)),
-                                new Product(3L, "반반치킨", BigDecimal.valueOf(16000)),
-                                new Product(4L, "통구이", BigDecimal.valueOf(16000)),
-                                new Product(5L, "간장치킨", BigDecimal.valueOf(17000)),
-                                new Product(6L, "순살치킨", BigDecimal.valueOf(17000))
+                                new Product(1L, "후라이드",new Price( BigDecimal.valueOf(16000))),
+                                new Product(2L, "양념치킨",new Price( BigDecimal.valueOf(16000))),
+                                new Product(3L, "반반치킨",new Price( BigDecimal.valueOf(16000))),
+                                new Product(4L, "통구이",new Price( BigDecimal.valueOf(16000))),
+                                new Product(5L, "간장치킨",new Price( BigDecimal.valueOf(17000))),
+                                new Product(6L, "순살치킨",new Price( BigDecimal.valueOf(17000)))
                         )
                 );
     }

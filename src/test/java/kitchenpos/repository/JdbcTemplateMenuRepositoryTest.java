@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.Price;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,7 @@ class JdbcTemplateMenuRepositoryTest {
     @Test
     void 저장한다() {
         // given
-        BigDecimal price = BigDecimal.valueOf(13000);
-        Menu menu = new Menu(null, "pasta", price, 1L, new ArrayList<>());
+        Menu menu = new Menu(null, "pasta", new Price(BigDecimal.valueOf(13000)), 1L, new ArrayList<>());
 
         // when
         Menu savedMenu = menuRepository.save(menu);
@@ -76,12 +76,12 @@ class JdbcTemplateMenuRepositoryTest {
                         .ignoringFields("price", "menuProducts")
                         .isEqualTo(
                                 Arrays.asList(
-                                        new Menu(1L, "후라이드치킨", BigDecimal.valueOf(16000), 2L, new ArrayList<>()),
-                                        new Menu(2L, "양념치킨", BigDecimal.valueOf(16000), 2L, new ArrayList<>()),
-                                        new Menu(3L, "반반치킨", BigDecimal.valueOf(16000), 2L, new ArrayList<>()),
-                                        new Menu(4L, "통구이", BigDecimal.valueOf(16000), 2L, new ArrayList<>()),
-                                        new Menu(5L, "간장치킨", BigDecimal.valueOf(17000), 2L, new ArrayList<>()),
-                                        new Menu(6L, "순살치킨", BigDecimal.valueOf(17000), 2L, new ArrayList<>())
+                                        new Menu(1L, "후라이드치킨",new Price( BigDecimal.valueOf(16000)), 2L, new ArrayList<>()),
+                                        new Menu(2L, "양념치킨",new Price( BigDecimal.valueOf(16000)), 2L, new ArrayList<>()),
+                                        new Menu(3L, "반반치킨",new Price( BigDecimal.valueOf(16000)), 2L, new ArrayList<>()),
+                                        new Menu(4L, "통구이",new Price( BigDecimal.valueOf(16000)), 2L, new ArrayList<>()),
+                                        new Menu(5L, "간장치킨",new Price( BigDecimal.valueOf(17000)), 2L, new ArrayList<>()),
+                                        new Menu(6L, "순살치킨",new Price( BigDecimal.valueOf(17000)), 2L, new ArrayList<>())
                                 )
                         )
         );
@@ -113,7 +113,7 @@ class JdbcTemplateMenuRepositoryTest {
                         .isEqualTo(new Menu(
                                 1L,
                                 "후라이드치킨",
-                                BigDecimal.valueOf(16000),
+                                new Price(BigDecimal.valueOf(16000)),
                                 2L,
                                 new ArrayList<>()
                         )));
