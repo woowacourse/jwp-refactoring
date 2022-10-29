@@ -2,14 +2,14 @@ package kitchenpos.dto;
 
 import kitchenpos.domain.MenuGroup;
 
-public class MenuGroupRequest {
+public class MenuGroupSaveRequest {
 
     private String name;
 
-    private MenuGroupRequest() {
+    private MenuGroupSaveRequest() {
     }
 
-    public MenuGroupRequest(final String name) {
+    public MenuGroupSaveRequest(final String name) {
         this.name = name;
     }
 

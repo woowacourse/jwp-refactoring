@@ -5,20 +5,20 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 
-public class MenuRequest {
+public class MenuSaveRequest {
 
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
-    private MenuRequest() {
+    private MenuSaveRequest() {
     }
 
-    public MenuRequest(final String name,
-                       final BigDecimal price,
-                       final Long menuGroupId,
-                       final List<MenuProduct> menuProducts) {
+    public MenuSaveRequest(final String name,
+                           final BigDecimal price,
+                           final Long menuGroupId,
+                           final List<MenuProduct> menuProducts) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
