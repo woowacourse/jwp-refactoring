@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-class JdbcTemplateOrderTableRepositoryTest {
+class OrderTableRepositoryTest {
 
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
@@ -25,8 +25,8 @@ class JdbcTemplateOrderTableRepositoryTest {
     private boolean empty = true;
 
     @Autowired
-    public JdbcTemplateOrderTableRepositoryTest(final OrderTableRepository orderTableRepository,
-                                                final TableGroupRepository tableGroupRepository) {
+    public OrderTableRepositoryTest(final OrderTableRepository orderTableRepository,
+                                    final TableGroupRepository tableGroupRepository) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }

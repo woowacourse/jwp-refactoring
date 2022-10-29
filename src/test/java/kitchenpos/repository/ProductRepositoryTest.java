@@ -14,12 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-class JdbcTemplateProductRepositoryTest {
+class ProductRepositoryTest {
 
     private final ProductRepository productRepository;
 
     @Autowired
-    public JdbcTemplateProductRepositoryTest(final ProductRepository productRepository) {
+    public ProductRepositoryTest(final ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 

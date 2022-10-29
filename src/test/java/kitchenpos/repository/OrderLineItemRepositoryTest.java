@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-class JdbcTemplateOrderLineItemRepositoryTest {
+class OrderLineItemRepositoryTest {
 
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderRepository orderRepository;
@@ -25,8 +25,8 @@ class JdbcTemplateOrderLineItemRepositoryTest {
     private Long orderId;
 
     @Autowired
-    public JdbcTemplateOrderLineItemRepositoryTest(final OrderLineItemRepository orderLineItemRepository,
-                                                   final OrderRepository orderRepository) {
+    public OrderLineItemRepositoryTest(final OrderLineItemRepository orderLineItemRepository,
+                                       final OrderRepository orderRepository) {
         this.orderLineItemRepository = orderLineItemRepository;
         this.orderRepository = orderRepository;
     }

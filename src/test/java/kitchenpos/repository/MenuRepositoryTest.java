@@ -15,12 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-class JdbcTemplateMenuRepositoryTest {
+class MenuRepositoryTest {
 
     private final MenuRepository menuRepository;
 
     @Autowired
-    public JdbcTemplateMenuRepositoryTest(final MenuRepository menuRepository) {
+    public MenuRepositoryTest(final MenuRepository menuRepository) {
         this.menuRepository = menuRepository;
     }
 

@@ -12,12 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-class JdbcTemplateMenuProductRepositoryTest {
+class MenuProductRepositoryTest {
 
     private final MenuProductRepository menuProductRepository;
 
     @Autowired
-    public JdbcTemplateMenuProductRepositoryTest(final MenuProductRepository menuProductRepository) {
+    public MenuProductRepositoryTest(final MenuProductRepository menuProductRepository) {
         this.menuProductRepository = menuProductRepository;
     }
 

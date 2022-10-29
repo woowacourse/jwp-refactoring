@@ -19,12 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-class JdbcTemplateOrderRepositoryTest {
+class OrderRepositoryTest {
 
     private final OrderRepository orderRepository;
 
     @Autowired
-    public JdbcTemplateOrderRepositoryTest(final OrderRepository orderRepository) {
+    public OrderRepositoryTest(final OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 

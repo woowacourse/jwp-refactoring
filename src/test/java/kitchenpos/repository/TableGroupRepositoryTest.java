@@ -12,12 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-class JdbcTemplateTableGroupRepositoryTest {
+class TableGroupRepositoryTest {
 
     private final TableGroupRepository tableGroupRepository;
 
     @Autowired
-    public JdbcTemplateTableGroupRepositoryTest(final TableGroupRepository tableGroupRepository) {
+    public TableGroupRepositoryTest(final TableGroupRepository tableGroupRepository) {
         this.tableGroupRepository = tableGroupRepository;
     }
 
