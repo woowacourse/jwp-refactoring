@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.ordertable.OrderTable;
-import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 public class TableFixture {
 

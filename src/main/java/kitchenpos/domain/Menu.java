@@ -1,9 +1,8 @@
-package kitchenpos.domain.menu;
+package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.domain.MenuProduct;
 
 public class Menu {
     private final Long id;

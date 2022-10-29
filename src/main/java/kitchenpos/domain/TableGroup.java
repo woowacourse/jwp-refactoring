@@ -1,10 +1,9 @@
-package kitchenpos.domain.tablegroup;
+package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.domain.ordertable.OrderTable;
 import org.springframework.util.CollectionUtils;
 
 public class TableGroup {

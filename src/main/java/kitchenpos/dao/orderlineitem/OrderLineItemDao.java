@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.dao.orderlineitem;
 
 import kitchenpos.domain.OrderLineItem;
 

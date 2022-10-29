@@ -4,6 +4,8 @@ import static kitchenpos.fixture.MenuFixture.getMenuProductRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.dao.menuproduct.JdbcTemplateMenuProductDao;
+import kitchenpos.dao.menuproduct.MenuProductDao;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

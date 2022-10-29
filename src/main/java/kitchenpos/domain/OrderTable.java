@@ -1,6 +1,4 @@
-package kitchenpos.domain.ordertable;
-
-import kitchenpos.domain.OrderStatus;
+package kitchenpos.domain;
 
 public class OrderTable {
     private Long id;

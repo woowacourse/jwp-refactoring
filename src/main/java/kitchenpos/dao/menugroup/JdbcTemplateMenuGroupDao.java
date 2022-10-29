@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.dao.menugroup;
 
 import kitchenpos.domain.MenuGroup;
 import org.springframework.dao.EmptyResultDataAccessException;

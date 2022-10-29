@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.dao.order;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

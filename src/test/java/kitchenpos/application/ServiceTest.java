@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.menu.MenuDao;
+import kitchenpos.dao.menugroup.MenuGroupDao;
+import kitchenpos.dao.order.OrderDao;
+import kitchenpos.dao.orderlineitem.OrderLineItemDao;
+import kitchenpos.dao.ordertable.OrderTableDao;
+import kitchenpos.dao.product.ProductDao;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
