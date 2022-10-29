@@ -41,19 +41,27 @@ public class OrderService {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException("주문 목록이 비어있습니다.");
         }
+        validateOrderLineItems(orderLineItems);
+        OrderTable orderTable = getOrderTable(request);
+        return createOrder(orderLineItems, orderTable);
+    }
+
+    private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
         List<Long> menuIds = getMenuIds(orderLineItems);
         if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("존재하지 않는 메뉴가 포함되어 있습니다.");
         }
-        OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
-                .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
-        return createOrder(orderLineItems, orderTable);
     }
 
     private List<Long> getMenuIds(final List<OrderLineItem> orderLineItems) {
         return orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
+    }
+
+    private OrderTable getOrderTable(final OrderRequest request) {
+        return orderTableDao.findById(request.getOrderTableId())
+                .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
     }
 
     private OrderResponse createOrder(final List<OrderLineItem> orderLineItems, final OrderTable orderTable) {
