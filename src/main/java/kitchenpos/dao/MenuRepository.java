@@ -38,7 +38,7 @@ public class MenuRepository implements MenuDao {
     @Override
     public List<Menu> findAll() {
         final List<Menu> menus = menuDao.findAll();
-        for (Menu menu : menus) {
+        for (final Menu menu : menus) {
             menu.addMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
         }
         return menus;

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 class JdbcTemplateTableGroupDaoTest extends JdbcTemplateTest{
 
-    private TableGroupDao tableGroupDao;
+    private JdbcTemplateTableGroupDao tableGroupDao;
 
     @BeforeEach
     void setUp() {

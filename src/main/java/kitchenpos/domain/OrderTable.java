@@ -17,9 +17,7 @@ public class OrderTable {
     }
 
     public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        this.tableGroupId = tableGroupId;
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
+        this(null, tableGroupId, numberOfGuests, empty);
     }
 
     public Long getId() {
@@ -34,7 +32,7 @@ public class OrderTable {
         return tableGroupId;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
+    public void changeTableGroup(final Long tableGroupId) {
         this.tableGroupId = tableGroupId;
     }
 

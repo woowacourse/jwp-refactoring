@@ -1,6 +1,7 @@
 package kitchenpos.fixture;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import kitchenpos.domain.OrderTable;
@@ -36,7 +37,7 @@ public class TableFixture {
     }
 
     public static TableGroup getTableGroupRequest() {
-        return getTableGroupRequest(1L, LocalDateTime.now(), new LinkedList<>());
+        return getTableGroupRequest(1L, LocalDateTime.now(), Arrays.asList(getOrderTableRequest(), getOrderTableRequest()));
     }
 
     public static TableGroup getTableGroupRequest(final List<OrderTable> orderTables) {
@@ -50,7 +51,7 @@ public class TableFixture {
     public static TableGroup getTableGroupRequest(final Long id,
                                                   final LocalDateTime createdDate,
                                                   final List<OrderTable> orderTables) {
-        return new TableGroup(id, createdDate, orderTables);
+        return TableGroup.of(id, createdDate, orderTables);
     }
 
     public static OrderTable getOrderTableRequest() {

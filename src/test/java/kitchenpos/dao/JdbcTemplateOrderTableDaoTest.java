@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 class JdbcTemplateOrderTableDaoTest extends JdbcTemplateTest{
 
-    private TableGroupDao tableGroupDao;
+    private JdbcTemplateTableGroupDao tableGroupDao;
     private OrderTableDao orderTableDao;
 
     @BeforeEach
