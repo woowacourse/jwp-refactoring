@@ -10,6 +10,10 @@ public class MenuGroupRequest {
     public MenuGroupRequest() {
     }
 
+    public MenuGroupRequest(final String name) {
+       this(null,name);
+    }
+
     public MenuGroupRequest(final Long id, final String name) {
         this.id = id;
         this.name = name;
