@@ -21,14 +21,18 @@ public class OrderTableResponse {
         this.empty = empty;
     }
 
+    public static OrderTableResponse from(OrderTable orderTable) {
+        return new OrderTableResponse(
+                orderTable.getId(),
+                orderTable.getTableGroupId(),
+                orderTable.getNumberOfGuests(),
+                orderTable.isEmpty()
+        );
+    }
+
     public static List<OrderTableResponse> from(List<OrderTable> orderTables) {
         return orderTables.stream()
-                .map(it -> new OrderTableResponse(
-                        it.getId(),
-                        it.getTableGroupId(),
-                        it.getNumberOfGuests(),
-                        it.isEmpty())
-                )
+                .map(OrderTableResponse::from)
                 .collect(Collectors.toList());
     }
 

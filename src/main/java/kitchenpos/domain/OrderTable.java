@@ -53,7 +53,14 @@ public class OrderTable {
     }
 
     public void setNumberOfGuests(final int numberOfGuests) {
+        validatePositive(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validatePositive(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public boolean isEmpty() {
