@@ -1,16 +1,14 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import kitchenpos.application.dto.MenuProductCreationDto;
+import kitchenpos.domain.product.Product;
 
 public class MenuProduct {
-    private Long id;
-    private Long menuId;
-    //    private Long productId;
-    private Product product;
-    private long quantity;
 
-    public MenuProduct() {}
+    private final Long id;
+    private final Long menuId;
+    private final Product product;
+    private final long quantity;
 
     public MenuProduct(final Long id, final Long menuId, final Product product, final long quantity) {
         this.id = id;
@@ -36,39 +34,16 @@ public class MenuProduct {
         return id;
     }
 
-    @Deprecated
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Long getMenuId() {
         return menuId;
-    }
-
-    @Deprecated
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
     }
 
     public Long getProductId() {
         return product.getId();
     }
 
-    @Deprecated
-    public void setProductId(final Long productId) {
-        if (product == null) {
-            product = new Product();
-        }
-        this.product.setId(productId);
-    }
-
     public long getQuantity() {
         return quantity;
-    }
-
-    @Deprecated
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 
     public Product getProduct() {

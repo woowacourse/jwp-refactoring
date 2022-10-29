@@ -7,7 +7,8 @@ import io.restassured.response.Response;
 import java.util.List;
 import kitchenpos.acceptance.common.httpcommunication.ProductHttpCommunication;
 import kitchenpos.common.fixture.RequestBody;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
+import kitchenpos.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -29,8 +30,8 @@ public class ProductAcceptanceTest extends AcceptanceTest {
     @Test
     void getProducts() {
         ProductHttpCommunication.create(RequestBody.PRODUCT);
-        final List<Product> body = ProductHttpCommunication.getProducts()
-                .getResponseBodyAsList(Product.class);
+        final List<ProductResponse> body = ProductHttpCommunication.getProducts()
+                .getResponseBodyAsList(ProductResponse.class);
 
         assertThat(body.size()).isEqualTo(1);
     }

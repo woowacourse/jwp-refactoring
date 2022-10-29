@@ -1,12 +1,11 @@
 package kitchenpos.domain;
 
 public class OrderLineItem {
-    private Long id;
-    private Long orderId;
-    private Long menuId;
-    private long quantity;
 
-    public OrderLineItem() {}
+    private final Long id;
+    private final Long orderId;
+    private final Long menuId;
+    private final long quantity;
 
     public OrderLineItem(final Long id, final Long orderId, final Long menuId, final long quantity) {
         this.id = id;
@@ -27,31 +26,15 @@ public class OrderLineItem {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Long getOrderId() {
         return orderId;
-    }
-
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
     }
 
     public Long getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }

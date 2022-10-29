@@ -31,7 +31,7 @@ class OrderDaoTest {
         final OrderTable orderTable = new OrderTable(0, true);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
         final Order savedOrder = orderDao.save(new Order(savedOrderTable.getId(), OrderStatus.MEAL, LocalDateTime.now(),
-                List.of(new OrderLineItem())));
+                List.of(new OrderLineItem(1L, 1L))));
 
         final Order actual = orderDao.findByTableId(savedOrder.getOrderTableId())
                 .get();
@@ -45,9 +45,9 @@ class OrderDaoTest {
         final OrderTable orderTable1 = orderTableDao.save(new OrderTable(0, true));
         final OrderTable orderTable2 = orderTableDao.save(new OrderTable(0, true));
         final Order order1 = new Order(orderTable1.getId(), OrderStatus.MEAL, LocalDateTime.now(),
-                List.of(new OrderLineItem()));
+                List.of(new OrderLineItem(1L, 1L)));
         final Order order2 = new Order(orderTable2.getId(), OrderStatus.MEAL, LocalDateTime.now(),
-                List.of(new OrderLineItem()));
+                List.of(new OrderLineItem(1L, 1L)));
         orderDao.save(order1);
         orderDao.save(order2);
 

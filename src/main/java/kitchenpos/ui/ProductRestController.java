@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.dto.ProductCreationDto;
-import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.request.ProductCreationRequest;
 import kitchenpos.ui.dto.response.ProductResponse;
 import org.springframework.http.ResponseEntity;

@@ -13,7 +13,7 @@ class OrderTest {
     @DisplayName("주문 상태가 완료인지를 판단한다.")
     @Test
     void isInCompletionStatus() {
-        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem());
+        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 1L));
         final Order order = new Order(1L, OrderStatus.COMPLETION, LocalDateTime.now(), orderLineItems);
 
         assertThat(order.isInCompletionStatus()).isTrue();

@@ -4,15 +4,11 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.ProductCreationDto;
 import kitchenpos.application.dto.ProductDto;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
-import kitchenpos.ui.dto.request.ProductCreationRequest;
-import kitchenpos.ui.dto.response.ProductResponse;
+import kitchenpos.domain.product.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class ProductService {

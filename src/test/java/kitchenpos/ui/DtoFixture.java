@@ -6,8 +6,6 @@ import java.util.List;
 import kitchenpos.application.dto.MenuDto;
 import kitchenpos.application.dto.MenuGroupDto;
 import kitchenpos.application.dto.OrderDto;
-import kitchenpos.application.dto.OrderLineItemDto;
-import kitchenpos.application.dto.OrderTableCreationDto;
 import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.application.dto.ProductDto;
 import kitchenpos.application.dto.TableGroupDto;
@@ -18,8 +16,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.ui.dto.request.TableGroupCreationRequest;
+import kitchenpos.domain.product.Product;
 
 public class DtoFixture {
 

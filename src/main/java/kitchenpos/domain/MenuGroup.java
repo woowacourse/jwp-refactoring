@@ -4,10 +4,8 @@ import java.util.Objects;
 
 public class MenuGroup {
 
-    private Long id;
-    private String name;
-
-    public MenuGroup() {}
+    private final Long id;
+    private final String name;
 
     public MenuGroup(final Long id, final String name) {
         this.id = id;
@@ -22,18 +20,8 @@ public class MenuGroup {
         return id;
     }
 
-    @Deprecated
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    @Deprecated
-    public void setName(final String name) {
-        this.name = name;
     }
 
     @Override

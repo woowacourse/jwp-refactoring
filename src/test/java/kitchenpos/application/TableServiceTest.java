@@ -34,9 +34,6 @@ class TableServiceTest {
     @Autowired
     private OrderDao orderDao;
 
-    @Autowired
-    private TableGroupDao tableGroupDao;
-
     @DisplayName("주문 테이블을 생성한다.")
     @Test
     void createOrderTable() {
@@ -72,7 +69,7 @@ class TableServiceTest {
         final OrderTable orderTable = new OrderTable(0, true);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
         orderDao.save(new Order(savedOrderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
-                List.of(new OrderLineItem())));
+                List.of(new OrderLineItem(1L, 1L))));
         final OrderTableDto orderTableDto = tableService.changeEmpty(savedOrderTable.getId(), false);
 
         assertThat(orderTableDto.isEmpty()).isFalse();
@@ -84,7 +81,7 @@ class TableServiceTest {
         final OrderTable orderTable = new OrderTable(0, true);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
         orderDao.save(new Order(savedOrderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
-                List.of(new OrderLineItem())));
+                List.of(new OrderLineItem(1L, 1L))));
         tableService.changeEmpty(savedOrderTable.getId(), false);
         final OrderTableDto orderTableDto = tableService.changeNumberOfGuests(savedOrderTable.getId(), 3);
 

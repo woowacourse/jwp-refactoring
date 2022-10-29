@@ -11,7 +11,7 @@ import kitchenpos.common.annotation.SpringTestWithData;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.ui.dto.request.MenuCreationRequest;
 import kitchenpos.ui.dto.request.MenuProductRequest;
 import org.junit.jupiter.api.DisplayName;

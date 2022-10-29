@@ -53,15 +53,6 @@ public class RequestBody {
                 )));
     }
 
-    public static Map<String, Object> getOrderWithCompletionStatus(final Long orderTableId) {
-        return Map.of(
-               "orderTableId", orderTableId,
-                "orderStatus", OrderStatus.COMPLETION,
-                "orderedTime", LocalDateTime.now(),
-                "orderLineItems", List.of(new OrderLineItem())
-        );
-    }
-
     public static Map<String, Object> getOrderTableGroups(final Long tableId1, final Long tableId2) {
         return Map.of(
                 "orderTables", List.of(

@@ -1,20 +1,16 @@
 package kitchenpos.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.util.CollectionUtils;
 
 public class Order {
-    private Long id;
-    private Long orderTableId;
-    private OrderStatus orderStatus;
-    private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
 
-    public Order() {
-    }
+    private final Long id;
+    private final Long orderTableId;
+    private final OrderStatus orderStatus;
+    private final LocalDateTime orderedTime;
+    private final List<OrderLineItem> orderLineItems;
 
     public Order(final Long id,
                  final Long orderTableId,
@@ -30,7 +26,7 @@ public class Order {
     }
 
     private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
+        if (orderLineItems != null && orderLineItems.isEmpty()) {
             throw new IllegalArgumentException();
         }
     }
@@ -42,16 +38,21 @@ public class Order {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
+    public Order(final Long id,
+                 final Long orderTableId,
+                 final OrderStatus orderStatus,
+                 final LocalDateTime orderedTime) {
+        this(id, orderTableId, orderStatus, orderedTime, null);
+    }
+
     public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, null, null, orderLineItems);
     }
 
-    @JsonIgnore
     public boolean isInCompletionStatus() {
         return orderStatus.isCompletion();
     }
 
-    @JsonIgnore
     public List<Long> getOrderLineItemsMenuId() {
         return orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
@@ -81,30 +82,4 @@ public class Order {
     public Order saveOrderLineItems(final List<OrderLineItem> orderLineItems) {
         return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
-
-    @Deprecated
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
-    }
-
-    @Deprecated
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = OrderStatus.valueOf(orderStatus);
-    }
-
-    @Deprecated
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
-    @Deprecated
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
-    }
-
-    @Deprecated
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
 }
