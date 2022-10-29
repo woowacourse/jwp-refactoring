@@ -37,7 +37,7 @@ class TableGroupServiceTest extends ServiceTest {
                 .getId();
         final OrderTable orderTable1 = orderTableDao.save(new OrderTable(null, null, 0, true));
         final OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, null, 0, true));
-        tableGroupId = tableGroupDao.save(new TableGroup(List.of(orderTable1, orderTable2))).getId();
+        tableGroupId = tableGroupDao.save(TableGroup.of(List.of(orderTable1, orderTable2))).getId();
         orderTableId1 = orderTable1.getId();
         orderTableId2 = orderTable2.getId();
     }
@@ -86,7 +86,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     @DisplayName("각 주문 테이블의 주문 상태가 식사 상태면 예외 발생")
     void whenIsMeal() {
-        orderDao.save(new Order(orderTableId1, MEAL.name(), LocalDateTime.now(), List.of(new OrderLineItem(1L, 2))));
+        orderDao.save(Order.of(orderTableId1, MEAL.name(), LocalDateTime.now(), List.of(new OrderLineItem(1L, 2))));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -95,7 +95,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     @DisplayName("각 주문 테이블의 주문 상태가 조리 상태면 예외 발생")
     void whenIsCooking() {
-        orderDao.save(new Order(orderTableId2, COOKING.name(), LocalDateTime.now(), List.of(new OrderLineItem(1L, 2))));
+        orderDao.save(Order.of(orderTableId2, COOKING.name(), LocalDateTime.now(), List.of(new OrderLineItem(1L, 2))));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
                 .isInstanceOf(IllegalArgumentException.class);

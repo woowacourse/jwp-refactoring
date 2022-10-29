@@ -31,7 +31,7 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest tableGroupCreateRequest) {
         final List<Long> orderTableIds = mapToIds(tableGroupCreateRequest);
-        final TableGroup tableGroup = new TableGroup(orderTableDao.findAllByIdIn(orderTableIds));
+        final TableGroup tableGroup = TableGroup.of(orderTableDao.findAllByIdIn(orderTableIds));
         tableGroup.checkOrderTableSize(orderTableIds.size());
         return TableGroupResponse.from(tableGroupDao.save(tableGroup));
     }

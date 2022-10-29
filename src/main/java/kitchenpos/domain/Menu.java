@@ -6,14 +6,12 @@ import java.util.List;
 import java.util.Objects;
 
 public class Menu {
-    private Long id;
-    private String name;
-    private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
 
-    public Menu() {
-    }
+    private final Long id;
+    private final String name;
+    private final BigDecimal price;
+    private final Long menuGroupId;
+    private final List<MenuProduct> menuProducts;
 
     public Menu(final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
@@ -49,20 +47,8 @@ public class Menu {
         }
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
-    }
-
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
+    public static Menu toEntity(final long id, final String name, final BigDecimal price, final Long menuGroupId) {
+        return new Menu(id, name, price, menuGroupId, new ArrayList<>());
     }
 
     public Long getId() {

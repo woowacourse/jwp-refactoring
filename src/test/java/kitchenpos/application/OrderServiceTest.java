@@ -115,7 +115,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     @DisplayName("주문의 상태를 변경한다.")
     void changeOrderStatus() {
-        final Order order = new Order(1L, Collections.singletonList(new OrderLineItem(1L, 1L)));
+        final Order order = Order.of(1L, Collections.singletonList(new OrderLineItem(1L, 1L)));
         final Order savedOrder = orderDao.save(order);
         final OrderStatusChangeRequest request = new OrderStatusChangeRequest(OrderStatus.MEAL.name());
 

@@ -55,7 +55,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("주문 테이블의 주문의 상태가 조리 상태면 예외 발생")
     void whenOrderTableWithCookingStatus() {
         final OrderTable savedOrderTableId = orderTableDao.save(new OrderTable(null, 3, false));
-        orderDao.save(new Order(savedOrderTableId.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
+        orderDao.save(Order.of(savedOrderTableId.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
                 List.of(new OrderLineItem(1L, 1L))));
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableId.getId(), true))
@@ -66,7 +66,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("주문 테이블의 주문의 상태가 식사 상태면 예외 발생")
     void whenOrderTableWithMealStatus() {
         final OrderTable savedOrderTableId = orderTableDao.save(new OrderTable(null, 3, false));
-        orderDao.save(new Order(savedOrderTableId.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
+        orderDao.save(Order.of(savedOrderTableId.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
                 List.of(new OrderLineItem(1L, 1L))));
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableId.getId(), true))

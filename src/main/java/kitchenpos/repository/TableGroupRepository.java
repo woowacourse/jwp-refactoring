@@ -35,7 +35,7 @@ public class TableGroupRepository implements TableGroupDao {
                 ))
                 .map(jdbcTemplateOrderTableDao::save)
                 .collect(Collectors.toList());
-        return new TableGroup(tableGroup.getId(), tableGroup.getCreatedDate(), orderTables);
+        return TableGroup.of(tableGroup.getId(), tableGroup.getCreatedDate(), orderTables);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class TableGroupRepository implements TableGroupDao {
     public List<TableGroup> findAll() {
         final List<TableGroup> tableGroups = jdbcTemplateTableGroupDao.findAll();
         return tableGroups.stream()
-                .map(tableGroup -> new TableGroup(
+                .map(tableGroup -> TableGroup.of(
                         tableGroup.getId(),
                         tableGroup.getCreatedDate(),
                         jdbcTemplateOrderTableDao.findAllByTableGroupId(tableGroup.getId()))

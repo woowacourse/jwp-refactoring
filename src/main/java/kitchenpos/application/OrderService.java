@@ -34,14 +34,8 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
-        final Long orderTableId = request.getOrderTableId();
-        final OrderTable orderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("주문 테이블이 비어 있을 수 없습니다.");
-        }
-        final Order order = new Order(
-                orderTable.getId(),
+        final Order order = Order.of(
+                getOrderTableId(request),
                 request.getOrderLineItemRequests()
                         .stream()
                         .map(orderLineItemRequest -> new OrderLineItem(
@@ -51,6 +45,20 @@ public class OrderService {
         );
         order.checkMenuSize(menuDao.countByIdIn(order.getMenuIds()));
         return OrderResponse.from(orderDao.save(order));
+    }
+
+    private Long getOrderTableId(final OrderCreateRequest request) {
+        final Long orderTableId = request.getOrderTableId();
+        final OrderTable orderTable = orderTableDao.findById(orderTableId)
+                .orElseThrow(IllegalArgumentException::new);
+        validateOrderTableEmpty(orderTable);
+        return orderTable.getId();
+    }
+
+    private static void validateOrderTableEmpty(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("주문 테이블이 비어 있을 수 없습니다.");
+        }
     }
 
     public List<OrderResponse> list() {

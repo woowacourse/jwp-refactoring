@@ -9,9 +9,6 @@ public class MenuProduct {
     private long quantity;
     private BigDecimal price = BigDecimal.ZERO;
 
-    public MenuProduct() {
-    }
-
     public MenuProduct(final Long productId, final long quantity, final BigDecimal price) {
         this(null, productId, quantity);
         this.price = price;
@@ -23,20 +20,15 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public void setSeq(final Long seq) {
+    public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity) {
         this.seq = seq;
-    }
-
-    public void setMenuId(final Long menuId) {
         this.menuId = menuId;
-    }
-
-    public void setProductId(final Long productId) {
         this.productId = productId;
+        this.quantity = quantity;
     }
 
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
+    public static MenuProduct toEntity(final Long seq, final Long menu_id, final Long product_id, final long quantity) {
+        return new MenuProduct(seq, menu_id, product_id, quantity);
     }
 
     public Long getSeq() {

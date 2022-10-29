@@ -34,7 +34,7 @@ public class OrderRepository implements OrderDao {
                 ))
                 .map(jdbcTemplateOrderLineItemDao::save)
                 .collect(Collectors.toList());
-        return new Order(
+        return Order.of(
                 order.getId(),
                 order.getOrderTableId(),
                 order.getOrderStatus(),
@@ -46,7 +46,7 @@ public class OrderRepository implements OrderDao {
     @Override
     public Optional<Order> findById(final Long id) {
         return jdbcTemplateOrderDao.findById(id)
-                .map(order -> new Order(
+                .map(order -> Order.of(
                         order.getId(),
                         order.getOrderTableId(),
                         order.getOrderStatus(),
@@ -59,7 +59,7 @@ public class OrderRepository implements OrderDao {
     public List<Order> findAll() {
         final List<Order> orders = jdbcTemplateOrderDao.findAll();
         return orders.stream()
-                .map(order -> new Order(
+                .map(order -> Order.of(
                         order.getId(),
                         order.getOrderTableId(),
                         order.getOrderStatus(),
