@@ -19,12 +19,12 @@ public class OrderRequestDto {
                 .collect(Collectors.toList()));
     }
 
-    public void setOrderTableId(Long orderTableId) {
-        this.orderTableId = orderTableId;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
-    public void setOrderLineItems(List<OrderLineItemRequestDto> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+    public List<OrderLineItemRequestDto> getOrderLineItems() {
+        return orderLineItems;
     }
 
     static class OrderLineItemRequestDto {
@@ -39,12 +39,12 @@ public class OrderRequestDto {
             return new CreateOrderLineItemDto(menuId, quantity);
         }
 
-        public void setMenuId(Long menuId) {
-            this.menuId = menuId;
+        public Long getMenuId() {
+            return menuId;
         }
 
-        public void setQuantity(Integer quantity) {
-            this.quantity = quantity;
+        public Integer getQuantity() {
+            return quantity;
         }
     }
 }

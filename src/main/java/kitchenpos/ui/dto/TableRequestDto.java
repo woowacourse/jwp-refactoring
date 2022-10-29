@@ -14,11 +14,11 @@ public class TableRequestDto {
         return new CreateTableDto(numberOfGuests, empty);
     }
 
-    public void setNumberOfGuests(Integer numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
+    public Integer getNumberOfGuests() {
+        return numberOfGuests;
     }
 
-    public void setEmpty(Boolean empty) {
-        this.empty = empty;
+    public Boolean getEmpty() {
+        return empty;
     }
 }

@@ -23,20 +23,20 @@ public class MenuRequestDto {
         return new CreateMenuDto(name, price, menuGroupId, menuProductsDto);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getName() {
+        return name;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setMenuGroupId(Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
-    public void setMenuProducts(List<MenuProductRequestDto> menuProducts) {
-        this.menuProducts = menuProducts;
+    public List<MenuProductRequestDto> getMenuProducts() {
+        return menuProducts;
     }
 
     static class MenuProductRequestDto {
@@ -51,12 +51,12 @@ public class MenuRequestDto {
             return new CreateMenuProductDto(productId, quantity);
         }
 
-        public void setProductId(Long productId) {
-            this.productId = productId;
+        public Long getProductId() {
+            return productId;
         }
 
-        public void setQuantity(Integer quantity) {
-            this.quantity = quantity;
+        public Integer getQuantity() {
+            return quantity;
         }
     }
 }

@@ -15,11 +15,11 @@ public class ProductRequestDto {
         return new CreateProductDto(name, price);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getName() {
+        return name;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    public BigDecimal getPrice() {
+        return price;
     }
 }

@@ -13,7 +13,7 @@ public class TableGuestNumberRequestDto {
         return new UpdateGuestNumberDto(orderTableId, numberOfGuests);
     }
 
-    public void setNumberOfGuests(Integer numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
+    public Integer getNumberOfGuests() {
+        return numberOfGuests;
     }
 }

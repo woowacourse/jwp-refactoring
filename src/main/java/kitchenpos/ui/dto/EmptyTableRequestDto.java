@@ -13,7 +13,7 @@ public class EmptyTableRequestDto {
         return new EmptyTableDto(orderTableId, empty);
     }
 
-    public void setEmpty(Boolean empty) {
-        this.empty = empty;
+    public Boolean getEmpty() {
+        return empty;
     }
 }

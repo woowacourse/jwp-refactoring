@@ -17,8 +17,8 @@ public class TableGroupsRequestDto {
                 .collect(Collectors.toList()));
     }
 
-    public void setOrderTables(List<OrderTableIdRequestDto> orderTables) {
-        this.orderTables = orderTables;
+    public List<OrderTableIdRequestDto> getOrderTables() {
+        return orderTables;
     }
 
     static class OrderTableIdRequestDto {
@@ -28,8 +28,8 @@ public class TableGroupsRequestDto {
         public OrderTableIdRequestDto() {
         }
 
-        public void setId(Long id) {
-            this.id = id;
+        public Long getId() {
+            return id;
         }
     }
 }

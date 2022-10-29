@@ -14,7 +14,7 @@ public class OrderStatusRequestDto {
         return new UpdateOrderStatusDto(orderId, OrderStatus.valueOf(orderStatus));
     }
 
-    public void setOrderStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
+    public String getOrderStatus() {
+        return orderStatus;
     }
 }
