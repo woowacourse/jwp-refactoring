@@ -26,7 +26,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupCommand tableGroupCommand) {
+    public TableGroup create(TableGroupCommand tableGroupCommand) {
         List<Long> orderTableIds = tableGroupCommand.getOrderTableId();
         List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         validate(orderTableIds, orderTables);
@@ -40,7 +40,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public void ungroup(final Long tableGroupId) {
+    public void ungroup(Long tableGroupId) {
         OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
         tableGroupValidator.validate(orderTables.getIds());
         orderTables.ungroup();

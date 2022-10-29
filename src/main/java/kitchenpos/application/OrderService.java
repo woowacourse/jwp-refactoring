@@ -28,7 +28,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse create(final OrderCommand orderCommand) {
+    public OrderResponse create(OrderCommand orderCommand) {
         OrderTable orderTable = getOrderTable(orderCommand.getOrderTableId());
         List<OrderLineItem> orderLineItems = orderCommand.toEntity();
         orderValidator.validate(orderLineItems);
@@ -47,7 +47,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse changeOrderStatus(final Long orderId, final String status) {
+    public OrderResponse changeOrderStatus(Long orderId, String status) {
         Order savedOrder = getOrder(orderId);
         savedOrder.changeStatus(OrderStatus.valueOf(status));
         return OrderResponse.from(savedOrder);

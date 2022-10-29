@@ -16,11 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
 
     private final MenuRepository menuRepository;
-    private final MenuCreatedValidator menuValidator;
+    private final MenuValidator menuValidator;
     private final MenuGroupRepository menuGroupRepository;
 
     public MenuService(MenuRepository menuRepository,
-                       MenuCreatedValidator menuValidator,
+                       MenuValidator menuValidator,
                        MenuGroupRepository menuGroupRepository) {
         this.menuRepository = menuRepository;
         this.menuValidator = menuValidator;

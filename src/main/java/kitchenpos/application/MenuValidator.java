@@ -10,11 +10,11 @@ import kitchenpos.domain.Products;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MenuCreatedValidator {
+public class MenuValidator {
 
     private final ProductRepository productRepository;
 
-    public MenuCreatedValidator(ProductRepository productRepository) {
+    public MenuValidator(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 

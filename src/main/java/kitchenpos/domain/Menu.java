@@ -43,16 +43,8 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
-    }
-
     public Menu(String name, BigDecimal price, Long menuGroupId) {
         this(null, name, price, menuGroupId, new ArrayList<>());
-    }
-
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
-        this(id, name, price, menuGroupId, new ArrayList<>());
     }
 
     public void addMenuProduct(MenuProduct menuProduct) {

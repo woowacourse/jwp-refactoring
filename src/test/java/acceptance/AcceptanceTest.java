@@ -13,8 +13,8 @@ import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.common.DataClearExtension;
-import kitchenpos.domain.ProductDto;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.request.MenuProductRequest;
 import kitchenpos.ui.dto.request.MenuRequest;
@@ -57,13 +57,13 @@ public class AcceptanceTest {
                 .extract().jsonPath().getLong("id");
     }
 
-    protected List<ProductDto> 상품을_조회한다() {
+    protected List<ProductResponse> 상품을_조회한다() {
         return RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/products")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .extract().body().jsonPath().getList(".", ProductDto.class);
+                .extract().body().jsonPath().getList(".", ProductResponse.class);
     }
 
     protected long 메뉴_그룹을_생성한다(String name) {
