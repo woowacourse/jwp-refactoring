@@ -33,10 +33,9 @@ public class RequestUtil {
                 .extract();
     }
 
-    static protected ExtractableResponse<Response> delete(final String uri, final Object body) {
+    static protected ExtractableResponse<Response> delete(final String uri) {
         return RestAssured.given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(body)
                 .when().delete(uri)
                 .then().log().all()
                 .extract();
