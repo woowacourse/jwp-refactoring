@@ -1,6 +1,6 @@
 package kitchenpos.ui;
 
-import static kitchenpos.fixture.ProductFixture.createProduct;
+import static kitchenpos.fixture.domain.ProductFixture.createProduct;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

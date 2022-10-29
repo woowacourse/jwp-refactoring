@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.ProductFixture.createProduct;
+import static kitchenpos.fixture.domain.ProductFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

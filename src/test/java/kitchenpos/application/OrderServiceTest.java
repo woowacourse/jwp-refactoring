@@ -1,11 +1,9 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFixture.createMenu;
-import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
-import static kitchenpos.fixture.MenuProductFixture.createMenuProduct;
-import static kitchenpos.fixture.OrderFixture.createOrder;
-import static kitchenpos.fixture.OrderLineItemFixture.createOrderLineItem;
-import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
+import static kitchenpos.fixture.domain.MenuFixture.createMenu;
+import static kitchenpos.fixture.domain.OrderFixture.createOrder;
+import static kitchenpos.fixture.domain.OrderLineItemFixture.createOrderLineItem;
+import static kitchenpos.fixture.domain.OrderTableFixture.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -15,11 +13,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -46,16 +42,11 @@ class OrderServiceTest {
     @Autowired
     private OrderTableDao tableDao;
 
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
     @DisplayName("주문을 생성한다.")
     @Test
     void create_success() {
         // given
-        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
-        Menu menu = menuRepository.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
-                Collections.singletonList(createMenuProduct(1L, 2))));
+        Menu menu = menuRepository.save(createMenu());
         OrderTable orderTable = tableDao.save(createOrderTable());
         Order order = createOrder(orderTable.getId(), Collections.singletonList(createOrderLineItem(menu.getId(), 1)));
 
@@ -96,9 +87,7 @@ class OrderServiceTest {
     @Test
     void create_fail_if_not_exist_orderTable() {
         // given
-        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
-        Menu menu = menuRepository.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
-                Collections.singletonList(createMenuProduct(1L, 2))));
+        Menu menu = menuRepository.save(createMenu());
         Order order = createOrder(9999999L, Collections.singletonList(createOrderLineItem(menu.getId(), 1)));
 
         // when, then
@@ -111,9 +100,7 @@ class OrderServiceTest {
     void create_fail_if_menu_id_duplicate() {
         // given
         OrderTable orderTable = tableDao.save(new OrderTable());
-        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
-        Menu menu = menuRepository.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
-                Collections.singletonList(createMenuProduct(1L, 2))));
+        Menu menu = menuRepository.save(createMenu());
         Order order = createOrder(orderTable.getId(),
                 Arrays.asList(createOrderLineItem(menu.getId(), 1), createOrderLineItem(menu.getId(), 1)));
 
@@ -127,9 +114,7 @@ class OrderServiceTest {
     void create_fail_if_orderTable_is_empty() {
         // given
         OrderTable orderTable = tableDao.save(createOrderTable(false));
-        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
-        Menu menu = menuRepository.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
-                Collections.singletonList(createMenuProduct(1L, 2))));
+        Menu menu = menuRepository.save(createMenu());
         Order order = createOrder(orderTable.getId(),
                 Arrays.asList(createOrderLineItem(menu.getId(), 1), createOrderLineItem(menu.getId(), 1)));
 
@@ -142,9 +127,7 @@ class OrderServiceTest {
     @Test
     void list_success() {
         // given
-        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
-        Menu menu = menuRepository.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
-                Collections.singletonList(createMenuProduct(1L, 2))));
+        Menu menu = menuRepository.save(createMenu());
         OrderTable orderTable = tableDao.save(createOrderTable());
         Order order = orderDao.save(createOrder(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
                 Collections.singletonList(createOrderLineItem(menu.getId(), 1))));
@@ -163,9 +146,7 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus_success() {
         // given
-        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
-        Menu menu = menuRepository.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
-                Collections.singletonList(createMenuProduct(1L, 2))));
+        Menu menu = menuRepository.save(createMenu());
         OrderTable orderTable = tableDao.save(createOrderTable());
         Order order = createOrder(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
                 Collections.singletonList(createOrderLineItem(menu.getId(), 1)));
@@ -185,16 +166,15 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus_fail_if_exist_orderStatus_is_COMPLETION() {
         // given
-        MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
-        Menu menu = menuRepository.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
-                Collections.singletonList(createMenuProduct(1L, 2))));
+        Menu menu = menuRepository.save(createMenu());
         OrderTable orderTable = tableDao.save(createOrderTable());
         Order order = createOrder(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(),
                 Collections.singletonList(createOrderLineItem(menu.getId(), 1)));
         Order savedOrder = orderDao.save(order);
 
         // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), createOrder(OrderStatus.COOKING.name())))
+        assertThatThrownBy(
+                () -> orderService.changeOrderStatus(savedOrder.getId(), createOrder(OrderStatus.COOKING.name())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

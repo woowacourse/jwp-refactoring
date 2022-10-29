@@ -1,6 +1,6 @@
 package kitchenpos.ui;
 
-import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
+import static kitchenpos.fixture.domain.OrderTableFixture.createOrderTable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

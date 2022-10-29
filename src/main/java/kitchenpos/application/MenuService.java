@@ -1,11 +1,12 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
 import kitchenpos.exception.NotFoundException;
 import kitchenpos.repository.MenuRepository;
@@ -19,21 +20,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
 
     private static final String NOT_FOUND_PRODUCT_ERROR_MESSAGE = "존재하지 않는 상품 ID 입니다.";
+    private static final String NOT_FOUND_MENU_GROUP_ERROR_MESSAGE = "존재하지 않는 메뉴그룹 ID 입니다.";
 
     private final MenuRepository menuRepository;
     private final MenuGroupDao menuGroupDao;
-    private final MenuProductDao menuProductDao;
     private final ProductRepository productRepository;
 
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupDao menuGroupDao,
-            final MenuProductDao menuProductDao,
             final ProductRepository productRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
         this.productRepository = productRepository;
     }
 
@@ -41,45 +40,44 @@ public class MenuService {
     public Menu create(final CreateMenuRequest request) {
         validateMenuGroup(request.getMenuGroupId());
 
-        BigDecimal price = request.getPrice();
-        List<CreateMenuProductsRequest> menuProductsRequests = request.getMenuProducts();
+        final MenuProducts menuProducts = toMenuProducts(request);
+        validatePrice(request.getPrice(), menuProducts);
 
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final CreateMenuProductsRequest menuProduct : menuProductsRequests) {
-            final Product product = productRepository.findById(menuProduct.getProductId())
-                    .orElseThrow(() -> new NotFoundException(NOT_FOUND_PRODUCT_ERROR_MESSAGE));
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
+        final Menu menu = toMenu(request, menuProducts);
+        return menuRepository.save(menu);
+    }
 
+    private Menu toMenu(final CreateMenuRequest request, final MenuProducts menuProducts) {
+        return Menu.builder()
+                .name(request.getName())
+                .price(request.getPrice())
+                .menuGroupId(request.getMenuGroupId())
+                .menuProducts(menuProducts)
+                .build();
+    }
+
+    private void validatePrice(final BigDecimal price, final MenuProducts menuProducts) {
+        BigDecimal sum = menuProducts.calculateTotalAmount();
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
-
-        final Menu savedMenu = menuRepository.save(
-                new Menu(request.getName(), request.getPrice(), request.getMenuGroupId()));
-        final Long menuId = savedMenu.getId();
-
-        for (CreateMenuProductsRequest menuProductsRequest : menuProductsRequests) {
-            Long productId = menuProductsRequest.getProductId();
-            long quantity = menuProductsRequest.getQuantity();
-            validateProduct(productId);
-
-            MenuProduct menuProduct = new MenuProduct(menuId, productId, quantity);
-            menuProductDao.save(menuProduct);
-        }
-
-        return savedMenu;
     }
 
-    private void validateProduct(final Long productId) {
-        if (!productRepository.existsById(productId)) {
-            throw new NotFoundException(NOT_FOUND_PRODUCT_ERROR_MESSAGE);
+    private MenuProducts toMenuProducts(final CreateMenuRequest request) {
+        List<MenuProduct> menuProducts = new ArrayList<>();
+        for (final CreateMenuProductsRequest menuProductsRequest : request.getMenuProducts()) {
+            final Long productId = menuProductsRequest.getProductId();
+            final long quantity = menuProductsRequest.getQuantity();
+            final Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new NotFoundException(NOT_FOUND_PRODUCT_ERROR_MESSAGE));
+            menuProducts.add(new MenuProduct(product, quantity));
         }
+        return new MenuProducts(menuProducts);
     }
 
     private void validateMenuGroup(final Long menuGroupId) {
         if (!menuGroupDao.existsById(menuGroupId)) {
-            throw new NotFoundException("존재하지 않는 메뉴그룹 ID 입니다.");
+            throw new NotFoundException(NOT_FOUND_MENU_GROUP_ERROR_MESSAGE);
         }
     }
 

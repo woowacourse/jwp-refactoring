@@ -1,11 +1,10 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFixture.createMenu;
-import static kitchenpos.fixture.MenuProductFixture.createMenuProduct;
-import static kitchenpos.fixture.OrderFixture.createOrder;
-import static kitchenpos.fixture.OrderLineItemFixture.createOrderLineItem;
-import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
-import static kitchenpos.fixture.TableGroupFixture.createTableGroup;
+import static kitchenpos.fixture.domain.MenuFixture.createMenu;
+import static kitchenpos.fixture.domain.OrderFixture.createOrder;
+import static kitchenpos.fixture.domain.OrderLineItemFixture.createOrderLineItem;
+import static kitchenpos.fixture.domain.OrderTableFixture.createOrderTable;
+import static kitchenpos.fixture.domain.TableGroupFixture.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -116,8 +115,7 @@ class TableServiceTest {
     @ParameterizedTest
     void changeEmpty_false_if_orderTableStatus_is_COOKING_or_MEAL(String status) {
         // given
-        Menu menu = menuRepository.save(createMenu("후라이드+후라이드", 19_000L, 1L,
-                Collections.singletonList(createMenuProduct(1L, 2))));
+        Menu menu = menuRepository.save(createMenu());
         OrderTable orderTable = tableDao.save(createOrderTable(4, true));
         orderDao.save(createOrder(orderTable.getId(), status, LocalDateTime.now(),
                 Collections.singletonList(createOrderLineItem(menu.getId(), 1))));

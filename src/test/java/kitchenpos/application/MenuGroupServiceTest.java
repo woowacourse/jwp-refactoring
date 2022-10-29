@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
+import static kitchenpos.fixture.domain.MenuGroupFixture.createMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;

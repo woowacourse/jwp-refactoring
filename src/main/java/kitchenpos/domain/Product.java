@@ -20,6 +20,28 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal price;
 
+    public Product() {
+    }
+
+    public Product(final Long id) {
+        this.id = id;
+    }
+
+    public Product(final String name, final BigDecimal price) {
+        this.name = name;
+        this.price = price;
+    }
+
+    public Product(final Long id, final String name, final BigDecimal price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
+
+    public BigDecimal calculateAmount(final long quantity) {
+        return price.multiply(BigDecimal.valueOf(quantity));
+    }
+
     public Long getId() {
         return id;
     }
@@ -43,4 +65,6 @@ public class Product {
     public void setPrice(final BigDecimal price) {
         this.price = price;
     }
+
+
 }

@@ -18,3 +18,5 @@ spring:
       hibernate:
         format_sql: true
     show-sql: true
+  flyway:
+    baseline-on-migrate: true

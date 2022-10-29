@@ -1,7 +1,6 @@
 package kitchenpos.ui;
 
-import static kitchenpos.fixture.MenuFixture.createMenu;
-import static kitchenpos.fixture.MenuProductFixture.createMenuProduct;
+import static kitchenpos.fixture.domain.MenuFixture.createMenu;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -9,9 +8,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import kitchenpos.application.MenuService;
-import kitchenpos.domain.Menu;
+import kitchenpos.ui.dto.CreateMenuProductsRequest;
+import kitchenpos.ui.dto.CreateMenuRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -29,16 +30,15 @@ public class MenuRestControllerTest extends ControllerTest {
     @Test
     public void create() throws Exception {
         // given
-        Menu menu = createMenu("후라이드+후라이드", 19_000L, 1L,
-                Collections.singletonList(createMenuProduct(1L, 2)));
-        given(menuService.create(any())).willReturn(createMenu(1L, "후라이드+후라이드", 19_000L, 1L,
-                Collections.singletonList(createMenuProduct(1L, 2))));
+        CreateMenuRequest request = new CreateMenuRequest("후라이드+후라이드", BigDecimal.valueOf(20_000L), 1L,
+                Collections.singletonList(new CreateMenuProductsRequest(1L, 2)));
+        given(menuService.create(any())).willReturn(createMenu());
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/menus")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
-                        .content(objectMapper.writeValueAsString(menu)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andDo(print());
 
         // then

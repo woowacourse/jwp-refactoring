@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
-import static kitchenpos.fixture.TableGroupFixture.createTableGroup;
+import static kitchenpos.fixture.domain.OrderTableFixture.createOrderTable;
+import static kitchenpos.fixture.domain.TableGroupFixture.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

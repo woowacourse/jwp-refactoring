@@ -1,9 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFixture.createMenu;
-import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
-import static kitchenpos.fixture.MenuProductFixture.createMenuProduct;
-import static kitchenpos.fixture.ProductFixture.createProduct;
+import static kitchenpos.fixture.domain.MenuGroupFixture.createMenuGroup;
+import static kitchenpos.fixture.domain.ProductFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -140,8 +138,9 @@ class MenuServiceTest {
     void list_success() {
         // given
         MenuGroup newMenuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
-        Menu menu = menuRepository.save(createMenu("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
-                Collections.singletonList(createMenuProduct(1L, 2))));
+        CreateMenuRequest request = createMenuRequest("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
+                Collections.singletonList(createMenuProductRequest(1L, 2)));
+        Menu savedMenu = menuService.create(request);
 
         // when
         List<Menu> menus = menuService.list();
@@ -150,7 +149,7 @@ class MenuServiceTest {
         List<String> menuNames = menus.stream()
                 .map(Menu::getName)
                 .collect(Collectors.toList());
-        assertThat(menuNames).contains(menu.getName());
+        assertThat(menuNames).contains(savedMenu.getName());
     }
 
     private CreateMenuRequest createMenuRequest(final String name, final Long price, final Long menuGroupId,

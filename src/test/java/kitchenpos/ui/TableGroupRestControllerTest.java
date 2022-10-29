@@ -1,7 +1,7 @@
 package kitchenpos.ui;
 
-import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
-import static kitchenpos.fixture.TableGroupFixture.createTableGroup;
+import static kitchenpos.fixture.domain.OrderTableFixture.createOrderTable;
+import static kitchenpos.fixture.domain.TableGroupFixture.createTableGroup;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
