@@ -18,6 +18,7 @@ public class OrderTable {
 
     private static final String SETTING_EMPTY_DISABLED_BY_TABLE_GROUP_EXCEPTION_MESSAGE =
             "Table Group으로 묶인 테이블은 empty를 변경할 수 없습니다.";
+    private static final String SETTIN_EMPTY_DISABLED_BY_ORDER_NOT_COMPLETE_EXCEPTION = "조리중이거나 식사중인 테이블의 empty를 변경할 수 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -77,7 +78,7 @@ public class OrderTable {
     private void validateOrderStatusIfExists() {
         Order order = getOrder();
         if (Objects.nonNull(order) && order.isNotCompletionOrderStatus()) {
-            throw new IllegalArgumentException("조리중이거나 식사중인 테이블의 empty를 변경할 수 없습니다.");
+            throw new TableEmptyDisabledException(SETTIN_EMPTY_DISABLED_BY_ORDER_NOT_COMPLETE_EXCEPTION);
         }
     }
 

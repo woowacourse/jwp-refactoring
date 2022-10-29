@@ -13,6 +13,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableDto;
 import kitchenpos.exception.GuestNumberChangeDisabledException;
 import kitchenpos.exception.InvalidGuestNumberException;
+import kitchenpos.exception.TableEmptyDisabledException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -67,7 +68,7 @@ class TableServiceTest extends ServiceTest {
 
         assertThatThrownBy(
                 () -> tableService.changeEmpty(orderTable.getId(), new TableDto(tableGroup.getId(), 3, true)))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(TableEmptyDisabledException.class)
                 .hasMessage("Table Group으로 묶인 테이블은 empty를 변경할 수 없습니다.");
     }
 
@@ -79,7 +80,7 @@ class TableServiceTest extends ServiceTest {
         orderRepository.save(new Order(orderTable, OrderStatus.from(orderStatus), Collections.emptyList()));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new TableDto(null, 3, true)))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(TableEmptyDisabledException.class)
                 .hasMessage("조리중이거나 식사중인 테이블의 empty를 변경할 수 없습니다.");
     }
 
