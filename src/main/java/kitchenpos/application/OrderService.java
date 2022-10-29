@@ -46,12 +46,10 @@ public class OrderService {
         Order order = new Order(orderTable, OrderStatus.COOKING, new ArrayList<>());
         Order savedOrder = orderRepository.save(order);
         createOrderLineItem(orderLineItemDtos, savedOrder);
-        //orderLineItemRepository.saveAll(orderLineItem);
         return new OrderResponse(savedOrder);
     }
 
     private void createOrderLineItem(List<OrderLineItemDto> orderLineItemDtos, Order savedOrder) {
-        List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (OrderLineItemDto orderLineItemDto : orderLineItemDtos) {
             OrderLineItem orderLineItem = new OrderLineItem(
                     savedOrder,
@@ -59,7 +57,6 @@ public class OrderService {
                     Quantity.from(orderLineItemDto.getQuantity()));
             orderLineItemRepository.save(orderLineItem);
         }
-        //return savedOrderLineItems;
     }
 
     private Menu findMenu(Long menuId) {
