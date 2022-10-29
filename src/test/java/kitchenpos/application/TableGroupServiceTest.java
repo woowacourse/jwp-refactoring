@@ -1,15 +1,16 @@
 package kitchenpos.application;
 
-import static kitchenpos.Fixture.테이블집합;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import java.util.List;
 import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.TableGroupRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,23 +27,25 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Test
     void 테이블그룹을_생성한다() {
-        TableGroup tableGroup = 테이블집합(테이블_생성(true), 테이블_생성(true));
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(테이블_생성(true), 테이블_생성(true)));
 
-        TableGroupResponse actual = tableGroupService.create(tableGroup);
+        TableGroupResponse actual = tableGroupService.create(tableGroupRequest);
         assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
     }
 
     @Test
     void 테이블그룹을_생성할때_테이블이_없는_경우_예외를_발생시킨다() {
-        assertThatThrownBy(() -> tableGroupService.create(new TableGroup(null)))
+        assertThatThrownBy(
+                () -> tableGroupService.create(new TableGroupRequest(List.of(new OrderTable(-1L, 1L, 1, true)))))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 테이블그룹을_생성할때_테이블이_저장된_정보와_다를_경우_예외를_발생시킨다() {
-        TableGroup tableGroup = 테이블집합(new OrderTable(-1L, null, 0, true), 테이블_생성(true));
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(
+                List.of(new OrderTable(-1L, null, 0, true), 테이블_생성(true)));
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
@@ -56,8 +59,8 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void 테이블그룹을_해제할때_조리중인_주문이_있는_경우_예외를_발생시킨다() {
         OrderTable orderTable = 테이블_생성(true);
-        TableGroup tableGroup = 테이블집합(orderTable, 테이블_생성(true));
-        TableGroupResponse savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(orderTable, 테이블_생성(true)));
+        TableGroupResponse savedTableGroup = tableGroupService.create(tableGroupRequest);
         주문_생성(orderTable.getId());
 
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
@@ -67,8 +70,8 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void 테이블그룹을_해제할때_식사중인_주문이_있는_경우_예외를_발생시킨다() {
         OrderTable orderTable = 테이블_생성(true);
-        TableGroup tableGroup = 테이블집합(orderTable, 테이블_생성(true));
-        TableGroupResponse savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(orderTable, 테이블_생성(true)));
+        TableGroupResponse savedTableGroup = tableGroupService.create(tableGroupRequest);
         Order savedOrder = 주문_생성(orderTable.getId());
         orderService.changeOrderStatus(savedOrder.getId(), OrderStatus.MEAL);
 

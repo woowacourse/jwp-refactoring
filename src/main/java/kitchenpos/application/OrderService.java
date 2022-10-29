@@ -23,21 +23,15 @@ public class OrderService {
     private final OrderTableDao orderTableDao;
 
     public OrderService(
-            final MenuDao menuDao,
-            final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
-            final OrderTableDao orderTableDao
+            MenuDao menuDao,
+            OrderDao orderDao,
+            OrderLineItemDao orderLineItemDao,
+            OrderTableDao orderTableDao
     ) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
         this.orderTableDao = orderTableDao;
-    }
-
-    private static List<Long> getMenuIds(List<OrderLineItem> orderLineItems) {
-        return orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -51,10 +45,8 @@ public class OrderService {
             throw new IllegalArgumentException("테이블이 비었습니다");
         }
 
-        Order savedOrder = orderDao.save(
-                new Order(orderTable.getId(), OrderStatus.COOKING, request.getOrderLineItems())
-        );
-        return new OrderResponse(savedOrder);
+        Order order = orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING, request.getOrderLineItems()));
+        return new OrderResponse(order);
     }
 
     private void validateOrderLineItems(OrderRequest request) {
@@ -63,6 +55,12 @@ public class OrderService {
         if (orderLineItems.size() != menuDao.countByIdIn(getMenuIds(orderLineItems))) {
             throw new IllegalArgumentException("주문정보가 존재하지 않습니다.");
         }
+    }
+
+    private List<Long> getMenuIds(List<OrderLineItem> orderLineItems) {
+        return orderLineItems.stream()
+                .map(OrderLineItem::getMenuId)
+                .collect(Collectors.toList());
     }
 
     public List<OrderResponse> list() {

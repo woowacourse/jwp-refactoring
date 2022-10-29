@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
-import static kitchenpos.Fixture.메뉴집합;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import kitchenpos.application.dto.MenuGroupResponse;
+import kitchenpos.ui.dto.MenuGroupRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,7 +18,10 @@ class MenuGroupServiceTest extends ServiceTest {
 
     @Test
     void 메뉴집합을_생성한다() {
-        MenuGroupResponse actual = menuGroupService.create(메뉴집합());
+        MenuGroupRequest request = new MenuGroupRequest("주리링 추천 메뉴");
+
+        MenuGroupResponse actual = menuGroupService.create(request);
+
         assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
     }
 

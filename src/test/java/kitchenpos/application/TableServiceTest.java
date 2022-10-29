@@ -11,6 +11,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.OrderRequest;
+import kitchenpos.ui.dto.OrderTableRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,7 +26,8 @@ class TableServiceTest extends ServiceTest {
 
     @Test
     void 테이블을_생성한다() {
-        OrderTableResponse actual = tableService.create(테이블(true));
+        OrderTableRequest orderTableRequest = new OrderTableRequest(1, true);
+        OrderTableResponse actual = tableService.create(orderTableRequest);
         assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
     }
 
@@ -75,7 +77,7 @@ class TableServiceTest extends ServiceTest {
     void 테이블의_손님수를_변경한다() {
         OrderTable savedTable = 테이블_생성(false);
 
-        savedTable.setNumberOfGuests(1);
+        savedTable.changeNumberOfGuests(1);
         OrderTableResponse result = tableService.changeNumberOfGuests(savedTable.getId(), savedTable);
 
         assertThat(result.getNumberOfGuests()).isEqualTo(1);

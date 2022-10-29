@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
@@ -18,35 +17,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
-    private final MenuProductDao menuProductDao;
     private final ProductDao productDao;
 
-    public MenuService(
-            final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao,
-            final MenuProductDao menuProductDao,
-            final ProductDao productDao
-    ) {
+    public MenuService(MenuDao menuDao, MenuGroupDao menuGroupDao, ProductDao productDao) {
         this.menuDao = menuDao;
         this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
         this.productDao = productDao;
     }
 
     @Transactional
-    public MenuResponse create(final MenuRequest request) {
+    public MenuResponse create(MenuRequest request) {
         if (!menuGroupDao.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException("메뉴 집합이 존재하지 않습니다.");
         }
 
-        Menu savedMenu = menuDao.save(
-                new Menu(
-                        request.getName(),
-                        request.getPrice(),
-                        request.getMenuGroupId(),
-                        findMenuProduct(request.getMenuProducts())
-                )
-        );
+        Menu savedMenu = menuDao.save(new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(),
+                findMenuProduct(request.getMenuProducts())));
         return new MenuResponse(savedMenu);
     }
 

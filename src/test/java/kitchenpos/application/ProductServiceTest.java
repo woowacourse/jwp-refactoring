@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.Fixture.상품의_가격은;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -19,7 +18,10 @@ class ProductServiceTest extends ServiceTest {
 
     @Test
     void 상품을_생성한다() {
-        ProductResponse actual = productService.create(상품의_가격은(new BigDecimal(10_000)));
+        ProductRequest productRequest = new ProductRequest("햄버거", new BigDecimal(10_000));
+
+        ProductResponse actual = productService.create(productRequest);
+
         assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
     }
 
@@ -27,7 +29,7 @@ class ProductServiceTest extends ServiceTest {
     void 생성할때_가격이_존재하지_않는_경우_예외를_발생시킨다() {
         ProductRequest productRequest = new ProductRequest("햄버거", null);
 
-        assertThatThrownBy(() -> productService.create(productRequest.toProduct()))
+        assertThatThrownBy(() -> productService.create(productRequest))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
@@ -35,7 +37,7 @@ class ProductServiceTest extends ServiceTest {
     void 생성할때_가격이_0보다_작은_경우_예외를_발생시킨다() {
         ProductRequest productRequest = new ProductRequest("햄버거", new BigDecimal(-1));
 
-        assertThatThrownBy(() -> productService.create(productRequest.toProduct()))
+        assertThatThrownBy(() -> productService.create(productRequest))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
