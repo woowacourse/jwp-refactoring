@@ -5,26 +5,27 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductCreateRequest;
 import kitchenpos.dto.ProductResponse;
+import kitchenpos.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductService {
 
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
-    public ProductService(final ProductDao productDao) {
-        this.productDao = productDao;
+    public ProductService(final ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Transactional
     public ProductResponse create(final ProductCreateRequest request) {
-        final Product product = productDao.save(request.toProduct());
+        final Product product = productRepository.save(request.toProduct());
         return ProductResponse.from(product);
     }
 
     public List<ProductResponse> list() {
-        final List<Product> products = productDao.findAll();
+        final List<Product> products = productRepository.findAll();
         return ProductResponse.from(products);
     }
 }

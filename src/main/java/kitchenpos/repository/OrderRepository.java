@@ -1,70 +1,18 @@
 package kitchenpos.repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class OrderRepository {
+public interface OrderRepository {
 
-    private final OrderDao orderDao;
+    Order save(Order entity);
 
-    private final OrderLineItemDao orderLineItemDao;
+    Optional<Order> findById(Long id);
 
-    public OrderRepository(final OrderDao orderDao, final OrderLineItemDao orderLineItemDao) {
-        this.orderDao = orderDao;
-        this.orderLineItemDao = orderLineItemDao;
-    }
+    List<Order> findAll();
 
-    public Order save(final Order entity) {
-        final Order savedOrder = orderDao.save(entity);
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : entity.getOrderLineItems()) {
-            final OrderLineItem savedOrderLineItem = orderLineItemDao.save(
-                    new OrderLineItem(savedOrder.getId(), orderLineItem.getMenuId(), orderLineItem.getQuantity()));
-            savedOrderLineItems.add(savedOrderLineItem);
-        }
-        return new Order(
-                savedOrder.getId(),
-                savedOrder.getOrderTableId(),
-                savedOrder.getOrderStatus(),
-                savedOrder.getOrderedTime(),
-                savedOrderLineItems
-        );
-    }
+    boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<String> orderStatuses);
 
-    public Optional<Order> findById(final Long id) {
-        final Optional<Order> order = orderDao.findById(id);
-        order.ifPresent(it -> it.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.get().getId())));
-        return order;
-    }
-
-    public List<Order> findAll() {
-        final List<Order> orders = orderDao.findAll();
-        return orders.stream()
-                .map(order -> new Order(
-                                order.getId(),
-                                order.getOrderTableId(),
-                                order.getOrderStatus(),
-                                order.getOrderedTime(),
-                                orderLineItemDao.findAllByOrderId(order.getId())
-                        )
-                )
-                .collect(Collectors.toList());
-    }
-
-    public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId, final List<String> orderStatuses) {
-        return orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatuses);
-    }
-
-    public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds,
-                                                          final List<String> orderStatuses) {
-        return orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatuses);
-    }
+    boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<String> orderStatuses);
 }

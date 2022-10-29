@@ -2,36 +2,17 @@ package kitchenpos.repository;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class OrderTableRepository {
+public interface OrderTableRepository {
 
-    private final OrderTableDao orderTableDao;
+    OrderTable save(OrderTable entity);
 
-    public OrderTableRepository(OrderTableDao orderTableDao) {
-        this.orderTableDao = orderTableDao;
-    }
+    Optional<OrderTable> findById(Long id);
 
-    public OrderTable save(OrderTable entity) {
-        return orderTableDao.save(entity);
-    }
+    List<OrderTable> findAll();
 
-    public Optional<OrderTable> findById(Long id) {
-        return orderTableDao.findById(id);
-    }
+    List<OrderTable> findAllByIdIn(List<Long> ids);
 
-    public List<OrderTable> findAll() {
-        return orderTableDao.findAll();
-    }
-
-    public List<OrderTable> findAllByIdIn(List<Long> ids) {
-        return orderTableDao.findAllByIdIn(ids);
-    }
-
-    public List<OrderTable> findAllByTableGroupId(Long tableGroupId) {
-        return orderTableDao.findAllByTableGroupId(tableGroupId);
-    }
+    List<OrderTable> findAllByTableGroupId(Long tableGroupId);
 }

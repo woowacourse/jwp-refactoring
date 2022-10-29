@@ -9,12 +9,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -27,6 +21,12 @@ import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableEmptyUpdateRequest;
 import kitchenpos.dto.OrderTableNumberOfGuestsUpdateRequest;
 import kitchenpos.dto.OrderTableResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,27 +39,27 @@ class TableServiceTest extends ServiceTest {
     private TableService tableService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @DisplayName("테이블을 등록할 수 있다.")
     @Test
     void create() {
-        OrderTableResponse response = tableService.create(new OrderTableCreateRequest(4, false));
+        final OrderTableResponse response = tableService.create(new OrderTableCreateRequest(4, false));
 
         assertAll(
                 () -> assertThat(response.getId()).isNotNull(),
@@ -71,10 +71,10 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블들을 조회할 수 있다.")
     @Test
     void list() {
-        orderTableDao.save(new OrderTable(0, true));
-        orderTableDao.save(new OrderTable(0, true));
+        orderTableRepository.save(new OrderTable(0, true));
+        orderTableRepository.save(new OrderTable(0, true));
 
-        List<OrderTableResponse> orderTables = tableService.list();
+        final List<OrderTableResponse> orderTables = tableService.list();
 
         assertThat(orderTables).hasSize(2);
     }
@@ -82,9 +82,9 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블을 빈 상태로 수정할 수 있다.")
     @Test
     void changeEmpty() {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(4, false));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(4, false));
 
-        OrderTableResponse response = tableService.changeEmpty(orderTable.getId(),
+        final OrderTableResponse response = tableService.changeEmpty(orderTable.getId(),
                 new OrderTableEmptyUpdateRequest(true));
 
         assertThat(response.isEmpty()).isTrue();
@@ -100,16 +100,16 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블을 빈 상태로 수정 시 테이블이 단체인 경우 예외가 발생한다.")
     @Test
     void changeEmptyWithOrderTableGroup() {
-        OrderTable firstOrderTable = orderTableDao.save(new OrderTable(4, false));
-        OrderTable secondOrderTable = orderTableDao.save(new OrderTable(4, false));
-        List<OrderTable> orderTables = createOrderTable(firstOrderTable, secondOrderTable);
-        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), orderTables));
+        final OrderTable firstOrderTable = orderTableRepository.save(new OrderTable(4, false));
+        final OrderTable secondOrderTable = orderTableRepository.save(new OrderTable(4, false));
+        final List<OrderTable> orderTables = createOrderTable(firstOrderTable, secondOrderTable);
+        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), orderTables));
         firstOrderTable.setTableGroupId(tableGroup.getId());
-        firstOrderTable.setEmpty(false);
+        firstOrderTable.updateEmpty(false);
         secondOrderTable.setTableGroupId(tableGroup.getId());
-        secondOrderTable.setEmpty(false);
-        orderTableDao.save(firstOrderTable);
-        orderTableDao.save(secondOrderTable);
+        secondOrderTable.updateEmpty(false);
+        orderTableRepository.save(firstOrderTable);
+        orderTableRepository.save(secondOrderTable);
 
         assertThatThrownBy(() -> tableService.changeEmpty(1L, new OrderTableEmptyUpdateRequest(true)))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -118,12 +118,12 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블을 빈 상태로 수정 시 테이블에 준비중이거나 식사중인 주문이 존재하면 예외가 발생한다.")
     @Test
     void changeEmptyWithCookingOrMealStatus() {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(4, false));
-        Product product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("1번 메뉴 그룹"));
-        Menu menu = menuDao.save(new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(),
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(4, false));
+        final Product product = productRepository.save(new Product("치킨", BigDecimal.valueOf(10000)));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("1번 메뉴 그룹"));
+        final Menu menu = menuRepository.save(new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(),
                 createMenuProducts(product.getId())));
-        orderDao.save(new Order(orderTable.getId(), "COOKING", LocalDateTime.now(), createOrderLineItem(menu.getId())));
+        orderRepository.save(new Order(orderTable.getId(), "COOKING", LocalDateTime.now(), createOrderLineItem(menu.getId())));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTableEmptyUpdateRequest(true)))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -132,9 +132,9 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블의 손님 수를 변경할 수 있다.")
     @Test
     void changeNumberOfGuests() {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(4, false));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(4, false));
 
-        OrderTableResponse response = tableService.changeNumberOfGuests(orderTable.getId(),
+        final OrderTableResponse response = tableService.changeNumberOfGuests(orderTable.getId(),
                 new OrderTableNumberOfGuestsUpdateRequest(3));
 
         assertThat(response.getNumberOfGuests()).isEqualTo(3);
@@ -143,7 +143,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블의 손님 수 변경 시 손님 수가 0보다 작으면 예외가 발생한다.")
     @Test
     void changeNumberWithInvalidNumberOfGuests() {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(4, false));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(4, false));
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(),
                 new OrderTableNumberOfGuestsUpdateRequest(-1)))
@@ -160,28 +160,28 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블의 손님 수 변경 시 테이블이 비어있으면 예외가 발생한다.")
     @Test
     void changeNumberWithEmptyOrderTable() {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(0, true));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(0, true));
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(),
                 new OrderTableNumberOfGuestsUpdateRequest(4)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private List<OrderTable> createOrderTable(OrderTable... orderTables) {
+    private List<OrderTable> createOrderTable(final OrderTable... orderTables) {
         return new ArrayList<>(Arrays.asList(orderTables));
     }
 
-    private List<MenuProduct> createMenuProducts(Long... productIds) {
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        for (Long productId : productIds) {
+    private List<MenuProduct> createMenuProducts(final Long... productIds) {
+        final List<MenuProduct> menuProducts = new ArrayList<>();
+        for (final Long productId : productIds) {
             menuProducts.add(new MenuProduct(productId, 1L, BigDecimal.valueOf(10000)));
         }
         return menuProducts;
     }
 
-    private List<OrderLineItem> createOrderLineItem(Long... menuIds) {
-        List<OrderLineItem> orderLineItems = new ArrayList<>();
-        for (Long menuId : menuIds) {
+    private List<OrderLineItem> createOrderLineItem(final Long... menuIds) {
+        final List<OrderLineItem> orderLineItems = new ArrayList<>();
+        for (final Long menuId : menuIds) {
             orderLineItems.add(new OrderLineItem(menuId, 10));
         }
         return orderLineItems;

@@ -8,10 +8,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.common.DatabaseCleaner;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -19,6 +15,10 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,16 +32,16 @@ class MenuServiceTest extends ServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @Autowired
     private DatabaseCleaner databaseCleaner;
@@ -54,19 +54,19 @@ class MenuServiceTest extends ServiceTest {
     void setUp() {
         databaseCleaner.tableClear();
 
-        product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
-        menuGroup = menuGroupDao.save(new MenuGroup("1번 메뉴 그룹"));
+        product = productRepository.save(new Product("치킨", BigDecimal.valueOf(10000)));
+        menuGroup = menuGroupRepository.save(new MenuGroup("1번 메뉴 그룹"));
     }
 
     @DisplayName("메뉴를 등록할 수 있다.")
     @Test
     void create() {
-        String name = "1번 메뉴";
-        BigDecimal price = BigDecimal.valueOf(10000);
-        MenuCreateRequest request = new MenuCreateRequest(name, price, menuGroup.getId(),
+        final String name = "1번 메뉴";
+        final BigDecimal price = BigDecimal.valueOf(10000);
+        final MenuCreateRequest request = new MenuCreateRequest(name, price, menuGroup.getId(),
                 createMenuProductRequest(product.getId()));
 
-        MenuResponse response = menuService.create(request);
+        final MenuResponse response = menuService.create(request);
 
         assertAll(
                 () -> assertThat(response.getId()).isNotNull(),
@@ -80,7 +80,7 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴 등록 시 메뉴 그룹이 존재하지 않으면 예외가 발생한다.")
     @Test
     void createWithNoMenuGroup() {
-        MenuCreateRequest request = new MenuCreateRequest("1번 메뉴", BigDecimal.valueOf(10000), 9999L,
+        final MenuCreateRequest request = new MenuCreateRequest("1번 메뉴", BigDecimal.valueOf(10000), 9999L,
                 createMenuProductRequest(product.getId()));
 
         assertThatThrownBy(() -> menuService.create(request))
@@ -90,13 +90,13 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴들을 조회할 수 있다.")
     @Test
     void list() {
-        Menu newMenu = new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(),
+        final Menu newMenu = new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(),
                 createMenuProducts(product.getId()));
-        Menu menu = menuDao.save(newMenu);
-        MenuProduct menuProduct = new MenuProduct(menu.getId(), product.getId(), 10);
-        menuProductDao.save(menuProduct);
+        final Menu menu = menuRepository.save(newMenu);
+        final MenuProduct menuProduct = new MenuProduct(menu.getId(), product.getId(), 10);
+        menuProductRepository.save(menuProduct);
 
-        List<MenuResponse> response = menuService.list();
+        final List<MenuResponse> response = menuService.list();
 
         assertAll(
                 () -> assertThat(response).hasSize(1),
@@ -104,17 +104,17 @@ class MenuServiceTest extends ServiceTest {
         );
     }
 
-    private List<MenuProduct> createMenuProducts(Long... productIds) {
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        for (Long productId : productIds) {
+    private List<MenuProduct> createMenuProducts(final Long... productIds) {
+        final List<MenuProduct> menuProducts = new ArrayList<>();
+        for (final Long productId : productIds) {
             menuProducts.add(new MenuProduct(productId, 1L, BigDecimal.valueOf(10000)));
         }
         return menuProducts;
     }
 
-    private List<MenuProductRequest> createMenuProductRequest(Long... productIds) {
-        List<MenuProductRequest> menuProducts = new ArrayList<>();
-        for (Long productId : productIds) {
+    private List<MenuProductRequest> createMenuProductRequest(final Long... productIds) {
+        final List<MenuProductRequest> menuProducts = new ArrayList<>();
+        for (final Long productId : productIds) {
             menuProducts.add(new MenuProductRequest(productId, 1L));
         }
         return menuProducts;

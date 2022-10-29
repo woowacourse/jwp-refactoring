@@ -5,10 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductCreateRequest;
 import kitchenpos.dto.ProductResponse;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ class ProductServiceTest extends ServiceTest {
     private ProductService productService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @DisplayName("상품을 등록할 수 있다.")
     @Test
@@ -42,8 +42,8 @@ class ProductServiceTest extends ServiceTest {
     @DisplayName("등록된 상품들을 조회할 수 있다.")
     @Test
     void list() {
-        productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
-        productDao.save(new Product("피자", BigDecimal.valueOf(8000)));
+        productRepository.save(new Product("치킨", BigDecimal.valueOf(10000)));
+        productRepository.save(new Product("피자", BigDecimal.valueOf(8000)));
 
         final List<ProductResponse> response = productService.list();
 

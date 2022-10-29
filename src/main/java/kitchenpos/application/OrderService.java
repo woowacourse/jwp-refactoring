@@ -1,37 +1,33 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderUpdateRequest;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
 
-    private final MenuDao menuDao;
+    private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
     public OrderService(
-            final MenuDao menuDao,
+            final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderLineItemDao orderLineItemDao,
-            final OrderTableDao orderTableDao
+            final OrderTableRepository orderTableRepository
     ) {
-        this.menuDao = menuDao;
+        this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemDao = orderLineItemDao;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
@@ -48,14 +44,14 @@ public class OrderService {
     }
 
     private void checkExistMenuIn(Order order) {
-        final long menuCount = menuDao.countByIdIn(order.getMenuIds());
+        final long menuCount = menuRepository.countByIdIn(order.getMenuIds());
         if (!order.hasValidSize(menuCount)) {
             throw new IllegalArgumentException();
         }
     }
 
     private OrderTable getOrderTable(Order order) {
-        return orderTableDao.findById(order.getOrderTableId())
+        return orderTableRepository.findById(order.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
     }
 

@@ -9,11 +9,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.common.DatabaseCleaner;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -26,7 +21,12 @@ import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderUpdateRequest;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,22 +40,22 @@ class OrderServiceTest extends ServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private OrderRepository orderRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
     private DatabaseCleaner databaseCleaner;
@@ -70,9 +70,9 @@ class OrderServiceTest extends ServiceTest {
     void setUp() {
         databaseCleaner.tableClear();
 
-        product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
-        menuGroup = menuGroupDao.save(new MenuGroup("1번 메뉴 그룹"));
-        menu = menuDao.save(new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(),
+        product = productRepository.save(new Product("치킨", BigDecimal.valueOf(10000)));
+        menuGroup = menuGroupRepository.save(new MenuGroup("1번 메뉴 그룹"));
+        menu = menuRepository.save(new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(),
                 createMenuProducts(product.getId())));
     }
 
@@ -80,7 +80,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create() {
         final OrderTable newOrderTable = new OrderTable(4, false);
-        final OrderTable orderTable = orderTableDao.save(newOrderTable);
+        final OrderTable orderTable = orderTableRepository.save(newOrderTable);
         final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
                 createOrderLineItemRequest(menu.getId()));
 
@@ -97,7 +97,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void createWithInvalidOrderLineItem() {
         final OrderTable newOrderTable = new OrderTable(4, false);
-        final OrderTable orderTable = orderTableDao.save(newOrderTable);
+        final OrderTable orderTable = orderTableRepository.save(newOrderTable);
         final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
                 createInvalidOrderLineItemRequest());
 
@@ -118,7 +118,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void createWithEmptyOrderTable() {
         final OrderTable newOrderTable = new OrderTable(0, true);
-        final OrderTable orderTable = orderTableDao.save(newOrderTable);
+        final OrderTable orderTable = orderTableRepository.save(newOrderTable);
         final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
                 createOrderLineItemRequest());
 
@@ -130,11 +130,11 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void list() {
         final OrderTable newOrderTable = new OrderTable(4, false);
-        final OrderTable orderTable = orderTableDao.save(newOrderTable);
+        final OrderTable orderTable = orderTableRepository.save(newOrderTable);
         final Order newOrder = new Order(orderTable.getId(), "COOKING", LocalDateTime.now(),
                 createOrderLineItem(menu.getId()));
         final Order order = orderRepository.save(newOrder);
-        orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 10));
+        orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 10));
         final List<OrderResponse> response = orderService.list();
 
         assertAll(
@@ -147,7 +147,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void changeOrderStatus() {
         final OrderTable newOrderTable = new OrderTable(4, false);
-        final OrderTable orderTable = orderTableDao.save(newOrderTable);
+        final OrderTable orderTable = orderTableRepository.save(newOrderTable);
         final Order newOrder = new Order(orderTable.getId(), "COOKING", LocalDateTime.now(),
                 createOrderLineItem(menu.getId()));
         final Order order = orderRepository.save(newOrder);
@@ -172,7 +172,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void changeOrderStatusWithCompletionOrderStatus() {
         final OrderTable newOrderTable = new OrderTable(4, false);
-        final OrderTable orderTable = orderTableDao.save(newOrderTable);
+        final OrderTable orderTable = orderTableRepository.save(newOrderTable);
         final Order newOrder = new Order(orderTable.getId(), "COOKING", LocalDateTime.now(),
                 createOrderLineItem(menu.getId()));
         final Order order = orderRepository.save(newOrder);
@@ -190,25 +190,25 @@ class OrderServiceTest extends ServiceTest {
         return orderLineItems;
     }
 
-    private List<OrderLineItem> createOrderLineItem(Long... menuIds) {
+    private List<OrderLineItem> createOrderLineItem(final Long... menuIds) {
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
-        for (Long menuId : menuIds) {
+        for (final Long menuId : menuIds) {
             orderLineItems.add(new OrderLineItem(menuId, 10));
         }
         return orderLineItems;
     }
 
-    private List<OrderLineItemRequest> createOrderLineItemRequest(Long... menuIds) {
+    private List<OrderLineItemRequest> createOrderLineItemRequest(final Long... menuIds) {
         final List<OrderLineItemRequest> orderLineItems = new ArrayList<>();
-        for (Long menuId : menuIds) {
+        for (final Long menuId : menuIds) {
             orderLineItems.add(new OrderLineItemRequest(menuId, 10L));
         }
         return orderLineItems;
     }
 
-    private List<MenuProduct> createMenuProducts(Long... productIds) {
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        for (Long productId : productIds) {
+    private List<MenuProduct> createMenuProducts(final Long... productIds) {
+        final List<MenuProduct> menuProducts = new ArrayList<>();
+        for (final Long productId : productIds) {
             menuProducts.add(new MenuProduct(productId, 1L, BigDecimal.valueOf(10000)));
         }
         return menuProducts;

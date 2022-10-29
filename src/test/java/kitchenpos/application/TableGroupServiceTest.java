@@ -10,11 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.common.DatabaseCleaner;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -26,6 +21,11 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.TableGroupCreateRequest;
 import kitchenpos.dto.TableGroupResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,19 +45,19 @@ class TableGroupServiceTest extends ServiceTest {
     private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
     private DatabaseCleaner databaseCleaner;
@@ -70,19 +70,19 @@ class TableGroupServiceTest extends ServiceTest {
     void setUp() {
         databaseCleaner.tableClear();
 
-        firstOrderTable = orderTableDao.save(new OrderTable(0, true));
-        secondOrderTable = orderTableDao.save(new OrderTable(0, true));
+        firstOrderTable = orderTableRepository.save(new OrderTable(0, true));
+        secondOrderTable = orderTableRepository.save(new OrderTable(0, true));
     }
 
     @DisplayName("테이블 그룹을 등록할 수 있다.")
     @Test
     void create() {
-        List<OrderTableRequest> request = Arrays.asList(
+        final List<OrderTableRequest> request = Arrays.asList(
                 new OrderTableRequest(firstOrderTable.getId()),
                 new OrderTableRequest(secondOrderTable.getId())
         );
 
-        TableGroupResponse response = tableGroupService.create(new TableGroupCreateRequest(request));
+        final TableGroupResponse response = tableGroupService.create(new TableGroupCreateRequest(request));
 
         assertAll(
                 () -> assertThat(response.getId()).isNotNull(),
@@ -100,7 +100,7 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("테이블 그룹 등록 시 존재하지 않는 테이블이 있는 경우 예외가 발생한다.")
     @Test
     void createWithNotExistOrderTable() {
-        List<OrderTableRequest> request = Arrays.asList(
+        final List<OrderTableRequest> request = Arrays.asList(
                 new OrderTableRequest(firstOrderTable.getId()),
                 new OrderTableRequest(999L)
         );
@@ -112,8 +112,8 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("테이블 그룹 등록 시 테이블이 비어있지 않으면 예외가 발생한다.")
     @Test
     void createWithNotEmptyOrderTable() {
-        OrderTable thirdOrderTable = orderTableDao.save(new OrderTable(4, false));
-        List<OrderTableRequest> request = Arrays.asList(
+        final OrderTable thirdOrderTable = orderTableRepository.save(new OrderTable(4, false));
+        final List<OrderTableRequest> request = Arrays.asList(
                 new OrderTableRequest(firstOrderTable.getId()),
                 new OrderTableRequest(secondOrderTable.getId()),
                 new OrderTableRequest(thirdOrderTable.getId())
@@ -126,15 +126,15 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("테이블 그룹 등록 시 테이블의 테이블 그룹이 존재하면 예외가 발생한다.")
     @Test
     void createWithOrderTableExistingTableGroup() {
-        List<OrderTable> orderTables = Arrays.asList(firstOrderTable, secondOrderTable);
-        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), orderTables));
+        final List<OrderTable> orderTables = Arrays.asList(firstOrderTable, secondOrderTable);
+        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), orderTables));
         firstOrderTable.setTableGroupId(tableGroup.getId());
-        firstOrderTable.setEmpty(false);
+        firstOrderTable.updateEmpty(false);
         secondOrderTable.setTableGroupId(tableGroup.getId());
-        secondOrderTable.setEmpty(false);
-        orderTableDao.save(firstOrderTable);
-        orderTableDao.save(secondOrderTable);
-        List<OrderTableRequest> request = Arrays.asList(
+        secondOrderTable.updateEmpty(false);
+        orderTableRepository.save(firstOrderTable);
+        orderTableRepository.save(secondOrderTable);
+        final List<OrderTableRequest> request = Arrays.asList(
                 new OrderTableRequest(firstOrderTable.getId()),
                 new OrderTableRequest(secondOrderTable.getId())
         );
@@ -146,18 +146,18 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("테이블 그룹을 해제할 수 있다.")
     @Test
     void ungroup() {
-        List<OrderTable> orderTables = Arrays.asList(firstOrderTable, secondOrderTable);
-        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), orderTables));
+        final List<OrderTable> orderTables = Arrays.asList(firstOrderTable, secondOrderTable);
+        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), orderTables));
         firstOrderTable.setTableGroupId(tableGroup.getId());
-        firstOrderTable.setEmpty(false);
+        firstOrderTable.updateEmpty(false);
         secondOrderTable.setTableGroupId(tableGroup.getId());
-        secondOrderTable.setEmpty(false);
-        orderTableDao.save(firstOrderTable);
-        orderTableDao.save(secondOrderTable);
+        secondOrderTable.updateEmpty(false);
+        orderTableRepository.save(firstOrderTable);
+        orderTableRepository.save(secondOrderTable);
 
         tableGroupService.ungroup(tableGroup.getId());
-        OrderTable foundFirstOrderTable = orderTableDao.findById(firstOrderTable.getId()).get();
-        OrderTable foundSecondOrderTable = orderTableDao.findById(secondOrderTable.getId()).get();
+        final OrderTable foundFirstOrderTable = orderTableRepository.findById(firstOrderTable.getId()).get();
+        final OrderTable foundSecondOrderTable = orderTableRepository.findById(secondOrderTable.getId()).get();
 
         assertAll(
                 () -> assertThat(foundFirstOrderTable.getTableGroupId()).isNull(),
@@ -169,37 +169,37 @@ class TableGroupServiceTest extends ServiceTest {
     @ValueSource(strings = {"COOKING", "MEAL"})
     @ParameterizedTest
     void ungroupWithCookingOrMeal(String orderStatus) {
-        Product product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("1번 메뉴 그룹"));
-        Menu menu = menuDao.save(
+        final Product product = productRepository.save(new Product("치킨", BigDecimal.valueOf(10000)));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("1번 메뉴 그룹"));
+        final Menu menu = menuRepository.save(
                 new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(), createMenuProducts(product.getId())));
-        orderDao.save(
+        orderRepository.save(
                 new Order(firstOrderTable.getId(), orderStatus, LocalDateTime.now(),
                         createOrderLineItem(menu.getId())));
-        List<OrderTable> orderTables = Arrays.asList(firstOrderTable, secondOrderTable);
-        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), orderTables));
+        final List<OrderTable> orderTables = Arrays.asList(firstOrderTable, secondOrderTable);
+        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), orderTables));
         firstOrderTable.setTableGroupId(tableGroup.getId());
-        firstOrderTable.setEmpty(false);
+        firstOrderTable.updateEmpty(false);
         secondOrderTable.setTableGroupId(tableGroup.getId());
-        secondOrderTable.setEmpty(false);
-        orderTableDao.save(firstOrderTable);
-        orderTableDao.save(secondOrderTable);
+        secondOrderTable.updateEmpty(false);
+        orderTableRepository.save(firstOrderTable);
+        orderTableRepository.save(secondOrderTable);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private List<MenuProduct> createMenuProducts(Long... productIds) {
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        for (Long productId : productIds) {
+    private List<MenuProduct> createMenuProducts(final Long... productIds) {
+        final List<MenuProduct> menuProducts = new ArrayList<>();
+        for (final Long productId : productIds) {
             menuProducts.add(new MenuProduct(productId, 1L, BigDecimal.valueOf(10000)));
         }
         return menuProducts;
     }
 
-    private List<OrderLineItem> createOrderLineItem(Long... menuIds) {
-        List<OrderLineItem> orderLineItems = new ArrayList<>();
-        for (Long menuId : menuIds) {
+    private List<OrderLineItem> createOrderLineItem(final Long... menuIds) {
+        final List<OrderLineItem> orderLineItems = new ArrayList<>();
+        for (final Long menuId : menuIds) {
             orderLineItems.add(new OrderLineItem(menuId, 10));
         }
         return orderLineItems;
