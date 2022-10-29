@@ -11,8 +11,10 @@ import kitchenpos.exception.NotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
-import kitchenpos.ui.dto.CreateMenuProductsRequest;
-import kitchenpos.ui.dto.CreateMenuRequest;
+import kitchenpos.ui.dto.response.MenuCreateResponse;
+import kitchenpos.ui.dto.request.MenuProductCreateRequest;
+import kitchenpos.ui.dto.request.MenuCreateRequest;
+import kitchenpos.ui.dto.response.MenuFindAllResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,17 +39,17 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final CreateMenuRequest request) {
+    public MenuCreateResponse create(final MenuCreateRequest request) {
         validateMenuGroup(request.getMenuGroupId());
 
         final MenuProducts menuProducts = toMenuProducts(request);
         validatePrice(request.getPrice(), menuProducts);
 
-        final Menu menu = toMenu(request, menuProducts);
-        return menuRepository.save(menu);
+        final Menu menu = menuRepository.save(toMenu(request, menuProducts));
+        return MenuCreateResponse.from(menu);
     }
 
-    private Menu toMenu(final CreateMenuRequest request, final MenuProducts menuProducts) {
+    private Menu toMenu(final MenuCreateRequest request, final MenuProducts menuProducts) {
         return Menu.builder()
                 .name(request.getName())
                 .price(request.getPrice())
@@ -63,9 +65,9 @@ public class MenuService {
         }
     }
 
-    private MenuProducts toMenuProducts(final CreateMenuRequest request) {
+    private MenuProducts toMenuProducts(final MenuCreateRequest request) {
         final List<MenuProduct> menuProducts = new ArrayList<>();
-        for (final CreateMenuProductsRequest menuProductsRequest : request.getMenuProducts()) {
+        for (final MenuProductCreateRequest menuProductsRequest : request.getMenuProducts()) {
             final Long productId = menuProductsRequest.getProductId();
             final long quantity = menuProductsRequest.getQuantity();
             final Product product = productRepository.findById(productId)
@@ -81,7 +83,8 @@ public class MenuService {
         }
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<MenuFindAllResponse> list() {
+        final List<Menu> menus = menuRepository.findAll();
+        return MenuFindAllResponse.from(menus);
     }
 }
