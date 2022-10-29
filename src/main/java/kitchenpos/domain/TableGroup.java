@@ -32,6 +32,10 @@ public class TableGroup {
         this.orderTables = new OrderTables(orderTables);
     }
 
+    public void ungroupOrderTables() {
+        orderTables.ungroupOrderTables();
+    }
+
     public Long getId() {
         return id;
     }

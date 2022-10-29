@@ -67,4 +67,18 @@ public class OrderTable {
         this.empty = false;
         return this;
     }
+
+    public void changeToEmpty(final boolean empty) {
+        this.empty = empty;
+    }
+
+    public void changeGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+        if (this.empty) {
+            throw new IllegalArgumentException();
+        }
+        this.numberOfGuests = numberOfGuests;
+    }
 }

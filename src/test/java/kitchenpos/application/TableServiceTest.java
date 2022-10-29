@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import kitchenpos.common.builder.OrderTableBuilder;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.request.OrderTableUpdateEmptyRequest;
+import kitchenpos.dto.request.OrderTableUpdateGuestRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.OrderTablesResponse;
 import kitchenpos.repository.OrderTableRepository;
@@ -63,7 +65,8 @@ class TableServiceTest extends ServiceTest {
         야채곱창_주문_테이블 = orderTableRepository.save(야채곱창_주문_테이블);
 
         // when
-        OrderTable actual = tableService.changeEmpty(야채곱창_주문_테이블.getId(), new OrderTable(사용가능_테이블));
+        OrderTableResponse actual = tableService.changeEmpty(야채곱창_주문_테이블.getId(),
+                new OrderTableUpdateEmptyRequest(사용가능_테이블));
 
         // then
         assertThat(actual.isEmpty()).isTrue();
@@ -76,7 +79,7 @@ class TableServiceTest extends ServiceTest {
         Long 잘못된_주문_테이블_아이디 = -1L;
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(잘못된_주문_테이블_아이디, new OrderTable(사용가능_테이블)))
+        assertThatThrownBy(() -> tableService.changeEmpty(잘못된_주문_테이블_아이디, new OrderTableUpdateEmptyRequest(사용가능_테이블)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -90,7 +93,8 @@ class TableServiceTest extends ServiceTest {
         int 변경할_테이블_1번_손님_수 = 5;
 
         // when
-        OrderTable actual = tableService.changeNumberOfGuests(야채곱창_주문_테이블.getId(), new OrderTable(변경할_테이블_1번_손님_수));
+        OrderTableResponse actual = tableService.changeNumberOfGuests(야채곱창_주문_테이블.getId(),
+                new OrderTableUpdateGuestRequest(변경할_테이블_1번_손님_수));
 
         // then
         assertThat(actual.getNumberOfGuests()).isEqualTo(5);
@@ -107,7 +111,8 @@ class TableServiceTest extends ServiceTest {
         int 잘못된_손님_수 = -1;
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(야채곱창_주문_테이블_아이디, new OrderTable(-1)))
+        assertThatThrownBy(
+                () -> tableService.changeNumberOfGuests(야채곱창_주문_테이블_아이디, new OrderTableUpdateGuestRequest(-1)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -118,7 +123,7 @@ class TableServiceTest extends ServiceTest {
         Long 잘못된_주문_테이블_아이디 = -1L;
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(잘못된_주문_테이블_아이디, new OrderTable(5)))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(잘못된_주문_테이블_아이디, new OrderTableUpdateGuestRequest(5)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

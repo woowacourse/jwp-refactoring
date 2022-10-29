@@ -3,8 +3,9 @@ package kitchenpos.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.request.OrderTableUpdateEmptyRequest;
+import kitchenpos.dto.request.OrderTableUpdateGuestRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.OrderTablesResponse;
 import org.springframework.http.ResponseEntity;
@@ -37,22 +38,16 @@ public class TableRestController {
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")
-    public ResponseEntity<OrderTable> changeEmpty(
+    public ResponseEntity<OrderTableResponse> changeEmpty(
             @PathVariable final Long orderTableId,
-            @RequestBody final OrderTable orderTable
-    ) {
-        return ResponseEntity.ok()
-                .body(tableService.changeEmpty(orderTableId, orderTable))
-                ;
+            @RequestBody final OrderTableUpdateEmptyRequest request) {
+        return ResponseEntity.ok().body(tableService.changeEmpty(orderTableId, request));
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
-    public ResponseEntity<OrderTable> changeNumberOfGuests(
+    public ResponseEntity<OrderTableResponse> changeNumberOfGuests(
             @PathVariable final Long orderTableId,
-            @RequestBody final OrderTable orderTable
-    ) {
-        return ResponseEntity.ok()
-                .body(tableService.changeNumberOfGuests(orderTableId, orderTable))
-                ;
+            @RequestBody final OrderTableUpdateGuestRequest request) {
+        return ResponseEntity.ok().body(tableService.changeNumberOfGuests(orderTableId, request));
     }
 }
