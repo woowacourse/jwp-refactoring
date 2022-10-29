@@ -6,7 +6,7 @@ import kitchenpos.application.request.table.OrderTableRequest;
 import kitchenpos.application.response.tablegroup.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static kitchenpos.fixture.OrderFixture.newOrder;
+import static kitchenpos.fixture.OrderTableFixture.newOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -88,9 +90,9 @@ class TableServiceTest {
         @DisplayName("계산이 완료된 테이블이어야 한다")
         @ParameterizedTest
         @ValueSource(strings = {"COOKING", "MEAL"})
-        void changeEmptyWithNotCompletedOrderTable(final String orderStatus) {
+        void changeEmptyWithNotCompletedOrderTable(final OrderStatus orderStatus) {
             final var orderTableId = saveOrderTable(null, 1, false).getId();
-            orderDao.save(new Order(orderTableId, orderStatus, LocalDateTime.now()));
+            orderDao.save(newOrder(orderTableId, orderStatus, LocalDateTime.now()));
 
             final var request = new ChangeEmptyRequest(true);
 
@@ -170,7 +172,7 @@ class TableServiceTest {
     }
 
     private OrderTable saveOrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        final var orderTable = new OrderTable(tableGroupId, numberOfGuests, empty);
+        final var orderTable = newOrderTable(tableGroupId, numberOfGuests, empty);
         return orderTableDao.save(orderTable);
     }
 }

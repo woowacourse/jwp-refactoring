@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.request.menu.MenuProductRequest;
 import kitchenpos.application.request.menu.MenuRequest;
 import kitchenpos.application.response.ResponseAssembler;
 import kitchenpos.application.response.menu.MenuResponse;
@@ -45,11 +46,11 @@ public class MenuService {
         validateMenuGroupExist(request.getMenuGroupId());
         final List<MenuProduct> menuProducts = request.getMenuProducts()
                 .stream()
-                .map(menuProduct -> new MenuProduct(menuProduct.getProductId(), menuProduct.getQuantity()))
+                .map(this::asMenuProduct)
                 .collect(Collectors.toUnmodifiableList());
         validatePriceIsNotLowerThanTotalPriceOfProducts(price, menuProducts);
 
-        final var menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), menuProducts);
+        final var menu = asMenu(request, menuProducts);
         final Menu savedMenu = menuDao.save(menu);
         final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
@@ -60,6 +61,22 @@ public class MenuService {
         savedMenu.setMenuProducts(savedMenuProducts);
 
         return responseAssembler.menuResponse(savedMenu);
+    }
+
+    private MenuProduct asMenuProduct(final MenuProductRequest request) {
+        final var menuProduct = new MenuProduct();
+        menuProduct.setProductId(request.getProductId());
+        menuProduct.setQuantity(request.getQuantity());
+        return menuProduct;
+    }
+
+    private Menu asMenu(final MenuRequest request, final List<MenuProduct> menuProducts) {
+        final var menu = new Menu();
+        menu.setName(request.getName());
+        menu.setPrice(request.getPrice());
+        menu.setMenuGroupId(request.getMenuGroupId());
+        menu.setMenuProducts(menuProducts);
+        return menu;
     }
 
     private void validatePriceIsNotLowerThanTotalPriceOfProducts(BigDecimal price, List<MenuProduct> menuProducts) {

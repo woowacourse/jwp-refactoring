@@ -33,9 +33,17 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse create(final OrderTableRequest request) {
-        final var orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
+        final var orderTable = asOrderTable(request);
         final var savedOrderTable = orderTableDao.save(orderTable);
+
         return responseAssembler.orderTableResponse(savedOrderTable);
+    }
+
+    private OrderTable asOrderTable(final OrderTableRequest request) {
+        final var orderTable = new OrderTable();
+        orderTable.updateNumberOfGuests(request.getNumberOfGuests());
+        orderTable.changeEmptyStatusTo(request.isEmpty());
+        return orderTable;
     }
 
     public List<OrderTableResponse> list() {

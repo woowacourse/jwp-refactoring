@@ -8,9 +8,6 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,6 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static kitchenpos.fixture.MenuFixture.newMenu;
+import static kitchenpos.fixture.MenuGroupFixture.newMenuGroup;
+import static kitchenpos.fixture.MenuProductFixture.newMenuProduct;
+import static kitchenpos.fixture.ProductFixture.newProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -50,9 +51,9 @@ class MenuServiceTest {
         @DisplayName("메뉴를 추가한다")
         @Test
         void create() {
-            final var menuGroup = menuGroupDao.save(new MenuGroup("중식"));
-            final var product = productDao.save(new Product("자장면", 5000));
-            final var menuProduct = menuProductDao.save(new MenuProduct(1, product.getId(), 1));
+            final var menuGroup = menuGroupDao.save(newMenuGroup("중식"));
+            final var product = productDao.save(newProduct("자장면", 5000));
+            final var menuProduct = menuProductDao.save(newMenuProduct(1L, product.getId(), 1));
 
             final var menuProductRequest = new MenuProductRequest(menuProduct.getProductId(), menuProduct.getQuantity());
             final var request = new MenuRequest("자장면", product.getPrice(), menuGroup.getId(), menuProductRequest);
@@ -79,8 +80,8 @@ class MenuServiceTest {
             final var menuPrice = 11;
             final var productPrice = 10;
 
-            final var menuGroup = menuGroupDao.save(new MenuGroup("중식"));
-            final var product = productDao.save(new Product("상품", productPrice));
+            final var menuGroup = menuGroupDao.save(newMenuGroup("중식"));
+            final var product = productDao.save(newProduct("상품", productPrice));
 
             final var menuProductRequest = new MenuProductRequest(product.getId(), 1);
             final var request = new MenuRequest(MENU_NAME, BigDecimal.valueOf(menuPrice), menuGroup.getId(), menuProductRequest);
@@ -108,7 +109,7 @@ class MenuServiceTest {
         void createWithNonExistProduct() {
             final var nonExistProductId = 0L;
 
-            final var menuGroup = menuGroupDao.save(new MenuGroup("중식"));
+            final var menuGroup = menuGroupDao.save(newMenuGroup("중식"));
 
             final var menuProductRequest = new MenuProductRequest(nonExistProductId, 1);
             final var request = new MenuRequest(MENU_NAME, BigDecimal.valueOf(10), menuGroup.getId(), menuProductRequest);
@@ -130,7 +131,7 @@ class MenuServiceTest {
     }
 
     private Menu saveMenu(final String name, final int price, final long menuGroupId) {
-        final var menu = new Menu(name, price, menuGroupId);
+        final var menu = newMenu(name, price, menuGroupId);
         return menuDao.save(menu);
     }
 }

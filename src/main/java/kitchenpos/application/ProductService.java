@@ -28,10 +28,17 @@ public class ProductService {
         final BigDecimal price = request.getPrice();
         validatePriceNotNegative(price);
 
-        final var product = new Product(request.getName(), request.getPrice());
+        final var product = asProduct(request);
         final var savedProduct =  productDao.save(product);
 
         return responseAssembler.productResponse(savedProduct);
+    }
+
+    private Product asProduct(final ProductRequest request) {
+        final var product = new Product();
+        product.setName(request.getName());
+        product.setPrice(request.getPrice());
+        return product;
     }
 
     private void validatePriceNotNegative(BigDecimal price) {

@@ -5,10 +5,8 @@ import kitchenpos.application.request.tablegroup.TableGroupRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,6 +21,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static kitchenpos.fixture.OrderFixture.newOrder;
+import static kitchenpos.fixture.OrderTableFixture.newOrderTable;
+import static kitchenpos.fixture.TableGroupFixture.newTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -53,8 +54,8 @@ class TableGroupServiceTest {
         @DisplayName("단체 지정을 한다")
         @Test
         void create() {
-            orderTableDao.save(new OrderTable(null, 1, true));
-            orderTableDao.save(new OrderTable(null, 1, true));
+            orderTableDao.save(newOrderTable(null, 1, true));
+            orderTableDao.save(newOrderTable(null, 1, true));
 
             final var request = new TableGroupRequest(new OrderTableIdRequest(1L), new OrderTableIdRequest(2L));
             final var actual = tableGroupService.create(request);
@@ -65,8 +66,8 @@ class TableGroupServiceTest {
         @DisplayName("2개 이상의 주문 테이블을 지정해야 한다")
         @Test
         void createWithEmptyOrSingleOrderTable() {
-            orderTableDao.save(new OrderTable(null, 1, true));
-            orderTableDao.save(new OrderTable(null, 1, true));
+            orderTableDao.save(newOrderTable(null, 1, true));
+            orderTableDao.save(newOrderTable(null, 1, true));
             final var request = new TableGroupRequest(new OrderTableIdRequest(1L));
 
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -77,8 +78,8 @@ class TableGroupServiceTest {
         @DisplayName("주문 테이블은 중복되지 않아야 한다")
         @Test
         void createWithDuplicatedOrderTables() {
-            orderTableDao.save(new OrderTable(null, 1, true));
-            orderTableDao.save(new OrderTable(null, 1, true));
+            orderTableDao.save(newOrderTable(null, 1, true));
+            orderTableDao.save(newOrderTable(null, 1, true));
 
             final var request = new TableGroupRequest(new OrderTableIdRequest(1L),new OrderTableIdRequest(1L));
 
@@ -90,8 +91,8 @@ class TableGroupServiceTest {
         @DisplayName("비어있는 주문 테이블이어야 한다")
         @Test
         void createWithNonEmptyOrderTable() {
-            orderTableDao.save(new OrderTable(null, 1, false));
-            orderTableDao.save(new OrderTable(null, 1, true));
+            orderTableDao.save(newOrderTable(null, 1, false));
+            orderTableDao.save(newOrderTable(null, 1, true));
 
             final var request = new TableGroupRequest(new OrderTableIdRequest(1L), new OrderTableIdRequest(2L));
 
@@ -103,8 +104,8 @@ class TableGroupServiceTest {
         @DisplayName("단체 지정되지 않은 주문 테이블이어야 한다")
         @Test
         void createWithAlreadyGroupAssignedOrderTable() {
-            orderTableDao.save(new OrderTable(1L, 1, true));
-            orderTableDao.save(new OrderTable(null, 1, true));
+            orderTableDao.save(newOrderTable(1L, 1, true));
+            orderTableDao.save(newOrderTable(null, 1, true));
 
             final var request = new TableGroupRequest(new OrderTableIdRequest(1L), new OrderTableIdRequest(2L));
 
@@ -115,7 +116,7 @@ class TableGroupServiceTest {
     }
 
     private List<OrderTable> saveOrderTableAsTimes(final int times) {
-        return Collections.nCopies(times, new OrderTable(null, 1, true))
+        return Collections.nCopies(times, newOrderTable(null, 1, true))
                 .stream()
                 .map(orderTableDao::save)
                 .collect(Collectors.toUnmodifiableList());
@@ -129,14 +130,14 @@ class TableGroupServiceTest {
         @Test
         void ungroup() {
             final var expected = saveOrderTableAsTimes(ORDER_TABLE_COUNT_LIMIT);
-            final var savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), expected));
+            final var savedTableGroup = tableGroupDao.save(newTableGroup(LocalDateTime.now(), expected));
 
             final var savedOrderTableIds = expected.stream()
                     .map(OrderTable::getId)
                     .collect(Collectors.toUnmodifiableList());
 
             savedOrderTableIds.forEach(orderTableId -> orderDao.save(
-                    new Order(orderTableId, OrderStatus.COMPLETION.name(), LocalDateTime.now(), Collections.emptyList()))
+                    newOrder(orderTableId, OrderStatus.COMPLETION, LocalDateTime.now()))
             );
 
             tableGroupService.ungroup(savedTableGroup.getId());
@@ -148,11 +149,11 @@ class TableGroupServiceTest {
         @DisplayName("지정된 주문 테이블의 모든 계산이 완료되어 있어야 한다")
         @ParameterizedTest
         @ValueSource(strings = {"COOKING", "MEAL"})
-        void ungroupWithUnreadyOrderTable(final String orderStatus) {
-            final var tableGroupId = tableGroupDao.save(new TableGroup()).getId();
-            orderTableDao.save(new OrderTable(tableGroupId, 1, true));
-            orderTableDao.save(new OrderTable(tableGroupId, 1, true));
-            orderDao.save(new Order(tableGroupId, orderStatus, LocalDateTime.now()));
+        void ungroupWithUnreadyOrderTable(final OrderStatus orderStatus) {
+            final var tableGroupId = tableGroupDao.save(newTableGroup()).getId();
+            orderTableDao.save(newOrderTable(tableGroupId, 1, true));
+            orderTableDao.save(newOrderTable(tableGroupId, 1, true));
+            orderDao.save(newOrder(tableGroupId, orderStatus, LocalDateTime.now()));
 
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
                     .isInstanceOf(IllegalArgumentException.class)

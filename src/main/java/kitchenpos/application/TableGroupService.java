@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -48,6 +49,7 @@ public class TableGroupService {
         validateAllOrderTablesEmpty(savedOrderTables);
 
         final TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now());
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
         final Long tableGroupId = savedTableGroup.getId();
         for (final var savedOrderTable : savedOrderTables) {

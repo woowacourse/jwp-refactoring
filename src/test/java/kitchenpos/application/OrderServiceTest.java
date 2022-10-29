@@ -18,6 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static kitchenpos.fixture.MenuFixture.newMenu;
+import static kitchenpos.fixture.OrderFixture.newOrder;
+import static kitchenpos.fixture.OrderTableFixture.newOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -50,8 +53,8 @@ class OrderServiceTest {
 
         @BeforeEach
         void setUp() {
-            this.menu = menuDao.save(new Menu("자장면", 5000, 1));
-            this.orderTable = orderTableDao.save(new OrderTable(1L, 1, false));
+            this.menu = menuDao.save(newMenu("자장면", 5000, 1L));
+            this.orderTable = orderTableDao.save(newOrderTable(1L, 1, false));
         }
 
         @DisplayName("주문을 한다")
@@ -89,9 +92,9 @@ class OrderServiceTest {
         @DisplayName("주문하고자 하는 주문 테이블은 공석이 아니어야 한다")
         @Test
         void createWithEmptyOrderTable() {
-            final var emptyOrderTable = orderTableDao.save(new OrderTable(1L, 1, true));
+            final var emptyOrderTable = orderTableDao.save(newOrderTable(1L, 1, true));
 
-            final var menu = menuDao.save(new Menu("자장면", 5000, 1));
+            final var menu = menuDao.save(newMenu("자장면", 5000, 1L));
             final var OrderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1);
             final var request = new OrderRequest(emptyOrderTable.getId(), OrderLineItemRequest);
 
@@ -105,7 +108,7 @@ class OrderServiceTest {
         void createWithNonExistOrderTable() {
             final var nonExistOrderTableId = 0L;
 
-            final var menu = menuDao.save(new Menu("자장면", 5000, 1));
+            final var menu = menuDao.save(newMenu("자장면", 5000, 1L));
             final var OrderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1);
             final var request = new OrderRequest(nonExistOrderTableId, OrderLineItemRequest);
 
@@ -170,7 +173,7 @@ class OrderServiceTest {
     }
 
     private Order saveOrder(final long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
-        final var order = new Order(orderTableId, orderStatus.name(), orderedTime);
+        final var order = newOrder(orderTableId, orderStatus, orderedTime);
         return orderDao.save(order);
     }
 }

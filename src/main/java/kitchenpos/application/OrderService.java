@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.request.order.ChangeOrderStatusRequest;
+import kitchenpos.application.request.order.OrderLineItemRequest;
 import kitchenpos.application.request.order.OrderRequest;
 import kitchenpos.application.response.ResponseAssembler;
 import kitchenpos.application.response.order.OrderResponse;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -43,7 +45,7 @@ public class OrderService {
     public OrderResponse create(final OrderRequest request) {
         final var orderLineItems = request.getOrderLineItems()
                 .stream()
-                .map(item -> new OrderLineItem(item.getMenuId(), item.getQuantity()))
+                .map(this::asOrderLineItem)
                 .collect(Collectors.toUnmodifiableList());
         validateOrderLineItemsNotEmpty(orderLineItems);
         validateMenuNotDuplicated(orderLineItems);
@@ -53,7 +55,7 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("주문 테이블을 찾을 수 없습니다."));
         validateOrderTableNotEmpty(orderTable);
 
-        final var order = new Order(request.getOrderTableId(), orderLineItems);
+        final var order = asOrder(request, orderLineItems);
         final Order savedOrder = orderDao.save(order);
         final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
@@ -64,6 +66,22 @@ public class OrderService {
         savedOrder.setOrderLineItems(savedOrderLineItems);
 
         return responseAssembler.orderResponse(savedOrder);
+    }
+
+    private OrderLineItem asOrderLineItem(final OrderLineItemRequest request) {
+        final var orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(request.getMenuId());
+        orderLineItem.setQuantity(request.getQuantity());
+        return orderLineItem;
+    }
+
+    private Order asOrder(final OrderRequest request, final List<OrderLineItem> orderLineItems) {
+        final var order = new Order();
+        order.setOrderTableId(request.getOrderTableId());
+        order.setOrderStatus(OrderStatus.COOKING.name());
+        order.setOrderedTime(LocalDateTime.now());
+        order.setOrderLineItems(orderLineItems);
+        return order;
     }
 
     private void validateOrderLineItemsNotEmpty(List<OrderLineItem> orderLineItems) {

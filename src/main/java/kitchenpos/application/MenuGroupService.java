@@ -23,10 +23,16 @@ public class MenuGroupService {
 
     @Transactional
     public MenuGroupResponse create(final MenuGroupRequest request) {
-        final var menuGroup = new MenuGroup(request.getName());
-
+        final var menuGroup = asMenuGroup(request);
         final var savedMenuGroup = menuGroupDao.save(menuGroup);
+
         return responseAssembler.menuGroupResponse(savedMenuGroup);
+    }
+
+    private MenuGroup asMenuGroup(final MenuGroupRequest request) {
+        final MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setName(request.getName());
+        return menuGroup;
     }
 
     public List<MenuGroupResponse> list() {

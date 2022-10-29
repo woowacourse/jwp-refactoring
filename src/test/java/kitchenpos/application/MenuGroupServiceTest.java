@@ -4,13 +4,13 @@ import kitchenpos.application.dao.FakeMenuGroupDao;
 import kitchenpos.application.request.menugroup.MenuGroupRequest;
 import kitchenpos.application.response.ResponseAssembler;
 import kitchenpos.application.response.menugroup.MenuGroupResponse;
-import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static kitchenpos.fixture.MenuGroupFixture.newMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MenuGroupServiceTest {
@@ -44,7 +44,7 @@ class MenuGroupServiceTest {
 
     private void saveMenuGroupForTimes(final int times) {
         for (int i = 0; i < times; i++) {
-            menuGroupDao.save(new MenuGroup("메뉴 그룹" + i));
+            menuGroupDao.save(newMenuGroup("메뉴 그룹" + i));
         }
     }
 }

@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import kitchenpos.application.request.product.ProductRequest;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 
+import static kitchenpos.fixture.ProductFixture.newProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -58,7 +58,7 @@ class ProductServiceTest {
     void list() {
         final var expectedSize = 4;
         for (int i = 0; i < expectedSize; i++) {
-            final var product = new Product("메뉴", 4500);
+            final var product = newProduct("메뉴", 4500);
             productDao.save(product);
         }
 
