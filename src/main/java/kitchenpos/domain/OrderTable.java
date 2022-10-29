@@ -29,13 +29,17 @@ public class OrderTable {
     protected OrderTable() {
     }
 
-    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final Order order,
+    private OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final Order order,
                       final boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.order = order;
         this.empty = empty;
+    }
+
+    public OrderTable(final int numberOfGuests, final boolean empty) {
+        this(null, null, numberOfGuests, null, empty);
     }
 
     public boolean isNotCompleted() {

@@ -22,13 +22,17 @@ public class Product {
     protected Product() {
     }
 
-    public Product(final Long id, final String name, final BigDecimal price) {
+    private Product(final Long id, final String name, final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new ProductNegativePriceException();
         }
         this.id = id;
         this.name = name;
         this.price = price;
+    }
+
+    public Product(final String name, final BigDecimal price) {
+        this(null, name, price);
     }
 
     public Long getId() {

@@ -37,32 +37,38 @@ public class OrderService {
     public Order create(final OrderCreateRequest orderCreateRequest) {
         final List<OrderLineItem> orderLineItems = mapToOrderLineItems(orderCreateRequest);
         validateOrderLineItemsMenuIdExists(orderLineItems);
-        final OrderTable orderTable = orderTableRepository.findById(orderCreateRequest.getOrderTableId())
-                .orElseThrow(OrderTableNotFoundException::new);
+        final OrderTable orderTable = getOrderTable(orderCreateRequest);
         final Order order = Order.of(orderTable, orderLineItems);
         return orderRepository.save(order);
     }
 
+    private OrderTable getOrderTable(final OrderCreateRequest orderCreateRequest) {
+        return orderTableRepository.findById(orderCreateRequest.getOrderTableId())
+                .orElseThrow(OrderTableNotFoundException::new);
+    }
+
     private static List<OrderLineItem> mapToOrderLineItems(final OrderCreateRequest orderCreateRequest) {
-        return  orderCreateRequest.getOrderLineItems()
+        return orderCreateRequest.getOrderLineItems()
                 .stream()
                 .map(OrderService::mapToOrderLineItem)
                 .collect(Collectors.toList());
     }
 
     private static OrderLineItem mapToOrderLineItem(final OrderLineItemCreateRequest orderLineItemCreateRequest) {
-        return new OrderLineItem(null, null, orderLineItemCreateRequest.getMenuId(),
-                orderLineItemCreateRequest.getQuantity());
+        return new OrderLineItem(orderLineItemCreateRequest.getMenuId(), orderLineItemCreateRequest.getQuantity());
     }
 
     private void validateOrderLineItemsMenuIdExists(final List<OrderLineItem> orderLineItems) {
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
-
+        final List<Long> menuIds = mapToMenuIds(orderLineItems);
         if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new OrderLineItemMenuException();
         }
+    }
+
+    private static List<Long> mapToMenuIds(final List<OrderLineItem> orderLineItems) {
+        return orderLineItems.stream()
+                .map(OrderLineItem::getMenuId)
+                .collect(Collectors.toList());
     }
 
     public List<Order> list() {

@@ -95,7 +95,7 @@ class TableGroupServiceTest extends ServiceTestEnvironment {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupsCreateRequest))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(InvalidOrderTableToGroupException.class);
     }
 
     @Test
@@ -137,7 +137,7 @@ class TableGroupServiceTest extends ServiceTestEnvironment {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupsCreateRequest))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(InvalidOrderTableToGroupException.class);
     }
 
     @Test

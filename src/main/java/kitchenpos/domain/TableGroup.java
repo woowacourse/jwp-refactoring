@@ -30,13 +30,17 @@ public class TableGroup {
     protected TableGroup() {
     }
 
-    public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+    private TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         validateOrderTableSize(orderTables);
         orderTables.forEach(TableGroup::validateOrderTableIsNotEmptyOrTableGroupNotNull);
         orderTables.forEach(orderTable -> orderTable.setEmpty(false));
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
+    }
+
+    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        this(null , createdDate, orderTables);
     }
 
     private static void validateOrderTableIsNotEmptyOrTableGroupNotNull(final OrderTable orderTable) {

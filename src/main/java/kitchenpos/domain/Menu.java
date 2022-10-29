@@ -30,7 +30,7 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
+    private Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
         validatePrice(menuProducts, price);
         menuProducts.forEach(menuProduct -> menuProduct.setMenu(this));
@@ -41,8 +41,13 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
+    public Menu(final String name, final BigDecimal price, final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroupId, menuProducts);
+    }
+
     private static void validatePrice(final List<MenuProduct> menuProducts, final BigDecimal price) {
-        if (menuPriceIsNullOrNegative(price)  || menuPriceIsExpansiveThanMenuProducts(menuProducts, price)) {
+        if (menuPriceIsNullOrNegative(price) || menuPriceIsExpansiveThanMenuProducts(menuProducts, price)) {
             throw new InvalidMenuPriceException();
         }
     }
@@ -50,6 +55,7 @@ public class Menu {
     private static boolean menuPriceIsNullOrNegative(final BigDecimal price) {
         return price == null || price.compareTo(BigDecimal.ZERO) < 0;
     }
+
     private static boolean menuPriceIsExpansiveThanMenuProducts(final List<MenuProduct> menuProducts,
                                                                 final BigDecimal price) {
         final BigDecimal amountSum = sumAllAmount(menuProducts);

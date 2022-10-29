@@ -17,7 +17,7 @@ public class ProductCreateRequest {
     }
 
     public Product toProduct() {
-        return new Product(null, name, price);
+        return new Product(name, price);
     }
 
     public String getName() {

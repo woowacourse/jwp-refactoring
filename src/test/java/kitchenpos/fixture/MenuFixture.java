@@ -12,25 +12,25 @@ public class MenuFixture {
 
     public static Menu createDefaultWithoutId(final Long menuGroupId, final Product... product) {
         final List<MenuProduct> menuProducts = convertToEmptyMenuIdMenuProduct(product);
-        return new Menu(null, "name", BigDecimal.valueOf(2000), menuGroupId, menuProducts);
+        return new Menu("name", BigDecimal.valueOf(2000), menuGroupId, menuProducts);
     }
 
-    public static Menu createWithIdAndPrice(final Long id, final Long menuGroupId, final Long price,
+    public static Menu createWithPrice(final Long menuGroupId, final Long price, final Product... product) {
+        return createWithIdAndPrice( menuGroupId, price, product);
+    }
+
+    private static Menu createWithIdAndPrice(final Long menuGroupId, final Long price,
                                             final Product... product) {
         final List<MenuProduct> menuProducts = convertToEmptyMenuIdMenuProduct(product);
         if (price == null) {
-            return new Menu(id, "name", null, menuGroupId, menuProducts);
+            return new Menu("name", null, menuGroupId, menuProducts);
         }
-        return new Menu(id, "name", BigDecimal.valueOf(price), menuGroupId, menuProducts);
+        return new Menu("name", BigDecimal.valueOf(price), menuGroupId, menuProducts);
     }
 
     private static List<MenuProduct> convertToEmptyMenuIdMenuProduct(final Product... product) {
         return Arrays.stream(product)
                 .map(it -> MenuProductFixture.createDefaultWithoutId(it, null))
                 .collect(Collectors.toList());
-    }
-
-    public static Menu createWithPrice(final Long menuGroupId, final Long price, final Product... product) {
-        return createWithIdAndPrice(null, menuGroupId, price, product);
     }
 }

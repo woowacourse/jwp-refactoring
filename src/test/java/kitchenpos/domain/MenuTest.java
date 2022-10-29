@@ -3,7 +3,7 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.util.Collections;
 import kitchenpos.exception.InvalidMenuPriceException;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.MenuProductFixture;
@@ -19,11 +19,11 @@ class MenuTest {
         // given
         final MenuGroup menuGroup = MenuGroupFixture.createWithId(1L);
         final MenuProduct menuProduct = MenuProductFixture.createDefaultWithoutId(
-                ProductFixture.createWithIdAndPrice(1L, 1000L), null);
+                ProductFixture.createWithPrice(1000L), null);
 
         // when, then
-        assertThatThrownBy(() -> new Menu(null, "menu-name", BigDecimal.valueOf(1001L), menuGroup.getId(),
-                Arrays.asList(menuProduct)))
+        assertThatThrownBy(() -> new Menu("menu-name", BigDecimal.valueOf(1001L), menuGroup.getId(),
+                Collections.singletonList(menuProduct)))
                 .isExactlyInstanceOf(InvalidMenuPriceException.class);
         // then
 

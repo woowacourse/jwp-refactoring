@@ -33,12 +33,16 @@ public class MenuService {
 
     @Transactional
     public Menu create(final MenuCreateRequest menuCreateRequest) {
-        final MenuGroup menuGroup = menuGroupRepository.findById(menuCreateRequest.getMenuGroupId())
-                .orElseThrow(MenuGroupNotFoundException::new);
+        final MenuGroup menuGroup = getMenuGroup(menuCreateRequest);
         final List<MenuProduct> menuProducts = mapAllToMenuProducts(menuCreateRequest);
-        final Menu menu = new Menu(null, menuCreateRequest.getName(), menuCreateRequest.getPrice(), menuGroup.getId(),
-                menuProducts);
+        final Menu menu = new Menu(menuCreateRequest.getName(), menuCreateRequest.getPrice(),
+                menuGroup.getId(), menuProducts);
         return menuRepository.save(menu);
+    }
+
+    private MenuGroup getMenuGroup(final MenuCreateRequest menuCreateRequest) {
+        return menuGroupRepository.findById(menuCreateRequest.getMenuGroupId())
+                .orElseThrow(MenuGroupNotFoundException::new);
     }
 
     private List<MenuProduct> mapAllToMenuProducts(final MenuCreateRequest menuCreateRequest) {
@@ -49,7 +53,7 @@ public class MenuService {
 
     private MenuProduct mapToMenuProduct(final MenuProductCreateRequest request) {
         final Product product = getProduct(request);
-        return new MenuProduct(null, null, product, request.getQuantity());
+        return new MenuProduct( product, request.getQuantity());
     }
 
     private Product getProduct(final MenuProductCreateRequest request) {

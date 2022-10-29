@@ -17,7 +17,7 @@ class ProductTest {
     @DisplayName("제품 가격이 Null이거나 음수이면 안된다.")
     void create_exceptionPriceIsNullOrNegative(final BigDecimal price) {
         // given, when, then
-        assertThatThrownBy(() ->  new Product(null, "hello", price))
+        assertThatThrownBy(() ->  new Product("hello", price))
                 .isExactlyInstanceOf(ProductNegativePriceException.class);
     }
 }
