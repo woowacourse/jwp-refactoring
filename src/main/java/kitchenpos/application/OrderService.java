@@ -29,10 +29,7 @@ public class OrderService {
     @Transactional
     public Order create(final Order request) {
         final List<OrderLineItem> orderLineItems = request.getOrderLineItems();
-
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
+        final List<Long> menuIds = collectMenuIds(orderLineItems);
 
         // 중복 메뉴면 안된다 && DB에 없는 메뉴면 안된다 ?
         if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
@@ -43,6 +40,12 @@ public class OrderService {
         final var order = new Order(orderTable, orderLineItems);
 
         return orders.add(order);
+    }
+
+    private List<Long> collectMenuIds(final List<OrderLineItem> orderLineItems) {
+        return orderLineItems.stream()
+                .map(OrderLineItem::getMenuId)
+                .collect(Collectors.toList());
     }
 
     public List<Order> list() {

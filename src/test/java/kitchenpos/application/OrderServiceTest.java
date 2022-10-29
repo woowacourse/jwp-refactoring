@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static kitchenpos.fixture.MenuFactory.menu;
 import static kitchenpos.fixture.MenuGroupFactory.menuGroup;
 import static kitchenpos.fixture.OrderFactory.order;
-import static kitchenpos.fixture.OrderTableFactory.emptyTable;
 import static kitchenpos.fixture.OrderTableFactory.notEmptyTable;
 import static kitchenpos.fixture.ProductFactory.product;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,22 +55,6 @@ class OrderServiceTest extends FakeSpringContext {
         final var table = orderTableDao.save(notEmptyTable(2));
 
         final var order = order(table, pizzaMenu, pizzaMenu);
-
-        assertThatThrownBy(
-                () -> orderService.create(order)
-        ).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("주문 테이블이 빈 상태라면 등록 시 예외 발생")
-    @Test
-    void create_orderTableIsEmptyTrue_throwsException() {
-        final var pizza = productDao.save(product("피자", 10_000));
-        final var italian = menuGroupDao.save(menuGroup("양식"));
-        final var pizzaMenu = menuDao.save(menu("피자파티", italian, List.of(pizza)));
-
-        final var table = orderTableDao.save(emptyTable(2));
-
-        final var order = order(table, pizzaMenu);
 
         assertThatThrownBy(
                 () -> orderService.create(order)

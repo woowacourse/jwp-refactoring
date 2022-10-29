@@ -29,10 +29,7 @@ public class TableGroupService {
     @Transactional
     public TableGroup create(final TableGroup request) {
         final List<OrderTable> orderTables = request.getOrderTables();
-
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
+        final List<Long> orderTableIds = collectIds(orderTables);
 
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
@@ -44,6 +41,12 @@ public class TableGroupService {
         final var tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
 
         return tableGroups.add(tableGroup);
+    }
+
+    private List<Long> collectIds(final List<OrderTable> orderTables) {
+        return orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
     }
 
     @Transactional
