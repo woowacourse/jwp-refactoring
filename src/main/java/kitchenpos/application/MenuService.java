@@ -7,12 +7,12 @@ import kitchenpos.application.dto.response.MenuDto;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.Price;
 import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.menu.ProductQuantity;
+import kitchenpos.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,16 +24,16 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductRepository menuProductRepository;
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
     public MenuService(MenuRepository menuRepository,
                        MenuGroupRepository menuGroupRepository,
                        MenuProductRepository menuProductRepository,
-                       ProductDao productDao) {
+                       ProductRepository productRepository) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.menuProductRepository = menuProductRepository;
-        this.productDao = productDao;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -57,7 +57,7 @@ public class MenuService {
     }
 
     private Product getProductById(Long productId) {
-        return productDao.findById(productId).orElseThrow(IllegalArgumentException::new);
+        return productRepository.findById(productId).orElseThrow(IllegalArgumentException::new);
     }
 
     public List<MenuDto> list() {

@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.CreateProductDto;
 import kitchenpos.application.dto.response.ProductDto;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,10 +14,10 @@ import java.util.List;
 @Service
 public class ProductService {
 
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
-    public ProductService(ProductDao productDao) {
-        this.productDao = productDao;
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -25,11 +25,11 @@ public class ProductService {
         String name = createProductDto.getName();
         BigDecimal price = createProductDto.getPrice();
         final Product product = new Product(name, price);
-        return productDao.save(product);
+        return productRepository.save(product);
     }
 
     public List<ProductDto> list() {
-        return productDao.findAll()
+        return productRepository.findAll()
                 .stream()
                 .map(ProductDto::of)
                 .collect(Collectors.toList());
