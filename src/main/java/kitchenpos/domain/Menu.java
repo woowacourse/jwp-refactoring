@@ -31,8 +31,8 @@ public class Menu implements Entity{
                 final BigDecimal price,
                 final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
-        this.price = new Price(price);
         this.id = id;
+        this.price = new Price(price);
         this.name = name;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
