@@ -19,8 +19,8 @@ public class Price {
         this.value = value;
     }
 
-    public static Price ofMenu(final BigDecimal price, final ProductQuantity productQuantity) {
-        BigDecimal sum = productQuantity.sum();
+    public static Price ofMenu(final BigDecimal price, final ProductQuantities productQuantities) {
+        BigDecimal sum = productQuantities.sum();
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }

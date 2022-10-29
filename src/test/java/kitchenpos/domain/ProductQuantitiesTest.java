@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
-class ProductQuantityTest {
+class ProductQuantitiesTest {
 
     private Price price = new Price(BigDecimal.valueOf(13000));
     private Product product = new Product("pasta", price);
@@ -16,11 +16,11 @@ class ProductQuantityTest {
 
     @Test
     void product_quantity로_총합을_알_수_있다() {
-        Map<Product, Quantity> rawProductQuantity = new HashMap<>();
-        rawProductQuantity.put(product, quantity);
+        Map<Product, Quantity> rawProductQuantities = new HashMap<>();
+        rawProductQuantities.put(product, quantity);
 
-        ProductQuantity productQuantity = new ProductQuantity(rawProductQuantity);
+        ProductQuantities productQuantities = new ProductQuantities(rawProductQuantities);
 
-        assertThat(productQuantity.sum()).isEqualTo(BigDecimal.valueOf(39000));
+        assertThat(productQuantities.sum()).isEqualTo(BigDecimal.valueOf(39000));
     }
 }

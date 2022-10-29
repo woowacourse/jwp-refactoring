@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class ProductQuantity {
+public class ProductQuantities {
 
     private final Map<Product, Quantity> values;
 
-    public ProductQuantity(final Map<Product, Quantity> values) {
+    public ProductQuantities(final Map<Product, Quantity> values) {
         this.values = values;
     }
 

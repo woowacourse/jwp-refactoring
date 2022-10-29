@@ -36,11 +36,11 @@ class PriceTest {
         Product product = new Product("pasta", anotherPrice);
         Quantity quantity = new Quantity(3L);
 
-        Map<Product, Quantity> rawProductQuantity = new HashMap<>();
-        rawProductQuantity.put(product, quantity);
-        ProductQuantity productQuantity = new ProductQuantity(rawProductQuantity);
+        Map<Product, Quantity> rawProductQuantities = new HashMap<>();
+        rawProductQuantities.put(product, quantity);
+        ProductQuantities productQuantities = new ProductQuantities(rawProductQuantities);
 
-        assertThatThrownBy(() -> Price.ofMenu(BigDecimal.valueOf(40000), productQuantity))
+        assertThatThrownBy(() -> Price.ofMenu(BigDecimal.valueOf(40000), productQuantities))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

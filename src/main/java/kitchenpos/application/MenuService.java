@@ -8,7 +8,7 @@ import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.ProductQuantity;
+import kitchenpos.domain.ProductQuantities;
 import kitchenpos.domain.Quantity;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
@@ -36,7 +36,7 @@ public class MenuService {
         validateExistMenuGroup(menuCreateRequest.getMenuGroupId());
         Price price = Price.ofMenu(
                 menuCreateRequest.getPrice(),
-                toProductQuantity(menuCreateRequest.getMenuProducts())
+                toProductQuantities(menuCreateRequest.getMenuProducts())
         );
         return saveMenu(menuCreateRequest, price);
     }
@@ -60,8 +60,8 @@ public class MenuService {
         return MenuResponse.from(savedMenu);
     }
 
-    private ProductQuantity toProductQuantity(final List<MenuProductDto> menuProductsDto) {
-        return new ProductQuantity(
+    private ProductQuantities toProductQuantities(final List<MenuProductDto> menuProductsDto) {
+        return new ProductQuantities(
                 menuProductsDto.stream()
                         .map(MenuProductDto::toMenuProduct)
                         .collect(Collectors.toMap(
