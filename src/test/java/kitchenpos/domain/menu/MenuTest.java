@@ -16,7 +16,7 @@ class MenuTest {
 
         @DisplayName("가격이 null이라면, IAE를 던진다.")
         @Test
-        void constructor_Should_ThrowIAE_When_PriceIsNull() {
+        void Should_ThrowIAE_When_PriceIsNull() {
             // given
             MenuProduct menuProduct = new MenuProduct();
 
@@ -27,7 +27,7 @@ class MenuTest {
 
         @DisplayName("가격이 0보다 작다면, IAE를 던진다.")
         @Test
-        void constructor_Should_ThrowIAE_When_PriceIsLessThan0() {
+        void Should_ThrowIAE_When_PriceIsLessThan0() {
             // given
             MenuProduct menuProduct = new MenuProduct();
 
