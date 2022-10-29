@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.MenuResponse;
+import kitchenpos.dto.MenuSaveRequest;
 
 public class MenuFixtures {
 
@@ -28,5 +30,12 @@ public class MenuFixtures {
                                           final Long menuGroupId,
                                           final List<MenuProduct> menuProducts) {
         return new Menu(name, price, menuGroupId, menuProducts);
+    }
+
+    public static final MenuSaveRequest generateMenuSaveRequest(final String name,
+                                                                final BigDecimal price,
+                                                                final Long menuGroupId,
+                                                                final List<MenuProduct> menuProducts) {
+        return new MenuSaveRequest(name, price, menuGroupId, menuProducts);
     }
 }
