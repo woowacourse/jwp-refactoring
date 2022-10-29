@@ -38,19 +38,12 @@ public class MenuService {
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
-        Menu menu = menuRepository.save(
-            new Menu(
-                request.getName(), request.getPrice(), request.getMenuGroupId(),
-                new MenuProducts(request.getMenuProducts()
-                    .stream()
-                    .map(this::createMenuProduct)
-                    .collect(Collectors.toList())))
-        );
 
-        // Todo: Refactor -> Menu, MenuProducts 의 생성 시점을 분리
-        for (MenuProduct menuProduct : menu.getMenuProducts()) {
-            menuProduct.addMenu(menu.getId());
-        }
+        Menu menu = menuRepository.save(new Menu(request.getName(), request.getPrice(), request.getMenuGroupId()));
+        menu.addMenuProducts(new MenuProducts(request.getMenuProducts()
+            .stream()
+            .map(this::createMenuProduct)
+            .collect(Collectors.toList())));
 
         return MenuResponse.createResponse(menuRepository.save(menu));
     }
@@ -58,7 +51,6 @@ public class MenuService {
     private MenuProduct createMenuProduct(final MenuProductCreateRequest request) {
         Product product = productRepository.findById(request.getProductId())
             .orElseThrow(IllegalArgumentException::new);
-        System.out.println("product = " + product.getPrice());
         return new MenuProduct(product.getId(), product.getPrice(), request.getQuantity());
     }
 
