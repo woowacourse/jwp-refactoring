@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BiConsumer;
 
 abstract class InMemoryAbstractDao<T> {
 
@@ -25,11 +24,11 @@ abstract class InMemoryAbstractDao<T> {
 
     public T save(T entity) {
         final long entityId = id.getAndIncrement();
-        setId().accept(entity, entityId);
+        setId(entity, entityId);
         database.put(entityId, entity);
         return entity;
     }
-    protected abstract BiConsumer<T, Long> setId();
+    protected abstract void setId(T entity, Long entityId);
 
     public Optional<T> findById(Long id) {
         return Optional.ofNullable(database.get(id));
