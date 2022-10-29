@@ -21,6 +21,8 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuResponse;
+import kitchenpos.dto.MenuSaveRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -38,19 +40,16 @@ class MenuServiceTest {
 
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
-    private final MenuProductDao menuProductDao;
     private final ProductDao productDao;
     private final MenuService menuService;
 
     @Autowired
     public MenuServiceTest(final MenuDao menuDao,
                            final MenuGroupDao menuGroupDao,
-                           final MenuProductDao menuProductDao,
                            final ProductDao productDao,
                            final MenuService menuService) {
         this.menuDao = menuDao;
         this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
         this.productDao = productDao;
         this.menuService = menuService;
     }
@@ -69,13 +68,14 @@ class MenuServiceTest {
         Product 후라이드 = productDao.save(generateProduct("후라이드"));
 
         List<MenuProduct> menuProducts = List.of(generateMenuProduct(후라이드.getId(), 1));
-        Menu menu = generateMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(), menuProducts);
+        MenuSaveRequest request = generateMenuSaveRequest(
+                "후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(), menuProducts);
 
-        Menu actual = menuService.create(menu);
+        MenuResponse actual = menuService.create(request);
 
         assertAll(() -> {
-            assertThat(actual.getName()).isEqualTo(menu.getName());
-            assertThat(actual.getPrice().compareTo(menu.getPrice())).isEqualTo(0);
+            assertThat(actual.getName()).isEqualTo(request.getName());
+            assertThat(actual.getPrice().compareTo(request.getPrice())).isEqualTo(0);
             assertThat(actual.getMenuGroupId()).isEqualTo(한마리메뉴.getId());
             assertThat(actual.getMenuProducts()).hasSize(1);
         });
@@ -83,26 +83,28 @@ class MenuServiceTest {
 
     @Test
     void menu를_등록할_때_price가_null인_경우_예외를_던진다() {
-        Menu menu = generateMenu("후라이드치킨", null, 1L);
+        MenuSaveRequest request = generateMenuSaveRequest("후라이드치킨", null, 1L, List.of());
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @ParameterizedTest(name = "price가 {0}미만인 경우 예외를 던진다")
     @ValueSource(ints = {-15000, -10, Integer.MIN_VALUE})
     void menu를_등록할_때_price가_0미만인_경우_예외를_던진다(final int price) {
-        Menu menu = generateMenu("후라이드치킨", BigDecimal.valueOf(price), 1L);
+        MenuSaveRequest request =
+                generateMenuSaveRequest("후라이드치킨", BigDecimal.valueOf(price), 1L, List.of());
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void menu를_등록할_때_존재하지_않는_menuGroupId인_경우_예외를_던진다() {
-        Menu menu = generateMenu("후라이드치킨", BigDecimal.valueOf(16000), 0L);
+        MenuSaveRequest request =
+                generateMenuSaveRequest("후라이드치킨", BigDecimal.valueOf(16000), 0L, List.of());
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -112,9 +114,10 @@ class MenuServiceTest {
         Product 후라이드 = productDao.save(generateProduct("후라이드", BigDecimal.valueOf(16000)));
 
         List<MenuProduct> menuProducts = List.of(generateMenuProduct(후라이드.getId(), 1));
-        Menu menu = generateMenu("후라이드치킨", BigDecimal.valueOf(17000), 한마리메뉴.getId(), menuProducts);
+        MenuSaveRequest request =
+                generateMenuSaveRequest("후라이드치킨", BigDecimal.valueOf(17000), 한마리메뉴.getId(), menuProducts);
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -124,7 +127,7 @@ class MenuServiceTest {
         menuDao.save(generateMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId()));
         menuDao.save(generateMenu("양념치킨", BigDecimal.valueOf(17000), 한마리메뉴.getId()));
 
-        List<Menu> actual = menuService.list();
+        List<MenuResponse> actual = menuService.list();
 
         assertThat(actual).hasSize(2);
     }
