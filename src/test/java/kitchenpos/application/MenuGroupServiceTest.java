@@ -1,7 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixtures.domain.MenuGroupFixture.createMenuGroup;
-import static kitchenpos.fixtures.domain.MenuGroupFixture.createMenuGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -30,7 +28,7 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void Should_CreateMenuGroup() {
             // given
-            MenuGroupRequest request = createMenuGroupRequest();
+            MenuGroupRequest request = new MenuGroupRequest("메뉴 그룹");
 
             // when
             MenuGroupResponse actual = menuGroupService.create(request);
@@ -50,9 +48,9 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void Should_ReturnMenuGroupList() {
             // given
-            MenuGroup menuGroup1 = createMenuGroup("분식");
-            MenuGroup menuGroup2 = createMenuGroup("한식");
-            MenuGroup menuGroup3 = createMenuGroup("중식");
+            MenuGroup menuGroup1 = new MenuGroup("분식");
+            MenuGroup menuGroup2 = new MenuGroup("한식");
+            MenuGroup menuGroup3 = new MenuGroup("중식");
 
             menuGroupRepository.save(menuGroup1);
             menuGroupRepository.save(menuGroup2);
