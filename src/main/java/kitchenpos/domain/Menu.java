@@ -30,7 +30,7 @@ public class Menu {
         this(name, price, menuGroupId);
         this.menuProducts = menuProducts;
 
-        if (isPriceEmpty(price)) {
+        if (isPriceEmptyOrCheaperThan0(price)) {
             throw new IllegalArgumentException("메뉴의 가격은 비어있거나 0보다 작을 수 없습니다.");
         }
 
@@ -48,7 +48,7 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    private boolean isPriceEmpty(final BigDecimal price) {
+    private boolean isPriceEmptyOrCheaperThan0(final BigDecimal price) {
         return Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0;
     }
 
