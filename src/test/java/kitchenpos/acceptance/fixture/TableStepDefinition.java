@@ -9,7 +9,6 @@ import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.application.dto.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.application.dto.OrderTableCreateRequest;
 import kitchenpos.application.dto.OrderTableResponse;
-import kitchenpos.domain.OrderTable;
 import org.springframework.http.HttpStatus;
 
 public class TableStepDefinition {

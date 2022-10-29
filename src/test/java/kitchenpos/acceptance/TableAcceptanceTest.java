@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.List;
 import kitchenpos.application.dto.OrderTableResponse;
-import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 
 public class TableAcceptanceTest extends AcceptanceTest {

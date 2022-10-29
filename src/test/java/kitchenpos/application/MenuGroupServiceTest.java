@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import kitchenpos.application.dto.MenuGroupRequest;
 import kitchenpos.application.dto.MenuGroupResponse;
-import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 

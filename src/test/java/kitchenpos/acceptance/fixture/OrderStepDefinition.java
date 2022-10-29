@@ -10,7 +10,6 @@ import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderResponse;
 import kitchenpos.application.dto.OrderUpdateRequest;
-import kitchenpos.domain.Order;
 import org.springframework.http.HttpStatus;
 
 public class OrderStepDefinition {

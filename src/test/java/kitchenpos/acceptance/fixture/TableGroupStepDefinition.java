@@ -6,10 +6,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import io.restassured.RestAssured;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.application.dto.TableGroupCreateRequest;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import org.springframework.http.HttpStatus;
 
 public class TableGroupStepDefinition {

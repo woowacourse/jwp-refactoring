@@ -2,8 +2,6 @@ package kitchenpos.acceptance;
 
 import static kitchenpos.acceptance.fixture.MenuGroupStepDefinition.메뉴_그룹을_생성한다;
 import static kitchenpos.acceptance.fixture.MenuGroupStepDefinition.메뉴_그룹을_조회한다;
-import static kitchenpos.support.fixture.MenuGroupFixture.두마리메뉴;
-import static kitchenpos.support.fixture.MenuGroupFixture.한마리메뉴;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;

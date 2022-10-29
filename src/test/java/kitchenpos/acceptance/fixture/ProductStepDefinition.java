@@ -6,7 +6,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import io.restassured.RestAssured;
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.Product;
 import org.springframework.http.HttpStatus;
 
