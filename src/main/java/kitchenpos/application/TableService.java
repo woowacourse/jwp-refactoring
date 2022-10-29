@@ -2,26 +2,28 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.EmptyRequest;
 import kitchenpos.dto.request.NumberOfGuestsRequest;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
 
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
     private final OrderTableDao orderTableDao;
 
-    public TableService(@Qualifier("orderRepository") final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
+    public TableService(
+            final OrderRepository orderRepository,
+            final OrderTableDao orderTableDao
+    ) {
+        this.orderRepository = orderRepository;
         this.orderTableDao = orderTableDao;
     }
 
@@ -52,7 +54,7 @@ public class TableService {
     }
 
     private void validateExistsByOrderTableIdAndOrderStatusIn(final Long orderTableId) {
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }

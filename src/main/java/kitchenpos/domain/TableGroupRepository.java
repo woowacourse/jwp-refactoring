@@ -4,14 +4,15 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.JdbcTemplateOrderTableDao;
 import kitchenpos.dao.JdbcTemplateTableGroupDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-@Component
-public class TableGroupRepository implements TableGroupDao {
+@Repository
+public class TableGroupRepository {
 
-    private final JdbcTemplateTableGroupDao tableGroupDao;
-    private final JdbcTemplateOrderTableDao orderTableDao;
+    private final TableGroupDao tableGroupDao;
+    private final OrderTableDao orderTableDao;
 
     public TableGroupRepository(final JdbcTemplateTableGroupDao tableGroupDao,
                                 final JdbcTemplateOrderTableDao orderTableDao) {
@@ -19,7 +20,6 @@ public class TableGroupRepository implements TableGroupDao {
         this.orderTableDao = orderTableDao;
     }
 
-    @Override
     public TableGroup save(final TableGroup entity) {
         final TableGroup tableGroup = tableGroupDao.save(entity);
 
@@ -36,12 +36,10 @@ public class TableGroupRepository implements TableGroupDao {
         return tableGroup;
     }
 
-    @Override
     public Optional<TableGroup> findById(final Long id) {
         return tableGroupDao.findById(id);
     }
 
-    @Override
     public List<TableGroup> findAll() {
         return tableGroupDao.findAll();
     }

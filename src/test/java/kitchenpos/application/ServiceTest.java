@@ -2,18 +2,18 @@ package kitchenpos.application;
 
 import static kitchenpos.fixture.dto.OrderDtoFixture.forUpdateStatus;
 
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuRepository;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroupRepository;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.TableGroupRequest;
@@ -21,7 +21,6 @@ import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.dto.response.TableGroupResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,9 +46,14 @@ public abstract class ServiceTest {
     @Autowired
     protected TableService tableService;
 
-    @Qualifier("menuRepository")
     @Autowired
-    protected MenuDao menuDao;
+    protected MenuRepository menuRepository;
+
+    @Autowired
+    protected OrderRepository orderRepository;
+
+    @Autowired
+    protected TableGroupRepository tableGroupRepository;
 
     @Autowired
     protected MenuGroupDao menuGroupDao;
@@ -57,9 +61,6 @@ public abstract class ServiceTest {
     @Autowired
     protected MenuProductDao menuProductDao;
 
-    @Qualifier("orderRepository")
-    @Autowired
-    protected OrderDao orderDao;
 
     @Autowired
     protected OrderLineItemDao orderLineItemDao;
@@ -70,9 +71,6 @@ public abstract class ServiceTest {
     @Autowired
     protected ProductDao productDao;
 
-    @Qualifier("tableGroupRepository")
-    @Autowired
-    protected TableGroupDao tableGroupDao;
 
     protected Product 상품등록(final Product product) {
         return productDao.save(product);

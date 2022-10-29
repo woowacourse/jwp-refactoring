@@ -35,7 +35,7 @@ public class MenuServiceTest extends ServiceTest {
         final Long actualId = actual.getId();
         assertAll(
                 () -> assertThat(actualId).isNotNull(),
-                () -> assertThat(menuDao.findById(actualId)).isPresent()
+                () -> assertThat(menuRepository.findById(actualId)).isPresent()
         );
     }
 

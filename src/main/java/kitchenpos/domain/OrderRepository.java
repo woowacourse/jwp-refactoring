@@ -2,24 +2,23 @@ package kitchenpos.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.dao.JdbcTemplateOrderDao;
 import kitchenpos.dao.JdbcTemplateOrderLineItemDao;
 import kitchenpos.dao.OrderDao;
-import org.springframework.stereotype.Component;
+import kitchenpos.dao.OrderLineItemDao;
+import org.springframework.stereotype.Repository;
 
-@Component
-public class OrderRepository implements OrderDao {
+@Repository
+public class OrderRepository {
 
-    private final JdbcTemplateOrderDao orderDao;
-    private final JdbcTemplateOrderLineItemDao orderLineItemDao;
+    private final OrderDao orderDao;
+    private final OrderLineItemDao orderLineItemDao;
 
     public OrderRepository(final JdbcTemplateOrderDao orderDao, final JdbcTemplateOrderLineItemDao orderLineItemDao) {
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
     }
 
-    @Override
     public Order save(final Order entity) {
         final Order savedOrder = orderDao.save(entity);
 
@@ -35,18 +34,15 @@ public class OrderRepository implements OrderDao {
         return savedOrder;
     }
 
-    @Override
-    public Optional<Order> findById(final Long id) {
-        //TODO : 이곳 엄청 불편하다.. 다른 방법이 필요하다.
+    public Order getById(final Long id) throws IllegalArgumentException {
         final Order order = orderDao.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
         final List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(id);
         order.setOrderLineItems(orderLineItems);
 
-        return Optional.of(order);
+        return order;
     }
 
-    @Override
     public List<Order> findAll() {
         final List<Order> orders = orderDao.findAll();
 
@@ -56,12 +52,10 @@ public class OrderRepository implements OrderDao {
         return orders;
     }
 
-    @Override
     public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId, final List<String> orderStatuses) {
         return orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatuses);
     }
 
-    @Override
     public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds,
                                                           final List<String> orderStatuses) {
         return orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatuses);

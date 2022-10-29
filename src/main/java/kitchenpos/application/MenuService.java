@@ -2,33 +2,32 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuProductResponse;
 import kitchenpos.dto.response.MenuResponse;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
 
-    private final MenuDao menuDao;
+    private final MenuRepository menuRepository;
     private final MenuGroupDao menuGroupDao;
     private final ProductDao productDao;
 
     public MenuService(
-            @Qualifier("menuRepository") final MenuDao menuDao,
+            final MenuRepository menuRepository,
             final MenuGroupDao menuGroupDao,
             final ProductDao productDao
     ) {
-        this.menuDao = menuDao;
+        this.menuRepository = menuRepository;
         this.menuGroupDao = menuGroupDao;
         this.productDao = productDao;
     }
@@ -39,7 +38,7 @@ public class MenuService {
         final Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(),
                 getMenuProducts(request));
 
-        return toMenuResponse(menuDao.save(menu));
+        return toMenuResponse(menuRepository.save(menu));
     }
 
     private void validateMenuGroupExistById(final Long menuGroupId) {
@@ -72,7 +71,7 @@ public class MenuService {
     }
 
     public List<MenuResponse> list() {
-        final List<Menu> menus = menuDao.findAll();
+        final List<Menu> menus = menuRepository.findAll();
 
         return menus.stream()
                 .map(MenuService::toMenuResponse)

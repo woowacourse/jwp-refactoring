@@ -4,33 +4,32 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.TableGroupRepository;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableGroupService {
 
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
+    private final TableGroupRepository tableGroupRepository;
     private final OrderTableDao orderTableDao;
-    private final TableGroupDao tableGroupDao;
 
     public TableGroupService(
-            @Qualifier("orderRepository") final OrderDao orderDao,
-            final OrderTableDao orderTableDao,
-            @Qualifier("tableGroupRepository") final TableGroupDao tableGroupDao
+            final OrderRepository orderRepository,
+            final TableGroupRepository tableGroupRepository,
+            final OrderTableDao orderTableDao
     ) {
-        this.orderDao = orderDao;
+        this.orderRepository = orderRepository;
+        this.tableGroupRepository = tableGroupRepository;
         this.orderTableDao = orderTableDao;
-        this.tableGroupDao = tableGroupDao;
     }
 
     @Transactional
@@ -40,7 +39,7 @@ public class TableGroupService {
         validateTableSize(orderTableIds, savedOrderTables);
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
 
-        return TableGroupResponse.of(tableGroupDao.save(tableGroup));
+        return TableGroupResponse.of(tableGroupRepository.save(tableGroup));
     }
 
     private void validateTableSize(final List<Long> orderTableIds, final List<OrderTable> savedOrderTables) {
@@ -70,7 +69,7 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }

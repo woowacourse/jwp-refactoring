@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.fixture.domain.MenuFixture.createMenu;
 import static kitchenpos.fixture.domain.MenuGroupFixture.메뉴그룹A;
 import static kitchenpos.fixture.domain.MenuGroupFixture.메뉴그룹B;
@@ -10,8 +12,6 @@ import static kitchenpos.fixture.dto.MenuDtoFixture.createMenuRequest;
 import static kitchenpos.fixture.dto.OrderDtoFixture.createOrderRequest;
 import static kitchenpos.fixture.dto.OrderDtoFixture.forUpdateStatus;
 import static kitchenpos.fixture.dto.OrderTableDtoFixture.forUpdateEmpty;
-import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -118,7 +118,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("changeOrderStatus : 주문이 존재하지 않으면 예외가 발생한다.")
     void changeOrderStatus_noOrder_throwException() {
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(null, forUpdateStatus(MEAL)))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(999L, forUpdateStatus(MEAL)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

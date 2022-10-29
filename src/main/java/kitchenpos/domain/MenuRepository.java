@@ -6,20 +6,20 @@ import java.util.Optional;
 import kitchenpos.dao.JdbcTemplateMenuDao;
 import kitchenpos.dao.JdbcTemplateMenuProductDao;
 import kitchenpos.dao.MenuDao;
-import org.springframework.stereotype.Component;
+import kitchenpos.dao.MenuProductDao;
+import org.springframework.stereotype.Repository;
 
-@Component
-public class MenuRepository implements MenuDao {
+@Repository
+public class MenuRepository {
 
-    private final JdbcTemplateMenuDao menuDao;
-    private final JdbcTemplateMenuProductDao menuProductDao;
+    private final MenuDao menuDao;
+    private final MenuProductDao menuProductDao;
 
     public MenuRepository(final JdbcTemplateMenuDao menuDao, final JdbcTemplateMenuProductDao menuProductDao) {
         this.menuDao = menuDao;
         this.menuProductDao = menuProductDao;
     }
 
-    @Override
     public Menu save(final Menu entity) {
         final List<MenuProduct> menuProducts = entity.getMenuProducts();
         final Menu savedMenu = menuDao.save(entity);
@@ -41,12 +41,10 @@ public class MenuRepository implements MenuDao {
         return savedMenuProducts;
     }
 
-    @Override
     public Optional<Menu> findById(final Long id) {
         return menuDao.findById(id);
     }
 
-    @Override
     public List<Menu> findAll() {
         final List<Menu> menus = menuDao.findAll();
         for (final Menu menu : menus) {
@@ -56,7 +54,6 @@ public class MenuRepository implements MenuDao {
         return menus;
     }
 
-    @Override
     public long countByIdIn(final List<Long> ids) {
         return menuDao.countByIdIn(ids);
     }

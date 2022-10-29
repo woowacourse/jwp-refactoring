@@ -2,38 +2,33 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderStatusRequest;
 import kitchenpos.dto.response.OrderResponse;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
 
-    private final MenuDao menuDao;
-    private final OrderDao orderDao;
-    private final OrderLineItemDao orderLineItemDao;
+    private final MenuRepository menuRepository;
+    private final OrderRepository orderRepository;
     private final OrderTableDao orderTableDao;
 
     public OrderService(
-            @Qualifier("menuRepository") final MenuDao menuDao,
-            @Qualifier("orderRepository") final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
+            final MenuRepository menuRepository,
+            final OrderRepository orderRepository,
             final OrderTableDao orderTableDao
     ) {
-        this.menuDao = menuDao;
-        this.orderDao = orderDao;
-        this.orderLineItemDao = orderLineItemDao;
+        this.menuRepository = menuRepository;
+        this.orderRepository = orderRepository;
         this.orderTableDao = orderTableDao;
     }
 
@@ -43,7 +38,7 @@ public class OrderService {
         validateEmptyTable(order.getOrderTableId());
         validateOrderMenus(order);
 
-        return OrderResponse.of(orderDao.save(order));
+        return OrderResponse.of(orderRepository.save(order));
     }
 
     private static Order proceedOrder(final OrderRequest request) {
@@ -65,13 +60,13 @@ public class OrderService {
     }
 
     private void validateOrderMenus(final Order order) {
-        if (order.getItemSize() != menuDao.countByIdIn(order.getMenuIds())) {
+        if (order.getItemSize() != menuRepository.countByIdIn(order.getMenuIds())) {
             throw new IllegalArgumentException();
         }
     }
 
     public List<OrderResponse> list() {
-        return orderDao.findAll()
+        return orderRepository.findAll()
                 .stream()
                 .map(OrderResponse::of)
                 .collect(Collectors.toList());
@@ -79,15 +74,10 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusRequest request) {
-        final Order savedOrder = getOrderById(orderId);
+        final Order savedOrder = orderRepository.getById(orderId);
         savedOrder.changeOrderStatus(request.getOrderStatus());
-        orderDao.save(savedOrder);
+        orderRepository.save(savedOrder);
 
         return OrderResponse.of(savedOrder);
-    }
-
-    private Order getOrderById(final Long orderId) {
-        return orderDao.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
     }
 }
