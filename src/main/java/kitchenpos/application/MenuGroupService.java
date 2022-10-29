@@ -30,9 +30,9 @@ public class MenuGroupService {
     }
 
     private MenuGroup asMenuGroup(final MenuGroupRequest request) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(request.getName());
-        return menuGroup;
+        return new MenuGroup(
+                request.getName()
+        );
     }
 
     public List<MenuGroupResponse> list() {
