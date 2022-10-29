@@ -3,6 +3,7 @@ package acceptance;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
         테이블을_생성한다(1, true);
         테이블을_생성한다(2, true);
 
-        List<OrderTable> tables = 테이블_목록을_조회한다();
+        List<OrderTableResponse> tables = 테이블_목록을_조회한다();
 
         assertThat(tables).hasSize(3);
     }

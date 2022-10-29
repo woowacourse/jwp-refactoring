@@ -12,15 +12,16 @@ import kitchenpos.Application;
 import kitchenpos.application.dto.request.OrderCommand;
 import kitchenpos.application.dto.request.OrderLineItemCommand;
 import kitchenpos.application.dto.response.MenuResponse;
+import kitchenpos.application.dto.response.OrderResponse;
+import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.common.DataClearExtension;
 import kitchenpos.domain.MenuGroupDto;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.ProductDto;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.request.MenuProductRequest;
 import kitchenpos.ui.dto.request.MenuRequest;
+import kitchenpos.ui.dto.request.OrderChangeRequest;
 import kitchenpos.ui.dto.request.OrderTableRequest;
 import kitchenpos.ui.dto.request.ProductRequest;
 import kitchenpos.ui.dto.request.TableGroupRequest;
@@ -46,7 +47,7 @@ public class AcceptanceTest {
         RestAssured.port = port;
     }
 
-    protected long 상품을_생성한다(final String name, final int price) {
+    protected long 상품을_생성한다(String name, int price) {
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .body(new ProductRequest(name, BigDecimal.valueOf(price)))
@@ -123,33 +124,30 @@ public class AcceptanceTest {
                 .extract().jsonPath().getLong("id");
     }
 
-    protected List<OrderTable> 테이블_목록을_조회한다() {
+    protected List<OrderTableResponse> 테이블_목록을_조회한다() {
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .when().log().all()
                 .get("/api/tables")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .extract().jsonPath().getList(".", OrderTable.class);
+                .extract().jsonPath().getList(".", OrderTableResponse.class);
     }
-//
-//    protected OrderTable 테이블_상태를_변경한다(long orderTableId, boolean empty) {
-//        OrderTable orderTable = new OrderTable();
-//        orderTable.setEmpty(empty);
-//
-//        return RestAssured.given().log().all()
-//                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-//                .body(orderTable)
-//                .when().log().all()
-//                .put("/api/tables/{order_table_id}/empty", orderTableId)
-//                .then().log().all()
-//                .extract().as(OrderTable.class);
-//    }
 
-    protected TableGroup 테이블_그룹을_생성한다(List<OrderTable> orderTables) {
-        TableGroupRequest tableGroup = new TableGroupRequest(orderTables.stream()
-                .map(OrderTable::getTableGroupId)
-                .collect(Collectors.toList()));
+    protected OrderTableResponse 테이블_상태를_변경한다(long orderTableId, boolean empty) {
+        OrderTableRequest orderTable = new OrderTableRequest(0, empty);
+
+        return RestAssured.given().log().all()
+                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .body(orderTable)
+                .when().log().all()
+                .put("/api/tables/{order_table_id}/empty", orderTableId)
+                .then().log().all()
+                .extract().as(OrderTableResponse.class);
+    }
+
+    protected TableGroup 테이블_그룹을_생성한다(List<Long> orderTableId) {
+        TableGroupRequest tableGroup = new TableGroupRequest(orderTableId);
 
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -170,18 +168,17 @@ public class AcceptanceTest {
                 .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
-//    protected OrderTable 테이블_방문자_수를_변경한다(long orderTableId, int numberOfGuests) {
-//        OrderTable orderTable = new OrderTable();
-//        orderTable.setNumberOfGuests(numberOfGuests);
-//
-//        return RestAssured.given().log().all()
-//                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-//                .body(orderTable)
-//                .when().log().all()
-//                .put("/api/tables/{order_table_id}/number-of-guests", orderTableId)
-//                .then().log().all()
-//                .extract().as(OrderTable.class);
-//    }
+    protected OrderTableResponse 테이블_방문자_수를_변경한다(long orderTableId, int numberOfGuests) {
+        OrderTableRequest orderTable = new OrderTableRequest(2, false);
+
+        return RestAssured.given().log().all()
+                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .body(orderTable)
+                .when().log().all()
+                .put("/api/tables/{order_table_id}/number-of-guests", orderTableId)
+                .then().log().all()
+                .extract().as(OrderTableResponse.class);
+    }
 
     protected long 주문을_생성한다(long table, List<OrderLineItem> orderLineItems) {
         List<OrderLineItemCommand> orderLineItemCommands = orderLineItems.stream()
@@ -199,23 +196,23 @@ public class AcceptanceTest {
                 .extract().jsonPath().getLong("id");
     }
 
-    protected Order 주문_상태를_변경한다(long 주문, String status) {
-        Order order = new Order();
+    protected OrderResponse 주문_상태를_변경한다(long orderId, String status) {
+        OrderChangeRequest orderChangeRequest = new OrderChangeRequest(status);
 
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(order)
+                .body(orderChangeRequest)
                 .when().log().all()
-                .put("/api/orders/{order_id}/order-status", 주문)
+                .put("/api/orders/{order_id}/order-status", orderId)
                 .then().log().all()
-                .extract().as(Order.class);
+                .extract().as(OrderResponse.class);
     }
 
-    protected List<Order> 주문_목목을_조회한다() {
+    protected List<OrderResponse> 주문_목목을_조회한다() {
         return RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/orders")
                 .then().log().all()
-                .extract().jsonPath().getList(".", Order.class);
+                .extract().jsonPath().getList(".", OrderResponse.class);
     }
 }

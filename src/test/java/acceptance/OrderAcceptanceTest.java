@@ -3,6 +3,7 @@ package acceptance;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import org.junit.jupiter.api.DisplayName;
@@ -20,9 +21,9 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         주문을_생성한다(테이블(), 주문항목());
         주문을_생성한다(테이블(), 주문항목());
 
-        List<Order> orders = 주문_목목을_조회한다();
+        List<OrderResponse> responses = 주문_목목을_조회한다();
 
-        assertThat(orders).hasSize(3);
+        assertThat(responses).hasSize(3);
     }
 
     @ParameterizedTest(name = "{0}으로 변경한다.")
@@ -31,9 +32,9 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     void changeStatus(String orderStatus) {
         long 주문 = 주문을_생성한다(테이블(), 주문항목());
 
-        Order result = 주문_상태를_변경한다(주문, orderStatus);
+        OrderResponse response = 주문_상태를_변경한다(주문, orderStatus);
 
-        assertThat(result.getOrderStatus()).isEqualTo(orderStatus);
+        assertThat(response.getOrderStatus()).isEqualTo(orderStatus);
     }
 
     private long 테이블() {
