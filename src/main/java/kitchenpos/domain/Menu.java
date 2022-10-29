@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,7 +18,6 @@ public class Menu {
     private Long id;
     private String name;
     private BigDecimal price;
-    @Column(name = "menu_group_id")
     private Long menuGroupId;
     @Embedded
     private MenuProducts menuProducts;
@@ -35,10 +33,6 @@ public class Menu {
         this(null, name, price, menuGroupId, new MenuProducts(new ArrayList<>()));
     }
 
-    public Menu(final String name, final BigDecimal price, final Long menuGroupId, final MenuProducts menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
-    }
-
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
                 final MenuProducts menuProducts) {
         this.id = id;
@@ -47,10 +41,17 @@ public class Menu {
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
         validateMenu(price);
+        validateMenuGroup(menuGroupId);
     }
 
     public void validateMenu(final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateMenuGroup(final Long menuGroupId) {
+        if (menuGroupId == null) {
             throw new IllegalArgumentException();
         }
     }

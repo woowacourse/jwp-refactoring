@@ -32,10 +32,7 @@ public class MenuService {
     }
 
     public MenuResponse create(final MenuCreateRequest request) {
-        if (request.getMenuGroupId() == null) {
-            throw new IllegalArgumentException();
-        }
-        if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
+        if (request.getMenuGroupId() != null && !menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
 
