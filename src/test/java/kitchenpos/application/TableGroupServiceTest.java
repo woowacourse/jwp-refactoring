@@ -10,13 +10,11 @@ import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.dao.fake.FakeOrderDao;
-import kitchenpos.dao.fake.FakeOrderTableDao;
-import kitchenpos.dao.fake.FakeTableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.dto.TableGroupResponse;
+import kitchenpos.dto.TableGroupSaveRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -48,28 +46,21 @@ class TableGroupServiceTest {
         this.tableGroupService = tableGroupService;
     }
 
-    @BeforeEach
-    void setUp() {
-        FakeOrderDao.deleteAll();
-        FakeOrderTableDao.deleteAll();
-        FakeTableGroupDao.deleteAll();
-    }
-
     @Test
     void tableGroup을_생성한다() {
         OrderTable 테이블_1번 = orderTableDao.save(generateOrderTable(0, true));
         OrderTable 테이블_2번 = orderTableDao.save(generateOrderTable(0, true));
 
-        TableGroup actual = tableGroupService.create(generateTableGroup(List.of(테이블_1번, 테이블_2번)));
+        TableGroupResponse actual = tableGroupService.create(generateTableGroupSaveRequest(List.of(테이블_1번, 테이블_2번)));
 
         assertThat(actual.getOrderTables()).hasSize(2);
     }
 
     @Test
     void orderTables가_비어있으면_예외를_던진다() {
-        TableGroup tableGroup = generateTableGroup(List.of());
+        TableGroupSaveRequest request = generateTableGroupSaveRequest(List.of());
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -77,7 +68,7 @@ class TableGroupServiceTest {
     void orderTables의_사이즈가_2미만인_경우_예외를_던진다() {
         OrderTable orderTable = orderTableDao.save(generateOrderTable(0, true));
 
-        assertThatThrownBy(() -> tableGroupService.create(generateTableGroup(List.of(orderTable))))
+        assertThatThrownBy(() -> tableGroupService.create(generateTableGroupSaveRequest(List.of(orderTable))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -87,7 +78,8 @@ class TableGroupServiceTest {
         OrderTable 테이블_2번 = orderTableDao.save(generateOrderTable(0, true));
         OrderTable 테이블_3번 = generateOrderTable(0, true);
 
-        assertThatThrownBy(() -> tableGroupService.create(generateTableGroup(List.of(테이블_1번, 테이블_2번, 테이블_3번))))
+        assertThatThrownBy(
+                () -> tableGroupService.create(generateTableGroupSaveRequest(List.of(테이블_1번, 테이블_2번, 테이블_3번))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -97,20 +89,21 @@ class TableGroupServiceTest {
         OrderTable 테이블_2번 = orderTableDao.save(generateOrderTable(0, true));
         OrderTable 비어있지_않은_테이블 = orderTableDao.save(generateOrderTable(0, false));
 
-        assertThatThrownBy(() -> tableGroupService.create(generateTableGroup(List.of(테이블_1번, 테이블_2번, 비어있지_않은_테이블))))
+        assertThatThrownBy(
+                () -> tableGroupService.create(generateTableGroupSaveRequest(List.of(테이블_1번, 테이블_2번, 비어있지_않은_테이블))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 저장된_orderTables_중_tableGroupId가_null이_아닌_경우_예외를_던진다() {
-        OrderTable 테이블_1번 = orderTableDao.save(generateOrderTable(0, true));
-        OrderTable 테이블_2번 = orderTableDao.save(generateOrderTable(0, true));
-
-        tableGroupService.create(generateTableGroup(List.of(테이블_1번, 테이블_2번)));
+        TableGroup tableGroup = tableGroupDao.save(generateTableGroup(List.of()));
+        OrderTable 테이블_1번 = orderTableDao.save(generateOrderTable(tableGroup.getId(), 0, true));
+        OrderTable 테이블_2번 = orderTableDao.save(generateOrderTable(tableGroup.getId(), 0, true));
 
         OrderTable 테이블_3번 = orderTableDao.save(generateOrderTable(0, true));
 
-        assertThatThrownBy(() -> tableGroupService.create(generateTableGroup(List.of(테이블_1번, 테이블_2번, 테이블_3번))))
+        assertThatThrownBy(
+                () -> tableGroupService.create(generateTableGroupSaveRequest(List.of(테이블_1번, 테이블_2번, 테이블_3번))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
