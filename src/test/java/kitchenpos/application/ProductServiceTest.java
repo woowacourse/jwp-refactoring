@@ -7,9 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.fixtures.domain.ProductFixture.ProductRequestBuilder;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

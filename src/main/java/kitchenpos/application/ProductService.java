@@ -3,8 +3,8 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -6,10 +6,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.fixtures.domain.OrderTableFixture.OrderTableRequestBuilder;
 import kitchenpos.fixtures.domain.TableGroupFixture.TableGroupRequestBuilder;
+import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
