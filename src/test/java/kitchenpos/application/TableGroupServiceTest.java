@@ -122,6 +122,10 @@ class TableGroupServiceTest {
         tableGroupService.ungroup(actual.getId());
     }
 
+    /**
+     * aw
+     * @param orderStatus
+     */
     @DisplayName("단체 지정을 해제할 때, 주문 상태가 COOKING이나 MEAL 이면 예외가 발생한다.")
     @MethodSource
     @ParameterizedTest
