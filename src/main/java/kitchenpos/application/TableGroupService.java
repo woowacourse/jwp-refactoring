@@ -42,7 +42,7 @@ public class TableGroupService {
         orderTables.validateOrderTableSize(orderTableRequests.size());
 
         final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
-        savedTableGroup.addOrderTables(orderTables.mapToTableGroup(orderTableDao::save));
+        savedTableGroup.addOrderTables(orderTables.mapToOrderTables(orderTableDao::save));
         return new TableGroupResponse(savedTableGroup);
     }
 

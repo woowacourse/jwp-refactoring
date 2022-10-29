@@ -27,7 +27,7 @@ public class OrderTables {
         }
     }
 
-    public List<OrderTable> mapToTableGroup(Consumer<OrderTable> consumer) {
+    public List<OrderTable> mapToOrderTables(Consumer<OrderTable> consumer) {
         return values.stream()
                 .peek(it -> consumer.accept(new OrderTable(it.getTableGroupId(), it.getNumberOfGuests(), false)))
                 .collect(Collectors.toList());
