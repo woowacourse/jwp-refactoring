@@ -1,7 +1,6 @@
 package kitchenpos;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -28,7 +27,7 @@ public class Fixture {
     }
 
     public static Menu 메뉴(MenuGroup menuGroup, MenuProduct... menuProducts) {
-        return new Menu("햄버억", new BigDecimal(200_000), menuGroup.getId(), List.of(menuProducts));
+        return new Menu("햄버억", new BigDecimal(20_000), menuGroup.getId(), List.of(menuProducts));
     }
 
     public static OrderTable 테이블(boolean empty) {
@@ -40,10 +39,10 @@ public class Fixture {
     }
 
     public static Order 주문(Long tableId, Long menuId) {
-        return new Order("COOKING", tableId, LocalDateTime.now(), List.of(주문정보(menuId)));
+        return new Order("COOKING", tableId, List.of(주문정보(menuId)));
     }
 
     public static TableGroup 테이블집합(OrderTable... orderTables) {
-        return new TableGroup(LocalDateTime.now(), List.of(orderTables));
+        return new TableGroup(List.of(orderTables));
     }
 }

@@ -10,6 +10,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.MenuRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,17 +34,18 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuResponse create(final Menu menu) {
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
+    public MenuResponse create(final MenuRequest request) {
+        if (!menuGroupDao.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException("메뉴 집합이 존재하지 않습니다.");
         }
 
         Menu savedMenu = menuDao.save(
                 new Menu(
-                        menu.getName(),
-                        menu.getPrice(),
-                        menu.getMenuGroupId(),
-                        findMenuProduct(menu.getMenuProducts()))
+                        request.getName(),
+                        request.getPrice(),
+                        request.getMenuGroupId(),
+                        findMenuProduct(request.getMenuProducts())
+                )
         );
         return new MenuResponse(savedMenu);
     }

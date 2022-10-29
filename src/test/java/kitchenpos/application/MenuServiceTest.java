@@ -8,8 +8,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dto.MenuResponse;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.ui.dto.MenuRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,7 +24,7 @@ class MenuServiceTest extends ServiceTest {
     void 메뉴를_생성한다() {
         MenuProduct 햄버거1 = 메뉴의_상품은(상품_생성(100_000));
         MenuProduct 햄버거2 = 메뉴의_상품은(상품_생성(100_000));
-        Menu menu = new Menu("햄버억", new BigDecimal(200_000), 메뉴집합_생성().getId(), List.of(햄버거1, 햄버거2));
+        MenuRequest menu = new MenuRequest("햄버억", new BigDecimal(200_000), 메뉴집합_생성().getId(), List.of(햄버거1, 햄버거2));
 
         MenuResponse actual = menuService.create(menu);
         assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
@@ -34,7 +34,7 @@ class MenuServiceTest extends ServiceTest {
     void 생성할때_가격이_존재하지_않는_경우_예외를_발생시킨다() {
         MenuProduct 햄버거1 = 메뉴의_상품은(상품_생성(100_000));
         MenuProduct 햄버거2 = 메뉴의_상품은(상품_생성(100_000));
-        Menu menu = new Menu("햄버억", null, 메뉴집합().getId(), List.of(햄버거1, 햄버거2));
+        MenuRequest menu = new MenuRequest("햄버억", null, 메뉴집합().getId(), List.of(햄버거1, 햄버거2));
 
         assertThatThrownBy(() -> menuService.create(menu))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
@@ -44,7 +44,7 @@ class MenuServiceTest extends ServiceTest {
     void 생성할때_가격이_0보다_작은_경우_예외를_발생시킨다() {
         MenuProduct 햄버거1 = 메뉴의_상품은(상품_생성(100_000));
         MenuProduct 햄버거2 = 메뉴의_상품은(상품_생성(100_000));
-        Menu menu = new Menu("햄버억", new BigDecimal(-1), 메뉴집합().getId(), List.of(햄버거1, 햄버거2));
+        MenuRequest menu = new MenuRequest("햄버억", new BigDecimal(-1), 메뉴집합().getId(), List.of(햄버거1, 햄버거2));
 
         assertThatThrownBy(() -> menuService.create(menu))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
@@ -54,7 +54,7 @@ class MenuServiceTest extends ServiceTest {
     void 생성할때_메뉴그룹이_존재하지_않는_경우_예외를_발생시킨다() {
         MenuProduct 햄버거1 = 메뉴의_상품은(상품_생성(100_000));
         MenuProduct 햄버거2 = 메뉴의_상품은(상품_생성(100_000));
-        Menu menu = new Menu("햄버억", new BigDecimal(200_000), -1L, List.of(햄버거1, 햄버거2));
+        MenuRequest menu = new MenuRequest("햄버억", new BigDecimal(200_000), -1L, List.of(햄버거1, 햄버거2));
 
         assertThatThrownBy(() -> menuService.create(menu))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
@@ -64,7 +64,7 @@ class MenuServiceTest extends ServiceTest {
     void 생성할때_상품이_존재하지_않는_경우_예외를_발생시킨다() {
         MenuProduct 햄버거1 = 메뉴의_상품은(상품_생성(100_000));
         MenuProduct 존재하지_않는_상품 = new MenuProduct(-1L, new BigDecimal(10_000), 1);
-        Menu menu = new Menu("햄버억", new BigDecimal(200_000), 메뉴집합().getId(), List.of(햄버거1, 존재하지_않는_상품));
+        MenuRequest menu = new MenuRequest("햄버억", new BigDecimal(200_000), 메뉴집합().getId(), List.of(햄버거1, 존재하지_않는_상품));
 
         assertThatThrownBy(() -> menuService.create(menu))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
@@ -74,7 +74,7 @@ class MenuServiceTest extends ServiceTest {
     void 생성할때_상품의_가격의_합과_메뉴의_가격이_다를_경우_예외를_발생시킨다() {
         MenuProduct 햄버거1 = 메뉴의_상품은(상품_생성(100_000));
         MenuProduct 햄버거2 = 메뉴의_상품은(상품_생성(100_000));
-        Menu menu = new Menu("햄버억", new BigDecimal(200_001), 메뉴집합().getId(), List.of(햄버거1, 햄버거2));
+        MenuRequest menu = new MenuRequest("햄버억", new BigDecimal(200_001), 메뉴집합().getId(), List.of(햄버거1, 햄버거2));
 
         assertThatThrownBy(() -> menuService.create(menu))
                 .isExactlyInstanceOf(IllegalArgumentException.class);

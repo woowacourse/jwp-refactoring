@@ -27,13 +27,21 @@ public class MenuRepository implements MenuDao {
 
         List<MenuProduct> menuProducts = new ArrayList<>();
         for (MenuProduct menuProduct : entity.getMenuProducts()) {
-            MenuProduct saveMenuProduct = jdbcTemplateMenuProductDao.save(menuProduct);
-            saveMenuProduct.setMenuId(menu.getId());
+            MenuProduct saveMenuProduct = saveMenuProduct(menu, menuProduct);
             menuProducts.add(saveMenuProduct);
         }
 
         menu.setMenuProducts(menuProducts);
         return menu;
+    }
+
+    private MenuProduct saveMenuProduct(Menu menu, MenuProduct menuProduct) {
+        return jdbcTemplateMenuProductDao.save(
+                new MenuProduct(
+                        menu.getId(),
+                        menuProduct.getProductId(),
+                        menuProduct.getQuantity()
+                ));
     }
 
     @Override

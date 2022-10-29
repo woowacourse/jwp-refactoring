@@ -22,11 +22,9 @@ public class Menu {
     }
 
     private static BigDecimal calculateSum(List<MenuProduct> menuProducts) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (MenuProduct menuProduct : menuProducts) {
-            sum.add(menuProduct.getPrice().multiply(new BigDecimal(menuProduct.getQuantity())));
-        }
-        return sum;
+        return menuProducts.stream().map(MenuProduct::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
     }
 
     private void validatePrice(List<MenuProduct> menuProducts, BigDecimal price) {

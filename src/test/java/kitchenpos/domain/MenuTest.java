@@ -21,8 +21,8 @@ class MenuTest {
 
     @Test
     void 상품의_가격의_합보다_메뉴의_가격의_합이_커야한다() {
-        assertThatThrownBy(() -> new Menu("돈까스", new BigDecimal(19_999), 1L, menuProducts))
-                .hasCauseExactlyInstanceOf(IllegalArgumentException.class)
+        assertThatThrownBy(() -> new Menu("돈까스", new BigDecimal(20_001), 1L, menuProducts))
+                .isExactlyInstanceOf(IllegalArgumentException.class)
                 .hasMessage("상품의 값의 합보다 메뉴의 값이 낮을 수 없습니다.");
     }
 }

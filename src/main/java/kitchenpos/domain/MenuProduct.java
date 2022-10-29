@@ -10,8 +10,15 @@ public class MenuProduct {
 
     private BigDecimal price;
 
+    public MenuProduct(Long menuId, Long productId, long quantity) {
+        this.menuId = menuId;
+        this.productId = productId;
+        this.quantity = quantity;
+    }
+
     public MenuProduct(Long productId, BigDecimal price, long quantity) {
         this.productId = productId;
+        this.price = price;
         this.quantity = quantity;
     }
 
@@ -52,5 +59,9 @@ public class MenuProduct {
 
     public BigDecimal getPrice() {
         return price;
+    }
+
+    public BigDecimal getAmount() {
+        return price.multiply(BigDecimal.valueOf(quantity));
     }
 }
