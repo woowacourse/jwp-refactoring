@@ -2,8 +2,8 @@ package kitchenpos.domain;
 
 public class MenuGroup {
 
-    private Long id;
-    private String name;
+    private final Long id;
+    private final String name;
 
     public MenuGroup(final Long id, final String name) {
         this.id = id;
