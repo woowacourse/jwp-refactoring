@@ -57,8 +57,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderChangeRequest request) {
-        final Order order = OrderConvertor.convertToOrder(request);
-        final Order changedOrder = changeStatus(orderId, order);
+        final Order changedOrder = changeStatus(orderId, request.getOrderStatus());
         return OrderConvertor.convertToOrderResponse(changedOrder);
     }
 
@@ -94,11 +93,11 @@ public class OrderService {
         }
     }
 
-    private Order changeStatus(final Long orderId, final Order order) {
+    private Order changeStatus(final Long orderId, final String orderStatus) {
         final Order savedOrder = orderRepository.findById(orderId)
             .orElseThrow(() -> new IllegalArgumentException(String.format("존재하지 않는 주문입니다. [%s]", orderId)));
 
-        savedOrder.changeStatus(order.getOrderStatus());
+        savedOrder.changeStatus(orderStatus);
         return orderRepository.update(savedOrder);
     }
 }

@@ -19,10 +19,6 @@ public class OrderFixture {
     private OrderFixture() {
     }
 
-    public static Order 주문_1번() {
-        return 주문().build();
-    }
-
     public static Order 주문_1번의_주문_항목들은(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
         return 주문()
             .주문_테이블_아이디(orderTableId)
@@ -71,12 +67,9 @@ public class OrderFixture {
     }
 
     private Order build() {
-        final Order order = new Order();
-        order.setId(id);
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(orderedTime);
-        order.setOrderLineItems(orderLineItems);
-        return order;
+        if (orderLineItems == null) {
+            return new Order(id, orderTableId, orderStatus, orderedTime);
+        }
+        return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 }
