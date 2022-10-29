@@ -14,7 +14,7 @@ import io.restassured.response.Response;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.order.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;

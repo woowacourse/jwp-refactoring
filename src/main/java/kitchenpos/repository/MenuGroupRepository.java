@@ -2,7 +2,7 @@ package kitchenpos.repository;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 
 public interface MenuGroupRepository {
     MenuGroup save(MenuGroup entity);

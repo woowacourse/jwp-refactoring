@@ -2,7 +2,7 @@ package kitchenpos.repository;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Product;
 
 public interface ProductRepository {
     Product save(Product entity);

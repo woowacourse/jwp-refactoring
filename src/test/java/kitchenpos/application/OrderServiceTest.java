@@ -9,9 +9,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderStatusUpdateRequest;
 import kitchenpos.dto.response.MenuGroupResponse;

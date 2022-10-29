@@ -1,6 +1,6 @@
 package kitchenpos.fixtures.domain;
 
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.menu.MenuProduct;
 
 public class MenuProductFixture {
 

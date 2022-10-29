@@ -2,7 +2,7 @@ package kitchenpos.repository;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItem;
 
 public interface OrderLineItemRepository {
     OrderLineItem save(OrderLineItem entity);

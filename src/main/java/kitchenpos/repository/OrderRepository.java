@@ -2,7 +2,7 @@ package kitchenpos.repository;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.order.Order;
 
 public interface OrderRepository {
     Order save(Order entity);
