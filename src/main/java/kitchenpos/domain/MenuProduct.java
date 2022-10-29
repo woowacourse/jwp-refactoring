@@ -13,6 +13,13 @@ public class MenuProduct {
     public MenuProduct() {
     }
 
+    public MenuProduct(final Long menuId, final Long productId, final long quantity, final BigDecimal price) {
+        this.menuId = menuId;
+        this.productId = productId;
+        this.quantity = quantity;
+        this.price = new Price(price);
+    }
+
     public MenuProduct(final Long productId, final long quantity, final BigDecimal price) {
         this.productId = productId;
         this.quantity = quantity;
@@ -53,5 +60,13 @@ public class MenuProduct {
 
     public void setQuantity(final long quantity) {
         this.quantity = quantity;
+    }
+
+    public BigDecimal getPrice() {
+        return price.getPrice();
+    }
+
+    public void setPrice(Price price) {
+        this.price = price;
     }
 }
