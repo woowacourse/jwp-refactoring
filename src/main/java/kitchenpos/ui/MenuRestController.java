@@ -3,7 +3,7 @@ package kitchenpos.ui;
 import javax.validation.Valid;
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.request.MenuRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

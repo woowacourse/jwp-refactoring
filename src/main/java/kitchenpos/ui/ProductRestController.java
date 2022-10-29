@@ -2,7 +2,7 @@ package kitchenpos.ui;
 
 import javax.validation.Valid;
 import kitchenpos.application.ProductService;
-import kitchenpos.dto.ProductRequest;
+import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.domain.product.Product;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

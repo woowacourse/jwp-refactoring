@@ -22,9 +22,9 @@ import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
-import kitchenpos.dto.OrderLineItemRequest;
-import kitchenpos.dto.OrderRequest;
-import kitchenpos.dto.OrderStatusRequest;
+import kitchenpos.dto.request.OrderLineItemRequest;
+import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.request.OrderStatusRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -8,8 +8,8 @@ import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
-import kitchenpos.dto.OrderRequest;
-import kitchenpos.dto.OrderStatusRequest;
+import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.request.OrderStatusRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

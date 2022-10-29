@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupRepository;
-import kitchenpos.dto.MenuGroupRequest;
+import kitchenpos.dto.request.MenuGroupRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
