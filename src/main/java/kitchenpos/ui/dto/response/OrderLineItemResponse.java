@@ -41,4 +41,14 @@ public class OrderLineItemResponse {
     public long getQuantity() {
         return quantity;
     }
+
+    @Override
+    public String toString() {
+        return "OrderLineItemResponse{" +
+                "id=" + id +
+                ", orderId=" + orderId +
+                ", menuId=" + menuId +
+                ", quantity=" + quantity +
+                '}';
+    }
 }

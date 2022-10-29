@@ -23,4 +23,12 @@ public class MenuGroupDto {
     public String getName() {
         return name;
     }
+
+    @Override
+    public String toString() {
+        return "MenuGroupDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

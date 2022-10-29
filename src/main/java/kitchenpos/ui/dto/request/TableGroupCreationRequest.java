@@ -15,4 +15,11 @@ public class TableGroupCreationRequest {
     public List<OrderTableIdDto> getOrderTables() {
         return orderTables;
     }
+
+    @Override
+    public String toString() {
+        return "TableGroupCreationRequest{" +
+                "orderTables=" + orderTables +
+                '}';
+    }
 }

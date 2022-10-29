@@ -19,4 +19,12 @@ public class OrderTableCreationRequest {
    public boolean isEmpty() {
       return empty;
    }
+
+   @Override
+   public String toString() {
+      return "OrderTableCreationRequest{" +
+              "numberOfGuests=" + numberOfGuests +
+              ", empty=" + empty +
+              '}';
+   }
 }

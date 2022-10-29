@@ -38,4 +38,14 @@ public class OrderLineItemDto {
     public long getQuantity() {
         return quantity;
     }
+
+    @Override
+    public String toString() {
+        return "OrderLineItemDto{" +
+                "id=" + id +
+                ", orderId=" + orderId +
+                ", menuId=" + menuId +
+                ", quantity=" + quantity +
+                '}';
+    }
 }

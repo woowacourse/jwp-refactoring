@@ -24,4 +24,12 @@ public class MenuProductCreationDto {
     public int getQuantity() {
         return quantity;
     }
+
+    @Override
+    public String toString() {
+        return "MenuProductCreationDto{" +
+                "productId=" + productId +
+                ", quantity=" + quantity +
+                '}';
+    }
 }

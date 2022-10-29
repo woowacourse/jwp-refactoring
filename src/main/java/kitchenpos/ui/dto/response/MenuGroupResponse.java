@@ -26,4 +26,12 @@ public class MenuGroupResponse {
     public String getName() {
         return name;
     }
+
+    @Override
+    public String toString() {
+        return "MenuGroupResponse{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

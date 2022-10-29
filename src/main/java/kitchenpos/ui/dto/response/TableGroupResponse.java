@@ -41,4 +41,13 @@ public class TableGroupResponse {
     public List<OrderTableResponse> getOrderTables() {
         return orderTables;
     }
+
+    @Override
+    public String toString() {
+        return "TableGroupResponse{" +
+                "id=" + id +
+                ", createdDate=" + createdDate +
+                ", orderTables=" + orderTables +
+                '}';
+    }
 }

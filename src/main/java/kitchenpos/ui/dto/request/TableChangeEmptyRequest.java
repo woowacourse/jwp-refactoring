@@ -13,4 +13,11 @@ public class TableChangeEmptyRequest {
     public Boolean getEmpty() {
         return empty;
     }
+
+    @Override
+    public String toString() {
+        return "TableChangeEmptyRequest{" +
+                "empty=" + empty +
+                '}';
+    }
 }

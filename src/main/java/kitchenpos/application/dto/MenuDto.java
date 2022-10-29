@@ -53,4 +53,15 @@ public class MenuDto {
     public List<MenuProductDto> getMenuProducts() {
         return menuProducts;
     }
+
+    @Override
+    public String toString() {
+        return "MenuDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", menuGroupId=" + menuGroupId +
+                ", menuProducts=" + menuProducts +
+                '}';
+    }
 }

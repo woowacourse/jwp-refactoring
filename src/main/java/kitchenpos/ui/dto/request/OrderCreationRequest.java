@@ -22,4 +22,12 @@ public class OrderCreationRequest {
     public List<OrderLineItemReeust> getOrderLineItems() {
         return orderLineItems;
     }
+
+    @Override
+    public String toString() {
+        return "OrderCreationRequest{" +
+                "orderTableId=" + orderTableId +
+                ", orderLineItems=" + orderLineItems +
+                '}';
+    }
 }

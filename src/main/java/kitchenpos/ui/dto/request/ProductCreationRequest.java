@@ -20,4 +20,12 @@ public class ProductCreationRequest {
     public int getPrice() {
         return price;
     }
+
+    @Override
+    public String toString() {
+        return "ProductCreationRequest{" +
+                "name='" + name + '\'' +
+                ", price=" + price +
+                '}';
+    }
 }

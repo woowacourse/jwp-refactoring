@@ -13,4 +13,11 @@ public class OrderStatusRequest {
     public String getOrderStatus() {
         return orderStatus;
     }
+
+    @Override
+    public String toString() {
+        return "OrderStatusRequest{" +
+                "orderStatus='" + orderStatus + '\'' +
+                '}';
+    }
 }

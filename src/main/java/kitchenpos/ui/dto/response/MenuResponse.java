@@ -60,4 +60,15 @@ public class MenuResponse {
     public List<MenuProductResponse> getMenuProducts() {
         return menuProducts;
     }
+
+    @Override
+    public String toString() {
+        return "MenuResponse{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", menuGroupId=" + menuGroupId +
+                ", menuProducts=" + menuProducts +
+                '}';
+    }
 }

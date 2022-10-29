@@ -28,4 +28,12 @@ public class OrderTableCreationDto {
     public boolean isEmpty() {
         return empty;
     }
+
+    @Override
+    public String toString() {
+        return "OrderTableCreationDto{" +
+                "numberOfGuests=" + numberOfGuests +
+                ", empty=" + empty +
+                '}';
+    }
 }

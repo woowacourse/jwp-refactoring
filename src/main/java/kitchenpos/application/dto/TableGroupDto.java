@@ -39,4 +39,13 @@ public class TableGroupDto {
     public List<OrderTableDto> getOrderTables() {
         return orderTables;
     }
+
+    @Override
+    public String toString() {
+        return "TableGroupDto{" +
+                "id=" + id +
+                ", createdDate=" + createdDate +
+                ", orderTables=" + orderTables +
+                '}';
+    }
 }

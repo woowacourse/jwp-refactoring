@@ -54,4 +54,15 @@ public class OrderDto {
     public List<OrderLineItemDto> getOrderLineItems() {
         return orderLineItems;
     }
+
+    @Override
+    public String toString() {
+        return "OrderDto{" +
+                "id=" + id +
+                ", orderTableId=" + orderTableId +
+                ", orderStatus='" + orderStatus + '\'' +
+                ", orderedTime=" + orderedTime +
+                ", orderLineItems=" + orderLineItems +
+                '}';
+    }
 }

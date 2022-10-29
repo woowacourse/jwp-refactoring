@@ -38,4 +38,14 @@ public class OrderTableDto {
     public boolean isEmpty() {
         return empty;
     }
+
+    @Override
+    public String toString() {
+        return "OrderTableDto{" +
+                "id=" + id +
+                ", tableGroupId=" + tableGroupId +
+                ", numberOfGuests=" + numberOfGuests +
+                ", empty=" + empty +
+                '}';
+    }
 }

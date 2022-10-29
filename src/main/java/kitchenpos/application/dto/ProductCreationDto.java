@@ -31,4 +31,12 @@ public class ProductCreationDto {
     public int getPrice() {
         return price;
     }
+
+    @Override
+    public String toString() {
+        return "ProductCreationDto{" +
+                "name='" + name + '\'' +
+                ", price=" + price +
+                '}';
+    }
 }

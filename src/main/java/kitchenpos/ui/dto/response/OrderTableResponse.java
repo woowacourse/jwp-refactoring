@@ -39,4 +39,14 @@ public class OrderTableResponse {
     public boolean isEmpty() {
         return empty;
     }
+
+    @Override
+    public String toString() {
+        return "OrderTableResponse{" +
+                "id=" + id +
+                ", tableGroupId=" + tableGroupId +
+                ", numberOfGuests=" + numberOfGuests +
+                ", empty=" + empty +
+                '}';
+    }
 }

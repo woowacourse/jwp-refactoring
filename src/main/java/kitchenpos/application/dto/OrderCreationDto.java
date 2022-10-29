@@ -43,4 +43,12 @@ public class OrderCreationDto {
     public List<OrderLineItemCreationDto> getOrderLineItems() {
         return orderLineItems;
     }
+
+    @Override
+    public String toString() {
+        return "OrderCreationDto{" +
+                "orderTableId=" + orderTableId +
+                ", orderLineItems=" + orderLineItems +
+                '}';
+    }
 }

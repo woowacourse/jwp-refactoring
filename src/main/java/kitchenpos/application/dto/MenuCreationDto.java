@@ -49,4 +49,14 @@ public class MenuCreationDto {
     public List<MenuProductCreationDto> getMenuProducts() {
         return menuProducts;
     }
+
+    @Override
+    public String toString() {
+        return "MenuCreationDto{" +
+                "name='" + name + '\'' +
+                ", price=" + price +
+                ", menuGroupId=" + menuGroupId +
+                ", menuProducts=" + menuProducts +
+                '}';
+    }
 }

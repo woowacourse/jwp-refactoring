@@ -39,4 +39,14 @@ public class MenuProductDto {
     public long getQuantity() {
         return quantity;
     }
+
+    @Override
+    public String toString() {
+        return "MenuProductDto{" +
+                "id=" + id +
+                ", menuId=" + menuId +
+                ", productId=" + productId +
+                ", quantity=" + quantity +
+                '}';
+    }
 }

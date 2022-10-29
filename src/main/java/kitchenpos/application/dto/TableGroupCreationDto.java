@@ -24,4 +24,11 @@ public class TableGroupCreationDto {
     public List<OrderTableIdDto> getOrderTableIds() {
         return orderTableIds;
     }
+
+    @Override
+    public String toString() {
+        return "TableGroupCreationDto{" +
+                "orderTableIds=" + orderTableIds +
+                '}';
+    }
 }

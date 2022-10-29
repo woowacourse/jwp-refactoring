@@ -13,4 +13,11 @@ public class OrderTableIdDto {
     public Long getId() {
         return id;
     }
+
+    @Override
+    public String toString() {
+        return "OrderTableIdDto{" +
+                "id=" + id +
+                '}';
+    }
 }

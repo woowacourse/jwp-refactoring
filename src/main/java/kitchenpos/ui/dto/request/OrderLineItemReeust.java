@@ -19,4 +19,12 @@ public class OrderLineItemReeust {
     public int getQuantity() {
         return quantity;
     }
+
+    @Override
+    public String toString() {
+        return "OrderLineItemReeust{" +
+                "menuId=" + menuId +
+                ", quantity=" + quantity +
+                '}';
+    }
 }
