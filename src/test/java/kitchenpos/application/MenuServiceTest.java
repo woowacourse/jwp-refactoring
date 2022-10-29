@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
 import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.fixtures.domain.MenuFixture.MenuRequestBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +23,7 @@ class MenuServiceTest extends ServiceTest {
     private MenuService menuService;
 
     private MenuGroupResponse savedMenuGroup;
-    private Product savedProduct;
+    private ProductResponse savedProduct;
 
     @BeforeEach
     void setUp() {
@@ -137,7 +137,7 @@ class MenuServiceTest extends ServiceTest {
             // given
             MenuGroupResponse menuGroup = saveMenuGroup("메뉴 그룹");
 
-            Product product = saveProduct("상품", 1_000_000);
+            ProductResponse product = saveProduct("상품", 1_000_000);
             MenuProduct menuProduct = createMenuProduct(product.getId(), 1L);
 
             int expected = 4;

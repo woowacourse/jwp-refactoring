@@ -2,6 +2,7 @@ package kitchenpos.fixtures.domain;
 
 import java.math.BigDecimal;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductRequest;
 
 public class ProductFixture {
 
@@ -37,12 +38,8 @@ public class ProductFixture {
             return this;
         }
 
-        public Product build() {
-            Product product = new Product();
-            product.setName(name);
-            product.setPrice(price);
-
-            return product;
+        public ProductRequest build() {
+            return new ProductRequest(name, price);
         }
     }
 }

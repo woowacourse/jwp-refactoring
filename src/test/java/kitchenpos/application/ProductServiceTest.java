@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductRequest;
+import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.fixtures.domain.ProductFixture.ProductRequestBuilder;
 import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -31,16 +33,16 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void Should_CreateProduct() {
             // given
-            Product product = new ProductRequestBuilder().build();
+            ProductRequest request = new ProductRequestBuilder().build();
 
             // when
-            Product actual = productService.create(product);
+            ProductResponse actual = productService.create(request);
 
             // then
             assertAll(() -> {
                 assertThat(actual.getId()).isNotNull();
-                assertThat(actual.getName()).isEqualTo(product.getName());
-                assertThat(actual.getPrice().doubleValue()).isEqualTo(product.getPrice().doubleValue());
+                assertThat(actual.getName()).isEqualTo(request.getName());
+                assertThat(actual.getPrice().doubleValue()).isEqualTo(request.getPrice().doubleValue());
             });
         }
 
@@ -48,12 +50,12 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_PriceOfProductIsNull() {
             // given
-            Product product = new ProductRequestBuilder()
+            ProductRequest request = new ProductRequestBuilder()
                     .price(null)
                     .build();
 
             // when & then
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -61,12 +63,12 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_PriceLessThan0() {
             // given
-            Product product = new ProductRequestBuilder()
+            ProductRequest request = new ProductRequestBuilder()
                     .price(-10_000)
                     .build();
 
             // when & then
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -86,7 +88,7 @@ class ProductServiceTest extends ServiceTest {
             }
 
             // when
-            List<Product> actual = productService.list();
+            List<ProductResponse> actual = productService.list();
 
             // then
             assertThat(actual).hasSize(expected);

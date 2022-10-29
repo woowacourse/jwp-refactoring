@@ -14,8 +14,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.fixtures.domain.OrderFixture.OrderRequestBuilder;
 import kitchenpos.repository.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +36,7 @@ class OrderServiceTest extends ServiceTest {
 
     private OrderTable savedOrderTable;
     private MenuGroupResponse savedMenuGroup;
-    private Product savedProduct;
+    private ProductResponse savedProduct;
     private Menu savedMenu;
 
     private OrderLineItem createdOrderLineItem;

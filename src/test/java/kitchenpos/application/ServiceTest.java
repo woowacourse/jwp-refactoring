@@ -1,9 +1,7 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixtures.domain.MenuFixture.createMenu;
-import static kitchenpos.fixtures.domain.MenuGroupFixture.createMenuGroupRequest;
 import static kitchenpos.fixtures.domain.OrderTableFixture.createOrderTable;
-import static kitchenpos.fixtures.domain.ProductFixture.createProduct;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -13,9 +11,10 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,7 +43,7 @@ public class ServiceTest {
     }
 
     protected MenuGroupResponse saveMenuGroup(final String name) {
-        MenuGroupRequest request = createMenuGroupRequest(name);
+        MenuGroupRequest request = new MenuGroupRequest(name);
         return menuGroupService.create(request);
     }
 
@@ -59,8 +58,8 @@ public class ServiceTest {
         return tableService.create(request);
     }
 
-    protected Product saveProduct(final String name, final int price) {
-        Product request = createProduct(name, new BigDecimal(price));
+    protected ProductResponse saveProduct(final String name, final int price) {
+        ProductRequest request = new ProductRequest(name, new BigDecimal(price));
         return productService.create(request);
     }
 }
