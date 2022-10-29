@@ -1,4 +1,4 @@
-package kitchenpos.application.response;
+package kitchenpos.application.response.order;
 
 public class OrderLineItemResponse {
 

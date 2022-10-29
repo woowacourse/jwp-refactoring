@@ -1,27 +1,25 @@
-package kitchenpos.application.response;
+package kitchenpos.application.request.menu;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-public class MenuResponse {
+public class MenuRequest {
 
-    private Long id;
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-    private List<MenuProductResponse> menuProducts;
+    private List<MenuProductRequest> menuProducts;
 
-    public MenuResponse(final Long id, final String name, final BigDecimal price, Long menuGroupId,
-                        final List<MenuProductResponse> menuProducts) {
-        this.id = id;
+    public MenuRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProductRequest> menuProducts) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
     }
 
-    public Long getId() {
-        return id;
+    public MenuRequest(final String name, final BigDecimal price, final Long menuGroupId,
+                       final MenuProductRequest... menuProducts) {
+        this(name, price, menuGroupId, List.of(menuProducts));
     }
 
     public String getName() {
@@ -36,7 +34,7 @@ public class MenuResponse {
         return menuGroupId;
     }
 
-    public List<MenuProductResponse> getMenuProducts() {
+    public List<MenuProductRequest> getMenuProducts() {
         return menuProducts;
     }
 }

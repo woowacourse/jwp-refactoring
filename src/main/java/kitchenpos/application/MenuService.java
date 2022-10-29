@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.application.request.MenuRequest;
-import kitchenpos.application.response.MenuResponse;
+import kitchenpos.application.request.menu.MenuRequest;
+import kitchenpos.application.response.menu.MenuResponse;
 import kitchenpos.application.response.ResponseAssembler;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
