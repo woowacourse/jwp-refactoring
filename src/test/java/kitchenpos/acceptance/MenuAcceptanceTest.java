@@ -8,12 +8,11 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
@@ -26,12 +25,11 @@ public class MenuAcceptanceTest extends AcceptanceTest {
 
     static ExtractableResponse<Response> 메뉴를_생성한다(final String name, final int price, final long menuGroupId,
                                                   final List<Map<String, Long>> menuProducts) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuGroupId(menuGroupId);
-
-        menu.setMenuProducts(menuProducts.stream()
+        Map<String, Object> body = new HashMap<>();
+        body.put("name", name);
+        body.put("price", price);
+        body.put("menuGroupId", menuGroupId);
+        body.put("menuProducts", menuProducts.stream()
                 .map(map -> {
                     MenuProduct menuProduct = new MenuProduct();
                     menuProduct.setProductId(map.get("productId"));
@@ -40,7 +38,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
                 })
                 .collect(Collectors.toList()));
 
-        return post("/api/menus", menu);
+        return post("/api/menus", body);
     }
 
     static ExtractableResponse<Response> 모든_메뉴를_조회한다() {

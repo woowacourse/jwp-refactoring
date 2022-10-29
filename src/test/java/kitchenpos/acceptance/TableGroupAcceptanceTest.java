@@ -20,7 +20,9 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
                 .map(id -> Map.of("id", id))
                 .collect(Collectors.toList());
 
-        return post("/api/table-groups", Map.of("orderTables", orderTableIds));
+        return post("/api/table-groups", Map.of(
+                "orderTables", orderTableIds
+        ));
     }
 
     static ExtractableResponse<Response> 단체_지정을_제거한다(final Long id) {

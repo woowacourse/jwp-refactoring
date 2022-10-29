@@ -6,9 +6,8 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.math.BigDecimal;
+import java.util.Map;
 import java.util.stream.Stream;
-import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -17,11 +16,10 @@ import org.springframework.http.HttpStatus;
 public class ProductAcceptanceTest extends AcceptanceTest {
 
     static ExtractableResponse<Response> 상품을_생성한다(final String name, final int price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
-
-        return post("/api/products", product);
+        return post("/api/products", Map.of(
+                "name", name,
+                "price", price
+        ));
     }
 
     static ExtractableResponse<Response> 모든_상품을_조회한다() {

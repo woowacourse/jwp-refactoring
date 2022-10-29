@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.util.Map;
 import java.util.stream.Stream;
-import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -17,10 +17,9 @@ import org.springframework.http.HttpStatus;
 public class MenuGroupAcceptanceTest extends AcceptanceTest {
 
     static ExtractableResponse<Response> 메뉴_그룹을_생성한다(final String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-
-        return post("/api/menu-groups", menuGroup);
+        return post("/api/menu-groups", Map.of(
+                "name", name
+        ));
     }
 
     static ExtractableResponse<Response> 모든_메뉴_그룹을_조회한다() {

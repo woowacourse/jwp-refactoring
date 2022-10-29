@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -24,11 +23,10 @@ import org.springframework.http.HttpStatus;
 public class OrderAcceptanceTest extends AcceptanceTest {
 
     static ExtractableResponse<Response> 주문을_생성한다(final Long orderTableId, List<Map<String, Long>> orderLineItems) {
-        Map<Object, Object> body = new HashMap<>();
-        body.put("orderTableId", orderTableId);
-        body.put("orderLineItems", orderLineItems);
-
-        return post("/api/orders", body);
+        return post("/api/orders", Map.of(
+                "orderTableId", orderTableId,
+                "orderLineItems", orderLineItems
+        ));
     }
 
     static ExtractableResponse<Response> 모든_주문을_조회한다() {
