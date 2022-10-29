@@ -12,7 +12,7 @@ public class OrderTableFixture {
     public static OrderTable createOrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         OrderTable orderTable = new OrderTable();
         orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.changeNumberOfGuests(numberOfGuests);
         orderTable.setEmpty(empty);
 
         return orderTable;

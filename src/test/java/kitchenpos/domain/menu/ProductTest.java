@@ -11,7 +11,7 @@ class ProductTest {
 
     @DisplayName("상품 생성자")
     @Nested
-    class ProductConstructor {
+    class Constructor {
 
         @DisplayName("가격이 null이라면, IAE를 던진다.")
         @Test

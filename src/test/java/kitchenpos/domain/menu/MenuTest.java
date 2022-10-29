@@ -12,7 +12,7 @@ class MenuTest {
 
     @DisplayName("메뉴 생성자")
     @Nested
-    class MenuConstructor {
+    class Constructor {
 
         @DisplayName("가격이 null이라면, IAE를 던진다.")
         @Test
