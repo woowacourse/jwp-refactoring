@@ -9,19 +9,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import kitchenpos.Application;
-import kitchenpos.application.dto.request.OrderCommand;
-import kitchenpos.application.dto.request.OrderLineItemCommand;
+import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.common.DataClearExtension;
-import kitchenpos.domain.MenuGroupDto;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.ProductDto;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.request.MenuProductRequest;
 import kitchenpos.ui.dto.request.MenuRequest;
 import kitchenpos.ui.dto.request.OrderChangeRequest;
+import kitchenpos.ui.dto.request.OrderLineItemRequest;
+import kitchenpos.ui.dto.request.OrderRequest;
 import kitchenpos.ui.dto.request.OrderTableRequest;
 import kitchenpos.ui.dto.request.ProductRequest;
 import kitchenpos.ui.dto.request.TableGroupRequest;
@@ -79,13 +78,13 @@ public class AcceptanceTest {
     }
 
 
-    protected List<MenuGroupDto> 메뉴_그룹을_조회한다() {
+    protected List<MenuGroupResponse> 메뉴_그룹을_조회한다() {
         return RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/menu-groups")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .extract().body().jsonPath().getList(".", MenuGroupDto.class);
+                .extract().body().jsonPath().getList(".", MenuGroupResponse.class);
     }
 
     protected long 메뉴를_생성한다(String name, int price, long menuGroup, List<Long> products, int quantity) {
@@ -180,15 +179,12 @@ public class AcceptanceTest {
                 .extract().as(OrderTableResponse.class);
     }
 
-    protected long 주문을_생성한다(long table, List<OrderLineItem> orderLineItems) {
-        List<OrderLineItemCommand> orderLineItemCommands = orderLineItems.stream()
-                .map(it -> new OrderLineItemCommand(it.getMenuId(), it.getQuantity()))
-                .collect(Collectors.toList());
-        OrderCommand order = new OrderCommand(table, orderLineItemCommands);
+    protected long 주문을_생성한다(long table, List<OrderLineItemRequest> orderLineItems) {
+        OrderRequest orderRequest = new OrderRequest(table, orderLineItems);
 
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(order)
+                .body(orderRequest)
                 .when().log().all()
                 .post("/api/orders")
                 .then().log().all()

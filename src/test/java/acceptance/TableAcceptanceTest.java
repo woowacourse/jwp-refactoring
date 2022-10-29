@@ -23,23 +23,23 @@ public class TableAcceptanceTest extends AcceptanceTest {
         assertThat(tables).hasSize(3);
     }
 
-//    @Test
-//    @DisplayName("빈 테이블로 변경한다.")
-//    void changeEmpty() {
-//        long 테이블 = 테이블을_생성한다(0, false);
-//
-//        OrderTable table = 테이블_상태를_변경한다(테이블, true);
-//
-//        assertThat(table.isEmpty()).isTrue();
-//    }
+    @Test
+    @DisplayName("빈 테이블로 변경한다.")
+    void changeEmpty() {
+        long 테이블 = 테이블을_생성한다(0, false);
 
-//    @Test
-//    @DisplayName("테이블 방문자 수를 변경한다.")
-//    void changeNumberOfGuest() {
-//        long 테이블 = 테이블을_생성한다(0, false);
-//
-//        OrderTable table = 테이블_방문자_수를_변경한다(테이블, 2);
-//
-//        assertThat(table.getNumberOfGuests()).isEqualTo(2);
-//    }
+        OrderTableResponse response = 테이블_상태를_변경한다(테이블, true);
+
+        assertThat(response.isEmpty()).isTrue();
+    }
+
+    @Test
+    @DisplayName("테이블 방문자 수를 변경한다.")
+    void changeNumberOfGuest() {
+        long 테이블 = 테이블을_생성한다(0, false);
+
+        OrderTableResponse response = 테이블_방문자_수를_변경한다(테이블, 2);
+
+        assertThat(response.getNumberOfGuests()).isEqualTo(2);
+    }
 }

@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
+import java.util.List;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -17,7 +17,7 @@ public class TableValidator {
 
     public void validateChangeEmpty(OrderTable orderTable) {
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTable.getId(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+                orderTable.getId(), List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException("조리중이거나 식사 상태입니다.");
         }
     }

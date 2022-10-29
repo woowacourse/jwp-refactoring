@@ -1,17 +1,17 @@
 package kitchenpos.dao;
 
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface OrderRepository {
-    Order save(Order entity);
+public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    Optional<Order> findById(Long id);
-
+    @EntityGraph(attributePaths = "orderLineItems")
     List<Order> findAll();
 
-    boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<String> orderStatuses);
+    boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<OrderStatus> status);
 
-    boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<String> orderStatuses);
+    boolean existsByOrderTableIdAndOrderStatusIn(Long id, List<OrderStatus> statuses);
 }

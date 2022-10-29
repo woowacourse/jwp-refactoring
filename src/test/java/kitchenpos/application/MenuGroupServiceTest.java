@@ -6,7 +6,7 @@ import java.util.List;
 import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.common.DataClearExtension;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.dao.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

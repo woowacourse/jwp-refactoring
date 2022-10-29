@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Price;
-import kitchenpos.domain.ProductRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Products;
 import org.springframework.stereotype.Component;
 

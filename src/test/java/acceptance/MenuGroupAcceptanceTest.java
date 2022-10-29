@@ -3,7 +3,7 @@ package acceptance;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroupDto;
+import kitchenpos.application.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +17,7 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
         메뉴_그룹을_생성한다("베루스 메뉴");
         메뉴_그룹을_생성한다("라라 메뉴");
 
-        List<MenuGroupDto> menuGroups = 메뉴_그룹을_조회한다();
+        List<MenuGroupResponse> menuGroups = 메뉴_그룹을_조회한다();
 
         assertThat(menuGroups).hasSize(3);
     }

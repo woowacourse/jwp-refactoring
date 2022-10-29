@@ -9,7 +9,7 @@ import kitchenpos.application.dto.request.ProductCommand;
 import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.common.DataClearExtension;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.ProductRepository;
+import kitchenpos.dao.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
