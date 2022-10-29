@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -25,30 +26,37 @@ public class OrderTable {
     @OneToMany(mappedBy = "orderTable", fetch = FetchType.LAZY)
     private List<Order> orders = new ArrayList<>();
 
-    private int numberOfGuests;
+    @Embedded
+    private NumberOfGuests numberOfGuests;
+
     private boolean empty;
 
     protected OrderTable() {
     }
 
     public OrderTable(int numberOfGuests, boolean empty) {
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
+        this(null, null, new ArrayList<>(), new NumberOfGuests(numberOfGuests), empty);
     }
 
     public OrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        this(null, tableGroup, numberOfGuests, empty);
+        this(null, tableGroup, new ArrayList<>(), new NumberOfGuests(numberOfGuests), empty);
     }
 
     public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        this(id, tableGroup, new ArrayList<>(), numberOfGuests, empty);
+        this(id, tableGroup, new ArrayList<>(), new NumberOfGuests(numberOfGuests), empty);
     }
 
     public OrderTable(TableGroup tableGroup, List<Order> orders, int numberOfGuests, boolean empty) {
-        this(null, tableGroup, orders, numberOfGuests, empty);
+        this(null, tableGroup, orders, new NumberOfGuests(numberOfGuests), empty);
     }
 
-    private OrderTable(Long id, TableGroup tableGroup, List<Order> orders, int numberOfGuests, boolean empty) {
+    private OrderTable(
+            Long id,
+            TableGroup tableGroup,
+            List<Order> orders,
+            NumberOfGuests numberOfGuests,
+            boolean empty
+    ) {
         this.id = id;
         this.tableGroup = tableGroup;
         this.orders = orders;
@@ -75,15 +83,8 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
-        validatePositiveNumber(numberOfGuests);
         validateNotEmpty();
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    private void validatePositiveNumber(int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("손님의 수를 음수로 변경할 수 없습니다 : " + numberOfGuests);
-        }
+        this.numberOfGuests = new NumberOfGuests(numberOfGuests);
     }
 
     private void validateNotEmpty() {
@@ -126,7 +127,7 @@ public class OrderTable {
         return orders;
     }
 
-    public int getNumberOfGuests() {
+    public NumberOfGuests getNumberOfGuests() {
         return numberOfGuests;
     }
 
