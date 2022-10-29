@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
-import static kitchenpos.DomainFixture.getEmptyTable;
 import static kitchenpos.DomainFixture.getMenuGroup;
 import static kitchenpos.DomainFixture.getNotEmptyTable;
 import static kitchenpos.DtoFixture.getEmptyTableCreateRequest;
 import static kitchenpos.DtoFixture.getMenuCreateRequest;
 import static kitchenpos.DtoFixture.getNotEmptyTableCreateRequest;
 import static kitchenpos.DtoFixture.getOrderCreateRequest;
+import static kitchenpos.DtoFixture.getTableChangeEmptyRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -16,6 +16,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.request.TableChangeEmptyRequest;
 import kitchenpos.ui.request.TableCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,9 +50,9 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeEmpty() {
         final OrderTable orderTable = 테이블_등록(getNotEmptyTableCreateRequest(0));
-        final OrderTable emptyTable = getEmptyTable();
+        final TableChangeEmptyRequest request = getTableChangeEmptyRequest(true);
 
-        final OrderTable changedTable = tableService.changeEmpty(orderTable.getId(), emptyTable);
+        final OrderTable changedTable = tableService.changeEmpty(orderTable.getId(), request);
 
         assertAll(
                 () -> assertThat(changedTable.getId()).isEqualTo(orderTable.getId()),
@@ -62,9 +63,9 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("빈 테이블로 변경한다. - 존재하지 않는 테이블이면 예외를 반환한다.")
     @Test
     void changeEmpty_exception_noSuchTable() {
-        final OrderTable emptyTable = getEmptyTable();
+        final TableChangeEmptyRequest request = getTableChangeEmptyRequest(true);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(null, emptyTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(null, request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -78,9 +79,10 @@ class TableServiceTest extends ServiceTest {
         tableGroup.setOrderTables(List.of(orderTable, anotherTable));
         tableGroupService.create(tableGroup);
 
-        final OrderTable emptyTable = 테이블_등록(getEmptyTableCreateRequest());
+//        final OrderTable emptyTable = 테이블_등록(getEmptyTableCreateRequest());
+        final TableChangeEmptyRequest request = getTableChangeEmptyRequest(true);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), emptyTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -92,9 +94,9 @@ class TableServiceTest extends ServiceTest {
         final Menu menu = 메뉴_등록(getMenuCreateRequest(menuGroup.getId(), createMenuProductDtos()));
         주문_등록(getOrderCreateRequest(savedTable.getId(), menu.getId()));
 
-        final OrderTable emptyTable = getEmptyTable();
+        final TableChangeEmptyRequest request = getTableChangeEmptyRequest(true);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(savedTable.getId(), emptyTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(savedTable.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

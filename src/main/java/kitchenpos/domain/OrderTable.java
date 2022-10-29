@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 public class OrderTable {
 
     private final Long id;
@@ -16,6 +18,10 @@ public class OrderTable {
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public boolean isBelongToGroup() {
+        return Objects.nonNull(tableGroupId);
     }
 
     public Long getId() {
