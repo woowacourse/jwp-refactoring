@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import static kitchenpos.fixtures.domain.OrderFixture.createOrder;
 import static kitchenpos.fixtures.domain.OrderTableFixture.createOrderTable;
-import static kitchenpos.fixtures.domain.TableGroupFixture.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -12,9 +11,10 @@ import java.util.List;
 import java.util.Objects;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.fixtures.domain.TableGroupFixture.TableGroupRequestBuilder;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -58,17 +58,16 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_CreateTableGroup() {
             // given
-            TableGroup request = new TableGroupRequestBuilder()
+            TableGroupRequest request = new TableGroupRequestBuilder()
                     .addOrderTables(savedOrderTable1, savedOrderTable2)
                     .build();
 
             // when
-            TableGroup actual = tableGroupService.create(request);
+            TableGroupResponse actual = tableGroupService.create(request);
 
             // then
             assertAll(() -> {
                 assertThat(actual.getId()).isNotNull();
-                assertThat(request.getCreatedDate()).isEqualTo(actual.getCreatedDate());
                 assertThat(request.getOrderTables()).hasSize(actual.getOrderTables().size());
             });
         }
@@ -77,7 +76,7 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTablesIsEmpty() {
             // given
-            TableGroup request = new TableGroupRequestBuilder().build();
+            TableGroupRequest request = new TableGroupRequestBuilder().build();
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -88,7 +87,7 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTablesSizeIsLessThan2() {
             // given
-            TableGroup request = new TableGroupRequestBuilder()
+            TableGroupRequest request = new TableGroupRequestBuilder()
                     .addOrderTables(savedOrderTable1)
                     .build();
 
@@ -103,7 +102,7 @@ class TableGroupServiceTest extends ServiceTest {
             // given
             OrderTableRequest notSavedTable1 = new OrderTableRequest(10, true);
             OrderTableRequest notSavedTable2 = new OrderTableRequest(15, true);
-            TableGroup request = new TableGroupRequestBuilder()
+            TableGroupRequest request = new TableGroupRequestBuilder()
                     .addOrderTables(notSavedTable1, notSavedTable2)
                     .build();
 
@@ -118,7 +117,7 @@ class TableGroupServiceTest extends ServiceTest {
             // given
             OrderTableResponse emptyOrderTable = saveOrderTable(10, true);
             OrderTableResponse notEmptyOrderTable = saveOrderTable(10, false);
-            TableGroup request = new TableGroupRequestBuilder()
+            TableGroupRequest request = new TableGroupRequestBuilder()
                     .addOrderTables(emptyOrderTable, notEmptyOrderTable)
                     .build();
 
@@ -131,7 +130,7 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableHasTableGroup() {
             // given
-            TableGroup request = new TableGroupRequestBuilder()
+            TableGroupRequest request = new TableGroupRequestBuilder()
                     .addOrderTables(savedOrderTable1, savedOrderTable2)
                     .build();
             tableGroupService.create(request);
@@ -150,10 +149,10 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_Ungroup() {
             // given
-            TableGroup request = new TableGroupRequestBuilder()
+            TableGroupRequest request = new TableGroupRequestBuilder()
                     .addOrderTables(savedOrderTable1, savedOrderTable2)
                     .build();
-            TableGroup tableGroup = tableGroupService.create(request);
+            TableGroupResponse tableGroup = tableGroupService.create(request);
 
             // when
             tableGroupService.ungroup(tableGroup.getId());
@@ -179,8 +178,8 @@ class TableGroupServiceTest extends ServiceTest {
             orderRepository.save(
                     createOrder(orderTable1.getId(), OrderStatus.COMPLETION, LocalDateTime.now(), List.of()));
 
-            TableGroup request = tableGroupService.create(
-                    createTableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
+            TableGroupResponse request = tableGroupService.create(
+                    new TableGroupRequest(List.of(orderTable1.getId(), orderTable2.getId())));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(request.getId()))

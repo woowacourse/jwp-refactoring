@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 
 public class TableGroupFixture {
@@ -54,12 +55,12 @@ public class TableGroupFixture {
             return this;
         }
 
-        public TableGroup build() {
-            TableGroup tableGroup = new TableGroup();
-            tableGroup.setCreatedDate(createdDate);
-            tableGroup.setOrderTables(orderTables);
+        public TableGroupRequest build() {
+            List<Long> orderTableIds = orderTables.stream()
+                    .map(OrderTable::getId)
+                    .collect(Collectors.toList());
 
-            return tableGroup;
+            return new TableGroupRequest(orderTableIds);
         }
     }
 }
