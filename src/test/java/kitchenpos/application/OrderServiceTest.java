@@ -13,8 +13,8 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.fixtures.domain.OrderFixture.OrderRequestBuilder;
 import kitchenpos.repository.OrderRepository;
@@ -34,7 +34,7 @@ class OrderServiceTest extends ServiceTest {
     @Autowired
     private OrderRepository orderRepository;
 
-    private OrderTable savedOrderTable;
+    private OrderTableResponse savedOrderTable;
     private MenuGroupResponse savedMenuGroup;
     private ProductResponse savedProduct;
     private Menu savedMenu;
@@ -124,7 +124,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableIsEmpty() {
             // given
-            OrderTable emptyOrderTable = saveOrderTable(10, true);
+            OrderTableResponse emptyOrderTable = saveOrderTable(10, true);
 
             Order order = new OrderRequestBuilder()
                     .orderTableId(emptyOrderTable.getId())

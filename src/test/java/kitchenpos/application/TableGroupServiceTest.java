@@ -13,6 +13,8 @@ import java.util.Objects;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.fixtures.domain.TableGroupFixture.TableGroupRequestBuilder;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -39,8 +41,8 @@ class TableGroupServiceTest extends ServiceTest {
     @Autowired
     private OrderRepository orderRepository;
 
-    private OrderTable savedOrderTable1;
-    private OrderTable savedOrderTable2;
+    private OrderTableResponse savedOrderTable1;
+    private OrderTableResponse savedOrderTable2;
 
     @BeforeEach
     void setUp() {
@@ -99,8 +101,8 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_TableGroupHasNotExistingTable() {
             // given
-            OrderTable notSavedTable1 = createOrderTable(10, true);
-            OrderTable notSavedTable2 = createOrderTable(15, true);
+            OrderTableRequest notSavedTable1 = new OrderTableRequest(10, true);
+            OrderTableRequest notSavedTable2 = new OrderTableRequest(15, true);
             TableGroup request = new TableGroupRequestBuilder()
                     .addOrderTables(notSavedTable1, notSavedTable2)
                     .build();
@@ -114,8 +116,8 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_TableIsNotEmpty() {
             // given
-            OrderTable emptyOrderTable = saveOrderTable(10, true);
-            OrderTable notEmptyOrderTable = saveOrderTable(10, false);
+            OrderTableResponse emptyOrderTable = saveOrderTable(10, true);
+            OrderTableResponse notEmptyOrderTable = saveOrderTable(10, false);
             TableGroup request = new TableGroupRequestBuilder()
                     .addOrderTables(emptyOrderTable, notEmptyOrderTable)
                     .build();

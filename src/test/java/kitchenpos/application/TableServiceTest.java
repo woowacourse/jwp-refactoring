@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.fixtures.domain.OrderTableFixture.OrderTableRequestBuilder;
 import kitchenpos.fixtures.domain.TableGroupFixture.TableGroupRequestBuilder;
 import kitchenpos.repository.OrderTableRepository;
@@ -44,16 +46,16 @@ class TableServiceTest extends ServiceTest {
         @Test
         void Should_CreateOrderTable() {
             // given
-            OrderTable orderTable = createOrderTable(10, false);
+            OrderTableRequest request = new OrderTableRequest(10, false);
 
             // when
-            OrderTable actual = tableService.create(orderTable);
+            OrderTableResponse actual = tableService.create(request);
 
             // then
             assertAll(() -> {
                 assertThat(actual.getId()).isNotNull();
-                assertThat(actual.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
-                assertThat(actual.isEmpty()).isEqualTo(orderTable.isEmpty());
+                assertThat(actual.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
+                assertThat(actual.isEmpty()).isEqualTo(request.isEmpty());
             });
         }
     }
@@ -73,7 +75,7 @@ class TableServiceTest extends ServiceTest {
             }
 
             // when
-            List<OrderTable> actual = tableService.list();
+            List<OrderTableResponse> actual = tableService.list();
 
             // then
             assertThat(actual).hasSize(expected + 2);
@@ -88,12 +90,12 @@ class TableServiceTest extends ServiceTest {
         @Test
         void Should_ChangeIsEmptyTable() {
             // given
-            OrderTable request = new OrderTableRequestBuilder()
+            OrderTableRequest request = new OrderTableRequestBuilder()
                     .empty()
                     .build();
 
             // when
-            OrderTable actual = tableService.changeEmpty(savedOrderTable1.getId(), request);
+            OrderTableResponse actual = tableService.changeEmpty(savedOrderTable1.getId(), request);
 
             // then
             assertThat(actual.isEmpty()).isTrue();
@@ -103,7 +105,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableDoesNotExist() {
             // given
-            OrderTable request = new OrderTableRequestBuilder()
+            OrderTableRequest request = new OrderTableRequestBuilder()
                     .empty()
                     .build();
 
@@ -120,7 +122,7 @@ class TableServiceTest extends ServiceTest {
                     .addOrderTables(savedOrderTable1, savedOrderTable2)
                     .build());
 
-            OrderTable request = new OrderTableRequestBuilder().build();
+            OrderTableRequest request = new OrderTableRequestBuilder().build();
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable1.getId(), request))
@@ -138,12 +140,12 @@ class TableServiceTest extends ServiceTest {
             // given
             int expected = 100;
             OrderTable orderTable = orderTableRepository.save(createOrderTable(1, false));
-            OrderTable request = new OrderTableRequestBuilder()
+            OrderTableRequest request = new OrderTableRequestBuilder()
                     .numberOfGuests(expected)
                     .build();
 
             // when
-            OrderTable actual = tableService.changeNumberOfGuests(orderTable.getId(), request);
+            OrderTableResponse actual = tableService.changeNumberOfGuests(orderTable.getId(), request);
 
             // then
             assertThat(actual.getNumberOfGuests()).isEqualTo(expected);
@@ -153,7 +155,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_NumberOfGuestsIsLessThan0() {
             // given
-            OrderTable request = new OrderTableRequestBuilder()
+            OrderTableRequest request = new OrderTableRequestBuilder()
                     .numberOfGuests(-1)
                     .build();
 
@@ -167,7 +169,7 @@ class TableServiceTest extends ServiceTest {
         void Should_ThrowIAE_When_OrderTableDoesNotExist() {
             // given
             OrderTable orderTable = orderTableRepository.save(createOrderTable(1, false));
-            OrderTable request = new OrderTableRequestBuilder()
+            OrderTableRequest request = new OrderTableRequestBuilder()
                     .numberOfGuests(100)
                     .build();
 
@@ -181,7 +183,7 @@ class TableServiceTest extends ServiceTest {
         void Should_ThrowIAE_When_OrderTableIsEmpty() {
             // given
             OrderTable orderTable = orderTableRepository.save(createOrderTable(1, true));
-            OrderTable request = new OrderTableRequestBuilder()
+            OrderTableRequest request = new OrderTableRequestBuilder()
                     .numberOfGuests(100)
                     .build();
 

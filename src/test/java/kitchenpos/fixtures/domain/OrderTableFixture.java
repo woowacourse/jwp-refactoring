@@ -1,6 +1,7 @@
 package kitchenpos.fixtures.domain;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderTableRequest;
 
 public class OrderTableFixture {
 
@@ -19,14 +20,8 @@ public class OrderTableFixture {
 
     public static class OrderTableRequestBuilder {
 
-        private Long tableGroupId;
         private int numberOfGuests = 0;
         private boolean empty = false;
-
-        public OrderTableRequestBuilder tableGroupId(final Long tableGroupId) {
-            this.tableGroupId = tableGroupId;
-            return this;
-        }
 
         public OrderTableRequestBuilder numberOfGuests(final int numberOfGuests) {
             this.numberOfGuests = numberOfGuests;
@@ -38,13 +33,8 @@ public class OrderTableFixture {
             return this;
         }
 
-        public OrderTable build() {
-            OrderTable orderTable = new OrderTable();
-            orderTable.setTableGroupId(tableGroupId);
-            orderTable.setNumberOfGuests(numberOfGuests);
-            orderTable.setEmpty(empty);
-
-            return orderTable;
+        public OrderTableRequest build() {
+            return new OrderTableRequest(numberOfGuests, empty);
         }
     }
 }

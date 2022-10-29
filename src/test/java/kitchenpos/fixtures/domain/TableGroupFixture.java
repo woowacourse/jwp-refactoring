@@ -2,10 +2,13 @@ package kitchenpos.fixtures.domain;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 
 public class TableGroupFixture {
 
@@ -28,13 +31,26 @@ public class TableGroupFixture {
             return this;
         }
 
-        public TableGroupRequestBuilder addOrderTables(final Collection<OrderTable> orderTables) {
-            this.orderTables.addAll(orderTables);
-            return this;
+        public TableGroupRequestBuilder addOrderTables(final OrderTableRequest... orderTableRequests) {
+            List<OrderTable> orderTables = Stream.of(orderTableRequests)
+                    .map(OrderTableRequest::toEntity)
+                    .collect(Collectors.toList());
+            return addOrderTables(orderTables);
+        }
+
+        public TableGroupRequestBuilder addOrderTables(final OrderTableResponse... orderTableResponses) {
+            List<OrderTable> orderTables = Stream.of(orderTableResponses)
+                    .map(OrderTableResponse::toEntity)
+                    .collect(Collectors.toList());
+            return addOrderTables(orderTables);
         }
 
         public TableGroupRequestBuilder addOrderTables(final OrderTable... orderTables) {
-            this.orderTables.addAll(List.of(orderTables));
+            return addOrderTables(List.of(orderTables));
+        }
+
+        public TableGroupRequestBuilder addOrderTables(final List<OrderTable> orderTables) {
+            this.orderTables.addAll(orderTables);
             return this;
         }
 
