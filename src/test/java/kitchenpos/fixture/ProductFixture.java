@@ -3,6 +3,8 @@ package kitchenpos.fixture;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.application.dto.request.ProductCreateRequest;
+import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.dao.InMemoryProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
@@ -13,7 +15,7 @@ public class ProductFixture {
     public static final Long 허니콤보 = 2L;
 
     private final ProductDao productDao;
-    private List<Product> fixtures;
+    private List<ProductResponse> fixtures;
 
     public ProductFixture(final ProductDao productDao) {
         this.productDao = productDao;
@@ -21,43 +23,30 @@ public class ProductFixture {
 
     public static ProductFixture setUp() {
         final ProductFixture productFixture = new ProductFixture(new InMemoryProductDao());
-        productFixture.fixtures = productFixture.createProducts();
+        productFixture.fixtures = productFixture.createProductsResponse();
         return productFixture;
     }
 
-    public static Product createProductByPrice(final BigDecimal price) {
-        final Product product = new Product();
-        product.setName("맥북m1");
-        product.setPrice(price);
-        return product;
+    public static ProductCreateRequest createProductRequest(final String productName, final BigDecimal productPrice) {
+        return new ProductCreateRequest(productName, productPrice);
     }
 
-    public static Product createProduct(final String productName, final BigDecimal productPrice) {
-        final Product product = new Product();
-        product.setName(productName);
-        product.setPrice(productPrice);
-        return product;
-    }
-
-    private List<Product> createProducts() {
+    private List<ProductResponse> createProductsResponse() {
         return List.of(
-                saveProduct("맵슐랭", new BigDecimal(21000)),
-                saveProduct("허니콤보", new BigDecimal(20000))
+                ProductResponse.from(saveProduct("맵슐랭", new BigDecimal(21000))),
+                ProductResponse.from(saveProduct("허니콤보", new BigDecimal(20000)))
         );
     }
 
     private Product saveProduct(final String productName, final BigDecimal price) {
-        final Product product = new Product();
-        product.setName(productName);
-        product.setPrice(price);
-        return productDao.save(product);
+        return productDao.save(new Product(productName, price));
     }
 
     public ProductDao getProductDao() {
         return productDao;
     }
 
-    public List<Product> getFixtures() {
+    public List<ProductResponse> getFixtures() {
         return Collections.unmodifiableList(fixtures);
     }
 }
