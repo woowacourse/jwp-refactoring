@@ -40,13 +40,11 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuDto menuDto) {
+    public MenuDto create(MenuDto menuDto) {
         Price menuPrice = Price.from(menuDto.getPrice());
         List<MenuProduct> menuProducts = toMenuProducts(menuDto.getMenuProducts());
         Menu menu = Menu.of(menuDto.getName(), menuPrice, findMenuGroup(menuDto), menuProducts);
-        Menu saved = menuRepository.save(menu);
-        menuProductRepository.saveAll(menuProducts);
-        return saved;
+        return new MenuDto(menuRepository.save(menu));
     }
 
     private List<MenuProduct> toMenuProducts(List<MenuProductDto> menuProductDtos) {

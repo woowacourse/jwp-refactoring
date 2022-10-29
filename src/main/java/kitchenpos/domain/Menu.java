@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -25,7 +26,7 @@ public class Menu {
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
     private List<MenuProduct> products;
 
     public Menu() {

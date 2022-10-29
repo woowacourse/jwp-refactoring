@@ -36,19 +36,17 @@ class OrderServiceTest extends ServiceTest {
 
     private OrderLineItemDto orderLineItemDto1;
     private OrderLineItemDto orderLineItemDto2;
-    private Menu menu1;
-    private Menu menu2;
 
     @BeforeEach
     void setUp() {
-        Product product = productRepository.save(Product.of("상품1", new BigDecimal(2500.0)));
+        Product product = productRepository.save(Product.of("상품1", new BigDecimal(2500)));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
         MenuProduct menuProduct1 = new MenuProduct(null, product, Quantity.from(2L));
         MenuProduct menuProduct2 = new MenuProduct(null, product, Quantity.from(3L));
-        menu1 = menuRepository.save(Menu.of("메뉴1", Price.from(new BigDecimal(5000.0)), menuGroup,
-                List.of(menuProduct1, menuProduct2)));
-        menu2 = menuRepository
-                .save(Menu.of("메뉴2", Price.from(new BigDecimal(4500.0)), menuGroup, List.of(menuProduct2)));
+        Menu menu1 = menuRepository.save(Menu.of("메뉴1", Price.from(new BigDecimal(5000)), menuGroup,
+                List.of(menuProduct1)));
+        Menu menu2 = menuRepository
+                .save(Menu.of("메뉴2", Price.from(new BigDecimal(4500)), menuGroup, List.of(menuProduct2)));
 
         orderLineItemDto1 = new OrderLineItemDto(menu1.getId(), 2L);
         orderLineItemDto2 = new OrderLineItemDto(menu2.getId(), 1L);

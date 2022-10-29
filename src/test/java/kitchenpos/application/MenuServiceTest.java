@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProductDto;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuDto;
@@ -35,15 +36,19 @@ class MenuServiceTest extends ServiceTest {
         MenuProductDto menuProductDto = new MenuProductDto(product.getId(), 2L);
         MenuDto menu = new MenuDto("메뉴1", new BigDecimal(10000), menuGroup.getId(), List.of(menuProductDto));
 
+        System.out.println("size : " + menuProductRepository.findAll().size());
+
         menuService.create(menu);
 
         List<MenuDto> menus = menuService.list();
         List<String> menuNames = menus.stream()
                 .map(MenuDto::getName)
                 .collect(Collectors.toUnmodifiableList());
+        List<MenuProduct> menuProducts = menuProductRepository.findAll();
         assertAll(
                 () -> assertThat(menus).hasSize(1),
-                () -> assertThat(menuNames).contains("메뉴1")
+                () -> assertThat(menuNames).contains("메뉴1"),
+                () -> assertThat(menuProducts).hasSize(1)
         );
     }
 
