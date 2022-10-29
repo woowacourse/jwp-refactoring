@@ -20,6 +20,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -74,7 +75,7 @@ class TableGroupServiceTest extends ServiceTestBase {
         // given
         OrderTable orderTable1 = 주문_테이블_생성();
         TableGroup tableGroup = 단체_지정_생성(orderTable1);
-        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        TableGroup savedTableGroup = jdbcTemplateTableGroupDao.save(tableGroup);
         orderTable1.setTableGroupId(savedTableGroup.getId());
         OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
 
@@ -96,7 +97,7 @@ class TableGroupServiceTest extends ServiceTestBase {
         // given
         OrderTable orderTable1 = 주문_테이블_생성();
         TableGroup tableGroup = 단체_지정_생성(orderTable1);
-        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        TableGroup savedTableGroup = jdbcTemplateTableGroupDao.save(tableGroup);
         orderTable1.setTableGroupId(savedTableGroup.getId());
         OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
 
@@ -117,7 +118,7 @@ class TableGroupServiceTest extends ServiceTestBase {
     void orderTableSizeSmallerThan2() {
         // given
         OrderTable orderTable1 = orderTableDao.save(빈_주문_테이블_생성());
-        TableGroup tableGroup = 단체_지정_생성(orderTable1);
+        TableGroupCreateRequest tableGroup = createTableGroupCreateRequest(orderTable1);
 
         // when & then
         assertThatThrownBy(
@@ -132,7 +133,7 @@ class TableGroupServiceTest extends ServiceTestBase {
         // given
         OrderTable savedOrderTable = orderTableDao.save(빈_주문_테이블_생성());
         OrderTable notSavedOrderTable = 빈_주문_테이블_생성();
-        TableGroup tableGroup = 단체_지정_생성(savedOrderTable, notSavedOrderTable);
+        TableGroupCreateRequest tableGroup = createTableGroupCreateRequest(savedOrderTable, notSavedOrderTable);
 
         // when & then
         assertThatThrownBy(
@@ -147,7 +148,7 @@ class TableGroupServiceTest extends ServiceTestBase {
         // given
         OrderTable notEmptyOrderTable = orderTableDao.save(주문_테이블_생성());
         OrderTable emptyOrderTable = orderTableDao.save(빈_주문_테이블_생성());
-        TableGroup tableGroup = 단체_지정_생성(notEmptyOrderTable, emptyOrderTable);
+        TableGroupCreateRequest tableGroup = createTableGroupCreateRequest(notEmptyOrderTable, emptyOrderTable);
 
         // when & then
         assertThatThrownBy(
@@ -161,11 +162,11 @@ class TableGroupServiceTest extends ServiceTestBase {
     void otherGroupOrderTable() {
         // given
         OrderTable orderTable = 빈_주문_테이블_생성();
-        TableGroup otherTableGroup = tableGroupDao.save(단체_지정_생성(orderTable));
+        TableGroup otherTableGroup = jdbcTemplateTableGroupDao.save(단체_지정_생성(orderTable));
         orderTable.setTableGroupId(otherTableGroup.getId());
         OrderTable otherGroupOrderTable = orderTableDao.save(orderTable);
         OrderTable thisGroupOrderTable = orderTableDao.save(빈_주문_테이블_생성());
-        TableGroup tableGroup = 단체_지정_생성(otherGroupOrderTable, thisGroupOrderTable);
+        TableGroupCreateRequest tableGroup = createTableGroupCreateRequest(otherGroupOrderTable, thisGroupOrderTable);
 
         // when & then
         assertThatThrownBy(
@@ -180,14 +181,14 @@ class TableGroupServiceTest extends ServiceTestBase {
         // given
         OrderTable orderTable1 = orderTableDao.save(빈_주문_테이블_생성());
         OrderTable orderTable2 = orderTableDao.save(빈_주문_테이블_생성());
-        TableGroup tableGroup = 단체_지정_생성(orderTable1, orderTable2);
+        TableGroupCreateRequest tableGroup = createTableGroupCreateRequest(orderTable1, orderTable2);
 
         // when
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         //then
         assertAll(
-                () -> assertThat(tableGroupDao.findById(savedTableGroup.getId())).isPresent(),
+                () -> assertThat(jdbcTemplateTableGroupDao.findById(savedTableGroup.getId())).isPresent(),
                 () -> assertThat(orderTableDao.findAllByTableGroupId(savedTableGroup.getId())).hasSize(2)
         );
     }

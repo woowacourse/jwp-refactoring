@@ -50,6 +50,21 @@ public class OrderTable {
         }
     }
 
+    public void validateToCreate() {
+        if (isTableNotEmptyOrNotNull()) {
+            throw new IllegalArgumentException("저장할 table은 empty 샹태가 아니거나 다른 table group에 포함되서는 안됩니다.");
+        }
+    }
+
+    private boolean isTableNotEmptyOrNotNull() {
+        return !isEmpty() || Objects.nonNull(tableGroupId);
+    }
+
+    public void ungroup() {
+        this.tableGroupId = null;
+        this.empty = false;
+    }
+
     public Long getId() {
         return id;
     }

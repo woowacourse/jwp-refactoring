@@ -121,7 +121,7 @@ class TableServiceTest extends ServiceTestBase {
     void changeEmptyWithNotExistedTableGroup() {
         // given
         OrderTable orderTable1 = 빈_주문_테이블_생성();
-        TableGroup tableGroup = tableGroupDao.save(단체_지정_생성(orderTable1));
+        TableGroup tableGroup = jdbcTemplateTableGroupDao.save(단체_지정_생성(orderTable1));
         orderTable1.setTableGroupId(tableGroup.getId());
         OrderTable savedTable = orderTableDao.save(orderTable1);
         OrderTableEmptyStatusRequest emptyStatusRequest = createOrderTableEmptyStatusRequest(false);

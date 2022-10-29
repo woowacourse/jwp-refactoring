@@ -53,5 +53,4 @@ class OrderTableTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("손님의 수는 0 이상이어야합니다.");
     }
-
 }

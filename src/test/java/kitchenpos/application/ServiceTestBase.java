@@ -23,6 +23,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.TableGroupRepository;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.OrderCreateRequest;
@@ -31,6 +32,8 @@ import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableEmptyStatusRequest;
 import kitchenpos.dto.OrderTableGuestRequest;
 import kitchenpos.dto.ProductRequest;
+import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.TableGroupOrderTableIdRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -64,7 +67,10 @@ public abstract class ServiceTestBase {
     protected OrderTableDao orderTableDao;
 
     @Autowired
-    protected TableGroupDao tableGroupDao;
+    protected TableGroupDao jdbcTemplateTableGroupDao;
+
+    @Autowired
+    protected TableGroupRepository tableGroupRepository;
 
     protected ProductRequest createProductRequest(String name, int price) {
         ProductRequest product = new ProductRequest(name, BigDecimal.valueOf(price));
@@ -132,6 +138,13 @@ public abstract class ServiceTestBase {
         tableGroup.setOrderTables(orderTableList);
 
         return tableGroup;
+    }
+
+    protected TableGroupCreateRequest createTableGroupCreateRequest(final OrderTable... orderTables) {
+        List<TableGroupOrderTableIdRequest> orderTableIds = Arrays.stream(orderTables)
+                .map(orderTable -> new TableGroupOrderTableIdRequest(orderTable.getId()))
+                .collect(Collectors.toList());
+        return new TableGroupCreateRequest(orderTableIds);
     }
 
     protected OrderLineItem 주문_항목_생성(final Order order, final Menu menu, final long quantity) {
