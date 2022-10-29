@@ -7,6 +7,7 @@ import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -37,8 +38,11 @@ public class TableGroupService {
         List<OrderTable> orderTables = tableGroup.getOrderTables();
         List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(getOrderTableIds(orderTables));
 
+        if (savedOrderTables.size() != orderTables.size()) {
+            throw new IllegalArgumentException("주문 테이블의 수가 맞지 않습니다.");
+        }
+
         TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(savedOrderTables));
-        savedTableGroup.checkOrderTableSize(orderTables.size());
 
         return new TableGroupResponse(savedTableGroup);
     }
@@ -51,15 +55,15 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
+        List<Order> all = orderDao.findAll();
+
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.changeEmpty(false);
-            orderTableDao.save(orderTable);
+            orderTableDao.save(new OrderTable(orderTable.getId(), null, orderTable.getNumberOfGuests(), false));
         }
     }
 }

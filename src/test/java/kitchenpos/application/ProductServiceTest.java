@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dto.ProductResponse;
-import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.ProductRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,17 +25,17 @@ class ProductServiceTest extends ServiceTest {
 
     @Test
     void 생성할때_가격이_존재하지_않는_경우_예외를_발생시킨다() {
-        Product product = 상품의_가격은(null);
+        ProductRequest productRequest = new ProductRequest("햄버거", null);
 
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(productRequest.toProduct()))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 생성할때_가격이_0보다_작은_경우_예외를_발생시킨다() {
-        Product product = 상품의_가격은(new BigDecimal(-1));
+        ProductRequest productRequest = new ProductRequest("햄버거", new BigDecimal(-1));
 
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(productRequest.toProduct()))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 

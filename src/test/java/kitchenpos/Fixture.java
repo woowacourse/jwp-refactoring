@@ -7,6 +7,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -39,7 +40,7 @@ public class Fixture {
     }
 
     public static Order 주문(Long tableId, Long menuId) {
-        return new Order("COOKING", tableId, List.of(주문정보(menuId)));
+        return new Order(tableId, OrderStatus.COOKING, List.of(주문정보(menuId)));
     }
 
     public static TableGroup 테이블집합(OrderTable... orderTables) {

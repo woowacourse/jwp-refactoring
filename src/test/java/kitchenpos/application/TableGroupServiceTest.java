@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,7 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Test
     void 테이블그룹을_생성한다() {
-        TableGroup tableGroup = 테이블집합(빈테이블을_생성(), 빈테이블을_생성());
+        TableGroup tableGroup = 테이블집합(테이블_생성(true), 테이블_생성(true));
 
         TableGroupResponse actual = tableGroupService.create(tableGroup);
         assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
@@ -38,27 +39,8 @@ class TableGroupServiceTest extends ServiceTest {
     }
 
     @Test
-    void 테이블그룹을_생성할때_테이블이_2개보다_적은_경우_예외를_발생시킨다() {
-        TableGroup tableGroup = 테이블집합(빈테이블을_생성());
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     void 테이블그룹을_생성할때_테이블이_저장된_정보와_다를_경우_예외를_발생시킨다() {
-        TableGroup tableGroup = 테이블집합(new OrderTable(-1L, null, 0, true), 빈테이블을_생성());
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 테이블그룹을_생성할때_테이블이_비어있지_않은_경우_예외를_발생시킨다() {
-        OrderTable orderTable = 빈테이블을_생성();
-        orderTable.changeEmpty(false);
-        tableService.changeEmpty(orderTable.getId(), orderTable);
-        TableGroup tableGroup = 테이블집합(orderTable, 빈테이블을_생성());
+        TableGroup tableGroup = 테이블집합(new OrderTable(-1L, null, 0, true), 테이블_생성(true));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
@@ -73,8 +55,8 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Test
     void 테이블그룹을_해제할때_조리중인_주문이_있는_경우_예외를_발생시킨다() {
-        OrderTable orderTable = 빈테이블을_생성();
-        TableGroup tableGroup = 테이블집합(orderTable, 빈테이블을_생성());
+        OrderTable orderTable = 테이블_생성(true);
+        TableGroup tableGroup = 테이블집합(orderTable, 테이블_생성(true));
         TableGroupResponse savedTableGroup = tableGroupService.create(tableGroup);
         주문_생성(orderTable.getId());
 
@@ -84,18 +66,13 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Test
     void 테이블그룹을_해제할때_식사중인_주문이_있는_경우_예외를_발생시킨다() {
-        OrderTable orderTable = 빈테이블을_생성();
-        TableGroup tableGroup = 테이블집합(orderTable, 빈테이블을_생성());
+        OrderTable orderTable = 테이블_생성(true);
+        TableGroup tableGroup = 테이블집합(orderTable, 테이블_생성(true));
         TableGroupResponse savedTableGroup = tableGroupService.create(tableGroup);
         Order savedOrder = 주문_생성(orderTable.getId());
-        savedOrder.setOrderStatus("MEAL");
-        orderService.changeOrderStatus(savedOrder.getId(), savedOrder);
+        orderService.changeOrderStatus(savedOrder.getId(), OrderStatus.MEAL);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
-    }
-
-    OrderTable 빈테이블을_생성() {
-        return 테이블_생성(true);
     }
 }

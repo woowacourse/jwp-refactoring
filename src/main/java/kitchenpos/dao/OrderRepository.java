@@ -38,7 +38,7 @@ public class OrderRepository implements OrderDao {
             OrderLineItem savedOrderLineItem = ordersOrderLineItemDao.save(
                     new OrderLineItem(
                             savedOrder.getId(),
-                            orderLineItem.getOrderId(),
+                            orderLineItem.getMenuId(),
                             orderLineItem.getQuantity()
                     )
             );
@@ -54,7 +54,13 @@ public class OrderRepository implements OrderDao {
 
     @Override
     public List<Order> findAll() {
-        return null;
+        List<Order> orders = jdbcTemplateOrderDao.findAll();
+
+        for (final Order order : orders) {
+            order.setOrderLineItems(ordersOrderLineItemDao.findAllByOrderId(order.getId()));
+        }
+
+        return orders;
     }
 
     @Override

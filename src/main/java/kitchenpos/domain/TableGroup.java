@@ -16,12 +16,6 @@ public class TableGroup {
     public TableGroup() {
     }
 
-    public void checkOrderTableSize(int orderTableSize) {
-        if (orderTables.equalSize(orderTableSize)) {
-            throw new IllegalArgumentException("주문 테이블의 수가 맞지 않습니다.");
-        }
-    }
-
     public Long getId() {
         return id;
     }

@@ -57,7 +57,8 @@ public class ServiceTest {
     }
 
     public Order 주문_생성() {
-        return orderDao.save(주문(테이블_생성(false).getId(), 메뉴_생성().getId()));
+        Order save = orderDao.save(주문(테이블_생성(false).getId(), 메뉴_생성().getId()));
+        return save;
     }
 
     public Order 주문_생성(Long tableId) {

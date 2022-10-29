@@ -8,12 +8,11 @@ import org.springframework.util.CollectionUtils;
 public class Order {
     private Long id;
     private Long orderTableId;
-    //TODO: Enum으로 변경하기
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
-    public Order(String orderStatus, Long orderTableId, List<OrderLineItem> orderLineItems) {
+    public Order(Long orderTableId, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
         validateEmptyOrderLineItems(orderLineItems);
         this.orderStatus = orderStatus;
         this.orderTableId = orderTableId;
@@ -22,7 +21,7 @@ public class Order {
     }
 
     public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderLineItems);
+        this(orderTableId, null, orderLineItems);
     }
 
     public Order() {
@@ -35,7 +34,7 @@ public class Order {
     }
 
     public boolean equalStatus(OrderStatus orderStatus) {
-        return Objects.equals(orderStatus.name(), this.orderStatus);
+        return Objects.equals(orderStatus, this.orderStatus);
     }
 
     public Long getId() {
@@ -54,11 +53,11 @@ public class Order {
         this.orderTableId = orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void changeOrderStatus(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 

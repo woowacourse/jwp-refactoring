@@ -35,7 +35,8 @@ public class TableGroupRepository implements TableGroupDao {
         List<OrderTable> orderTables = new ArrayList<>();
 
         for (OrderTable savedOrderTable : savedOrderTables) {
-            OrderTable orderTable = new OrderTable(tableGroup.getId(), savedOrderTable.getNumberOfGuests(), false);
+            OrderTable orderTable = new OrderTable(savedOrderTable.getId(), tableGroup.getId(),
+                    savedOrderTable.getNumberOfGuests(), false);
             OrderTable table = jdbcTemplateOrderTableDao.save(orderTable);
             orderTables.add(table);
         }

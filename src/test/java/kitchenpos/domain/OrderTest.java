@@ -21,7 +21,7 @@ class OrderTest {
 
     @Test
     void 주문의_상태를_확인한다() {
-        Order order = new Order(OrderStatus.COMPLETION.name(), 1L, List.of(new OrderLineItem(1L, 1)));
+        Order order = new Order(1L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1)));
         assertThat(order.equalStatus(OrderStatus.COMPLETION)).isTrue();
     }
 }

@@ -30,8 +30,4 @@ public class OrderTables {
     public List<OrderTable> getOrderTables() {
         return orderTables;
     }
-
-    public boolean equalSize(int orderTableSize) {
-        return orderTables.size() == orderTableSize;
-    }
 }
