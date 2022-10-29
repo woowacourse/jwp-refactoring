@@ -8,7 +8,7 @@ import kitchenpos.domain.OrderStatus;
 
 public abstract class OrderFixture {
 
-    public static Order 주문(final OrderStatus orderStatus) {
+    public static Order 주문(OrderStatus orderStatus) {
         return new Order(null, orderStatus.name(), now(), null);
     }
 }

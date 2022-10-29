@@ -6,29 +6,29 @@ import kitchenpos.dto.request.ProductRequest;
 
 public abstract class ProductFixture {
 
-    public static Product createProduct(final String name) {
+    public static Product createProduct(String name) {
         return new Product(name, BigDecimal.valueOf(20_000));
     }
 
-    public static Product createProduct(final int price) {
+    public static Product createProduct(int price) {
         return new Product("간장 치킨", BigDecimal.valueOf(price));
     }
 
-    public static ProductRequest createProductRequest(final int price) {
+    public static ProductRequest createProductRequest(int price) {
         return new ProductRequest("간장 치킨", BigDecimal.valueOf(price));
     }
 
-    public static WrapProductRequest createProductRequest(final String name, final int price) {
+    public static WrapProductRequest createProductRequest(String name, int price) {
         return new WrapProductRequest(name, BigDecimal.valueOf(price));
     }
 
-    public static final WrapProductRequest 후라이드_치킨 = createProductRequest("후라이드 치킨", 16_000);
-    public static final WrapProductRequest 간장_치킨 = createProductRequest("간장 치킨", 17_000);
-    public static final WrapProductRequest 양념_치킨 = createProductRequest("양념 치킨", 17_000);
+    public static WrapProductRequest 후라이드_치킨 = createProductRequest("후라이드 치킨", 16_000);
+    public static WrapProductRequest 간장_치킨 = createProductRequest("간장 치킨", 17_000);
+    public static WrapProductRequest 양념_치킨 = createProductRequest("양념 치킨", 17_000);
 
     public static class WrapProductRequest extends ProductRequest {
 
-        public WrapProductRequest(final String name, final BigDecimal price) {
+        public WrapProductRequest(String name, BigDecimal price) {
             super(name, price);
         }
 
@@ -54,7 +54,7 @@ public abstract class ProductFixture {
         public WrapProduct() {
         }
 
-        public WrapProduct(final String name, final BigDecimal price) {
+        public WrapProduct(String name, BigDecimal price) {
             super(name, price);
         }
 

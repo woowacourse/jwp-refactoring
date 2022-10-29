@@ -52,7 +52,7 @@ public class DbTableCleaner implements InitializingBean {
     /**
      * 특정 테이블의 PK에 해당하는 데이터를 삭제합니다.
      */
-    public void removeRecordByPk(final String tableName, final Long pk) {
+    public void removeRecordByPk(String tableName, Long pk) {
 
         try (Connection connection = dataSource.getConnection()) {
             removeRecordByPkInternal(connection, tableName, pk);
@@ -74,7 +74,7 @@ public class DbTableCleaner implements InitializingBean {
         }
     }
 
-    private ResultSet extractTableNameResultSet(final Connection conn) throws SQLException {
+    private ResultSet extractTableNameResultSet(Connection conn) throws SQLException {
 
         return conn
                 .getMetaData()
@@ -89,7 +89,7 @@ public class DbTableCleaner implements InitializingBean {
             for (String tableName : tableNames) {
                 try {
                     statement.executeUpdate("TRUNCATE TABLE " + tableName);
-                    final String sql =
+                    String sql =
                             "ALTER TABLE " + tableName + " ALTER COLUMN " + pkName(tableName) + " RESTART WITH 1";
                     statement.executeUpdate(sql);
                 } catch (SQLException ex) {
@@ -101,7 +101,7 @@ public class DbTableCleaner implements InitializingBean {
         }
     }
 
-    private void removeRecordByPkInternal(final Connection conn, final String tableName, final Long pk)
+    private void removeRecordByPkInternal(Connection conn, String tableName, Long pk)
             throws SQLException {
 
         try (Statement statement = conn.createStatement()) {
@@ -113,7 +113,7 @@ public class DbTableCleaner implements InitializingBean {
         }
     }
 
-    private String pkName(final String tableName) {
+    private String pkName(String tableName) {
 
         if (TABLES_NOT_NAMED_ID.contains(tableName.toUpperCase())) {
             return "SEQ";

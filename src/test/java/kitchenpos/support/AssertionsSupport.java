@@ -10,14 +10,14 @@ import org.opentest4j.MultipleFailuresError;
 
 public class AssertionsSupport extends Assertions {
 
-    public static void assertAll(final Executable executable1, final Collection<Executable> executables) throws MultipleFailuresError {
+    public static void assertAll(Executable executable1, Collection<Executable> executables) throws MultipleFailuresError {
 
         executables.add(executable1);
 
         assertAll(executables);
     }
 
-    public static void assertAll(final Executable executable1, final Executable executable2, final Collection<Executable> executables) throws MultipleFailuresError {
+    public static void assertAll(Executable executable1, Executable executable2, Collection<Executable> executables) throws MultipleFailuresError {
 
         executables.add(executable1);
         executables.add(executable2);
@@ -25,7 +25,7 @@ public class AssertionsSupport extends Assertions {
         assertAll(executables);;
     }
 
-    public static void assertAll(final Executable executable1, final Executable executable2, final Executable executable3, final Collection<Executable> executables) throws MultipleFailuresError {
+    public static void assertAll(Executable executable1, Executable executable2, Executable executable3, Collection<Executable> executables) throws MultipleFailuresError {
 
         executables.add(executable1);
         executables.add(executable2);
@@ -34,11 +34,11 @@ public class AssertionsSupport extends Assertions {
         assertAll(executables);
     }
 
-    public static void assertAll(final Executable executable1,
-                                 final Executable executable2,
-                                 final Executable executable3,
-                                 final Executable executable4,
-                                 final Collection<Executable> executables
+    public static void assertAll(Executable executable1,
+                                 Executable executable2,
+                                 Executable executable3,
+                                 Executable executable4,
+                                 Collection<Executable> executables
     ) throws MultipleFailuresError {
 
         executables.add(executable1);
@@ -49,12 +49,12 @@ public class AssertionsSupport extends Assertions {
         assertAll(executables);
     }
 
-    public static void assertAll(final Executable executable1, 
-                                 final Executable executable2, 
-                                 final Executable executable3, 
-                                 final Executable executable4, 
-                                 final Executable executable5, 
-                                 final Collection<Executable> executables
+    public static void assertAll(Executable executable1, 
+                                 Executable executable2, 
+                                 Executable executable3, 
+                                 Executable executable4, 
+                                 Executable executable5, 
+                                 Collection<Executable> executables
     ) throws MultipleFailuresError {
 
         executables.add(executable1);
@@ -74,13 +74,13 @@ public class AssertionsSupport extends Assertions {
      * @param executables 2차원
      * @return 1차원
      */
-    private static List<Executable> decrease1Dimension(final Collection<Executable>[] executableCollections) {
+    private static List<Executable> decrease1Dimension(Collection<Executable>[] executableCollections) {
         return Arrays.stream(executableCollections)
                 .flatMap(executables -> executables.stream())
                 .collect(Collectors.toList());
     }
 
-    private static void assertAll(final List<Executable> executables) {
+    private static void assertAll(List<Executable> executables) {
         assertAll(executables.toArray(Executable[]::new));
     }
 }

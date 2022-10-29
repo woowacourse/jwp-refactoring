@@ -19,10 +19,10 @@ public class MenuGroupE2eTest extends KitchenPosE2eTest {
     void create() {
 
         // given
-        final ExtractableResponse<Response> 응답 = POST_요청(MENU_GROUP_URL, 단짜_두_마리_메뉴);
+        ExtractableResponse<Response> 응답 = POST_요청(MENU_GROUP_URL, 단짜_두_마리_메뉴);
 
         // when
-        final MenuGroup 저장된_메뉴그룹 = 응답.body().as(MenuGroup.class);
+        MenuGroup 저장된_메뉴그룹 = 응답.body().as(MenuGroup.class);
 
         // then
         assertAll(
@@ -40,8 +40,8 @@ public class MenuGroupE2eTest extends KitchenPosE2eTest {
         POST_요청(MENU_GROUP_URL, 간장_양념_세_마리_메뉴);
 
         // when
-        final ExtractableResponse<Response> 응답 = GET_요청(MENU_GROUP_URL);
-        final List<Product> 상품_리스트 = extractHttpBody(응답);
+        ExtractableResponse<Response> 응답 = GET_요청(MENU_GROUP_URL);
+        List<Product> 상품_리스트 = extractHttpBody(응답);
 
         // then
         assertAll(

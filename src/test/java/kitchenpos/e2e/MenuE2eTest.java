@@ -52,9 +52,9 @@ public class MenuE2eTest extends KitchenPosE2eTest {
         // given :: setUp 메서드
 
         // when
-        final ExtractableResponse<Response> 응답 = POST_요청(MENU_URL, 메뉴_요청바디_1);
-        final WrapMenu 저장된_메뉴 = 응답.body().as(WrapMenu.class);
-        final MenuProduct 저장된_메뉴상품 = 저장된_메뉴.getMenuProducts().get(0);
+        ExtractableResponse<Response> 응답 = POST_요청(MENU_URL, 메뉴_요청바디_1);
+        WrapMenu 저장된_메뉴 = 응답.body().as(WrapMenu.class);
+        MenuProduct 저장된_메뉴상품 = 저장된_메뉴.getMenuProducts().get(0);
 
         // then
         assertAll(
@@ -75,12 +75,12 @@ public class MenuE2eTest extends KitchenPosE2eTest {
 
         // when
         // TODO TypeRef를 이용해서 Mock객체로 불러오기, 가격정보만 Validation해서 들고오는 순간 체크
-        final ExtractableResponse<Response> 응답 = GET_요청(MENU_URL);
+        ExtractableResponse<Response> 응답 = GET_요청(MENU_URL);
 
-        final List<Menu> 메뉴그룹_리스트 = 응답.body().as(new TypeRef<List<Menu>>() {
+        List<Menu> 메뉴그룹_리스트 = 응답.body().as(new TypeRef<List<Menu>>() {
         }); // TODO Refactor This Method
-        final List<MenuProduct> 메뉴상품_리스트_1 = 메뉴그룹_리스트.get(0).getMenuProducts();
-        final List<MenuProduct> 메뉴상품_리스트_2 = 메뉴그룹_리스트.get(1).getMenuProducts();
+        List<MenuProduct> 메뉴상품_리스트_1 = 메뉴그룹_리스트.get(0).getMenuProducts();
+        List<MenuProduct> 메뉴상품_리스트_2 = 메뉴그룹_리스트.get(1).getMenuProducts();
 
         // TODO 가격 추가
         assertAll(

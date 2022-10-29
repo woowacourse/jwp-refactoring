@@ -9,30 +9,30 @@ import kitchenpos.domain.MenuProduct;
 
 public abstract class MenuFixture {
 
-    public static Menu createMenu(final int price) {
+    public static Menu createMenu(int price) {
 
         return new Menu("치킨은 살 안쪄요, 살은 내가 쪄요", BigDecimal.valueOf(price), 1L, emptyList());
     }
 
-    public static Menu createMenu(final int price, final long menuGroupId) {
+    public static Menu createMenu(int price, long menuGroupId) {
 
         return new Menu("치킨은 살 안쪄요, 살은 내가 쪄요", BigDecimal.valueOf(price), menuGroupId, emptyList());
     }
 
-    public static Menu createMenu(final int price, final List<MenuProduct> menuProducts) {
+    public static Menu createMenu(int price, List<MenuProduct> menuProducts) {
 
         return new Menu("치킨은 살 안쪄요, 살은 내가 쪄요", BigDecimal.valueOf(price), 1L, menuProducts);
     }
 
-    public static Menu createMenuWithProduct(final Long productId, final int price) {
+    public static Menu createMenuWithProduct(Long productId, int price) {
 
         return new Menu("치킨은 살 안쪄요, 살은 내가 쪄요", BigDecimal.valueOf(price), 1L, List.of(new MenuProduct(productId, 1L)));
     }
 
-    public static WrapMenu createMenuRequest(final String name,
-                                             final int price,
-                                             final Long menuGroupId,
-                                             final List<MenuProduct> menuProducts) {
+    public static WrapMenu createMenuRequest(String name,
+                                             int price,
+                                             Long menuGroupId,
+                                             List<MenuProduct> menuProducts) {
 
         return new WrapMenu(name, BigDecimal.valueOf(price), menuGroupId, menuProducts);
     }
@@ -45,10 +45,10 @@ public abstract class MenuFixture {
         public WrapMenu() {
         }
 
-        public WrapMenu(final String name,
-                        final BigDecimal price,
-                        final Long menuGroupId,
-                        final List<MenuProduct> menuProducts) {
+        public WrapMenu(String name,
+                        BigDecimal price,
+                        Long menuGroupId,
+                        List<MenuProduct> menuProducts) {
 
             super(name, price, menuGroupId, menuProducts);
         }

@@ -21,11 +21,11 @@ public class TableGroupE2eTest extends KitchenPosE2eTest {
     void create() {
 
         // given
-        final List<OrderTable> 주문테이블들 = 주문테이블들_생성(2);
+        List<OrderTable> 주문테이블들 = 주문테이블들_생성(2);
 
         // when
-        final ExtractableResponse<Response> 응답 = POST_요청(TABLE_GROUP_URL, new TableGroup(null, 주문테이블들));
-        final TableGroup 저장된_테이블그룹 = 응답.body().as(TableGroup.class);
+        ExtractableResponse<Response> 응답 = POST_요청(TABLE_GROUP_URL, new TableGroup(null, 주문테이블들));
+        TableGroup 저장된_테이블그룹 = 응답.body().as(TableGroup.class);
 
         // then
         assertAll(
@@ -40,13 +40,13 @@ public class TableGroupE2eTest extends KitchenPosE2eTest {
     void ungroup() {
 
         // given
-        final List<OrderTable> 주문테이블들 = 주문테이블들_생성(2, new OrderTable(0, true));
-        final TableGroup 저장된_테이블그룹 = 테이블그룹_생성(new TableGroup(null, 주문테이블들));
+        List<OrderTable> 주문테이블들 = 주문테이블들_생성(2, new OrderTable(0, true));
+        TableGroup 저장된_테이블그룹 = 테이블그룹_생성(new TableGroup(null, 주문테이블들));
 
         // when
-        final ExtractableResponse<Response> 응답 =
+        ExtractableResponse<Response> 응답 =
                 DELETE_요청(TABLE_GROUP_DELETE_URL, 저장된_테이블그룹.getId(), new TableGroup(null, 주문테이블들));
-        final List<OrderTable> 갱신된_주문테이블_리스트 = extractHttpBody(GET_요청(TABLE_URL));
+        List<OrderTable> 갱신된_주문테이블_리스트 = extractHttpBody(GET_요청(TABLE_URL));
 
         // then
         assertAll(

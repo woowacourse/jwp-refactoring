@@ -18,12 +18,12 @@ class ProductE2eTest extends KitchenPosE2eTest {
     void create() {
 
         // given
-        final WrapProductRequest requestBody = createProductRequest("양념 치킨", 10_000);
+        WrapProductRequest requestBody = createProductRequest("양념 치킨", 10_000);
 
         // when
-        final ExtractableResponse<Response> 응답 = POST_요청("/api/products", requestBody);
+        ExtractableResponse<Response> 응답 = POST_요청("/api/products", requestBody);
 
-        final WrapProduct 저장된_상품 = 응답.body().as(WrapProduct.class);
+        WrapProduct 저장된_상품 = 응답.body().as(WrapProduct.class);
 
         // then
         assertAll(
@@ -38,16 +38,16 @@ class ProductE2eTest extends KitchenPosE2eTest {
     void list() {
 
         // given
-        final WrapProductRequest 양념_치킨 = createProductRequest("양념 치킨", 10_000);
-        final WrapProductRequest 간장_치킨 = createProductRequest("간장 치킨", 10_000);
+        WrapProductRequest 양념_치킨 = createProductRequest("양념 치킨", 10_000);
+        WrapProductRequest 간장_치킨 = createProductRequest("간장 치킨", 10_000);
 
         POST_요청("/api/products", 양념_치킨);
         POST_요청("/api/products", 간장_치킨);
 
         // when
-        final ExtractableResponse<Response> 응답 = GET_요청("/api/products");
+        ExtractableResponse<Response> 응답 = GET_요청("/api/products");
 
-        final List list = 응답.body().as(List.class);
+        List list = 응답.body().as(List.class);
 
         // then
         assertAll(
