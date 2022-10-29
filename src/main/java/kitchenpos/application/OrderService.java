@@ -43,19 +43,31 @@ public class OrderService {
     public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
         List<OrderLineItem> orderLineItems = orderLineItemMapper.toOrderLineItems(
                 orderCreateRequest.getOrderLineItems());
-        List<Long> menuIds = orderLineItems.stream()
+        List<Long> menuIds = toMenuIds(orderLineItems);
+        validateOrderLineItemCount(orderLineItems, menuIds);
+        Order order = orderMapper.toOrder(orderCreateRequest, orderLineItems);
+        validateOrderTableIsEmpty(order);
+        return orderDtoMapper.toOrderResponse(orderRepository.save(order));
+    }
+
+    private List<Long> toMenuIds(final List<OrderLineItem> orderLineItems) {
+        return orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
+    }
+
+    private void validateOrderLineItemCount(final List<OrderLineItem> orderLineItems, final List<Long> menuIds) {
         if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
-        Order order = orderMapper.toOrder(orderCreateRequest, orderLineItems);
+    }
+
+    private void validateOrderTableIsEmpty(final Order order) {
         OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        return orderDtoMapper.toOrderResponse(orderRepository.save(order));
     }
 
     public List<OrderResponse> list() {
