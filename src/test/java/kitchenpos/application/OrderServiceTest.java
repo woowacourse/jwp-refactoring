@@ -16,7 +16,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -63,7 +62,6 @@ class OrderServiceTest extends FakeSpringContext {
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
-    @Disabled
     @DisplayName("주문 테이블이 빈 상태라면 등록 시 예외 발생")
     @Test
     void create_orderTableIsEmptyTrue_throwsException() {

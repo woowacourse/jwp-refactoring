@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import static kitchenpos.fixture.OrderTableFactory.emptyTable;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
@@ -28,5 +29,15 @@ class OrderTest {
         assertThatThrownBy(
                 () -> order.changeStatus(OrderStatus.COOKING)
         ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("빈 주문 테이블로 생성할 수 없다")
+    @Test
+    void create_orderTableIsEmptyTrue_throwsException() {
+        final var table = emptyTable(2);
+
+        assertThatThrownBy(
+                () -> new Order(table, List.of(new OrderLineItem(null, null, 1)))
+        );
     }
 }
