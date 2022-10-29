@@ -3,7 +3,7 @@ package kitchenpos.ui.dto;
 public class OrderUpdateRequest {
     private String orderStatus;
 
-    public OrderUpdateRequest() {
+    private OrderUpdateRequest() {
     }
 
     public OrderUpdateRequest(String orderStatus) {

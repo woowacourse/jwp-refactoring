@@ -4,7 +4,7 @@ public class OrderTableUpdateRequest {
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTableUpdateRequest() {
+    private OrderTableUpdateRequest() {
     }
 
     public OrderTableUpdateRequest(int numberOfGuests, boolean empty) {

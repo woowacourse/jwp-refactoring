@@ -7,7 +7,7 @@ public class OrderCreateRequest {
     private Long orderTableId;
     private List<OrderLineItem> orderLineItems;
 
-    public OrderCreateRequest() {
+    private OrderCreateRequest() {
     }
 
     public OrderCreateRequest(Long orderTableId, List<OrderLineItem> orderLineItems) {

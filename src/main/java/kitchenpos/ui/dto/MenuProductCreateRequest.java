@@ -5,7 +5,7 @@ public class MenuProductCreateRequest {
     private Long productId;
     private long quantity;
 
-    public MenuProductCreateRequest() {
+    private MenuProductCreateRequest() {
     }
 
     public MenuProductCreateRequest(Long productId, long quantity) {
