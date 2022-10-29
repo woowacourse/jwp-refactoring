@@ -3,8 +3,11 @@ package kitchenpos.fixtures.domain;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.request.MenuProductRequest;
+import kitchenpos.dto.request.MenuRequest;
 
 public class MenuFixture {
 
@@ -62,15 +65,10 @@ public class MenuFixture {
             return this;
         }
 
-        public Menu build() {
-            Menu menu = new Menu();
-            menu.setId(id);
-            menu.setName(name);
-            menu.setPrice(price);
-            menu.setMenuGroupId(menuGroupId);
-            menu.setMenuProducts(menuProducts);
-
-            return menu;
+        public MenuRequest build() {
+            return new MenuRequest(name, price, menuGroupId, menuProducts.stream()
+                    .map(MenuProductRequest::new)
+                    .collect(Collectors.toList()));
         }
     }
 }

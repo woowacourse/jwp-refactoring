@@ -6,9 +6,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.fixtures.domain.MenuFixture.MenuRequestBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +42,7 @@ class MenuServiceTest extends ServiceTest {
             // given
             MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
 
-            Menu menu = new MenuRequestBuilder()
+            MenuRequest request = new MenuRequestBuilder()
                     .name("세트1")
                     .price(20_000)
                     .menuGroupId(savedMenuGroup.getId())
@@ -49,13 +50,13 @@ class MenuServiceTest extends ServiceTest {
                     .build();
 
             // when
-            Menu actual = menuService.create(menu);
+            MenuResponse actual = menuService.create(request);
 
             // then
             assertAll(() -> {
                 assertThat(actual.getId()).isNotNull();
-                assertThat(actual.getName()).isEqualTo(menu.getName());
-                assertThat(actual.getPrice().doubleValue()).isEqualTo(menu.getPrice().doubleValue());
+                assertThat(actual.getName()).isEqualTo(request.getName());
+                assertThat(actual.getPrice().doubleValue()).isEqualTo(request.getPrice().doubleValue());
             });
         }
 
@@ -65,14 +66,14 @@ class MenuServiceTest extends ServiceTest {
             // given
             MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
 
-            Menu menu = new MenuRequestBuilder()
+            MenuRequest request = new MenuRequestBuilder()
                     .price(null)
                     .menuGroupId(savedMenuGroup.getId())
                     .menuProducts(menuProduct)
                     .build();
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -83,13 +84,13 @@ class MenuServiceTest extends ServiceTest {
             // given
             MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
 
-            Menu menu = new MenuRequestBuilder()
+            MenuRequest request = new MenuRequestBuilder()
                     .menuGroupId(savedMenuGroup.getId() + 1)
                     .menuProducts(menuProduct)
                     .build();
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -99,13 +100,13 @@ class MenuServiceTest extends ServiceTest {
             // given
             MenuProduct notSavedMenuProduct = createMenuProduct(savedProduct.getId() + 1, 1L);
 
-            Menu menu = new MenuRequestBuilder()
+            MenuRequest request = new MenuRequestBuilder()
                     .menuGroupId(savedMenuGroup.getId())
                     .menuProducts(notSavedMenuProduct)
                     .build();
 
             // when
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -115,14 +116,14 @@ class MenuServiceTest extends ServiceTest {
             // given
             MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
 
-            Menu menu = new MenuRequestBuilder()
+            MenuRequest request = new MenuRequestBuilder()
                     .price(1_000_000)
                     .menuGroupId(savedMenuGroup.getId())
                     .menuProducts(menuProduct)
                     .build();
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -142,17 +143,17 @@ class MenuServiceTest extends ServiceTest {
 
             int expected = 4;
             for (int i = 0; i < expected; i++) {
-                Menu menu = new MenuRequestBuilder()
+                MenuRequest request = new MenuRequestBuilder()
                         .name("menu " + i)
                         .menuGroupId(menuGroup.getId())
                         .menuProducts(menuProduct)
                         .build();
 
-                menuService.create(menu);
+                menuService.create(request);
             }
 
             // when
-            List<Menu> actual = menuService.list();
+            List<MenuResponse> actual = menuService.list();
 
             // then
             assertAll(() -> {

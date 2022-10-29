@@ -9,13 +9,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderStatusUpdateRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.ProductResponse;
@@ -40,7 +40,7 @@ class OrderServiceTest extends ServiceTest {
     private OrderTableResponse savedOrderTable;
     private MenuGroupResponse savedMenuGroup;
     private ProductResponse savedProduct;
-    private Menu savedMenu;
+    private MenuResponse savedMenu;
 
     private OrderLineItem createdOrderLineItem;
 

@@ -1,18 +1,19 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixtures.domain.MenuFixture.createMenu;
-
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.DatabaseCleaner;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.dto.request.MenuProductRequest;
+import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,9 +48,12 @@ public class ServiceTest {
         return menuGroupService.create(request);
     }
 
-    protected Menu saveMenu(final String name, final int price, final MenuGroup menuGroup,
-                            final List<MenuProduct> menuProducts) {
-        Menu menu = createMenu(name, new BigDecimal(price), menuGroup.getId(), menuProducts);
+    protected MenuResponse saveMenu(final String name, final int price, final MenuGroup menuGroup,
+                                    final List<MenuProduct> menuProducts) {
+        MenuRequest menu = new MenuRequest(name, BigDecimal.valueOf(price), menuGroup.getId(), menuProducts.stream()
+                .map(MenuProductRequest::new)
+                .collect(Collectors.toList()));
+
         return menuService.create(menu);
     }
 
