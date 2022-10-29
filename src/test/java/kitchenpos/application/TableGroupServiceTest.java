@@ -10,7 +10,7 @@ import kitchenpos.application.dto.request.CreateOrderLineItemDto;
 import kitchenpos.application.dto.request.CreateTableDto;
 import kitchenpos.application.dto.request.CreateTableGroupDto;
 import kitchenpos.application.dto.response.TableGroupDto;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +35,7 @@ class TableGroupServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @DisplayName("create 메서드는")
     @Nested
@@ -96,7 +96,7 @@ class TableGroupServiceTest {
 
             tableGroupService.ungroup(savedTableGroup.getId());
 
-            List<OrderTable> orderTables = orderTableDao.findAllByIdIn(List.of(orderTableId1, orderTableId2));
+            List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(List.of(orderTableId1, orderTableId2));
             assertAll(
                     () -> assertThat(orderTables.get(0).getTableGroupId()).isNull(),
                     () -> assertThat(orderTables.get(0).isEmpty()).isFalse(),

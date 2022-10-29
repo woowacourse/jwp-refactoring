@@ -5,11 +5,11 @@ import kitchenpos.application.dto.request.CreateOrderLineItemDto;
 import kitchenpos.application.dto.response.OrderDto;
 import kitchenpos.application.dto.request.UpdateOrderStatusDto;
 import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.table.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,16 +24,16 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
     public OrderService(MenuRepository menuRepository,
                         OrderRepository orderRepository,
                         OrderLineItemRepository orderLineItemRepository,
-                        OrderTableDao orderTableDao) {
+                        OrderTableRepository orderTableRepository) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
@@ -58,7 +58,7 @@ public class OrderService {
     }
 
     private OrderTable findOrderTable(Long orderTableId) {
-        return orderTableDao.findById(orderTableId)
+        return orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
     }
 
