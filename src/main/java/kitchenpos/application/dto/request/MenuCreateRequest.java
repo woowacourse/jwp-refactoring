@@ -42,18 +42,4 @@ public class MenuCreateRequest {
     public List<MenuProductDto> getMenuProducts() {
         return menuProducts;
     }
-
-    public Menu toMenu(final Price price) {
-        return new Menu(
-                this.name,
-                price,
-                this.menuGroupId,
-                toMenuProducts());
-    }
-
-    private List<MenuProduct> toMenuProducts() {
-        return this.menuProducts.stream()
-                .map(MenuProductDto::toMenuProduct)
-                .collect(Collectors.toList());
-    }
 }

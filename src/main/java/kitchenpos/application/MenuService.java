@@ -6,6 +6,7 @@ import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.request.MenuProductDto;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductQuantities;
@@ -38,8 +39,14 @@ public class MenuService {
                 menuCreateRequest.getPrice(),
                 toProductQuantities(menuCreateRequest.getMenuProducts())
         );
-        return saveMenu(menuCreateRequest, price);
+        return MenuResponse.from(saveMenu(menuCreateRequest, price));
     }
+
+    private List<MenuProduct> toMenuProducts(final List<MenuProductDto> menuProducts) {
+            return menuProducts.stream()
+                    .map(MenuProductDto::toMenuProduct)
+                    .collect(Collectors.toList());
+        }
 
     @Transactional(readOnly = true)
     public List<MenuResponse> list() {
@@ -55,9 +62,13 @@ public class MenuService {
         }
     }
 
-    private MenuResponse saveMenu(final MenuCreateRequest menuCreateRequest, Price price) {
-        final Menu savedMenu = menuRepository.save(menuCreateRequest.toMenu(price));
-        return MenuResponse.from(savedMenu);
+    private Menu saveMenu(final MenuCreateRequest menuCreateRequest, final Price price) {
+        return menuRepository.save(new Menu(
+                menuCreateRequest.getName(),
+                price,
+                menuCreateRequest.getMenuGroupId(),
+                toMenuProducts(menuCreateRequest.getMenuProducts())
+        ));
     }
 
     private ProductQuantities toProductQuantities(final List<MenuProductDto> menuProductsDto) {
