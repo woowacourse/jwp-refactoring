@@ -30,8 +30,12 @@ public class MenuService {
         final var menuGroup = menuGroups.get(request.getMenuGroupId());
         final var menuProducts = mapMenuProducts(request);
 
-        final var menu = new Menu(request.getName(), request.getPrice(), menuGroup.getId(), menuProducts);
-        return menus.add(menu);
+        return menus.add(
+                new Menu(request.getName(),
+                        request.getPrice(),
+                        menuGroup.getId(),
+                        menuProducts)
+        );
     }
 
     private List<MenuProduct> mapMenuProducts(final Menu request) {

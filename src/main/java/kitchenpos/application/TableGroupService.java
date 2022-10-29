@@ -50,6 +50,7 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final var tableGroup = tableGroups.get(tableGroupId);
         tableGroup.ungroup();
+
         orderTables.addAll(tableGroup.getOrderTables());
     }
 }
