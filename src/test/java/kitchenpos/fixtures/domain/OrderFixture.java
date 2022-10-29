@@ -3,9 +3,12 @@ package kitchenpos.fixtures.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.dto.request.OrderLineItemRequest;
+import kitchenpos.dto.request.OrderRequest;
 
 public class OrderFixture {
 
@@ -53,14 +56,12 @@ public class OrderFixture {
             return this;
         }
 
-        public Order build() {
-            Order order = new Order();
-            order.setOrderTableId(orderTableId);
-            order.setOrderStatus(orderStatus);
-            order.setOrderedTime(orderedTime);
-            order.setOrderLineItems(orderLineItems);
+        public OrderRequest build() {
+            List<OrderLineItemRequest> orderLineItemRequests = orderLineItems.stream()
+                    .map(OrderLineItemRequest::new)
+                    .collect(Collectors.toList());
 
-            return order;
+            return new OrderRequest(orderTableId, orderLineItemRequests);
         }
     }
 }

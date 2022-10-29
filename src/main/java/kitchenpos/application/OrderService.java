@@ -9,6 +9,9 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.request.OrderStatusUpdateRequest;
+import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
@@ -37,7 +40,9 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
+    public OrderResponse create(final OrderRequest request) {
+        Order order = request.toEntity();
+
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
@@ -75,21 +80,23 @@ public class OrderService {
         }
         savedOrder.setOrderLineItems(savedOrderLineItems);
 
-        return savedOrder;
+        return new OrderResponse(savedOrder);
     }
 
-    public List<Order> list() {
+    public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
 
         for (final Order order : orders) {
             order.setOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
         }
 
-        return orders;
+        return orders.stream()
+                .map(OrderResponse::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusUpdateRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -97,13 +104,13 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
+        final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
         savedOrder.setOrderStatus(orderStatus.name());
 
         orderRepository.save(savedOrder);
 
         savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
 
-        return savedOrder;
+        return new OrderResponse(savedOrder);
     }
 }

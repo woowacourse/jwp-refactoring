@@ -13,7 +13,10 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.request.OrderStatusUpdateRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.fixtures.domain.OrderFixture.OrderRequestBuilder;
@@ -61,19 +64,18 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_CreateOrder() {
             // given
-            Order order = new OrderRequestBuilder()
+            OrderRequest request = new OrderRequestBuilder()
                     .orderTableId(savedOrderTable.getId())
                     .addOrderLineItem(createdOrderLineItem)
                     .build();
 
             // when
-            Order actual = orderService.create(order);
+            OrderResponse actual = orderService.create(request);
 
             // then
             assertAll(() -> {
                 assertThat(actual.getId()).isNotNull();
-                assertThat(actual.getOrderStatus()).isEqualTo(order.getOrderStatus());
-                assertThat(actual.getOrderedTime()).isEqualTo(order.getOrderedTime());
+                assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
             });
         }
 
@@ -81,12 +83,12 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderLineItemsIsEmpty() {
             // given
-            Order order = new OrderRequestBuilder()
+            OrderRequest request = new OrderRequestBuilder()
                     .orderTableId(savedOrderTable.getId())
                     .build();
 
             // when & then
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -96,13 +98,13 @@ class OrderServiceTest extends ServiceTest {
             // given
             OrderLineItem orderLineItemHasNotSavedMenu = createOrderLineItem(savedMenu.getId() + 1, 1L);
 
-            Order order = new OrderRequestBuilder()
+            OrderRequest request = new OrderRequestBuilder()
                     .orderTableId(savedOrderTable.getId())
                     .addOrderLineItem(orderLineItemHasNotSavedMenu)
                     .build();
 
             // when & then
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -110,13 +112,13 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableDoesNotExist() {
             // given
-            Order order = new OrderRequestBuilder()
+            OrderRequest request = new OrderRequestBuilder()
                     .orderTableId(savedOrderTable.getId() + 1)
                     .addOrderLineItem(createdOrderLineItem)
                     .build();
 
             // when & then
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -126,13 +128,13 @@ class OrderServiceTest extends ServiceTest {
             // given
             OrderTableResponse emptyOrderTable = saveOrderTable(10, true);
 
-            Order order = new OrderRequestBuilder()
+            OrderRequest request = new OrderRequestBuilder()
                     .orderTableId(emptyOrderTable.getId())
                     .addOrderLineItem(createdOrderLineItem)
                     .build();
 
             // when & then
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -153,7 +155,7 @@ class OrderServiceTest extends ServiceTest {
             }
 
             // when
-            List<Order> actual = orderService.list();
+            List<OrderResponse> actual = orderService.list();
 
             // then
             assertThat(actual).hasSize(expected);
@@ -173,12 +175,10 @@ class OrderServiceTest extends ServiceTest {
                     createOrder(savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
                             List.of(createdOrderLineItem)));
 
-            Order request = new OrderRequestBuilder()
-                    .orderStatus(after)
-                    .build();
+            OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(after);
 
             // when
-            Order actual = orderService.changeOrderStatus(oldOrder.getId(), request);
+            OrderResponse actual = orderService.changeOrderStatus(oldOrder.getId(), request);
 
             // then
             assertThat(actual.getOrderStatus()).isEqualTo(after);
@@ -192,11 +192,10 @@ class OrderServiceTest extends ServiceTest {
                     createOrder(savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
                             List.of(createdOrderLineItem)));
 
-            Order orderRequest = new OrderRequestBuilder()
-                    .build();
+            OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(OrderStatus.MEAL.name());
 
             // when & then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId() + 1, orderRequest))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId() + 1, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -208,9 +207,7 @@ class OrderServiceTest extends ServiceTest {
                     createOrder(savedOrderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
                             List.of(createdOrderLineItem)));
 
-            Order request = new OrderRequestBuilder()
-                    .orderStatus(OrderStatus.COOKING)
-                    .build();
+            OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(OrderStatus.MEAL.name());
 
             // when & then
             assertThatThrownBy(() -> orderService.changeOrderStatus(completionOrder.getId(), request))
