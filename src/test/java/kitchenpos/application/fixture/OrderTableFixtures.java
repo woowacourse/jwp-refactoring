@@ -3,6 +3,7 @@ package kitchenpos.application.fixture;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableSaveRequest;
 
 public class OrderTableFixtures {
 
@@ -55,5 +56,10 @@ public class OrderTableFixtures {
         } catch (final Exception e) {
             throw new RuntimeException();
         }
+    }
+
+    public static final OrderTableSaveRequest generateOrderTableSaveRequest(final int numberOfGuests,
+                                                                            final boolean empty) {
+        return new OrderTableSaveRequest(numberOfGuests, empty);
     }
 }
