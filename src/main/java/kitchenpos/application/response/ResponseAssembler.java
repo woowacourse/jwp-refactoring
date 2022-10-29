@@ -2,12 +2,10 @@ package kitchenpos.application.response;
 
 import kitchenpos.application.response.menu.MenuProductResponse;
 import kitchenpos.application.response.menu.MenuResponse;
+import kitchenpos.application.response.menugroup.MenuGroupResponse;
 import kitchenpos.application.response.order.OrderLineItemResponse;
 import kitchenpos.application.response.order.OrderResponse;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -68,5 +66,17 @@ public class ResponseAssembler {
                         menuProduct.getQuantity()
                 ))
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    public List<MenuGroupResponse> menuGroupResponses(final List<MenuGroup> menuGroups) {
+        return menuGroups.stream()
+                .map(this::menuGroupResponse)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    public MenuGroupResponse menuGroupResponse(final MenuGroup menuGroup) {
+        return new MenuGroupResponse(
+                menuGroup.getId(),
+                menuGroup.getName());
     }
 }

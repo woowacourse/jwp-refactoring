@@ -1,6 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dao.FakeMenuGroupDao;
+import kitchenpos.application.request.menugroup.MenuGroupRequest;
+import kitchenpos.application.response.ResponseAssembler;
+import kitchenpos.application.response.menugroup.MenuGroupResponse;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,8 +15,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class MenuGroupServiceTest {
 
+    private final ResponseAssembler responseAssembler = new ResponseAssembler();
     private final FakeMenuGroupDao menuGroupDao = new FakeMenuGroupDao();
-    private final MenuGroupService menuGroupService = new MenuGroupService(menuGroupDao);
+    private final MenuGroupService menuGroupService = new MenuGroupService(menuGroupDao, responseAssembler);
 
     @BeforeEach
     void clear() {
@@ -23,7 +27,7 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 추가한다")
     @Test
     void create() {
-        final var request = new MenuGroup("양식");
+        final var request = new MenuGroupRequest("양식");
         final var actual = menuGroupService.create(request);
         assertThat(actual.getId()).isPositive();
     }
@@ -34,7 +38,7 @@ class MenuGroupServiceTest {
         final var expectedSize = 4;
         saveMenuGroupForTimes(expectedSize);
 
-        final List<MenuGroup> actual = menuGroupService.list();
+        final List<MenuGroupResponse> actual = menuGroupService.list();
         assertThat(actual).hasSize(expectedSize);
     }
 
