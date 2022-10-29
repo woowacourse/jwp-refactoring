@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.fixture.ProductFixture.짜장면;
-import static kitchenpos.application.fixture.ProductFixture.짬뽕;
-import static kitchenpos.application.fixture.ProductFixture.탕수육;
+import static kitchenpos.fixture.domain.ProductFixture.짜장면;
+import static kitchenpos.fixture.domain.ProductFixture.짬뽕;
+import static kitchenpos.fixture.domain.ProductFixture.탕수육;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;

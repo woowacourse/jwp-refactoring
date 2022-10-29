@@ -1,4 +1,4 @@
-package kitchenpos.application.fixture.dto;
+package kitchenpos.fixture.dto;
 
 import kitchenpos.dto.request.EmptyRequest;
 import kitchenpos.dto.request.NumberOfGuestsRequest;

@@ -1,9 +1,9 @@
 package kitchenpos.presentation;
 
-import static kitchenpos.application.fixture.dto.ProductDtoFixture.짜장면_요청;
-import static kitchenpos.application.fixture.dto.ProductDtoFixture.짜장면_응답;
-import static kitchenpos.application.fixture.dto.ProductDtoFixture.짬뽕_응답;
-import static kitchenpos.application.fixture.dto.ProductDtoFixture.탕수육_응답;
+import static kitchenpos.fixture.dto.ProductDtoFixture.짜장면_요청;
+import static kitchenpos.fixture.dto.ProductDtoFixture.짜장면_응답;
+import static kitchenpos.fixture.dto.ProductDtoFixture.짬뽕_응답;
+import static kitchenpos.fixture.dto.ProductDtoFixture.탕수육_응답;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;

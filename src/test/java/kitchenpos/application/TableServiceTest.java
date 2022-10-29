@@ -1,14 +1,14 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.fixture.MenuGroupFixture.메뉴그룹A;
-import static kitchenpos.application.fixture.OrderTableFixture.createOrderTable;
-import static kitchenpos.application.fixture.ProductFixture.탕수육;
-import static kitchenpos.application.fixture.dto.MenuDtoFixture.createMenuRequest;
-import static kitchenpos.application.fixture.dto.OrderDtoFixture.createOrderRequest;
-import static kitchenpos.application.fixture.dto.OrderTableDtoFixture.createOrderTableRequest;
-import static kitchenpos.application.fixture.dto.OrderTableDtoFixture.forUpdateEmpty;
-import static kitchenpos.application.fixture.dto.OrderTableDtoFixture.forUpdateGuestNumber;
-import static kitchenpos.application.fixture.dto.TableGroupDtoFixture.createTableGroupRequest;
+import static kitchenpos.fixture.domain.MenuGroupFixture.메뉴그룹A;
+import static kitchenpos.fixture.domain.OrderTableFixture.createOrderTable;
+import static kitchenpos.fixture.domain.ProductFixture.탕수육;
+import static kitchenpos.fixture.dto.MenuDtoFixture.createMenuRequest;
+import static kitchenpos.fixture.dto.OrderDtoFixture.createOrderRequest;
+import static kitchenpos.fixture.dto.OrderTableDtoFixture.createOrderTableRequest;
+import static kitchenpos.fixture.dto.OrderTableDtoFixture.forUpdateEmpty;
+import static kitchenpos.fixture.dto.OrderTableDtoFixture.forUpdateGuestNumber;
+import static kitchenpos.fixture.dto.TableGroupDtoFixture.createTableGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;

@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.fixture.MenuGroupFixture.메뉴그룹A;
-import static kitchenpos.application.fixture.MenuGroupFixture.메뉴그룹B;
+import static kitchenpos.fixture.domain.MenuGroupFixture.메뉴그룹A;
+import static kitchenpos.fixture.domain.MenuGroupFixture.메뉴그룹B;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 

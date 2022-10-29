@@ -1,4 +1,4 @@
-package kitchenpos.application.fixture.dto;
+package kitchenpos.fixture.dto;
 
 import java.util.Arrays;
 import java.util.List;

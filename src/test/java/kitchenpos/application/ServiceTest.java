@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.fixture.dto.OrderDtoFixture.forUpdateStatus;
+import static kitchenpos.fixture.dto.OrderDtoFixture.forUpdateStatus;
 
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;

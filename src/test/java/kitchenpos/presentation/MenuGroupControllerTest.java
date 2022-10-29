@@ -1,9 +1,9 @@
 package kitchenpos.presentation;
 
-import static kitchenpos.application.fixture.dto.MenuGroupDtoFixture.메뉴그룹A_요청;
-import static kitchenpos.application.fixture.dto.MenuGroupDtoFixture.메뉴그룹A_응답;
-import static kitchenpos.application.fixture.dto.MenuGroupDtoFixture.메뉴그룹B_응답;
-import static kitchenpos.application.fixture.dto.MenuGroupDtoFixture.메뉴그룹C_응답;
+import static kitchenpos.fixture.dto.MenuGroupDtoFixture.메뉴그룹A_요청;
+import static kitchenpos.fixture.dto.MenuGroupDtoFixture.메뉴그룹A_응답;
+import static kitchenpos.fixture.dto.MenuGroupDtoFixture.메뉴그룹B_응답;
+import static kitchenpos.fixture.dto.MenuGroupDtoFixture.메뉴그룹C_응답;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;

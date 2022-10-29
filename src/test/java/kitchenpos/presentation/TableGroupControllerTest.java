@@ -1,7 +1,7 @@
 package kitchenpos.presentation;
 
-import static kitchenpos.application.fixture.dto.OrderTableDtoFixture.빈테이블_응답;
-import static kitchenpos.application.fixture.dto.OrderTableDtoFixture.테이블_응답;
+import static kitchenpos.fixture.dto.OrderTableDtoFixture.빈테이블_응답;
+import static kitchenpos.fixture.dto.OrderTableDtoFixture.테이블_응답;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
@@ -16,10 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dto.request.EmptyRequest;
-import kitchenpos.dto.request.NumberOfGuestsRequest;
 import kitchenpos.dto.request.TableGroupRequest;
-import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
