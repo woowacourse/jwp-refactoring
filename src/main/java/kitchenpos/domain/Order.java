@@ -17,13 +17,12 @@ public class Order {
     public Order() {
     }
 
-    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        validateOrderLineItemIsNotEmpty(orderLineItems);
-        this.orderTableId = orderTableId;
-        this.orderLineItems = orderLineItems;
+    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
     public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
+        validateOrderLineItemIsNotEmpty(orderLineItems);
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
