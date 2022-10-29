@@ -5,7 +5,7 @@ import static kitchenpos.fixture.MenuFixture.getMenuRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.Menu;
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

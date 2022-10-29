@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.tablegroup.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

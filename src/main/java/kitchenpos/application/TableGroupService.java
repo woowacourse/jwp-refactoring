@@ -6,8 +6,8 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.tablegroup.TableGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

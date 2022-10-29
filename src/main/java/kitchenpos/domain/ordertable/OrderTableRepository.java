@@ -1,4 +1,4 @@
-package kitchenpos.dao.repository;
+package kitchenpos.domain.ordertable;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -7,7 +7,6 @@ import kitchenpos.dao.JdbcTemplateOrderDao;
 import kitchenpos.dao.JdbcTemplateOrderTableDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Repository;
 
 @Repository
