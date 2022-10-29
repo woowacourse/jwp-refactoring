@@ -53,13 +53,13 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final Menu menu = menuRequest.toEntity(menuGroup);
+        final Menu menu = null;
+
         final Menu savedMenu = menuDao.save(menu);
 
-        final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menu.getMenuProducts()) {
-            menuProduct.setMenuId(menuId);
+            menuProduct.setMenu(savedMenu);
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
         savedMenu.setMenuProducts(savedMenuProducts);

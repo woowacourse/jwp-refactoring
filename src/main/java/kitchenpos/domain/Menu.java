@@ -51,6 +51,10 @@ public class Menu {
         return menuGroup.getId();
     }
 
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
+    }
+
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
