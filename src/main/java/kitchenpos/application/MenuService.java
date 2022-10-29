@@ -34,7 +34,7 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
         if (!menuGroupDao.existsById(request.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴 그룹이 존재 하지 않습니다.");
         }
         final Menu menu = new Menu(
                 request.getName(),
@@ -56,7 +56,7 @@ public class MenuService {
 
     private Product getProductById(final Long productId) {
         return productDao.findById(productId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품이 존재합니다."));
     }
 
     @Transactional(readOnly = true)

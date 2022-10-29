@@ -47,7 +47,7 @@ public class TableService {
     private void validateCookingOrMeal(final Long orderTableId) {
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 테이블의 주문 상태가 조리, 식사라면 상태를 변경할 수 없습니다.");
         }
     }
 

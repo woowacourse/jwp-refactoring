@@ -59,7 +59,7 @@ public class TableGroupService {
 
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 상태가 조리, 식사 상태면 해제할 수 없습니다.");
         }
     }
 }

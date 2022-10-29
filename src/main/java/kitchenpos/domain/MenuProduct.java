@@ -23,13 +23,6 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity) {
-        this.seq = seq;
-        this.menuId = menuId;
-        this.productId = productId;
-        this.quantity = quantity;
-    }
-
     public void setSeq(final Long seq) {
         this.seq = seq;
     }

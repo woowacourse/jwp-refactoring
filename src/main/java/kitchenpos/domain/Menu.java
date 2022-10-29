@@ -36,7 +36,7 @@ public class Menu {
 
     private void validatePrice(final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("가격은 0원 이상이어야 합니다.");
         }
     }
 
@@ -45,7 +45,7 @@ public class Menu {
                 .map(MenuProduct::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         if (!sum.equals(BigDecimal.ZERO) && price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴의 가격은 메뉴 상품 가격의 합계보다 클 수 없습니다.");
         }
     }
 

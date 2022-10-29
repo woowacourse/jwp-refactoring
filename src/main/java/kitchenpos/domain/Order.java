@@ -37,13 +37,13 @@ public class Order {
 
     private static void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 항목이 비어있습니다.");
         }
     }
 
     public void checkMenuSize(final long size) {
         if (orderLineItems.size() != size) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 항목의 크기가 메뉴의 크기와 같지 않습니다.");
         }
     }
 
@@ -55,7 +55,7 @@ public class Order {
 
     public void changeOrderStatus(final OrderStatus orderStatus) {
         if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문의 상태가 계산 완료일 때 상태를 변경할 수 없습니다.");
         }
         this.orderStatus = orderStatus.name();
     }

@@ -20,18 +20,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
     private final MenuDao menuDao;
     private final OrderDao orderDao;
-    private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
 
     public OrderService(
             final MenuDao menuDao,
             final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
             final OrderTableDao orderTableDao
     ) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
-        this.orderLineItemDao = orderLineItemDao;
         this.orderTableDao = orderTableDao;
     }
 
@@ -41,7 +38,7 @@ public class OrderService {
         final OrderTable orderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 테이블이 비어 있을 수 없습니다.");
         }
         final Order order = new Order(
                 orderTable.getId(),

@@ -21,7 +21,7 @@ public class TableGroup {
     public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this.id = id;
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 테이블들은 2개 이상이어야 합니다.");
         }
         for (OrderTable orderTable : orderTables) {
             validateTableGroping(orderTable);
@@ -36,6 +36,12 @@ public class TableGroup {
         }
         if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId())) {
             throw new IllegalArgumentException();
+        }
+    }
+
+    public void checkOrderTableSize(final int size) {
+        if (orderTables.size() != size) {
+            throw new IllegalArgumentException("주문 테이블들의 사이즈가 해당 사이즈와 같지 않습니다.");
         }
     }
 
@@ -61,11 +67,5 @@ public class TableGroup {
 
     public void setOrderTables(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
-    }
-
-    public void checkOrderTableSize(final int size) {
-        if (orderTables.size() != size) {
-            throw new IllegalArgumentException();
-        }
     }
 }

@@ -21,17 +21,17 @@ public class OrderTable {
 
     public void changeEmpty(final boolean empty) {
         if (Objects.nonNull(tableGroupId)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("단체 지정이 되어 있으면 empty값을 변경 할 수 없습니다.");
         }
         this.empty = empty;
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("방문한 손님 수는 0 이상이어야 합니다.");
         }
         if (empty) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("빈 테이블이면 방문한 손님 수를 변경할 수 없습니다.");
         }
         this.numberOfGuests = numberOfGuests;
     }
