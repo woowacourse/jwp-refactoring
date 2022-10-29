@@ -5,7 +5,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import java.util.List;
 import kitchenpos.ApplicationTest;
 import kitchenpos.application.request.MenuGroupCreateRequest;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.application.response.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,15 +19,15 @@ class MenuGroupServiceTest {
     void create() {
         MenuGroupCreateRequest request = new MenuGroupCreateRequest("name");
 
-        MenuGroup savedMenuGroup = menuGroupService.create(request);
+        MenuGroupResponse response = menuGroupService.create(request);
 
-        assertThat(savedMenuGroup.getId()).isNotNull();
+        assertThat(response.getId()).isNotNull();
     }
 
     @Test
     void list() {
-        List<MenuGroup> menuGroups = menuGroupService.list();
+        List<MenuGroupResponse> response = menuGroupService.list();
 
-        assertThat(menuGroups.size()).isEqualTo(4);
+        assertThat(response.size()).isEqualTo(4);
     }
 }

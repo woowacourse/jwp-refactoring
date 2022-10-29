@@ -9,7 +9,7 @@ class ProductTest {
 
     @Test
     void validatePrice() {
-        assertThatThrownBy(() -> Product.of("name", BigDecimal.valueOf(-10)))
+        assertThatThrownBy(() -> new Product("name", BigDecimal.valueOf(-10)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("product의 가격은 0원 이상이어야 합니다.");
     }

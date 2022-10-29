@@ -6,7 +6,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.ApplicationTest;
-import kitchenpos.domain.Product;
+import kitchenpos.application.request.ProductRequest;
+import kitchenpos.application.response.ProductResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,24 +19,24 @@ class ProductServiceTest {
 
     @Test
     void create() {
-        Product request = Product.of("name", BigDecimal.valueOf(1000));
+        ProductRequest request = new ProductRequest("name", BigDecimal.valueOf(1000));
 
-        Product savedProduct = productService.create(request);
+        ProductResponse response = productService.create(request);
 
-        assertThat(savedProduct.getId()).isNotNull();
+        assertThat(response.getId()).isNotNull();
     }
 
     @Test
     void createThrowExceptionWhenPriceNegative() {
-        assertThatThrownBy(() -> productService.create(Product.of("name", BigDecimal.valueOf(-10))))
+        assertThatThrownBy(() -> productService.create(new ProductRequest("name", BigDecimal.valueOf(-10))))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("product의 가격은 0원 이상이어야 합니다.");
     }
 
     @Test
     void list() {
-        List<Product> products = productService.list();
+        List<ProductResponse> response = productService.list();
 
-        assertThat(products.size()).isEqualTo(6);
+        assertThat(response.size()).isEqualTo(6);
     }
 }
