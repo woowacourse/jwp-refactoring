@@ -5,8 +5,10 @@ import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_MENU_EXCE
 import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.ui.dto.OrderRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +38,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문메뉴가_null_이면_예외를_반환한다() {
-        final Order 주문 = new Order(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), null);
+        final OrderRequest 주문 = new OrderRequest(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
 
         Assertions.assertThatThrownBy(() -> orderService.create(주문))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -44,7 +46,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 없는_메뉴를_주문_할_경우_예외를_반환한다() {
-        final Order 주문 = 주문_생성(OrderStatus.COOKING);
+        final OrderRequest 주문 = 주문_요청_생성(OrderStatus.COOKING);
 
         메뉴존재유뮤세팅(0L);
 
@@ -55,7 +57,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 없는_테이블에_주문_할_경우_예외를_반환한다() {
-        final Order 주문 = 주문_생성(OrderStatus.COOKING);
+        final OrderRequest 주문 = 주문_요청_생성(OrderStatus.COOKING);
 
         메뉴존재유뮤세팅(1L);
         존재하지않는_테이블_세팅();
@@ -63,19 +65,5 @@ class OrderServiceTest extends ServiceTest {
         Assertions.assertThatThrownBy(() -> orderService.create(주문))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(NOT_FOUND_TABLE_EXCEPTION.getMessage());
-    }
-
-    @Test
-    void 이미_완료된_주문의_상태를_변경_할_경우_예외를_반환한다() {
-
-        final Order 주문 = 주문_생성(OrderStatus.COOKING);
-
-        메뉴존재유뮤세팅(1L);
-        존재하는_테이블_세팅();
-        완료된_주문_조회();
-
-        Assertions.assertThatThrownBy(() -> orderService.changeOrderStatus(1L, 주문))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(INVALID_CHANGE_ORDER_STATUS_EXCEPTION.getMessage());
     }
 }

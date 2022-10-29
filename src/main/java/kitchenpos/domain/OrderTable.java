@@ -1,9 +1,6 @@
 package kitchenpos.domain;
 
-import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
-
 import java.util.Objects;
-import kitchenpos.application.exception.CustomIllegalArgumentException;
 
 public class OrderTable {
     private Long id;
@@ -21,14 +18,20 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    private void validTableGroup(final Long tableGroupId) {
-        if (Objects.nonNull(tableGroupId)) {
-            throw new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION);
-        }
-    }
-
     public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this(null, tableGroupId, numberOfGuests, empty);
+    }
+
+    public boolean hasGuest() {
+        return numberOfGuests > 0;
+    }
+
+    public boolean hasTableGroup() {
+        return Objects.nonNull(tableGroupId);
+    }
+
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
     }
 
     public Long getId() {
@@ -49,10 +52,6 @@ public class OrderTable {
 
     public int getNumberOfGuests() {
         return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
     }
 
     public boolean isEmpty() {

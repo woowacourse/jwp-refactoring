@@ -1,36 +1,29 @@
-package kitchenpos.domain;
+package kitchenpos.ui.dto;
 
-public class OrderLineItem {
+import kitchenpos.domain.OrderLineItem;
+
+public class OrderLineItemRequest {
     private Long seq;
     private Long orderId;
     private Long menuId;
     private long quantity;
 
-    public OrderLineItem() {
+    public OrderLineItemRequest() {
     }
 
-    public OrderLineItem(final Long seq, final Long orderId, final Long menuId, final long quantity) {
+    public OrderLineItemRequest(final Long seq, final Long orderId, final Long menuId, final long quantity) {
         this.seq = seq;
         this.orderId = orderId;
         this.menuId = menuId;
         this.quantity = quantity;
     }
 
-    public OrderLineItem(final Long orderId, final Long menuId, final long quantity) {
-        this(null, orderId, menuId, quantity);
-    }
-
     public Long getSeq() {
         return seq;
     }
 
-
     public Long getOrderId() {
         return orderId;
-    }
-
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
     }
 
     public Long getMenuId() {
@@ -39,5 +32,9 @@ public class OrderLineItem {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public OrderLineItem toOrderLineItem() {
+        return new OrderLineItem(seq, orderId, menuId, quantity);
     }
 }

@@ -2,6 +2,8 @@ package kitchenpos.application;
 
 import static kitchenpos.application.exception.ExceptionType.INVALID_TABLE_UNGROUP_EXCEPTION;
 import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
+import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.OrderStatus.MEAL;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,7 +12,6 @@ import kitchenpos.application.exception.CustomIllegalArgumentException;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.OrderTableRequest;
@@ -49,12 +50,9 @@ public class TableGroupService {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTableRequest::getId)
                 .collect(Collectors.toList());
-
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-        return savedOrderTables;
+        return orderTableDao.findAllByIdIn(orderTableIds);
     }
 
-    @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
 
@@ -62,17 +60,19 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        // todo 주문 상태가 요리중인지, 식사중인지 검증하는 로직은 Order 안에 있어야지
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new CustomIllegalArgumentException(INVALID_TABLE_UNGROUP_EXCEPTION);
-        }
+        validChangeOrderTableStatusCondition(orderTableIds);
 
-        // todo 상태를 변경하는 로직도 Order 안에 있어야지
         for (final OrderTable orderTable : orderTables) {
             orderTable.setTableGroupId(null);
             orderTable.setEmpty(false);
             orderTableDao.save(orderTable);
+        }
+    }
+
+    private void validChangeOrderTableStatusCondition(final List<Long> orderTableIds) {
+        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
+                orderTableIds, Arrays.asList(COOKING.name(), MEAL.name()))) {
+            throw new CustomIllegalArgumentException(INVALID_TABLE_UNGROUP_EXCEPTION);
         }
     }
 }

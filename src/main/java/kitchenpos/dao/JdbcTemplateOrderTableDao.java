@@ -1,5 +1,11 @@
 package kitchenpos.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.sql.DataSource;
 import kitchenpos.domain.OrderTable;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -8,13 +14,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Repository
 public class JdbcTemplateOrderTableDao {
@@ -31,7 +30,7 @@ public class JdbcTemplateOrderTableDao {
                 .usingGeneratedKeyColumns(KEY_COLUMN_NAME);
     }
 
-//    @Override
+    //    @Override
     public OrderTable save(final OrderTable entity) {
         if (Objects.isNull(entity.getId())) {
             final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
@@ -42,7 +41,7 @@ public class JdbcTemplateOrderTableDao {
         return entity;
     }
 
-//    @Override
+    //    @Override
     public Optional<OrderTable> findById(final Long id) {
         try {
             return Optional.of(select(id));
@@ -93,11 +92,11 @@ public class JdbcTemplateOrderTableDao {
     }
 
     private OrderTable toEntity(final ResultSet resultSet) throws SQLException {
-        final OrderTable entity = new OrderTable();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setTableGroupId(resultSet.getObject("table_group_id", Long.class));
-        entity.setNumberOfGuests(resultSet.getInt("number_of_guests"));
-        entity.setEmpty(resultSet.getBoolean("empty"));
-        return entity;
+        return new OrderTable(
+                resultSet.getLong(KEY_COLUMN_NAME),
+                resultSet.getObject("table_group_id", Long.class),
+                resultSet.getInt("number_of_guests"),
+                resultSet.getBoolean("empty")
+        );
     }
 }

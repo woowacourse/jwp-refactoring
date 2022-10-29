@@ -28,8 +28,8 @@ class OrderTableRepository implements OrderTableDao{
 
     @Override
     public OrderTable save(final OrderTable entity) {
-        entity.setTableGroupId(entity.getId());
-        entity.setEmpty(false);
+        entity.setId(null);
+        entity.setTableGroupId(null);
         return orderTableDao.save(entity);
     }
 

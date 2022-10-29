@@ -7,7 +7,6 @@ import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXC
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.application.exception.CustomIllegalArgumentException;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -28,57 +27,52 @@ public class TableService {
     }
 
     public OrderTable create(final OrderTable orderTable) {
-        // todo 왜 setId를 해주는지?
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-
         return orderTableDao.save(orderTable);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTable> list() {
         return orderTableDao.findAll();
     }
 
-    @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION));
+        final OrderTable savedOrderTable = getOrderTable(orderTableId);
 
-        // todo 진행중인 테이블이 존재하는지 검증하는 로직이니까 OrderTable 로 이동
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new CustomIllegalArgumentException(INVALID_PROCEEDING_TABLE_GROUP_EXCEPTION);
-        }
+        validTableGroupCondition(savedOrderTable);
+        validExistOrderTables(orderTableId);
 
-        // todo 요리중이거나, 식사중인 주문이 있는지 검증하는 로직이라서  Order -> OrderStatus 로 가는게 맞지 않을까
+        savedOrderTable.setEmpty(orderTable.isEmpty());
+        return orderTableDao.save(savedOrderTable);
+    }
+
+    private void validExistOrderTables(final Long orderTableId) {
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new CustomIllegalArgumentException(INVALID_TABLE_UNGROUP_EXCEPTION);
         }
+    }
 
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+    private void validTableGroupCondition(final OrderTable savedOrderTable) {
+        if (savedOrderTable.hasTableGroup()) {
+            throw new CustomIllegalArgumentException(INVALID_PROCEEDING_TABLE_GROUP_EXCEPTION);
+        }
+    }
+
+    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
+        final int numberOfGuests = orderTable.getNumberOfGuests();
+
+        if (!orderTable.hasGuest()) {
+            throw new CustomIllegalArgumentException(INVALID_CHANGE_NUMBER_OF_GUEST);
+        }
+
+        final OrderTable savedOrderTable = getOrderTable(orderTableId);
+        savedOrderTable.changeNumberOfGuests(numberOfGuests);
 
         return orderTableDao.save(savedOrderTable);
     }
 
-    @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
-
-        // :todo OrderTable 내에 인원 검증 로직이니까 이동
-        if (numberOfGuests < 0) {
-            throw new CustomIllegalArgumentException(INVALID_CHANGE_NUMBER_OF_GUEST);
-        }
-
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+    private OrderTable getOrderTable(final Long orderTableId) {
+        return orderTableDao.findById(orderTableId)
                 .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION));
-
-        // :todo OrderTable 없는 테이블에 대한 요청인지 검증
-        if (savedOrderTable.isEmpty()) {
-            throw new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION);
-        }
-
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
-        return orderTableDao.save(savedOrderTable);
     }
 }
