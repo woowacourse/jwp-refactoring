@@ -4,8 +4,8 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.CreateMenuDto;
 import kitchenpos.application.dto.request.CreateMenuProductDto;
 import kitchenpos.application.dto.response.MenuDto;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.menu.Menu;
@@ -22,23 +22,23 @@ import java.util.List;
 public class MenuService {
 
     private final MenuRepository menuRepository;
-    private final MenuGroupDao menuGroupDao;
+    private final MenuGroupRepository menuGroupRepository;
     private final MenuProductDao menuProductDao;
     private final ProductDao productDao;
 
     public MenuService(MenuRepository menuRepository,
-                       MenuGroupDao menuGroupDao,
+                       MenuGroupRepository menuGroupRepository,
                        MenuProductDao menuProductDao,
                        ProductDao productDao) {
         this.menuRepository = menuRepository;
-        this.menuGroupDao = menuGroupDao;
+        this.menuGroupRepository = menuGroupRepository;
         this.menuProductDao = menuProductDao;
         this.productDao = productDao;
     }
 
     @Transactional
     public MenuDto create(final CreateMenuDto createMenuDto) {
-        if (!menuGroupDao.existsById(createMenuDto.getMenuGroupId())) {
+        if (!menuGroupRepository.existsById(createMenuDto.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
         final List<ProductQuantity> menuProductQuantities = getMenuProductQuantities(createMenuDto.getMenuProducts());
