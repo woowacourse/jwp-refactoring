@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixtures.domain.MenuProductFixture.createMenuProduct;
 import static kitchenpos.fixtures.domain.OrderFixture.createOrder;
 import static kitchenpos.fixtures.domain.OrderLineItemFixture.createOrderLineItem;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -9,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
@@ -50,7 +50,7 @@ class OrderServiceTest extends ServiceTest {
         savedMenuGroup = saveMenuGroup("메뉴 그룹");
         savedProduct = saveProduct("상품", 5_000);
         savedMenu = saveMenu("메뉴", 10_000, savedMenuGroup.toEntity(), List.of(
-                createMenuProduct(savedProduct.getId(), 10)
+                new MenuProduct(savedProduct.getId(), 10)
         ));
         createdOrderLineItem = createOrderLineItem(savedMenu.getId(), 10);
 

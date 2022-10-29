@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixtures.domain.MenuProductFixture.createMenuProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -41,7 +40,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_CreateMenu() {
             // given
-            MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
+            MenuProduct menuProduct = new MenuProduct(savedProduct.getId(), 1L);
 
             MenuRequest request = new MenuRequest(
                     "세트1",
@@ -65,7 +64,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_MenuGroupDoesNotExist() {
             // given
-            MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
+            MenuProduct menuProduct = new MenuProduct(savedProduct.getId(), 1L);
 
             MenuRequest request = new MenuRequest(
                     "세트1",
@@ -83,7 +82,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_ProductDoesNotExistInMenuProductList() {
             // given
-            MenuProduct notSavedMenuProduct = createMenuProduct(savedProduct.getId() + 1, 1L);
+            MenuProduct notSavedMenuProduct = new MenuProduct(savedProduct.getId() + 1, 1L);
 
             MenuRequest request = new MenuRequest(
                     "세트1",
@@ -101,7 +100,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_MenuPriceIsBiggerThanSumOfProductOfProductPriceAndQuantity() {
             // given
-            MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
+            MenuProduct menuProduct = new MenuProduct(savedProduct.getId(), 1L);
 
             MenuRequest request = new MenuRequest(
                     "세트1",
@@ -127,7 +126,7 @@ class MenuServiceTest extends ServiceTest {
             MenuGroupResponse menuGroup = saveMenuGroup("메뉴 그룹");
 
             ProductResponse product = saveProduct("상품", 1_000_000);
-            MenuProduct menuProduct = createMenuProduct(product.getId(), 1L);
+            MenuProduct menuProduct = new MenuProduct(product.getId(), 1L);
 
             int expected = 4;
             for (int i = 0; i < expected; i++) {
