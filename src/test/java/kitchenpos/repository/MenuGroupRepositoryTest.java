@@ -70,7 +70,7 @@ class MenuGroupRepositoryTest {
     }
 
     @Test
-    void existsByIdWithEmptyId() {
+    void existsByIdWithInvalidId() {
         // given
         long invalidId = 999L;
 

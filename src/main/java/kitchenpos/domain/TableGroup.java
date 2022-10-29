@@ -32,28 +32,28 @@ public class TableGroup {
     }
 
     public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
-        validateOrderTablesLength(orderTables);
         groupOrderTables(orderTables);
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
 
-    private void validateOrderTablesLength(List<OrderTable> orderTables) {
+    private void groupOrderTables(List<OrderTable> orderTables) {
+        validateOrderTablesSize(orderTables);
+        for (OrderTable orderTable : orderTables) {
+            orderTable.group(this);
+        }
+    }
+
+    private void validateOrderTablesSize(List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
         }
     }
 
-    private void groupOrderTables(List<OrderTable> orderTables) {
-        for (OrderTable orderTable : orderTables) {
-            orderTable.beGrouped(this);
-        }
-    }
-
     public void ungroupOrderTables() {
         for (OrderTable orderTable : orderTables) {
-            orderTable.beUngrouped();
+            orderTable.ungroup();
         }
     }
 

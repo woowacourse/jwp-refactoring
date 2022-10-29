@@ -97,7 +97,7 @@ public class OrderTable {
         this.orders.add(order);
     }
 
-    public void beGrouped(TableGroup tableGroup) {
+    public void group(TableGroup tableGroup) {
         validateEmpty();
         this.empty = false;
         this.tableGroup = tableGroup;
@@ -109,7 +109,7 @@ public class OrderTable {
         }
     }
 
-    public void beUngrouped() {
+    public void ungroup() {
         validateOrderCompleted();
         this.tableGroup = null;
         this.empty = false;

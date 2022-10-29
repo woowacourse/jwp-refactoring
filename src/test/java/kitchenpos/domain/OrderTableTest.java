@@ -86,7 +86,7 @@ class OrderTableTest {
         OrderTable orderTable = new OrderTable(0, empty);
 
         // when
-        orderTable.beGrouped(tableGroup);
+        orderTable.group(tableGroup);
 
         // then
         assertThat(orderTable.getTableGroup()).isSameAs(tableGroup);
@@ -100,7 +100,7 @@ class OrderTableTest {
         TableGroup tableGroup = TableGroupFixtures.createTableGroup();
 
         // when & then
-        assertThatThrownBy(() -> orderTable.beGrouped(tableGroup))
+        assertThatThrownBy(() -> orderTable.group(tableGroup))
                 .isInstanceOf(IllegalStateException.class);
     }
 
@@ -111,7 +111,7 @@ class OrderTableTest {
         OrderTable orderTable = new OrderTable(tableGroup, 0, true);
 
         // when & then
-        assertThatThrownBy(() -> orderTable.beGrouped(tableGroup))
+        assertThatThrownBy(() -> orderTable.group(tableGroup))
                 .isInstanceOf(IllegalStateException.class);
     }
 
@@ -124,7 +124,7 @@ class OrderTableTest {
         orderTable.addOrder(order);
 
         // when
-        orderTable.beUngrouped();
+        orderTable.ungroup();
 
         // then
         assertThat(orderTable.getTableGroup()).isNull();
@@ -139,7 +139,7 @@ class OrderTableTest {
         orderTable.addOrder(order);
 
         // when & then
-        assertThatThrownBy(orderTable::beUngrouped)
+        assertThatThrownBy(orderTable::ungroup)
                 .isInstanceOf(IllegalStateException.class);
     }
 }
