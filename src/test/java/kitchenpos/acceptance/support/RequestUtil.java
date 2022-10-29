@@ -7,7 +7,7 @@ import org.springframework.http.MediaType;
 
 public class RequestUtil {
 
-    static protected ExtractableResponse<Response> get(final String uri) {
+    public static ExtractableResponse<Response> get(final String uri) {
         return RestAssured.given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when().get(uri)
@@ -15,7 +15,7 @@ public class RequestUtil {
                 .extract();
     }
 
-    static protected ExtractableResponse<Response> post(final String uri, final Object body) {
+    public static ExtractableResponse<Response> post(final String uri, final Object body) {
         return RestAssured.given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(body)
@@ -24,7 +24,7 @@ public class RequestUtil {
                 .extract();
     }
 
-    static protected ExtractableResponse<Response> put(final String uri, final Object body) {
+    public static ExtractableResponse<Response> put(final String uri, final Object body) {
         return RestAssured.given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(body)
@@ -33,7 +33,7 @@ public class RequestUtil {
                 .extract();
     }
 
-    static protected ExtractableResponse<Response> delete(final String uri) {
+    public static ExtractableResponse<Response> delete(final String uri) {
         return RestAssured.given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when().delete(uri)
