@@ -42,7 +42,9 @@ class TableServiceTest extends ServiceTest {
 
     @Test
     void 테이블을_비운다() {
-        OrderTableResponse result = tableService.changeEmpty(테이블_생성(false).getId(), 테이블(true));
+        OrderTable orderTable = 테이블_생성(false);
+
+        OrderTableResponse result = tableService.changeEmpty(orderTable.getId(), 테이블(true));
 
         assertThat(result.isEmpty()).isTrue();
     }
@@ -50,7 +52,8 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 테이블을_비울때_테이블이_존재하지_않을_경우_예외를_발생시킨다() {
         assertThatThrownBy(() -> tableService.changeEmpty(-1L, null))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(IllegalArgumentException.class)
+                .hasMessage("테이블을 비우기위한 테이블이 존재하지 않습니다.");
     }
 
     @Test
@@ -60,7 +63,8 @@ class TableServiceTest extends ServiceTest {
         orderService.create(request);
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedTable.getId(), new OrderTable(0, true)))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(IllegalArgumentException.class)
+                .hasMessage("조리중이거나 식사중인 테이블이 있는 경우 테이블을 비울 수 없습니다.");
     }
 
     @Test
@@ -70,12 +74,14 @@ class TableServiceTest extends ServiceTest {
         orderService.changeOrderStatus(savedOrder.getId(), OrderStatus.MEAL);
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedTable.getId(), new OrderTable(0, true)))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(IllegalArgumentException.class)
+                .hasMessage("조리중이거나 식사중인 테이블이 있는 경우 테이블을 비울 수 없습니다.");
     }
 
     @Test
     void 테이블의_손님수를_변경한다() {
         OrderTable savedTable = 테이블_생성(false);
+        테이블집합_생성(savedTable);
 
         savedTable.changeNumberOfGuests(1);
         OrderTableResponse result = tableService.changeNumberOfGuests(savedTable.getId(), savedTable);
@@ -89,13 +95,15 @@ class TableServiceTest extends ServiceTest {
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(
                 savedTable.getId(), new OrderTable(-1, false)))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(IllegalArgumentException.class)
+                .hasMessage("손님의 수는 음수일 수 없습니다.");
     }
 
     @Test
     void 테이블의_손님수를_변경할때_테이블이_존재하지_않는_경우_예외를_발생시킨다() {
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(-1L, 테이블(false)))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(IllegalArgumentException.class)
+                .hasMessage("테이블의 손님 수를 변경하기 위한 테이블이 존재하지 않습니다.");
     }
 
     @Test
@@ -103,6 +111,7 @@ class TableServiceTest extends ServiceTest {
         OrderTable savedTable = 테이블_생성(true);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedTable.getId(), 테이블(true)))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(IllegalArgumentException.class)
+                .hasMessage("테이블의 손님 수를 변경하기 위한 테이블이 비어있습니다.");
     }
 }

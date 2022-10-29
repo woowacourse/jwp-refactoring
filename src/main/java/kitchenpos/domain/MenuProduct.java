@@ -3,58 +3,47 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 
 public class MenuProduct {
-    private Long seq;
-    private Long menuId;
-    private Long productId;
-    private long quantity;
+    private final Long seq;
+    private final Long menuId;
+    private final Long productId;
+    private final long quantity;
 
-    private BigDecimal price;
+    private final BigDecimal price;
 
-    public MenuProduct(Long menuId, Long productId, long quantity) {
+    private MenuProduct(Long seq, Long menuId, Long productId, long quantity, BigDecimal price) {
+        this.seq = seq;
         this.menuId = menuId;
         this.productId = productId;
         this.quantity = quantity;
+        this.price = price;
+    }
+
+    public MenuProduct(Long seq, Long menuId, Long productId, long quantity) {
+        this(seq, menuId, productId, quantity, null);
+    }
+
+    public MenuProduct(Long menuId, Long productId, long quantity) {
+        this(null, menuId, productId, quantity, null);
     }
 
     public MenuProduct(Long productId, BigDecimal price, long quantity) {
-        this.productId = productId;
-        this.price = price;
-        this.quantity = quantity;
-    }
-
-    public MenuProduct() {
+        this(null, null, productId, quantity, price);
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
-
     public Long getMenuId() {
         return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
     }
 
     public Long getProductId() {
         return productId;
     }
 
-    public void setProductId(final Long productId) {
-        this.productId = productId;
-    }
-
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 
     public BigDecimal getPrice() {

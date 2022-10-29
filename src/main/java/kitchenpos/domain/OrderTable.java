@@ -1,8 +1,8 @@
 package kitchenpos.domain;
 
 public class OrderTable {
-    private Long id;
-    private Long tableGroupId;
+    private final Long id;
+    private final Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
@@ -22,12 +22,9 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
-    public OrderTable() {
-    }
-
     public void validateGuestNumber(int numberOfGuests) {
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("손님의 수는 음수일 수 없습니다.");
         }
     }
 
@@ -35,16 +32,8 @@ public class OrderTable {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Long getTableGroupId() {
         return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
     }
 
     public int getNumberOfGuests() {

@@ -11,17 +11,17 @@ class OrderTest {
 
     @Test
     void 주문_생성() {
-        Assertions.assertDoesNotThrow(() -> new Order(1L, List.of(new OrderLineItem(1L, 1))));
+        Assertions.assertDoesNotThrow(() -> new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, 1))));
     }
 
     @Test
     void 주문_정보가_없는_경우_예외를_발생시킨다() {
-        assertThatThrownBy(() -> new Order(1L, null));
+        assertThatThrownBy(() -> new Order(1L, OrderStatus.COOKING, null));
     }
 
     @Test
     void 주문의_상태를_확인한다() {
-        Order order = new Order(1L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1)));
+        Order order = new Order(1L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1L, 1)));
         assertThat(order.equalStatus(OrderStatus.COMPLETION)).isTrue();
     }
 }

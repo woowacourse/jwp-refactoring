@@ -57,8 +57,7 @@ public class ServiceTest {
     }
 
     public Order 주문_생성() {
-        Order save = orderDao.save(주문(테이블_생성(false).getId(), 메뉴_생성().getId()));
-        return save;
+        return orderDao.save(주문(테이블_생성(false).getId(), 메뉴_생성().getId()));
     }
 
     public Order 주문_생성(Long tableId) {
@@ -67,5 +66,9 @@ public class ServiceTest {
 
     public TableGroup 테이블집합_생성() {
         return tableGroupDao.save(테이블집합(테이블_생성(true), 테이블_생성(true)));
+    }
+
+    public TableGroup 테이블집합_생성(OrderTable orderTable) {
+        return tableGroupDao.save(테이블집합(orderTable, 테이블_생성(true)));
     }
 }

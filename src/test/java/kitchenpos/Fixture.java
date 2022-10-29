@@ -31,12 +31,16 @@ public class Fixture {
         return new Menu("햄버억", new BigDecimal(20_000), menuGroup.getId(), List.of(menuProducts));
     }
 
+    public static OrderTable 테이블(Long tableGroupId, boolean empty) {
+        return new OrderTable(tableGroupId, 1, empty);
+    }
+
     public static OrderTable 테이블(boolean empty) {
         return new OrderTable(1, empty);
     }
 
     public static OrderLineItem 주문정보(Long menuId) {
-        return new OrderLineItem(menuId, 1);
+        return new OrderLineItem(1L, menuId, 1);
     }
 
     public static Order 주문(Long tableId, Long menuId) {

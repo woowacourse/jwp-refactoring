@@ -6,25 +6,28 @@ import java.util.Objects;
 import org.springframework.util.CollectionUtils;
 
 public class Order {
-    private Long id;
-    private Long orderTableId;
+    private final Long id;
+    private final Long orderTableId;
     private OrderStatus orderStatus;
-    private LocalDateTime orderedTime;
+    private final LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
-    public Order(Long orderTableId, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
-        validateEmptyOrderLineItems(orderLineItems);
-        this.orderStatus = orderStatus;
+    private Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
+                  List<OrderLineItem> orderLineItems) {
+        this.id = id;
         this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
         this.orderedTime = LocalDateTime.now();
         this.orderLineItems = orderLineItems;
     }
 
-    public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
-        this(orderTableId, null, orderLineItems);
+    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        this(id, orderTableId, orderStatus, orderedTime, null);
     }
 
-    public Order() {
+    public Order(Long orderTableId, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, orderStatus, null, orderLineItems);
+        validateEmptyOrderLineItems(orderLineItems);
     }
 
     private void validateEmptyOrderLineItems(List<OrderLineItem> orderLineItems) {
@@ -41,16 +44,8 @@ public class Order {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Long getOrderTableId() {
         return orderTableId;
-    }
-
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
     }
 
     public OrderStatus getOrderStatus() {
@@ -63,10 +58,6 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
     }
 
     public List<OrderLineItem> getOrderLineItems() {

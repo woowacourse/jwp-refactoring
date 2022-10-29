@@ -4,32 +4,30 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class TableGroup {
-    private Long id;
-    private LocalDateTime createdDate;
+    private final Long id;
+    private final LocalDateTime createdDate;
     private OrderTables orderTables;
 
-    public TableGroup(List<OrderTable> orderTables) {
+    public TableGroup(Long id, LocalDateTime createdDate, OrderTables orderTables) {
+        this.id = id;
         this.createdDate = LocalDateTime.now();
-        this.orderTables = new OrderTables(orderTables);
+        this.orderTables = orderTables;
     }
 
-    public TableGroup() {
+    public TableGroup(Long id, LocalDateTime createdDate) {
+        this(id, createdDate, null);
+    }
+
+    public TableGroup(List<OrderTable> orderTables) {
+        this(null, null, new OrderTables(orderTables));
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
     }
 
     public List<OrderTable> getOrderTables() {

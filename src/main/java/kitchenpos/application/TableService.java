@@ -38,15 +38,15 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(Long orderTableId, OrderTable orderTable) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("테이블을 비우기위한 테이블이 존재하지 않습니다."));
 
         if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블 그룹에 속해 있어 테이블을 비우지 못합니다.");
         }
 
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("조리중이거나 식사중인 테이블이 있는 경우 테이블을 비울 수 없습니다.");
         }
 
         savedOrderTable.changeEmpty(orderTable.isEmpty());
@@ -59,10 +59,10 @@ public class TableService {
         int numberOfGuests = orderTable.getNumberOfGuests();
 
         OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("테이블의 손님 수를 변경하기 위한 테이블이 존재하지 않습니다."));
 
         if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블의 손님 수를 변경하기 위한 테이블이 비어있습니다.");
         }
 
         OrderTable table = orderTableDao.save(
