@@ -9,6 +9,8 @@ import java.util.List;
 import kitchenpos.dao.fake.FakeMenuGroupDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupResponse;
+import kitchenpos.dto.MenuGroupSaveRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -31,16 +33,11 @@ class MenuGroupServiceTest {
         this.menuGroupService = menuGroupService;
     }
 
-    @BeforeEach
-    void setUp() {
-        FakeMenuGroupDao.deleteAll();
-    }
-
     @Test
     void menuGroup을_생성한다() {
-        MenuGroup 한마리메뉴 = generateMenuGroup("한마리메뉴");
+        MenuGroupSaveRequest 한마리메뉴 = generateMenuGroupSaveRequest("한마리메뉴");
 
-        MenuGroup actual = menuGroupService.create(한마리메뉴);
+        MenuGroupResponse actual = menuGroupService.create(한마리메뉴);
 
         assertThat(actual.getName())
                 .isEqualTo(한마리메뉴.getName());
@@ -54,7 +51,7 @@ class MenuGroupServiceTest {
 
         List<String> actual = menuGroupService.list()
                 .stream()
-                .map(MenuGroup::getName)
+                .map(MenuGroupResponse::getName)
                 .collect(toList());
 
         assertAll(() -> {
