@@ -32,7 +32,7 @@ class JdbcTemplateMenuGroupDaoTest {
 
         @Test
         void save() {
-            final var menuGroup = new MenuGroup("양식");
+            final var menuGroup = newMenuGroup("양식");
             final var actual = menuGroupDao.save(menuGroup);
 
             assertThat(actual.getId()).isPositive();
@@ -50,7 +50,7 @@ class JdbcTemplateMenuGroupDaoTest {
 
         private Map<Long, MenuGroup> saveMenuGroups(final List<String> names) {
             return names.stream()
-                    .map(MenuGroup::new)
+                    .map(JdbcTemplateMenuGroupDaoTest::newMenuGroup)
                     .map(menuGroupDao::save)
                     .collect(Collectors.toMap(MenuGroup::getId, menuGroup -> menuGroup));
         }
@@ -115,5 +115,11 @@ class JdbcTemplateMenuGroupDaoTest {
     private void assertEquals(final MenuGroup actual, final MenuGroup expected) {
         assertThat(actual.getId()).isEqualTo(expected.getId());
         assertThat(actual.getName()).isEqualTo(expected.getName());
+    }
+
+    private static MenuGroup newMenuGroup(final String name) {
+        final var menuGroup = new MenuGroup();
+        menuGroup.setName(name);
+        return menuGroup;
     }
 }

@@ -1,5 +1,6 @@
 package kitchenpos.dao;
 
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.sql.DataSource;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -33,7 +35,7 @@ class JdbcTemplateTableGroupDaoTest {
 
         @Test
         void save() {
-            final var tableGroup = new TableGroup(LocalDateTime.now());
+            final var tableGroup = newTableGroup();
             final var actual = tableGroupDao.save(tableGroup);
 
             assertThat(actual.getId()).isPositive();
@@ -47,8 +49,8 @@ class JdbcTemplateTableGroupDaoTest {
     class SelectTest {
 
         private final Map<Long, TableGroup> savedTableGroups = saveAll(
-                new TableGroup(LocalDateTime.now()),
-                new TableGroup(LocalDateTime.now())
+                newTableGroup(),
+                newTableGroup()
         );
 
         private Map<Long, TableGroup> saveAll(final TableGroup... tableGroups) {
@@ -95,5 +97,16 @@ class JdbcTemplateTableGroupDaoTest {
     private void assertEquals(final TableGroup actual, final TableGroup expected) {
         assertThat(actual.getId()).isEqualTo(expected.getId());
         assertThat(actual.getCreatedDate()).isEqualTo(expected.getCreatedDate());
+    }
+
+    private static TableGroup newTableGroup(final LocalDateTime createdDate, final OrderTable... orderTables) {
+        final var tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(createdDate);
+        tableGroup.setOrderTables(List.of(orderTables));
+        return tableGroup;
+    }
+
+    private static TableGroup newTableGroup(final OrderTable... orderTables) {
+        return newTableGroup(LocalDateTime.now(), orderTables);
     }
 }

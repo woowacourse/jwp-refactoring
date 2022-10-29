@@ -1,6 +1,8 @@
 package kitchenpos.dao;
 
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,7 +36,7 @@ class JdbcTemplateOrderDaoTest {
 
         @Test
         void save() {
-            final var order = new Order(1L, "MEAL", LocalDateTime.now());
+            final var order = newOrder(1L, OrderStatus.MEAL);
             final var actual = orderDao.save(order);
 
             assertThat(actual.getId()).isPositive();
@@ -50,9 +52,9 @@ class JdbcTemplateOrderDaoTest {
     class SelectTest {
 
         final Map<Long, Order> savedOrders = saveAll(
-                new Order(1L, "COOKING", LocalDateTime.now()),
-                new Order(1L, "COMPLETION", LocalDateTime.now()),
-                new Order(2L, "COMPLETION", LocalDateTime.now())
+                newOrder(1L, OrderStatus.COOKING),
+                newOrder(1L, OrderStatus.COMPLETION),
+                newOrder(2L, OrderStatus.COMPLETION)
         );
 
         private Map<Long, Order> saveAll(final Order... orders) {
@@ -165,5 +167,19 @@ class JdbcTemplateOrderDaoTest {
         assertThat(actual.getOrderTableId()).isEqualTo(expected.getOrderTableId());
         assertThat(actual.getOrderStatus()).isEqualTo(expected.getOrderStatus());
         assertThat(actual.getOrderedTime()).isEqualTo(expected.getOrderedTime());
+    }
+
+    private static Order newOrder(final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime localDateTime,
+                           final OrderLineItem... orderLineItems) {
+        final var order = new Order();
+        order.setOrderTableId(orderTableId);
+        order.setOrderStatus(orderStatus.name());
+        order.setOrderedTime(localDateTime);
+        order.setOrderLineItems(List.of(orderLineItems));
+        return order;
+    }
+
+    private static Order newOrder(final Long orderTableId, final OrderStatus orderStatus, final OrderLineItem... orderLineItems) {
+        return newOrder(orderTableId, orderStatus, LocalDateTime.now(), orderLineItems);
     }
 }

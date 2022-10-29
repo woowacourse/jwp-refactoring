@@ -34,7 +34,7 @@ class JdbcTemplateOrderLineItemDaoTest {
 
         @Test
         void save() {
-            final var orderLineItem = new OrderLineItem(1L, 2L, 30);
+            final var orderLineItem = newOrderLineItem(1L, 2L, 30);
             final var actual = orderLineItemDao.save(orderLineItem);
 
             assertThat(actual.getSeq()).isPositive();
@@ -51,9 +51,9 @@ class JdbcTemplateOrderLineItemDaoTest {
     class SelectTest {
 
         private final Map<Long, OrderLineItem> savedOrderLineItems = saveAll(
-                new OrderLineItem(1L, 2L, 30),
-                new OrderLineItem(1L, 3L, 40),
-                new OrderLineItem(2L, 4L, 0)
+                newOrderLineItem(1L, 2L, 30),
+                newOrderLineItem(1L, 3L, 40),
+                newOrderLineItem(2L, 4L, 0)
         );
 
         private Map<Long, OrderLineItem> saveAll(final OrderLineItem... orderLineItems) {
@@ -138,5 +138,13 @@ class JdbcTemplateOrderLineItemDaoTest {
         assertThat(actual.getOrderId()).isEqualTo(expected.getOrderId());
         assertThat(actual.getMenuId()).isEqualTo(expected.getMenuId());
         assertThat(actual.getQuantity()).isEqualTo(expected.getQuantity());
+    }
+
+    private static OrderLineItem newOrderLineItem(final Long orderId, final Long menuId, final long quantity) {
+        final var orderLineItem = new OrderLineItem();
+        orderLineItem.setOrderId(orderId);
+        orderLineItem.setMenuId(menuId);
+        orderLineItem.setQuantity(quantity);
+        return orderLineItem;
     }
 }

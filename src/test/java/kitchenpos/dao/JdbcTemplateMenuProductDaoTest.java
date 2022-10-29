@@ -34,7 +34,7 @@ class JdbcTemplateMenuProductDaoTest {
 
         @Test
         void save() {
-            final var menuProduct = new MenuProduct(1L, 2L, 30);
+            final var menuProduct = newMenuProduct(1L, 2L, 30);
             final var actual = menuProductDao.save(menuProduct);
 
             assertThat(actual.getSeq()).isPositive();
@@ -50,9 +50,9 @@ class JdbcTemplateMenuProductDaoTest {
     class SelectTest {
 
         private final Map<Long, MenuProduct> savedMenuProducts = saveAll(
-                new MenuProduct(1L, 2L, 30),
-                new MenuProduct(1L, 3L, 40),
-                new MenuProduct(2L, 4L, 0)
+                newMenuProduct(1L, 2L, 30),
+                newMenuProduct(1L, 3L, 40),
+                newMenuProduct(2L, 4L, 0)
         );
 
         private Map<Long, MenuProduct> saveAll(final MenuProduct... menuProducts) {
@@ -136,5 +136,13 @@ class JdbcTemplateMenuProductDaoTest {
         assertThat(actual.getMenuId()).isEqualTo(expected.getMenuId());
         assertThat(actual.getProductId()).isEqualTo(expected.getProductId());
         assertThat(actual.getQuantity()).isEqualTo(expected.getQuantity());
+    }
+
+    private static MenuProduct newMenuProduct(final Long menuId, final Long productId, final long quantity) {
+        final var menuProduct = new MenuProduct();
+        menuProduct.setMenuId(menuId);
+        menuProduct.setProductId(productId);
+        menuProduct.setQuantity(quantity);
+        return menuProduct;
     }
 }

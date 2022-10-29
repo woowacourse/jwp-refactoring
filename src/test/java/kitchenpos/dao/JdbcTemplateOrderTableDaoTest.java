@@ -34,7 +34,7 @@ class JdbcTemplateOrderTableDaoTest {
 
         @Test
         void save() {
-            final var orderTable = new OrderTable(1L, 3, true);
+            final var orderTable = newOrderTable(1L, 3, true);
             final var actual = orderTableDao.save(orderTable);
 
             assertThat(actual.getId()).isPositive();
@@ -50,9 +50,9 @@ class JdbcTemplateOrderTableDaoTest {
     class SelectTest {
 
         private final Map<Long, OrderTable> savedOrderTables = saveAll(
-                new OrderTable(1L, 2, true),
-                new OrderTable(1L, 34, false),
-                new OrderTable(2L, 0, true)
+                newOrderTable(1L, 2, true),
+                newOrderTable(1L, 34, false),
+                newOrderTable(2L, 0, true)
         );
 
         private Map<Long, OrderTable> saveAll(final OrderTable... orderTables) {
@@ -149,5 +149,13 @@ class JdbcTemplateOrderTableDaoTest {
         assertThat(actual.getNumberOfGuests()).isEqualTo(expected.getNumberOfGuests());
         assertThat(actual.getTableGroupId()).isEqualTo(expected.getTableGroupId());
         assertThat(actual.isEmpty()).isEqualTo(expected.isEmpty());
+    }
+
+    private static OrderTable newOrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        final var orderTable = new OrderTable();
+        orderTable.setTableGroupId(tableGroupId);
+        orderTable.updateNumberOfGuests(numberOfGuests);
+        orderTable.changeEmptyStatusTo(empty);
+        return orderTable;
     }
 }

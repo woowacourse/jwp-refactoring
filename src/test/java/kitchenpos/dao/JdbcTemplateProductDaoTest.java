@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -32,7 +33,7 @@ class JdbcTemplateProductDaoTest {
 
         @Test
         void save() {
-            final var product = new Product("탕수육", 1000);
+            final var product = newProduct("탕수육", 1000);
             final var actual = productDao.save(product);
 
             assertThat(actual.getId()).isPositive();
@@ -47,9 +48,9 @@ class JdbcTemplateProductDaoTest {
     class SelectTest {
 
         private final Map<Long, Product> savedProducts = saveAll(
-                new Product("자장면", 4500L),
-                new Product("짬뽕", 5000L),
-                new Product("탕수육", 10000L)
+                newProduct("자장면", 4500),
+                newProduct("짬뽕", 5000),
+                newProduct("탕수육", 10000)
         );
 
         private Map<Long, Product> saveAll(final Product... products) {
@@ -96,5 +97,12 @@ class JdbcTemplateProductDaoTest {
         assertThat(actual.getId()).isEqualTo(expected.getId());
         assertThat(actual.getName()).isEqualTo(expected.getName());
         assertThat(actual.getPrice()).isEqualByComparingTo(expected.getPrice());
+    }
+
+    private static Product newProduct(final String name, final int price) {
+        final var product = new Product();
+        product.setName(name);
+        product.setPrice(BigDecimal.valueOf(price));
+        return product;
     }
 }
