@@ -7,7 +7,7 @@ import java.util.List;
 public class Order {
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
@@ -15,7 +15,7 @@ public class Order {
                  final List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
-        this.orderStatus = orderStatus;
+        this.orderStatus = OrderStatus.valueOf(orderStatus);
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
@@ -45,7 +45,7 @@ public class Order {
     }
 
     public String getOrderStatus() {
-        return orderStatus;
+        return orderStatus.name();
     }
 
     public LocalDateTime getOrderedTime() {
@@ -54,5 +54,12 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
+    }
+
+    public void changeStatus(final String status) {
+        if (orderStatus.isCompletion()) {
+            throw new IllegalArgumentException("주문이 이미 완료되었습니다.");
+        }
+        this.orderStatus = OrderStatus.valueOf(status);
     }
 }

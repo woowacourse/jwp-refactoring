@@ -1,9 +1,8 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
+import kitchenpos.application.request.OrderChangeStatusRequest;
 import kitchenpos.application.request.OrderRequest;
 import kitchenpos.application.response.OrderResponse;
 import kitchenpos.dao.MenuDao;
@@ -12,7 +11,6 @@ import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,27 +69,19 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    public List<Order> list() {
+    public List<OrderResponse> list() {
         List<Order> orders = orderDao.findAll();
         return orders.stream()
-                .map(it -> Order.of(
-                        it.getOrderTableId(),
-                        it.getOrderStatus(),
-                        it.getOrderedTime(),
-                        orderLineItemDao.findAllByOrderId(it.getId())))
+                .map(it -> OrderResponse.of(it, orderLineItemDao.findAllByOrderId(it.getId())))
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
-        Order savedOrder = orderDao.findById(orderId)
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderChangeStatusRequest request) {
+        Order order = orderDao.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("order가 존재하지 않습니다."));
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException("주문이 이미 완료되었습니다.");
-        }
-        OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        orderDao.save(savedOrder);
-        return new Order(savedOrder.getId(), savedOrder.getOrderTableId(), orderStatus.name(), LocalDateTime.now(),
-                orderLineItemDao.findAllByOrderId(orderId));
+        order.changeStatus(request.getOrderStatus());
+        Order savedOrder = orderDao.save(order);
+        return OrderResponse.of(order, order.getOrderLineItems());
     }
 }

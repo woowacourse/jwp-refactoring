@@ -28,6 +28,10 @@ public class OrderResponse {
         return id;
     }
 
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
     public static OrderResponse of(final Order order, final List<OrderLineItem> orderLineItems) {
         List<OrderLineItemResponse> orderLineItemResponses = orderLineItems.stream()
                 .map(OrderLineItemResponse::from)

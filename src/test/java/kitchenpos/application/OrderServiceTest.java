@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.ApplicationTest;
+import kitchenpos.application.request.OrderChangeStatusRequest;
 import kitchenpos.application.request.OrderRequest;
 import kitchenpos.application.request.OrderRequest.OrderLineItemRequest;
 import kitchenpos.application.response.OrderResponse;
@@ -74,9 +75,9 @@ class OrderServiceTest {
 
     @Test
     void list() {
-        List<Order> orders = orderService.list();
+        List<OrderResponse> response = orderService.list();
 
-        assertThat(orders.size()).isEqualTo(0);
+        assertThat(response.size()).isEqualTo(0);
     }
 
     @Test
@@ -84,18 +85,18 @@ class OrderServiceTest {
         Order order = Order.of(1L, OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
         Long savedId = orderDao.save(order)
                 .getId();
+        OrderChangeStatusRequest request = new OrderChangeStatusRequest("MEAL");
 
-        Order changeOrder = Order.of(1L, OrderStatus.MEAL.name(), LocalDateTime.now(), new ArrayList<>());
-        Order changedOrder = orderService.changeOrderStatus(savedId, changeOrder);
+        OrderResponse response = orderService.changeOrderStatus(savedId, request);
 
-        assertThat(changedOrder.getOrderStatus()).isEqualTo(changeOrder.getOrderStatus());
+        assertThat(response.getOrderStatus()).isEqualTo(request.getOrderStatus());
     }
 
     @Test
     void changeOrderStatusThrowExceptionWhenNotExistOrder() {
-        Order order = Order.of(0L, OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
+        OrderChangeStatusRequest request = new OrderChangeStatusRequest("MEAL");
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("order가 존재하지 않습니다.");
     }
@@ -105,8 +106,9 @@ class OrderServiceTest {
         Order order = Order.of(1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(), new ArrayList<>());
         Long savedId = orderDao.save(order)
                 .getId();
+        OrderChangeStatusRequest request = new OrderChangeStatusRequest("MEAL");
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedId, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedId, request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문이 이미 완료되었습니다.");
     }
