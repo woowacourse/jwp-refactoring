@@ -4,7 +4,7 @@ import kitchenpos.application.dto.request.CreateOrderDto;
 import kitchenpos.application.dto.request.CreateOrderLineItemDto;
 import kitchenpos.application.dto.response.OrderDto;
 import kitchenpos.application.dto.request.UpdateOrderStatusDto;
-import kitchenpos.dao.MenuDao;
+import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
@@ -21,16 +21,16 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
 
-    private final MenuDao menuDao;
+    private final MenuRepository menuRepository;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
 
-    public OrderService(MenuDao menuDao,
+    public OrderService(MenuRepository menuRepository,
                         OrderDao orderDao,
                         OrderLineItemDao orderLineItemDao,
                         OrderTableDao orderTableDao) {
-        this.menuDao = menuDao;
+        this.menuRepository = menuRepository;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
         this.orderTableDao = orderTableDao;
@@ -52,7 +52,7 @@ public class OrderService {
                 .stream()
                 .map(CreateOrderLineItemDto::getMenuId)
                 .collect(Collectors.toList());
-        if (CollectionUtils.isEmpty(menuIds) || menuIds.size() != menuDao.countByIdIn(menuIds)) {
+        if (CollectionUtils.isEmpty(menuIds) || menuIds.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
     }

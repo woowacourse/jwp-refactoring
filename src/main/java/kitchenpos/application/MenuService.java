@@ -4,9 +4,9 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.CreateMenuDto;
 import kitchenpos.application.dto.request.CreateMenuProductDto;
 import kitchenpos.application.dto.response.MenuDto;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
+import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
@@ -21,16 +21,16 @@ import java.util.List;
 @Service
 public class MenuService {
 
-    private final MenuDao menuDao;
+    private final MenuRepository menuRepository;
     private final MenuGroupDao menuGroupDao;
     private final MenuProductDao menuProductDao;
     private final ProductDao productDao;
 
-    public MenuService(MenuDao menuDao,
+    public MenuService(MenuRepository menuRepository,
                        MenuGroupDao menuGroupDao,
                        MenuProductDao menuProductDao,
                        ProductDao productDao) {
-        this.menuDao = menuDao;
+        this.menuRepository = menuRepository;
         this.menuGroupDao = menuGroupDao;
         this.menuProductDao = menuProductDao;
         this.productDao = productDao;
@@ -43,7 +43,7 @@ public class MenuService {
         }
         final List<ProductQuantity> menuProductQuantities = getMenuProductQuantities(createMenuDto.getMenuProducts());
         final Price menuPrice = Price.ofMenu(createMenuDto.getPrice(), menuProductQuantities);
-        final Menu menu = menuDao.save(new Menu(createMenuDto.getName(), menuPrice, createMenuDto.getMenuGroupId()));
+        final Menu menu = menuRepository.save(new Menu(createMenuDto.getName(), menuPrice, createMenuDto.getMenuGroupId()));
         return MenuDto.of(menu, menuProductQuantities.stream()
                 .map(it -> new MenuProduct(menu.getId(), it.getProductId(), it.getQuantity()))
                 .map(menuProductDao::save)
@@ -61,7 +61,7 @@ public class MenuService {
     }
 
     public List<MenuDto> list() {
-        final List<Menu> menus = menuDao.findAll();
+        final List<Menu> menus = menuRepository.findAll();
         return menus.stream()
                 .map(menu -> MenuDto.of(menu, menuProductDao.findAllByMenuId(menu.getId())))
                 .collect(Collectors.toList());
