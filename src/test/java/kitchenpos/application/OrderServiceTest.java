@@ -147,15 +147,15 @@ class OrderServiceTest {
     void list() {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("추천메뉴"));
         Menu menu = menuRepository.save(new Menu("강정치킨", BigDecimal.valueOf(37000), menuGroup.getId()));
-        OrderTable orderTable = orderTableRepository.save(new OrderTable(2, true));
 
-        orderRepository.save(new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 2))));
-        orderRepository.save(new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 2))));
-        orderRepository.save(new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 2))));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
+        List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getId(), 2));
+
+        orderRepository.save(Order.first(orderTable, orderLineItems));
 
         List<OrderResponse> orders = orderService.list();
 
-        assertThat(orders).hasSize(3);
+        assertThat(orders).hasSize(1);
     }
 
     @Nested
@@ -172,13 +172,11 @@ class OrderServiceTest {
 
             OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
 
-            OrderResponse savedOrder = orderService.create(
-                    new OrderCommand(orderTable.getId(), List.of(new OrderLineItemCommand(menu.getId(), 2))));
+            Order order = orderRepository.save(Order.first(orderTable, List.of(new OrderLineItem(menu.getId(), 2))));
 
-            OrderResponse orderResponse = orderService.changeOrderStatus(savedOrder.getId(), "MEAL");
+            OrderResponse orderResponse = orderService.changeOrderStatus(order.getId(), "MEAL");
 
             assertThat(orderResponse.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
-            assertThat(orderResponse.getOrderLineItems()).isNotEmpty();
         }
 
         @Nested
@@ -197,10 +195,14 @@ class OrderServiceTest {
             @Test
             @DisplayName("계산 완료 상태로 변경하면 예외가 발생한다.")
             void changeOrderStatusCompletion() {
-                OrderTable orderTable = orderTableRepository.save(new OrderTable(2, true));
-                Order savedOrder = orderRepository.save(new Order(orderTable.getId(), OrderStatus.COMPLETION));
+                MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("추천메뉴"));
+                Product product = productRepository.save(new Product("강정치킨", BigDecimal.valueOf(18000)));
+                Menu menu = menuRepository.save(new Menu("강정치킨", BigDecimal.valueOf(37000), menuGroup.getId()));
+                menu.addMenuProduct(new MenuProduct(menu.getId(), product.getId(), 2));
+                OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
+                Order order = orderRepository.save(Order.first(orderTable, List.of(new OrderLineItem(menu.getId(), 2))));
 
-                assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), "COMPLETION"))
+                assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), "COMPLETION"))
                         .hasMessage("계산 완료된 주문입니다.");
             }
         }

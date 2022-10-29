@@ -8,9 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @EntityGraph(attributePaths = "orderLineItems")
-    Optional<Order> findByIdOrderByOrderLineItems(Long orderId);
-
-    @EntityGraph(attributePaths = "orderLineItems")
     List<Order> findAll();
 
     boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<OrderStatus> status);

@@ -200,7 +200,7 @@ public class AcceptanceTest {
     }
 
     protected Order 주문_상태를_변경한다(long 주문, String status) {
-        Order order = new Order(status);
+        Order order = new Order();
 
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)

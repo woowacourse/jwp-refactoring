@@ -2,10 +2,11 @@ package kitchenpos.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderLineItem {
@@ -14,8 +15,8 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @JoinColumn(name = "order_id", nullable = false)
-    private Long orderId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Order order;
 
     @Column(name = "menu_id", nullable = false)
     private Long menuId;
@@ -26,54 +27,26 @@ public class OrderLineItem {
     public OrderLineItem() {
     }
 
-    public OrderLineItem(Long seq, Long orderId, Long menuId, long quantity) {
+    public OrderLineItem(Long seq, Order order, Long menuId, long quantity) {
         this.seq = seq;
-        this.orderId = orderId;
+        this.order = order;
         this.menuId = menuId;
         this.quantity = quantity;
     }
 
-    public OrderLineItem(Long orderId, Long menuId, long quantity) {
-        this(null, orderId, menuId, quantity);
-    }
-
-    public OrderLineItem(Long orderId) {
-        this.orderId = orderId;
-    }
-
-    public OrderLineItem(Long menuId, int quantity) {
+    public OrderLineItem(Long menuId, long quantity) {
         this(null, null, menuId, quantity);
-    }
-
-    public Long getSeq() {
-        return seq;
-    }
-
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
     }
 
     public Long getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
     public long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 }

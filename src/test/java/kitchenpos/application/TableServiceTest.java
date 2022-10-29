@@ -12,8 +12,6 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuRepository;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
@@ -126,7 +124,7 @@ class TableServiceTest {
                 Menu menu = menuRepository.save(new Menu("강정치킨", BigDecimal.valueOf(37000), menuGroup.getId()));
                 OrderTable orderTable = orderTableRepository.save(new OrderTable(2, true));
 
-                orderRepository.save(new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 2))));
+//                orderRepository.save(new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 2))));
 
                 assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTableCommand(2, true)))
                         .hasMessage("조리중이거나 식사 상태입니다.");

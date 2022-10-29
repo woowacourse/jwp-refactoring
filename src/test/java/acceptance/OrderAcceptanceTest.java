@@ -57,8 +57,6 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
     private static OrderLineItem createOrderLineItem(long orderLineItemId) {
         OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setMenuId(orderLineItemId);
-        orderLineItem1.setQuantity(1);
         return orderLineItem1;
     }
 }
