@@ -5,10 +5,10 @@ import kitchenpos.application.dto.request.CreateOrderLineItemDto;
 import kitchenpos.application.dto.response.OrderDto;
 import kitchenpos.application.dto.request.UpdateOrderStatusDto;
 import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.table.OrderTable;
 import org.springframework.stereotype.Service;
@@ -23,16 +23,16 @@ public class OrderService {
 
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemDao orderLineItemDao;
+    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableDao orderTableDao;
 
     public OrderService(MenuRepository menuRepository,
                         OrderRepository orderRepository,
-                        OrderLineItemDao orderLineItemDao,
+                        OrderLineItemRepository orderLineItemRepository,
                         OrderTableDao orderTableDao) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemDao = orderLineItemDao;
+        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableDao = orderTableDao;
     }
 
@@ -43,7 +43,7 @@ public class OrderService {
         return OrderDto.of(order, createOrderDto.getOrderLineItems()
                 .stream()
                 .map(it -> new OrderLineItem(order.getId(), it.getMenuId(), it.getQuantity()))
-                .map(orderLineItemDao::save)
+                .map(orderLineItemRepository::save)
                 .collect(Collectors.toList()));
     }
 
@@ -65,7 +65,7 @@ public class OrderService {
     public List<OrderDto> list() {
         return orderRepository.findAll()
                 .stream()
-                .map(it -> OrderDto.of(it, orderLineItemDao.findAllByOrderId(it.getId())))
+                .map(it -> OrderDto.of(it, orderLineItemRepository.findAllByOrderId(it.getId())))
                 .collect(Collectors.toList());
     }
 
@@ -75,7 +75,7 @@ public class OrderService {
         Order order = findOrder(orderId);
         order.changeOrderStatus(updateOrderStatusDto.getOrderStatus());
         order = orderRepository.save(order);
-        List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(orderId);
+        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(orderId);
         return OrderDto.of(order, orderLineItems);
     }
 
