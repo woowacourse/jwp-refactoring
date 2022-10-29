@@ -151,7 +151,7 @@ class OrderServiceTest {
         OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
         List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getId(), 2));
 
-        orderRepository.save(Order.first(orderTable, orderLineItems));
+        orderRepository.save(Order.create(orderTable, orderLineItems));
 
         List<OrderResponse> orders = orderService.list();
 
@@ -172,7 +172,7 @@ class OrderServiceTest {
 
             OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
 
-            Order order = orderRepository.save(Order.first(orderTable, List.of(new OrderLineItem(menu.getId(), 2))));
+            Order order = orderRepository.save(Order.create(orderTable, List.of(new OrderLineItem(menu.getId(), 2))));
 
             OrderResponse orderResponse = orderService.changeOrderStatus(order.getId(), "MEAL");
 
@@ -200,7 +200,7 @@ class OrderServiceTest {
                 Menu menu = menuRepository.save(new Menu("강정치킨", BigDecimal.valueOf(37000), menuGroup.getId()));
                 menu.addMenuProduct(new MenuProduct(menu.getId(), product.getId(), 2));
                 OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
-                Order order = orderRepository.save(Order.first(orderTable, List.of(new OrderLineItem(menu.getId(), 2))));
+                Order order = orderRepository.save(Order.create(orderTable, List.of(new OrderLineItem(menu.getId(), 2))));
 
                 assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), "COMPLETION"))
                         .hasMessage("계산 완료된 주문입니다.");

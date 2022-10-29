@@ -50,7 +50,7 @@ public class Order {
         this(null, orderTableId, orderStatus, LocalDateTime.now(), new OrderLineItems(orderLineItems));
     }
 
-    public static Order first(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+    public static Order create(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("빈 테이블입니다.");
         }

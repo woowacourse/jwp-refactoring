@@ -32,7 +32,7 @@ public class OrderService {
         OrderTable orderTable = getOrderTable(orderCommand.getOrderTableId());
         List<OrderLineItem> orderLineItems = orderCommand.toEntity();
         orderValidator.validate(orderLineItems);
-        return OrderResponse.from(orderRepository.save(Order.first(orderTable, orderLineItems)));
+        return OrderResponse.from(orderRepository.save(Order.create(orderTable, orderLineItems)));
     }
 
     private OrderTable getOrderTable(Long orderTableId) {
