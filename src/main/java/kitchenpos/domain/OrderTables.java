@@ -9,14 +9,14 @@ public class OrderTables {
     private final List<OrderTable> values;
 
     public OrderTables(List<OrderTable> values) {
-        validateEmpty(values);
+        validateExists(values);
         this.values = values;
     }
 
-    private void validateEmpty(List<OrderTable> savedOrderTables) {
+    private void validateExists(List<OrderTable> savedOrderTables) {
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException("[ERROR] 주문 테이블이 비어있습니다.");
+                throw new IllegalArgumentException("[ERROR] 주문 테이블이 이미 존재합니다.");
             }
         }
     }

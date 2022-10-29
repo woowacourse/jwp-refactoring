@@ -122,19 +122,15 @@ class TableGroupServiceTest {
         tableGroupService.ungroup(actual.getId());
     }
 
-    /**
-     * aw
-     * @param orderStatus
-     */
     @DisplayName("단체 지정을 해제할 때, 주문 상태가 COOKING이나 MEAL 이면 예외가 발생한다.")
     @MethodSource
     @ParameterizedTest
     void ungroupFailureWhenOrderStatusIsCookingOrMeal(OrderStatus orderStatus) {
+        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
+        orderTable1 = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, true));
+        orderTable2 = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, true));
         orderDao.save(new Order(orderTable1.getId(), orderStatus, LocalDateTime.now()));
         orderDao.save(new Order(orderTable2.getId(), orderStatus, LocalDateTime.now()));
-
-        TableGroup tableGroup = tableGroupDao.save(
-                new TableGroup(1L, LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
         assertThatThrownBy(
                 () -> tableGroupService.ungroup(tableGroup.getId())

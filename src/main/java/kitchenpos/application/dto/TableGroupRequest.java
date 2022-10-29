@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TableGroupRequest {
-    private List<OrderTableRequest> orderTables = new ArrayList<>();
+    private List<OrderTableRequest> orderTables;
 
     private TableGroupRequest() {
     }

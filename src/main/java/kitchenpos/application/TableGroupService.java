@@ -57,7 +57,7 @@ public class TableGroupService {
 
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[ERROR] 주문 상태가 COOKING 또는 MEAL일 때는 그룹을 해제할 수 없습니다.");
         }
 
         for (final OrderTable orderTable : orderTables) {
