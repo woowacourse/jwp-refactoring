@@ -1,7 +1,10 @@
 package kitchenpos.domain;
 
+import org.springframework.util.CollectionUtils;
+
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 public class Order {
 
@@ -10,6 +13,45 @@ public class Order {
     private String orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
+
+    public Order() {
+    }
+
+    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
+        validateOrderLineItemsNotEmpty(orderLineItems);
+        this.id = id;
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
+    }
+
+    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
+    }
+
+    private void validateOrderLineItemsNotEmpty(List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException("주문 항목이 비어 있습니다.");
+        }
+    }
+
+    public void updateOrderStatus(final OrderStatus orderStatus) {
+        validateOrderNotYestCompleted();
+        this.orderStatus = orderStatus.name();
+    }
+
+    private void validateOrderNotYestCompleted() {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), orderStatus)) {
+            throw new IllegalArgumentException("이미 결제 완료된 주문입니다.");
+        }
+    }
+
+    public void updateOrderStatus(final String orderStatus) {
+        updateOrderStatus(OrderStatus.valueOf(orderStatus));
+    }
 
     public Long getId() {
         return id;

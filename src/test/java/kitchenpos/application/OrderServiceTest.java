@@ -6,7 +6,6 @@ import kitchenpos.application.request.order.OrderRequest;
 import kitchenpos.application.response.order.OrderResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
@@ -30,16 +29,14 @@ class OrderServiceTest {
     private final OrderService orderService;
     private final MenuDao menuDao;
     private final OrderDao orderDao;
-    private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
 
     @Autowired
-    public OrderServiceTest(OrderService orderService, MenuDao menuDao, OrderDao orderDao,
-                            OrderLineItemDao orderLineItemDao, OrderTableDao orderTableDao) {
+    public OrderServiceTest(final OrderService orderService, final MenuDao menuDao, final OrderDao orderDao,
+                            final OrderTableDao orderTableDao) {
         this.orderService = orderService;
         this.menuDao = menuDao;
         this.orderDao = orderDao;
-        this.orderLineItemDao = orderLineItemDao;
         this.orderTableDao = orderTableDao;
     }
 
