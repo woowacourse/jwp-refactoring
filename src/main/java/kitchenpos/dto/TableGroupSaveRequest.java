@@ -16,7 +16,7 @@ public class TableGroupSaveRequest {
     }
 
     public TableGroup toEntity() {
-        return new TableGroup(null, orderTables);
+        return new TableGroup(orderTables);
     }
 
     public List<OrderTable> getOrderTables() {
