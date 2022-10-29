@@ -10,14 +10,14 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.OrderTableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.fakedao.OrderFakeDao;
 import kitchenpos.fakedao.OrderTableFakeDao;
-import kitchenpos.fakedao.TableGroupFakeDao;
+import kitchenpos.fakedao.OrderTableGroupFakeDao;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,9 +26,9 @@ public class TableGroupServiceTest {
 
     private OrderDao orderDao = new OrderFakeDao();
     private OrderTableDao orderTableDao = new OrderTableFakeDao();
-    private TableGroupDao tableGroupDao = new TableGroupFakeDao();
+    private OrderTableGroupDao orderTableGroupDao = new OrderTableGroupFakeDao();
 
-    private TableGroupService tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
+    private TableGroupService tableGroupService = new TableGroupService(orderDao, orderTableDao, orderTableGroupDao);
 
     @DisplayName("단체 지정을 생성할 때")
     @Nested
@@ -47,7 +47,7 @@ public class TableGroupServiceTest {
             TableGroup actual = tableGroupService.create(new TableGroup(null, orderTables));
 
             // then
-            Optional<TableGroup> tableGroup = tableGroupDao.findById(actual.getId());
+            Optional<TableGroup> tableGroup = orderTableGroupDao.findById(actual.getId());
             assertAll(
                     () -> assertThat(tableGroup).isPresent(),
                     () -> assertThat(tableGroup.get().getCreatedDate()).isNotNull(),
@@ -98,7 +98,7 @@ public class TableGroupServiceTest {
         @Test
         void alreadyOrderTableHasTableGroup_exception() {
             // given
-            TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()));
+            TableGroup tableGroup = orderTableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()));
             ArrayList<OrderTable> orderTables = new ArrayList<>();
             orderTables.add(orderTableDao.save(new OrderTable(tableGroup.getId(), 1, true)));
             orderTables.add(orderTableDao.save(new OrderTable(null, 2, false)));
@@ -117,7 +117,7 @@ public class TableGroupServiceTest {
         @Test
         void success() {
             // given
-            TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()));
+            TableGroup tableGroup = orderTableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()));
             orderTableDao.save(new OrderTable(tableGroup.getId(), 1, true));
             orderTableDao.save(new OrderTable(tableGroup.getId(), 2, true));
             orderTableDao.save(new OrderTable(tableGroup.getId(), 3, true));
@@ -134,7 +134,7 @@ public class TableGroupServiceTest {
         @Test
         void orderTablesStatusIsMealOrCooking_exception() {
             // given
-            TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()));
+            TableGroup tableGroup = orderTableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()));
             OrderTable orderTable1 = orderTableDao.save(new OrderTable(tableGroup.getId(), 1, true));
             OrderTable orderTable2 = orderTableDao.save(new OrderTable(tableGroup.getId(), 2, true));
             OrderTable orderTable3 = orderTableDao.save(new OrderTable(tableGroup.getId(), 3, true));

@@ -85,4 +85,9 @@ public class OrderRepository implements OrderDao {
     public boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<String> orderStatuses) {
         return false;
     }
+
+    @Override
+    public List<Order> findByOrderTableId(Long orderTableId) {
+        return orderDao.findByOrderTableId(orderTableId);
+    }
 }

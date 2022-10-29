@@ -79,6 +79,15 @@ public class JdbcTemplateOrderDao implements OrderDao {
         return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
     }
 
+    @Override
+    public List<Order> findByOrderTableId(Long orderTableId) {
+        final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders "
+                + "WHERE order_table_id = (:orderTableId)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("orderTableId", orderTableId);
+        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+    }
+
     private Order select(final Long id) {
         final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()

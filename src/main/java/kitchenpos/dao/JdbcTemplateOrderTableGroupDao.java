@@ -17,14 +17,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class JdbcTemplateTableGroupDao implements TableGroupDao {
+public class JdbcTemplateOrderTableGroupDao implements OrderTableGroupDao {
     private static final String TABLE_NAME = "table_group";
     private static final String KEY_COLUMN_NAME = "id";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    public JdbcTemplateTableGroupDao(final DataSource dataSource) {
+    public JdbcTemplateOrderTableGroupDao(final DataSource dataSource) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)

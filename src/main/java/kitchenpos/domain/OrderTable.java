@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 public class OrderTable {
+
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
@@ -14,6 +15,11 @@ public class OrderTable {
             throw new IllegalArgumentException();
         }
         this.tableGroupId = tableGroupId;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
+    public OrderTable(int numberOfGuests, boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -38,7 +44,10 @@ public class OrderTable {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
         this.numberOfGuests = numberOfGuests;
     }
 
@@ -48,5 +57,9 @@ public class OrderTable {
 
     public void setEmpty(final boolean empty) {
         this.empty = empty;
+    }
+
+    public void changeEmpty() {
+        this.empty = true;
     }
 }

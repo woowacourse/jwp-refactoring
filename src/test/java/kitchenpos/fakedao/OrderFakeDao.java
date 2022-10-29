@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 
@@ -44,5 +46,13 @@ public class OrderFakeDao implements OrderDao {
                 .stream()
                 .filter(order -> orderTableIds.contains(order.getOrderTableId()))
                 .anyMatch(order -> orderStatuses.contains(order.getOrderStatus()));
+    }
+
+    @Override
+    public List<Order> findByOrderTableId(Long orderTableId) {
+        return repository.values()
+                .stream()
+                .filter(order -> Objects.equals(order.getOrderTableId(), orderTableId))
+                .collect(Collectors.toList());
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.ui.apiservice.MenuApiService;
 import kitchenpos.ui.apiservice.MenuGroupApiService;
 import kitchenpos.ui.apiservice.OrderApiService;
+import kitchenpos.ui.apiservice.OrderTabelApiService;
 import kitchenpos.ui.apiservice.ProductApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -14,7 +15,8 @@ import org.springframework.test.web.servlet.MockMvc;
         ProductRestController.class,
         MenuGroupRestController.class,
         MenuRestController.class,
-        OrderRestController.class
+        OrderRestController.class,
+        OrderTableRestController.class
     }
 )
 public class ControllerTest {
@@ -36,4 +38,7 @@ public class ControllerTest {
 
     @MockBean
     protected OrderApiService orderApiService;
+
+    @MockBean
+    protected OrderTabelApiService orderTabelApiService;
 }

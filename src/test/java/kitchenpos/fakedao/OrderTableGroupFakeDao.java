@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.OrderTableGroupDao;
 import kitchenpos.domain.TableGroup;
 
-public class TableGroupFakeDao implements TableGroupDao {
+public class OrderTableGroupFakeDao implements OrderTableGroupDao {
 
     private Long autoIncrementId = 0L;
     private final Map<Long, TableGroup> repository = new HashMap<>();
