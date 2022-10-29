@@ -6,20 +6,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.TableGroup;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 
 public class TableGroupFixture {
-
-    public static TableGroup createTableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(createdDate);
-        tableGroup.setOrderTables(orderTables);
-
-        return tableGroup;
-    }
 
     public static class TableGroupRequestBuilder {
 
