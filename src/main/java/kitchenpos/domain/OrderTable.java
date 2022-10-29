@@ -22,6 +22,15 @@ public class OrderTable {
     @Column(name = "empty")
     private boolean empty;
 
+    protected OrderTable() {
+    }
+
+    public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
     public Long getId() {
         return id;
     }
