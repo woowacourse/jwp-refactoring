@@ -95,11 +95,23 @@ public class OrderService {
     public Order changeOrderStatus(final Long orderId, final Order orderRequest) {
         final Order order = getOrder(orderId);
         order.changeOrderStatus(orderRequest.getOrderStatus());
+        changeOrderStatus(order);
         return orderDao.save(order);
     }
 
     private Order getOrder(final Long orderId) {
         return orderDao.findById(orderId)
+                .orElseThrow(NoSuchElementException::new);
+    }
+
+    private void changeOrderStatus(final Order order) {
+        final OrderTable orderTable = getOrderTable(order);
+        orderTable.changeOrderStatus(order.getOrderStatus());
+        orderTableDao.save(orderTable);
+    }
+
+    private OrderTable getOrderTable(final Order order) {
+        return orderTableDao.findById(order.getOrderTableId())
                 .orElseThrow(NoSuchElementException::new);
     }
 }
