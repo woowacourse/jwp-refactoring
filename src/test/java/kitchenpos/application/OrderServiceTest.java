@@ -4,7 +4,7 @@ import static kitchenpos.domain.fixture.MenuFixture.후라이드_치킨_세트�
 import static kitchenpos.domain.fixture.MenuGroupFixture.치킨_세트;
 import static kitchenpos.domain.fixture.MenuProductFixture.상품_하나;
 import static kitchenpos.domain.fixture.OrderFixture.요리중인_주문;
-import static kitchenpos.domain.fixture.OrderFixture.주문_1번;
+import static kitchenpos.domain.fixture.OrderFixture.주문_1번의_주문_항목들은;
 import static kitchenpos.domain.fixture.OrderTableFixture.비어있는_테이블;
 import static kitchenpos.domain.fixture.ProductFixture.후라이드_치킨;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,16 +36,19 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.fixture.OrderTableFixture;
+import kitchenpos.repository.OrderRepository;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayName("Order 서비스 테스트")
 class OrderServiceTest {
 
     private OrderService orderService;
+    private OrderRepository orderRepository;
 
     private OrderDao orderDao;
     private OrderTableDao orderTableDao;
@@ -61,7 +64,8 @@ class OrderServiceTest {
         orderDao = new FakeOrderDao();
         orderTableDao = new FakeOrderTableDao();
 
-        orderService = new OrderService(menuDao, orderDao, new FakeOrderLineItemDao(), orderTableDao);
+        orderRepository = new OrderRepository(orderDao, new FakeOrderLineItemDao());
+        orderService = new OrderService(orderRepository, menuDao, orderTableDao);
 
         final Product savedProduct = productDao.save(후라이드_치킨());
         final MenuGroup savedMenuGroup = menuGroupDao.save(치킨_세트());
@@ -130,7 +134,9 @@ class OrderServiceTest {
     void list() {
         final int numberOfOrder = 5;
         for (int i = 0; i < numberOfOrder; i++) {
-            orderDao.save(주문_1번());
+            final OrderLineItem orderLineItem = new OrderLineItem(1L, 1);
+            final Order order = 주문_1번의_주문_항목들은(저장된_주문_테이블.getId(), List.of(orderLineItem));
+            orderRepository.save(order);
         }
 
         final List<OrderResponse> responses = orderService.list();
