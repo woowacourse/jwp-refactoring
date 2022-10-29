@@ -13,7 +13,7 @@ import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-public class MenuGroupE2eTest extends E2eTest {
+public class MenuGroupE2eTest extends KitchenPosE2eTest {
 
     @Test
     void create() {

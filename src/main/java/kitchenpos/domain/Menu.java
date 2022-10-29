@@ -11,7 +11,6 @@ public class Menu {
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
-
     public Menu() {
     }
 

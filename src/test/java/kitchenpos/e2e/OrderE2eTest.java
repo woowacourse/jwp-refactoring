@@ -16,7 +16,7 @@ import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-public class OrderE2eTest extends E2eTest {
+public class OrderE2eTest extends KitchenPosE2eTest {
 
     @Test
     void create() {

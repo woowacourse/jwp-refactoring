@@ -12,7 +12,7 @@ import kitchenpos.support.ProductFixture.WrapProductRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-class ProductE2eTest extends E2eTest {
+class ProductE2eTest extends KitchenPosE2eTest {
 
     @Test
     void create() {

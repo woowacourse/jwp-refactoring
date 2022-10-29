@@ -10,7 +10,7 @@ import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-public class TableE2eTest extends E2eTest {
+public class TableE2eTest extends KitchenPosE2eTest {
 
     @Test
     void create() {
@@ -40,7 +40,6 @@ public class TableE2eTest extends E2eTest {
         final List<OrderTable> 주문테이블_리스트 = extractHttpBody(응답);
 
         // then
-
         // TODO row("empty", true, false)의 경우 계속해서 동일 객체로 false가 나옴.(디버거상은 정상(T, F))
         assertAll(
                 HTTP_STATUS_검증(HttpStatus.OK, 응답),

@@ -15,7 +15,7 @@ import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-public class TableGroupE2eTest extends E2eTest {
+public class TableGroupE2eTest extends KitchenPosE2eTest {
 
     @Test
     void create() {
@@ -31,10 +31,10 @@ public class TableGroupE2eTest extends E2eTest {
         assertAll(
                 HTTP_STATUS_검증(HttpStatus.CREATED, 응답),
                 NOT_NULL_검증(저장된_테이블그룹.getId()),
-                () -> assertThat(저장된_테이블그룹.getCreatedDate()).isCloseTo(now(), within(3, ChronoUnit.MINUTES))
+                시간_근사_검증(저장된_테이블그룹.getCreatedDate(), 3, ChronoUnit.MINUTES)
         );
-
     }
+
 
     @Test
     void ungroup() {
