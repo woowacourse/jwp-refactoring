@@ -17,11 +17,13 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.order.OrderChangeOrderStatusRequest;
+import kitchenpos.dto.order.OrderCreateRequest;
+import kitchenpos.dto.order.OrderLineItemRequest;
+import kitchenpos.dto.order.OrderResponse;
 import org.assertj.core.data.TemporalUnitWithinOffset;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -50,14 +52,14 @@ class OrderServiceTest {
     @Test
     void 주문을_생성한다() {
         // given
-        Order order = 후라이드_후라이드_주문();
+        final OrderCreateRequest request = 후라이드_세트_메뉴_주문_요청();
 
         // when
-        Order actual = orderService.create(order);
+        OrderResponse actual = orderService.create(request);
 
         // then
         assertAll(
-                () -> assertThat(actual.getOrderTableId()).isEqualTo(order.getOrderTableId()),
+                () -> assertThat(actual.getOrderTableId()).isEqualTo(request.getOrderTableId()),
                 () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
                 () -> assertThat(actual.getOrderedTime()).isCloseTo(LocalDateTime.now(),
                         new TemporalUnitWithinOffset(1, ChronoUnit.SECONDS)),
@@ -69,34 +71,32 @@ class OrderServiceTest {
     @Test
     void 주문항목이_null이면_주문을_생성할_수_없다() {
         // given
-        Order order = 주문(null);
+        OrderCreateRequest request = 주문_항목들로_주문_요청(null);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문항목이_없으면_주문을_생성할_수_없다() {
         // given
-        Order order = 주문(Collections.emptyList());
+        OrderCreateRequest request = 주문_항목들로_주문_요청(Collections.emptyList());
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문항목에_들어있는_메뉴가_존재하지않으면_주문을_생성할_수_없다() {
         // given
-        OrderLineItem invalidOrderItem = new OrderLineItem();
-        invalidOrderItem.setMenuId(-1L);
-        invalidOrderItem.setQuantity(2L);
+        OrderLineItemRequest invalidOrderItem = new OrderLineItemRequest(-1L, 2L);
 
-        Order order = 주문(Collections.singletonList(invalidOrderItem));
+        OrderCreateRequest request = 주문_항목들로_주문_요청(Collections.singletonList(invalidOrderItem));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -105,17 +105,13 @@ class OrderServiceTest {
         // given
         Menu menu = 후라이드_세트_메뉴();
 
-        OrderLineItem duplicatedOrderItem1 = new OrderLineItem();
-        duplicatedOrderItem1.setMenuId(menu.getId());
-        duplicatedOrderItem1.setQuantity(2L);
+        OrderLineItemRequest request1 = new OrderLineItemRequest(menu.getId(), 2L);
+        OrderLineItemRequest request2 = new OrderLineItemRequest(menu.getId(), 1L);
 
-        OrderLineItem duplicatedOrderItem2 = new OrderLineItem();
-        duplicatedOrderItem1.setMenuId(menu.getId());
-        duplicatedOrderItem1.setQuantity(1L);
-        Order order = 주문(Arrays.asList(duplicatedOrderItem1, duplicatedOrderItem2));
+        OrderCreateRequest request = 주문_항목들로_주문_요청(Arrays.asList(request1, request2));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -123,31 +119,31 @@ class OrderServiceTest {
     void 주문에_등록된_주문_테이블이_존재하지않으면_주문을_생성할_수_없다() {
         // given
         OrderTable invalidOrderTable = new OrderTable(-1L, null, 0, false);
-        Order order = 주문(invalidOrderTable, 후라이드_세트_메뉴_주문_항목());
+        OrderCreateRequest request = 주문_요청(invalidOrderTable, 후라이드_세트_메뉴_주문_항목_요청());
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문_테이블이_빈_상태라면_주문을_생성할_수_없다() {
         // given
-        Order order = 주문(빈_상태의_주문_테이블(), 후라이드_세트_메뉴_주문_항목());
+        OrderCreateRequest request = 주문_요청(빈_상태의_주문_테이블(), 후라이드_세트_메뉴_주문_항목_요청());
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문_목록을_조회한다() {
         // given
-        Order order = 후라이드_후라이드_주문();
-        orderService.create(order);
+        OrderCreateRequest request = 후라이드_세트_메뉴_주문_요청();
+        orderService.create(request);
 
         // when
-        List<Order> actual = orderService.list();
+        List<OrderResponse> actual = orderService.list();
 
         // then
         assertThat(actual).hasSizeGreaterThanOrEqualTo(1);
@@ -157,20 +153,15 @@ class OrderServiceTest {
     @ValueSource(strings = {"MEAL", "COOKING"})
     void 주문_상태를_변경한다(String orderStatus) {
         // given
-        Order order = orderService.create(후라이드_후라이드_주문());
+        OrderResponse response = orderService.create(후라이드_세트_메뉴_주문_요청());
 
-        Order updateOrder = new Order();
-        updateOrder.setOrderStatus(orderStatus);
+        final OrderChangeOrderStatusRequest request = new OrderChangeOrderStatusRequest(orderStatus);
 
         // when
-        Order actual = orderService.changeOrderStatus(order.getId(), updateOrder);
+        OrderResponse actual = orderService.changeOrderStatus(response.getId(), request);
 
         // then
-        assertAll(
-                () -> assertThat(actual.getOrderStatus()).isEqualTo(orderStatus),
-                () -> assertThat(actual.getOrderLineItems()).usingRecursiveComparison()
-                        .isEqualTo(order.getOrderLineItems())
-        );
+        assertThat(actual.getOrderStatus()).isEqualTo(orderStatus);
     }
 
     @Test
@@ -178,8 +169,7 @@ class OrderServiceTest {
         // given
         long invalidOrderId = -1L;
 
-        Order updateOrder = new Order();
-        updateOrder.setOrderStatus("MEAL");
+        OrderChangeOrderStatusRequest updateOrder = new OrderChangeOrderStatusRequest(OrderStatus.MEAL.name());
 
         // when & then
         assertThatThrownBy(() -> orderService.changeOrderStatus(invalidOrderId, updateOrder))
@@ -189,12 +179,12 @@ class OrderServiceTest {
     @Test
     void 주문이_계산완료_상태이면_주문_상태를_변경할_수_없다() {
         // given
-        Order order = orderService.create(후라이드_후라이드_주문());
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
-        orderService.changeOrderStatus(order.getId(), order);
+        OrderResponse response = orderService.create(후라이드_세트_메뉴_주문_요청());
+        final OrderChangeOrderStatusRequest request = new OrderChangeOrderStatusRequest(OrderStatus.COMPLETION.name());
+        orderService.changeOrderStatus(response.getId(), request);
 
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(response.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -207,26 +197,20 @@ class OrderServiceTest {
         return orderTableDao.save(emptyOrderTable);
     }
 
-    private Order 후라이드_후라이드_주문() {
-        return 주문(주문_테이블(), 후라이드_세트_메뉴_주문_항목());
+    private OrderCreateRequest 후라이드_세트_메뉴_주문_요청() {
+        return 주문_요청(주문_테이블(), 후라이드_세트_메뉴_주문_항목_요청());
     }
 
-    private Order 주문(List<OrderLineItem> orderLineItems) {
-        return 주문(주문_테이블(), orderLineItems);
+    private OrderCreateRequest 주문_항목들로_주문_요청(List<OrderLineItemRequest> orderLineItems) {
+        return 주문_요청(주문_테이블(), orderLineItems);
     }
 
-    private Order 주문(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(orderLineItems);
-        return order;
+    private OrderCreateRequest 주문_요청(OrderTable orderTable, List<OrderLineItemRequest> orderLineItems) {
+        return new OrderCreateRequest(orderTable.getId(), orderLineItems);
     }
 
-    private List<OrderLineItem> 후라이드_세트_메뉴_주문_항목() {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(후라이드_세트_메뉴().getId());
-        orderLineItem.setQuantity(1);
-        return Collections.singletonList(orderLineItem);
+    private List<OrderLineItemRequest> 후라이드_세트_메뉴_주문_항목_요청() {
+        return Collections.singletonList(new OrderLineItemRequest(후라이드_세트_메뉴().getId(), 1));
     }
 
     public Menu 후라이드_세트_메뉴() {

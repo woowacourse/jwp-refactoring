@@ -190,12 +190,8 @@ class TableServiceTest {
 
     private OrderTable getOrderedOrderTable(String orderStatus) {
         OrderTable invalidOrderTable = orderTableDao.save(new OrderTable(null, null, 0, false));
+        orderDao.save(new Order(invalidOrderTable.getId(), OrderStatus.valueOf(orderStatus), LocalDateTime.now()));
 
-        Order order = new Order();
-        order.setOrderTableId(invalidOrderTable.getId());
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(LocalDateTime.now());
-        orderDao.save(order);
         return invalidOrderTable;
     }
 }

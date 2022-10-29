@@ -120,8 +120,8 @@ class TableGroupServiceTest {
     void 테이블_그룹을_삭제한다() {
         // given
         List<OrderTableRequest> orderTables = Arrays.asList(
-                생성된_orderTable_createRequest(OrderStatus.COMPLETION.name()),
-                생성된_orderTable_createRequest(OrderStatus.COMPLETION.name())
+                생성된_orderTable_createRequest(OrderStatus.COMPLETION),
+                생성된_orderTable_createRequest(OrderStatus.COMPLETION)
         );
 
         TableGroupResponse savedTableGroup = tableGroupService.create(new TableGroupCreateRequest(orderTables));
@@ -146,8 +146,8 @@ class TableGroupServiceTest {
     void 테이블_그룹에_속한_테이블이_조리중이거나_식사중인_상태라면_테이블_그룹을_삭제할_수_없다(String orderStatus) {
         // given
         List<OrderTableRequest> orderTables = Arrays.asList(
-                생성된_orderTable_createRequest(orderStatus),
-                생성된_orderTable_createRequest(OrderStatus.COMPLETION.name())
+                생성된_orderTable_createRequest(OrderStatus.valueOf(orderStatus)),
+                생성된_orderTable_createRequest(OrderStatus.COMPLETION)
         );
 
         TableGroupResponse savedTableGroup = tableGroupService.create(new TableGroupCreateRequest(orderTables));
@@ -168,15 +168,11 @@ class TableGroupServiceTest {
         ));
     }
 
-    private OrderTableRequest 생성된_orderTable_createRequest(String orderStatus) {
+    private OrderTableRequest 생성된_orderTable_createRequest(OrderStatus orderStatus) {
         OrderTable orderTable = new OrderTable(null, null, 0, true);
         OrderTable emptyOrderTable = orderTableDao.save(orderTable);
 
-        Order order = new Order();
-        order.setOrderTableId(emptyOrderTable.getId());
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(LocalDateTime.now());
-        orderDao.save(order);
+        orderDao.save(new Order(emptyOrderTable.getId(), orderStatus, LocalDateTime.now()));
         return new OrderTableRequest(emptyOrderTable.getId());
     }
 }
