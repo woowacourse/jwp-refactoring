@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.fixture.OrderTableFactory;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,6 @@ class TableGroupRestControllerTest {
     @Autowired
     private TableGroupDao tableGroupDao;
 
-    @Disabled
     @DisplayName("테이블 그룹 등록")
     @Test
     void create() {
@@ -41,7 +39,6 @@ class TableGroupRestControllerTest {
         );
     }
 
-    @Disabled
     @DisplayName("테이블 그룹 해제")
     @Test
     void ungroup() {
@@ -51,6 +48,6 @@ class TableGroupRestControllerTest {
 
         final var response = tableGroupRestController.ungroup(group.getId());
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 }

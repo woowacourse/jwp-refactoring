@@ -18,7 +18,7 @@ class TableGroupTest {
         final List<OrderTable> emptyOrderTables = Collections.emptyList();
 
         assertThatThrownBy(
-                () -> new TableGroup(null, LocalDateTime.now(), emptyOrderTables)
+                () -> new TableGroup(LocalDateTime.now(), emptyOrderTables)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -29,7 +29,7 @@ class TableGroupTest {
         final var oneInOrderTables = List.of(table);
 
         assertThatThrownBy(
-                () -> new TableGroup(null, LocalDateTime.now(), oneInOrderTables)
+                () -> new TableGroup(LocalDateTime.now(), oneInOrderTables)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 

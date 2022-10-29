@@ -1,48 +1,40 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TableGroup {
+public class TableGroup implements Entity {
     
     private Long id;
     private LocalDateTime createdDate;
-    private OrderTables orderTables;
+    private List<OrderTable> orderTables;
+
+    public TableGroup(final Long id, final LocalDateTime createdDate) {
+        this(id, createdDate, new ArrayList<>());
+    }
 
     public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this(null, createdDate, orderTables);
     }
 
     public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        if (isNewEntity(id)) {
-            validateAllTablesCanBeGrouped(orderTables);
-        }
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = new OrderTables(orderTables);
-    }
-
-    private boolean isNewEntity(final Long id) {
-        return id == null;
-    }
-
-    private void validateAllTablesCanBeGrouped(final List<OrderTable> orderTables) {
-        final var canAllTablesBeGrouped = orderTables.stream()
-                .allMatch(OrderTable::canBeGrouped);
-        if (!canAllTablesBeGrouped) {
-            throw new IllegalArgumentException();
+        this.orderTables = orderTables;
+        if (isNew()) {
+            validateOnCreate();
         }
     }
 
     public void ungroup() {
         validateCanBeUngrouped();
-        final List<OrderTable> ungroupedOrderTables = ungroupAllTables();
-        this.orderTables = new OrderTables(ungroupedOrderTables);
+        this.orderTables = ungroupAllTables();;
     }
 
     private void validateCanBeUngrouped() {
-        final var isAllTablesCanBeUngrouped = orderTables.orderTables
+        final var isAllTablesCanBeUngrouped = orderTables
                 .stream()
                 .allMatch(OrderTable::canBeUngrouped);
 
@@ -52,7 +44,7 @@ public class TableGroup {
     }
 
     private List<OrderTable> ungroupAllTables() {
-        return orderTables.orderTables
+        return orderTables
                 .stream()
                 .map(orderTable -> new OrderTable(
                         orderTable.getId(),
@@ -61,6 +53,31 @@ public class TableGroup {
                         false,
                         orderTable.getOrders())
                 ).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isNew() {
+        return id == null;
+    }
+
+    @Override
+    public void validateOnCreate() {
+        validateAllTablesCanBeGrouped();
+        validateTablesNotEmptyAndLeastSizeTwo();
+    }
+
+    private void validateAllTablesCanBeGrouped() {
+        final var canAllTablesBeGrouped = orderTables.stream()
+                .allMatch(OrderTable::canBeGrouped);
+        if (!canAllTablesBeGrouped) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateTablesNotEmptyAndLeastSizeTwo() {
+        if (orderTables.isEmpty() || orderTables.size() < 2) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -75,31 +92,7 @@ public class TableGroup {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public List<OrderTable> getOrderTables() {
-        return orderTables.orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = new OrderTables(orderTables);
-    }
-
-    private static class OrderTables {
-
-        private final List<OrderTable> orderTables;
-
-        private OrderTables(final List<OrderTable> orderTables) {
-            validateLeastSize(orderTables);
-            this.orderTables = orderTables;
-        }
-
-        private void validateLeastSize(final List<OrderTable> orderTables) {
-            if (orderTables.isEmpty() || orderTables.size() < 2) {
-                throw new IllegalArgumentException();
-            }
-        }
+        return orderTables;
     }
 }
