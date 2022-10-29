@@ -53,7 +53,7 @@ class TableServiceTest extends FakeSpringContext {
         final var italian = menuGroupDao.save(menuGroup("양식"));
         final var pizzaMenu = menuDao.save(menu("피자파티", italian, List.of(pizza)));
 
-        final var table = orderTableDao.save(emptyTable(2));
+        final var table = orderTableDao.save(notEmptyTable(2));
 
         orderDao.save(order(table, OrderStatus.MEAL, pizzaMenu));
 

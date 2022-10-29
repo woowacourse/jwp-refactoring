@@ -1,6 +1,7 @@
 package kitchenpos.repository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
@@ -34,6 +35,12 @@ public class OrderTableRepository {
 
     public OrderTable add(final OrderTable orderTable) {
         return orderTableDao.save(orderTable);
+    }
+
+    public List<OrderTable> addAll(final List<OrderTable> orderTables) {
+        return orderTables.stream()
+                .map(this::add)
+                .collect(Collectors.toList());
     }
 
     public List<OrderTable> getAll() {

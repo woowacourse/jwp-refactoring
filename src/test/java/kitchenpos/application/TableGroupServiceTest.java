@@ -4,6 +4,8 @@ import static kitchenpos.fixture.MenuFactory.menu;
 import static kitchenpos.fixture.MenuGroupFactory.menuGroup;
 import static kitchenpos.fixture.OrderFactory.order;
 import static kitchenpos.fixture.OrderTableFactory.emptyTable;
+
+import static kitchenpos.fixture.OrderTableFactory.notEmptyTable;
 import static kitchenpos.fixture.ProductFactory.product;
 import static kitchenpos.fixture.TableGroupFactory.tableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +21,7 @@ import org.junit.jupiter.api.Test;
 
 class TableGroupServiceTest extends FakeSpringContext {
 
-    private final TableGroupService tableGroupService = new TableGroupService(orderTableDao, tableGroups);
+    private final TableGroupService tableGroupService = new TableGroupService(orderTableDao, orderTables, tableGroups);
 
     @DisplayName("테이블 그룹 등록")
     @Test
@@ -65,10 +67,10 @@ class TableGroupServiceTest extends FakeSpringContext {
         final var singleTable = orderTableDao.save(emptyTable(1));
         final var doubleTable = orderTableDao.save(emptyTable(2));
 
-        orderDao.save(order(singleTable, OrderStatus.MEAL, pizzaMenu));
-        orderDao.save(order(doubleTable, OrderStatus.COMPLETION, cokeMenu));
-
         final var tableGroup = createTableGroupAndSave(singleTable, doubleTable);
+
+        orderDao.save(order(tableGroup.getOrderTables().get(0), OrderStatus.MEAL, pizzaMenu));
+        orderDao.save(order(tableGroup.getOrderTables().get(1), OrderStatus.COMPLETION, cokeMenu));
 
         assertThatThrownBy(
                 () -> tableGroupService.ungroup(tableGroup.getId())
@@ -77,10 +79,6 @@ class TableGroupServiceTest extends FakeSpringContext {
 
     private TableGroup createTableGroupAndSave(final OrderTable... orderTables) {
         final var group = tableGroupDao.save(tableGroup(orderTables));
-        for (OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(group.getId());
-            orderTableDao.save(orderTable);
-        }
-        return group;
+        return tableGroups.add(group);
     }
 }

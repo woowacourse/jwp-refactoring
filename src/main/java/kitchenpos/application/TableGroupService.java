@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,10 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableGroupService {
 
     private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTables;
     private final TableGroupRepository tableGroups;
 
     public TableGroupService(final OrderTableDao orderTableDao,
+                             final OrderTableRepository orderTables,
                              final TableGroupRepository tableGroups) {
+        this.orderTables = orderTables;
         this.orderTableDao = orderTableDao;
         this.tableGroups = tableGroups;
     }
@@ -46,7 +50,6 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final var tableGroup = tableGroups.get(tableGroupId);
         tableGroup.ungroup();
-
-        tableGroups.add(tableGroup);
+        orderTables.addAll(tableGroup.getOrderTables());
     }
 }

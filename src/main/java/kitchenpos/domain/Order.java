@@ -3,42 +3,52 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class Order {
+public class Order implements Entity {
 
     private Long id;
+    private OrderTable orderTable;
     private Long orderTableId;
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    private LineItems orderLineItems;
+    private List<OrderLineItem> orderLineItems;
 
     public Order() {
     }
 
-    public Order(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = new LineItems(orderLineItems);
-    }
-
     public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
-        this(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        this(null, orderTable, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
-    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
-        this.id = id;
-        this.orderTableId = orderTableId;
-        this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
+    public Order(final Long id,
+                 final Long orderTableId,
+                 final OrderStatus orderStatus,
+                 final LocalDateTime orderedTime) {
+        this(id, null, orderTableId, orderStatus, orderedTime, null);
     }
 
-    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
+    public Order(final Long id,
+                 final Long orderTableId,
+                 final OrderStatus orderStatus,
+                 final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
+        this(id, null, orderTableId, orderStatus, orderedTime, orderLineItems);
+    }
+
+    public Order(final Long id,
+                 final OrderTable orderTable,
+                 final Long orderTableId,
+                 final OrderStatus orderStatus,
+                 final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         this.id = id;
+        this.orderTable = orderTable;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = new LineItems(orderLineItems);
+        this.orderLineItems = orderLineItems;
+        if (isNew()) {
+            validateOnCreate();
+        }
     }
 
     public void changeStatus(final OrderStatus orderStatus) {
@@ -64,10 +74,6 @@ public class Order {
         return orderTableId;
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
-    }
-
     public OrderStatus getOrderStatus() {
         return orderStatus;
     }
@@ -80,31 +86,22 @@ public class Order {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems.lineItems;
+        return orderLineItems;
     }
 
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = new LineItems(orderLineItems);
+    @Override
+    public boolean isNew() {
+        return id == null;
     }
 
-    private static class LineItems {
-
-        private final List<OrderLineItem> lineItems;
-
-        private LineItems(final List<OrderLineItem> lineItems) {
-            validateNotEmpty(lineItems);
-            this.lineItems = lineItems;
+    @Override
+    public void validateOnCreate() {
+        if (orderLineItems.isEmpty()) {
+            throw new IllegalArgumentException();
         }
-
-        private void validateNotEmpty(final List<OrderLineItem> lineItems) {
-            if (lineItems.isEmpty()) {
-                throw new IllegalArgumentException();
-            }
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
         }
     }
 }

@@ -8,6 +8,7 @@ import static kitchenpos.fixture.OrderTableFactory.notEmptyTable;
 import static kitchenpos.fixture.ProductFactory.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.not;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
@@ -53,7 +54,7 @@ class OrderServiceTest extends FakeSpringContext {
         final var italian = menuGroupDao.save(menuGroup("양식"));
         final var pizzaMenu = menuDao.save(menu("피자파티", italian, List.of(pizza)));
 
-        final var table = orderTableDao.save(emptyTable(2));
+        final var table = orderTableDao.save(notEmptyTable(2));
 
         final var order = order(table, pizzaMenu, pizzaMenu);
 

@@ -18,6 +18,7 @@ public class OrderTableFakeDao extends BaseFakeDao<OrderTable> implements OrderT
     public List<OrderTable> findAllByTableGroupId(final Long tableGroupId) {
         return entities.values()
                 .stream()
+                .filter(orderTable -> orderTable.getTableGroupId() != null)
                 .filter(orderTable -> orderTable.getTableGroupId().equals(tableGroupId))
                 .collect(Collectors.toList());
     }

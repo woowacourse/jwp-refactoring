@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +16,7 @@ class OrderTest {
         final List<OrderLineItem> invalidOrderLineItems = Collections.emptyList();
 
         assertThatThrownBy(
-                () -> new Order(invalidOrderLineItems)
+                () -> new Order(null, 1L, OrderStatus.COOKING, LocalDateTime.now(), invalidOrderLineItems)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 

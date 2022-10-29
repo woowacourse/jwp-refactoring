@@ -34,13 +34,12 @@ public class OrderService {
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
 
-        // 중복이 있거나, 없는 메뉴면 안된다 ?
+        // 중복 메뉴면 안된다 && DB에 없는 메뉴면 안된다 ?
         if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
 
         final OrderTable orderTable = orderTables.get(request.getOrderTableId());
-
         final var order = new Order(orderTable, orderLineItems);
 
         return orders.add(order);
@@ -51,9 +50,9 @@ public class OrderService {
     }
 
     @Transactional
+
     public Order changeOrderStatus(final Long orderId, final Order request) {
         final Order order = orders.get(orderId);
-
         order.changeStatus(request.getOrderStatus());
 
         return orders.add(order);

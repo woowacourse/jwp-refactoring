@@ -54,7 +54,11 @@ public class TableGroup {
     private List<OrderTable> ungroupAllTables() {
         return orderTables.orderTables
                 .stream()
-                .map(orderTable -> new OrderTable(orderTable.getId(), null, orderTable.getNumberOfGuests(), false,
+                .map(orderTable -> new OrderTable(
+                        orderTable.getId(),
+                        null,
+                        orderTable.getNumberOfGuests(),
+                        false,
                         orderTable.getOrders())
                 ).collect(Collectors.toList());
     }

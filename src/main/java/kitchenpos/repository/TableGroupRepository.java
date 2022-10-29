@@ -28,8 +28,15 @@ public class TableGroupRepository {
         final var savedTableGroup = tableGroupDao.save(tableGroup);
         final var orderTables = tableGroup.getOrderTables()
                 .stream()
-                .map(orderTableDao::save)
-                .collect(Collectors.toList());
+                .map(orderTable -> {
+                    final var groupedOrderTable = new OrderTable(
+                            orderTable.getId(),
+                            savedTableGroup.getId(),
+                            orderTable.getNumberOfGuests(),
+                            false,
+                            orderTable.getOrders());
+                    return orderTableDao.save(groupedOrderTable);
+                }).collect(Collectors.toList());
         return new TableGroup(
                 savedTableGroup.getId(),
                 savedTableGroup.getCreatedDate(),
