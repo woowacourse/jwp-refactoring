@@ -65,7 +65,7 @@ class TableServiceTest extends ApplicationTest {
     @DisplayName("테이블의 empty 변경시 단체 지정 정보가 존재하면 예외가 발생한다.")
     @Test
     void changeEmptyWithTableGroup() {
-        TableGroup tableGroup = 단체지정_생성(new TableGroup(LocalDateTime.now(), List.of()));
+        TableGroup tableGroup = 단체지정_생성(new TableGroup(LocalDateTime.now()));
         OrderTable table = 주문테이블_생성(new OrderTable(tableGroup.getId(), 5, true));
         TableEmptyRequest tableEmptyRequest = new TableEmptyRequest(true);
 

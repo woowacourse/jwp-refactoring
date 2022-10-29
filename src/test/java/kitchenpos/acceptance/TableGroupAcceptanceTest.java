@@ -25,9 +25,9 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
 
         List<Long> tableIds = List.of(table1, table2, table3);
         List<OrderTable> orderTables = tableIds.stream()
-                .map(id -> new OrderTable(id, null, 0, false))
+                .map(id -> new OrderTable(id, null, 0, true))
                 .collect(Collectors.toList());
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
+        TableGroup tableGroup = TableGroup.create(LocalDateTime.now(), orderTables);
 
         RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
