@@ -17,12 +17,12 @@ public class FakeProductDao implements ProductDao {
 
     @Override
     public Product save(final Product product) {
-        final var newProduct = makeNew(product);
+        final var newProduct = assignId(product);
         products.put(newProduct.getId(), newProduct);
         return newProduct;
     }
 
-    private Product makeNew(final Product product) {
+    private Product assignId(final Product product) {
         return new Product(
                 id++,
                 product.getName(),

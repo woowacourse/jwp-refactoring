@@ -17,12 +17,12 @@ public class FakeMenuGroupDao implements MenuGroupDao {
 
     @Override
     public MenuGroup save(final MenuGroup menuGroup) {
-        final var newMenuGroup = makeNew(menuGroup);
+        final var newMenuGroup = assignId(menuGroup);
         menuGroups.put(newMenuGroup.getId(), newMenuGroup);
         return newMenuGroup;
     }
 
-    private MenuGroup makeNew(final MenuGroup menuGroup) {
+    private MenuGroup assignId(final MenuGroup menuGroup) {
         return new MenuGroup(
                 id++,
                 menuGroup.getName()
