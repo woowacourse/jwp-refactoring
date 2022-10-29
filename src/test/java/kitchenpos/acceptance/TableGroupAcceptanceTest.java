@@ -8,9 +8,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.support.annotation.AcceptanceTest;
 import org.junit.jupiter.api.Test;
 
-public class TableGroupAcceptanceTest extends AcceptanceTest {
+@AcceptanceTest
+public class TableGroupAcceptanceTest {
 
     @Test
     void 테이블_그룹을_생성할_수_있다() {

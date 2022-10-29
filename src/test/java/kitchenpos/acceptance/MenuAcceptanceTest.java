@@ -13,9 +13,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import kitchenpos.application.dto.MenuResponse;
+import kitchenpos.support.annotation.AcceptanceTest;
 import org.junit.jupiter.api.Test;
 
-public class MenuAcceptanceTest extends AcceptanceTest {
+@AcceptanceTest
+public class MenuAcceptanceTest {
 
     @Test
     void 메뉴_목록을_조회할_수_있다() {

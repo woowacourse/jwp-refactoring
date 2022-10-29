@@ -6,9 +6,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import kitchenpos.domain.Product;
+import kitchenpos.support.annotation.AcceptanceTest;
 import org.junit.jupiter.api.Test;
 
-public class ProductAcceptanceTest extends AcceptanceTest {
+@AcceptanceTest
+public class ProductAcceptanceTest  {
 
     @Test
     void 상품_목록을_조회할_수_있다() {

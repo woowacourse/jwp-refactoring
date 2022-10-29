@@ -15,9 +15,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import kitchenpos.application.dto.OrderResponse;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.support.annotation.AcceptanceTest;
 import org.junit.jupiter.api.Test;
 
-public class OrderAcceptanceTest extends AcceptanceTest {
+@AcceptanceTest
+public class OrderAcceptanceTest  {
 
     @Test
     void 주문을_조회할_수_있다() {

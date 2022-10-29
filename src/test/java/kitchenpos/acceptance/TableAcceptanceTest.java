@@ -9,9 +9,11 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.List;
 import kitchenpos.application.dto.OrderTableResponse;
+import kitchenpos.support.annotation.AcceptanceTest;
 import org.junit.jupiter.api.Test;
 
-public class TableAcceptanceTest extends AcceptanceTest {
+@AcceptanceTest
+public class TableAcceptanceTest {
 
     @Test
     void 테이블을_조회할_수_있다() {
