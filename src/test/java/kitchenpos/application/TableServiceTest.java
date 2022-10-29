@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.domain.MenuFixture.createMenu;
 import static kitchenpos.fixture.domain.MenuGroupFixture.메뉴그룹A;
 import static kitchenpos.fixture.domain.OrderTableFixture.createOrderTable;
 import static kitchenpos.fixture.domain.ProductFixture.탕수육;
-import static kitchenpos.fixture.dto.MenuDtoFixture.createMenuRequest;
 import static kitchenpos.fixture.dto.OrderDtoFixture.createOrderRequest;
 import static kitchenpos.fixture.dto.OrderTableDtoFixture.createOrderTableRequest;
 import static kitchenpos.fixture.dto.OrderTableDtoFixture.forUpdateEmpty;
@@ -14,10 +14,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderTableRequest;
-import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -111,7 +111,7 @@ public class TableServiceTest extends ServiceTest {
     void changeEmpty_existRemainOrder_throwException(final OrderStatus orderStatus) {
         // given
         final OrderTable table = 테이블등록(createOrderTable(3, false));
-        final MenuResponse menu = 메뉴등록(createMenuRequest("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
+        final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
 
         final OrderResponse order = 주문등록(createOrderRequest(table, menu));
         주문상태변경(order.getId(), orderStatus);

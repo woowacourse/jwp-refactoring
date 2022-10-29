@@ -7,6 +7,7 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.OrderRepository;
@@ -14,10 +15,8 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroupRepository;
-import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.TableGroupRequest;
-import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.dto.response.TableGroupResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +60,6 @@ public abstract class ServiceTest {
     @Autowired
     protected MenuProductDao menuProductDao;
 
-
     @Autowired
     protected OrderLineItemDao orderLineItemDao;
 
@@ -71,7 +69,6 @@ public abstract class ServiceTest {
     @Autowired
     protected ProductDao productDao;
 
-
     protected Product 상품등록(final Product product) {
         return productDao.save(product);
     }
@@ -80,8 +77,8 @@ public abstract class ServiceTest {
         return menuGroupDao.save(menuGroup);
     }
 
-    protected MenuResponse 메뉴등록(final MenuRequest menu) {
-        return menuService.create(menu);
+    protected Menu 메뉴등록(final Menu menu) {
+        return menuRepository.save(menu);
     }
 
     protected OrderTable 테이블등록(final OrderTable orderTable) {

@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.domain.MenuFixture.createMenu;
 import static kitchenpos.fixture.domain.MenuGroupFixture.메뉴그룹A;
 import static kitchenpos.fixture.domain.MenuGroupFixture.메뉴그룹B;
 import static kitchenpos.fixture.domain.ProductFixture.짜장면;
@@ -46,10 +47,10 @@ public class MenuServiceTest extends ServiceTest {
         final MenuGroup menuGroup = 메뉴그룹등록(메뉴그룹A);
         final Product product = 상품등록(탕수육);
 
-        final MenuRequest menu = createMenuRequest("탕수육_메뉴", -1, menuGroup, product);
+        final MenuRequest request = createMenuRequest("탕수육_메뉴", -1, menuGroup, product);
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -60,10 +61,10 @@ public class MenuServiceTest extends ServiceTest {
         final MenuGroup notRegisteredMenuGroup = 메뉴그룹A;
         final Product product = 상품등록(탕수육);
 
-        final MenuRequest menu = createMenuRequest("탕수육_메뉴", 10_000, notRegisteredMenuGroup, product);
+        final MenuRequest request = createMenuRequest("탕수육_메뉴", 10_000, notRegisteredMenuGroup, product);
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -75,10 +76,10 @@ public class MenuServiceTest extends ServiceTest {
         final Product product1 = 상품등록(짜장면);
         final Product product2 = 상품등록(짬뽕);
 
-        final MenuRequest menu = createMenuRequest("짜장짬뽕_메뉴", 30_000, menuGroup, product1, product2);
+        final MenuRequest request = createMenuRequest("짜장짬뽕_메뉴", 30_000, menuGroup, product1, product2);
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -86,8 +87,8 @@ public class MenuServiceTest extends ServiceTest {
     @DisplayName("주문테이블 목록을 조회한다.")
     void list() {
         // given
-        메뉴등록(createMenuRequest("짜장_메뉴", 8_000, 메뉴그룹등록(메뉴그룹A), 상품등록(짜장면)));
-        메뉴등록(createMenuRequest("짬뽕_메뉴", 8_000, 메뉴그룹등록(메뉴그룹B), 상품등록(짬뽕)));
+        메뉴등록(createMenu("짜장_메뉴", 8_000, 메뉴그룹등록(메뉴그룹A), 상품등록(짜장면)));
+        메뉴등록(createMenu("짬뽕_메뉴", 8_000, 메뉴그룹등록(메뉴그룹B), 상품등록(짬뽕)));
 
         // when
         final List<MenuResponse> actual = menuService.list();
