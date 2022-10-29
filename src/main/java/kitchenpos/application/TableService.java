@@ -1,5 +1,10 @@
 package kitchenpos.application;
 
+import kitchenpos.application.request.table.ChangeEmptyRequest;
+import kitchenpos.application.request.table.ChangeNumberOfGuestsRequest;
+import kitchenpos.application.request.table.OrderTableRequest;
+import kitchenpos.application.response.ResponseAssembler;
+import kitchenpos.application.response.tablegroup.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
@@ -17,24 +22,29 @@ public class TableService {
 
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
+    private final ResponseAssembler responseAssembler;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
+    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao,
+                        final ResponseAssembler responseAssembler) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
+        this.responseAssembler = responseAssembler;
     }
 
     @Transactional
-    public OrderTable create(final OrderTable request) {
+    public OrderTableResponse create(final OrderTableRequest request) {
         final var orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
-        return orderTableDao.save(orderTable);
+        final var savedOrderTable = orderTableDao.save(orderTable);
+        return responseAssembler.orderTableResponse(savedOrderTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableDao.findAll();
+    public List<OrderTableResponse> list() {
+        final var orderTables = orderTableDao.findAll();
+        return responseAssembler.orderTableResponses(orderTables);
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable request) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final ChangeEmptyRequest request) {
         final var isEmpty = request.isEmpty();
 
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
@@ -45,7 +55,8 @@ public class TableService {
 
         savedOrderTable.changeEmptyStatusTo(isEmpty);
 
-        return orderTableDao.save(savedOrderTable);
+        final var orderTable = orderTableDao.save(savedOrderTable);
+        return responseAssembler.orderTableResponse(orderTable);
     }
 
     private void validateOrderTableNotGrouped(final OrderTable savedOrderTable) {
@@ -62,7 +73,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable request) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final ChangeNumberOfGuestsRequest request) {
         final int numberOfGuests = request.getNumberOfGuests();
 
         validateNumberOfGuestsNotNegative(numberOfGuests);
@@ -72,7 +83,9 @@ public class TableService {
         validateOrderTableNotEmpty(orderTable);
 
         orderTable.updateNumberOfGuests(numberOfGuests);
-        return orderTableDao.save(orderTable);
+
+        final var savedOrderTable = orderTableDao.save(orderTable);
+        return responseAssembler.orderTableResponse(savedOrderTable);
     }
 
     private void validateNumberOfGuestsNotNegative(final int numberOfGuests) {

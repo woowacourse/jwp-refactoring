@@ -1,5 +1,9 @@
 package kitchenpos.application;
 
+import kitchenpos.application.request.table.ChangeEmptyRequest;
+import kitchenpos.application.request.table.ChangeNumberOfGuestsRequest;
+import kitchenpos.application.request.table.OrderTableRequest;
+import kitchenpos.application.response.tablegroup.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
@@ -38,13 +42,10 @@ class TableServiceTest {
     @DisplayName("주문 테이블을 추가한다")
     @Test
     void create() {
-        final var expected = new OrderTable(null, 1, false);
-        final var actual = tableService.create(expected);
+        final var request = new OrderTableRequest(1, false);
+        final var actual = tableService.create(request);
 
         assertThat(actual.getId()).isPositive();
-        assertThat(actual).usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(expected);
     }
 
     @Nested
@@ -54,12 +55,12 @@ class TableServiceTest {
         @DisplayName("주문 테이블을 비운다")
         @Test
         void changeEmpty() {
-            final var expected = orderTableDao.save(new OrderTable(null, 1, false));
-            expected.changeEmptyStatusTo(true);
+            final var orderTableId = saveOrderTable(null, 1, false).getId();
 
-            final var actual = tableService.changeEmpty(expected.getId(), expected);
-            assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(expected);
+            final var request = new ChangeEmptyRequest(true);
+
+            final var actual = tableService.changeEmpty(orderTableId, request);
+            assertThat(actual.isEmpty()).isTrue();
         }
 
         @DisplayName("존재하는 주문 테이블이어야만 한다")
@@ -67,9 +68,9 @@ class TableServiceTest {
         void changeEmptyWithNonExistOrderTable() {
             final var nonExistOrderTableId = 0L;
 
-            final var orderTable = new OrderTable(null, 1, false);
+            final var request = new ChangeEmptyRequest(true);
 
-            assertThatThrownBy(() -> tableService.changeEmpty(nonExistOrderTableId, orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(nonExistOrderTableId, request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("주문 테이블을 찾을 수 없습니다.");
         }
@@ -78,12 +79,11 @@ class TableServiceTest {
         @Test
         void changeEmptyWithAssignedTableGroup() {
             final var tableGroupId = 1L;
+            final var orderTableId = saveOrderTable(tableGroupId, 1, false).getId();
 
-            final var orderTable = orderTableDao.save(new OrderTable(tableGroupId, 1, false));
-            orderTable.changeEmptyStatusTo(true);
+            final var request = new ChangeEmptyRequest(true);
 
-            final var orderTableId = orderTable.getId();
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("단체 지정된 테이블입니다.");
         }
@@ -92,12 +92,12 @@ class TableServiceTest {
         @ParameterizedTest
         @ValueSource(strings = {"COOKING", "MEAL"})
         void changeEmptyWithNotCompletedOrderTable(final String orderStatus) {
-            final var orderTable = orderTableDao.save(new OrderTable(null, 1, false));
-            final var orderTableId = orderTable.getId();
+            final var orderTableId = saveOrderTable(null, 1, false).getId();
+            orderDao.save(new Order(orderTableId, orderStatus, LocalDateTime.now()));
 
-            orderDao.save(new Order(orderTableId, orderStatus, LocalDateTime.now(), Collections.emptyList()));
+            final var request = new ChangeEmptyRequest(true);
 
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("계산이 완료되지 않은 테이블입니다.");
         }
@@ -109,15 +109,14 @@ class TableServiceTest {
 
         @DisplayName("주문 테이블의 손님 수를 변경한다")
         @ParameterizedTest
-        @ValueSource(ints = {0, 1})
+        @ValueSource(ints = {0, 10})
         void changeNumberOfGuests(final int expectedNumberOfGuests) {
-            final var orderTable = orderTableDao.save(new OrderTable(null, 1, false));
+            final var orderTable = saveOrderTable(null, 1, false);
 
-            orderTable.updateNumberOfGuests(expectedNumberOfGuests);
-            tableService.changeNumberOfGuests(orderTable.getId(), orderTable);
+            final var request = new ChangeNumberOfGuestsRequest(expectedNumberOfGuests);
+            final var actual = tableService.changeNumberOfGuests(orderTable.getId(), request);
 
-            final var actual = orderTable.getNumberOfGuests();
-            assertThat(actual).isEqualTo(expectedNumberOfGuests);
+            assertThat(actual.getNumberOfGuests()).isEqualTo(expectedNumberOfGuests);
         }
 
         @DisplayName("주문 테이블의 손님 수는 음수가 될 수 없다")
@@ -125,13 +124,10 @@ class TableServiceTest {
         void changeNumberOfGuestsWithNegative() {
             final var negativeNumberOfGuests = -1;
 
-            final var orderTable = new OrderTable(null, 1, false);
-            final var savedOrderTable = orderTableDao.save(orderTable);
+            final var orderTableId = saveOrderTable(null, 1, false).getId();
+            final var request = new ChangeNumberOfGuestsRequest(negativeNumberOfGuests);
 
-            orderTable.updateNumberOfGuests(negativeNumberOfGuests);
-
-            final var orderTableId = savedOrderTable.getId();
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, orderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("손님 수는 음수가 될 수 없습니다.");
         }
@@ -141,9 +137,9 @@ class TableServiceTest {
         void changeNumberOfGuestsWithNonExistOrderTable() {
             final var nonExistOrderTableId = 0L;
 
-            final var orderTable = orderTableDao.save(new OrderTable(null, 1, false));
+            final var request = new ChangeNumberOfGuestsRequest(2);
 
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(nonExistOrderTableId, orderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(nonExistOrderTableId, request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("주문 테이블을 찾을 수 없습니다.");
         }
@@ -153,11 +149,11 @@ class TableServiceTest {
         void changeNumberOfGuestsWithEmptyOrderTable() {
             final var isEmpty = true;
 
-            final var orderTable = new OrderTable(null, 1, isEmpty);
-            final var savedOrderTable = orderTableDao.save(orderTable);
+            final var orderTableId = saveOrderTable(null, 1, isEmpty).getId();
 
-            final var orderTableId = savedOrderTable.getId();
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, orderTable))
+            final var request = new ChangeNumberOfGuestsRequest(2);
+
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("주문 테이블이 비어있습니다.");
         }
@@ -166,15 +162,18 @@ class TableServiceTest {
     @DisplayName("주문 테이블을 전체 조회한다")
     @Test
     void list() {
-        final List<OrderTable> expected = Stream.of(
-                        new OrderTable(null, 1, false),
-                        new OrderTable(null, 5, false),
-                        new OrderTable(null, 10, true))
-                .map(orderTableDao::save)
-                .collect(Collectors.toUnmodifiableList());
-        final List<OrderTable> actual = tableService.list();
+        final var expectedSize = 4;
+        for (int i = 0; i < expectedSize; i++) {
+            saveOrderTable(null, 1, false);
+        }
 
-        assertThat(actual).usingRecursiveComparison()
-                .isEqualTo(expected);
+        final List<OrderTableResponse> actual = tableService.list();
+
+        assertThat(actual).hasSize(expectedSize);
+    }
+
+    private OrderTable saveOrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        final var orderTable = new OrderTable(tableGroupId, numberOfGuests, empty);
+        return orderTableDao.save(orderTable);
     }
 }

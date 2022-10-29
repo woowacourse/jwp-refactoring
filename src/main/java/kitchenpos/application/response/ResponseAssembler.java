@@ -106,7 +106,7 @@ public class ResponseAssembler {
         );
     }
 
-    private List<OrderTableResponse> orderTableResponses(final List<OrderTable> orderTables) {
+    public List<OrderTableResponse> orderTableResponses(final List<OrderTable> orderTables) {
         return orderTables.stream()
                 .map(orderTable -> new OrderTableResponse(
                         orderTable.getId(),
@@ -115,5 +115,14 @@ public class ResponseAssembler {
                         orderTable.isEmpty()
                 ))
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    public OrderTableResponse orderTableResponse(final OrderTable orderTable) {
+        return new OrderTableResponse(
+                orderTable.getId(),
+                orderTable.getTableGroupId(),
+                orderTable.getNumberOfGuests(),
+                orderTable.isEmpty()
+        );
     }
 }
