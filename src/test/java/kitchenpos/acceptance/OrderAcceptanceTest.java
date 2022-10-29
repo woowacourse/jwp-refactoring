@@ -4,9 +4,9 @@ import static kitchenpos.acceptance.MenuAcceptanceTest.메뉴를_생성한다;
 import static kitchenpos.acceptance.MenuGroupAcceptanceTest.메뉴_그룹을_생성한다;
 import static kitchenpos.acceptance.OrderTableAcceptanceTest.테이블을_생성한다;
 import static kitchenpos.acceptance.ProductAcceptanceTest.상품을_생성한다;
-import static kitchenpos.acceptance.RequestUtil.get;
-import static kitchenpos.acceptance.RequestUtil.post;
-import static kitchenpos.acceptance.RequestUtil.put;
+import static kitchenpos.acceptance.support.RequestUtil.get;
+import static kitchenpos.acceptance.support.RequestUtil.post;
+import static kitchenpos.acceptance.support.RequestUtil.put;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import io.restassured.response.ExtractableResponse;

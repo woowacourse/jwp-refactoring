@@ -1,13 +1,14 @@
 package kitchenpos.acceptance;
 
 import static kitchenpos.acceptance.OrderTableAcceptanceTest.테이블을_생성한다;
-import static kitchenpos.acceptance.RequestUtil.post;
+import static kitchenpos.acceptance.support.RequestUtil.post;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import kitchenpos.acceptance.support.RequestUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

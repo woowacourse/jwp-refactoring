@@ -2,8 +2,8 @@ package kitchenpos.acceptance;
 
 import static kitchenpos.acceptance.MenuGroupAcceptanceTest.메뉴_그룹을_생성한다;
 import static kitchenpos.acceptance.ProductAcceptanceTest.상품을_생성한다;
-import static kitchenpos.acceptance.RequestUtil.get;
-import static kitchenpos.acceptance.RequestUtil.post;
+import static kitchenpos.acceptance.support.RequestUtil.get;
+import static kitchenpos.acceptance.support.RequestUtil.post;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import io.restassured.response.ExtractableResponse;

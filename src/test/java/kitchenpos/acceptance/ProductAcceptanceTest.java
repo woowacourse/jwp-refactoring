@@ -1,7 +1,7 @@
 package kitchenpos.acceptance;
 
-import static kitchenpos.acceptance.RequestUtil.get;
-import static kitchenpos.acceptance.RequestUtil.post;
+import static kitchenpos.acceptance.support.RequestUtil.get;
+import static kitchenpos.acceptance.support.RequestUtil.post;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import io.restassured.response.ExtractableResponse;
