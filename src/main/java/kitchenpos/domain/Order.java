@@ -48,8 +48,8 @@ public class Order {
         return orderTableId;
     }
 
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
+    public String getOrderStatus() {
+        return orderStatus.name();
     }
 
     public LocalDateTime getOrderedTime() {

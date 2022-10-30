@@ -13,6 +13,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.exception.MenuPriceException;
 import kitchenpos.exception.NotFoundMenuGroupException;
+import kitchenpos.exception.PriceException;
 import kitchenpos.ui.dto.MenuProductDto;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +46,7 @@ class MenuServiceTest extends ServiceTest {
                 = new MenuCreateRequest("", BigDecimal.valueOf(-1), menuGroup.getId(), List.of());
 
         assertThatThrownBy(() -> menuService.create(menuCreateRequest))
-                .isInstanceOf(MenuPriceException.class);
+                .isInstanceOf(PriceException.class);
     }
 
     @Test

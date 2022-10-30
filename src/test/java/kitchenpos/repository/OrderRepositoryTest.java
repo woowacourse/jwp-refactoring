@@ -53,7 +53,7 @@ class OrderRepositoryTest extends RepositoryTest {
 
         orderRepository.changeOrderStatus(savedOrder.getId(), MEAL);
 
-        assertThat(orderDao.findById(savedOrder.getId()).get().getOrderStatus()).isEqualTo(MEAL);
+        assertThat(orderDao.findById(savedOrder.getId()).get().getOrderStatus()).isEqualTo(MEAL.name());
     }
 
     @Test
