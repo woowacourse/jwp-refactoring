@@ -1,10 +1,10 @@
 package kitchenpos.dao.repository;
 
 import java.util.List;
-import java.util.Optional;
-import kitchenpos.dao.jdbctemplate.JdbcTemplateOrderLineItemDao;
 import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.jdbctemplate.JdbcTemplateOrderLineItemDao;
 import kitchenpos.domain.OrderLineItem;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -21,8 +21,9 @@ public class OrderLineItemRepository implements OrderLineItemDao {
     }
 
     @Override
-    public Optional<OrderLineItem> findById(Long id) {
-        return orderLineItemDao.findById(id);
+    public OrderLineItem findById(Long id) {
+        return orderLineItemDao.findById(id)
+                .orElseThrow(() -> new InvalidDataAccessApiUsageException("주문 항목이 존재해야 한다."));
     }
 
     @Override
