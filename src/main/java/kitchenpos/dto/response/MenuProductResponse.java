@@ -14,4 +14,16 @@ public class MenuProductResponse {
         quantity = menuProduct.getQuantity();
     }
 
+    public Long getSeq() {
+        return seq;
+    }
+
+    public ProductResponse getProduct() {
+        return product;
+    }
+
+    public long getQuantity() {
+        return quantity;
+    }
+
 }

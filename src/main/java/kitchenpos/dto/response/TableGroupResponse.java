@@ -13,4 +13,13 @@ public class TableGroupResponse {
         id = tableGroup.getId();
         createdDate = tableGroup.getCreatedDate();
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
 }

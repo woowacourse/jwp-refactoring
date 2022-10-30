@@ -21,4 +21,21 @@ public class MenuResponse {
             .map(it -> new MenuProductResponse(it))
             .collect(Collectors.toList());
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public MenuGroupResponse getMenuGroup() {
+        return menuGroup;
+    }
+
+    public List<MenuProductResponse> getMenuProducts() {
+        return menuProducts;
+    }
+
 }
