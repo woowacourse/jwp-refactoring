@@ -9,10 +9,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableEmptyRequest;
 import kitchenpos.dto.request.OrderTableNumberOfGuestsRequest;
 import kitchenpos.dto.request.OrderTableRequest;
@@ -68,13 +68,14 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 테이블_그룹_아이디가_null이_아니면_테이블을_비어있음_상태로_변경할_수_없다() {
         // given
-        final TableGroup tableGroup = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성());
-        final OrderTable savedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성(tableGroup));
-        주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(savedOrderTable.getId()));
+        final OrderTable orderTable1_hasTableGroup = ORDER_TABLE_NOT_EMPTY_1.생성();
+        final OrderTable orderTable2_hasTableGroup = ORDER_TABLE_NOT_EMPTY_1.생성();
+        테이블그룹을_저장한다(TABLE_GROUP_NOW.생성(List.of(orderTable1_hasTableGroup, orderTable2_hasTableGroup)));
+        주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(orderTable1_hasTableGroup.getId()));
 
         final OrderTableEmptyRequest orderTableEmptyRequest = new OrderTableEmptyRequest(true);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), orderTableEmptyRequest))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable1_hasTableGroup.getId(), orderTableEmptyRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -83,7 +84,8 @@ class TableServiceTest extends ServiceTest {
     void 주문상태가_조리중이거나_식사중_상태이면_테이블을_비어있음_상태로_변경할_수_없다(final String status) {
         // given
         final OrderTable savedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성());
-        주문을_저장한다(new Order(savedOrderTable.getId(), OrderStatus.valueOf(status), LocalDateTime.now(), new ArrayList<>()));
+        주문을_저장한다(new Order(savedOrderTable.getId(), OrderStatus.valueOf(status), LocalDateTime.now(),
+                new ArrayList<>()));
 
         final OrderTableEmptyRequest orderTableEmptyRequest = new OrderTableEmptyRequest(true);
 

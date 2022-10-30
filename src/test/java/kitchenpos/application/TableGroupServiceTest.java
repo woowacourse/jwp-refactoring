@@ -85,12 +85,13 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void 테이블그룹을_생성할_때_묶을_테이블중_이미_테이블_그룹이_있다면_예외를_발생한다() {
         // given
-        final TableGroup tableGroup = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성());
-        final OrderTable alreadySavedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroup));
+        final OrderTable orderTable1_hasTableGroup = ORDER_TABLE_EMPTY_1.생성();
+        final OrderTable orderTable2_hasTableGroup = ORDER_TABLE_EMPTY_1.생성();
+        테이블그룹을_저장한다(TABLE_GROUP_NOW.생성(List.of(orderTable1_hasTableGroup, orderTable2_hasTableGroup)));
 
         final OrderTable savedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(
-                List.of(new OrderTableIdRequest(alreadySavedOrderTable.getId()),
+                List.of(new OrderTableIdRequest(orderTable1_hasTableGroup.getId()),
                         new OrderTableIdRequest(savedOrderTable.getId())));
 
         // when, then
@@ -101,11 +102,11 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void 테이블_그룹을_해제할_수_있다() {
         // given
-        final TableGroup tableGroup = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성());
-        final OrderTable alreadySavedOrderTable1 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroup));
-        final OrderTable alreadySavedOrderTable2 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroup));
-        주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(alreadySavedOrderTable1.getId()));
-        주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(alreadySavedOrderTable2.getId()));
+        final OrderTable orderTable1 = ORDER_TABLE_EMPTY_1.생성();
+        final OrderTable orderTable2 = ORDER_TABLE_EMPTY_1.생성();
+        final TableGroup tableGroup = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성(List.of(orderTable1, orderTable2)));
+        주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(orderTable1.getId()));
+        주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(orderTable2.getId()));
 
         // when
         tableGroupService.ungroup(tableGroup.getId());
@@ -126,11 +127,11 @@ class TableGroupServiceTest extends ServiceTest {
     @ValueSource(strings = {"COOKING", "MEAL"})
     void 테이블_그룹을_해제할_때_주문테이블의_주문상태가_제조중이거나_식사중이면_예외를_발생한다(final String status) {
         // given
-        final TableGroup tableGroup = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성());
-        final OrderTable alreadySavedOrderTable1 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroup));
-        final OrderTable alreadySavedOrderTable2 = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성(tableGroup));
-        주문을_저장한다(new Order(alreadySavedOrderTable1.getId(), OrderStatus.valueOf(status), LocalDateTime.now(), new ArrayList<>()));
-        주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(alreadySavedOrderTable2.getId()));
+        final OrderTable orderTable1 = ORDER_TABLE_EMPTY_1.생성();
+        final OrderTable orderTable2 = ORDER_TABLE_EMPTY_1.생성();
+        final TableGroup tableGroup = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성(List.of(orderTable1, orderTable2)));
+        주문을_저장한다(new Order(orderTable1.getId(), OrderStatus.valueOf(status), LocalDateTime.now(), new ArrayList<>()));
+        주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(orderTable2.getId()));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
