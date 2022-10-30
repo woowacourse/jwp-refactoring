@@ -55,18 +55,23 @@ public class OrderService {
     }
 
     private void validateOrderCondition(final Order order) {
-        final List<Long> menuIds = order.getOrderLineItemsMenuId();
+        validateMenus(order.getOrderLineItemsMenuId());
+        validateOrderTable(order);
+    }
+
+    private void validateMenus(final List<Long> menuIds) {
         if (menuIds.size() != menuDao.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
+    }
 
+    private void validateOrderTable(final Order order) {
         final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
     }
-
 
     @Transactional(readOnly = true)
     public List<OrderDto> getOrders() {
@@ -82,9 +87,7 @@ public class OrderService {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (savedOrder.isInCompletionStatus()) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderStatus(savedOrder);
 
         final Order order = orderDao.save(new Order(savedOrder.getId(),
                 savedOrder.getOrderTableId(),
@@ -93,5 +96,11 @@ public class OrderService {
                 orderLineItemDao.findAllByOrderId(orderId)));
 
         return OrderDto.from(order);
+    }
+
+    private void validateOrderStatus(final Order order) {
+        if (order.isInCompletionStatus()) {
+            throw new IllegalArgumentException();
+        }
     }
 }
