@@ -12,11 +12,9 @@ import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.TestFixture;
+import kitchenpos.TestEntityFactory;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.dto.request.ProductRequest;
-import kitchenpos.domain.Product;
-import kitchenpos.repository.ProductRepository;
 
 @SpringBootTest
 @Transactional
@@ -24,11 +22,11 @@ import kitchenpos.repository.ProductRepository;
 public class ProductServiceTest {
 
     private final ProductService productService;
-    private final TestFixture testFixture;
+    private final TestEntityFactory testEntityFactory;
 
-    public ProductServiceTest(ProductService productService, TestFixture testFixture) {
+    public ProductServiceTest(ProductService productService, TestEntityFactory testEntityFactory) {
         this.productService = productService;
-        this.testFixture = testFixture;
+        this.testEntityFactory = testEntityFactory;
     }
 
     @DisplayName("상품의 가격이 존재하지 않는다면 예외가 발생한다.")
@@ -52,8 +50,8 @@ public class ProductServiceTest {
     @DisplayName("상품의 목록을 가져올 수 있다.")
     @Test
     public void list() {
-        testFixture.상품을_생성한다("삼겹살", 1000L);
-        testFixture.상품을_생성한다("대패삼겹살", 1000L);
+        testEntityFactory.상품을_생성한다("삼겹살", 1000L);
+        testEntityFactory.상품을_생성한다("대패삼겹살", 1000L);
 
         assertThat(productService.list()).hasSize(2);
     }

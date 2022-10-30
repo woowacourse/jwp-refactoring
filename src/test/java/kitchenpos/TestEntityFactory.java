@@ -8,35 +8,39 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.application.MenuService;
+import kitchenpos.application.OrderService;
 import kitchenpos.application.ProductService;
-import kitchenpos.application.TableGroupService;
 import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.application.dto.request.MenuRequest;
+import kitchenpos.application.dto.request.OrderLineItemRequest;
+import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.ProductRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderTableRepository;
 
 @Component
 @Transactional
-public class TestFixture {
+public class TestEntityFactory {
 
     private final ProductService productService;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuService menuService;
     private final OrderTableRepository orderTableRepository;
+    private final OrderService orderService;
 
-    public TestFixture(ProductService productService, MenuGroupRepository menuGroupRepository, MenuService menuService,
-                       OrderTableRepository orderTableRepository) {
+    public TestEntityFactory(ProductService productService, MenuGroupRepository menuGroupRepository,
+                             MenuService menuService, OrderTableRepository orderTableRepository,
+                             OrderService orderService) {
         this.productService = productService;
         this.menuGroupRepository = menuGroupRepository;
         this.menuService = menuService;
         this.orderTableRepository = orderTableRepository;
+        this.orderService = orderService;
     }
 
     public Product 상품을_생성한다(String menuName, Long price) {
@@ -69,5 +73,15 @@ public class TestFixture {
 
     public OrderTable 주문_테이블을_생성한다(int numberOfGuests, boolean empty) {
         return orderTableRepository.save(new OrderTable(numberOfGuests, empty));
+    }
+
+    public Order 주문을_개수만큼_하도록_생성한다(Long orderTableId, List<Long> menuIds, Long quantity) {
+        List<OrderLineItemRequest> orderLineItemRequests = menuIds.stream()
+                .map(menuId -> new OrderLineItemRequest(menuId, quantity))
+                .collect(Collectors.toList());
+        OrderRequest request = new OrderRequest(
+          orderTableId, orderLineItemRequests
+        );
+        return orderService.create(request);
     }
 }
