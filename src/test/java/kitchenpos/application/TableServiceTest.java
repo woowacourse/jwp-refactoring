@@ -103,13 +103,7 @@ class TableServiceTest extends ServiceTest {
         final OrderTable firstOrderTable = orderTableRepository.save(new OrderTable(4, false));
         final OrderTable secondOrderTable = orderTableRepository.save(new OrderTable(4, false));
         final List<OrderTable> orderTables = createOrderTable(firstOrderTable, secondOrderTable);
-        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), orderTables));
-        firstOrderTable.setTableGroupId(tableGroup.getId());
-        firstOrderTable.updateEmpty(false);
-        secondOrderTable.setTableGroupId(tableGroup.getId());
-        secondOrderTable.updateEmpty(false);
-        orderTableRepository.save(firstOrderTable);
-        orderTableRepository.save(secondOrderTable);
+        tableGroupRepository.save(new TableGroup(LocalDateTime.now(), orderTables));
 
         assertThatThrownBy(() -> tableService.changeEmpty(1L, new OrderTableEmptyUpdateRequest(true)))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -123,7 +117,8 @@ class TableServiceTest extends ServiceTest {
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("1번 메뉴 그룹"));
         final Menu menu = menuRepository.save(new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(),
                 createMenuProducts(product.getId())));
-        orderRepository.save(new Order(orderTable.getId(), "COOKING", LocalDateTime.now(), createOrderLineItem(menu.getId())));
+        orderRepository.save(
+                new Order(orderTable.getId(), "COOKING", LocalDateTime.now(), createOrderLineItem(menu.getId())));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTableEmptyUpdateRequest(true)))
                 .isInstanceOf(IllegalArgumentException.class);

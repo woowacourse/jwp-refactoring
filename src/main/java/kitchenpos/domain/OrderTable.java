@@ -31,12 +31,29 @@ public class OrderTable {
         return new OrderTable(id, null, numberOfGuests, false);
     }
 
-    public OrderTable(final Long id) {
-        this.id = id;
+    public OrderTable updateNumberOfGuests(final int numberOfGuests) {
+        validateEmpty();
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
+    }
+
+    private void validateEmpty() {
+        if (isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateHasTableGroup() {
+        if (hasTableGroup()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public boolean hasTableGroup() {
         return Objects.nonNull(tableGroupId);
+    }
+
+    public OrderTable(final Long id) {
+        this.id = id;
     }
 
     public Long getId() {
@@ -47,16 +64,8 @@ public class OrderTable {
         return tableGroupId;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
-    }
-
-    public OrderTable updateNumberOfGuests(final int numberOfGuests) {
-        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 
     public boolean isEmpty() {
@@ -64,6 +73,7 @@ public class OrderTable {
     }
 
     public void updateEmpty(final boolean empty) {
+        validateHasTableGroup();
         this.empty = empty;
     }
 }

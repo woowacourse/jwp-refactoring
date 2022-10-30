@@ -127,13 +127,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void createWithOrderTableExistingTableGroup() {
         final List<OrderTable> orderTables = Arrays.asList(firstOrderTable, secondOrderTable);
-        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), orderTables));
-        firstOrderTable.setTableGroupId(tableGroup.getId());
-        firstOrderTable.updateEmpty(false);
-        secondOrderTable.setTableGroupId(tableGroup.getId());
-        secondOrderTable.updateEmpty(false);
-        orderTableRepository.save(firstOrderTable);
-        orderTableRepository.save(secondOrderTable);
+        tableGroupRepository.save(new TableGroup(LocalDateTime.now(), orderTables));
         final List<OrderTableRequest> request = Arrays.asList(
                 new OrderTableRequest(firstOrderTable.getId()),
                 new OrderTableRequest(secondOrderTable.getId())
@@ -148,12 +142,6 @@ class TableGroupServiceTest extends ServiceTest {
     void ungroup() {
         final List<OrderTable> orderTables = Arrays.asList(firstOrderTable, secondOrderTable);
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), orderTables));
-        firstOrderTable.setTableGroupId(tableGroup.getId());
-        firstOrderTable.updateEmpty(false);
-        secondOrderTable.setTableGroupId(tableGroup.getId());
-        secondOrderTable.updateEmpty(false);
-        orderTableRepository.save(firstOrderTable);
-        orderTableRepository.save(secondOrderTable);
 
         tableGroupService.ungroup(tableGroup.getId());
         final OrderTable foundFirstOrderTable = orderTableRepository.findById(firstOrderTable.getId()).get();
@@ -178,12 +166,6 @@ class TableGroupServiceTest extends ServiceTest {
                         createOrderLineItem(menu.getId())));
         final List<OrderTable> orderTables = Arrays.asList(firstOrderTable, secondOrderTable);
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), orderTables));
-        firstOrderTable.setTableGroupId(tableGroup.getId());
-        firstOrderTable.updateEmpty(false);
-        secondOrderTable.setTableGroupId(tableGroup.getId());
-        secondOrderTable.updateEmpty(false);
-        orderTableRepository.save(firstOrderTable);
-        orderTableRepository.save(secondOrderTable);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
