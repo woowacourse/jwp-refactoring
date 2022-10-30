@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.response.OrderTableIdResponse;
@@ -16,16 +16,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableGroupService {
 
     private final OrderTableRepository orderTableRepository;
-    private final TableGroupDao tableGroupDao;
+    private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderTableRepository orderTableRepository, final TableGroupDao tableGroupDao) {
+    public TableGroupService(final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository) {
         this.orderTableRepository = orderTableRepository;
-        this.tableGroupDao = tableGroupDao;
+        this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
     public TableGroup create(List<Long> orderTableIds) {
-        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
+        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         final List<OrderTable> orderTables = findOrderTablesIdIn(orderTableIds);
 
         tableGroup.bind(orderTables);
@@ -43,7 +43,7 @@ public class TableGroupService {
 
     @Transactional(readOnly = true)
     public TableGroupResponse findById(long tableId) {
-        TableGroup tableGroup = tableGroupDao.findById(tableId)
+        TableGroup tableGroup = tableGroupRepository.findById(tableId)
                 .orElseThrow(IllegalArgumentException::new);
         List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
 

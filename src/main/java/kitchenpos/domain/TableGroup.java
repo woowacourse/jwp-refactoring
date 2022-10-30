@@ -2,11 +2,22 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
+@Entity
 public class TableGroup {
 
-    private final Long id;
-    private final LocalDateTime createdDate;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private LocalDateTime createdDate;
+
+    protected TableGroup() {
+    }
 
     public TableGroup(final LocalDateTime createdDate) {
         this(null, createdDate);

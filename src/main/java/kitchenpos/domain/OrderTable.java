@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import static kitchenpos.domain.OrderStatus.COMPLETION;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
@@ -43,7 +45,7 @@ public class OrderTable {
         }
 
         for (Order order : orders) {
-            if (!order.getOrderStatus().equals("COMPLETION")) {
+            if (order.getOrderStatus() != COMPLETION) {
                 throw new IllegalArgumentException();
             }
         }
@@ -70,7 +72,7 @@ public class OrderTable {
 
     public void leaveGroup() {
         for (Order order : orders) {
-            if (!order.getOrderStatus().equals("COMPLETION")) {
+            if (order.getOrderStatus() != COMPLETION) {
                 throw new IllegalArgumentException();
             }
         }

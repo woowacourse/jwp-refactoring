@@ -7,8 +7,8 @@ import common.IntegrationTest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.ui.request.OrderLineItemRequest;
+import kitchenpos.ui.request.OrderRequest;
 import kitchenpos.ui.request.OrderTableRequest;
 import kitchenpos.ui.request.TableGroupRequest;
 import kitchenpos.ui.request.TableIdRequest;
@@ -56,11 +56,7 @@ class TableRestControllerTest {
         // arrange
         changeOrderTableStatus(1L, false);
 
-        OrderLineItem item = createOrderLineItemRequest(후라이드치킨_메뉴.id(), 1L);
-        createOrder(1L, item);
-        createOrder(1L, createOrderLineItemRequest(후라이드치킨_메뉴.id(), 2L));
-        createOrder(1L, createOrderLineItemRequest(후라이드치킨_메뉴.id(), 2L));
-        createOrder(1L, createOrderLineItemRequest(후라이드치킨_메뉴.id(), 2L));
+        createOrder(1L, new OrderLineItemRequest(후라이드치킨_메뉴.id(), 1L));
 
         // act & assert
         assertThatThrownBy(() -> changeOrderTableStatus(1L, true))
@@ -104,18 +100,9 @@ class TableRestControllerTest {
         sut.changeEmpty(orderTableId, orderTableRequest);
     }
 
-    private OrderLineItem createOrderLineItemRequest(long menuId, long quantity) {
-        OrderLineItem item = new OrderLineItem();
-        item.setMenuId(menuId);
-        item.setQuantity(quantity);
-        return item;
-    }
-
-    private void createOrder(long orderTableId, OrderLineItem... itemRequests) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderLineItems(List.of(itemRequests));
-        orderRestController.create(order);
+    private void createOrder(long orderTableId, OrderLineItemRequest... itemRequests) {
+        final OrderRequest request = new OrderRequest(orderTableId, List.of(itemRequests));
+        orderRestController.create(request);
     }
 
     private void changeNumberOfGuest(long orderTableId, int numberOfGuest) {
