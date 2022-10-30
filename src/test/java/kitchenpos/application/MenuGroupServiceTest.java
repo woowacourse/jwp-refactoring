@@ -5,25 +5,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import kitchenpos.common.builder.MenuGroupBuilder;
-import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.request.MenuGroupCreateRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.dto.response.MenuGroupsResponse;
+import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class MenuGroupServiceTest extends ServiceTest {
 
-    @Autowired
-    private MenuGroupService menuGroupService;
-
-    @Autowired
-    private MenuGroupRepository menuGroupRepository;
+    private final MenuGroupService menuGroupService;
+    private final MenuGroupRepository menuGroupRepository;
 
     private MenuGroup 루나세트;
+
+    MenuGroupServiceTest(final MenuGroupService menuGroupService,
+                         final MenuGroupRepository menuGroupRepository) {
+        this.menuGroupService = menuGroupService;
+        this.menuGroupRepository = menuGroupRepository;
+    }
 
     @BeforeEach
     void setUp() {
