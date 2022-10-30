@@ -3,13 +3,11 @@ package kitchenpos;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuProductRequest;
@@ -25,8 +23,6 @@ import org.assertj.core.api.ListAssert;
 @SuppressWarnings("NonAsciiCharacters")
 public class Fixtures {
 
-    public static final OrderLineItem ORDER_LINE_ITEM = new OrderLineItem(1L, 1L, 1L, 1L);
-
     public static MenuGroup 메뉴그룹_한마리메뉴() {
         return new MenuGroup(null, "한마리메뉴");
     }
@@ -39,7 +35,6 @@ public class Fixtures {
         return new Menu(null, "후라이드치킨", BigDecimal.valueOf(16000),
                 1L, null);
     }
-
 
     public static MenuGroupRequest 메뉴그룹요청_한마리메뉴() {
         return new MenuGroupRequest("한마리메뉴");
@@ -68,40 +63,19 @@ public class Fixtures {
                 Arrays.asList(menuProducts));
     }
 
-    public static OrderTable 테이블_1(long tableGroupId) {
-        return new OrderTable(1L, tableGroupId, 0, false);
-    }
-
-    public static OrderTable 테이블_ofId(long id) {
-        return new OrderTable(id, null, 0, false);
-    }
-
     public static OrderTableCreateRequest 빈테이블생성요청() {
         return new OrderTableCreateRequest(0, true);
     }
 
-    public OrderTableRequest 주문요청변환(OrderTable 빈테이블_1) {
-        return new OrderTableRequest(빈테이블_1.getId());
-    }
-
-    public static OrderTable 테이블_1() {
-        return new OrderTable(1L, null, 0, false);
-    }
-
-    public static OrderTable 빈테이블() {
-        return new OrderTable(null, null, 0, true);
-    }
-
-    public static OrderTable 빈테이블_1() {
-        return new OrderTable(1L, null, 0, true);
-    }
-
     public static TableGroupRequest 테이블그룹요청(List<OrderTableRequest> tables) {
-        return new TableGroupRequest(1L, LocalDateTime.now(), tables);
+        return new TableGroupRequest(tables);
     }
 
-    public static TableGroupRequest 테이블그룹요청2(List<OrderTableRequest> tables) {
-        return new TableGroupRequest(2L, LocalDateTime.now(), tables);
+    public static TableGroupRequest 테이블그룹요청_id(Long... tableIds) {
+        List<OrderTableRequest> orderTableRequests = Arrays.stream(tableIds)
+                .map(OrderTableRequest::new)
+                .collect(Collectors.toList());
+        return new TableGroupRequest(orderTableRequests);
     }
 
     public static OrderLineItemRequest 주문아이템요청(long menuId) {
@@ -113,8 +87,7 @@ public class Fixtures {
     }
 
     public static OrderRequest 주문요청_테이블1() {
-        return new OrderRequest(1L,
-                List.of(주문아이템요청_후라이드()));
+        return new OrderRequest(1L, List.of(주문아이템요청_후라이드()));
     }
 
     @SafeVarargs

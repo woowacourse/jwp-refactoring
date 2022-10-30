@@ -53,11 +53,11 @@ public class TableGroupService {
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty()) {
-                throw new IllegalArgumentException("등록되는 모든 테이블들은 비어있어야 한다.");
-            }
             if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
                 throw new IllegalArgumentException("등록되는 모든 테이블들은 기존 단체 지정이 없어야 한다.");
+            }
+            if (!savedOrderTable.isEmpty()) {
+                throw new IllegalArgumentException("등록되는 모든 테이블들은 비어있어야 한다.");
             }
         }
 

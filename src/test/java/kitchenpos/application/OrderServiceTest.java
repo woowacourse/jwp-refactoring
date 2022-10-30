@@ -16,6 +16,8 @@ import kitchenpos.dto.ChangeOrderStatusRequest;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderResponse;
+import kitchenpos.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.dto.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +30,6 @@ class OrderServiceTest extends ServiceTest {
         orderTableDao.save(new OrderTable(null, null, 0, false));
         menuProductDao.save(new MenuProduct(null, 1L, 1L, 1));
     }
-
 
     @DisplayName("주문을 추가하면 주문 목록에 추가된다.")
     @Test
@@ -89,9 +90,9 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create_noCustomer() {
         init();
-        tableService.create(빈테이블생성요청());
+        OrderTableResponse 테이블2 = tableService.create(빈테이블생성요청());
 
-        assertThatThrownBy(() -> orderService.create(주문요청_테이블1()))
+        assertThatThrownBy(() -> orderService.create(new OrderRequest(테이블2.getId(), List.of(주문아이템요청_후라이드()))))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 테이블은 손님이 존재해야 한다.");
     }
@@ -134,5 +135,10 @@ class OrderServiceTest extends ServiceTest {
 
     private OrderResponse 주문_상태를_변경했다(long id, OrderStatus orderStatus) {
         return orderService.changeOrderStatus(id, new ChangeOrderStatusRequest(orderStatus));
+    }
+
+    private OrderTableResponse 테이블_빈_여부_변경(Long id, boolean empty) {
+        return tableService.changeEmpty(id, new OrderTableChangeEmptyRequest(empty));
+
     }
 }

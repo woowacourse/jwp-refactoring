@@ -6,38 +6,34 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.dto.TableGroupRequest;
-import kitchenpos.dto.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
 class TableGroupServiceTest extends ServiceTest {
 
-    OrderTable 빈테이블_1;
-    OrderTable 빈테이블_2;
+    Long 빈테이블_1_id;
+    Long 빈테이블_2_id;
 
 
     void init() {
-        빈테이블_1 = orderTableDao.save(빈테이블());
-        빈테이블_2 = orderTableDao.save(빈테이블());
+        빈테이블_1_id = tableService.create(빈테이블생성요청()).getId();
+        빈테이블_2_id = tableService.create(빈테이블생성요청()).getId();
     }
 
     @DisplayName("단체 지정을 추가하면 특정 테이블이 단체에 속한다.")
     @Test
     void create() {
         init();
-        Long 테이블그룹Id = tableGroupService.create(테이블그룹요청(List.of(
-                주문요청변환(빈테이블_1),
-                주문요청변환(빈테이블_2)
-        ))).getId();
+        Long 테이블그룹Id = tableGroupService.create(테이블그룹요청_id(빈테이블_1_id, 빈테이블_2_id)).getId();
 
         List<OrderTable> 테이블_목록 = orderTableDao.findAllByTableGroupId(테이블그룹Id);
         boolean 손님_착석 = false;
         검증_필드비교_동일_목록(테이블_목록, List.of(
-                new OrderTable(빈테이블_1.getId(), 테이블그룹Id, 0, 손님_착석),
-                new OrderTable(빈테이블_2.getId(), 테이블그룹Id, 0, 손님_착석)
+                new OrderTable(빈테이블_1_id, 테이블그룹Id, 0, 손님_착석),
+                new OrderTable(빈테이블_2_id, 테이블그룹Id, 0, 손님_착석)
         ));
     }
 
@@ -56,8 +52,8 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_fillTable() {
         init();
-        OrderTable 테이블_1 = orderTableDao.save(테이블_1());
-        TableGroupRequest 테이블그룹 = 테이블그룹요청(List.of(주문요청변환(테이블_1), 주문요청변환(빈테이블_2)));
+        Long id = tableService.changeEmpty(1L, new OrderTableChangeEmptyRequest(false)).getId();
+        TableGroupRequest 테이블그룹 = 테이블그룹요청_id(id, 빈테이블_2_id);
 
         assertThatThrownBy(() -> tableGroupService.create(테이블그룹))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -69,7 +65,7 @@ class TableGroupServiceTest extends ServiceTest {
     void create_noTable() {
         init();
         long 존재하지_않는_테이블_id = 100L;
-        TableGroupRequest 테이블그룹 = 테이블그룹요청(List.of(주문요청변환(테이블_ofId(존재하지_않는_테이블_id)), 주문요청변환(빈테이블_2)));
+        TableGroupRequest 테이블그룹 = 테이블그룹요청_id(존재하지_않는_테이블_id, 빈테이블_2_id);
 
         assertThatThrownBy(() -> tableGroupService.create(테이블그룹))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -80,32 +76,21 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_alreadyInGroup() {
         init();
-        TableGroupResponse 테이블그룹1 = tableGroupService.create(테이블그룹요청(List.of(
-                주문요청변환(빈테이블_1),
-                주문요청변환(빈테이블_2)
-        )));
-        테이블_단체_지정(테이블그룹1.getId(), 빈테이블_1());
+        TableGroupRequest tableGroupRequest = 테이블그룹요청_id(빈테이블_1_id, 빈테이블_2_id);
 
-        TableGroupRequest 테이블그룹2 = 테이블그룹요청2(List.of(new OrderTableRequest(1L),
-                new OrderTableRequest(2L)));
-        assertThatThrownBy(() -> tableGroupService.create(테이블그룹2))
+        tableGroupService.create(tableGroupRequest);
+
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("등록되는 모든 테이블들은 기존 단체 지정이 없어야 한다.");
-    }
-
-    private OrderTable 테이블_단체_지정(Long id, OrderTable 테이블) {
-        테이블.updateTableGroupId(id);
-        return orderTableDao.save(테이블);
     }
 
     @DisplayName("단체지정을 삭제하면 소속된 테이블들이 단체에서 빠진다.")
     @Test
     void ungroup() {
         init();
-        Long 테이블그룹Id = tableGroupService.create(테이블그룹요청(List.of(
-                주문요청변환(빈테이블_1),
-                주문요청변환(빈테이블_2)
-        ))).getId();
+        Long 테이블그룹Id = tableGroupService.create(테이블그룹요청_id(빈테이블_1_id, 빈테이블_2_id))
+                .getId();
 
         tableGroupService.ungroup(테이블그룹Id);
 
@@ -121,21 +106,11 @@ class TableGroupServiceTest extends ServiceTest {
         menuDao.save(메뉴_후라이드치킨());
         init();
 
-        Long 테이블그룹Id = tableGroupService.create(테이블그룹요청(List.of(
-                new OrderTableRequest(빈테이블_1.getId()),
-                new OrderTableRequest(빈테이블_2.getId())
-        ))).getId();
-
-        테이블의_그룹변경(테이블그룹Id, 테이블_1());
+        Long 테이블그룹Id = tableGroupService.create(테이블그룹요청_id(빈테이블_1_id, 빈테이블_2_id)).getId();
         orderService.create(주문요청_테이블1());
 
         assertThatThrownBy(() -> tableGroupService.ungroup(테이블그룹Id))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("단체 지정 속 모든 테이블들의 주문이 있다면 COMPLETION 상태여야 한다.");
-    }
-
-    private void 테이블의_그룹변경(Long id, OrderTable 테이블_1) {
-        테이블_1.updateTableGroupId(id);
-        orderTableDao.save(테이블_1);
     }
 }
