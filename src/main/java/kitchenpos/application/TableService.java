@@ -11,6 +11,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableResponse;
+import kitchenpos.dto.TableGuestChangeRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,7 +68,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final TableGuestChangeRequest orderTable) {
         final int numberOfGuests = orderTable.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
@@ -83,6 +84,6 @@ public class TableService {
 
         savedOrderTable.updateNumberOfGuests(numberOfGuests);
 
-        return orderTableDao.save(savedOrderTable);
+        return toOrderTableResponse(orderTableDao.save(savedOrderTable));
     }
 }

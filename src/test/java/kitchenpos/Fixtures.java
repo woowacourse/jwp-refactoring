@@ -2,16 +2,12 @@ package kitchenpos;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -81,7 +77,7 @@ public class Fixtures {
     }
 
     public static OrderTableCreateRequest 빈테이블생성요청() {
-        return new OrderTableCreateRequest(0, false);
+        return new OrderTableCreateRequest(0, true);
     }
 
     public OrderTableRequest 주문요청변환(OrderTable 빈테이블_1) {
@@ -90,10 +86,6 @@ public class Fixtures {
 
     public static OrderTable 테이블_1() {
         return new OrderTable(1L, null, 0, false);
-    }
-
-    public static OrderTable 테이블() {
-        return new OrderTable(null, null, 0, false);
     }
 
     public static OrderTable 빈테이블() {
@@ -121,7 +113,7 @@ public class Fixtures {
     }
 
     public static OrderRequest 주문요청_테이블1() {
-        return new OrderRequest(테이블_1().getId(),
+        return new OrderRequest(1L,
                 List.of(주문아이템요청_후라이드()));
     }
 
@@ -142,26 +134,6 @@ public class Fixtures {
             assertThat(list.get(i)).usingRecursiveComparison()
                     .ignoringFields(ignore)
                     .isEqualTo(values.get(i));
-        }
-    }
-
-    public OrderRequest 주문요청_변환(Order order) {
-        return new OrderRequest(order.getOrderTableId(), toOrderLineItemRequest(order));
-    }
-
-    private List<OrderLineItemRequest> toOrderLineItemRequest(Order savedOrder) {
-        return savedOrder.getOrderLineItems().stream()
-                .map(orderLineItem -> new OrderLineItemRequest(orderLineItem.getMenuId(), orderLineItem.getQuantity()))
-                .collect(Collectors.toList());
-    }
-
-    public static <D, T> T 변환(D inputObj, Class<T> outputClass) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            String value = objectMapper.writeValueAsString(inputObj);
-            return objectMapper.readValue(value, outputClass);
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException(e.getMessage());
         }
     }
 }
