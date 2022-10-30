@@ -12,18 +12,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.menu.application.dto.MenuResponse;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.table.application.dto.OrderTableResponse;
 import kitchenpos.table.application.dto.TableGroupRequestDto;
 import kitchenpos.table.application.dto.TableGroupResponse;
 import kitchenpos.table.domain.repository.OrderTableRepository;
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.product.domain.Product;
-import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -36,6 +36,9 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
     private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Nested
     @DisplayName("테이블 그룹핑 테스트")
@@ -147,11 +150,7 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("테이블 상태가 COOKING이거나 MEAL일 경우 예외를 발생시킨다.")
         void ungroup_CookingOrMeal(final String orderStatus) {
             final List<OrderTable> orderTable = tableGroup.getOrderTables();
-            final BigDecimal lessThanSingleProductPrice = BigDecimal.valueOf(9000);
-            final Product savedProduct = 상품_등록(상품);
-            final MenuGroup savedMenuGroup = 메뉴_그룹_등록(메뉴_그룹);
-            final MenuResponse savedMenu = 메뉴_등록(메뉴_생성("메뉴이름", lessThanSingleProductPrice, savedMenuGroup.getId(), savedProduct));
-            주문_등록(주문_생성(orderTable.get(0).getId(), savedMenu, orderStatus));
+            orderRepository.save(new Order(orderTable.get(0).getId(), orderStatus, LocalDateTime.now(), null));
 
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                     .isInstanceOf(IllegalArgumentException.class);

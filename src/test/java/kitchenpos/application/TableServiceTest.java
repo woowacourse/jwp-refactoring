@@ -13,9 +13,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.table.application.dto.OrderTableRequestDto;
 import kitchenpos.table.application.dto.OrderTableResponse;
 import kitchenpos.table.application.dto.UpdateEmptyRequestDto;
@@ -26,9 +29,13 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 class TableServiceTest extends ServiceTest {
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Test
     @DisplayName("테이블을 생성한다.")
@@ -75,7 +82,6 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("등록되지 않은 테이블의 상태를 반환하려 시도하면 예외를 발생시킨다.")
         void changeEmpty_notExistTable() {
             final Long notExistOrderTableId = 0L;
-            final OrderTableRequestDto orderTableRequestDto = new OrderTableRequestDto(null, null, null);
             final UpdateEmptyRequestDto orderTableUpdateEmptyRequestDto =
                     new UpdateEmptyRequestDto(false);
             assertThatThrownBy(() -> tableService.changeEmpty(notExistOrderTableId, orderTableUpdateEmptyRequestDto))
@@ -100,15 +106,11 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("테이블 상태가 조리중이거나 식사중이면 예외를 발생시킨다.")
         void changeEmpty_cookingOrMeal(final String orderStatus) {
 
-            final BigDecimal lessThanSingleProductPrice = BigDecimal.valueOf(9000);
-            final Product savedProduct = 상품_등록(상품);
-            final MenuGroup savedMenuGroup = 메뉴_그룹_등록(메뉴_그룹);
-            final MenuResponse savedMenu = 메뉴_등록(메뉴_생성("메뉴이름", lessThanSingleProductPrice, savedMenuGroup.getId(), savedProduct));
             final OrderTableResponse savedTable = 주문_테이블_등록(비어있지_않은_주문_테이블);
-            주문_등록(주문_생성(savedTable.getId(), savedMenu, orderStatus));
+            orderRepository.save(new Order(savedTable.getId(), orderStatus, LocalDateTime.now(), null));
 
-            final UpdateEmptyRequestDto orderTableUpdateEmptyRequestDto =
-                    new UpdateEmptyRequestDto(false);
+
+            final UpdateEmptyRequestDto orderTableUpdateEmptyRequestDto = new UpdateEmptyRequestDto(false);
             assertThatThrownBy(() -> tableService.changeEmpty(savedTable.getId(), orderTableUpdateEmptyRequestDto))
                     .isInstanceOf(IllegalArgumentException.class);
         }
