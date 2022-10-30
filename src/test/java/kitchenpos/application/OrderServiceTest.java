@@ -54,7 +54,7 @@ class OrderServiceTest extends ServiceTest {
     void create_noMenu() {
         init();
         List<OrderLineItemRequest> 빈_메뉴들 = new ArrayList<>();
-        OrderRequest orderRequest = new OrderRequest(테이블_1().getId(), 빈_메뉴들);
+        OrderRequest orderRequest = new OrderRequest(1L, 빈_메뉴들);
 
         assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -89,7 +89,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create_noCustomer() {
         init();
-        orderTableDao.save(빈테이블_1());
+        tableService.create(빈테이블생성요청());
 
         assertThatThrownBy(() -> orderService.create(주문요청_테이블1()))
                 .isInstanceOf(IllegalArgumentException.class)
