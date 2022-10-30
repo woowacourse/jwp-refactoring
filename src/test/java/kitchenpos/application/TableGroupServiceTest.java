@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Collections;
 import java.util.List;
@@ -11,9 +12,8 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
-import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.dto.request.TableIdRequest;
-import org.junit.jupiter.api.Assertions;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +37,7 @@ class TableGroupServiceTest extends ServiceTest {
             List<OrderTable> updatedTables = orderTableDao.findAllByIdIn(
                     List.of(tableIdRequest1.getId(), tableIdRequest2.getId()));
 
-            Assertions.assertAll(() -> {
+            assertAll(() -> {
                 assertThat(savedTableGroup.getId()).isNotNull();
                 assertThat(updatedTables).extracting(OrderTable::getTableGroupId, OrderTable::isEmpty)
                         .containsOnly(tuple(savedTableGroup.getId(), false));

@@ -1,8 +1,9 @@
 package kitchenpos.domain;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import java.util.Collections;
 import java.util.List;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -21,7 +22,7 @@ class TableGroupTest {
             OrderTable orderTable2 = new OrderTable(null, 7, false);
 
             // when & then
-            Assertions.assertThatThrownBy(() -> TableGroup.create(List.of(orderTable1, orderTable2), 2))
+            assertThatThrownBy(() -> TableGroup.create(List.of(orderTable1, orderTable2), 2))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -32,14 +33,14 @@ class TableGroupTest {
             OrderTable orderTable2 = new OrderTable(1L, 7, false);
 
             // when & then
-            Assertions.assertThatThrownBy(() -> TableGroup.create(List.of(orderTable1, orderTable2), 2))
+            assertThatThrownBy(() -> TableGroup.create(List.of(orderTable1, orderTable2), 2))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 그룹화하려는_테이블이_없다면_예외가_발생한다() {
             // when & then
-            Assertions.assertThatThrownBy(() -> TableGroup.create(Collections.emptyList(), 0))
+            assertThatThrownBy(() -> TableGroup.create(Collections.emptyList(), 0))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -49,7 +50,7 @@ class TableGroupTest {
             OrderTable orderTable1 = new OrderTable(null, 7, false);
 
             // when & then
-            Assertions.assertThatThrownBy(() -> TableGroup.create(List.of(orderTable1), 2))
+            assertThatThrownBy(() -> TableGroup.create(List.of(orderTable1), 2))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -61,7 +62,7 @@ class TableGroupTest {
             OrderTable orderTable3 = new OrderTable(null, 7, false);
 
             // when & then
-            Assertions.assertThatThrownBy(() -> TableGroup.create(List.of(orderTable1, orderTable2, orderTable3), 2))
+            assertThatThrownBy(() -> TableGroup.create(List.of(orderTable1, orderTable2, orderTable3), 2))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

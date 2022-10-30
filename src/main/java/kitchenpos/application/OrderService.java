@@ -42,13 +42,13 @@ public class OrderService {
         return OrderResponse.from(savedOrder);
     }
 
-    private List<Long> extractMenuIds(OrderCreateRequest request) {
+    private List<Long> extractMenuIds(OrderCreateRequest request) { // FIXME : DTO에서
         return request.getOrderLineItems().stream()
                 .map(OrderLineItemCreateRequest::getMenuId)
                 .collect(Collectors.toList());
     }
 
-    private void validateTableExistence(OrderTable orderTable) {
+    private void validateTableExistence(OrderTable orderTable) { // 메소드명 수정, Order에서 검증하게 하기
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }

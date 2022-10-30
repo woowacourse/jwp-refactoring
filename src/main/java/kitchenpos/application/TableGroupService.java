@@ -41,7 +41,7 @@ public class TableGroupService {
         return TableGroupResponse.from(savedTableGroup);
     }
 
-    private List<Long> toTableRequestIds(List<TableIdRequest> orderTablesRequest) {
+    private List<Long> toTableRequestIds(List<TableIdRequest> orderTablesRequest) { // DTO에서
         return orderTablesRequest.stream()
                 .map(TableIdRequest::getId)
                 .collect(Collectors.toList());

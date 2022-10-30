@@ -1,8 +1,9 @@
 package kitchenpos.domain;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import java.util.Collections;
 import java.util.List;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -17,8 +18,8 @@ class OrderTest {
         @Test
         void 주문_목록이_비어_있으면_예외가_발생한다() {
             // when & then
-            Assertions.assertThatThrownBy(
-                            () -> Order.create(1L, OrderStatus.COOKING.name(), Collections.emptyList(), 2L))
+            assertThatThrownBy(
+                    () -> Order.create(1L, OrderStatus.COOKING.name(), Collections.emptyList(), 2L))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -29,8 +30,8 @@ class OrderTest {
             OrderLineItem orderLineItem2 = new OrderLineItem(null, 2L, 2L);
 
             // when & then
-            Assertions.assertThatThrownBy(
-                            () -> Order.create(1L, OrderStatus.COOKING.name(), List.of(orderLineItem1, orderLineItem2), 1L))
+            assertThatThrownBy(
+                    () -> Order.create(1L, OrderStatus.COOKING.name(), List.of(orderLineItem1, orderLineItem2), 1L))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
