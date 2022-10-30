@@ -7,7 +7,7 @@ public class MenuProductResponse {
     private Long productId;
     private long quantity;
 
-    public MenuProductResponse() {
+    private MenuProductResponse() {
     }
 
     public MenuProductResponse(final MenuProduct menuProduct) {

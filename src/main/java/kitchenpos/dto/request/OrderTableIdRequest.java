@@ -6,7 +6,7 @@ public class OrderTableIdRequest {
     @NotNull
     private Long id;
 
-    public OrderTableIdRequest() {
+    private OrderTableIdRequest() {
     }
 
     public OrderTableIdRequest(final Long id) {

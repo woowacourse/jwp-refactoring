@@ -9,7 +9,7 @@ public class MenuProductRequest {
     @NotNull
     private long quantity;
 
-    public MenuProductRequest() {
+    private MenuProductRequest() {
     }
 
     public MenuProductRequest(final Long productId, final long quantity) {

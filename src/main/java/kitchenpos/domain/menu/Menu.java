@@ -34,7 +34,7 @@ public class Menu {
     @JoinColumn(name = "menu_id", nullable = false)
     private List<MenuProduct> menuProducts;
 
-    public Menu() {
+    protected Menu() {
     }
 
     public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup,

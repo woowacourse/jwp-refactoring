@@ -17,7 +17,7 @@ public class MenuRequest {
     @NotNull
     private List<MenuProductRequest> menuProducts;
 
-    public MenuRequest() {
+    private MenuRequest() {
     }
 
     public MenuRequest(final String name, final BigDecimal price, final Long menuGroupId,

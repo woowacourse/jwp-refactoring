@@ -10,7 +10,7 @@ public class ProductRequest {
     @NotNull
     private BigDecimal price;
 
-    public ProductRequest() {
+    private ProductRequest() {
     }
 
     public ProductRequest(final String name, final BigDecimal price) {

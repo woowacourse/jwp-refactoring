@@ -10,7 +10,7 @@ public class OrderRequest {
     @NotNull
     private List<OrderLineItemRequest> orderLineItems;
 
-    public OrderRequest() {
+    private OrderRequest() {
     }
 
     public OrderRequest(final Long orderTableId, final List<OrderLineItemRequest> orderLineItems) {

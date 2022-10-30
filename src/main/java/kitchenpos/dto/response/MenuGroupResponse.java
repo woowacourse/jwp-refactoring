@@ -6,7 +6,7 @@ public class MenuGroupResponse {
     private Long id;
     private String name;
 
-    public MenuGroupResponse() {
+    private MenuGroupResponse() {
     }
 
     public MenuGroupResponse(final MenuGroup menuGroup) {

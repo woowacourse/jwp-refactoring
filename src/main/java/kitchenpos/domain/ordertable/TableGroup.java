@@ -30,7 +30,7 @@ public class TableGroup {
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
 
-    public TableGroup() {
+    protected TableGroup() {
     }
 
     public TableGroup(final List<OrderTable> orderTables) {
@@ -60,6 +60,12 @@ public class TableGroup {
         }
     }
 
+    public void ungroup() {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.ungroup();
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -70,11 +76,5 @@ public class TableGroup {
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void ungroup() {
-        for (OrderTable orderTable : orderTables) {
-            orderTable.ungroup();
-        }
     }
 }

@@ -7,7 +7,7 @@ public class OrderLineItemResponse {
     private Long menuId;
     private long quantity;
 
-    public OrderLineItemResponse() {
+    private OrderLineItemResponse() {
     }
 
     public OrderLineItemResponse(final OrderLineItem orderLineItem) {

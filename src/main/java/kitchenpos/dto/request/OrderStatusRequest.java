@@ -7,7 +7,7 @@ public class OrderStatusRequest {
     @NotNull
     private OrderStatus orderStatus;
 
-    public OrderStatusRequest() {
+    private OrderStatusRequest() {
     }
 
     public OrderStatusRequest(final OrderStatus orderStatus) {

@@ -9,7 +9,7 @@ public class OrderLineItemRequest {
     @NotNull
     private int quantity;
 
-    public OrderLineItemRequest() {
+    private OrderLineItemRequest() {
     }
 
     public OrderLineItemRequest(final Long menuId, final int quantity) {

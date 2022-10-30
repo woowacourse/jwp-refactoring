@@ -10,7 +10,7 @@ public class TableGroupResponse {
     private LocalDateTime createdDate;
     private List<OrderTableResponse> orderTables;
 
-    public TableGroupResponse() {
+    private TableGroupResponse() {
     }
 
     public TableGroupResponse(final TableGroup tableGroup) {

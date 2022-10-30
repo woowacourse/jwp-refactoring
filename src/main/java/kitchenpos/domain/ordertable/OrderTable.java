@@ -26,7 +26,7 @@ public class OrderTable {
     @Column(name = "empty")
     private boolean empty;
 
-    public OrderTable() {
+    protected OrderTable() {
     }
 
     public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {

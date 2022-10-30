@@ -6,7 +6,7 @@ public class MenuGroupRequest {
     @NotNull
     private String name;
 
-    public MenuGroupRequest() {
+    private MenuGroupRequest() {
     }
 
     public MenuGroupRequest(final String name) {
