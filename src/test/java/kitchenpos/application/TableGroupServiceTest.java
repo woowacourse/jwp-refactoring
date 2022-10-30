@@ -70,7 +70,8 @@ class TableGroupServiceTest {
         void throwExceptionBecauseOfNoTable() {
             TableGroupRequest request = new TableGroupRequest(Collections.emptyList());
             assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("테이블을 그룹화하려면 2개 이상의 테이블이 필요합니다.");
         }
 
         @DisplayName("테이블이 2개 보다 작을 경우 예외가 발생한다")
@@ -78,7 +79,8 @@ class TableGroupServiceTest {
         void throwExceptionBecauseOfInvalidNumOfTables() {
             TableGroupRequest request = new TableGroupRequest(List.of(tableRequest1));
             assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("테이블을 그룹화하려면 2개 이상의 테이블이 필요합니다.");
         }
 
         @DisplayName("존재하지 않는 테이블이 존재할 경우 예외가 발생한다")
@@ -88,7 +90,8 @@ class TableGroupServiceTest {
 
             TableGroupRequest tableGroup = new TableGroupRequest(List.of(tableRequest1, notExistTableId));
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("존재하지 않는 주문 테이블이 있습니다.");
         }
 
         @DisplayName("비어있지 않은 테이블이 존재하는 경우 예외가 발생한다")
@@ -100,7 +103,8 @@ class TableGroupServiceTest {
 
             TableGroupRequest tableGroup = new TableGroupRequest(List.of(tableRequest1, notEmptyTableId));
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("테이블이 비어있지 않습니다.");
         }
 
         @DisplayName("이미 단체로 묶인 테이블이 있을 경우 예외가 발생한다")
@@ -110,7 +114,8 @@ class TableGroupServiceTest {
             tableGroupService.create(request);
 
             assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("이미 테이블 그룹이 형성된 테이블입니다.");
         }
     }
 
@@ -140,7 +145,8 @@ class TableGroupServiceTest {
             orderDao.save(order);
 
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("그룹 해제를 할 수 없는 테이블이 존재합니다.");
         }
     }
 }

@@ -30,7 +30,7 @@ public class Menu {
 
     public void validatePriceIsCheaperThanSum(BigDecimal sumOfPrice) {
         if (price.isMoreExpensive(sumOfPrice)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴 가격은 상품 가격의 합보다 적어야 합니다.");
         }
     }
 

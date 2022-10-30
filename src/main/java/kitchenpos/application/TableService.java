@@ -8,14 +8,14 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.application.dto.request.ChangeNumOfTableGuestsRequest;
 import kitchenpos.application.dto.request.ChangeOrderTableEmptyRequest;
 import kitchenpos.application.dto.request.OrderTableRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 
 @Service
 @Transactional
@@ -58,14 +58,14 @@ public class TableService {
 
     private void validateNotBelongToTableGroup(OrderTable orderTable) {
         if (Objects.nonNull(orderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("이미 테이블 그룹이 형성된 테이블입니다.");
         }
     }
 
     private void validateTableCanChangeEmpty(Long orderTableId) {
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("비울 수 없는 테이블이 존재합니다.");
         }
     }
 
@@ -81,12 +81,12 @@ public class TableService {
 
     private OrderTable findOrderTable(Long orderTableId) {
         return orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
     }
 
     private void validateOrderTableIsNotEmpty(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 테이블이 비어있습니다.");
         }
     }
 }

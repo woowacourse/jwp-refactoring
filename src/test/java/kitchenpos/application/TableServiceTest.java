@@ -89,7 +89,8 @@ class TableServiceTest {
             Long notExistId = 0L;
 
             assertThatThrownBy(() -> tableService.changeEmpty(notExistId, changeOrderTableEmptyRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("존재하지 않는 테이블입니다.");
         }
 
         @DisplayName("테이블이 다른 테이블 그룹에 묶여있을 경우 예외가 발생한다")
@@ -103,7 +104,8 @@ class TableServiceTest {
             OrderTable orderTable = orderTableDao.save(newOrderTable);
 
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changeOrderTableEmptyRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("이미 테이블 그룹이 형성된 테이블입니다.");
         }
 
         @DisplayName("테이블 중 주문 상태가 Cooking, Meal인 주문이 있을 경우 예외가 발생한다")
@@ -117,7 +119,8 @@ class TableServiceTest {
             orderDao.save(order);
 
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changeOrderTableEmptyRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("비울 수 없는 테이블이 존재합니다.");
         }
     }
 
@@ -155,7 +158,8 @@ class TableServiceTest {
             ChangeNumOfTableGuestsRequest changeGuestsRequest = new ChangeNumOfTableGuestsRequest(numberOfGuests);
 
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changeGuestsRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("테이블에는 1명 이상의 손님이 앉을 수 있습니다.");
         }
 
         @DisplayName("존재하지 않는 테이블 Id일 경우 예외가 발생한다")
@@ -166,7 +170,8 @@ class TableServiceTest {
             ChangeNumOfTableGuestsRequest changeGuestsRequest = new ChangeNumOfTableGuestsRequest(10);
 
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(notExistId, changeGuestsRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("존재하지 않는 테이블입니다.");
         }
 
         @DisplayName("테이블이 비어있을 경우 예외가 발생한다")
@@ -178,7 +183,8 @@ class TableServiceTest {
             ChangeNumOfTableGuestsRequest changeGuestsRequest = new ChangeNumOfTableGuestsRequest(10);
 
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(emptyTable.getId(), changeGuestsRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("주문 테이블이 비어있습니다.");
         }
     }
 }

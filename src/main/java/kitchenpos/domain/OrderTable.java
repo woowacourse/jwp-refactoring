@@ -24,7 +24,7 @@ public class OrderTable {
 
     public void changeNumberOfGuests(int numberOfGuests) {
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블에는 1명 이상의 손님이 앉을 수 있습니다.");
         }
 
         this.numberOfGuests = numberOfGuests;

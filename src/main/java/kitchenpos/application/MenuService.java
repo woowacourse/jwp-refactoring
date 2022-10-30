@@ -7,13 +7,13 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.application.dto.request.MenuRequest;
+import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.application.dto.request.MenuRequest;
-import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.repository.MenuRepository;
 
 @Service
@@ -40,7 +40,7 @@ public class MenuService {
 
     private void validateIsExistMenuGroup(Menu menu) {
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
         }
     }
 
@@ -48,7 +48,7 @@ public class MenuService {
         BigDecimal sum = BigDecimal.ZERO;
         for (MenuProduct menuProduct : menu.getMenuProducts()) {
             Product product = productDao.findById(menuProduct.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 

@@ -97,7 +97,8 @@ class OrderServiceTest {
             OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of());
 
             assertThatThrownBy(() -> orderService.create(orderRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("주문 항목이 비어있습니다.");
         }
 
         @DisplayName("orderLineItems에 존재하지 않는 메뉴가 있을 경우 예외가 발생한다")
@@ -108,7 +109,8 @@ class OrderServiceTest {
             OrderRequest orderRequest = new OrderRequest(orderTable.getId(), orderLineItemRequests);
 
             assertThatThrownBy(() -> orderService.create(orderRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("존재하지 않는 메뉴가 있습니다.");
         }
 
         @DisplayName("존재하지 않는 테이블일 경우 예외가 발생한다")
@@ -134,7 +136,8 @@ class OrderServiceTest {
             OrderRequest order = new OrderRequest(emptyTable.getId(), orderLineItemRequests);
 
             assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("테이블이 비어있습니다.");
         }
     }
 
@@ -170,7 +173,8 @@ class OrderServiceTest {
             OrderStatusUpdateRequest orderStatusUpdateRequest = new OrderStatusUpdateRequest(OrderStatus.MEAL.name());
 
             assertThatThrownBy(() -> orderService.changeOrderStatus(notExistId, orderStatusUpdateRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("존재하지 않는 주문입니다.");
         }
 
         private Order createOrder() {

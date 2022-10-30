@@ -43,7 +43,7 @@ public class Order {
 
     public void changeStatus(OrderStatus newStatus) {
         if (Objects.equals(OrderStatus.COMPLETION.name(), orderStatus)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("완료된 제품은 상태 변경이 불가능합니다.");
         }
 
         orderStatus = newStatus.name();

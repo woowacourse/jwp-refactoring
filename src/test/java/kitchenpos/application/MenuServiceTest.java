@@ -3,7 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import static kitchenpos.fixture.MenuFixture.후라이드_양념치킨_두마리세트;
+import static kitchenpos.fixture.MenuFixture.*;
 
 import java.util.List;
 
@@ -70,7 +70,8 @@ class MenuServiceTest {
             MenuRequest request = 후라이드_양념치킨_두마리세트.toRequest(notExistMenuGroupId, 후라이드.getId(), 양념치킨.getId());
 
             assertThatThrownBy(() -> menuService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("메뉴 그룹이 존재하지 않습니다.");
         }
 
         @DisplayName("상품이 존재하지 않을 경우 예외가 발생한다")
@@ -80,7 +81,8 @@ class MenuServiceTest {
             MenuRequest request = 후라이드_양념치킨_두마리세트.toRequest(두마리메뉴.getId(), notExistProductId, 양념치킨.getId());
 
             assertThatThrownBy(() -> menuService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("존재하지 않는 상품입니다.");
         }
     }
 
