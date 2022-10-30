@@ -1,6 +1,6 @@
 package kitchenpos.domain.fixture;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderTableFixture {

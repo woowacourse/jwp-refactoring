@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -6,6 +6,8 @@ import java.util.Collections;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import kitchenpos.domain.table.TableGroup;
 
 @DisplayName("OrderTables 도메인 테스트")
 class OrderTablesTest {

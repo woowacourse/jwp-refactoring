@@ -7,8 +7,8 @@ import kitchenpos.application.dto.request.OrderTableChangeRequest;
 import kitchenpos.application.dto.request.TableGroupRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.application.dto.response.TableGroupResponse;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 
 public class TableGroupConvertor {
 

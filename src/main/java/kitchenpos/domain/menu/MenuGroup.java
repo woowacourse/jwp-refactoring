@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 public class MenuGroup {
 

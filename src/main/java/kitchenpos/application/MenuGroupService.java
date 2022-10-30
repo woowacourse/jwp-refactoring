@@ -4,7 +4,7 @@ import kitchenpos.application.dto.convertor.MenuGroupConvertor;
 import kitchenpos.application.dto.request.MenuGroupRequest;
 import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

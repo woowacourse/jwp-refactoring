@@ -22,8 +22,8 @@ import kitchenpos.dao.fake.FakeOrderDao;
 import kitchenpos.dao.fake.FakeOrderTableDao;
 import kitchenpos.dao.fake.FakeTableGroupDao;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 import kitchenpos.domain.fixture.OrderTableFixture;
 
 @SuppressWarnings("NonAsciiCharacters")

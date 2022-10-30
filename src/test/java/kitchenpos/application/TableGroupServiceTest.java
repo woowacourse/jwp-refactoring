@@ -26,8 +26,8 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.dao.fake.FakeOrderDao;
 import kitchenpos.dao.fake.FakeOrderTableDao;
 import kitchenpos.dao.fake.FakeTableGroupDao;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayName("TableGroup 서비스 테스트")

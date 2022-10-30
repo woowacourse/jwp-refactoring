@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 
 public class FakeOrderTableDao implements OrderTableDao {
 

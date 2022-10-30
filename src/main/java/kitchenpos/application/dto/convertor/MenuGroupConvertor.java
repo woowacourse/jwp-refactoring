@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import kitchenpos.application.dto.request.MenuGroupRequest;
 import kitchenpos.application.dto.response.MenuGroupResponse;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 
 public class MenuGroupConvertor {
 

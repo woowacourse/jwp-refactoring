@@ -3,8 +3,8 @@ package kitchenpos.domain.fixture;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class TableGroupFixture {

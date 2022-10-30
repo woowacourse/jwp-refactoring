@@ -1,7 +1,10 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTables;
 
 public class TableGroup {
 

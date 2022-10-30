@@ -1,9 +1,11 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
 import java.util.Collections;
 import java.util.List;
 
 import org.springframework.util.CollectionUtils;
+
+import kitchenpos.domain.table.OrderTable;
 
 public class OrderTables {
 

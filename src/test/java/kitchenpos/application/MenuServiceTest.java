@@ -24,7 +24,7 @@ import kitchenpos.dao.fake.FakeMenuGroupDao;
 import kitchenpos.dao.fake.FakeMenuProductDao;
 import kitchenpos.dao.fake.FakeProductDao;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuRepository;

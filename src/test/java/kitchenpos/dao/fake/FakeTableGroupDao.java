@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.TableGroup;
 
 public class FakeTableGroupDao implements TableGroupDao {
 

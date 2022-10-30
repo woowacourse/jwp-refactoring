@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 
 public class FakeMenuGroupDao implements MenuGroupDao {
 

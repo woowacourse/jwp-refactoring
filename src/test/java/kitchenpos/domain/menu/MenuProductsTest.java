@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import kitchenpos.domain.Price;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProducts;
 
