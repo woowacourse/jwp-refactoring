@@ -10,7 +10,6 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuProductResponse;
 import kitchenpos.dto.MenuRequest;
@@ -23,16 +22,16 @@ public class MenuService {
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
     private final MenuProductDao menuProductDao;
-    private final ProductDao productDao;
+    private final ProductDao productRepository;
 
     public MenuService(final MenuDao menuDao,
                        final MenuGroupDao menuGroupDao,
                        final MenuProductDao menuProductDao,
-                       final ProductDao productDao) {
+                       final ProductDao productRepository) {
         this.menuDao = menuDao;
         this.menuGroupDao = menuGroupDao;
         this.menuProductDao = menuProductDao;
-        this.productDao = productDao;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -57,8 +56,7 @@ public class MenuService {
     private void validateDiscount(BigDecimal price, List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = getProduct(menuProduct);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+            sum = sum.add(menuProduct.getPrice());
         }
 
         if (price.compareTo(sum) > 0) {
@@ -70,11 +68,6 @@ public class MenuService {
         if (!menuGroupDao.existsById(menuGroupId)) {
             throw new IllegalArgumentException("메뉴 그룹은 DB에 등록되어야 한다.");
         }
-    }
-
-    private Product getProduct(MenuProduct menuProduct) {
-        return productDao.findById(menuProduct.getProductId())
-                .orElseThrow(() -> new IllegalArgumentException("메뉴 속 상품들은 모두 DB에 등록되어야 한다"));
     }
 
     private Menu toMenu(MenuRequest menuRequest) {
@@ -89,7 +82,8 @@ public class MenuService {
     }
 
     private MenuProduct toMenuProduct(MenuProductRequest mp) {
-        return new MenuProduct(mp.getProductId(), mp.getQuantity());
+        Long productId = mp.getProductId();
+        return new MenuProduct(productId, mp.getQuantity(), productRepository.findById(productId).getPrice());
     }
 
     private List<MenuProductResponse> toMenuProductResponses(Long menuId, List<MenuProduct> savedMenuProducts) {

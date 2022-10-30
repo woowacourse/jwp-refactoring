@@ -13,6 +13,7 @@ import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 @SuppressWarnings("NonAsciiCharacters")
 class MenuServiceTest extends ServiceTest {
@@ -62,8 +63,8 @@ class MenuServiceTest extends ServiceTest {
         MenuRequest 메뉴_치킨그룹 = 메뉴요청_치킨그룹(new MenuProductRequest( 잘못된_상품_id, 10));
 
         assertThatThrownBy(() -> menuService.create(메뉴_치킨그룹))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("메뉴 속 상품들은 모두 DB에 등록되어야 한다");
+                .isInstanceOf(InvalidDataAccessApiUsageException.class)
+                .hasMessage("상품은 DB에 등록되어야 한다");
     }
 
     @DisplayName("메뉴 가격은 내부 모든 상품가격보다 낮아야 한다.")

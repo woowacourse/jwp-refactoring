@@ -16,7 +16,7 @@ class MenuTest {
         BigDecimal 음수_가격 = BigDecimal.valueOf(-10000);
 
         assertThatThrownBy(() -> new Menu(1L, "후라이드", 음수_가격,
-                1L, List.of(new MenuProduct(1L, 1L, 1L, 1))))
+                1L, List.of(new MenuProduct(1L, 1L, 1L, 1, new Price(16000)))))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("가격은 0 이상이어야 한다.");
     }
