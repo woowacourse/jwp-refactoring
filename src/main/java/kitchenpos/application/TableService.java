@@ -49,7 +49,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest orderTable) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 아이디의 테이블은 존재하지 않는다."));
 
@@ -62,7 +62,7 @@ public class TableService {
             throw new IllegalArgumentException("테이블의 주문이 있다면 COMPLETION 상태여야 한다.");
         }
 
-        savedOrderTable.updateEmpty(orderTable.isEmpty());
+        savedOrderTable.updateEmpty(orderTableChangeEmptyRequest.isEmpty());
 
         return toOrderTableResponse(orderTableDao.save(savedOrderTable));
     }

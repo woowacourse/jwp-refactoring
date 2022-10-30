@@ -86,14 +86,17 @@ class TableServiceTest extends ServiceTest {
         productDao.save(상품_후라이드());
         menuDao.save(메뉴_후라이드치킨());
         OrderTableResponse 테이블1 = tableService.create(빈테이블생성요청());
+        Long id = 테이블1.getId();
+        테이블_빈_여부_변경(id, false);
         orderService.create(주문요청_테이블1());
-        return 테이블1.getId();
+        return id;
     }
 
     @DisplayName("특정 테이블의 손님 수를 변경할 수 있다.")
     @Test
     void changeNumberOfGuests() {
         OrderTableResponse 테이블_1 = tableService.create(빈테이블생성요청());
+        테이블_빈_여부_변경(테이블_1.getId(), false);
 
         int 손님수 = 100;
         OrderTableResponse 테이블_손님수_변경 = 테이블_손님수_변경(테이블_1.getId(), 손님수);

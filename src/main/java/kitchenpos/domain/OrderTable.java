@@ -6,9 +6,6 @@ public class OrderTable {
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTable() {
-    }
-
     public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         validateNumberOfGuests(numberOfGuests);
         this.id = id;
