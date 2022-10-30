@@ -78,19 +78,19 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문_목록을_반환한다() {
         int beforeSize = orderService.list().size();
-        orderDao.save(new Order(orderTable.getId(), COOKING.name(), LocalDateTime.now()));
+        orderDao.save(new Order(orderTable.getId(), COOKING, LocalDateTime.now()));
 
         assertThat(orderService.list().size()).isEqualTo(beforeSize + 1);
     }
 
     @Test
     void 주문_상태를_변경한다() {
-        Order savedOrder = orderDao.save(new Order(orderTable.getId(), COOKING.name(), LocalDateTime.now()));
+        Order savedOrder = orderDao.save(new Order(orderTable.getId(), COOKING, LocalDateTime.now()));
 
         ChangeOrderStatusRequest changeOrderStatusRequest = new ChangeOrderStatusRequest(MEAL.name());
         orderService.changeOrderStatus(savedOrder.getId(), changeOrderStatusRequest);
 
-        assertThat(orderDao.findById(savedOrder.getId()).get().getOrderStatus()).isEqualTo(MEAL.name());
+        assertThat(orderDao.findById(savedOrder.getId()).get().getOrderStatus()).isEqualTo(MEAL);
     }
 
     @Test
@@ -103,7 +103,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문_상태를_변경할때_완료상태면_예외를_반환한다() {
-        Order savedOrder = orderDao.save(new Order(orderTable.getId(), COMPLETION.name(), LocalDateTime.now()));
+        Order savedOrder = orderDao.save(new Order(orderTable.getId(), COMPLETION, LocalDateTime.now()));
         ChangeOrderStatusRequest changeOrderStatusRequest = new ChangeOrderStatusRequest(MEAL.name());
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), changeOrderStatusRequest))

@@ -7,6 +7,7 @@ import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.exception.NotFoundOrderException;
 import kitchenpos.exception.NotFoundOrderTableException;
@@ -58,7 +59,7 @@ public class OrderRepository {
                 .collect(Collectors.toList());
     }
 
-    public Order changeOrderStatus(Long orderId, String orderStatus) {
+    public Order changeOrderStatus(Long orderId, OrderStatus orderStatus) {
         Order savedOrder = findOrder(orderId);
         savedOrder.changeOrderStatus(orderStatus);
         return orderDao.save(savedOrder);

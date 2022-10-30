@@ -1,12 +1,10 @@
 package kitchenpos.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
-import kitchenpos.exception.NotFoundMenuGroupException;
 import org.junit.jupiter.api.Test;
 
 class MenuRepositoryTest extends RepositoryTest {
@@ -18,14 +16,6 @@ class MenuRepositoryTest extends RepositoryTest {
         Menu savedMenu = menuRepository.save(menu, List.of());
 
         assertThat(menuDao.findById(savedMenu.getId())).isPresent();
-    }
-
-    @Test
-    void 메뉴를_생성할때_메뉴그룹아이디_예외를_발생한다() {
-        Menu menu = new Menu("", BigDecimal.valueOf(0L), 0L);
-
-        assertThatThrownBy(() -> menuRepository.save(menu, List.of()))
-                .isInstanceOf(NotFoundMenuGroupException.class);
     }
 
     @Test

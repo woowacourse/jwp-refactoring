@@ -3,11 +3,13 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.exception.MenuPriceException;
+import kitchenpos.exception.NotFoundMenuGroupException;
 import kitchenpos.exception.NotFoundProductException;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.ui.dto.MenuProductDto;
@@ -18,15 +20,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MenuService {
     private final MenuRepository menuRepository;
+    private final MenuGroupDao menuGroupDao;
     private final ProductDao productDao;
 
-    public MenuService(MenuRepository menuRepository, ProductDao productDao) {
+    public MenuService(MenuRepository menuRepository, MenuGroupDao menuGroupDao, ProductDao productDao) {
         this.menuRepository = menuRepository;
+        this.menuGroupDao = menuGroupDao;
         this.productDao = productDao;
     }
 
     @Transactional
     public Menu create(MenuCreateRequest menuCreateRequest) {
+        validateMenuGroupId(menuCreateRequest.getMenuGroupId());
         List<MenuProduct> menuProducts = getMenuProducts(menuCreateRequest.getMenuProducts());
         validatePrice(menuProducts, menuCreateRequest.getPrice());
         Menu menu = new Menu(
@@ -35,6 +40,12 @@ public class MenuService {
                 menuCreateRequest.getMenuGroupId());
 
         return menuRepository.save(menu, menuProducts);
+    }
+
+    private void validateMenuGroupId(Long menuGroupId) {
+        if (!menuGroupDao.existsById(menuGroupId)) {
+            throw new NotFoundMenuGroupException();
+        }
     }
 
     private List<MenuProduct> getMenuProducts(List<MenuProductDto> menuProductDtos) {

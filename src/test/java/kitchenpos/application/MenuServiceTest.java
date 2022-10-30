@@ -13,7 +13,6 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.exception.MenuPriceException;
 import kitchenpos.exception.NotFoundMenuGroupException;
-import kitchenpos.fixture.DomainFixture;
 import kitchenpos.ui.dto.MenuProductDto;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +59,8 @@ class MenuServiceTest extends ServiceTest {
 
     @Test
     void 메뉴를_생성할때_product총가격보다_menu가격이높으면_예외를_발생한다() {
-        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("", BigDecimal.valueOf(MAX_VALUE), 1L,
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("", BigDecimal.valueOf(MAX_VALUE),
+                menuGroup.getId(),
                 List.of(new MenuProductDto(product.getId(), 1)));
 
         assertThatThrownBy(() -> menuService.create(menuCreateRequest))

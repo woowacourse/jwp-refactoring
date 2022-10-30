@@ -29,7 +29,7 @@ public class OrderService {
 
     @Transactional
     public Order create(OrderCreateRequest orderCreateRequest) {
-        Order order = new Order(orderCreateRequest.getOrderTableId(), OrderStatus.COOKING.name(), LocalDateTime.now());
+        Order order = new Order(orderCreateRequest.getOrderTableId(), OrderStatus.COOKING, LocalDateTime.now());
         List<OrderLineItem> savedOrderLineItems = getOrderLineItems(orderCreateRequest.getOrderLineItems());
 
         return orderRepository.save(order, savedOrderLineItems);
@@ -60,6 +60,7 @@ public class OrderService {
 
     @Transactional
     public Order changeOrderStatus(Long orderId, ChangeOrderStatusRequest changeOrderStatusRequest) {
-        return orderRepository.changeOrderStatus(orderId, changeOrderStatusRequest.getOrderStatus());
+        return orderRepository.changeOrderStatus(orderId,
+                OrderStatus.valueOf(changeOrderStatusRequest.getOrderStatus()));
     }
 }

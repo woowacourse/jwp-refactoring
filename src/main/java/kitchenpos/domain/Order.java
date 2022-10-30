@@ -8,11 +8,11 @@ import kitchenpos.exception.NotConvertableStatusException;
 public class Order {
     private final Long id;
     private final Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private final LocalDateTime orderedTime;
     private final List<OrderLineItem> orderLineItems;
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
+    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
@@ -21,11 +21,11 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this(id, orderTableId, orderStatus, orderedTime, null);
     }
 
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+    public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this(null, orderTableId, orderStatus, orderedTime, null);
     }
 
@@ -33,8 +33,8 @@ public class Order {
         this(order.id, order.orderTableId, order.orderStatus, order.orderedTime, orderLineItems);
     }
 
-    public void changeOrderStatus(String orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
             throw new NotConvertableStatusException();
         }
         this.orderStatus = orderStatus;
@@ -48,7 +48,7 @@ public class Order {
         return orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 

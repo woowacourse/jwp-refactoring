@@ -12,9 +12,9 @@ class OrderTest {
 
     @Test
     void 완료_상태면_상태를_바꿀때_예외를_반환한다() {
-        Order order = new Order(1L, COMPLETION.name(), LocalDateTime.now());
+        Order order = new Order(1L, COMPLETION, LocalDateTime.now());
 
-        assertThatThrownBy(() -> order.changeOrderStatus(COOKING.name()))
+        assertThatThrownBy(() -> order.changeOrderStatus(COOKING))
                 .isInstanceOf(NotConvertableStatusException.class);
     }
 }
