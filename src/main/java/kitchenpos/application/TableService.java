@@ -3,8 +3,10 @@ package kitchenpos.application;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.exception.OrderTableConvertEmptyStatusException;
 import kitchenpos.repository.TableRepository;
 import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
@@ -15,12 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
-    private final TableRepository tableRepository;
     private final OrderDao orderDao;
+    private final OrderTableDao orderTableDao;
 
-    public TableService(OrderDao orderDao, TableRepository tableRepository) {
+    public TableService(OrderDao orderDao, OrderTableDao orderTableDao) {
         this.orderDao = orderDao;
-        this.tableRepository = tableRepository;
+        this.orderTableDao = orderTableDao;
     }
 
     @Transactional
@@ -28,18 +30,21 @@ public class TableService {
         OrderTable orderTable =
                 new OrderTable(orderTableCreateRequest.getNumberOfGuests(), orderTableCreateRequest.getEmpty());
 
-        return tableRepository.save(orderTable);
+        return orderTableDao.save(orderTable);
     }
 
     public List<OrderTable> list() {
-        return tableRepository.findAll();
+        return orderTableDao.findAll();
     }
 
     @Transactional
     public OrderTable changeEmpty(Long orderTableId, OrderTableChangeEmptyRequest orderTableChangeEmptyRequest) {
         validateOrderTableStatus(orderTableId);
 
-        return tableRepository.changeEmpty(orderTableId, orderTableChangeEmptyRequest.getEmpty());
+        OrderTable savedOrderTable = findOrderTable(orderTableId);
+        savedOrderTable.changeEmpty(orderTableChangeEmptyRequest.getEmpty());
+
+        return orderTableDao.save(savedOrderTable);
     }
 
     private void validateOrderTableStatus(Long orderTableId) {
@@ -52,7 +57,14 @@ public class TableService {
     @Transactional
     public OrderTable changeNumberOfGuests(Long orderTableId,
                                            OrderTableChangeNumberOfGuestsRequest orderTableChangeNumberOfGuestsRequest) {
-        return tableRepository.changeNumberOfGuests(orderTableId,
-                orderTableChangeNumberOfGuestsRequest.getNumberOfGuests());
+        OrderTable savedOrderTable = findOrderTable(orderTableId);
+        savedOrderTable.changeNumberOfGuests(orderTableChangeNumberOfGuestsRequest.getNumberOfGuests());
+
+        return orderTableDao.save(savedOrderTable);
+    }
+
+    private OrderTable findOrderTable(Long orderTableId) {
+        return orderTableDao.findById(orderTableId)
+                .orElseThrow(NotFoundOrderTableException::new);
     }
 }

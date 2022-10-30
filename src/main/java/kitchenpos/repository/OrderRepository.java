@@ -27,6 +27,10 @@ public class OrderRepository {
         this.orderLineItemDao = orderLineItemDao;
     }
 
+    public Order save(Order order) {
+        return orderDao.save(order);
+    }
+
     public Order save(Order order, List<OrderLineItem> orderLineItems) {
         validateOrderTable(order.getOrderTableId());
         Order savedOrder = orderDao.save(order);
@@ -37,7 +41,7 @@ public class OrderRepository {
         return new Order(savedOrder, savedOrderLineItems);
     }
 
-    private void validateOrderTable(Long orderTableId) {
+    public void validateOrderTable(Long orderTableId) {
         OrderTable orderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(NotFoundOrderTableException::new);
         if (orderTable.isEmpty()) {
