@@ -43,7 +43,8 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void 메뉴의_가격이_음수이면_예외를_발생한다() {
         // given
-        final MenuRequest menuRequest = new MenuRequest("메뉴", new BigDecimal(-1), null, List.of());
+        final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
+        final MenuRequest menuRequest = new MenuRequest("메뉴", new BigDecimal(-1), menuGroupId, List.of());
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuRequest))
@@ -53,7 +54,8 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void 메뉴의_가격이_null이면_예외를_발생한다() {
         // given
-        final MenuRequest menuRequest = new MenuRequest("메뉴", null, null, List.of());
+        final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
+        final MenuRequest menuRequest = new MenuRequest("메뉴", null, menuGroupId, List.of());
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuRequest))
