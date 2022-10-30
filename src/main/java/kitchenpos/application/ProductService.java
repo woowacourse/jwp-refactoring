@@ -20,10 +20,10 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponse create(final ProductCreateRequest productCreateRequest) {
+    public ProductResponse create(final ProductCreateRequest request) {
         Product product = Product.builder()
-                .name(productCreateRequest.getName())
-                .price(productCreateRequest.getPrice())
+                .name(request.getName())
+                .price(request.getPrice())
                 .build();
         Product savedProduct = productRepository.save(product);
         return ProductResponse.from(savedProduct);
