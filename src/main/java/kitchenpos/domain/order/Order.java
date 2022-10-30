@@ -1,10 +1,9 @@
 package kitchenpos.domain.order;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import org.springframework.util.CollectionUtils;
 
 public class Order {
 
@@ -12,7 +11,7 @@ public class Order {
     private final Long orderTableId;
     private String orderStatus;
     private final LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private final OrderLineItems orderLineItems;
 
     /**
      * DB 에 저장되지 않은 객체
@@ -29,15 +28,15 @@ public class Order {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+        this.orderLineItems = null;
     }
 
     public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
-        validateOrderLineItemIsNotEmpty(orderLineItems);
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
     public void changeStatus(final String orderStatus) {
@@ -45,12 +44,6 @@ public class Order {
             throw new IllegalArgumentException("주문이 완료된 상태입니다.");
         }
         this.orderStatus = orderStatus;
-    }
-
-    private void validateOrderLineItemIsNotEmpty(final List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("주문 항목이 존재하지 않습니다.");
-        }
     }
 
     public Long getId() {
@@ -70,10 +63,9 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+        if (orderLineItems == null) {
+            return Collections.emptyList();
+        }
+        return orderLineItems.getValue();
     }
 }

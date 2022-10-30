@@ -16,14 +16,6 @@ import kitchenpos.domain.order.OrderStatus;
 @DisplayName("Order 도메인 테스트")
 class OrderTest {
 
-    @DisplayName("주문 항목이 비어있으면 안된다")
-    @Test
-    void orderLineItemIsEmpty() {
-        assertThatThrownBy(() -> new Order(1L, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.emptyList()))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("주문 항목이 존재하지 않습니다.");
-    }
-
     @DisplayName("주문의 상태 변경 시 주문이 완료된 상태면 안된다")
     @Test
     void changeStatusOrderIsCompletion() {

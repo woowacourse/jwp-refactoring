@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Repository;
 
 import kitchenpos.dao.OrderDao;
@@ -24,15 +25,18 @@ public class OrderRepository {
 
     public Order save(final Order order) {
         final Order savedOrder = orderDao.save(order);
-        final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(savedOrder.getId(), order.getOrderLineItems());
-        savedOrder.setOrderLineItems(savedOrderLineItems);
-        return savedOrder;
+        return new Order(
+            savedOrder.getId(),
+            savedOrder.getOrderTableId(),
+            savedOrder.getOrderStatus(),
+            savedOrder.getOrderedTime(),
+            saveOrderLineItems(savedOrder.getId(), order.getOrderLineItems())
+        );
     }
 
     public Order update(final Order order) {
         final Order savedOrder = orderDao.save(order);
-        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(savedOrder.getId()));
-        return savedOrder;
+        return createOrder(savedOrder);
     }
 
     public Optional<Order> findById(final Long id) {
@@ -41,10 +45,9 @@ public class OrderRepository {
 
     public List<Order> findAll() {
         final List<Order> orders = orderDao.findAll();
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
-        }
-        return orders;
+        return orders.stream()
+            .map(this::createOrder)
+            .collect(Collectors.toUnmodifiableList());
     }
 
     public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId, final List<String> orderStatuses) {
@@ -61,5 +64,15 @@ public class OrderRepository {
                 new OrderLineItem(orderId, orderLineItem.getMenuId(), orderLineItem.getQuantity())
             ))
             .collect(Collectors.toUnmodifiableList());
+    }
+
+    private Order createOrder(final Order order) {
+        return new Order(
+            order.getId(),
+            order.getOrderTableId(),
+            order.getOrderStatus(),
+            order.getOrderedTime(),
+            orderLineItemDao.findAllByOrderId(order.getId())
+        );
     }
 }

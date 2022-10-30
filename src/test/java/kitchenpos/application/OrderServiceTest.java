@@ -147,8 +147,9 @@ class OrderServiceTest {
     @DisplayName("주문의 상태를 변경한다")
     @Test
     void changeOrderStatus() {
-        final Order order = 요리중인_주문(저장된_주문_테이블.getId());
-        final Order savedOrder = orderDao.save(order);
+        final OrderLineItem orderLineItem = new OrderLineItem(1L, 1);
+        final Order order = 주문_1번의_주문_항목들은(저장된_주문_테이블.getId(), List.of(orderLineItem));
+        final Order savedOrder = orderRepository.save(order);
         final OrderChangeRequest newOrder = new OrderChangeRequest(OrderStatus.COMPLETION.name());
 
         final OrderResponse response = orderService.changeOrderStatus(savedOrder.getId(), newOrder);
