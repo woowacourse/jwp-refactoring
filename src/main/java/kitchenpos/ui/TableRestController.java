@@ -2,8 +2,11 @@ package kitchenpos.ui;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,36 +24,53 @@ public class TableRestController {
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<OrderTable> create(@RequestBody final OrderTable orderTable) {
-        final OrderTable created = tableService.create(orderTable);
+    public ResponseEntity<OrderTableResponse> create(@RequestBody OrderTableRequest orderTableRequest) {
+
+        final OrderTable created = tableService.create(orderTableRequest);
         final URI uri = URI.create("/api/tables/" + created.getId());
+
+        final OrderTableResponse orderTableResponse = OrderTableResponse.from(created);
+
         return ResponseEntity.created(uri)
-                .body(created)
-                ;
+                .body(orderTableResponse);
     }
 
     @GetMapping("/api/tables")
-    public ResponseEntity<List<OrderTable>> list() {
+    public ResponseEntity<List<OrderTableResponse>> list() {
+
+        final List<OrderTable> orderTables = tableService.list();
+
+        final List<OrderTableResponse> orderTableResponses = orderTables.stream()
+                .map(OrderTableResponse::from)
+                .collect(Collectors.toList());
+
         return ResponseEntity.ok()
-                .body(tableService.list())
-                ;
+                .body(orderTableResponses);
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")
-    public ResponseEntity<OrderTable> changeEmpty(
+    public ResponseEntity<OrderTableResponse> changeEmpty(
             @PathVariable final Long orderTableId,
-            @RequestBody final OrderTable orderTable) {
+            @RequestBody OrderTableRequest orderTableRequest) {
+
+        final OrderTable orderTable = tableService.changeEmpty(orderTableId, orderTableRequest);
+
+        final OrderTableResponse orderTableResponse = OrderTableResponse.from(orderTable);
+
         return ResponseEntity.ok()
-                .body(tableService.changeEmpty(orderTableId, orderTable))
-                ;
+                .body(orderTableResponse);
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
-    public ResponseEntity<OrderTable> changeNumberOfGuests(
+    public ResponseEntity<OrderTableResponse> changeNumberOfGuests(
             @PathVariable final Long orderTableId,
-            @RequestBody final OrderTable orderTable) {
+            @RequestBody OrderTableRequest orderTableRequest) {
+
+        final OrderTable orderTable = tableService.changeNumberOfGuests(orderTableId, orderTableRequest);
+
+        final OrderTableResponse orderTableResponse = OrderTableResponse.from(orderTable);
+
         return ResponseEntity.ok()
-                .body(tableService.changeNumberOfGuests(orderTableId, orderTable))
-                ;
+                .body(orderTableResponse);
     }
 }

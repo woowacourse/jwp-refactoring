@@ -13,6 +13,8 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.dao.jpa.MenuProductRepository;
 import kitchenpos.dao.jpa.ProductRepository;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderTableRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,4 +79,14 @@ abstract public class IntegrationServiceTest {
     // Support's
     @Autowired
     protected DbTableCleaner dbTableCleaner;
+
+    protected OrderTableRequest createOrderTableResponseFrom(OrderTable orderTable) {
+
+        return new OrderTableRequest(
+                orderTable.getId(),
+                orderTable.getTableGroupId(),
+                orderTable.getNumberOfGuests(),
+                orderTable.isEmpty()
+        );
+    }
 }

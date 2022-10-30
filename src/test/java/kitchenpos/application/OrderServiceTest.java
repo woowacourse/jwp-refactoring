@@ -12,6 +12,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.support.IntegrationServiceTest;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +32,7 @@ class OrderServiceTest extends IntegrationServiceTest {
 
             private final List<OrderLineItem> EMPTY_ORDER_LINE_ITEMS = Lists.emptyList();
 
-            private final Order order = new Order(1L, null, now(), EMPTY_ORDER_LINE_ITEMS);
+            private final OrderRequest order = new OrderRequest(1L, null, now(), EMPTY_ORDER_LINE_ITEMS);
 
             @Test
             void 예외가_발생한다() {
@@ -45,8 +46,8 @@ class OrderServiceTest extends IntegrationServiceTest {
         class 존재하지_않는_메뉴를_주문할_경우 {
 
             private static final long 존재하지_않는_MENU_ID = -1L;
-            private final Order order =
-                    new Order(1L, null, now(), asList(new OrderLineItem(존재하지_않는_MENU_ID, 1L)));
+            private final OrderRequest order =
+                    new OrderRequest(1L, null, now(), asList(new OrderLineItem(존재하지_않는_MENU_ID, 1L)));
 
             @Test
             void 예외가_발생한다() {
@@ -60,8 +61,8 @@ class OrderServiceTest extends IntegrationServiceTest {
         class 존재하지_않는_주문테이블을_입력한_경우 {
 
             private final long 존재하지_않는_주문테이블_ID = -1L;
-            private final Order order =
-                    new Order(존재하지_않는_주문테이블_ID, null, now(), ORDER_LINE_ITEMS);
+            private final OrderRequest order =
+                    new OrderRequest(존재하지_않는_주문테이블_ID, null, now(), ORDER_LINE_ITEMS);
 
             @Test
             void 예외가_발생한다() {
@@ -74,7 +75,7 @@ class OrderServiceTest extends IntegrationServiceTest {
         @Nested
         class 주문테이블이_비어있는_경우 {
 
-            private final Order order = new Order(1L, null, now(), ORDER_LINE_ITEMS);
+            private final OrderRequest order = new OrderRequest(1L, null, now(), ORDER_LINE_ITEMS);
 
             @Test
             void 예외가_발생한다() {
@@ -87,7 +88,7 @@ class OrderServiceTest extends IntegrationServiceTest {
         @Nested
         class 정상적으로_주문요청한_경우 extends IntegrationServiceTest {
 
-            private final Order order = new Order(1L, null, now(), ORDER_LINE_ITEMS);
+            private final OrderRequest order = new OrderRequest(1L, null, now(), ORDER_LINE_ITEMS);
             private Long savedOrderTableId;
 
             @BeforeEach
@@ -128,10 +129,11 @@ class OrderServiceTest extends IntegrationServiceTest {
 
             private static final long NOT_EXISTS_ORDER_ID = -1L;
 
-            private final Order order = new Order(1L, OrderStatus.MEAL.name(), now(), ORDER_LINE_ITEMS);
+            private final OrderRequest order = new OrderRequest(1L, OrderStatus.MEAL.name(), now(), ORDER_LINE_ITEMS);
 
             @Test
             void 예외가_발생한다() {
+
                 assertThatThrownBy(() -> orderService.changeOrderStatus(NOT_EXISTS_ORDER_ID, order))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("존재하지 않는 주문입니다.");
@@ -142,7 +144,7 @@ class OrderServiceTest extends IntegrationServiceTest {
         @Nested
         class 이미_계산완료된_주문의_상태를_변경하려는_경우 extends IntegrationServiceTest {
 
-            private final Order orderToChange = new Order(null, OrderStatus.MEAL.name(), now(), ORDER_LINE_ITEMS);
+            private final OrderRequest orderToChange = new OrderRequest(null, OrderStatus.MEAL.name(), now(), ORDER_LINE_ITEMS);
             private Long savedOrderId;
 
             @BeforeEach

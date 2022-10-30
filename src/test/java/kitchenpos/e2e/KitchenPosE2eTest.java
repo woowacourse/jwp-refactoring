@@ -19,9 +19,11 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.MenuResponse;
-import kitchenpos.support.MenuFixture;
+import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.support.ProductFixture.WrapProductRequest;
 
 public abstract class KitchenPosE2eTest extends E2eTest {
@@ -33,13 +35,12 @@ public abstract class KitchenPosE2eTest extends E2eTest {
     public static final String TABLE_URL = "/api/tables";
     public static final String TABLE_GROUP_URL = "/api/table-groups";
     public static final String TABLE_CHANGE_EMPTY_URL = "/api/tables/{orderTableId}/empty";
-    public static final String TABLE_GROUP_DELETE_URL =  "/api/table-groups/{tableGroupId}";
+    public static final String TABLE_GROUP_DELETE_URL = "/api/table-groups/{tableGroupId}";
+    public static final String ORDER_TABLE_CHANGE_NUMBER_OF_GUESTS = "/api/tables/{orderTableId}/number-of-guests";
 
 
     /**
-     * -----------------------------
-     * 생성 (API) 요청 편의 메서드 목록
-     * -----------------------------
+     * ----------------------------- 생성 (API) 요청 편의 메서드 목록 -----------------------------
      */
 
     protected Order 주문_생성(final OrderStatus orderStatus) {
@@ -84,46 +85,49 @@ public abstract class KitchenPosE2eTest extends E2eTest {
         }
     }
 
-    protected OrderTable 주문테이블_생성() {
+    protected OrderTableResponse 주문테이블_생성_및_변환(OrderTableRequest orderTableRequest) {
 
-        return 주문테이블_생성_변환(new OrderTable(0, true));
+        return 주문테이블_생성(orderTableRequest)
+                .body()
+                .as(OrderTableResponse.class);
     }
 
-    protected ExtractableResponse<Response> 주문테이블_생성(final OrderTable orderTable) {
+    protected ExtractableResponse<Response> 주문테이블_생성(OrderTableRequest orderTableRequest) {
 
-        return POST_요청(TABLE_URL, orderTable);
+        return POST_요청(TABLE_URL, orderTableRequest);
     }
 
-    protected OrderTable 주문테이블_생성_변환(final OrderTable orderTable) {
+    protected List<OrderTableRequest> 주문테이블들_생성(int size, OrderTableRequest orderTableRequest) {
 
-        return 주문테이블_생성(orderTable).body().as(OrderTable.class);
-    }
-
-    protected Long 주문테이블_생성_ID반환(final OrderTable orderTable) {
-
-        return 주문테이블_생성(orderTable).body().as(OrderTable.class).getId();
-    }
-
-    protected List<OrderTable> 주문테이블들_생성(final int size) {
-
-        return 주문테이블들_생성(size, 주문테이블_생성());
-    }
-
-    protected List<OrderTable> 주문테이블들_생성(final int size, final OrderTable orderTable) {
-
-        List<OrderTable> orderTables = new ArrayList<>();
+        List<OrderTableRequest> orderTablesRequests = new ArrayList<>();
 
         for (int i = 0; i < size; i++) {
-            orderTables.add(주문테이블_생성_변환(orderTable));
+            final OrderTableResponse orderTableResponse = 주문테이블_생성_및_변환(orderTableRequest);
+            orderTablesRequests.add(convertToOrderTableRequest(orderTableResponse));
         }
 
-        return orderTables;
+        return orderTablesRequests;
     }
 
-    protected TableGroup 테이블그룹_생성(final TableGroup tableGroup) {
+    protected List<OrderTableRequest> 주문테이블들_생성(int size) {
 
-        final ExtractableResponse<Response> 응답 = POST_요청(TABLE_GROUP_URL, tableGroup);
-        return 응답.body().as(TableGroup.class);
+        return 주문테이블들_생성(size, new OrderTableRequest(0, true));
+    }
+
+    private OrderTableRequest convertToOrderTableRequest(OrderTableResponse tableResponse) {
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(
+                tableResponse.getId(),
+                tableResponse.getTableGroupId(),
+                tableResponse.getNumberOfGuests(),
+                tableResponse.isEmpty()
+        );
+        return orderTableRequest;
+    }
+
+    protected TableGroupResponse 테이블그룹_생성(final TableGroupRequest tableGroupRequest) {
+
+        final ExtractableResponse<Response> 응답 = POST_요청(TABLE_GROUP_URL, tableGroupRequest);
+        return 응답.body().as(TableGroupResponse.class);
     }
 
     protected MenuResponse 메뉴_생성() {
@@ -138,7 +142,8 @@ public abstract class KitchenPosE2eTest extends E2eTest {
 
     protected Long 메뉴_생성_및_ID_반환() {
 
-        return 메뉴_생성().getId();
+        return 메뉴_생성()
+                .getId();
     }
 
     protected MenuGroup 메뉴_그룹_생성(final MenuGroup menuGroup) {
@@ -166,8 +171,7 @@ public abstract class KitchenPosE2eTest extends E2eTest {
 
     protected Long 상품_생성_및_ID_반환() {
 
-        return POST_요청(PRODUCT_URL, 후라이드_치킨_요청_DTO)
-                .as(Product.class)
+        return 상품_생성()
                 .getId();
     }
 

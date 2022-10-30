@@ -36,6 +36,11 @@ public class MenuService {
     @Transactional
     public Menu create(MenuRequest menuRequest) {
 
+        /**
+         * TODO MenuProduct : Domain to Request
+         * menuRequest.productIds();
+         * p Repo
+         */
         final Menu menu = menuRequest.toDomain();
         menuSpecification.validateCreate(menu);
 

@@ -12,6 +12,7 @@ import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.support.IntegrationServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -22,12 +23,12 @@ class TableServiceTest extends IntegrationServiceTest {
     @Nested
     class create_메서드는 {
 
-        private final OrderTable orderTable = new OrderTable(1, true);
+        private final OrderTableRequest orderTableRequest = new OrderTableRequest(1, true);
 
         @Test
         void 주문테이블을_저장하고_반환한다() {
 
-            OrderTable actual = tableService.create(orderTable);
+            OrderTable actual = tableService.create(orderTableRequest);
 
             assertThat(actual).isNotNull();
         }
@@ -52,11 +53,11 @@ class TableServiceTest extends IntegrationServiceTest {
         class 존재하지않는_주문테이블_ID가_입력된_경우 {
 
             private final long NOT_EXISTS_ID = -1L;
-            private final OrderTable orderTable = new OrderTable(0, true);
+            private final OrderTableRequest orderTableRequest = new OrderTableRequest(0, true);
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> tableService.changeEmpty(NOT_EXISTS_ID, orderTable))
+                assertThatThrownBy(() -> tableService.changeEmpty(NOT_EXISTS_ID, orderTableRequest))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("존재하지 않는 주문 테이블 ID입니다.");
             }
@@ -66,7 +67,7 @@ class TableServiceTest extends IntegrationServiceTest {
         class 단체지정된_주문테이블이_입력된_경우 extends IntegrationServiceTest {
 
             private final Long orderTableId = 1L;
-            private final OrderTable changeOrderTable = new OrderTable(0, false);
+            private final OrderTableRequest orderTableRequest = new OrderTableRequest(0, false);
 
             @BeforeEach
             void setUp() {
@@ -76,7 +77,7 @@ class TableServiceTest extends IntegrationServiceTest {
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, changeOrderTable))
+                assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTableRequest))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("주문 테이블이 단체 지정되었을 경우 상태를 변경할 수 없습니다.");
             }
@@ -86,7 +87,7 @@ class TableServiceTest extends IntegrationServiceTest {
         class 주문테이블에_조리상태의_주문이_있는_경우 extends IntegrationServiceTest {
 
             private final Long orderTableId = 1L;
-            private final OrderTable changeOrderTable = new OrderTable(4, false);
+            private final OrderTableRequest changeOrderTableRequest = new OrderTableRequest(4, false);
 
             @BeforeEach
             void setUp() {
@@ -95,7 +96,7 @@ class TableServiceTest extends IntegrationServiceTest {
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, changeOrderTable))
+                assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, changeOrderTableRequest))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("주문 테이블이 계산 완료되었을 경우에만 상태를 변경할 수 있습니다.");
             }
@@ -105,7 +106,7 @@ class TableServiceTest extends IntegrationServiceTest {
         class 주문테이블에_식사상태의_주문이_있는_경우 extends IntegrationServiceTest {
 
             private final Long orderTableId = 1L;
-            private final OrderTable changeOrderTable = new OrderTable(4, false);
+            private final OrderTableRequest changeOrderTableRequest = new OrderTableRequest(4, false);
 
             @BeforeEach
             void setUp() {
@@ -114,7 +115,7 @@ class TableServiceTest extends IntegrationServiceTest {
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, changeOrderTable))
+                assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, changeOrderTableRequest))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("주문 테이블이 계산 완료되었을 경우에만 상태를 변경할 수 있습니다.");
             }
@@ -124,11 +125,11 @@ class TableServiceTest extends IntegrationServiceTest {
         class 정상적으로_변경_가능한_경우 {
 
             private final Long orderTableId = 1L;
-            private final OrderTable changeOrderTable = new OrderTable(4, false);
+            private final OrderTableRequest changeOrderTableRequest = new OrderTableRequest(4, false);
 
             @Test
             void 주문테이블의_상태를_변경하고_변경된_상태의_주문테이블을_반환한다() {
-                OrderTable actual = tableService.changeEmpty(orderTableId, changeOrderTable);
+                OrderTable actual = tableService.changeEmpty(orderTableId, changeOrderTableRequest);
 
                 assertThat(actual.isEmpty()).isFalse();
             }
@@ -143,11 +144,11 @@ class TableServiceTest extends IntegrationServiceTest {
 
             private static final int NEGATIVE_NUMBER_OF_GUESTS = -1;
             private final Long orderTableId = 1L;
-            private final OrderTable changeOrderTable = new OrderTable(NEGATIVE_NUMBER_OF_GUESTS, false);
+            private final OrderTableRequest changeOrderTableRequest = new OrderTableRequest(NEGATIVE_NUMBER_OF_GUESTS, false);
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, changeOrderTable))
+                assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, changeOrderTableRequest))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("손님의 수는 음수가 될 수 없습니다.");
             }
@@ -157,7 +158,7 @@ class TableServiceTest extends IntegrationServiceTest {
         class 존재하지않는_주문테이블을_입력한_경우 {
 
             private final Long NOT_EXISTS_ORDER_TABLE_ID = -1L;
-            private final OrderTable changeOrderTable = new OrderTable(2, true);
+            private final OrderTableRequest changeOrderTable = new OrderTableRequest(2, true);
 
             @Test
             void 예외가_발생한다() {
@@ -171,11 +172,11 @@ class TableServiceTest extends IntegrationServiceTest {
         class 주문테이블이_비어있는_경우 {
 
             private final Long orderTableId = 1L;
-            private final OrderTable changeOrderTable = new OrderTable(0, true);
+            private final OrderTableRequest changeOrderTableRequest = new OrderTableRequest(0, true);
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, changeOrderTable))
+                assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, changeOrderTableRequest))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("주문 테이블이 비어있는 경우 손님 수를 변경할 수 없습니다.");
             }
@@ -187,7 +188,7 @@ class TableServiceTest extends IntegrationServiceTest {
             private static final int CHANGE_NUMBER_OF_GUESTS = 4;
 
             private final Long orderTableId = 1L;
-            private final OrderTable changeOrderTable = new OrderTable(CHANGE_NUMBER_OF_GUESTS, false);
+            private final OrderTableRequest changeOrderTable = new OrderTableRequest(CHANGE_NUMBER_OF_GUESTS, false);
 
             @BeforeEach
             void setUp() {

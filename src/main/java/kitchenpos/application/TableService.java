@@ -4,6 +4,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderTableRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +23,10 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
+    public OrderTable create(final OrderTableRequest orderTableRequest) {
+
+        final OrderTable orderTable = orderTableRequest.toDomain();
+
         orderTable.setId(null);
         orderTable.setTableGroupId(null);
 
@@ -34,7 +38,10 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTable changeEmpty(Long orderTableId, OrderTableRequest orderTableRequest) {
+
+        final OrderTable orderTable = orderTableRequest.toDomain();
+
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블 ID입니다."));
 
@@ -53,7 +60,11 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTable changeNumberOfGuests(Long orderTableId,
+                                           OrderTableRequest orderTableRequest) {
+
+        final OrderTable orderTable = orderTableRequest.toDomain();
+
         final int numberOfGuests = orderTable.getNumberOfGuests();
 
         if (numberOfGuests < 0) {

@@ -6,6 +6,7 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.TableGroupRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -28,9 +29,11 @@ public class TableGroupService {
         this.tableGroupDao = tableGroupDao;
     }
 
-
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
+    public TableGroup create(TableGroupRequest tableGroupRequest) {
+
+        final TableGroup tableGroup = tableGroupRequest.toDomain();
+
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {

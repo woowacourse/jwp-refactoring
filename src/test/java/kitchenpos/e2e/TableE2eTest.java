@@ -7,6 +7,8 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
@@ -16,8 +18,8 @@ public class TableE2eTest extends KitchenPosE2eTest {
     void create() {
 
         // given & when
-        ExtractableResponse<Response> 응답 = 주문테이블_생성(new OrderTable(0, true));
-        OrderTable 주문테이블 = 응답.body().as(OrderTable.class);
+        ExtractableResponse<Response> 응답 = 주문테이블_생성(new OrderTableRequest(0, true));
+        OrderTableRequest 주문테이블 = 응답.body().as(OrderTableRequest.class);
 
         // then
         assertAll(
@@ -32,8 +34,8 @@ public class TableE2eTest extends KitchenPosE2eTest {
     void list() {
 
         // given
-        주문테이블_생성(new OrderTable(0, true));
-        주문테이블_생성(new OrderTable(2, false));
+        주문테이블_생성(new OrderTableRequest(0, true));
+        주문테이블_생성(new OrderTableRequest(2, false));
 
         // when
         ExtractableResponse<Response> 응답 = GET_요청(TABLE_URL);
@@ -56,13 +58,13 @@ public class TableE2eTest extends KitchenPosE2eTest {
 
         // given
         Long 주문테이블_ID =
-                주문테이블_생성_ID반환(new OrderTable(0, true));
+                주문테이블_생성(new OrderTableRequest(0, true)).as(OrderTableRequest.class).getId();
 
         // when
         ExtractableResponse<Response> 응답 =
-                PUT_요청(TABLE_CHANGE_EMPTY_URL, 주문테이블_ID, new OrderTable(0, false));
+                PUT_요청(TABLE_CHANGE_EMPTY_URL, 주문테이블_ID, new OrderTableRequest(0, false));
 
-        OrderTable 바뀐_주문테이블 = 응답.as(OrderTable.class);
+        OrderTableRequest 바뀐_주문테이블 = 응답.as(OrderTableRequest.class);
 
         // then
         assertAll(
@@ -79,17 +81,17 @@ public class TableE2eTest extends KitchenPosE2eTest {
 
         // given
         Long 주문테이블_ID =
-                POST_요청(TABLE_URL, new OrderTable(0, false))
-                        .as(OrderTable.class)
+                POST_요청(TABLE_URL, new OrderTableRequest(0, false))
+                        .as(OrderTableRequest.class)
                         .getId();
 
         // when
         ExtractableResponse<Response> 응답 =
-                PUT_요청("/api/tables/{orderTableId}/number-of-guests",
+                PUT_요청(ORDER_TABLE_CHANGE_NUMBER_OF_GUESTS,
                         주문테이블_ID,
-                        new OrderTable(4, true));
+                        new OrderTableRequest(4, true));
 
-        OrderTable 바뀐_주문테이블 = 응답.as(OrderTable.class);
+        OrderTableResponse 바뀐_주문테이블 = 응답.as(OrderTableResponse.class);
 
         // then
         assertAll(

@@ -44,6 +44,11 @@ public class MenuRequest {
 
         MenuGroup menuGroup = new MenuGroup(menuGroupId, null);
 
+        /**
+         * for~~
+         * new Product(productId, ...)
+         * new MenuProduct(menuProductRequest.getId(), null, product..., quantity )
+         */
         return new Menu(name, price, menuGroup, menuProducts);
     }
 

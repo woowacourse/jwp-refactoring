@@ -1,7 +1,10 @@
 package kitchenpos.ui;
 
+import java.util.stream.Collectors;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
+import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.response.OrderResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,26 +20,39 @@ public class OrderRestController {
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<Order> create(@RequestBody final Order order) {
-        final Order created = orderService.create(order);
+    public ResponseEntity<OrderResponse> create(@RequestBody OrderRequest orderRequest) {
+
+        final Order created = orderService.create(orderRequest);
+
         final URI uri = URI.create("/api/orders/" + created.getId());
+        final OrderResponse orderResponse = OrderResponse.from(created);
+
         return ResponseEntity.created(uri)
-                .body(created)
-                ;
+                .body(orderResponse);
     }
 
     @GetMapping("/api/orders")
-    public ResponseEntity<List<Order>> list() {
+    public ResponseEntity<List<OrderResponse>> list() {
+
+        final List<Order> orders = orderService.list();
+
+        final List<OrderResponse> orderResponses = orders.stream()
+                .map(OrderResponse::from)
+                .collect(Collectors.toList());
+
         return ResponseEntity.ok()
-                .body(orderService.list())
-                ;
+                .body(orderResponses);
     }
 
     @PutMapping("/api/orders/{orderId}/order-status")
-    public ResponseEntity<Order> changeOrderStatus(
+    public ResponseEntity<OrderResponse> changeOrderStatus(
             @PathVariable final Long orderId,
-            @RequestBody final Order order
-    ) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, order));
+            @RequestBody final OrderRequest orderRequest) {
+
+        final Order changedOrder = orderService.changeOrderStatus(orderId, orderRequest);
+
+        final OrderResponse orderResponse = OrderResponse.from(changedOrder);
+
+        return ResponseEntity.ok(orderResponse);
     }
 }
