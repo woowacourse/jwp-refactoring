@@ -13,7 +13,7 @@ public class Price {
     }
 
     public BigDecimal multiply(final long count) {
-        return price.multiply(new BigDecimal(count));
+        return price.multiply(BigDecimal.valueOf(count));
     }
 
     public boolean isHigherThan(final BigDecimal other) {

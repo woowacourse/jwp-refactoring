@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import static kitchenpos.domain.fixture.ProductFixture.후라이드_치킨;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -33,7 +32,7 @@ class ProductServiceTest {
     @DisplayName("상품을 등록한다")
     @Test
     void create() {
-        final ProductRequest request = new ProductRequest("후라이드", new BigDecimal(15_000));
+        final ProductRequest request = new ProductRequest("후라이드", BigDecimal.valueOf(15_000));
 
         final ProductResponse response = productService.create(request);
 

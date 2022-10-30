@@ -17,7 +17,7 @@ public class ProductFixture {
     public static Product 후라이드_치킨() {
         return 상품()
             .이름("후라이드 치킨")
-            .가격(new BigDecimal(15_000))
+            .가격(BigDecimal.valueOf(15_000))
             .build();
     }
 

@@ -9,8 +9,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.Price;
-import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.menu.MenuProducts;
 
 @DisplayName("MenuProducts 도메인 테스트")
 class MenuProductsTest {
@@ -19,7 +17,7 @@ class MenuProductsTest {
     @Test
     void validatePriceIsLowerThanTotalPrice() {
         final MenuProduct menuProduct = new MenuProduct(1L, 1, BigDecimal.valueOf(15_000));
-        final Price price = new Price(new BigDecimal(30_000));
+        final Price price = new Price(BigDecimal.valueOf(30_000));
 
         final MenuProducts menuProducts = new MenuProducts(List.of(menuProduct));
 

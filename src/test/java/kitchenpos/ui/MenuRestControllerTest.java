@@ -15,14 +15,8 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import kitchenpos.application.MenuService;
 import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.application.dto.request.MenuRequest;
 import kitchenpos.application.dto.response.MenuProductResponse;
@@ -32,7 +26,7 @@ import kitchenpos.application.dto.response.MenuResponse;
 class MenuRestControllerTest extends RestControllerTest {
 
     private static final String MENU_NAME = "후라이드 치킨 세트";
-    private static final BigDecimal PRICE = new BigDecimal(15_000);
+    private static final BigDecimal PRICE = BigDecimal.valueOf(15_000);
     private static final Long MENU_GROUP_ID = null;
     private static final List<MenuProductRequest> MENU_PRODUCT_REQUESTS = null;
     private static final List<MenuProductResponse> MENU_PRODUCT_RESPONSES = null;

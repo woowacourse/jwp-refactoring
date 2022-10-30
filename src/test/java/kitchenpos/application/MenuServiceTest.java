@@ -34,7 +34,7 @@ import kitchenpos.repository.MenuRepository;
 class MenuServiceTest {
 
     private static final String MENU_NAME = "후라이드 치킨 세트";
-    private static final BigDecimal PRICE = new BigDecimal(15_000);
+    private static final BigDecimal PRICE = BigDecimal.valueOf(15_000);
     private static final int MENU_PRODUCT_QUANTITY = 1;
 
     private MenuService menuService;
@@ -97,9 +97,9 @@ class MenuServiceTest {
     void list() {
         final int numberOfMenu = 5;
         for (int i = 0; i < numberOfMenu; i++) {
-            final MenuProduct menuProduct = 가격_정보가_있는_상품_하나(저장된_후라이드_치킨.getId(), new BigDecimal(15_000));
+            final MenuProduct menuProduct = 가격_정보가_있는_상품_하나(저장된_후라이드_치킨.getId(), BigDecimal.valueOf(15_000));
             final Menu menu = 후라이드_치킨_세트의_가격과_메뉴_상품_리스트는(
-                저장된_치킨_세트.getId(), new BigDecimal(15_000), List.of(menuProduct)
+                저장된_치킨_세트.getId(), BigDecimal.valueOf(15_000), List.of(menuProduct)
             );
             menuRepository.save(menu);
         }
