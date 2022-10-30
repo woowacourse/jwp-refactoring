@@ -42,7 +42,7 @@ class ProductServiceTest extends ServiceTest {
             final ProductRequestDto product = 상품_생성("상품명", null);
 
             assertThatThrownBy(() -> 상품_등록(product))
-                    .isInstanceOf(NullPointerException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test

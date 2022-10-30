@@ -2,13 +2,14 @@ package kitchenpos.product.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 public class Price {
 
     private BigDecimal value;
 
     public Price(final BigDecimal value) {
-        validatePrice(value.intValue());
+        validatePrice(value);
         this.value = value;
     }
 
@@ -33,8 +34,8 @@ public class Price {
         return sum.add(productPrice.get(i).multiply(BigDecimal.valueOf(quantities.get(i))));
     }
 
-    private void validatePrice(final Integer price) {
-        if (price == null || price.doubleValue() < 0) {
+    private void validatePrice(final BigDecimal price) {
+        if (Objects.isNull(price) || price.doubleValue() < 0) {
             throw new IllegalArgumentException();
         }
     }
