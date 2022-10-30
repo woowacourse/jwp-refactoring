@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional(readOnly = true)
 public class MenuRepository {
 
     private final MenuDao menuDao;

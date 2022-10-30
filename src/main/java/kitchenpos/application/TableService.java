@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@Transactional(readOnly = true)
 public class TableService {
 
     private final OrderDao orderDao;
@@ -43,7 +44,6 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableDao.getById(orderTableId);
-
         validateTableGroupNonNull(savedOrderTable);
         validateStatusNonCompletion(orderTableId);
 
@@ -68,8 +68,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
                                                    final OrderTableChangeNumberOfGuestsRequest request) {
-       OrderTable savedOrderTable = orderTableDao.getById(orderTableId);
-
+        OrderTable savedOrderTable = orderTableDao.getById(orderTableId);
         savedOrderTable.changeNumberOfStatus(request.getNumberOfGuests());
         return new OrderTableResponse(savedOrderTable);
     }

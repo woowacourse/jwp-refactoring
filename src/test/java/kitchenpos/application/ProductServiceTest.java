@@ -8,12 +8,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.fake.FakeProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductResponse;
 import kitchenpos.dto.ProductSaveRequest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -35,11 +33,6 @@ class ProductServiceTest {
     public ProductServiceTest(final ProductDao productDao, final ProductService productService) {
         this.productDao = productDao;
         this.productService = productService;
-    }
-
-    @BeforeEach
-    void setUp() {
-        FakeProductDao.deleteAll();
     }
 
     @Test

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional(readOnly = true)
 public class TableGroupRepository {
 
     private final OrderTableDao orderTableDao;
@@ -49,9 +50,13 @@ public class TableGroupRepository {
 
     private void validateEmptyOrderTables(final List<OrderTable> orderTables) {
         for (final OrderTable savedOrderTable : orderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
-            }
+            validateEmptyOrderTable(savedOrderTable);
+        }
+    }
+
+    private void validateEmptyOrderTable(final OrderTable savedOrderTable) {
+        if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
+            throw new IllegalArgumentException();
         }
     }
 }

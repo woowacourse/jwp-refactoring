@@ -45,13 +45,12 @@ public class OrderRepository {
     }
 
     private void validateOrderLineItems(final Order entity) {
-        final List<OrderLineItem> orderLineItems = entity.getOrderLineItems();
-
-        final List<Long> menuIds = orderLineItems.stream()
+        final List<Long> menuIds = entity.getOrderLineItems()
+                .stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(toList());
 
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+        if (menuIds.size() != menuDao.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
     }
