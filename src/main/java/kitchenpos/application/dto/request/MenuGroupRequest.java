@@ -1,23 +1,19 @@
 package kitchenpos.application.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupRequest {
 
-    private String name;
+    private final String name;
 
-    public MenuGroupRequest() {
-    }
-
+    @JsonCreator
     public MenuGroupRequest(String name) {
         this.name = name;
     }
 
     public MenuGroup toMenuGroup() {
         return new MenuGroup(name);
-    }
-
-    public String getName() {
-        return name;
     }
 }

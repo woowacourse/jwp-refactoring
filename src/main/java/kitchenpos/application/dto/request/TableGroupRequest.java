@@ -3,15 +3,15 @@ package kitchenpos.application.dto.request;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import kitchenpos.domain.TableGroup;
 
 public class TableGroupRequest {
 
-    private List<OrderTableIdRequest> orderTables;
+    private final List<OrderTableIdRequest> orderTables;
 
-    public TableGroupRequest() {
-    }
-
+    @JsonCreator
     public TableGroupRequest(List<OrderTableIdRequest> orderTables) {
         this.orderTables = orderTables;
     }

@@ -8,11 +8,8 @@ import kitchenpos.domain.OrderLineItem;
 
 public class OrderRequest {
 
-    private Long orderTableId;
-    private List<OrderLineItemRequest> orderLineItems;
-
-    public OrderRequest() {
-    }
+    private final Long orderTableId;
+    private final List<OrderLineItemRequest> orderLineItems;
 
     public OrderRequest(Long orderTableId, List<OrderLineItemRequest> orderLineItems) {
         this.orderTableId = orderTableId;
@@ -25,13 +22,5 @@ public class OrderRequest {
                 .collect(Collectors.toList());
 
         return Order.create(orderTableId, items);
-    }
-
-    public Long getOrderTableId() {
-        return orderTableId;
-    }
-
-    public List<OrderLineItemRequest> getOrderLineItems() {
-        return orderLineItems;
     }
 }

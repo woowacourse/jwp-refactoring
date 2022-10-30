@@ -9,13 +9,10 @@ import kitchenpos.domain.MenuProduct;
 
 public class MenuRequest {
 
-    private String name;
-    private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProductRequest> menuProducts;
-
-    public MenuRequest() {
-    }
+    private final String name;
+    private final BigDecimal price;
+    private final Long menuGroupId;
+    private final List<MenuProductRequest> menuProducts;
 
     public MenuRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProductRequest> menuProducts) {
         this.name = name;
@@ -30,21 +27,5 @@ public class MenuRequest {
                 .collect(Collectors.toList());
 
         return new Menu(name, price, menuGroupId, products);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public Long getMenuGroupId() {
-        return menuGroupId;
-    }
-
-    public List<MenuProductRequest> getMenuProducts() {
-        return menuProducts;
     }
 }

@@ -1,12 +1,12 @@
 package kitchenpos.application.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public class ChangeNumOfTableGuestsRequest {
 
-    private int numberOfGuests;
+    private final int numberOfGuests;
 
-    public ChangeNumOfTableGuestsRequest() {
-    }
-
+    @JsonCreator
     public ChangeNumOfTableGuestsRequest(int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
