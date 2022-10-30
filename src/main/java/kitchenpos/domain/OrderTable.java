@@ -36,6 +36,14 @@ public class OrderTable {
     }
 
     public void changeNumberOfStatus(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        if (isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+
         this.numberOfGuests = numberOfGuests;
     }
 
@@ -58,5 +66,4 @@ public class OrderTable {
     public boolean isEmpty() {
         return empty;
     }
-
 }
