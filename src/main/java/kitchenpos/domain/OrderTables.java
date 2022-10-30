@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class OrderTables {
+
     private final List<OrderTable> orderTables;
 
     public OrderTables(final List<OrderTable> orderTables) {
