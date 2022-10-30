@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class JdbcTemplateTableGroupDao implements TableGroupDao {
+public class JdbcTemplateTableGroupDao {
     private static final String TABLE_NAME = "table_group";
     private static final String KEY_COLUMN_NAME = "id";
 
@@ -32,14 +32,12 @@ public class JdbcTemplateTableGroupDao implements TableGroupDao {
         ;
     }
 
-    @Override
     public TableGroup save(final TableGroup entity) {
         final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
         final Number key = jdbcInsert.executeAndReturnKey(parameters);
         return select(key.longValue());
     }
 
-    @Override
     public Optional<TableGroup> findById(final Long id) {
         try {
             return Optional.of(select(id));
@@ -48,7 +46,6 @@ public class JdbcTemplateTableGroupDao implements TableGroupDao {
         }
     }
 
-    @Override
     public List<TableGroup> findAll() {
         final String sql = "SELECT id, created_date FROM table_group";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
