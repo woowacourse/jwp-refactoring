@@ -39,7 +39,7 @@ public class MenuService {
 
         final Menu savedMenu = menuDao.save(menu);
 
-        return MenuResponse.of(savedMenu);
+        return MenuResponse.from(savedMenu);
     }
 
     private Menu convertToMenu(final MenuRequest menuRequest) {
@@ -71,6 +71,6 @@ public class MenuService {
     public MenusResponse list() {
         final List<Menu> menus = menuDao.findAll();
 
-        return MenusResponse.of(menus);
+        return MenusResponse.from(menus);
     }
 }

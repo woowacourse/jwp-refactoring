@@ -43,7 +43,7 @@ public class TableGroupService {
             savedOrderTable.updateEmptyStatus(false);
         }
 
-        return TableGroupResponse.of(savedTableGroup);
+        return TableGroupResponse.from(savedTableGroup);
     }
 
     private void validateOrderTables(final List<OrderTable> orderTables) {

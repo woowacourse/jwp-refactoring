@@ -15,9 +15,9 @@ public class MenuGroupsResponse {
         this.menuGroups = menuGroups;
     }
 
-    public static MenuGroupsResponse of(final List<MenuGroup> menuGroups) {
+    public static MenuGroupsResponse from(final List<MenuGroup> menuGroups) {
         final List<MenuGroupResponse> menuGroupResponses = menuGroups.stream()
-                .map(MenuGroupResponse::of)
+                .map(MenuGroupResponse::from)
                 .collect(Collectors.toList());
         return new MenuGroupsResponse(menuGroupResponses);
     }

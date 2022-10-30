@@ -15,7 +15,7 @@ public class ProductResponse {
         this.price = price;
     }
 
-    public static ProductResponse of(final Product product) {
+    public static ProductResponse from(final Product product) {
         return new ProductResponse(product.getId(), product.getName(), product.getPrice().getValue());
     }
 

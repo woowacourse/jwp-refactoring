@@ -95,8 +95,8 @@ class MenuServiceTest extends ServiceTest {
         final Menu savedMenu = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId));
         final MenuProduct savedMenuProduct = 메뉴상품을_저장한다(MENU_PRODUCT_1.생성(savedMenu, product));
 
-        final MenuResponse expectedMenuResponse = MenuResponse.of(savedMenu);
-        final MenuProductResponse expectedMenuProductResponse = MenuProductResponse.of(savedMenuProduct);
+        final MenuResponse expectedMenuResponse = MenuResponse.from(savedMenu);
+        final MenuProductResponse expectedMenuProductResponse = MenuProductResponse.from(savedMenuProduct);
 
         // when
         final MenusResponse menusResponse = menuService.list();

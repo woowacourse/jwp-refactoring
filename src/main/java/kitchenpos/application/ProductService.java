@@ -21,13 +21,13 @@ public class ProductService {
     public ProductResponse create(final ProductRequest productRequest) {
         final Product product = productRequest.toEntity();
         final Product savedProduct = productDao.save(product);
-        return ProductResponse.of(savedProduct);
+        return ProductResponse.from(savedProduct);
     }
 
     public List<ProductResponse> list() {
         final List<Product> products = productDao.findAll();
         return products.stream()
-                .map(ProductResponse::of)
+                .map(ProductResponse::from)
                 .collect(Collectors.toList());
     }
 }

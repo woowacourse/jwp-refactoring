@@ -20,10 +20,10 @@ public class MenuGroupService {
     public MenuGroupResponse create(final MenuGroupRequest menuGroupRequest) {
         final MenuGroup menuGroup = menuGroupRequest.toEntity();
         final MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
-        return MenuGroupResponse.of(savedMenuGroup);
+        return MenuGroupResponse.from(savedMenuGroup);
     }
 
     public MenuGroupsResponse list() {
-        return MenuGroupsResponse.of(menuGroupDao.findAll());
+        return MenuGroupsResponse.from(menuGroupDao.findAll());
     }
 }

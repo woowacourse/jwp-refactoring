@@ -38,7 +38,7 @@ public class OrderService {
         validateMenusExist(orderRequest.getOrderLineItems().size(), order);
         validateOrderTableExistAndNotEmpty(orderRequest);
         orderDao.save(order);
-        return OrderResponse.of(order);
+        return OrderResponse.from(order);
     }
 
     private Order convertToOrder(final OrderRequest orderRequest) {
@@ -69,7 +69,7 @@ public class OrderService {
         final List<Order> orders = orderDao.findAll();
 
         return orders.stream()
-                .map(OrderResponse::of)
+                .map(OrderResponse::from)
                 .collect(Collectors.toList());
     }
 
@@ -79,7 +79,7 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
         validateOrderCompletion(savedOrder);
         savedOrder.updateOrderStatus(OrderStatus.valueOf(orderStatusRequest.getOrderStatus()));
-        return OrderResponse.of(savedOrder);
+        return OrderResponse.from(savedOrder);
     }
 
     private void validateOrderCompletion(final Order savedOrder) {

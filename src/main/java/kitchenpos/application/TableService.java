@@ -32,13 +32,13 @@ public class TableService {
         final OrderTable orderTable = orderTableRequest.toEntity();
         orderTableDao.save(orderTable);
 
-        return OrderTableResponse.of(orderTable);
+        return OrderTableResponse.from(orderTable);
     }
 
     public List<OrderTableResponse> list() {
         final List<OrderTable> orderTables = orderTableDao.findAll();
         return orderTables.stream()
-                .map(OrderTableResponse::of)
+                .map(OrderTableResponse::from)
                 .collect(Collectors.toList());
     }
 
@@ -51,7 +51,7 @@ public class TableService {
         validateOrderStatusCompletion(orderTableId);
         orderTable.updateEmptyStatus(orderTableEmptyRequest.isEmpty());
 
-        return OrderTableResponse.of(orderTable);
+        return OrderTableResponse.from(orderTable);
     }
 
     private void findNotEmptyOrderTable(final OrderTable orderTable) {
@@ -74,7 +74,7 @@ public class TableService {
         final NumberOfGuests numberOfGuests = new NumberOfGuests(orderTableNumberOfGuestRequest.getNumberOfGuests());
         orderTable.updateNumberOfGuests(numberOfGuests);
 
-        return OrderTableResponse.of(orderTable);
+        return OrderTableResponse.from(orderTable);
     }
 
     private OrderTable findNotEmptyOrderTable(final Long orderTableId) {

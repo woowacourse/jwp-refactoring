@@ -113,8 +113,8 @@ class OrderServiceTest extends ServiceTest {
         final OrderLineItem orderLineItem = ORDER_LINE_ITEM_1.생성(menu);
         final Order savedOrder = 주문을_저장한다(ORDER_COOKING_1.생성(orderTableId, List.of(orderLineItem)));
 
-        final OrderResponse expectedOrderResponse = OrderResponse.of(savedOrder);
-        final OrderLineItemResponse orderLineItemResponse = OrderLineItemResponse.of(orderLineItem);
+        final OrderResponse expectedOrderResponse = OrderResponse.from(savedOrder);
+        final OrderLineItemResponse orderLineItemResponse = OrderLineItemResponse.from(orderLineItem);
 
         // when
         final List<OrderResponse> orderResponses = orderService.list();
