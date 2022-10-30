@@ -6,6 +6,7 @@ import java.util.Objects;
 import org.springframework.util.CollectionUtils;
 
 public class Order {
+
     private Long id;
     private Long orderTableId;
     private String orderStatus;
@@ -29,14 +30,18 @@ public class Order {
 
     public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("주문 항목이 비었습니다.");
-        }
+        validateEmptyOrderLineItem(orderLineItems);
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+    }
+
+    private void validateEmptyOrderLineItem(final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException("주문 항목이 비었습니다.");
+        }
     }
 
     public static Order createWithOutOrderLineItem(final long id, final long orderTableId, final String orderStatus,
@@ -46,6 +51,17 @@ public class Order {
 
     public boolean isValidMenuSize(final int menuCount) {
         return orderLineItems.size() == menuCount;
+    }
+
+    public void changeOrderStatus(final String changeOrderStatus) {
+        validateCompletionOrderStatus();
+        this.orderStatus = changeOrderStatus;
+    }
+
+    private void validateCompletionOrderStatus() {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), orderStatus)) {
+            throw new IllegalArgumentException("완료된 주문 상태는 변경할 수 없습니다.");
+        }
     }
 
     public Long getId() {
@@ -86,12 +102,5 @@ public class Order {
 
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
-    }
-
-    public void changeOrderStatus(final String changeOrderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), orderStatus)) {
-            throw new IllegalArgumentException("완료된 주문 상태는 변경할 수 없습니다.");
-        }
-        this.orderStatus = changeOrderStatus;
     }
 }
