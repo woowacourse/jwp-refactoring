@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.OrderFixture.ORDER_COMPLETION_1;
 import static kitchenpos.support.OrderTableFixture.ORDER_TABLE_EMPTY_1;
 import static kitchenpos.support.OrderTableFixture.ORDER_TABLE_NOT_EMPTY_1;
 import static kitchenpos.support.TableGroupFixture.TABLE_GROUP_NOW;
@@ -8,10 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -105,8 +101,8 @@ class TableGroupServiceTest extends ServiceTest {
         final OrderTable orderTable1 = ORDER_TABLE_EMPTY_1.생성();
         final OrderTable orderTable2 = ORDER_TABLE_EMPTY_1.생성();
         final TableGroup tableGroup = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성(List.of(orderTable1, orderTable2)));
-        주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(orderTable1.getId()));
-        주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(orderTable2.getId()));
+        주문항목과_함께_주문을_저장한다(orderTable1.getId(), OrderStatus.COMPLETION);
+        주문항목과_함께_주문을_저장한다(orderTable2.getId(), OrderStatus.COMPLETION);
 
         // when
         tableGroupService.ungroup(tableGroup.getId());
@@ -130,8 +126,8 @@ class TableGroupServiceTest extends ServiceTest {
         final OrderTable orderTable1 = ORDER_TABLE_EMPTY_1.생성();
         final OrderTable orderTable2 = ORDER_TABLE_EMPTY_1.생성();
         final TableGroup tableGroup = 테이블그룹을_저장한다(TABLE_GROUP_NOW.생성(List.of(orderTable1, orderTable2)));
-        주문을_저장한다(new Order(orderTable1.getId(), OrderStatus.valueOf(status), LocalDateTime.now(), new ArrayList<>()));
-        주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(orderTable2.getId()));
+        주문항목과_함께_주문을_저장한다(orderTable1.getId(), OrderStatus.valueOf(status));
+        주문항목과_함께_주문을_저장한다(orderTable2.getId(), OrderStatus.COMPLETION);
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

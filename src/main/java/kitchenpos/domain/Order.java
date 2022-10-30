@@ -39,13 +39,10 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final Long id) {
-        this.id = id;
-    }
-
     public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
         injectOrder(orderLineItems);
+        validateOrderLineItemsNotEmpty();
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
@@ -58,8 +55,10 @@ public class Order {
         }
     }
 
-    public boolean isOrderLineItemsEmpty() {
-        return CollectionUtils.isEmpty(this.orderLineItems);
+    private void validateOrderLineItemsNotEmpty() {
+        if (CollectionUtils.isEmpty(this.orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public boolean isOrderLineItemsSizeEqualTo(final int size) {

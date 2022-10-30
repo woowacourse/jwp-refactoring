@@ -1,17 +1,14 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.OrderFixture.ORDER_COMPLETION_1;
+import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.domain.OrderStatus.valueOf;
 import static kitchenpos.support.OrderTableFixture.ORDER_TABLE_EMPTY_1;
 import static kitchenpos.support.OrderTableFixture.ORDER_TABLE_NOT_EMPTY_1;
 import static kitchenpos.support.TableGroupFixture.TABLE_GROUP_NOW;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderTableEmptyRequest;
 import kitchenpos.dto.request.OrderTableNumberOfGuestsRequest;
@@ -41,7 +38,7 @@ class TableServiceTest extends ServiceTest {
     void 테이블을_비어있음_상태로_변경한다() {
         // given
         final OrderTable savedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성());
-        주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(savedOrderTable.getId()));
+        주문항목과_함께_주문을_저장한다(savedOrderTable.getId(), COMPLETION);
 
         final OrderTableEmptyRequest orderTableEmptyRequest = new OrderTableEmptyRequest(true);
 
@@ -71,7 +68,7 @@ class TableServiceTest extends ServiceTest {
         final OrderTable orderTable1_hasTableGroup = ORDER_TABLE_NOT_EMPTY_1.생성();
         final OrderTable orderTable2_hasTableGroup = ORDER_TABLE_NOT_EMPTY_1.생성();
         테이블그룹을_저장한다(TABLE_GROUP_NOW.생성(List.of(orderTable1_hasTableGroup, orderTable2_hasTableGroup)));
-        주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(orderTable1_hasTableGroup.getId()));
+        주문항목과_함께_주문을_저장한다(orderTable1_hasTableGroup.getId(), COMPLETION);
 
         final OrderTableEmptyRequest orderTableEmptyRequest = new OrderTableEmptyRequest(true);
 
@@ -84,8 +81,7 @@ class TableServiceTest extends ServiceTest {
     void 주문상태가_조리중이거나_식사중_상태이면_테이블을_비어있음_상태로_변경할_수_없다(final String status) {
         // given
         final OrderTable savedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성());
-        주문을_저장한다(new Order(savedOrderTable.getId(), OrderStatus.valueOf(status), LocalDateTime.now(),
-                new ArrayList<>()));
+        주문항목과_함께_주문을_저장한다(savedOrderTable.getId(), valueOf(status));
 
         final OrderTableEmptyRequest orderTableEmptyRequest = new OrderTableEmptyRequest(true);
 

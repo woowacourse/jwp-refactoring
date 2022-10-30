@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
 import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.support.MenuFixture.MENU_PRICE_10000;
 import static kitchenpos.support.MenuGroupFixture.MENU_GROUP_1;
-import static kitchenpos.support.OrderFixture.ORDER_COMPLETION_1;
 import static kitchenpos.support.OrderFixture.ORDER_COOKING_1;
 import static kitchenpos.support.OrderLineItemFixture.ORDER_LINE_ITEM_1;
 import static kitchenpos.support.OrderTableFixture.ORDER_TABLE_EMPTY_1;
@@ -110,11 +110,11 @@ class OrderServiceTest extends ServiceTest {
         final Menu menu = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId));
 
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성()).getId();
-        final Order savedOrder = 주문을_저장한다(ORDER_COOKING_1.주문항목_없이_생성(orderTableId));
-        final OrderLineItem savedOrderLineItem = 주문항목을_저장한다(ORDER_LINE_ITEM_1.생성(savedOrder, menu));
+        final OrderLineItem orderLineItem = ORDER_LINE_ITEM_1.생성(menu);
+        final Order savedOrder = 주문을_저장한다(ORDER_COOKING_1.생성(orderTableId, List.of(orderLineItem)));
 
         final OrderResponse expectedOrderResponse = OrderResponse.of(savedOrder);
-        final OrderLineItemResponse orderLineItemResponse = OrderLineItemResponse.of(savedOrderLineItem);
+        final OrderLineItemResponse orderLineItemResponse = OrderLineItemResponse.of(orderLineItem);
 
         // when
         final List<OrderResponse> orderResponses = orderService.list();
@@ -135,7 +135,7 @@ class OrderServiceTest extends ServiceTest {
     void 주문의_상태를_변경할_수_있다() {
         // given
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성()).getId();
-        final Order savedOrder = 주문을_저장한다(ORDER_COOKING_1.주문항목_없이_생성(orderTableId));
+        final Order savedOrder = 주문항목과_함께_주문을_저장한다(orderTableId, COOKING);
 
         // when
         final OrderResponse orderResponse = orderService.changeOrderStatus(savedOrder.getId(),
@@ -160,7 +160,7 @@ class OrderServiceTest extends ServiceTest {
     void 주문의_상태를_변경할_때_이미_완료된_주문이면_예외를_반환한다() {
         // given
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성()).getId();
-        final Order savedOrder = 주문을_저장한다(ORDER_COMPLETION_1.주문항목_없이_생성(orderTableId));
+        final Order savedOrder = 주문항목과_함께_주문을_저장한다(orderTableId, COMPLETION);
 
         // when, then
         assertThatThrownBy(

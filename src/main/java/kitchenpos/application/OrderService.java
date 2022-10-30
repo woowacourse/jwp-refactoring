@@ -35,7 +35,6 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
         final Order order = convertToOrder(orderRequest);
-        validateOrderLineItemsEmpty(order);
         validateMenusExist(orderRequest.getOrderLineItems().size(), order);
         validateOrderTableExistAndNotEmpty(orderRequest);
         orderDao.save(order);
@@ -49,12 +48,6 @@ public class OrderService {
                 .collect(Collectors.toList());
         final List<Menu> menus = menuDao.findByIdIn(menuIds);
         return orderRequest.toEntity(menus);
-    }
-
-    private static void validateOrderLineItemsEmpty(final Order order) {
-        if (order.isOrderLineItemsEmpty()) {
-            throw new IllegalArgumentException();
-        }
     }
 
     private void validateMenusExist(final int menusSize, final Order order) {
