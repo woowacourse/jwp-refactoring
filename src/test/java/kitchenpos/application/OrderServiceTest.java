@@ -62,8 +62,7 @@ class OrderServiceTest {
         @Test
         void order_line_itmes_크기와_메뉴_ID의_개수가_맞지_않으면_예외를_반환한다() {
             // given
-            OrderCreateRequest request = 주문_생성_dto를_만든다(id, orderTableId, orderStatus, orderedTime,
-                    orderLineItems);
+            OrderCreateRequest request = 주문_생성_dto를_만든다(id, orderTableId, orderStatus, orderedTime, orderLineItems);
             when(menuRepository.countByIdIn(any())).thenReturn(3L);
 
             // when & then
@@ -74,8 +73,7 @@ class OrderServiceTest {
         @Test
         void order를_생성할_수_있다() {
             // given
-            OrderCreateRequest request = 주문_생성_dto를_만든다(id, orderTableId, orderStatus, orderedTime,
-                    orderLineItems);
+            OrderCreateRequest request = 주문_생성_dto를_만든다(id, orderTableId, orderStatus, orderedTime, orderLineItems);
             when(menuRepository.countByIdIn(any())).thenReturn(Long.valueOf(orderLineItems.size()));
 
             Order order = request.toOrder();
@@ -164,8 +162,7 @@ class OrderServiceTest {
             assertThat(response.getOrderStatus()).isEqualTo(COMPLETION.name());
         }
 
-        private Order order_객체를_생성한다(final Long orderTableId,
-                                     final List<OrderLineItem> orderLineItems) {
+        private Order order_객체를_생성한다(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
             return new Order(orderTableId, orderLineItems);
         }
     }

@@ -163,8 +163,9 @@ class OrderRepositoryTest {
         orderRepository.save(order2);
 
         // when
-        boolean actual = orderRepository.existsByOrderTableIdInAndOrderStatusIn(Arrays.asList(1L, 2L),
-                Arrays.asList(COOKING, MEAL));
+        boolean actual = orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+                Arrays.asList(1L, 2L), Arrays.asList(COOKING, MEAL)
+        );
 
         // then
         assertThat(actual).isEqualTo(expected);

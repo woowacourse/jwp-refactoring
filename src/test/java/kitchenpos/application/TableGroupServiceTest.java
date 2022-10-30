@@ -60,7 +60,7 @@ class TableGroupServiceTest {
         @Test
         void order_table이_비어있으면_예외를_반환한다() {
             ArrayList<OrderTable> emptyOrderTable = new ArrayList<>();
-            TableGroupCreateRequest request = 테이블_그룹_생성_dto를_만든다(id, createdDate, emptyOrderTable);
+            TableGroupCreateRequest request = 테이블_그룹_생성_dto를_만든다(emptyOrderTable);
             assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -68,7 +68,7 @@ class TableGroupServiceTest {
         @Test
         void order_table의_크기가_2보다_작으면_예외를_반환한다() {
             // given
-            TableGroupCreateRequest request = 테이블_그룹_생성_dto를_만든다(id, createdDate, Arrays.asList(orderTable));
+            TableGroupCreateRequest request = 테이블_그룹_생성_dto를_만든다(Arrays.asList(orderTable));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -80,7 +80,7 @@ class TableGroupServiceTest {
             // given
             OrderTable orderTable = new OrderTable(orderId, tableGroupId, numberOfGuests, false);
             List<OrderTable> orderTables = Arrays.asList(orderTable, orderTable2);
-            TableGroupCreateRequest request = 테이블_그룹_생성_dto를_만든다(id, createdDate,
+            TableGroupCreateRequest request = 테이블_그룹_생성_dto를_만든다(
                     orderTables);
             when(orderTableRepository.findAllByOrderTableIdsIn(any())).thenReturn(orderTables);
 
@@ -95,7 +95,7 @@ class TableGroupServiceTest {
             Long notNullTableGroupId = 111L;
             OrderTable orderTable = new OrderTable(orderId, notNullTableGroupId, numberOfGuests, empty);
             List<OrderTable> orderTables = Arrays.asList(orderTable, orderTable2);
-            TableGroupCreateRequest request = 테이블_그룹_생성_dto를_만든다(id, createdDate, orderTables);
+            TableGroupCreateRequest request = 테이블_그룹_생성_dto를_만든다(orderTables);
             when(orderTableRepository.findAllByOrderTableIdsIn(any())).thenReturn(orderTables);
 
             // when & then
@@ -106,7 +106,7 @@ class TableGroupServiceTest {
         @Test
         void table_group을_생성할_수_있다() {
             // given
-            TableGroupCreateRequest request = 테이블_그룹_생성_dto를_만든다(id, createdDate, orderTables);
+            TableGroupCreateRequest request = 테이블_그룹_생성_dto를_만든다(orderTables);
             when(orderTableRepository.findAllByOrderTableIdsIn(any())).thenReturn(orderTables);
 
             when(tableGroupRepository.save(any(TableGroup.class))).thenReturn(
@@ -119,8 +119,7 @@ class TableGroupServiceTest {
             assertThat(response.getCreatedDate()).isNotNull();
         }
 
-        private TableGroupCreateRequest 테이블_그룹_생성_dto를_만든다(final Long id, final LocalDateTime createdDate,
-                                                           final List<OrderTable> orderTables) {
+        private TableGroupCreateRequest 테이블_그룹_생성_dto를_만든다(final List<OrderTable> orderTables) {
             return new TableGroupCreateRequest(orderTables.stream()
                     .map(OrderTableIdDto::new)
                     .collect(Collectors.toList()));
