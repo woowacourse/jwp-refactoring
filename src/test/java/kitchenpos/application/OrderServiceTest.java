@@ -134,7 +134,6 @@ class OrderServiceTest extends ServiceTest {
     class changeOrderStatus {
 
         @Test
-        @Disabled
         @DisplayName("주문 상태를 변경한다.")
         void changeOrderStatus() {
             final OrderTableRequestDto orderTableRequestDto = 비어있지_않은_주문_테이블;
@@ -155,7 +154,6 @@ class OrderServiceTest extends ServiceTest {
         }
 
         @Test
-        @Disabled
         @DisplayName("존재하지 않는 주문의 상태를 변경하려는 경우 예외를 발생 시킨다.")
         void changeOrderStatus_notExistOrder() {
             tableService.create(비어있지_않은_주문_테이블);

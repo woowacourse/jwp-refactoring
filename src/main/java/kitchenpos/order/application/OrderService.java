@@ -98,7 +98,7 @@ public class OrderService {
     }
 
     private void validateOrderStatus(Order savedOrder) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        if (savedOrder.isCompletion()) {
             throw new IllegalArgumentException();
         }
     }
