@@ -4,9 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -57,7 +55,7 @@ public class Order {
     }
 
     public void changeStatus(String status) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), orderStatus)) {
+        if (OrderStatus.isCompletion(orderStatus)) {
             throw new IllegalArgumentException("이미 완료된 주문 상태를 변경할 수 없습니다.");
         }
 
