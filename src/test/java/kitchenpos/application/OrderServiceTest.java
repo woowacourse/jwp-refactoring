@@ -3,11 +3,16 @@ package kitchenpos.application;
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.fixture.DomainFixture.createMenu;
+import static kitchenpos.fixture.DomainFixture.createMenuGroup;
+import static kitchenpos.fixture.DomainFixture.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.exception.NotConvertableStatusException;
@@ -24,17 +29,19 @@ import org.junit.jupiter.api.Test;
 class OrderServiceTest extends ServiceTest {
 
     private OrderTable orderTable;
+    private Menu menu;
 
     @BeforeEach
     void setUp() {
-        orderTable = new OrderTable(0, false);
+        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup());
+        orderTable = orderTableDao.save(createOrderTable());
+        menu = menuDao.save(createMenu(menuGroup.getId()));
     }
 
     @Test
     void 주문을_생성한다() {
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(),
-                List.of(new OrderLineItemDto(1L, 1)));
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
+                List.of(new OrderLineItemDto(menu.getId(), 1)));
 
         Order savedOrder = orderService.create(orderCreateRequest);
 
@@ -43,8 +50,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문을_생성할때_orderLineItems가_비었으면_예외를_발생한다() {
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(),
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
                 List.of());
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
@@ -53,8 +59,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문을_생성할때_메뉴의수가_다르면_예외를_발생한다() {
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(),
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
                 List.of(new OrderLineItemDto(0L, 1)));
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
@@ -64,7 +69,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문을_생성할때_orderTableId가_존재하지않으면_예외를_발생한다() {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(0L,
-                List.of(new OrderLineItemDto(1L, 1)));
+                List.of(new OrderLineItemDto(menu.getId(), 1)));
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                 .isInstanceOf(NotFoundOrderTableException.class);
@@ -72,17 +77,15 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문_목록을_반환한다() {
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
         int beforeSize = orderService.list().size();
-        orderDao.save(new Order(savedOrderTable.getId(), COOKING.name(), LocalDateTime.now()));
+        orderDao.save(new Order(orderTable.getId(), COOKING.name(), LocalDateTime.now()));
 
         assertThat(orderService.list().size()).isEqualTo(beforeSize + 1);
     }
 
     @Test
     void 주문_상태를_변경한다() {
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        Order savedOrder = orderDao.save(new Order(savedOrderTable.getId(), COOKING.name(), LocalDateTime.now()));
+        Order savedOrder = orderDao.save(new Order(orderTable.getId(), COOKING.name(), LocalDateTime.now()));
 
         ChangeOrderStatusRequest changeOrderStatusRequest = new ChangeOrderStatusRequest(MEAL.name());
         orderService.changeOrderStatus(savedOrder.getId(), changeOrderStatusRequest);
@@ -100,8 +103,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문_상태를_변경할때_완료상태면_예외를_반환한다() {
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        Order savedOrder = orderDao.save(new Order(savedOrderTable.getId(), COMPLETION.name(), LocalDateTime.now()));
+        Order savedOrder = orderDao.save(new Order(orderTable.getId(), COMPLETION.name(), LocalDateTime.now()));
         ChangeOrderStatusRequest changeOrderStatusRequest = new ChangeOrderStatusRequest(MEAL.name());
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), changeOrderStatusRequest))
