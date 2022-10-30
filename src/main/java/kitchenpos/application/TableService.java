@@ -53,13 +53,12 @@ public class TableService {
     @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId,
         final ChangeOrderTableNumberOfGuestRequest request) {
+
         final int numberOfGuests = request.getNumberOfGuests();
+        final OrderTable orderTable = findOrderTableById(orderTableId);
 
-        final OrderTable savedOrderTable = findOrderTableById(orderTableId);
-
-        savedOrderTable.changeNumberOfGuests(numberOfGuests);
-
-        return orderTableRepository.save(savedOrderTable);
+        orderTable.changeNumberOfGuests(numberOfGuests);
+        return orderTable;
     }
 
     private OrderTable findOrderTableById(final Long orderTableId) {

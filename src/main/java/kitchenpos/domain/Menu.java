@@ -87,7 +87,7 @@ public class Menu {
         }
 
         if (price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("메뉴의 0원 미만일 수 없습니다.");
+            throw new IllegalArgumentException("메뉴의 가격은 0원 미만일 수 없습니다.");
         }
     }
 

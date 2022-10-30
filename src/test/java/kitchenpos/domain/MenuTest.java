@@ -49,7 +49,7 @@ class MenuTest {
     void negativePrice() {
         assertThatThrownBy(() -> new Menu("name", new BigDecimal(-1), menuGroup, menuProducts))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("메뉴의 0원 미만일 수 없습니다.");
+            .hasMessageContaining("메뉴의 가격은 0원 미만일 수 없습니다.");
     }
 
     @Test
