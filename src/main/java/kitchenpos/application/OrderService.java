@@ -27,12 +27,12 @@ public class OrderService {
 
     @Transactional
     public Order create(Long orderTableId, List<OrderLineItem> orderLineItems) {
-        OrderTable orderTable = validateOrderTable(orderTableId);
+        OrderTable orderTable = searchValidOrderTable(orderTableId);
         Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
         return orderDao.save(order);
     }
 
-    private OrderTable validateOrderTable(Long orderTableId) {
+    private OrderTable searchValidOrderTable(Long orderTableId) {
         OrderTable orderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         if (orderTable.isEmpty()) {

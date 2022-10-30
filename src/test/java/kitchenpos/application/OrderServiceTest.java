@@ -29,7 +29,6 @@ import kitchenpos.fakedao.OrderLineItemFakeDao;
 import kitchenpos.fakedao.OrderTableFakeDao;
 import kitchenpos.fakedao.ProductFakeDao;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -80,20 +79,6 @@ public class OrderServiceTest {
 
             // then
             assertThatThrownBy(() -> orderService.create(orderTable.getId(), new ArrayList<>()))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Disabled("fakeDao 사용으로 인해 무시")
-        @DisplayName("메뉴를 찾지 못하면 예외를 발생시킨다.")
-        @Test
-        void notFoundMenu_exception() {
-            // given
-            OrderTable orderTable = orderTableDao.save(new OrderTable(null, 2, false));
-            ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
-            orderLineItems.add(orderLineItemDao.save(new OrderLineItem(0L, 3)));
-
-            // then
-            assertThatThrownBy(() -> orderService.create(orderTable.getId(), orderLineItems))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 

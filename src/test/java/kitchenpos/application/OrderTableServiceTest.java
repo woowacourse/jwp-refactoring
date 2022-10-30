@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -21,8 +20,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableGroup;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.fakedao.MenuFakeDao;
 import kitchenpos.fakedao.MenuGroupFakeDao;
 import kitchenpos.fakedao.MenuProductFakeDao;
@@ -30,7 +29,6 @@ import kitchenpos.fakedao.OrderFakeDao;
 import kitchenpos.fakedao.OrderTableFakeDao;
 import kitchenpos.fakedao.OrderTableGroupFakeDao;
 import kitchenpos.fakedao.ProductFakeDao;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -79,18 +77,20 @@ public class OrderTableServiceTest {
         @Test
         void success() {
             // given
-            TableGroup tableGroup = orderTableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()));
-            OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 2, false));
+            OrderTable orderTable1 = orderTableDao.save(new OrderTable(1L, 2, false));
+            OrderTable orderTable2 = orderTableDao.save(new OrderTable(1L, 3, false));
+            orderTableGroupDao.save(new OrderTableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
+
             MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
             Product product = productDao.save(new Product("상품", BigDecimal.valueOf(1000L)));
             MenuProduct menuProduct = menuProductDao.save(
                     new MenuProduct(product.getId(), 2, product.getPrice()));
             Menu menu = menuDao.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(),
                     List.of(menuProduct)));
-            orderDao.save(new Order(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(),
+            orderDao.save(new Order(orderTable1.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(),
                     List.of(new OrderLineItem(menu.getId(), 2))));
             // when
-            OrderTable actual = orderTableService.changeEmpty(orderTable.getId());
+            OrderTable actual = orderTableService.changeEmpty(orderTable1.getId());
 
             // then
             assertThat(actual.isEmpty()).isTrue();
@@ -108,12 +108,10 @@ public class OrderTableServiceTest {
         @Test
         void existTableGroup_exception() {
             // given
-            TableGroup tableGroup = orderTableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()));
-            OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 2, false));
+            OrderTable orderTable = orderTableDao.save(new OrderTable(1L, 2, false));
 
             // when
-            assertThatThrownBy(() -> orderTableService.changeEmpty(
-                    orderTable.getId()))
+            assertThatThrownBy(() -> orderTableService.changeEmpty(orderTable.getId()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -121,19 +119,21 @@ public class OrderTableServiceTest {
         @Test
         void existsOrderStatusIsCookingOrMeal_exception() {
             // given
-            TableGroup tableGroup = orderTableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()));
-            OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 2, false));
+            OrderTable orderTable1 = orderTableDao.save(new OrderTable(1L, 2, false));
+            OrderTable orderTable2 = orderTableDao.save(new OrderTable(1L, 3, false));
+            orderTableGroupDao.save(new OrderTableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
+
             MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
             Product product = productDao.save(new Product("상품", BigDecimal.valueOf(1000L)));
             MenuProduct menuProduct = menuProductDao.save(
                     new MenuProduct(product.getId(), 2, product.getPrice()));
             Menu menu = menuDao.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(),
                     List.of(menuProduct)));
-            orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
+            orderDao.save(new Order(orderTable1.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
                     List.of(new OrderLineItem(menu.getId(), 2))));
 
             // then
-            assertThatThrownBy(() -> orderTableService.changeEmpty(orderTable.getId()))
+            assertThatThrownBy(() -> orderTableService.changeEmpty(orderTable1.getId()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -177,12 +177,13 @@ public class OrderTableServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @Disabled("fakeDao 사용으로 인해 무시")
         @DisplayName("테이블이 empty 상태면 예외를 발생시킨다.")
         @Test
         void emptyIsTrue_exception() {
             // given
-            OrderTable orderTable = orderTableDao.save(new OrderTable(null, 2, true));
+            OrderTable entity = new OrderTable(null, 2, false);
+            entity.changeEmpty();
+            OrderTable orderTable = orderTableDao.save(entity);
 
             // then
             assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(orderTable.getId(), 3))

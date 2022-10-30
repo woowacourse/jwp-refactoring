@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,5 +52,34 @@ public class OrderTableTest {
         // then
         assertThatThrownBy(() -> orderTable.changeNumberOfGuests(-1))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("테이블 그룹에 포함되어 있는지 알 수 있다.")
+    @Test
+    void isTableGrouping() {
+        // given
+        OrderTable orderTable = new OrderTable(1L, 3, false);
+
+        // when
+        boolean actual = orderTable.isTableGrouping();
+
+        // then
+        assertThat(actual).isTrue();
+    }
+
+    @DisplayName("테이블 그룹을 해제할 수 있다.")
+    @Test
+    void upgroup() {
+        // given
+        OrderTable orderTable = new OrderTable(1L, 3, false);
+
+        // when
+        orderTable.upgroup();
+
+        // then
+        assertAll(
+                () -> assertThat(orderTable.getTableGroupId()).isNull(),
+                () -> assertThat(orderTable.isEmpty()).isFalse()
+        );
     }
 }

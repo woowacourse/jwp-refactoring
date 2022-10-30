@@ -1,14 +1,14 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.OrderTableGroup;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface OrderTableGroupDao {
-    TableGroup save(TableGroup entity);
+    OrderTableGroup save(OrderTableGroup entity);
 
-    Optional<TableGroup> findById(Long id);
+    Optional<OrderTableGroup> findById(Long id);
 
-    List<TableGroup> findAll();
+    List<OrderTableGroup> findAll();
 }

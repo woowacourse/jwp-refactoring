@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 public class OrderTable {
 
     private Long id;
@@ -8,6 +10,13 @@ public class OrderTable {
     private boolean empty;
 
     public OrderTable() {
+    }
+
+    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+        this.id = id;
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
     }
 
     public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
@@ -61,5 +70,14 @@ public class OrderTable {
 
     public void changeEmpty() {
         this.empty = true;
+    }
+
+    public boolean isTableGrouping() {
+        return Objects.nonNull(tableGroupId);
+    }
+
+    public void upgroup() {
+        tableGroupId = null;
+        empty = false;
     }
 }

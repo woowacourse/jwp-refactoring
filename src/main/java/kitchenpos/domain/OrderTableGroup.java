@@ -2,16 +2,28 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
-public class TableGroup {
+public class OrderTableGroup {
+
     private Long id;
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
 
-    public TableGroup() {
+    public OrderTableGroup() {
     }
 
-    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
+    public OrderTableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
+        if (orderTables.size() < 2) {
+            throw new IllegalArgumentException();
+        }
+        if (orderTables.stream()
+                .map(OrderTable::getId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .count() != orderTables.size()) {
+            throw new IllegalArgumentException();
+        }
         this.createdDate = createdDate;
         this.orderTables = orderTables;
     }

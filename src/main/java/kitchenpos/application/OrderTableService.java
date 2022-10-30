@@ -33,8 +33,7 @@ public class OrderTableService {
 
     @Transactional
     public OrderTable changeEmpty(Long orderTableId) {
-        final OrderTable orderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        OrderTable orderTable = search(orderTableId);
         orderTableGroupDao.findById(orderTable.getTableGroupId())
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -53,12 +52,16 @@ public class OrderTableService {
 
     @Transactional
     public OrderTable changeNumberOfGuests(Long orderTableId, int numberOfGuests) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-        if (savedOrderTable.isEmpty()) {
+        OrderTable orderTable = search(orderTableId);
+        if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        savedOrderTable.changeNumberOfGuests(numberOfGuests);
-        return orderTableDao.save(savedOrderTable);
+        orderTable.changeNumberOfGuests(numberOfGuests);
+        return orderTableDao.save(orderTable);
+    }
+
+    public OrderTable search(long orderTableId) {
+        return orderTableDao.findById(orderTableId)
+                .orElseThrow(IllegalArgumentException::new);
     }
 }
