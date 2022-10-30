@@ -57,5 +57,4 @@ public class OrderLineItem {
     public long getQuantity() {
         return quantity;
     }
-
 }

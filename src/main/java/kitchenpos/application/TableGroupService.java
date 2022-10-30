@@ -32,7 +32,7 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
-        final List<OrderTable> orderTables = orderTableDao.findAllByIdIn(tableGroupRequest.getOrderTables());
+        final List<OrderTable> orderTables = orderTableDao.findAllByIdIn(tableGroupRequest.getOrderTableIds());
         validateOrderTables(orderTables);
 
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);

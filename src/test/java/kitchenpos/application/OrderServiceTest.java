@@ -147,7 +147,7 @@ class OrderServiceTest extends ServiceTest {
         // given
         final long notExistOrderId = Long.MAX_VALUE;
 
-        // when
+        // when, then
         assertThatThrownBy(
                 () -> orderService.changeOrderStatus(notExistOrderId, new OrderStatusRequest(COMPLETION.name())))
                 .isInstanceOf(IllegalArgumentException.class);
