@@ -47,10 +47,6 @@ public class OrderTable {
         return !isEmpty() || Objects.nonNull(this.tableGroupId);
     }
 
-    public void setEmpty(boolean empty) {
-        this.empty = empty;
-    }
-
     public Long getId() {
         return id;
     }

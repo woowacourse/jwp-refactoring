@@ -7,7 +7,7 @@ import kitchenpos.exception.AlreadyGroupedException;
 public class TableGroup {
     private final Long id;
     private final LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
+    private final List<OrderTable> orderTables;
 
     public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
         this.id = id;
@@ -17,8 +17,7 @@ public class TableGroup {
     }
 
     public TableGroup(Long id, LocalDateTime createdDate) {
-        this.id = id;
-        this.createdDate = createdDate;
+        this(id, createdDate, null);
     }
 
     public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
