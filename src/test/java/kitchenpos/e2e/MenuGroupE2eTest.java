@@ -36,8 +36,8 @@ public class MenuGroupE2eTest extends KitchenPosE2eTest {
     void list() {
 
         // given
-        POST_요청(MENU_GROUP_URL, 단짜_두_마리_메뉴);
-        POST_요청(MENU_GROUP_URL, 간장_양념_세_마리_메뉴);
+        메뉴_그룹_생성(단짜_두_마리_메뉴);
+        메뉴_그룹_생성(간장_양념_세_마리_메뉴);
 
         // when
         ExtractableResponse<Response> 응답 = GET_요청(MENU_GROUP_URL);

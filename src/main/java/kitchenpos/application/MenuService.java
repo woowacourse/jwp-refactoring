@@ -6,7 +6,6 @@ import kitchenpos.dao.jpa.MenuProductRepository;
 import kitchenpos.dao.jpa.MenuRepository;
 import kitchenpos.dao.jpa.ProductRepository;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.specification.MenuSpecification;
 import org.springframework.stereotype.Service;
@@ -40,16 +39,13 @@ public class MenuService {
         final Menu menu = menuRequest.toDomain();
         menuSpecification.validateCreate(menu);
 
-        return menuRepository.save(menu);
+        final Menu save = menuRepository.save(menu);
+        return save;
     }
 
     public List<Menu> list() {
-        final List<Menu> menus = menuRepository.findAll();
 
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
-        }
-
+        final List<Menu> menus = menuRepository.findAllWithMenuProduct();
         return menus;
     }
 }

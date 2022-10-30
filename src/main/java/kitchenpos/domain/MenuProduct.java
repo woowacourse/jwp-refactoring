@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import static javax.persistence.FetchType.LAZY;
+
 import java.math.BigDecimal;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,11 +19,11 @@ public class MenuProduct {
     private Long seq;
 
     @JoinColumn(name = "menu_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     private Menu menu;
 
     @JoinColumn(name = "product_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     private Product product;
 
     private long quantity;

@@ -18,7 +18,7 @@ public class MenuRequest {
 
     private List<MenuProduct> menuProducts;
 
-    private MenuRequest() {
+    protected MenuRequest() {
     }
 
     public MenuRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {

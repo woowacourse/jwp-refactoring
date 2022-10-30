@@ -30,9 +30,9 @@ public abstract class ProductFixture {
         return new WrapProductRequest(name, BigDecimal.valueOf(price));
     }
 
-    public static final WrapProductRequest 후라이드_치킨 = productRequest("후라이드 치킨", 16_000);
-    public static final WrapProductRequest 간장_치킨 = productRequest("간장 치킨", 17_000);
-    public static final WrapProductRequest 양념_치킨 = productRequest("양념 치킨", 17_000);
+    public static final WrapProductRequest 후라이드_치킨_요청_DTO = productRequest("후라이드 치킨", 16_000);
+    public static final WrapProductRequest 간장_치킨_요청_DTO = productRequest("간장 치킨", 17_000);
+    public static final WrapProductRequest 양념_치킨_요청_DTO = productRequest("양념 치킨", 17_000);
 
     public static class WrapProductRequest extends ProductRequest {
 

@@ -9,6 +9,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.response.MenuResponse;
 
 public abstract class MenuFixture {
 
@@ -88,49 +89,80 @@ public abstract class MenuFixture {
                 .build();
     }
 
-    public static WrapMenu menu(String name,
-                                int price,
-                                Long menuGroupId,
-                                List<MenuProduct> menuProducts) {
+    public static WrapMenuRequest menuRequest(String name,
+                                              int price,
+                                              Long menuGroupId,
+                                              List<MenuProduct> menuProducts) {
 
         final MenuGroup menuGroup = new MenuGroup(menuGroupId, null);
-        return new WrapMenu(name, BigDecimal.valueOf(price), menuGroup, menuProducts);
+        return new WrapMenuRequest(name, BigDecimal.valueOf(price), menuGroup, menuProducts);
     }
 
-    public static class WrapMenu extends Menu {
+    /**
+     * need jackson binding default constructor
+     */
+    public static class WrapMenuRequest extends MenuRequest {
 
-        /**
-         * need jackson binding default constructor
-         */
-        public WrapMenu() {
-        }
-
-        public WrapMenu(String name,
-                        BigDecimal price,
+        WrapMenuRequest(String name,
+                        BigDecimal bigDecimal,
                         MenuGroup menuGroup,
                         List<MenuProduct> menuProducts) {
-
-            super(name, price, menuGroup, menuProducts);
+            super(name, bigDecimal, menuGroup.getId(), menuProducts);
         }
 
-        public Long id() {
-            return super.getId();
+        public static class WrapMenu extends Menu {
+
+            /**
+             * need jackson binding default constructor
+             */
+            private WrapMenu() {
+            }
+
+            public Long id() {
+                return super.getId();
+            }
+
+            public String name() {
+                return super.getName();
+            }
+
+            public BigDecimal price() {
+                return super.getPrice();
+            }
+
+            public int intPrice() {
+                return super.getPrice().intValue();
+            }
+
+            public double doublePrice() {
+                return super.getPrice().doubleValue();
+            }
         }
 
-        public String name() {
-            return super.getName();
-        }
+        public static class WrapMenuResponse extends MenuResponse {
 
-        public BigDecimal price() {
-            return super.getPrice();
-        }
+            private WrapMenuResponse() {
+            }
 
-        public int intPrice() {
-            return super.getPrice().intValue();
-        }
+            public Long id() {
+                return super.getId();
+            }
 
-        public double doublePrice() {
-            return super.getPrice().doubleValue();
+            public String name() {
+                return super.getName();
+            }
+
+            public BigDecimal price() {
+                return super.getPrice();
+            }
+
+            public int intPrice() {
+                return super.getPrice().intValue();
+            }
+
+            public double doublePrice() {
+                return super.getPrice().doubleValue();
+            }
         }
     }
 }

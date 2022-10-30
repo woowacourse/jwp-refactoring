@@ -4,7 +4,7 @@ import static java.time.LocalDateTime.now;
 import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.support.MenuFixture.menuRequest;
 import static kitchenpos.support.MenuGroupFixture.단짜_두_마리_메뉴;
-import static kitchenpos.support.ProductFixture.후라이드_치킨;
+import static kitchenpos.support.ProductFixture.후라이드_치킨_요청_DTO;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -20,7 +20,9 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.support.MenuFixture;
+import kitchenpos.support.ProductFixture.WrapProductRequest;
 
 public abstract class KitchenPosE2eTest extends E2eTest {
 
@@ -124,33 +126,47 @@ public abstract class KitchenPosE2eTest extends E2eTest {
         return 응답.body().as(TableGroup.class);
     }
 
-    protected Long 메뉴_생성_및_ID_반환() {
+    protected MenuResponse 메뉴_생성() {
 
         final Long 메뉴그룹_ID = 메뉴그룹_생성_및_ID_반환();
         final Product 후라이드치킨 = 상품_생성();
         final List<MenuProduct> 메뉴상품_리스트 = List.of(new MenuProduct(후라이드치킨, 1));
 
-        return POST_요청(MENU_URL, MenuFixture.menu("단 치킨 한 마리", 15_000, 메뉴그룹_ID, 메뉴상품_리스트))
-                .as(Menu.class)
-                .getId();
+        return POST_요청(MENU_URL, menuRequest("단 치킨 한 마리", 15_000, 메뉴그룹_ID, 메뉴상품_리스트))
+                .as(MenuResponse.class);
+    }
+
+    protected Long 메뉴_생성_및_ID_반환() {
+
+        return 메뉴_생성().getId();
+    }
+
+    protected MenuGroup 메뉴_그룹_생성(final MenuGroup menuGroup) {
+        return POST_요청(MENU_GROUP_URL, menuGroup).body().as(MenuGroup.class);
     }
 
     protected Long 메뉴_생성_및_ID_반환(final Long 메뉴그룹_ID, final List<MenuProduct> 메뉴상품_리스트) {
 
-        return POST_요청(MENU_URL, MenuFixture.menu("단 치킨 한 마리", 15_000, 메뉴그룹_ID, 메뉴상품_리스트))
+        return POST_요청(MENU_URL, menuRequest("단 치킨 한 마리", 15_000, 메뉴그룹_ID, 메뉴상품_리스트))
                 .as(Menu.class)
                 .getId();
     }
 
+    protected Product 상품_생성(WrapProductRequest productRequest) {
+
+        return POST_요청(PRODUCT_URL, productRequest)
+                .as(Product.class);
+    }
+
     protected Product 상품_생성() {
 
-        return POST_요청(PRODUCT_URL, 후라이드_치킨)
+        return POST_요청(PRODUCT_URL, 후라이드_치킨_요청_DTO)
                 .as(Product.class);
     }
 
     protected Long 상품_생성_및_ID_반환() {
 
-        return POST_요청(PRODUCT_URL, 후라이드_치킨)
+        return POST_요청(PRODUCT_URL, 후라이드_치킨_요청_DTO)
                 .as(Product.class)
                 .getId();
     }

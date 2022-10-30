@@ -1,5 +1,8 @@
 package kitchenpos.domain;
 
+import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.FetchType.LAZY;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
@@ -26,10 +29,10 @@ public class Menu {
     private BigDecimal price;
 
     @JoinColumn(name = "menu_group_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "menu", cascade = PERSIST)
     private List<MenuProduct> menuProducts;
 
     protected Menu() {
@@ -43,7 +46,14 @@ public class Menu {
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
+        mapMenuProducts(menuProducts);
         validate();
+    }
+
+    private void mapMenuProducts(List<MenuProduct> menuProducts) {
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.setMenu(this);
+        }
     }
 
     private void validate() {
