@@ -4,9 +4,26 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.exception.GuestSizeException;
 import kitchenpos.exception.TableGroupNotNullException;
+import kitchenpos.exception.UnableToGroupingException;
 import org.junit.jupiter.api.Test;
 
 class OrderTableTest {
+
+    @Test
+    void 테이블그룹이_존재하면_그룹화_예외를_발생한다() {
+        OrderTable orderTable = new OrderTable(1L, 1L, 0, false);
+
+        assertThatThrownBy(() -> orderTable.validateAbleToGrouping())
+                .isInstanceOf(UnableToGroupingException.class);
+    }
+
+    @Test
+    void 비어있지_않으면_그룹화_예외를_발생한다() {
+        OrderTable orderTable = new OrderTable(1L, 1L, 0, true);
+
+        assertThatThrownBy(() -> orderTable.validateAbleToGrouping())
+                .isInstanceOf(UnableToGroupingException.class);
+    }
 
     @Test
     void 테이블그룹이_존재하면_비울때_예외를_발생한다() {

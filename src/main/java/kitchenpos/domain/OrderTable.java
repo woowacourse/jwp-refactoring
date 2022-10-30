@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.util.Objects;
 import kitchenpos.exception.GuestSizeException;
 import kitchenpos.exception.TableGroupNotNullException;
+import kitchenpos.exception.UnableToGroupingException;
 
 public class OrderTable {
     private final Long id;
@@ -29,6 +30,12 @@ public class OrderTable {
         this(orderTable.id, tableGroupId, orderTable.numberOfGuests, orderTable.empty);
     }
 
+    public void validateAbleToGrouping() {
+        if (!empty || Objects.nonNull(tableGroupId)) {
+            throw new UnableToGroupingException();
+        }
+    }
+
     public void changeEmpty(boolean empty) {
         if (Objects.nonNull(this.tableGroupId)) {
             throw new TableGroupNotNullException();
@@ -41,10 +48,6 @@ public class OrderTable {
             throw new GuestSizeException();
         }
         this.numberOfGuests = numberOfGuests;
-    }
-
-    public boolean isNotPossibleTableGrouping() {
-        return !isEmpty() || Objects.nonNull(this.tableGroupId);
     }
 
     public Long getId() {

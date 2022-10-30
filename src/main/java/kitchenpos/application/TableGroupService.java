@@ -36,11 +36,16 @@ public class TableGroupService {
         List<Long> orderTableIds = getOrderTableIds(tableGroupCreateRequest);
         List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
         validateOrderTablesSize(orderTableIds, savedOrderTables);
+        validateAbleToGrouping(savedOrderTables);
 
         TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
         List<OrderTable> orderTables = updateOrderTables(savedOrderTables, savedTableGroup.getId());
 
         return new TableGroup(savedTableGroup, orderTables);
+    }
+
+    private void validateAbleToGrouping(List<OrderTable> orderTables) {
+        orderTables.forEach(OrderTable::validateAbleToGrouping);
     }
 
     private List<Long> getOrderTableIds(TableGroupCreateRequest tableGroupCreateRequest) {

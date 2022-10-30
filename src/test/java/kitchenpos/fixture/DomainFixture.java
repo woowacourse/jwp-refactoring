@@ -1,10 +1,12 @@
 package kitchenpos.fixture;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 
 public class DomainFixture {
 
@@ -26,5 +28,9 @@ public class DomainFixture {
 
     public static Menu createMenu(Long menuGroupId) {
         return new Menu("뿌링 치킨", BigDecimal.valueOf(15_000), menuGroupId);
+    }
+
+    public static TableGroup createTableGroup() {
+        return new TableGroup(LocalDateTime.now());
     }
 }

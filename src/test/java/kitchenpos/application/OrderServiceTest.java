@@ -20,6 +20,7 @@ import kitchenpos.exception.NotFoundMenuException;
 import kitchenpos.exception.NotFoundOrderException;
 import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.exception.OrderMenusCountException;
+import kitchenpos.exception.OrderTableEmptyException;
 import kitchenpos.ui.dto.OrderLineItemDto;
 import kitchenpos.ui.dto.request.ChangeOrderStatusRequest;
 import kitchenpos.ui.dto.request.OrderCreateRequest;
@@ -73,6 +74,16 @@ class OrderServiceTest extends ServiceTest {
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                 .isInstanceOf(NotFoundOrderTableException.class);
+    }
+
+    @Test
+    void 주문을_생성할때_orderTable이_비어있으면_예외를_발생한다() {
+        OrderTable emptyOrderTable = orderTableDao.save(createOrderTable(null, true));
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(emptyOrderTable.getId(),
+                List.of(new OrderLineItemDto(menu.getId(), 1)));
+
+        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
+                .isInstanceOf(OrderTableEmptyException.class);
     }
 
     @Test

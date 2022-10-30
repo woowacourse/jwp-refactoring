@@ -13,6 +13,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.exception.MenuPriceException;
 import kitchenpos.exception.NotFoundMenuGroupException;
+import kitchenpos.exception.NotFoundProductException;
 import kitchenpos.exception.PriceException;
 import kitchenpos.ui.dto.MenuProductDto;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
@@ -32,12 +33,22 @@ class MenuServiceTest extends ServiceTest {
 
     @Test
     void 메뉴를_생성한다() {
-        MenuCreateRequest menuCreateRequest
-                = new MenuCreateRequest("", BigDecimal.valueOf(0), menuGroup.getId(), List.of());
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("", BigDecimal.valueOf(0), menuGroup.getId(),
+                List.of(new MenuProductDto(product.getId(), 1)));
 
         Menu savedMenu = menuService.create(menuCreateRequest);
 
         assertThat(menuDao.findById(savedMenu.getId())).isPresent();
+    }
+
+    @Test
+    void 메뉴를_생성할때_존재하지_않는_productId면_예외를_발생한다() {
+        MenuCreateRequest menuCreateRequest
+                = new MenuCreateRequest("", BigDecimal.valueOf(-1), menuGroup.getId(),
+                List.of(new MenuProductDto(0L, 1)));
+
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
+                .isInstanceOf(NotFoundProductException.class);
     }
 
     @Test

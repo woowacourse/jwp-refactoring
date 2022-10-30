@@ -1,11 +1,16 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.DomainFixture.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.exception.GuestSizeException;
 import kitchenpos.exception.NotFoundOrderTableException;
+import kitchenpos.exception.OrderTableConvertEmptyStatusException;
 import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.ui.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.request.OrderTableCreateRequest;
@@ -48,6 +53,17 @@ class TableServiceTest extends ServiceTest {
 
         assertThatThrownBy(() -> tableService.changeEmpty(0L, request))
                 .isInstanceOf(NotFoundOrderTableException.class);
+    }
+
+    @Test
+    void 주문테이블을_비울수_없는_상태면_예외를_반환한다() {
+        OrderTable savedOrderTable = orderTableDao.save(createOrderTable());
+        orderDao.save(new Order(savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now()));
+
+        OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(true);
+
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), request))
+                .isInstanceOf(OrderTableConvertEmptyStatusException.class);
     }
 
     @Test
