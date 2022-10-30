@@ -43,9 +43,9 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final EmptyRequest request) {
         final OrderTable savedOrderTable = getOrderTableById(orderTableId);
         validateExistsByOrderTableIdAndOrderStatusIn(orderTableId);
-        savedOrderTable.changeEmpty(request.isEmpty());
+        final OrderTable changedOrderTable = savedOrderTable.changeEmpty(request.isEmpty());
 
-        return OrderTableResponse.of(orderTableDao.save(savedOrderTable));
+        return OrderTableResponse.of(orderTableDao.save(changedOrderTable));
     }
 
     private OrderTable getOrderTableById(final Long orderTableId) {
@@ -63,8 +63,8 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final NumberOfGuestsRequest request) {
         final OrderTable savedOrderTable = getOrderTableById(orderTableId);
-        savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
+        final OrderTable changedOrderTable = savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
 
-        return OrderTableResponse.of(orderTableDao.save(savedOrderTable));
+        return OrderTableResponse.of(orderTableDao.save(changedOrderTable));
     }
 }

@@ -92,6 +92,7 @@
 - [ ] 레포지토리를 리팩토링한다.
     - [x] MenuRepository
     - [x] OrderRepository ( Order를 완전한 불변으로 만들기는 실패 )
+    - [x] TableGroupRepository 제거 ( 라이프사이클 불일치, 억지로 끼워 맞추는 느낌이 들었음 )
 
 ## 고민 주절주절
 
@@ -138,3 +139,9 @@
     - menuProduct를 가져올 때 항상 join을 쳐서 가져온다면? ( ✅ )
         - 영속화를 굳이 하지 않아도 된다.
 ```
+
+### TableGroup과 orderTable
+
+- 둘은 같은 애그리거트라고 생각했지만 라이프사이클이 다르다는 느낌이다.
+- 처음에는 억지로 끼워맞춰서 TableGroupRepository를 만들었으나.. 이는 실패했다. ( 서로 비즈니스 규칙의 충돌이 발생했음.. )
+- TableGroupDao와 OrderTableDao 를 활용해서 다시 리팩토링해보자.

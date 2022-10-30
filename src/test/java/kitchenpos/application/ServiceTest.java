@@ -1,10 +1,12 @@
 package kitchenpos.application;
 
+import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuRepository;
@@ -13,7 +15,6 @@ import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.TableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,13 +42,13 @@ public abstract class ServiceTest {
     protected TableService tableService;
 
     @Autowired
+    protected TableGroupDao tableGroupDao;
+
+    @Autowired
     protected MenuRepository menuRepository;
 
     @Autowired
     protected OrderRepository orderRepository;
-
-    @Autowired
-    protected TableGroupRepository tableGroupRepository;
 
     @Autowired
     protected MenuGroupDao menuGroupDao;
@@ -81,7 +82,12 @@ public abstract class ServiceTest {
     }
 
     protected TableGroup 단체지정(final TableGroup tableGroup) {
-        return tableGroupRepository.save(tableGroup);
+        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+        final TableGroup group = tableGroupDao.save(tableGroup)
+                .group(orderTables);
+
+        orderTableDao.updateAll(group.getOrderTables());
+        return group;
     }
 
     protected Order 주문등록(final Order order) {

@@ -15,10 +15,10 @@ public class OrderTableTest {
         final OrderTable orderTable = new OrderTable(3, false);
 
         // when
-        orderTable.changeNumberOfGuests(6);
+        final OrderTable actual = orderTable.changeNumberOfGuests(6);
 
         // then
-        assertThat(orderTable.getNumberOfGuests()).isEqualTo(6);
+        assertThat(actual.getNumberOfGuests()).isEqualTo(6);
     }
 
     @Test
@@ -50,10 +50,10 @@ public class OrderTableTest {
         final OrderTable orderTable = new OrderTable(3, false);
 
         // when
-        orderTable.changeEmpty(true);
+        final OrderTable actual = orderTable.changeEmpty(true);
 
         // then
-        assertThat(orderTable.isEmpty()).isTrue();
+        assertThat(actual.isEmpty()).isTrue();
     }
 
     @Test
@@ -63,10 +63,10 @@ public class OrderTableTest {
         final OrderTable orderTable = new OrderTable(3, true);
 
         // when
-        orderTable.changeEmpty(false);
+        final OrderTable actual = orderTable.changeEmpty(false);
 
         // then
-        assertThat(orderTable.isEmpty()).isFalse();
+        assertThat(actual.isEmpty()).isFalse();
     }
 
     @Test

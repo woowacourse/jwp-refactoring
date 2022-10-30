@@ -1,9 +1,8 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.OrderTable;
-
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.domain.OrderTable;
 
 public interface OrderTableDao {
 
@@ -16,4 +15,6 @@ public interface OrderTableDao {
     List<OrderTable> findAllByIdIn(List<Long> ids);
 
     List<OrderTable> findAllByTableGroupId(Long tableGroupId);
+
+    void updateAll(List<OrderTable> entities);
 }

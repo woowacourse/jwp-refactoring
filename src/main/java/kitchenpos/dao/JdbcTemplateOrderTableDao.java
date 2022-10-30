@@ -2,6 +2,7 @@ package kitchenpos.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -73,6 +74,23 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("tableGroupId", tableGroupId);
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+    }
+
+    @Override
+    public void updateAll(final List<OrderTable> entities) {
+        final String sql = "UPDATE order_table SET table_group_id = (:tableGroupId)," +
+                " number_of_guests = (:numberOfGuests), empty = (:empty) WHERE id = (:id)";
+
+        final List<MapSqlParameterSource> params = new ArrayList<>();
+        for (final OrderTable entity : entities) {
+            final MapSqlParameterSource param = new MapSqlParameterSource()
+                    .addValue("tableGroupId", entity.getTableGroupId())
+                    .addValue("numberOfGuests", entity.getNumberOfGuests())
+                    .addValue("empty", entity.isEmpty())
+                    .addValue("id", entity.getId());
+            params.add(param);
+        }
+        jdbcTemplate.batchUpdate(sql, params.toArray(MapSqlParameterSource[]::new));
     }
 
     private OrderTable select(final Long id) {

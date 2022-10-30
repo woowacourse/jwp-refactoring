@@ -3,7 +3,7 @@ package kitchenpos.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
@@ -63,10 +63,10 @@ public class JdbcTemplateTableGroupDao implements TableGroupDao {
     }
 
     private TableGroup toEntity(final ResultSet resultSet) throws SQLException {
-        return TableGroup.forEntity(
+        return new TableGroup(
                 resultSet.getLong(KEY_COLUMN_NAME),
-                resultSet.getObject("created_date", LocalDateTime.class)
+                resultSet.getObject("created_date", LocalDateTime.class),
+                new ArrayList<>()
         );
     }
-
 }
