@@ -12,8 +12,29 @@ public class OrderTables {
 
     public OrderTables(final List<OrderTable> orderTables) {
         validateSize(orderTables);
-
         this.orderTables = orderTables;
+    }
+
+    public static OrderTables from(List<OrderTable> orderTables, OrderTables checkOrderTables) {
+        validateTableGroup(orderTables, checkOrderTables);
+        return new OrderTables(orderTables);
+    }
+
+    private static void validateTableGroup(final List<OrderTable> orderTables, final OrderTables savedOrderTables) {
+        validateOrderTablesSize(orderTables, savedOrderTables);
+        validatePossibleGrouping(savedOrderTables);
+    }
+
+    private static void validateOrderTablesSize(List<OrderTable> orderTables, OrderTables savedOrderTables) {
+        if (orderTables.size() != savedOrderTables.size()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private static void validatePossibleGrouping(OrderTables savedOrderTables) {
+        if (!savedOrderTables.canGrouping()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public int size() {

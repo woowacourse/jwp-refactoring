@@ -102,22 +102,6 @@ class TableGroupServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("저장된 orderTables 중 비어있지 않은 table이 존재하는 경우 예외를 던진다.")
-    @Test
-    void createTableGroupByNotEmptyOrderTable() {
-        OrderTableResponse 테이블_1번 = tableService.create(테이블_1번());
-        OrderTableResponse 테이블_2번 = tableService.create(테이블_2번());
-        OrderTableResponse 비어있지_않은_테이블 = tableService.create(createOrderTable(0, false));
-
-        List<OrderTableIdRequest> 테이블_그룹 = List.of(new OrderTableIdRequest(테이블_1번.getId()),
-                new OrderTableIdRequest(테이블_2번.getId()),
-                new OrderTableIdRequest(비어있지_않은_테이블.getId()));
-
-        assertThatThrownBy(() -> tableGroupService.create(
-                createTableGroup(테이블_그룹)))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("tableGroup을 해제한다.")
     @Test
     void unlockTableGroup() {
