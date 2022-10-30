@@ -1,46 +1,78 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import org.springframework.data.annotation.CreatedDate;
 
+@Entity
+@Table(name = "table_group")
 public class TableGroup {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @CreatedDate
+    @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
 
-    public TableGroup() {
+    @Embedded
+    private OrderTables orderTables;
+
+    protected TableGroup() {
     }
 
-    public TableGroup(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
-    }
-
-    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+    public TableGroup(final Long id, final LocalDateTime createdDate, final OrderTables orderTables) {
+        this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
+    public OrderTables getOrderTables() {
         return orderTables;
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+    public static class Builder {
+
+        private Long id;
+        private LocalDateTime createdDate;
+        private OrderTables orderTables;
+
+        public Builder id(final Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder createdDate(final LocalDateTime createdDate) {
+            this.createdDate = createdDate;
+            return this;
+        }
+
+        public Builder orderTables(final OrderTables orderTables) {
+            this.orderTables = orderTables;
+            return this;
+        }
+
+        public TableGroup build() {
+            return new TableGroup(id, createdDate, orderTables);
+        }
     }
 }

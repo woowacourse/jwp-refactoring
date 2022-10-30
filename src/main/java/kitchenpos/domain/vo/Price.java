@@ -19,9 +19,21 @@ public class Price {
         this.value = value;
     }
 
+    public Price multiply(final long quantity) {
+        return new Price(value.multiply(BigDecimal.valueOf(quantity)));
+    }
+
+    public Price add(final Price price) {
+        return new Price(this.value.add(price.value));
+    }
+
+    public int compareTo(final Price totalPrice) {
+        return this.value.compareTo(totalPrice.value);
+    }
+
     private void validate(final BigDecimal value) {
         if (isNullOrNegative(value)) {
-            throw new IllegalArgumentException("상품의 가격은 null 이거나 0원 미만일 수 없습니다.");
+            throw new IllegalArgumentException("가격은 null 이거나 0원 미만일 수 없습니다.");
         }
     }
 

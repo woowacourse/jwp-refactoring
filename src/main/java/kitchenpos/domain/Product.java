@@ -37,6 +37,10 @@ public class Product {
         return new Builder();
     }
 
+    public Price calculatePrice(final long quantity) {
+        return price.multiply(quantity);
+    }
+
     public Long getId() {
         return id;
     }

@@ -51,7 +51,7 @@ class ProductServiceTest extends ServiceTest {
             void 예외가_발생한다() {
                 assertThatThrownBy(() -> productService.create(productCreateRequest))
                         .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("상품의 가격은 null 이거나 0원 미만일 수 없습니다.");
+                        .hasMessage("가격은 null 이거나 0원 미만일 수 없습니다.");
             }
         }
 
@@ -66,7 +66,7 @@ class ProductServiceTest extends ServiceTest {
             void 예외가_발생한다() {
                 assertThatThrownBy(() -> productService.create(productCreateRequest))
                         .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("상품의 가격은 null 이거나 0원 미만일 수 없습니다.");
+                        .hasMessage("가격은 null 이거나 0원 미만일 수 없습니다.");
             }
         }
     }

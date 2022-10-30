@@ -17,7 +17,7 @@ class PriceTest {
     void validate(final BigDecimal value) {
         assertThatThrownBy(() -> new Price(value))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("상품의 가격은 null 이거나 0원 미만일 수 없습니다.");
+                .hasMessage("가격은 null 이거나 0원 미만일 수 없습니다.");
     }
 
     private static Stream<Arguments> invalidValue() {

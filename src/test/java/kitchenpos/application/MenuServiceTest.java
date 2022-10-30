@@ -6,12 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuGroupCreateRequest;
+import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -35,12 +36,13 @@ class MenuServiceTest extends ServiceTest {
                     new MenuGroupCreateRequest("햄버거 세트"));
             private final ProductResponse productResponse = productService.create(
                     new ProductCreateRequest(name, price));
-            private final MenuProduct menuProduct = new MenuProduct(productResponse.getId(), 1);
-            private final Menu menu = new Menu(name, price, menuGroupResponse.getId(), List.of(menuProduct));
+            private final MenuProductRequest menuProductRequest = new MenuProductRequest(productResponse.getId(), 1);
+            private final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(name, price,
+                    menuGroupResponse.getId(), List.of(menuProductRequest));
 
             @Test
             void 메뉴를_추가한다() {
-                Menu actual = menuService.create(menu);
+                MenuResponse actual = menuService.create(menuCreateRequest);
 
                 assertAll(() -> {
                     assertThat(actual.getId()).isNotNull();
@@ -58,14 +60,15 @@ class MenuServiceTest extends ServiceTest {
                     new MenuGroupCreateRequest("햄버거 세트"));
             private final ProductResponse productResponse = productService.create(
                     new ProductCreateRequest(name, BigDecimal.valueOf(5000)));
-            private final MenuProduct menuProduct = new MenuProduct(productResponse.getId(), 1);
-            private final Menu menu = new Menu(name, price, menuGroupResponse.getId(), List.of(menuProduct));
+            private final MenuProductRequest menuProductRequest = new MenuProductRequest(productResponse.getId(), 1);
+            private final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(name, price,
+                    menuGroupResponse.getId(), List.of(menuProductRequest));
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> menuService.create(menu))
+                assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                         .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("메뉴의 가격은 null 이거나 0원 미만일 수 없습니다.");
+                        .hasMessage("가격은 null 이거나 0원 미만일 수 없습니다.");
             }
         }
 
@@ -78,14 +81,15 @@ class MenuServiceTest extends ServiceTest {
                     new MenuGroupCreateRequest("햄버거 세트"));
             private final ProductResponse productResponse = productService.create(
                     new ProductCreateRequest(name, BigDecimal.valueOf(5000)));
-            private final MenuProduct menuProduct = new MenuProduct(productResponse.getId(), 1);
-            private final Menu menu = new Menu(name, price, menuGroupResponse.getId(), List.of(menuProduct));
+            private final MenuProductRequest menuProductRequest = new MenuProductRequest(productResponse.getId(), 1);
+            private final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(name, price,
+                    menuGroupResponse.getId(), List.of(menuProductRequest));
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> menuService.create(menu))
+                assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                         .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("메뉴의 가격은 null 이거나 0원 미만일 수 없습니다.");
+                        .hasMessage("가격은 null 이거나 0원 미만일 수 없습니다.");
             }
         }
 
@@ -94,14 +98,17 @@ class MenuServiceTest extends ServiceTest {
 
             private final String name = "햄버거";
             private final BigDecimal price = BigDecimal.valueOf(5000);
+            private final MenuGroupResponse menuGroupResponse = menuGroupService.create(
+                    new MenuGroupCreateRequest("햄버거 세트"));
             private final ProductResponse productResponse = productService.create(
                     new ProductCreateRequest(name, price));
-            private final MenuProduct menuProduct = new MenuProduct(productResponse.getId(), 1);
-            private final Menu menu = new Menu(name, price, 0L, List.of(menuProduct));
+            private final MenuProductRequest menuProductRequest = new MenuProductRequest(productResponse.getId(), 1);
+            private final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(name, price,
+                    0L, List.of(menuProductRequest));
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> menuService.create(menu))
+                assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("메뉴 그룹이 존재하지 않습니다.");
             }
@@ -116,12 +123,13 @@ class MenuServiceTest extends ServiceTest {
                     new MenuGroupCreateRequest("햄버거 세트"));
             private final ProductResponse productResponse = productService.create(
                     new ProductCreateRequest(name, BigDecimal.valueOf(4999)));
-            private final MenuProduct menuProduct = new MenuProduct(productResponse.getId(), 1);
-            private final Menu menu = new Menu(name, price, menuGroupResponse.getId(), List.of(menuProduct));
+            private final MenuProductRequest menuProductRequest = new MenuProductRequest(productResponse.getId(), 1);
+            private final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(name, price,
+                    menuGroupResponse.getId(), List.of(menuProductRequest));
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> menuService.create(menu))
+                assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("메뉴의 가격은 메뉴에 속한 상품의 합보다 클 수 없습니다.");
             }
