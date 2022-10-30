@@ -10,6 +10,7 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuProductResponse;
 import kitchenpos.dto.MenuRequest;
@@ -37,29 +38,24 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
         validateMenuGroup(menuRequest.getMenuGroupId());
-        final List<MenuProduct> menuProducts = toMenuProducts(menuRequest.getMenuProducts());
+        final MenuProducts menuProducts = new MenuProducts(toMenuProducts(menuRequest.getMenuProducts()));
         validateDiscount(menuRequest.getPrice(), menuProducts);
 
         final Menu savedMenu = menuDao.save(toMenu(menuRequest));
 
-        final Long menuId = savedMenu.getId();
+        menuProducts.updateMenuId(savedMenu.getId());
+
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.updateMenuId(menuId);
+        for (final MenuProduct menuProduct : menuProducts.getMenuProducts()) {
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
         savedMenu.updateMenuProducts(savedMenuProducts);
 
-        return toMenuResponse(savedMenu, toMenuProductResponses(menuId, savedMenuProducts));
+        return toMenuResponse(savedMenu, toMenuProductResponses(savedMenu.getId(), savedMenuProducts));
     }
 
-    private void validateDiscount(BigDecimal price, List<MenuProduct> menuProducts) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            sum = sum.add(menuProduct.getPrice());
-        }
-
-        if (price.compareTo(sum) > 0) {
+    private void validateDiscount(BigDecimal price, MenuProducts menuProducts) {
+        if (price.compareTo(menuProducts.getSum()) > 0) {
             throw new IllegalArgumentException("메뉴 가격은 내부 모든 상품가격보다 낮아야 한다.");
         }
     }
