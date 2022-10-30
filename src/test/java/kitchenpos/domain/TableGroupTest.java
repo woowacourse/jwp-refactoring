@@ -13,12 +13,6 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 class TableGroupTest {
 
-    @Nested
-    @DisplayName("create()")
-    class CreateMethod {
-
-    }
-
     @ParameterizedTest
     @NullAndEmptySource
     @DisplayName("테이블 정보가 비어있거나 null인 경우 예외가 발생한다.")

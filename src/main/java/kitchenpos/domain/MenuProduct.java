@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,6 +30,7 @@ public class MenuProduct {
     }
 
     public MenuProduct(Menu menu, Product product, long quantity) {
+        validate(quantity);
         this.menu = menu;
         this.product = product;
         this.quantity = quantity;
@@ -50,6 +50,12 @@ public class MenuProduct {
 
     public Product getProduct() {
         return product;
+    }
+
+    private void validate(long quantity) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("메뉴 수량은 1이상이어야 합니다.");
+        }
     }
 
 }
