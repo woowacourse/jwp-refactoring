@@ -16,7 +16,10 @@ public class MenuGroup {
     }
 
     public Menu createMenu(final String name, final BigDecimal price, final PendingMenuProducts products) {
-        return new Menu(name, price, id, products);
+        if (price == null || price.compareTo(BigDecimal.ZERO) < 0 || price.compareTo(products.getTotalPrice()) > 0) {
+            throw new IllegalArgumentException();
+        }
+        return new Menu(name, price, id, products.createMenuProducts());
     }
 
     public Long getId() {

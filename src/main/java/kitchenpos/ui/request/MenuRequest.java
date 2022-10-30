@@ -1,8 +1,11 @@
 package kitchenpos.ui.request;
 
+import static java.util.stream.Collectors.toMap;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public class MenuRequest {
 

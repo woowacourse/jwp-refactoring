@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -33,23 +32,19 @@ public class Menu {
     }
 
     public Menu(final Long id, final String name, final BigDecimal price, final long menuGroupId) {
-        this(id, name, price, menuGroupId, PendingMenuProducts.empty());
+        this(id, name, price, menuGroupId, List.of());
     }
 
-    Menu(final String name, final BigDecimal price, final long menuGroupId, final PendingMenuProducts products) {
+    Menu(final String name, final BigDecimal price, final long menuGroupId, final List<MenuProduct> products) {
         this(null, name, price, menuGroupId, products);
     }
 
-    private Menu(final Long id, final String name, final BigDecimal price, final long menuGroupId, final PendingMenuProducts products) {
-        if (price == null || price.compareTo(BigDecimal.ZERO) < 0 || price.compareTo(products.getTotalPrice()) > 0) {
-            throw new IllegalArgumentException();
-        }
-
+    private Menu(final Long id, final String name, final BigDecimal price, final long menuGroupId, final List<MenuProduct> products) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = products.createMenuProducts();
+        this.menuProducts = products;
     }
 
     public Long getId() {
