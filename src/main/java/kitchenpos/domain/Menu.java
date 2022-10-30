@@ -35,6 +35,7 @@ public class Menu {
 
     public Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
         injectMenu(menuProducts);
+        validatePriceLessThanMenuProductsPrice(price);
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
@@ -47,12 +48,14 @@ public class Menu {
         }
     }
 
-    public boolean isPriceGreaterThanMenuProductsPrice() {
+    private void validatePriceLessThanMenuProductsPrice(final Price price) {
         final Price sumPrice = menuProducts.stream()
                 .map(menuProduct -> menuProduct.getProduct().getPrice()
                         .multiply(menuProduct.getQuantity()))
                 .reduce(new Price(BigDecimal.ZERO), Price::add);
-        return price.isGreaterThan(sumPrice);
+        if (price.isGreaterThan(sumPrice)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {

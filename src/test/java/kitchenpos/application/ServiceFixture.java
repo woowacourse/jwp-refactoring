@@ -2,7 +2,9 @@ package kitchenpos.application;
 
 import static kitchenpos.support.MenuFixture.MENU_PRICE_10000;
 import static kitchenpos.support.MenuGroupFixture.MENU_GROUP_1;
+import static kitchenpos.support.MenuProductFixture.MENU_PRODUCT_1;
 import static kitchenpos.support.OrderLineItemFixture.ORDER_LINE_ITEM_1;
+import static kitchenpos.support.ProductFixture.PRODUCT_PRICE_10000;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -61,6 +63,11 @@ public class ServiceFixture {
         return menuDao.save(menu);
     }
 
+    protected Menu 상품과_함께_메뉴를_저장한다(final Long menuGroupId) {
+        final Product product = 제품을_저장한다(PRODUCT_PRICE_10000.생성());
+        return 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId, List.of(MENU_PRODUCT_1.생성(product))));
+    }
+
     protected MenuProduct 메뉴상품을_저장한다(final MenuProduct menuProduct) {
         return menuProductDao.save(menuProduct);
     }
@@ -79,7 +86,8 @@ public class ServiceFixture {
 
     protected Order 주문항목과_함께_주문을_저장한다(final Long orderTableId, final OrderStatus orderStatus) {
         final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final Menu menu = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId));
+        final Product product = 제품을_저장한다(PRODUCT_PRICE_10000.생성());
+        final Menu menu = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId, List.of(MENU_PRODUCT_1.생성(product))));
         final List<OrderLineItem> orderLineItems = List.of(ORDER_LINE_ITEM_1.생성(menu));
         return 주문을_저장한다(new Order(orderTableId, orderStatus, LocalDateTime.now(), orderLineItems));
     }

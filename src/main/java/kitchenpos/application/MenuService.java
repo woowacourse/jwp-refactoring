@@ -35,7 +35,6 @@ public class MenuService {
         final Menu menu = convertToMenu(menuRequest);
 
         validateMenuGroupExist(menuRequest.getMenuGroupId());
-        validateMenuPrice(menu);
 
         final Menu savedMenu = menuDao.save(menu);
 
@@ -57,12 +56,6 @@ public class MenuService {
 
     private void validateMenuGroupExist(final Long menuGroupId) {
         if (!menuGroupDao.existsById(menuGroupId)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateMenuPrice(final Menu menu) {
-        if (menu.isPriceGreaterThanMenuProductsPrice()) {
             throw new IllegalArgumentException();
         }
     }

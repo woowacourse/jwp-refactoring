@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
-import static kitchenpos.support.MenuFixture.MENU_PRICE_10000;
 import static kitchenpos.support.MenuGroupFixture.MENU_GROUP_1;
 import static kitchenpos.support.OrderFixture.ORDER_COOKING_1;
 import static kitchenpos.support.OrderLineItemFixture.ORDER_LINE_ITEM_1;
@@ -33,8 +32,7 @@ class OrderServiceTest extends ServiceTest {
     void 주문을_저장한다() {
         // given
         final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final Long menuId = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId))
-                .getId();
+        final Long menuId = 상품과_함께_메뉴를_저장한다(menuGroupId).getId();
 
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성()).getId();
         final OrderRequest orderRequest = new OrderRequest(orderTableId,
@@ -75,7 +73,7 @@ class OrderServiceTest extends ServiceTest {
     void 주문을_저장할_때_존재하지_않는_테이블_번호로_주문하면_예외를_발생한다() {
         // given
         final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final Long menuId = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId))
+        final Long menuId = 상품과_함께_메뉴를_저장한다(menuGroupId)
                 .getId();
 
         final long notExistOrderTableId = Long.MAX_VALUE;
@@ -91,8 +89,7 @@ class OrderServiceTest extends ServiceTest {
     void 주문을_저장할_때_테이블이_비어있다면_예외를_발생한다() {
         // given
         final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final Long menuId = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId))
-                .getId();
+        final Long menuId = 상품과_함께_메뉴를_저장한다(menuGroupId).getId();
 
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성()).getId();
         final OrderRequest orderRequest = new OrderRequest(orderTableId,
@@ -107,7 +104,7 @@ class OrderServiceTest extends ServiceTest {
     void 모든_주문을_조회할_때_주문한_메뉴도_함께_조회한다() {
         // given
         final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final Menu menu = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId));
+        final Menu menu = 상품과_함께_메뉴를_저장한다(menuGroupId);
 
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성()).getId();
         final OrderLineItem orderLineItem = ORDER_LINE_ITEM_1.생성(menu);
