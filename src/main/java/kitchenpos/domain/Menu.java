@@ -49,11 +49,10 @@ public class Menu {
     }
 
     private void validatePriceLessThanMenuProductsPrice(final Price price) {
-        final Price sumPrice = menuProducts.stream()
-                .map(menuProduct -> menuProduct.getProduct().getPrice()
-                        .multiply(menuProduct.getQuantity()))
+        final Price menuProductsPrice = menuProducts.stream()
+                .map(MenuProduct::calculateProductTotalPrice)
                 .reduce(new Price(BigDecimal.ZERO), Price::add);
-        if (price.isGreaterThan(sumPrice)) {
+        if (price.isGreaterThan(menuProductsPrice)) {
             throw new IllegalArgumentException();
         }
     }

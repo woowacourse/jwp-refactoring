@@ -30,6 +30,10 @@ public class Product {
         this.price = price;
     }
 
+    public Price multiplyPriceWith(final long value) {
+        return this.price.multiply(value);
+    }
+
     public Long getId() {
         return id;
     }
