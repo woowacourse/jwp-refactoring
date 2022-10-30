@@ -265,6 +265,7 @@ Content-Type: application/json
 
 #### 개인
 
+- [ ] [긴급] 서비스 내 도메인 픽스처를 DTO 픽스처로 변환!
 - [x] DirtiesContext 제거 및 DatabaseCleaner 로 변경
 - [x] 컨트롤러 테스트가 테스트 픽스처를 상속하도록 변경
 - [x] 테스트 픽스처 추가 분리

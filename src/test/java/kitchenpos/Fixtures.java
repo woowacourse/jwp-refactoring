@@ -18,6 +18,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.OrderLineItemRequest;
@@ -32,11 +33,15 @@ import org.assertj.core.api.ListAssert;
 public class Fixtures {
 
     public static MenuGroup 메뉴그룹_한마리메뉴() {
-        return new MenuGroup(1L, "한마리메뉴");
+        return new MenuGroup(null, "한마리메뉴");
     }
 
-    public static MenuGroup 메뉴그룹_두마리메뉴() {
-        return new MenuGroup(2L, "두마리메뉴");
+    public static MenuGroupRequest 메뉴그룹요청_한마리메뉴() {
+        return new MenuGroupRequest( "한마리메뉴");
+    }
+
+    public static MenuGroupRequest 메뉴그룹요청_두마리메뉴() {
+        return new MenuGroupRequest( "두마리메뉴");
     }
 
     public static Product 상품_후라이드() {
@@ -49,7 +54,7 @@ public class Fixtures {
 
     public static MenuRequest 메뉴요청_후라이드치킨() {
         return new MenuRequest(1L, "후라이드치킨", BigDecimal.valueOf(16000),
-                메뉴그룹_한마리메뉴().getId(),
+                1L,
                 List.of(메뉴상품요청_후라이드()));
     }
 
@@ -64,13 +69,13 @@ public class Fixtures {
 
     public static Menu 메뉴_후라이드치킨() {
         return new Menu(null, "후라이드치킨", BigDecimal.valueOf(16000),
-                메뉴그룹_한마리메뉴().getId(),
+                1L,
                 List.of(메뉴상품_후라이드()));
     }
 
     public static Menu 메뉴_치킨그룹(MenuProduct... menuProducts) {
         return new Menu(1L, "후라이드치킨", BigDecimal.valueOf(16000),
-                메뉴그룹_한마리메뉴().getId(),
+                1L,
                 Arrays.asList(menuProducts));
     }
 
