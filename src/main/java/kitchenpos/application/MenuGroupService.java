@@ -23,6 +23,7 @@ public class MenuGroupService {
         return MenuGroupResponse.from(savedMenuGroup);
     }
 
+    @Transactional(readOnly = true)
     public MenuGroupsResponse list() {
         return MenuGroupsResponse.from(menuGroupDao.findAll());
     }

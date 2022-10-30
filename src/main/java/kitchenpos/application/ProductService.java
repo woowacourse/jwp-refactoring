@@ -24,6 +24,7 @@ public class ProductService {
         return ProductResponse.from(savedProduct);
     }
 
+    @Transactional(readOnly = true)
     public List<ProductResponse> list() {
         final List<Product> products = productDao.findAll();
         return products.stream()

@@ -35,6 +35,7 @@ public class TableService {
         return OrderTableResponse.from(orderTable);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTableResponse> list() {
         final List<OrderTable> orderTables = orderTableDao.findAll();
         return orderTables.stream()
