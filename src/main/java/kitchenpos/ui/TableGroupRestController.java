@@ -1,5 +1,8 @@
 package kitchenpos.ui;
 
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.http.HttpStatus.OK;
+
 import kitchenpos.application.TableGroupService;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupRequest;
@@ -30,11 +33,9 @@ public class TableGroupRestController {
     }
 
     @DeleteMapping("/api/table-groups/{tableGroupId}")
-    public ResponseEntity<Void> ungroup(@PathVariable final Long tableGroupId) {
+    @ResponseStatus(NO_CONTENT)
+    public void ungroup(@PathVariable final Long tableGroupId) {
 
         tableGroupService.ungroup(tableGroupId);
-
-        return ResponseEntity.noContent()
-                .build();
     }
 }
