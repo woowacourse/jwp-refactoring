@@ -3,27 +3,20 @@ package kitchenpos.support;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.application.dto.MenuResponse;
-import kitchenpos.order.domain.Order;
+import kitchenpos.order.application.dto.OrderRequestDto;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.presentation.dto.OrderLineItemRequest;
 
 public class OrderFixture {
 
-    public static Order 주문_생성(final Long orderTableId, final MenuResponse menu, final String orderStatus) {
-        final Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderLineItems(convertMenuProductToOrderLineItem(menu));
-        return order;
+    public static OrderRequestDto 주문_생성(final Long orderTableId, final MenuResponse menu, final String orderStatus) {
+        return new OrderRequestDto(orderTableId,convertMenuProductToOrderLineItem(menu));
     }
 
-    private static List<OrderLineItem> convertMenuProductToOrderLineItem(MenuResponse menu) {
+    private static List<OrderLineItemRequest> convertMenuProductToOrderLineItem(MenuResponse menu) {
         return menu.getMenuProducts().stream()
-                .map(menuProduct -> {
-                    final OrderLineItem orderLineItem = new OrderLineItem();
-                    orderLineItem.setMenuId(menuProduct.getMenuId());
-                    orderLineItem.setQuantity(menuProduct.getQuantity());
-                    return orderLineItem;
-                })
+                .map(menuProduct -> new OrderLineItem(menuProduct.getMenuId(), menuProduct.getQuantity()))
+                .map(orderLineItem -> new OrderLineItemRequest(orderLineItem.getMenuId(), orderLineItem.getQuantity()))
                 .collect(Collectors.toList());
     }
 }

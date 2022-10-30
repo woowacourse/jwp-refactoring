@@ -8,7 +8,8 @@ import kitchenpos.menu.application.dto.MenuRequestDto;
 import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.order.application.OrderService;
-import kitchenpos.order.domain.Order;
+import kitchenpos.order.application.dto.OrderRequestDto;
+import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.product.application.ProductService;
 import kitchenpos.product.application.dto.ProductRequestDto;
 import kitchenpos.support.DatabaseCleaner;
@@ -19,7 +20,6 @@ import kitchenpos.table.application.dto.OrderTableResponse;
 import kitchenpos.product.domain.Product;
 import kitchenpos.table.application.dto.TableGroupRequestDto;
 import kitchenpos.table.application.dto.TableGroupResponse;
-import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -73,7 +73,7 @@ public class ServiceTest {
         return menuGroupService.create(menuGroup);
     }
 
-    protected Order 주문_등록(final Order order) {
+    protected OrderResponse 주문_등록(final OrderRequestDto order) {
         return orderService.create(order);
     }
 
