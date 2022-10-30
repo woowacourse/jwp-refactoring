@@ -163,7 +163,7 @@ class OrderServiceTest extends ServiceTest {
         menuGroupDao.save(new MenuGroup(null, "한마리메뉴"));
         productDao.save(new Product(null, "후라이드", BigDecimal.valueOf(16000)));
         menuDao.save(new Menu(null, "후라이드치킨", BigDecimal.valueOf(16000),
-                메뉴그룹_한마리메뉴().getId(),
+                1L,
                 List.of(메뉴상품_후라이드())));
         orderTableDao.save(new OrderTable(null, null, 0, false));
         menuProductDao.save(new MenuProduct(null, 1L, 1L, 1));
