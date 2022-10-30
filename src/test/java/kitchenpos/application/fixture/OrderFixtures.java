@@ -9,6 +9,7 @@ import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.dto.OrderChangeOrderStatusRequest;
 import kitchenpos.dto.OrderLineItemSaveRequest;
 import kitchenpos.dto.OrderSaveRequest;
 
@@ -73,5 +74,11 @@ public class OrderFixtures {
                 .map(it -> new OrderLineItemSaveRequest(it.getMenuId(), it.getQuantity()))
                 .collect(toList());
         return new OrderSaveRequest(orderTableId, orderLimeItemsRequest);
+    }
+
+    public static final OrderChangeOrderStatusRequest generateOrderChangeOrderStatusRequest(
+            final OrderStatus orderStatus
+    ) {
+        return new OrderChangeOrderStatusRequest(orderStatus.name());
     }
 }
