@@ -17,7 +17,7 @@ public class TableGroup {
     }
 
     public TableGroup(Long id, LocalDateTime createdDate) {
-        this(id, createdDate, null);
+        this(id, createdDate, List.of());
     }
 
     public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {

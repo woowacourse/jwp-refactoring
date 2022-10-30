@@ -1,5 +1,6 @@
 package kitchenpos.repository;
 
+import static kitchenpos.fixture.DomainFixture.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -15,7 +16,10 @@ class TableGroupRepositoryTest extends RepositoryTest {
 
     @Test
     void 테이블그룹을_저장한다() {
-        TableGroup savedTableGroup = tableGroupRepository.save(List.of(1L));
+        OrderTable saved1 = orderTableDao.save(createOrderTable(true));
+        OrderTable saved2 = orderTableDao.save(createOrderTable(true));
+
+        TableGroup savedTableGroup = tableGroupRepository.save(List.of(saved1.getId(), saved2.getId()));
 
         assertThat(tableGroupDao.findById(savedTableGroup.getId())).isPresent();
     }
@@ -28,9 +32,8 @@ class TableGroupRepositoryTest extends RepositoryTest {
 
     @Test
     void 그룹을_해제한다() {
-        OrderTable orderTable = new OrderTable(1, true);
-        OrderTable saved1 = orderTableDao.save(orderTable);
-        OrderTable saved2 = orderTableDao.save(orderTable);
+        OrderTable saved1 = orderTableDao.save(createOrderTable(true));
+        OrderTable saved2 = orderTableDao.save(createOrderTable(true));
 
         TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Arrays.asList(saved1, saved2));
         tableGroupDao.save(tableGroup);
