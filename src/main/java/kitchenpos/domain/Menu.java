@@ -14,9 +14,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import kitchenpos.application.dto.MenuProductRequest;
-import kitchenpos.application.dto.MenuRequest;
-
 @Table(name = "menu")
 @Entity
 public class Menu {
@@ -48,8 +45,8 @@ public class Menu {
     private void validatePriceIsLessThanProductPriceSum(BigDecimal price, List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
-            Product product = menuProduct.getProduct();
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+            BigDecimal menuProductPrice = menuProduct.calculatePrice();
+            sum = sum.add(price);
         }
 
         if (price.compareTo(sum) > 0) {

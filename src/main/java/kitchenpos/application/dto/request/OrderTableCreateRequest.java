@@ -1,14 +1,14 @@
-package kitchenpos.application.dto;
+package kitchenpos.application.dto.request;
 
-public class OrderTableModifyRequest {
+public class OrderTableCreateRequest {
 
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTableModifyRequest() {
+    public OrderTableCreateRequest() {
     }
 
-    public OrderTableModifyRequest(int numberOfGuests, boolean empty) {
+    public OrderTableCreateRequest(int numberOfGuests, boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }

@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -17,11 +16,9 @@ import org.springframework.test.context.TestConstructor.AutowireMode;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.TestFixture;
-import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.MenuService;
-import kitchenpos.application.ProductService;
-import kitchenpos.application.dto.MenuProductRequest;
-import kitchenpos.application.dto.MenuRequest;
+import kitchenpos.application.dto.request.MenuProductRequest;
+import kitchenpos.application.dto.request.MenuRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;

@@ -13,7 +13,7 @@ import org.springframework.test.context.TestConstructor.AutowireMode;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.application.ProductService;
-import kitchenpos.application.dto.ProductRequest;
+import kitchenpos.application.dto.request.ProductRequest;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.ProductRepository;
 

@@ -1,7 +1,6 @@
 package kitchenpos;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -10,15 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.application.MenuService;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.TableGroupService;
-import kitchenpos.application.dto.MenuProductRequest;
-import kitchenpos.application.dto.MenuRequest;
-import kitchenpos.application.dto.ProductRequest;
+import kitchenpos.application.dto.request.MenuProductRequest;
+import kitchenpos.application.dto.request.MenuRequest;
+import kitchenpos.application.dto.request.ProductRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 
 @Component

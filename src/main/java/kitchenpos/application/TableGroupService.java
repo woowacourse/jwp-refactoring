@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import kitchenpos.application.dto.OrderTableRequest;
-import kitchenpos.application.dto.TableGroupRequest;
+import kitchenpos.application.dto.request.OrderTableRequest;
+import kitchenpos.application.dto.request.TableGroupRequest;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;

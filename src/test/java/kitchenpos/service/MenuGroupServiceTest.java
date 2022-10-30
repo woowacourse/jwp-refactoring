@@ -11,7 +11,7 @@ import org.springframework.test.context.TestConstructor.AutowireMode;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.application.MenuGroupService;
-import kitchenpos.application.dto.MenuGroupRequest;
+import kitchenpos.application.dto.request.MenuGroupRequest;
 
 @SpringBootTest
 @TestConstructor(autowireMode = AutowireMode.ALL)

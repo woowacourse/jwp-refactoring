@@ -3,9 +3,10 @@ package kitchenpos.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+
+import javax.persistence.EntityManager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,12 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.TestFixture;
 import kitchenpos.application.OrderService;
-import kitchenpos.application.dto.OrderLineItemRequest;
-import kitchenpos.application.dto.OrderRequest;
-import kitchenpos.application.dto.OrderStatusRequest;
+import kitchenpos.application.dto.request.OrderLineItemRequest;
+import kitchenpos.application.dto.request.OrderRequest;
+import kitchenpos.application.dto.request.OrderStatusRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.OrderTableRepository;
@@ -35,15 +35,17 @@ public class OrderServiceTest {
     private final OrderService orderService;
     private final OrderTableRepository orderTableRepository;
     private final TestFixture testFixture;
+    private final EntityManager entityManager;
 
     OrderTable orderTable;
     Menu menu;
 
     public OrderServiceTest(OrderService orderService, OrderTableRepository orderTableRepository,
-                            TestFixture testFixture) {
+                            TestFixture testFixture, EntityManager entityManager) {
         this.orderService = orderService;
         this.orderTableRepository = orderTableRepository;
         this.testFixture = testFixture;
+        this.entityManager = entityManager;
     }
 
     @BeforeEach
