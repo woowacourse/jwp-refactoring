@@ -2,7 +2,7 @@ package kitchenpos.dao.repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.dao.JdbcTemplateOrderDao;
+import kitchenpos.dao.jdbctemplate.JdbcTemplateOrderDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -25,14 +25,18 @@ public class OrderRepository implements OrderDao {
         Order save = orderDao.save(entity);
 
         if (entity.getId() == null) {
-            List<OrderLineItem> items = new ArrayList<>();
-            for (OrderLineItem item : entity.getOrderLineItems()) {
-                item.updateOrderId(save.getId());
-                items.add(itemRepository.save(item));
-            }
-            save.updateOrderLineItems(items);
+            saveItems(entity, save);
         }
         return save;
+    }
+
+    private void saveItems(Order entity, Order save) {
+        List<OrderLineItem> items = new ArrayList<>();
+        for (OrderLineItem item : entity.getOrderLineItems()) {
+            item.updateOrderId(save.getId());
+            items.add(itemRepository.save(item));
+        }
+        save.updateOrderLineItems(items);
     }
 
     @Override

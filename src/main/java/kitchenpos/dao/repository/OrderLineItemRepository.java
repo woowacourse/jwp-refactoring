@@ -2,7 +2,7 @@ package kitchenpos.dao.repository;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.JdbcTemplateOrderLineItemDao;
+import kitchenpos.dao.jdbctemplate.JdbcTemplateOrderLineItemDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.domain.OrderLineItem;
 import org.springframework.stereotype.Repository;
