@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.menu.application.dto.MenuProductDto;
 import kitchenpos.menu.application.dto.MenuRequestDto;
-import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.product.domain.Product;
 
 public class MenuFixture {
@@ -19,9 +19,9 @@ public class MenuFixture {
         return new MenuRequestDto(name, price, menuGroupId, makeMenuProducts(products));
     }
 
-    private static List<MenuProduct> makeMenuProducts(final Product[] products) {
+    private static List<MenuProductDto> makeMenuProducts(final Product[] products) {
         return Arrays.stream(products)
-                .map(it -> new MenuProduct(null, it.getId(), QUANTITY))
+                .map(it -> new MenuProductDto(null, null, it.getId(), QUANTITY))
                 .collect(Collectors.toList());
     }
 

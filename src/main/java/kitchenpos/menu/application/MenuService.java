@@ -3,6 +3,7 @@ package kitchenpos.menu.application;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.menu.application.dto.MenuProductDto;
 import kitchenpos.menu.application.dto.MenuRequestDto;
 import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.menu.domain.Menu;
@@ -42,28 +43,30 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final List<MenuProduct> menuProducts = menuRequestDto.getMenuProducts();
+        final List<MenuProductDto> menuProductDtos = menuRequestDto.getMenuProducts();
 
-        Price.convertToMenuPrice(menuRequestDto.getPrice(), findProducts(menuProducts), getQuantities(menuProducts));
+        Price.convertToMenuPrice(menuRequestDto.getPrice(),
+                findProducts(menuProductDtos),
+                getQuantities(menuProductDtos));
         final Menu savedMenu = menuRepository.save(new Menu(menuRequestDto.getName(), menuRequestDto.getPrice(), menuRequestDto.getMenuGroupId()));
 
-        return new MenuResponse(savedMenu, setMenuProductToMenu(menuProducts,savedMenu.getId()));
+        return new MenuResponse(savedMenu, setMenuProductToMenu(menuProductDtos,savedMenu.getId()));
     }
 
-    private List<BigDecimal> findProducts(final List<MenuProduct> menuProducts) {
-        return menuProducts.stream()
+    private List<BigDecimal> findProducts(final List<MenuProductDto> menuProductDtos) {
+        return menuProductDtos.stream()
                         .map(menuProduct -> findProduct(menuProduct.getProductId()).getPrice())
                         .collect(Collectors.toList());
     }
 
-    private List<Long> getQuantities(final List<MenuProduct> menuProducts) {
-        return menuProducts.stream()
-                        .map(MenuProduct::getQuantity)
+    private List<Long> getQuantities(final List<MenuProductDto> menuProductDtos) {
+        return menuProductDtos.stream()
+                        .map(MenuProductDto::getQuantity)
                         .collect(Collectors.toList());
     }
 
-    private List<MenuProduct> setMenuProductToMenu(final List<MenuProduct> menuProducts, Long menuId) {
-        return menuProducts.stream()
+    private List<MenuProduct> setMenuProductToMenu(final List<MenuProductDto> menuProductDtos, Long menuId) {
+        return menuProductDtos.stream()
                 .map(menuProduct -> new MenuProduct(menuId, menuProduct.getProductId(), menuProduct.getQuantity()))
                 .map(menuProductRepository::save)
                 .collect(Collectors.toList());
