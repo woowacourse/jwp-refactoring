@@ -58,17 +58,17 @@ public class OrderService {
         return order;
     }
 
-    private OrderTable findOrderTableById(Long id) {
+    private OrderTable findOrderTableById(final Long id) {
         return orderTableRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블 입니다."));
     }
 
-    private Menu findMenuById(Long id) {
+    private Menu findMenuById(final Long id) {
         return menuRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴입니다."));
     }
 
-    private Order findOrderById(Long id) {
+    private Order findOrderById(final Long id) {
         return orderRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 주문입니다."));
     }

@@ -49,12 +49,12 @@ public class MenuService {
         return menuRepository.findAll();
     }
 
-    private MenuGroup findMenuGroupById(Long id) {
+    private MenuGroup findMenuGroupById(final Long id) {
         return menuGroupRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴그룹입니다."));
     }
 
-    private Product findProductById(Long id) {
+    private Product findProductById(final Long id) {
         return productRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 제품입니다."));
     }
