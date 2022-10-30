@@ -3,8 +3,6 @@ package kitchenpos.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.JdbcTemplateOrderDao;
-import kitchenpos.dao.JdbcTemplateOrderLineItemDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import org.springframework.stereotype.Repository;
@@ -15,7 +13,7 @@ public class OrderRepository {
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
 
-    public OrderRepository(final JdbcTemplateOrderDao orderDao, final JdbcTemplateOrderLineItemDao orderLineItemDao) {
+    public OrderRepository(final OrderDao orderDao, final OrderLineItemDao orderLineItemDao) {
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
     }

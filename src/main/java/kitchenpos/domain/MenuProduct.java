@@ -5,14 +5,10 @@ import java.math.BigDecimal;
 public class MenuProduct {
 
     private final Long seq;
-    private Long menuId;
+    private final Long menuId;
     private final Long productId;
     private final BigDecimal price;
-    private long quantity;
-
-    public MenuProduct(final Long productId, final long quantity) {
-        this(null, null, productId, quantity);
-    }
+    private final long quantity;
 
     public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity) {
         this(seq, menuId, productId, null, quantity);
@@ -43,19 +39,15 @@ public class MenuProduct {
         return menuId;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
     public Long getProductId() {
         return productId;
     }
 
-    public long getQuantity() {
-        return quantity;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
+    public long getQuantity() {
+        return quantity;
     }
 }

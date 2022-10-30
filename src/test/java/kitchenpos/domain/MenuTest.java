@@ -13,7 +13,8 @@ public class MenuTest {
     @DisplayName("메뉴의 가격은 0원 미만이면 예외를 던진다.")
     void price_underZero_throwException() {
         // when & then
-        assertThatThrownBy(() -> new Menu("닭강정", BigDecimal.valueOf(-1L), 1L, List.of(new MenuProduct(1L, 1L))))
+        assertThatThrownBy(
+                () -> new Menu("닭강정", BigDecimal.valueOf(-1L), 1L, List.of(new MenuProduct(null, null, 1L, 1L))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

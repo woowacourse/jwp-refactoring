@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.dao.JdbcTemplateMenuDao;
 import kitchenpos.dao.JdbcTemplateMenuProductDao;
 import kitchenpos.dao.MenuDao;
@@ -20,35 +19,44 @@ public class MenuRepository {
         this.menuProductDao = menuProductDao;
     }
 
-    public Menu save(final Menu entity) {
-        final List<MenuProduct> menuProducts = entity.getMenuProducts();
-        final Menu savedMenu = menuDao.save(entity);
+    public Menu save(final Menu menu) {
+        final List<MenuProduct> menuProducts = menu.getMenuProducts();
+        final Menu menuEntity = menuDao.save(menu);
 
-        final List<MenuProduct> savedMenuProducts = getMenuProducts(menuProducts, savedMenu);
-        savedMenu.setMenuProducts(savedMenuProducts);
-
-        return savedMenu;
+        return MenuFactory.create(menuEntity, toMenuProductEntities(menuEntity.getId(), menuProducts));
     }
 
-    private List<MenuProduct> getMenuProducts(final List<MenuProduct> menuProducts, final Menu savedMenu) {
-        final Long menuId = savedMenu.getId();
+    private List<MenuProduct> toMenuProductEntities(final Long menuId, final List<MenuProduct> menuProducts) {
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
+
         for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
+            final MenuProduct menuProductWithMenuId = new MenuProduct(
+                    null,
+                    menuId,
+                    menuProduct.getProductId(),
+                    menuProduct.getPrice(),
+                    menuProduct.getQuantity());
+            savedMenuProducts.add(menuProductDao.save(menuProductWithMenuId));
         }
 
         return savedMenuProducts;
     }
 
-    public Optional<Menu> findById(final Long id) {
-        return menuDao.findById(id);
+    public Menu getById(final Long id) {
+        final Menu menuEntity = menuDao.findById(id)
+                .orElseThrow(IllegalArgumentException::new);
+        final List<MenuProduct> menuProductEntities = menuProductDao.findAllByMenuId(id);
+
+        return MenuFactory.create(menuEntity, menuProductEntities);
     }
 
     public List<Menu> findAll() {
-        final List<Menu> menus = menuDao.findAll();
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+        final List<Menu> menus = new ArrayList<>();
+
+        final List<Menu> menuEntities = menuDao.findAll();
+        for (final Menu menuEntity : menuEntities) {
+            final List<MenuProduct> menuProductEntities = menuProductDao.findAllByMenuId(menuEntity.getId());
+            menus.add(MenuFactory.create(menuEntity, menuProductEntities));
         }
 
         return menus;

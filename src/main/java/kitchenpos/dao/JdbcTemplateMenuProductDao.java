@@ -55,14 +55,14 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
 
     @Override
     public List<MenuProduct> findAllByMenuId(final Long menuId) {
-        final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product WHERE menu_id = (:menuId)";
+        final String sql = "SELECT seq, menu_id, product_id, quantity, p.price FROM menu_product mp JOIN product p ON mp.product_id = p.id  WHERE menu_id = (:menuId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("menuId", menuId);
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     private MenuProduct select(final Long id) {
-        final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product WHERE seq = (:seq)";
+        final String sql = "SELECT seq, menu_id, product_id, quantity, p.price FROM menu_product mp JOIN product p ON mp.product_id = p.id WHERE seq = (:seq)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("seq", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
@@ -73,6 +73,7 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
                 resultSet.getLong(KEY_COLUMN_NAME),
                 resultSet.getLong("menu_id"),
                 resultSet.getLong("product_id"),
+                resultSet.getBigDecimal("price"),
                 resultSet.getLong("quantity")
         );
     }

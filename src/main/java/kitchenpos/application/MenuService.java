@@ -36,7 +36,7 @@ public class MenuService {
     public MenuResponse create(final MenuRequest request) {
         validateMenuGroupExistById(request.getMenuGroupId());
         final Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(),
-                getMenuProducts(request)); // 미완성 객체 ( Menu의 Id, MenuProducts의 seq, MenuId )
+                getMenuProducts(request));
 
         return toMenuResponse(menuRepository.save(menu));
     }
@@ -51,7 +51,8 @@ public class MenuService {
         final List<MenuProductRequest> menuProductsRequest = request.getMenuProducts();
 
         return menuProductsRequest.stream()
-                .map(it -> MenuProduct.of(getProductById(it.getProductId()), it.getQuantity()))
+                .map(it -> MenuProduct.
+                        of(getProductById(it.getProductId()), it.getQuantity()))
                 .collect(Collectors.toList());
     }
 
