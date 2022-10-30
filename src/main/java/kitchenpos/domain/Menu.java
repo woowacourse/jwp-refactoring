@@ -21,7 +21,7 @@ public class Menu {
         this(null, name, price, menuGroupId, menuProducts);
     }
 
-    public Menu(final long id, final String name, final BigDecimal price, final long menuGroupId) {
+    public Menu(final Long id, final String name, final BigDecimal price, final long menuGroupId) {
         this(id, name, price, menuGroupId, Collections.emptyList());
     }
 

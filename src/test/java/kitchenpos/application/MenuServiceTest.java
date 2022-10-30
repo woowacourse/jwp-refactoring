@@ -55,7 +55,7 @@ class MenuServiceTest {
     @DisplayName("존재하지 않은 상품인 경우, 예외를 발생한다")
     @Test
     void does_not_exist_product_exception() {
-        final MenuProductCreateRequest notExistProduct = new MenuProductCreateRequest(1L, 0L, 1L);
+        final MenuProductCreateRequest notExistProduct = new MenuProductCreateRequest(0L, 1L);
 
         final MenuCreateRequest request = new MenuCreateRequest("뿌링클", BigDecimal.valueOf(18000), 1L,
                 Collections.singletonList(notExistProduct));
@@ -67,7 +67,7 @@ class MenuServiceTest {
     @DisplayName("메뉴 가격이 상품의 가격 총합보다 큰 경우, 예외를 발생한다")
     @Test
     void menu_price_more_expensive_than_sum_of_product_exception() {
-        final MenuProductCreateRequest product = new MenuProductCreateRequest(1L, 1L, 2L);
+        final MenuProductCreateRequest product = new MenuProductCreateRequest(1L, 2L);
 
         final MenuCreateRequest request = new MenuCreateRequest("뿌링클", BigDecimal.valueOf(180000), 1L,
                 Collections.singletonList(product));
@@ -79,7 +79,7 @@ class MenuServiceTest {
     @DisplayName("메뉴를 생성한다")
     @Test
     void create() {
-        final MenuProductCreateRequest menuProduct = new MenuProductCreateRequest(1L, 1L, 2L);
+        final MenuProductCreateRequest menuProduct = new MenuProductCreateRequest(1L, 2L);
 
         final MenuCreateRequest request = new MenuCreateRequest("뿌링클", BigDecimal.valueOf(18000), 1L,
                 Collections.singletonList(menuProduct));

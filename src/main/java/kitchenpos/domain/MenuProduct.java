@@ -16,8 +16,8 @@ public class MenuProduct {
         this(null, menuId, productId, quantity);
     }
 
-    public MenuProduct(final Long menuId, final Long productId, final long quantity, final BigDecimal price) {
-        this(null, menuId, productId, quantity);
+    public MenuProduct(final Long productId, final long quantity, final BigDecimal price) {
+        this(null, null, productId, quantity);
         this.price = price;
     }
 

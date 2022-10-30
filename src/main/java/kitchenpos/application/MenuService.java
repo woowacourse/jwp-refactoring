@@ -49,7 +49,7 @@ public class MenuService {
                 .map(it -> {
                     final Product product = productDao.findById(it.getProductId())
                             .orElseThrow(IllegalArgumentException::new);
-                    return new MenuProduct(it.getMenuId(), product.getId(), it.getQuantity(), product.getPrice());
+                    return new MenuProduct(product.getId(), it.getQuantity(), product.getPrice());
                 })
                 .collect(Collectors.toList());
     }
