@@ -33,10 +33,6 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(Long id) {
-        this.id = id;
-    }
-
     public Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
         injectMenu(menuProducts);
         this.name = name;

@@ -27,10 +27,6 @@ public class TableGroup {
     protected TableGroup() {
     }
 
-    public TableGroup(final Long id) {
-        this.id = id;
-    }
-
     public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         validateOrderTables(orderTables);
         injectTableGroup(orderTables);

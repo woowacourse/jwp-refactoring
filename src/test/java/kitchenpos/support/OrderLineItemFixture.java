@@ -14,10 +14,6 @@ public enum OrderLineItemFixture {
         this.quantity = quantity;
     }
 
-    public OrderLineItem 생성(final long menuId) {
-        return new OrderLineItem(null, null, new Menu(menuId), quantity);
-    }
-
     public OrderLineItem 생성(final Menu menu) {
         return new OrderLineItem(null, null, menu, quantity);
     }

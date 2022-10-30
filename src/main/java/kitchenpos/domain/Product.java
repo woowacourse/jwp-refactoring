@@ -20,10 +20,6 @@ public class Product {
     protected Product() {
     }
 
-    protected Product(Long id) {
-        this(id, null, null);
-    }
-
     public Product(final String name, final Price price) {
         this(null, name, price);
     }
