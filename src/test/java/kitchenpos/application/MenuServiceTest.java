@@ -30,16 +30,18 @@ class MenuServiceTest {
         MenuCreateRequest request = new MenuCreateRequest("뿌링클", null, 1L, new ArrayList<>());
 
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴 가격은 null이 아니고 0보다 크거나 같아야 합니다.");
     }
 
     @DisplayName("메뉴 가격이 0보다 작은 경우, 예외를 발생한다")
     @Test
     void negative_price_exception() {
-        final MenuCreateRequest request = new MenuCreateRequest("뿌링클", BigDecimal.valueOf(-1), null, new ArrayList<>());
+        final MenuCreateRequest request = new MenuCreateRequest("뿌링클", BigDecimal.valueOf(-1), 1L, new ArrayList<>());
 
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴 가격은 null이 아니고 0보다 크거나 같아야 합니다.");
     }
 
     @DisplayName("존재하지 않은 메뉴 그룹인 경우, 예외를 발생한다")
@@ -49,7 +51,8 @@ class MenuServiceTest {
                 new ArrayList<>());
 
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴 그룹이 존재하지 않습니다.");
     }
 
     @DisplayName("존재하지 않은 상품인 경우, 예외를 발생한다")
@@ -61,7 +64,8 @@ class MenuServiceTest {
                 Collections.singletonList(notExistProduct));
 
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("상품이 존재하지 않습니다.");
     }
 
     @DisplayName("메뉴 가격이 상품의 가격 총합보다 큰 경우, 예외를 발생한다")
@@ -73,7 +77,8 @@ class MenuServiceTest {
                 Collections.singletonList(product));
 
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("상품의 총 합과 메뉴의 총 합이 같지 않습니다.");
     }
 
     @DisplayName("메뉴를 생성한다")

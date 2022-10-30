@@ -33,7 +33,7 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
         if (!menuGroupDao.existsById(request.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
         }
 
         final Menu savedMenu = menuDao.save(new Menu(request.getName(),
@@ -48,7 +48,7 @@ public class MenuService {
         return menuProductRequests.stream()
                 .map(it -> {
                     final Product product = productDao.findById(it.getProductId())
-                            .orElseThrow(IllegalArgumentException::new);
+                            .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
                     return new MenuProduct(product.getId(), it.getQuantity(), product.getPrice());
                 })
                 .collect(Collectors.toList());

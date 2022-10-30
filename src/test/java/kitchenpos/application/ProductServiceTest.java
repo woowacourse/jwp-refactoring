@@ -29,7 +29,8 @@ class ProductServiceTest {
         final ProductCreateRequest request = new ProductCreateRequest("양념", null);
 
         assertThatThrownBy(() -> productService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("상품의 가격은 null이 아니고 0보다 크거나 같아야 합니다.");
     }
 
     @DisplayName("상품의 가격이 0보다 작은 경우 예외가 발생한다")
@@ -38,7 +39,8 @@ class ProductServiceTest {
         final ProductCreateRequest request = new ProductCreateRequest("양념", BigDecimal.valueOf(-1L));
 
         assertThatThrownBy(() -> productService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("상품의 가격은 null이 아니고 0보다 크거나 같아야 합니다.");
     }
 
     @DisplayName("상품의 가격이 0이상인 경우 등록할 수 있다")

@@ -38,14 +38,14 @@ public class Menu {
 
     private static void validatePrice(final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴 가격은 null이 아니고 0보다 크거나 같아야 합니다.");
         }
     }
 
     private void validateProductPrice(final BigDecimal price, final List<MenuProduct> menuProducts) {
         final BigDecimal sum = getTotalAmount(menuProducts);
         if (!sum.equals(BigDecimal.ZERO) && price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("상품의 총 합과 메뉴의 총 합이 같지 않습니다.");
         }
     }
 
