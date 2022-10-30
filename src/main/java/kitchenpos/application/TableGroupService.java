@@ -32,18 +32,11 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupDto create(final TableGroupCreationDto tableGroupCreationDto) {
-        List<Long> orderTableIds = tableGroupCreationDto.getOrderTableIds()
-                .stream()
-                .map(OrderTableIdDto::getId)
-                .collect(Collectors.toList());
+        List<Long> orderTableIds = getOrderTableIds(tableGroupCreationDto);
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-        if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
+        validateTheNumberOfOrderTableIds(orderTableIds, savedOrderTables);
 
-        final TableGroup tableGroup = new TableGroup(savedOrderTables, LocalDateTime.now());
-
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(savedOrderTables, LocalDateTime.now()));
         final Long tableGroupId = savedTableGroup.getId();
 
         final List<OrderTable> orderTables = savedOrderTables.stream()
@@ -53,6 +46,21 @@ public class TableGroupService {
 
         return TableGroupDto.from(savedTableGroup.addTableGroups(orderTables));
     }
+
+    private List<Long> getOrderTableIds(final TableGroupCreationDto tableGroupCreationDto) {
+        return tableGroupCreationDto.getOrderTableIds()
+                .stream()
+                .map(OrderTableIdDto::getId)
+                .collect(Collectors.toList());
+    }
+
+    private void validateTheNumberOfOrderTableIds(final List<Long> orderTableIds,
+                                                  final List<OrderTable> savedOrderTables) {
+        if (orderTableIds.size() != savedOrderTables.size()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
 
     @Transactional
     public void ungroupTable(final Long tableGroupId) {

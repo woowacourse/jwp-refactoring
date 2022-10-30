@@ -40,7 +40,7 @@ public class TableService {
     public OrderTableDto changeEmpty(final Long orderTableId, final Boolean emptyStatus) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        canChangeEmptyStatus(savedOrderTable);
+        validateChangeEmptyStatus(savedOrderTable);
 
         final OrderTable orderTable = new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
                 savedOrderTable.getNumberOfGuests(), emptyStatus);
@@ -48,7 +48,7 @@ public class TableService {
         return OrderTableDto.from(orderTableDao.save(orderTable));
     }
 
-    private void canChangeEmptyStatus(final OrderTable orderTable) {
+    private void validateChangeEmptyStatus(final OrderTable orderTable) {
         final Optional<Order> order = orderDao.findByTableId(orderTable.getId());
         if (orderTable.isPartOfTableGroup() || (order.isPresent() && !order.get().isInCompletionStatus())) {
             throw new IllegalArgumentException();
