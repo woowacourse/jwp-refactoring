@@ -24,7 +24,7 @@ public class ProductService {
     }
 
     private ProductResponse toResponse(Product product) {
-        return new ProductResponse(product.getId(), product.getName(), product.getPrice());
+        return new ProductResponse(product.getId(), product.getName(), product.getPriceValue());
     }
 
     public List<ProductResponse> list() {

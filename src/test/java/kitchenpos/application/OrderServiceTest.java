@@ -25,10 +25,11 @@ import org.junit.jupiter.api.Test;
 class OrderServiceTest extends ServiceTest {
     private void init() {
         menuGroupDao.save(new MenuGroup("한마리메뉴"));
-        productDao.save(new Product(null, "후라이드", new Price(16000)));
+        Price price = new Price(16000);
+        productDao.save(new Product(null, "후라이드", price));
         menuDao.save(메뉴_후라이드치킨());
         orderTableDao.save(new OrderTable(null, null, 0, false));
-        menuProductDao.save(new MenuProduct(null, 1L, 1L, 1));
+        menuProductDao.save(new MenuProduct(null, 1L, 1L, 1, price));
     }
 
     @DisplayName("주문을 추가하면 주문 목록에 추가된다.")

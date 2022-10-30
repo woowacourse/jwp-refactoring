@@ -13,7 +13,7 @@ class ProductTest {
         Product product = new Product("123", new Price(10000));
         assertAll(
                 () -> assertThat(product.getName()).isEqualTo("123"),
-                () -> assertThat(product.getPrice()).isEqualTo(new BigDecimal("10000.0"))
+                () -> assertThat(product.getPriceValue()).isEqualTo(new BigDecimal("10000.0"))
         );
     }
 }
