@@ -6,15 +6,18 @@ import java.util.Objects;
 import org.springframework.util.CollectionUtils;
 
 public class TableGroup {
-    private Long id;
+
+    private final Long id;
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
 
-    public TableGroup() {
-    }
-
     public TableGroup(final List<OrderTable> orderTables) {
         this(null, LocalDateTime.now(), orderTables);
+    }
+
+    public TableGroup(final long id, final LocalDateTime createdDate) {
+        this.id = id;
+        this.createdDate = createdDate;
     }
 
     public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
@@ -49,10 +52,6 @@ public class TableGroup {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
@@ -63,9 +62,5 @@ public class TableGroup {
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 }

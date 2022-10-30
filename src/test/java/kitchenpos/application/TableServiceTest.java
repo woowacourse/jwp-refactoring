@@ -73,8 +73,7 @@ class TableServiceTest {
         final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(
                 Arrays.asList(new OrderTable(10, false), new OrderTable(10, false))));
 
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(savedTableGroup.getId());
+        final OrderTable orderTable = new OrderTable(savedTableGroup.getId(), 10, false);
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         // when, then
