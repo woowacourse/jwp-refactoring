@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.ui.request.menu.MenuCreateRequest;
 import kitchenpos.ui.request.menu.MenuProductDto;
+import kitchenpos.ui.request.menugroup.MenuGroupCreateRequest;
 import kitchenpos.ui.request.order.OrderCreateRequest;
 import kitchenpos.ui.request.order.OrderLineItemDto;
 import kitchenpos.ui.request.prodcut.ProductCreateRequest;
@@ -56,5 +57,9 @@ public class DtoFixture {
 
     public static ProductCreateRequest getProductCreateRequest(final String name, final BigDecimal price) {
         return new ProductCreateRequest(name, price);
+    }
+
+    public static MenuGroupCreateRequest getMenuGroupCreateRequest() {
+        return new MenuGroupCreateRequest("마이쮸 1종 세트");
     }
 }

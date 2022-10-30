@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import static kitchenpos.DomainFixture.getMenuGroup;
 import static kitchenpos.DtoFixture.getEmptyTableCreateRequest;
 import static kitchenpos.DtoFixture.getMenuCreateRequest;
+import static kitchenpos.DtoFixture.getMenuGroupCreateRequest;
 import static kitchenpos.DtoFixture.getNotEmptyTableCreateRequest;
 import static kitchenpos.DtoFixture.getOrderCreateRequest;
 import static kitchenpos.DtoFixture.getTableChangeEmptyRequest;
@@ -55,7 +55,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeEmpty() {
         final OrderTable savedTable = 테이블_등록(getNotEmptyTableCreateRequest(0));
-        final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroup());
+        final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroupCreateRequest());
         final Menu menu = 메뉴_등록(getMenuCreateRequest(menuGroup.getId(), createMenuProductDtos()));
         final Order savedOrder = 주문_등록(getOrderCreateRequest(savedTable.getId(), menu.getId()));
         final OrderStatusChangeRequest statusChangeRequest = new OrderStatusChangeRequest(
@@ -101,7 +101,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeEmpty_exception_orderStatusIsCookingOrMeal() {
         final OrderTable savedTable = 테이블_등록(getNotEmptyTableCreateRequest(0));
-        final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroup());
+        final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroupCreateRequest());
         final Menu menu = 메뉴_등록(getMenuCreateRequest(menuGroup.getId(), createMenuProductDtos()));
         주문_등록(getOrderCreateRequest(savedTable.getId(), menu.getId()));
 

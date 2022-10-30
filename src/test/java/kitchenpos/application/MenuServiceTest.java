@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.DomainFixture.getMenuGroup;
 import static kitchenpos.DtoFixture.getMenuCreateRequest;
+import static kitchenpos.DtoFixture.getMenuGroupCreateRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -20,7 +20,7 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴를 등록한다.")
     @Test
     void create() {
-        final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroup());
+        final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroupCreateRequest());
         final MenuCreateRequest request = getMenuCreateRequest(menuGroup.getId(), createMenuProductDtos());
 
         final Menu savedMenu = 메뉴_등록(request);
@@ -46,7 +46,7 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴를 등록한다. - 존재하지 않는 상품이 포함되어 있으면 예외를 반환한다.")
     @Test
     void create_exception_noSuchProduct() {
-        final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroup());
+        final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroupCreateRequest());
         final List<MenuProductDto> menuProductDtos = List.of(new MenuProductDto(null, 1));
         final MenuCreateRequest request = getMenuCreateRequest(menuGroup.getId(), menuProductDtos);
 
@@ -57,7 +57,7 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴 목록을 조회한다.")
     @Test
     void list() {
-        final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroup());
+        final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroupCreateRequest());
         final MenuCreateRequest request = getMenuCreateRequest(menuGroup.getId(), createMenuProductDtos());
         메뉴_등록(request);
 

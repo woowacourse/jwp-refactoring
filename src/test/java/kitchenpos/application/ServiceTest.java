@@ -13,6 +13,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.request.menu.MenuCreateRequest;
 import kitchenpos.ui.request.menu.MenuProductDto;
+import kitchenpos.ui.request.menugroup.MenuGroupCreateRequest;
 import kitchenpos.ui.request.order.OrderCreateRequest;
 import kitchenpos.ui.request.prodcut.ProductCreateRequest;
 import kitchenpos.ui.request.table.TableCreateRequest;
@@ -50,8 +51,8 @@ public abstract class ServiceTest {
         return productService.create(request);
     }
 
-    protected MenuGroup 메뉴_그룹_등록(final MenuGroup menuGroup) {
-        return menuGroupService.create(menuGroup);
+    protected MenuGroup 메뉴_그룹_등록(final MenuGroupCreateRequest request) {
+        return menuGroupService.create(request);
     }
 
     protected Menu 메뉴_등록(final MenuCreateRequest request) {

@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import static kitchenpos.DomainFixture.getMenuGroup;
 import static kitchenpos.DtoFixture.getEmptyTableCreateRequest;
 import static kitchenpos.DtoFixture.getMenuCreateRequest;
+import static kitchenpos.DtoFixture.getMenuGroupCreateRequest;
 import static kitchenpos.DtoFixture.getNotEmptyTableCreateRequest;
 import static kitchenpos.DtoFixture.getOrderCreateRequest;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 class OrderServiceTest extends ServiceTest {
 
     private Menu createMenu() {
-        final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroup());
+        final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroupCreateRequest());
         return 메뉴_등록(getMenuCreateRequest(menuGroup.getId(), createMenuProductDtos()));
     }
 

@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import static kitchenpos.DomainFixture.getMenuGroup;
 import static kitchenpos.DtoFixture.getEmptyTableCreateRequest;
 import static kitchenpos.DtoFixture.getMenuCreateRequest;
+import static kitchenpos.DtoFixture.getMenuGroupCreateRequest;
 import static kitchenpos.DtoFixture.getNotEmptyTableCreateRequest;
 import static kitchenpos.DtoFixture.getOrderCreateRequest;
 import static kitchenpos.DtoFixture.getTableCreateRequest;
@@ -58,7 +58,8 @@ class TableGroupServiceTest extends ServiceTest {
         final OrderTable table1 = 테이블_등록(getEmptyTableCreateRequest());
         final OrderTable table2 = 테이블_등록(getEmptyTableCreateRequest());
         final OrderTable table3 = 테이블_등록(getNotEmptyTableCreateRequest(0));
-        final TableGroupCreatRequest request = getTableCreateRequest(List.of(table1.getId(), table2.getId(), table3.getId()));
+        final TableGroupCreatRequest request = getTableCreateRequest(
+                List.of(table1.getId(), table2.getId(), table3.getId()));
 
         assertThatThrownBy(() -> 단체_지정(request))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -103,7 +104,7 @@ class TableGroupServiceTest extends ServiceTest {
     void list_exception_orderStatusIsCookingOrMeal() {
         final OrderTable table1 = 테이블_등록(getEmptyTableCreateRequest());
         final OrderTable table2 = 테이블_등록(getEmptyTableCreateRequest());
-        final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroup());
+        final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroupCreateRequest());
         final Menu menu = 메뉴_등록(getMenuCreateRequest(menuGroup.getId(), createMenuProductDtos()));
 
         final TableGroupCreatRequest request = getTableCreateRequest(List.of(table1.getId(), table2.getId()));
