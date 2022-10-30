@@ -12,7 +12,7 @@ import org.springframework.util.CollectionUtils;
 public class OrderLineItems {
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER)
-    @JoinColumn(name = "order_id", nullable = false)
+    @JoinColumn(name = "order_id", nullable = false, updatable = false)
     private List<OrderLineItem> orderLineItems;
 
     private OrderLineItems() {

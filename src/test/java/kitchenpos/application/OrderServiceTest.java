@@ -48,26 +48,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 class OrderServiceTest extends ServiceTest {
 
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
-    private OrderTableRepository orderTableRepository;
-
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private MenuGroupRepository menuGroupRepository;
-
-    @Autowired
-    private MenuRepository menuRepository;
+    private final OrderService orderService;
+    private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
+    private final ProductRepository productRepository;
+    private final MenuGroupRepository menuGroupRepository;
+    private final MenuRepository menuRepository;
 
     private Menu 야채곱창_메뉴;
     private OrderTable 야채곱창_주문_테이블;
+
+    @Autowired
+    OrderServiceTest(final OrderService orderService, final OrderRepository orderRepository,
+                     final OrderTableRepository orderTableRepository, final ProductRepository productRepository,
+                     final MenuGroupRepository menuGroupRepository, final MenuRepository menuRepository) {
+        this.orderService = orderService;
+        this.orderRepository = orderRepository;
+        this.orderTableRepository = orderTableRepository;
+        this.productRepository = productRepository;
+        this.menuGroupRepository = menuGroupRepository;
+        this.menuRepository = menuRepository;
+    }
 
     @BeforeEach
     void setUp() {

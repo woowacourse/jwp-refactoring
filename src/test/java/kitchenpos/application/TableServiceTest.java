@@ -21,20 +21,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 class TableServiceTest extends ServiceTest {
 
-    @Autowired
-    private TableService tableService;
+    private final TableService tableService;
+    private final OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderTableRepository orderTableRepository;
+    TableServiceTest(final TableService tableService,
+                     final OrderTableRepository orderTableRepository) {
+        this.tableService = tableService;
+        this.orderTableRepository = orderTableRepository;
+    }
 
     @DisplayName("주문 테이블을 등록한다.")
     @Test
     void 주문_테이블을_등록한다() {
         // given
-        OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(테이블_손님_수, 사용가능_테이블);
+        OrderTableCreateRequest 주문_테이블_생성_요청 = new OrderTableCreateRequest(테이블_손님_수, 사용가능_테이블);
 
         // when
-        OrderTableResponse actual = tableService.create(orderTableCreateRequest);
+        OrderTableResponse actual = tableService.create(주문_테이블_생성_요청);
 
         // then
         assertAll(
@@ -47,7 +51,10 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문_테이블_목록을_조회한다() {
         // given
-        OrderTable 야채곱창_주문_테이블 = 주문_테이블_생성(테이블_손님_수, 사용중인_테이블);
+        OrderTable 야채곱창_주문_테이블 = new OrderTableBuilder()
+                .numberOfGuests(테이블_손님_수)
+                .empty(사용중인_테이블)
+                .build();
         orderTableRepository.save(야채곱창_주문_테이블);
 
         // when
@@ -61,12 +68,15 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문_테이블을_빈_테이블로_변경한다() {
         // given
-        OrderTable 야채곱창_주문_테이블 = 주문_테이블_생성(테이블_손님_수, 사용중인_테이블);
+        OrderTable 야채곱창_주문_테이블 = new OrderTableBuilder()
+                .numberOfGuests(테이블_손님_수)
+                .empty(사용중인_테이블)
+                .build();
         야채곱창_주문_테이블 = orderTableRepository.save(야채곱창_주문_테이블);
+        OrderTableUpdateEmptyRequest 테이블_상태_변경_요청 = new OrderTableUpdateEmptyRequest(사용가능_테이블);
 
         // when
-        OrderTableResponse actual = tableService.changeEmpty(야채곱창_주문_테이블.getId(),
-                new OrderTableUpdateEmptyRequest(사용가능_테이블));
+        OrderTableResponse actual = tableService.changeEmpty(야채곱창_주문_테이블.getId(), 테이블_상태_변경_요청);
 
         // then
         assertThat(actual.isEmpty()).isTrue();
@@ -87,7 +97,10 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문_테이블의_방문한_손님_수를_변경한다() {
         // given
-        OrderTable 야채곱창_주문_테이블 = 주문_테이블_생성(테이블_손님_수, 사용중인_테이블);
+        OrderTable 야채곱창_주문_테이블 = new OrderTableBuilder()
+                .numberOfGuests(테이블_손님_수)
+                .empty(사용중인_테이블)
+                .build();
         야채곱창_주문_테이블 = orderTableRepository.save(야채곱창_주문_테이블);
 
         int 변경할_테이블_1번_손님_수 = 5;

@@ -34,11 +34,8 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void changeToUse() {
-        if (!this.empty || this.tableGroup != null) {
-            throw new IllegalArgumentException();
-        }
-        this.empty = false;
+    public void changeToEmpty(final boolean empty) {
+        this.empty = empty;
     }
 
     public void changeToEmpty() {
@@ -46,8 +43,11 @@ public class OrderTable {
         this.empty = true;
     }
 
-    public void changeToEmpty(final boolean empty) {
-        this.empty = empty;
+    public void changeToUse() {
+        if (!this.empty || this.tableGroup != null) {
+            throw new IllegalArgumentException();
+        }
+        this.empty = false;
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {

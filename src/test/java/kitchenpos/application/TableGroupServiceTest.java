@@ -22,18 +22,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 class TableGroupServiceTest extends ServiceTest {
 
-    @Autowired
-    private TableGroupService tableGroupService;
-
-    @Autowired
-    private TableGroupRepository tableGroupRepository;
-
-    @Autowired
-    private OrderTableRepository orderTableRepository;
+    private final TableGroupService tableGroupService;
+    private final TableGroupRepository tableGroupRepository;
+    private final OrderTableRepository orderTableRepository;
 
     private OrderTable 야채곱창_주문_테이블;
     private OrderTable 치킨_주문_테이블;
     private OrderTable 피자_주문_테이블;
+
+    @Autowired
+    TableGroupServiceTest(final TableGroupService tableGroupService,
+                          final TableGroupRepository tableGroupRepository,
+                          final OrderTableRepository orderTableRepository) {
+        this.tableGroupService = tableGroupService;
+        this.tableGroupRepository = tableGroupRepository;
+        this.orderTableRepository = orderTableRepository;
+    }
 
     @BeforeEach
     void setUp() {
