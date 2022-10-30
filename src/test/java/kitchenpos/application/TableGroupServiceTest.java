@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import kitchenpos.application.dto.OrderTableIdRequest;
@@ -61,7 +60,8 @@ class TableGroupServiceTest {
     @Test
     void order_table_not_found_exception() {
         assertThatThrownBy(() -> tableGroupService.create(
-                new TableGroupCreateRequest(Arrays.asList(new OrderTableIdRequest(0L), new OrderTableIdRequest(2L)))))
+                new TableGroupCreateRequest(Arrays.asList(new OrderTableIdRequest(0L), new OrderTableIdRequest(1L),
+                        new OrderTableIdRequest(2L)))))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 테이블이 올바르지 않습니다.");
     }
@@ -70,11 +70,11 @@ class TableGroupServiceTest {
     @Test
     void already_set_group_exception() {
         // given
-        final TableGroup firstSavedTableGroup = tableGroupDao.save(
-                new TableGroup(LocalDateTime.now(), new ArrayList<>()));
+        final TableGroup tableGroup = tableGroupDao.save(
+                new TableGroup(Arrays.asList(new OrderTable(10, false), new OrderTable(10, false))));
 
-        final OrderTable orderTable1 = orderTableDao.save(new OrderTable(firstSavedTableGroup.getId(), 10, false));
-        final OrderTable orderTable2 = orderTableDao.save(new OrderTable(firstSavedTableGroup.getId(), 10, false));
+        final OrderTable orderTable1 = orderTableDao.save(new OrderTable(tableGroup.getId(), 10, false));
+        final OrderTable orderTable2 = orderTableDao.save(new OrderTable(tableGroup.getId(), 10, false));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(
@@ -88,11 +88,11 @@ class TableGroupServiceTest {
     @Test
     void empty_order_table_exception() {
         // given
-        final TableGroup firstSavedTableGroup = tableGroupDao.save(
-                new TableGroup(LocalDateTime.now(), new ArrayList<>()));
+        final TableGroup tableGroup = tableGroupDao.save(
+                new TableGroup(Arrays.asList(new OrderTable(10, false), new OrderTable(10, false))));
 
-        final OrderTable orderTable1 = orderTableDao.save(new OrderTable(firstSavedTableGroup.getId(), 10, true));
-        final OrderTable orderTable2 = orderTableDao.save(new OrderTable(firstSavedTableGroup.getId(), 10, false));
+        final OrderTable orderTable1 = orderTableDao.save(new OrderTable(tableGroup.getId(), 10, true));
+        final OrderTable orderTable2 = orderTableDao.save(new OrderTable(tableGroup.getId(), 10, false));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(
@@ -120,8 +120,7 @@ class TableGroupServiceTest {
         final OrderTable orderTable1 = orderTableDao.save(new OrderTable(10, false));
         final OrderTable orderTable2 = orderTableDao.save(new OrderTable(10, false));
 
-        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(),
-                Arrays.asList(orderTable1, orderTable2)));
+        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(Arrays.asList(orderTable1, orderTable2)));
 
         orderDao.save(new Order(orderTable1.getId(), status, LocalDateTime.now(),
                 Collections.singletonList(new OrderLineItem(1L, 1L))));
@@ -130,7 +129,8 @@ class TableGroupServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 상태가 조리 또는 식사 중 일 때, 단체 지정을 해제할 수 없습니다.");
     }
 
     @DisplayName("테이블 단체 지정을 해제한다")
@@ -140,8 +140,7 @@ class TableGroupServiceTest {
         final OrderTable orderTable1 = orderTableDao.save(new OrderTable(10, false));
         final OrderTable orderTable2 = orderTableDao.save(new OrderTable(10, false));
 
-        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(),
-                Arrays.asList(orderTable1, orderTable2)));
+        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(Arrays.asList(orderTable1, orderTable2)));
 
         orderDao.save(new Order(orderTable1.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(),
                 Collections.singletonList(new OrderLineItem(1L, 1L))));

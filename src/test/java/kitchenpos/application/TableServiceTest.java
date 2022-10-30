@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import javax.transaction.Transactional;
@@ -70,7 +70,8 @@ class TableServiceTest {
     @Test
     void grouped_table_exception() {
         // given
-        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()));
+        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(
+                Arrays.asList(new OrderTable(10, false), new OrderTable(10, false))));
 
         final OrderTable orderTable = new OrderTable();
         orderTable.setTableGroupId(savedTableGroup.getId());
