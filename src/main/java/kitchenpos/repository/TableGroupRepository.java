@@ -26,17 +26,12 @@ public class TableGroupRepository {
     @Transactional
     public TableGroup save(final TableGroup entity) {
         List<Long> orderTableIds = toOrderTableIds(entity);
-        List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
-        validateOrderTableSize(orderTableIds, savedOrderTables);
+        List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
+        validateSizeOrderTable(orderTableIds, savedOrderTables);
         validateEmptyOrderTables(savedOrderTables);
 
-        TableGroup savedTableGroup = tableGroupDao.save(entity);
-        updateOrderTables(savedOrderTables, savedTableGroup);
-
-        savedTableGroup.addOrderTables(savedOrderTables);
-
-        return savedTableGroup;
+        return tableGroupDao.save(entity);
     }
 
     private List<Long> toOrderTableIds(final TableGroup entity) {
@@ -46,7 +41,7 @@ public class TableGroupRepository {
                 .collect(toList());
     }
 
-    private void validateOrderTableSize(final List<Long> orderTableIds, final List<OrderTable> orderTables) {
+    private void validateSizeOrderTable(final List<Long> orderTableIds, final List<OrderTable> orderTables) {
         if (orderTableIds.size() != orderTables.size()) {
             throw new IllegalArgumentException();
         }
@@ -57,13 +52,6 @@ public class TableGroupRepository {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
                 throw new IllegalArgumentException();
             }
-        }
-    }
-
-    private void updateOrderTables(final List<OrderTable> orderTables, final TableGroup tableGroup) {
-        for (OrderTable savedOrderTable : orderTables) {
-            savedOrderTable.changeTableGroupId(tableGroup.getId());
-            savedOrderTable.changeEmpty(false);
         }
     }
 }
