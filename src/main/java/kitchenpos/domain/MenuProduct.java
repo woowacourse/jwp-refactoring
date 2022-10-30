@@ -8,7 +8,7 @@ public class MenuProduct {
     private final Long menuId;
     private final Long productId;
     private final long quantity;
-    private BigDecimal price;
+    private final BigDecimal price;
 
     public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity,
                        final BigDecimal price) {
@@ -25,10 +25,6 @@ public class MenuProduct {
 
     public MenuProduct(final Long menuId, final Long productId, final long quantity) {
         this(null, menuId, productId, quantity, null);
-    }
-
-    public MenuProduct(final Long productId, final long quantity) {
-        this(null, null, productId, quantity, null);
     }
 
     public MenuProduct(final Long productId, final long quantity, final BigDecimal price) {
@@ -53,9 +49,5 @@ public class MenuProduct {
 
     public BigDecimal getAmount() {
         return price.multiply(BigDecimal.valueOf(quantity));
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
     }
 }

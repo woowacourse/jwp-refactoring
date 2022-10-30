@@ -32,15 +32,22 @@ public class MenuRepositoryImpl implements MenuRepository {
         final Menu menu = menuDao.save(entity);
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : entity.getMenuProducts()) {
-            MenuProduct savedMenuProduct = menuProductDao.save(
+            final MenuProduct savedMenuProduct = menuProductDao.save(
                     new MenuProduct(
                             menuProduct.getSeq(),
                             menu.getId(),
                             menuProduct.getProductId(),
                             menuProduct.getQuantity()
                     ));
-            savedMenuProduct.setPrice(getById(menuProduct.getProductId()).getPrice());
-            savedMenuProducts.add(savedMenuProduct);
+            savedMenuProducts.add(
+                    new MenuProduct(
+                            savedMenuProduct.getSeq(),
+                            savedMenuProduct.getMenuId(),
+                            savedMenuProduct.getProductId(),
+                            savedMenuProduct.getQuantity(),
+                            getById(menuProduct.getProductId()).getPrice()
+                    )
+            );
         }
         return new Menu(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), savedMenuProducts);
     }

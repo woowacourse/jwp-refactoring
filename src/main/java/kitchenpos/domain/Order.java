@@ -15,7 +15,7 @@ public class Order {
 
     public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
-        validateEmpty(orderLineItems);
+        validateEmptyOrderLineItems(orderLineItems);
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -39,7 +39,7 @@ public class Order {
         this(null, orderTableId, null, null, orderLineItems);
     }
 
-    private void validateEmpty(final List<OrderLineItem> orderLineItems) {
+    private void validateEmptyOrderLineItems(final List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
         }
@@ -66,7 +66,14 @@ public class Order {
     }
 
     public void updateOrderStatus(final String orderStatus) {
+        validateCompletion();
         this.orderStatus = orderStatus;
+    }
+
+    private void validateCompletion() {
+        if (hasStatus(OrderStatus.COMPLETION)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public LocalDateTime getOrderedTime() {

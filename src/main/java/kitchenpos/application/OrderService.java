@@ -35,7 +35,7 @@ public class OrderService {
     public OrderResponse create(final OrderCreateRequest request) {
         final Order order = request.toOrder();
         checkExistMenuIn(order);
-        final OrderTable orderTable = getOrderTable(order);
+        final OrderTable orderTable = getOrderTableById(order.getOrderTableId());
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
@@ -44,15 +44,15 @@ public class OrderService {
         return OrderResponse.from(savedOrder);
     }
 
-    private void checkExistMenuIn(Order order) {
+    private void checkExistMenuIn(final Order order) {
         final long menuCount = menuRepository.countByIdIn(order.getMenuIds());
         if (!order.hasValidSize(menuCount)) {
             throw new IllegalArgumentException();
         }
     }
 
-    private OrderTable getOrderTable(Order order) {
-        return orderTableRepository.findById(order.getOrderTableId())
+    private OrderTable getOrderTableById(final Long orderId) {
+        return orderTableRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
     }
 
@@ -65,10 +65,6 @@ public class OrderService {
     public OrderResponse changeOrderStatus(final Long orderId, final OrderUpdateRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (savedOrder.hasStatus(OrderStatus.COMPLETION)) {
-            throw new IllegalArgumentException();
-        }
 
         final OrderStatus orderStatus = OrderStatus.from(request.getOrderStatus());
         savedOrder.updateOrderStatus(orderStatus.name());

@@ -40,7 +40,13 @@ public class MenuService {
 
         final List<MenuProduct> menuProducts = mapToMenuProducts(request);
         final Menu menu = menuRepository.save(
-                new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), menuProducts));
+                new Menu(
+                        request.getName(),
+                        request.getPrice(),
+                        request.getMenuGroupId(),
+                        menuProducts
+                )
+        );
 
         return MenuResponse.from(menu);
     }
@@ -54,8 +60,8 @@ public class MenuService {
                 .collect(Collectors.toList());
     }
 
-    private Product getProductById(final Long id) {
-        return productRepository.findById(id)
+    private Product getProductById(final Long productId) {
+        return productRepository.findById(productId)
                 .orElseThrow(IllegalArgumentException::new);
     }
 

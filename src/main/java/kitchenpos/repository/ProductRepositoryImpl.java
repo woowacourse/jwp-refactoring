@@ -15,7 +15,6 @@ public class ProductRepositoryImpl implements ProductRepository {
         this.productDao = productDao;
     }
 
-
     @Override
     public Product save(final Product entity) {
         return productDao.save(entity);
