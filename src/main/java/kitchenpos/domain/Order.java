@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import org.springframework.util.CollectionUtils;
 
 @Entity
 @Table(name = "orders")
@@ -28,19 +30,23 @@ public class Order {
     private LocalDateTime orderedTime;
 
     @Transient
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
     }
 
-    public Order(final Long orderTableId,
-                 final String orderStatus,
-                 final LocalDateTime orderedTime,
-                 final List<OrderLineItem> orderLineItems) {
+    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        validateOrderLineItems(orderLineItems);
         this.orderTableId = orderTableId;
-        this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
+        this.orderStatus = OrderStatus.COOKING.name();
+        this.orderedTime = LocalDateTime.now();
         this.orderLineItems = orderLineItems;
+    }
+
+    private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -79,7 +85,7 @@ public class Order {
         return orderLineItems;
     }
 
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
+    public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
     }
 }
