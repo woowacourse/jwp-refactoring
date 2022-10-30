@@ -4,6 +4,8 @@ public class AddOrderTableToTableGroupRequest {
 
     private Long id;
 
+    private AddOrderTableToTableGroupRequest(){}
+
     public AddOrderTableToTableGroupRequest(Long id) {
         this.id = id;
     }

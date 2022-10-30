@@ -4,6 +4,9 @@ public class ChangeOrderTableNumberOfGuestRequest {
 
     private int numberOfGuests;
 
+    private ChangeOrderTableNumberOfGuestRequest() {
+    }
+
     public ChangeOrderTableNumberOfGuestRequest(int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }

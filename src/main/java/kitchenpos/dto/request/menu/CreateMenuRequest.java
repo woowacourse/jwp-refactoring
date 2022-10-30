@@ -10,7 +10,11 @@ public class CreateMenuRequest {
     private Long menuGroupId;
     private List<CreateMenuProductRequest> menuProducts;
 
-    public CreateMenuRequest(String name, BigDecimal price, Long menuGroupId, List<CreateMenuProductRequest> menuProducts) {
+    private CreateMenuRequest() {
+    }
+
+    public CreateMenuRequest(String name, BigDecimal price, Long menuGroupId,
+        List<CreateMenuProductRequest> menuProducts) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;

@@ -4,6 +4,9 @@ public class ChangeOrderTableEmptyRequest {
 
     private boolean empty;
 
+    private ChangeOrderTableEmptyRequest() {
+    }
+
     public ChangeOrderTableEmptyRequest(boolean empty) {
         this.empty = empty;
     }

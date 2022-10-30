@@ -6,6 +6,8 @@ public class CreateTableGroupRequest {
 
     private List<AddOrderTableToTableGroupRequest> orderTables;
 
+    private CreateTableGroupRequest(){}
+
     public CreateTableGroupRequest(List<AddOrderTableToTableGroupRequest> orderTables) {
         this.orderTables = orderTables;
     }
