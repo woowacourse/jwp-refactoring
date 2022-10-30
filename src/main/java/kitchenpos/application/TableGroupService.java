@@ -21,7 +21,8 @@ public class TableGroupService {
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
+    public TableGroupService(final OrderRepository orderRepository,
+                             final OrderTableRepository orderTableRepository,
                              final TableGroupRepository tableGroupRepository) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
@@ -29,25 +30,30 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroupResponse create(final TableGroupCreateRequest tableGroupCreateRequest) {
-        List<OrderTable> orderTables = tableGroupCreateRequest.getOrderTables()
-                .stream()
-                .map(orderTableRepository::getById)
-                .collect(Collectors.toList());
-
-        TableGroup tableGroup = new TableGroup(orderTables);
+    public TableGroupResponse create(final TableGroupCreateRequest request) {
+        TableGroup tableGroup = new TableGroup();
+        List<OrderTable> orderTables = getOrderTables(request);
+        tableGroup.grouping(orderTables);
         tableGroupRepository.save(tableGroup);
         return TableGroupResponse.of(tableGroup);
     }
 
-    @Transactional
-    public void ungroup(final Long tableGroupId) {
-        TableGroup tableGroup = tableGroupRepository.getById(tableGroupId);
-        validateUngroupPossible(tableGroup);
-        tableGroup.ungroupOrderTables();
+    private List<OrderTable> getOrderTables(final TableGroupCreateRequest request) {
+        return request.getOrderTables()
+                .stream()
+                .map(orderTableRepository::getById)
+                .collect(Collectors.toList());
     }
 
-    private void validateUngroupPossible(TableGroup tableGroup) {
+    @Transactional
+    public void ungroup(final Long tableGroupId) {
+        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+                .orElseThrow(IllegalArgumentException::new);
+        validatePossibleUngrouping(tableGroup);
+        tableGroup.ungrouping();
+    }
+
+    private void validatePossibleUngrouping(final TableGroup tableGroup) {
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 tableGroup.getOrderTables(), List.of(COOKING.name(), MEAL.name()))) {
             throw new IllegalArgumentException();

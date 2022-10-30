@@ -14,7 +14,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.common.builder.MenuBuilder;
@@ -191,13 +190,11 @@ class OrderServiceTest extends ServiceTest {
 
     private Order 주문_생성(final OrderTable orderTable, final List<OrderLineItem> orderLineItems,
                         final OrderStatus orderStatus) {
-        Order order = new OrderBuilder()
+        return new OrderBuilder()
                 .orderTableId(orderTable.getId())
                 .orderLineItems(orderLineItems)
                 .orderStatus(orderStatus.name())
                 .build();
-        order.setOrderedTime(LocalDateTime.now());
-        return order;
     }
 
     private OrderLineItem 주문_항목_생성(final Menu menu) {

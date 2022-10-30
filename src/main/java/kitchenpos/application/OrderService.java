@@ -1,11 +1,12 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.OrderStatus.COOKING;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemRequest;
@@ -35,32 +36,29 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
-        List<OrderLineItem> orderLineItems = toEntity(orderCreateRequest);
-        Order order = new Order(orderCreateRequest.getOrderTableId(), OrderStatus.COOKING.name(), orderLineItems);
-        validateExistOrderTableInOrder(order);
+    public OrderResponse create(final OrderCreateRequest request) {
+        Order order = new Order(request.getOrderTableId(), COOKING.name(), orderLineItems(request));
+        validateExistOrderTable(order);
         orderRepository.save(order);
         return OrderResponse.of(order);
     }
 
-    private List<OrderLineItem> toEntity(OrderCreateRequest orderCreateRequest) {
-        return orderCreateRequest.getOrderLineItems()
+    private List<OrderLineItem> orderLineItems(final OrderCreateRequest request) {
+        return request.getOrderLineItems()
                 .stream()
                 .map(this::toOrderLineItem)
                 .collect(Collectors.toList());
     }
 
-    private OrderLineItem toOrderLineItem(final OrderLineItemRequest orderLineItemRequest) {
-        Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
+    private OrderLineItem toOrderLineItem(final OrderLineItemRequest request) {
+        Menu menu = menuRepository.findById(request.getMenuId())
                 .orElseThrow(IllegalArgumentException::new);
-        return new OrderLineItem(menu, orderLineItemRequest.getQuantity());
+        return new OrderLineItem(menu, request.getQuantity());
     }
 
-    private void validateExistOrderTableInOrder(final Order order) {
-        if (!orderTableRepository.existsById(order.getOrderTableId())) {
-            throw new IllegalArgumentException();
-        }
-        OrderTable orderTable = orderTableRepository.getById(order.getOrderTableId());
+    private void validateExistOrderTable(final Order order) {
+        OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
+                .orElseThrow(IllegalArgumentException::new);
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }

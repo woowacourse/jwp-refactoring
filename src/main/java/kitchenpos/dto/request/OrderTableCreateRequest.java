@@ -5,7 +5,7 @@ public class OrderTableCreateRequest {
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTableCreateRequest() {
+    private OrderTableCreateRequest() {
     }
 
     public OrderTableCreateRequest(final int numberOfGuests, final boolean empty) {

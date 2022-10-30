@@ -14,6 +14,6 @@ public class TableGroupBuilder {
     }
 
     public TableGroup build() {
-        return new TableGroup(orderTables);
+        return new TableGroup();
     }
 }

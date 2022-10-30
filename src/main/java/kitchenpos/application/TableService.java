@@ -22,8 +22,8 @@ public class TableService {
     @Transactional
     public OrderTableResponse create(final OrderTableCreateRequest request) {
         OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
-        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-        return OrderTableResponse.of(savedOrderTable);
+        orderTableRepository.save(orderTable);
+        return OrderTableResponse.of(orderTable);
     }
 
     public OrderTablesResponse list() {
@@ -32,9 +32,9 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableUpdateEmptyRequest request) {
-        OrderTable orderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+    public OrderTableResponse changeEmpty(final Long orderTableId,
+                                          final OrderTableUpdateEmptyRequest request) {
+        OrderTable orderTable = getOrderTable(orderTableId);
         orderTable.changeToEmpty(request.isEmpty());
         return OrderTableResponse.of(orderTable);
     }
@@ -42,9 +42,13 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
                                                    final OrderTableUpdateGuestRequest request) {
-        OrderTable orderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-        orderTable.changeGuests(request.getNumberOfGuests());
+        OrderTable orderTable = getOrderTable(orderTableId);
+        orderTable.changeNumberOfGuests(request.getNumberOfGuests());
         return OrderTableResponse.of(orderTable);
+    }
+
+    private OrderTable getOrderTable(final Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
+                .orElseThrow(IllegalArgumentException::new);
     }
 }

@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.common.builder.OrderTableBuilder;
 import kitchenpos.common.builder.TableGroupBuilder;
@@ -20,7 +19,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 class TableGroupServiceTest extends ServiceTest {
 
@@ -113,35 +111,32 @@ class TableGroupServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(단체_테이블_생성_요청))
-                        .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class);
 
     }
 
-//    @DisplayName("단체 지정을 해제한다.")
-//    @Test
-//    void 단체_지정을_해제한다() {
-//        // given
-//        List<OrderTable> 주문_테이블들 = List.of(야채곱창_주문_테이블, 치킨_주문_테이블, 피자_주문_테이블);
-//        TableGroup 단체_테이블 = 테이블_그룹_생성(주문_테이블들);
-//        단체_테이블 = tableGroupRepository.save(단체_테이블);
-//
-//        // when
-//        tableGroupService.ungroup(단체_테이블.getId());
-//
-//        // then
-//
-//        Long 단체_테이블_아이디 = 단체_테이블.getId();
-//        assertAll(
-//                () -> assertThat(orderTableDao.findAllByTableGroupId(단체_테이블_아이디)).isEmpty()
-//        );
-//    }
+    @DisplayName("단체 지정을 해제한다.")
+    @Test
+    void 단체_지정을_해제한다() {
+        // given
+        List<OrderTable> 주문_테이블들 = List.of(야채곱창_주문_테이블, 치킨_주문_테이블, 피자_주문_테이블);
+        TableGroup 단체_테이블 = 테이블_그룹_생성(주문_테이블들);
+        단체_테이블 = tableGroupRepository.save(단체_테이블);
+
+        // when
+        tableGroupService.ungroup(단체_테이블.getId());
+
+        // then
+        Long 단체_테이블_아이디 = 단체_테이블.getId();
+        assertAll(
+                () -> assertThat(orderTableRepository.findAllByTableGroupId(단체_테이블_아이디)).isEmpty()
+        );
+    }
 
     private TableGroup 테이블_그룹_생성(final List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroupBuilder()
+        return new TableGroupBuilder()
                 .orderTables(orderTables)
                 .build();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        return tableGroup;
     }
 
     private OrderTable 주문_테이블_생성(final int numberOfGuests, final boolean empty) {

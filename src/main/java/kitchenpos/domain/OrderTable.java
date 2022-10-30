@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderTable {
@@ -20,15 +22,11 @@ public class OrderTable {
     @Column(name = "empty")
     private boolean empty;
 
+    @ManyToOne()
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
+
     public OrderTable() {
-    }
-
-    public OrderTable(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    public OrderTable(final boolean empty) {
-        this.empty = empty;
     }
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
@@ -36,49 +34,38 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    public boolean isEmpty() {
-        return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
-    }
-
-    public OrderTable changeToUse() {
+    public void changeToUse() {
         if (!this.empty) {
             throw new IllegalArgumentException();
         }
         this.empty = false;
-        return this;
+    }
+
+    public void changeToEmpty() {
+        this.tableGroup = null;
+        this.empty = true;
     }
 
     public void changeToEmpty(final boolean empty) {
         this.empty = empty;
     }
 
-    public void changeGuests(final int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-        if (this.empty) {
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0 || this.empty) {
             throw new IllegalArgumentException();
         }
         this.numberOfGuests = numberOfGuests;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 }
