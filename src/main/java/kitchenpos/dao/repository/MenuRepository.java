@@ -24,19 +24,23 @@ public class MenuRepository implements MenuDao {
     public Menu save(Menu entity) {
         Menu save = menuDao.save(entity);
 
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        for (MenuProduct menuProduct : entity.getMenuProducts()) {
-            menuProduct.updateMenuId(save.getId());
-            menuProducts.add(menuProductRepository.save(menuProduct));
+        if (entity.getId() == null) {
+            List<MenuProduct> menuProducts = new ArrayList<>();
+            for (MenuProduct menuProduct : entity.getMenuProducts()) {
+                menuProduct.updateMenuId(save.getId());
+                menuProducts.add(menuProductRepository.save(menuProduct));
+            }
+            save.updateMenuProducts(menuProducts);
         }
-        save.updateMenuProducts(menuProducts);
         return save;
     }
 
     @Override
     public Menu findById(Long id) {
-        return menuDao.findById(id)
+        Menu menu = menuDao.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("메뉴는 DB에 등록되어야 한다"));
+        menu.updateMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
+        return menu;
     }
 
     @Override
