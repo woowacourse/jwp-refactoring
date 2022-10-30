@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Table(name="order_table")
@@ -18,6 +19,9 @@ public class OrderTable {
     @ManyToOne
     private TableGroup tableGroup;
 
+    @OneToOne
+    private Order order;
+
     private int numberOfGuests;
     private boolean empty;
 
@@ -30,8 +34,7 @@ public class OrderTable {
     }
 
     public OrderTable(int numberOfGuests, boolean empty) {
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
+        this(null, numberOfGuests, empty);
     }
 
     public Long getId() {
@@ -44,6 +47,10 @@ public class OrderTable {
 
     public int getNumberOfGuests() {
         return numberOfGuests;
+    }
+
+    public Order getOrder() {
+        return order;
     }
 
     public boolean isEmpty() {
@@ -76,5 +83,17 @@ public class OrderTable {
 
     public void deleteTableGroup() {
         this.tableGroup = null;
+    }
+
+    public void enrollOrder(Order order) {
+        this.order = order;
+    }
+
+    public boolean hasTableGroup() {
+        return this.tableGroup != null;
+    }
+
+    public boolean isCookingOrMeal() {
+        return getOrder().isCooking() || getOrder().isMeal();
     }
 }

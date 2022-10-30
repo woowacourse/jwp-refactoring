@@ -25,7 +25,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne(mappedBy="order")
     private OrderTable orderTable;
 
     @Enumerated(EnumType.STRING)
@@ -46,6 +46,7 @@ public class Order {
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+        orderTable.enrollOrder(this);
     }
 
     private void validateOrderTableNotEmpty(OrderTable orderTable) {
@@ -86,5 +87,13 @@ public class Order {
 
     public boolean isCompletion() {
         return this.orderStatus.isCompletion();
+    }
+
+    public boolean isCooking() {
+        return this.orderStatus.isCooking();
+    }
+
+    public boolean isMeal() {
+        return this.orderStatus.isMeal();
     }
 }

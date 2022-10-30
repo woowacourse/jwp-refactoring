@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,7 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.springframework.data.annotation.CreatedDate;
+import org.springframework.util.CollectionUtils;
 
 @Table(name="table_group")
 @Entity
@@ -30,11 +31,36 @@ public class TableGroup {
     public TableGroup() {}
 
     public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
+        validateMoreThanTwoOrderTable(orderTables);
+        validateIsEmptyAndNotContainTableGroup(orderTables);
+        enrollTableGroupToOrderTable(orderTables);
         this.createdDate = createdDate;
+        this.orderTables = orderTables;
+    }
+
+    private void validateMoreThanTwoOrderTable(List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateIsEmptyAndNotContainTableGroup(List<OrderTable> orderTables) {
+        for (final OrderTable orderTable : orderTables) {
+            validateOrderTableIsEmptyAndNotContainTableGroup(orderTable);
+        }
+    }
+
+    private void validateOrderTableIsEmptyAndNotContainTableGroup(OrderTable orderTable) {
+        if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void enrollTableGroupToOrderTable(List<OrderTable> orderTables) {
         for (OrderTable orderTable : orderTables) {
             orderTable.enrollTableGroup(this);
+            orderTable.full();
         }
-        this.orderTables = orderTables;
     }
 
     public Long getId() {
@@ -51,5 +77,12 @@ public class TableGroup {
 
     public void deleteOrderTable(OrderTable orderTable) {
         this.orderTables.remove(orderTable);
+        orderTable.deleteTableGroup();
+        orderTable.empty();
+    }
+
+    public boolean hasOrderTableWhichStatusIsCookingOrMeal() {
+        return orderTables.stream()
+            .anyMatch(OrderTable::isCookingOrMeal);
     }
 }
