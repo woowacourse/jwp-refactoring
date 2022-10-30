@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import kitchenpos.dao.OrderDao;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.order.Order;
 
 public class FakeOrderDao implements OrderDao {
 

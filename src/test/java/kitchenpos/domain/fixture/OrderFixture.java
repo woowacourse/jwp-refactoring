@@ -3,9 +3,9 @@ package kitchenpos.domain.fixture;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderFixture {

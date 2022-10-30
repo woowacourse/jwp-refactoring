@@ -2,7 +2,7 @@ package kitchenpos.domain.fixture;
 
 import java.math.BigDecimal;
 
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.Price;
 
 @SuppressWarnings("NonAsciiCharacters")

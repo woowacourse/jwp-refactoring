@@ -1,9 +1,12 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import kitchenpos.domain.Price;
+import kitchenpos.domain.menu.MenuProduct;
 
 public class MenuProducts {
 

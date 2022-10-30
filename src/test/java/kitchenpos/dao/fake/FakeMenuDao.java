@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import kitchenpos.dao.MenuDao;
-import kitchenpos.domain.Menu;
+import kitchenpos.domain.menu.Menu;
 
 public class FakeMenuDao implements MenuDao {
 

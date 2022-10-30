@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItem;
 
 public class FakeOrderLineItemDao implements OrderLineItemDao {
 
