@@ -36,7 +36,7 @@ public class MenuService {
     public MenuResponse create(final MenuRequest request) {
         validateMenuGroupExistById(request.getMenuGroupId());
         final Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(),
-                getMenuProducts(request));
+                getMenuProducts(request)); // 미완성 객체 ( Menu의 Id, MenuProducts의 seq, MenuId )
 
         return toMenuResponse(menuRepository.save(menu));
     }

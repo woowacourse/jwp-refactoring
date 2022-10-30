@@ -4,10 +4,10 @@ import java.math.BigDecimal;
 
 public class MenuProduct {
 
-    private Long seq;
+    private final Long seq;
     private Long menuId;
-    private Long productId;
-    private BigDecimal price;
+    private final Long productId;
+    private final BigDecimal price;
     private long quantity;
 
     public MenuProduct(final Long productId, final long quantity) {
@@ -31,7 +31,7 @@ public class MenuProduct {
         return new MenuProduct(null, null, product.getId(), product.getPrice(), quantity);
     }
 
-    public BigDecimal amount() {
+    public BigDecimal calculateTotalAmount() {
         return price.multiply(BigDecimal.valueOf(quantity));
     }
 

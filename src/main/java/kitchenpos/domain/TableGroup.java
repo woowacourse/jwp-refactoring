@@ -8,8 +8,8 @@ import org.springframework.util.CollectionUtils;
 
 public class TableGroup {
 
-    private Long id;
-    private LocalDateTime createdDate;
+    private final Long id;
+    private final LocalDateTime createdDate;
     private List<OrderTable> orderTables;
 
     private TableGroup(final Long id, final LocalDateTime createdDate) {

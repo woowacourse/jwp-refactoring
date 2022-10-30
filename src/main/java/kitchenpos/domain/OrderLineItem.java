@@ -2,10 +2,10 @@ package kitchenpos.domain;
 
 public class OrderLineItem {
 
-    private Long seq;
+    private final Long seq;
     private Long orderId;
-    private Long menuId;
-    private long quantity;
+    private final Long menuId;
+    private final long quantity;
 
     public OrderLineItem(final Long menuId, final long quantity) {
         this(null, null, menuId, quantity);

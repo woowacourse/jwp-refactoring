@@ -15,7 +15,7 @@ public class MenuProductTest {
         final MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L, new BigDecimal(1000L), 3L);
 
         // when
-        final BigDecimal amount = menuProduct.amount();
+        final BigDecimal amount = menuProduct.calculateTotalAmount();
 
         // then
         assertThat(amount.longValue()).isEqualTo(3_000L);

@@ -5,9 +5,9 @@ import java.util.Objects;
 
 public class Product {
 
-    private Long id;
-    private String name;
-    private BigDecimal price;
+    private final Long id;
+    private final String name;
+    private final BigDecimal price;
 
     public Product(final String name, final BigDecimal price) {
         this(null, name, price);

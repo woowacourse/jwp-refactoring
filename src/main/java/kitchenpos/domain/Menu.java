@@ -51,7 +51,7 @@ public class Menu {
 
     private void validatePriceAndSum(final BigDecimal price, final List<MenuProduct> menuProducts) {
         final BigDecimal sum = menuProducts.stream()
-                .map(MenuProduct::amount)
+                .map(MenuProduct::calculateTotalAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         if (price.compareTo(sum) > 0) {
