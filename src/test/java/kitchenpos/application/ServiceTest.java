@@ -11,11 +11,16 @@ import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.product.application.ProductService;
 import kitchenpos.product.application.dto.ProductRequestDto;
+import kitchenpos.support.DatabaseCleaner;
 import kitchenpos.table.application.TableGroupService;
 import kitchenpos.table.application.TableService;
-import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.application.dto.OrderTableRequestDto;
+import kitchenpos.table.application.dto.OrderTableResponse;
 import kitchenpos.product.domain.Product;
+import kitchenpos.table.application.dto.TableGroupRequestDto;
+import kitchenpos.table.application.dto.TableGroupResponse;
 import kitchenpos.table.domain.TableGroup;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @Transactional
 public class ServiceTest {
+
+
 
     @Autowired
     protected ProductService productService;
@@ -42,15 +49,23 @@ public class ServiceTest {
     @Autowired
     protected TableService tableService;
 
+    @Autowired
+    private DatabaseCleaner databaseCleaner;
+
+    @BeforeEach
+    void clear() {
+        databaseCleaner.clear();
+    }
+
     protected Product 상품_등록(final ProductRequestDto productRequestDto) {
         return productService.create(productRequestDto);
     }
 
-    protected OrderTable 주문_테이블_등록(final OrderTable orderTable) {
-        return tableService.create(orderTable);
+    protected OrderTableResponse 주문_테이블_등록(final OrderTableRequestDto orderTableRequestDto) {
+        return tableService.create(orderTableRequestDto);
     }
 
-    protected TableGroup 테이블_그룹_등록(final TableGroup tableGroup) {
+    protected TableGroupResponse 테이블_그룹_등록(final TableGroupRequestDto tableGroup) {
         return tableGroupService.create(tableGroup);
     }
 

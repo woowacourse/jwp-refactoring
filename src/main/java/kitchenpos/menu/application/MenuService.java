@@ -47,7 +47,7 @@ public class MenuService {
         Price.convertToMenuPrice(menuRequestDto.getPrice(), findProducts(menuProducts), getQuantities(menuProducts));
         final Menu savedMenu = menuRepository.save(new Menu(menuRequestDto.getName(), menuRequestDto.getPrice(), menuRequestDto.getMenuGroupId()));
 
-        return new MenuResponse(savedMenu, setMenuProductToMenu(menuProducts));
+        return new MenuResponse(savedMenu, setMenuProductToMenu(menuProducts,savedMenu.getId()));
     }
 
     private List<BigDecimal> findProducts(List<MenuProduct> menuProducts) {
@@ -62,9 +62,10 @@ public class MenuService {
                         .collect(Collectors.toList());
     }
 
-    private List<MenuProduct> setMenuProductToMenu(List<MenuProduct> menuProducts) {
+    private List<MenuProduct> setMenuProductToMenu(List<MenuProduct> menuProducts, Long menuId) {
         return menuProducts.stream()
-                .map(menuProduct -> new MenuProduct(menuProduct.getMenuId(), menuProduct.getProductId(), menuProduct.getQuantity()))
+                .map(menuProduct -> new MenuProduct(menuId, menuProduct.getProductId(), menuProduct.getQuantity()))
+                .map(menuProductRepository::save)
                 .collect(Collectors.toList());
     }
 

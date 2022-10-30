@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.OrderTableFixture.비어있는_주문_테이블;
+import static kitchenpos.support.OrderTableFixture.비어있지_않은_주문_테이블;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -8,7 +10,7 @@ import java.util.List;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.application.dto.OrderTableRequestDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,9 +24,8 @@ class OrderServiceTest extends ServiceTest{
         @Test
         @DisplayName("주문을 생성한다.")
         void create() {
-            final OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(false);
-            final Long tableId = tableService.create(orderTable).getId();
+            final OrderTableRequestDto orderTableRequestDto = 비어있는_주문_테이블;
+            final Long tableId = tableService.create(orderTableRequestDto).getId();
             final Order order = new Order();
             order.setOrderTableId(tableId);
             order.setOrderLineItems(List.of(new OrderLineItem(1L, 1L)));
@@ -43,8 +44,7 @@ class OrderServiceTest extends ServiceTest{
         @Test
         @DisplayName("orderLineItems가 비어있는데 주문을 생성하려는 경우 예외를 발생시킨다.")
         void create_emptyOrderLineItems() {
-            final OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(false);
+            final OrderTableRequestDto orderTable = 비어있는_주문_테이블;
             final Long tableId = tableService.create(orderTable).getId();
             final Order order = new Order();
             order.setOrderTableId(tableId);
@@ -58,9 +58,8 @@ class OrderServiceTest extends ServiceTest{
         @Test
         @DisplayName("존재하지 않는 메뉴로 주문을 생성하려는 경우 예외를 발생시킨다.")
         void create_notExistMenuId() {
-            final OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(false);
-            final Long tableId = tableService.create(orderTable).getId();
+            final OrderTableRequestDto orderTableRequestDto = 비어있지_않은_주문_테이블;
+            final Long tableId = tableService.create(orderTableRequestDto).getId();
             final Order order = new Order();
             order.setOrderTableId(tableId);
             final Long notExistMenuId = 999999L;
@@ -86,9 +85,8 @@ class OrderServiceTest extends ServiceTest{
         @Test
         @DisplayName("테이블이 비어있는데 주문을 생성하려는 경우 예외를 발생시킨다.")
         void create_emptyTable() {
-            final OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
-            final Long tableId = tableService.create(orderTable).getId();
+            final OrderTableRequestDto orderTableRequestDto = 비어있는_주문_테이블;
+            final Long tableId = tableService.create(orderTableRequestDto).getId();
             final Order order = new Order();
             order.setOrderTableId(tableId);
             order.setOrderLineItems(List.of());
@@ -103,9 +101,8 @@ class OrderServiceTest extends ServiceTest{
     @DisplayName("주문 내역을 반환한다.")
     void list() {
         final Order order = new Order();
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        order.setOrderTableId(tableService.create(orderTable).getId());
+        final OrderTableRequestDto orderTableRequestDto= 비어있지_않은_주문_테이블;
+        order.setOrderTableId(tableService.create(orderTableRequestDto).getId());
         order.setOrderLineItems(List.of(new OrderLineItem(1L, 1L)));
         orderService.create(order);
         orderService.create(order);
@@ -122,9 +119,8 @@ class OrderServiceTest extends ServiceTest{
         @Test
         @DisplayName("주문 상태를 변경한다.")
         void changeOrderStatus() {
-            final OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(false);
-            final Long tableId = tableService.create(orderTable).getId();
+            final OrderTableRequestDto orderTableRequestDto = 비어있지_않은_주문_테이블;
+            final Long tableId = tableService.create(orderTableRequestDto).getId();
             Order order = new Order();
             order.setOrderTableId(tableId);
             order.setOrderLineItems(List.of(new OrderLineItem(1L, 1L)));
@@ -144,7 +140,7 @@ class OrderServiceTest extends ServiceTest{
         @Test
         @DisplayName("존재하지 않는 주문의 상태를 변경하려는 경우 예외를 발생 시킨다.")
         void changeOrderStatus_notExistOrder(){
-            tableService.create(new OrderTable());
+            tableService.create(비어있지_않은_주문_테이블);
             final Long notExistOrderId = 999999L;
 
             final Order newOrder = new Order();
@@ -157,9 +153,8 @@ class OrderServiceTest extends ServiceTest{
         @Test
         @DisplayName("Completion인 주문의 상태를 변경하려는 경우 예외를 발생 시킨다.")
         void changeOrderStatus_CompletionOrder(){
-            final OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(false);
-            final Long tableId = tableService.create(orderTable).getId();
+            final OrderTableRequestDto orderTableRequestDto = 비어있지_않은_주문_테이블;
+            final Long tableId = tableService.create(orderTableRequestDto).getId();
 
             Order order = new Order();
             order.setOrderTableId(tableId);

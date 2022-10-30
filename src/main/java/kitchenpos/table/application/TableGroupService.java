@@ -1,6 +1,9 @@
 package kitchenpos.table.application;
 
 import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.table.application.dto.TableGroupRequestDto;
+import kitchenpos.table.application.dto.TableGroupResponse;
+import kitchenpos.table.domain.OrderTables;
 import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.table.domain.repository.TableGroupRepository;
 import kitchenpos.order.domain.OrderStatus;
@@ -8,12 +11,10 @@ import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,42 +30,37 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+    public TableGroupResponse create(final TableGroupRequestDto tableGroupRequestDto) {
 
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+        final OrderTables savedOrderTables = validateInputOrderTable(tableGroupRequestDto.getOrderTableIds());
+        final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), savedOrderTables.getOrderTables()));
+        savedOrderTables.group(savedTableGroup.getId());
+        for (OrderTable orderTable : savedOrderTables.getOrderTables()) {
+            orderTableRepository.save(orderTable);
         }
+        return TableGroupResponse.of(savedTableGroup, savedOrderTables);
+    }
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
+    private OrderTables validateInputOrderTable(List<Long> orderTableIds) {
 
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        validateOrderTableSize(orderTableIds, savedOrderTables);
+        validateOrderTable(savedOrderTables);
 
-        if (orderTables.size() != savedOrderTables.size()) {
+        return new OrderTables(savedOrderTables);
+    }
+
+    private void validateOrderTableSize(List<Long> orderTableIds, List<OrderTable> savedOrderTables) {
+        if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
+    }
 
+    private void validateOrderTable(List<OrderTable> savedOrderTables) {
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
-            }
+            savedOrderTable.validateEmptyTable();
+            savedOrderTable.validateNotGroupTable();
         }
-
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-
-        final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
-            savedOrderTable.setEmpty(false);
-            orderTableRepository.save(savedOrderTable);
-        }
-        savedTableGroup.setOrderTables(savedOrderTables);
-
-        return savedTableGroup;
     }
 
     @Transactional
@@ -81,9 +77,12 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
-            orderTableRepository.save(orderTable);
+            orderTableRepository.save(
+                    new OrderTable(orderTable.getId(),
+                            null,
+                            orderTable.getNumberOfGuests(),
+                            false)
+            );
         }
     }
 }
