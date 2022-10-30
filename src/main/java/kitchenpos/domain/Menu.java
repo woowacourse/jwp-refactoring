@@ -1,8 +1,11 @@
 package kitchenpos.domain;
 
+import static kitchenpos.application.exception.ExceptionType.INVALID_MENU_PRODUCT_EXCEPTION;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.application.exception.CustomIllegalArgumentException;
 
 public class Menu {
     private Long id;
@@ -38,7 +41,7 @@ public class Menu {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
+            throw new CustomIllegalArgumentException(INVALID_MENU_PRODUCT_EXCEPTION);
         }
     }
 

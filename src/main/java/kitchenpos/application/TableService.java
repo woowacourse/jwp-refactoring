@@ -26,6 +26,7 @@ public class TableService {
         this.orderTableDao = orderTableDao;
     }
 
+    //:todo dto 로 변환
     public OrderTable create(final OrderTable orderTable) {
         return orderTableDao.save(orderTable);
     }
