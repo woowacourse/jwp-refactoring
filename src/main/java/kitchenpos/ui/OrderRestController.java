@@ -52,6 +52,7 @@ public class OrderRestController {
         @RequestBody final ChangeOrderStatusRequest request
     ) {
         Order changed = orderService.changeOrderStatus(orderId, request);
-        return ResponseEntity.ok(new OrderResponse(changed));
+        return ResponseEntity.ok(new OrderResponse(changed))
+            ;
     }
 }

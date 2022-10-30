@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.menu.CreateMenuProductRequest;
 import kitchenpos.dto.request.menu.CreateMenuRequest;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
@@ -32,17 +33,12 @@ public class MenuService {
 
     @Transactional
     public Menu create(final CreateMenuRequest request) {
-
-        final MenuGroup menuGroup = findMenuGroupById(request.getMenuGroupId());
-
-        final Map<Product, Long> menuProducts = request.getMenuProducts().stream()
-            .collect(Collectors.toMap(
-                it -> findProductById(it.getProductId()),
-                it -> it.getQuantity())
-            );
-
-        final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup, menuProducts);
-        return menuRepository.save(menu);
+        return menuRepository.save(new Menu(
+            request.getName(),
+            request.getPrice(),
+            findMenuGroupById(request.getMenuGroupId()),
+            toEntities(request.getMenuProducts())
+        ));
     }
 
     public List<Menu> list() {
@@ -57,5 +53,17 @@ public class MenuService {
     private Product findProductById(final Long id) {
         return productRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 제품입니다."));
+    }
+
+    private Map<Product, Long> toEntities(List<CreateMenuProductRequest> menuProducts) {
+        final Map<Product, Long> entities = new HashMap<>();
+        for (CreateMenuProductRequest menuProduct : menuProducts) {
+            entities.put(
+                findProductById(menuProduct.getProductId()),
+                menuProduct.getQuantity()
+            );
+        }
+
+        return entities;
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.tableGroup.AddOrderTableToTableGroupRequest;
 import kitchenpos.dto.request.tableGroup.CreateTableGroupRequest;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -36,12 +37,9 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final CreateTableGroupRequest request) {
-        final List<OrderTable> orderTables = request.getOrderTables().stream()
-            .map(table -> findOrderTableById(table.getId()))
-            .collect(Collectors.toList());
-
-        TableGroup tableGroup = new TableGroup(orderTables);
-        return tableGroupRepository.save(tableGroup);
+        return tableGroupRepository.save(new TableGroup(
+            toEntities(request.getOrderTables())
+        ));
     }
 
     @Transactional
@@ -63,5 +61,14 @@ public class TableGroupService {
         if (orderRepository.existsByOrderTableInAndOrderStatusIn(orderTables, ORDER_STATUS_FOR_CANT_UNGROUP)) {
             throw new IllegalArgumentException("주문이 시작되어 그룹을 해제할 수 없습니다.");
         }
+    }
+
+    private List<OrderTable> toEntities(List<AddOrderTableToTableGroupRequest> orderTables) {
+        final List<OrderTable> entities = new ArrayList<>();
+        for (AddOrderTableToTableGroupRequest orderTable : orderTables) {
+            entities.add(findOrderTableById(orderTable.getId()));
+        }
+
+        return entities;
     }
 }

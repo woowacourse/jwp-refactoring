@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +11,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.order.ChangeOrderStatusRequest;
+import kitchenpos.dto.request.order.CreateOrderLineItemRequest;
 import kitchenpos.dto.request.order.CreateOrderRequest;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
@@ -34,16 +35,10 @@ public class OrderService {
 
     @Transactional
     public Order create(final CreateOrderRequest request) {
-        final OrderTable orderTable = findOrderTableById(request.getOrderTableId());
-
-        final Map<Menu, Long> orderLineItems = request.getOrderLineItems().stream()
-            .collect(Collectors.toMap(
-                it -> findMenuById(it.getMenuId()),
-                it -> it.getQuantity()
-            ));
-
-        Order order = new Order(orderTable, orderLineItems);
-        return orderRepository.save(order);
+        return orderRepository.save(new Order(
+            findOrderTableById(request.getOrderTableId()),
+            toEntities((request.getOrderLineItems()))
+        ));
     }
 
     public List<Order> list() {
@@ -71,5 +66,17 @@ public class OrderService {
     private Order findOrderById(final Long id) {
         return orderRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 주문입니다."));
+    }
+
+    private Map<Menu, Long> toEntities(List<CreateOrderLineItemRequest> orderLineItems) {
+        final Map<Menu, Long> entities = new HashMap<>();
+        for (CreateOrderLineItemRequest orderLineItem : orderLineItems) {
+            entities.put(
+                findMenuById(orderLineItem.getMenuId()),
+                orderLineItem.getQuantity()
+            );
+        }
+
+        return entities;
     }
 }
