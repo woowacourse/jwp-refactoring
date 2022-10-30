@@ -10,15 +10,17 @@ import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.menu.MenuCreateRequest;
+import kitchenpos.dto.menu.MenuProductRequest;
+import kitchenpos.dto.menu.MenuResponse;
 import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ServiceTest
+@SuppressWarnings("NonAsciiCharacters")
 class MenuServiceTest {
 
     @Autowired
@@ -33,106 +35,101 @@ class MenuServiceTest {
     @Test
     void 메뉴를_생성할_수_있다() {
         // given
-        Menu menu = 후라이드후라이드(BigDecimal.valueOf(19000));
+        final MenuCreateRequest request = 후라이드_세트_메뉴_생성_요청(BigDecimal.valueOf(19000));
 
         // when
-        Menu actual = menuService.create(menu);
+        MenuResponse actual = menuService.create(request);
 
         // then
-        menu.getMenuProducts().forEach(menuProduct -> menuProduct.setMenuId(actual.getId()));
         assertAll(
-                () -> assertThat(actual.getName()).isEqualTo(menu.getName()),
-                () -> assertThat(actual.getPrice()).isCloseTo(menu.getPrice(), Percentage.withPercentage(0)),
-                () -> assertThat(actual.getMenuGroupId()).isEqualTo(menu.getMenuGroupId()),
+                () -> assertThat(actual.getName()).isEqualTo(request.getName()),
+                () -> assertThat(actual.getPrice()).isCloseTo(request.getPrice(), Percentage.withPercentage(0)),
+                () -> assertThat(actual.getMenuGroupId()).isEqualTo(request.getMenuGroupId()),
                 () -> assertThat(actual.getMenuProducts()).extracting("menuId", "productId", "quantity")
-                        .containsExactly(tuple(actual.getId(), menu.getMenuProducts().get(0).getProductId(),
-                                menu.getMenuProducts().get(0).getQuantity()))
+                        .containsExactly(tuple(actual.getId(), request.getMenuProducts().get(0).getProductId(),
+                                request.getMenuProducts().get(0).getQuantity()))
         );
     }
 
     @Test
     void 메뉴_가격이_null인_경우_메뉴를_생성할_수_없다() {
         // given
-        Menu menu = 후라이드후라이드(null);
+        final MenuCreateRequest request = 후라이드_세트_메뉴_생성_요청(null);
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 메뉴_가격이_0보다_작은_경우_메뉴를_생성할_수_없다() {
         // given
-        Menu menu = 후라이드후라이드(BigDecimal.valueOf(-1));
+        final MenuCreateRequest request = 후라이드_세트_메뉴_생성_요청(BigDecimal.valueOf(-1));
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 메뉴_그룹이_존재하지_않는_경우_메뉴를_생성할_수_없다() {
         // given
-        Menu menu = 후라이드후라이드(BigDecimal.valueOf(19000));
-        menu.setMenuGroupId(-1L);
+        final MenuCreateRequest nonMenuGroupRequest = 메뉴_그룹이_존재하지않는_메뉴_생성_요청();
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(nonMenuGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 메뉴의_가격이_상품_개별_가격의_총합보다_크다면_메뉴를_생성할_수_없다() {
         // given
-        Menu menu = 후라이드후라이드(BigDecimal.valueOf(20001));
+        final MenuCreateRequest request = 후라이드_세트_메뉴_생성_요청(BigDecimal.valueOf(20001));
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 메뉴_목록을_조회한다() {
         // given
-        Menu menu = 후라이드후라이드(BigDecimal.valueOf(19000));
-        menuService.create(menu);
+        menuService.create(후라이드_세트_메뉴_생성_요청(BigDecimal.valueOf(19000)));
 
         // when
-        List<Menu> actual = menuService.list();
+        List<MenuResponse> actual = menuService.list();
 
         // then
         assertThat(actual).hasSizeGreaterThanOrEqualTo(1);
     }
 
-    public Menu 후라이드후라이드(BigDecimal price) {
-        Menu menu = new Menu();
-        menu.setName("후라이드+후라이드");
-        menu.setPrice(price);
-        menu.setMenuGroupId(추천메뉴().getId());
-        menu.setMenuProducts(Collections.singletonList(후라이드후라이드_메뉴_상품()));
-
-        return menu;
+    public MenuCreateRequest 후라이드_세트_메뉴_생성_요청(BigDecimal price) {
+        return new MenuCreateRequest(
+                "후라이드+후라이드",
+                price,
+                추천메뉴_그룹().getId(),
+                Collections.singletonList(후라이드_세트_메뉴_상품_생성_요청())
+        );
     }
 
-    public MenuGroup 추천메뉴() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("추천메뉴");
-        return menuGroupDao.save(menuGroup);
+    public MenuCreateRequest 메뉴_그룹이_존재하지않는_메뉴_생성_요청() {
+        return new MenuCreateRequest(
+                "후라이드+후라이드",
+                BigDecimal.valueOf(19000),
+                -1,
+                Collections.singletonList(후라이드_세트_메뉴_상품_생성_요청())
+        );
     }
 
-    public MenuProduct 후라이드후라이드_메뉴_상품() {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(후라이드().getId());
-        menuProduct.setQuantity(2);
-
-        return menuProduct;
+    public MenuGroup 추천메뉴_그룹() {
+        return menuGroupDao.save(new MenuGroup("추천메뉴"));
     }
 
+    public MenuProductRequest 후라이드_세트_메뉴_상품_생성_요청() {
+        return new MenuProductRequest(후라이드().getId(), 2);
+    }
 
     public Product 후라이드() {
-        Product product = new Product();
-        product.setName("후라이드");
-        product.setPrice(BigDecimal.valueOf(10000));
-        return productDao.save(product);
+        return productDao.save(new Product("후라이드", BigDecimal.valueOf(10000)));
     }
 }
