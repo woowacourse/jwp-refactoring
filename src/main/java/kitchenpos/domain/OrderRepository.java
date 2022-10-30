@@ -18,36 +18,45 @@ public class OrderRepository {
         this.orderLineItemDao = orderLineItemDao;
     }
 
-    public Order save(final Order entity) {
-        final Order savedOrder = orderDao.save(entity);
+    public Order save(final Order order) {
+        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+        final Order orderEntity = orderDao.save(order);
 
-        final List<OrderLineItem> orderLineItems = savedOrder.getOrderLineItems();
+        return OrderFactory.create(orderEntity, toOrderLineItemEntities(orderEntity.getId(), orderLineItems));
+    }
 
+    private List<OrderLineItem> toOrderLineItemEntities(final Long orderId, final List<OrderLineItem> orderLineItems) {
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(savedOrder.getId());
-            savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
-        }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
 
-        return savedOrder;
+        for (final OrderLineItem orderLineItem : orderLineItems) {
+            final OrderLineItem orderLineItemWithOrderId = new OrderLineItem(
+                    null,
+                    orderId,
+                    orderLineItem.getMenuId(),
+                    orderLineItem.getQuantity());
+            savedOrderLineItems.add(orderLineItemDao.save(orderLineItemWithOrderId));
+        }
+
+        return savedOrderLineItems;
     }
 
     public Order getById(final Long id) throws IllegalArgumentException {
-        final Order order = orderDao.findById(id)
+        final Order orderEntity = orderDao.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
-        final List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(id);
-        order.setOrderLineItems(orderLineItems);
+        final List<OrderLineItem> orderLineItemEntities = orderLineItemDao.findAllByOrderId(id);
 
-        return order;
+        return OrderFactory.create(orderEntity, orderLineItemEntities);
     }
 
     public List<Order> findAll() {
-        final List<Order> orders = orderDao.findAll();
+        final List<Order> orders = new ArrayList<>();
+        final List<Order> orderEntities = orderDao.findAll();
 
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
+        for (final Order orderEntity : orderEntities) {
+            final List<OrderLineItem> orderLineItemEntities = orderLineItemDao.findAllByOrderId(orderEntity.getId());
+            orders.add(OrderFactory.create(orderEntity, orderLineItemEntities));
         }
+
         return orders;
     }
 
@@ -56,6 +65,7 @@ public class OrderRepository {
         final List<String> orderStatusNames = orderStatuses.stream()
                 .map(Enum::name)
                 .collect(Collectors.toList());
+
         return orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatusNames);
     }
 
@@ -64,6 +74,7 @@ public class OrderRepository {
         final List<String> orderStatusNames = orderStatuses.stream()
                 .map(Enum::name)
                 .collect(Collectors.toList());
+
         return orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatusNames);
     }
 }

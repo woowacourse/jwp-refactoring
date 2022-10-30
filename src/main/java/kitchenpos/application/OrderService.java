@@ -42,9 +42,11 @@ public class OrderService {
     }
 
     private static Order proceedOrder(final OrderRequest request) {
-        final List<OrderLineItem> items = request.getOrderLineItems().stream()
+        final List<OrderLineItem> items = request.getOrderLineItems()
+                .stream()
                 .map(OrderLineItemRequest::toEntity)
                 .collect(Collectors.toList());
+
         return Order.proceed(request.getOrderTableId(), items);
     }
 

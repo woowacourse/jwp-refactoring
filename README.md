@@ -91,6 +91,7 @@
 - [x] 테스트 픽스쳐 패키지를 분리한다.
 - [ ] 레포지토리를 리팩토링한다.
     - [x] MenuRepository
+    - [x] OrderRepository ( Order를 완전한 불변으로 만들기는 실패 )
 
 ## 고민 주절주절
 

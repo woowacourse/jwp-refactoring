@@ -3,6 +3,7 @@ package kitchenpos.dao;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 
 public interface OrderDao {
 
