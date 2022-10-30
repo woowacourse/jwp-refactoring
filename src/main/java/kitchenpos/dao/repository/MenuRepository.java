@@ -2,7 +2,7 @@ package kitchenpos.dao.repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.dao.JdbcTemplateMenuDao;
+import kitchenpos.dao.jdbctemplate.JdbcTemplateMenuDao;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
@@ -25,14 +25,18 @@ public class MenuRepository implements MenuDao {
         Menu save = menuDao.save(entity);
 
         if (entity.getId() == null) {
-            List<MenuProduct> menuProducts = new ArrayList<>();
-            for (MenuProduct menuProduct : entity.getMenuProducts()) {
-                menuProduct.updateMenuId(save.getId());
-                menuProducts.add(menuProductRepository.save(menuProduct));
-            }
-            save.updateMenuProducts(menuProducts);
+            saveMenuProduct(entity, save);
         }
         return save;
+    }
+
+    private void saveMenuProduct(Menu entity, Menu save) {
+        List<MenuProduct> menuProducts = new ArrayList<>();
+        for (MenuProduct menuProduct : entity.getMenuProducts()) {
+            menuProduct.updateMenuId(save.getId());
+            menuProducts.add(menuProductRepository.save(menuProduct));
+        }
+        save.updateMenuProducts(menuProducts);
     }
 
     @Override

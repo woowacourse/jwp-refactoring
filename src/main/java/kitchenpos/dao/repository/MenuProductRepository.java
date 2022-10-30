@@ -2,7 +2,7 @@ package kitchenpos.dao.repository;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.JdbcTemplateMenuProductDao;
+import kitchenpos.dao.jdbctemplate.JdbcTemplateMenuProductDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Price;

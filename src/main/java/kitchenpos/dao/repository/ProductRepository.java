@@ -1,7 +1,7 @@
 package kitchenpos.dao.repository;
 
 import java.util.List;
-import kitchenpos.dao.JdbcTemplateProductDao;
+import kitchenpos.dao.jdbctemplate.JdbcTemplateProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
