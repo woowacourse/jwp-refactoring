@@ -38,9 +38,8 @@ class OrderStatusTest {
         @ParameterizedTest
         @EnumSource(value = OrderStatus.class, names = {"COMPLETION"}, mode = Mode.EXCLUDE)
         @DisplayName("완료가 아닌 상태를 받으면, 거짓을 반환한다.")
-        void fail_notCompleted() {
-            OrderStatus status = OrderStatus.COMPLETION;
-            assertThat(OrderStatus.isCompleted(status)).isTrue();
+        void fail_notCompleted(OrderStatus status) {
+            assertThat(OrderStatus.isCompleted(status)).isFalse();
         }
     }
 }
