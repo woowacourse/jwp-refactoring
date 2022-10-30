@@ -13,7 +13,7 @@ public class OrderFixture {
         return new OrderRequestDto(orderTableId,convertMenuProductToOrderLineItem(menu));
     }
 
-    private static List<OrderLineItemRequest> convertMenuProductToOrderLineItem(MenuResponse menu) {
+    private static List<OrderLineItemRequest> convertMenuProductToOrderLineItem(final MenuResponse menu) {
         return menu.getMenuProducts().stream()
                 .map(menuProduct -> new OrderLineItem(menuProduct.getMenuId(), menuProduct.getQuantity()))
                 .map(orderLineItem -> new OrderLineItemRequest(orderLineItem.getMenuId(), orderLineItem.getQuantity()))

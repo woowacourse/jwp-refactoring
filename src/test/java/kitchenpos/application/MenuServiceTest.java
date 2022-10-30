@@ -12,6 +12,7 @@ import java.util.List;
 import kitchenpos.menu.application.dto.MenuRequestDto;
 import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.product.application.dto.ProductResponse;
 import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +22,7 @@ import org.mockito.internal.matchers.Null;
 
 class MenuServiceTest extends ServiceTest {
 
-    private Product product;
+    private ProductResponse product;
     private MenuGroup savedMenuGroup;
 
     @BeforeEach

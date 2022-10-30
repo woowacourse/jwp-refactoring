@@ -1,7 +1,6 @@
 package kitchenpos.product.domain;
 
 import java.math.BigDecimal;
-import javax.persistence.criteria.CriteriaBuilder.In;
 
 public class Product {
 

@@ -19,6 +19,7 @@ import kitchenpos.order.application.dto.UpdateOrderStatusRequestDto;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.presentation.dto.OrderLineItemRequest;
+import kitchenpos.product.application.dto.ProductResponse;
 import kitchenpos.product.domain.Product;
 import kitchenpos.table.application.dto.OrderTableRequestDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +34,7 @@ class OrderServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        final Product savedProduct = 상품_등록(상품);
+        final ProductResponse savedProduct = 상품_등록(상품);
         final MenuGroup savedMenuGroup = 메뉴_그룹_등록(메뉴_그룹);
         savedMenu = 메뉴_등록(메뉴_생성("메뉴이름", BigDecimal.valueOf(9000), savedMenuGroup.getId(), savedProduct));
     }

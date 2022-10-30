@@ -12,6 +12,7 @@ import kitchenpos.order.application.dto.OrderRequestDto;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.product.application.ProductService;
 import kitchenpos.product.application.dto.ProductRequestDto;
+import kitchenpos.product.application.dto.ProductResponse;
 import kitchenpos.support.DatabaseCleaner;
 import kitchenpos.table.application.TableGroupService;
 import kitchenpos.table.application.TableService;
@@ -57,7 +58,7 @@ public class ServiceTest {
         databaseCleaner.clear();
     }
 
-    protected Product 상품_등록(final ProductRequestDto productRequestDto) {
+    protected ProductResponse 상품_등록(final ProductRequestDto productRequestDto) {
         return productService.create(productRequestDto);
     }
 
