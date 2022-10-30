@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,7 +23,9 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private BigDecimal price;
+
+    @Embedded
+    private Price price;
 
     @OneToOne
     private MenuGroup menuGroup;
@@ -34,10 +37,9 @@ public class Menu {
     public Menu() {}
 
     public Menu(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
-        validatePriceIsNotNullOrNegative(price);
         validatePriceIsLessThanProductPriceSum(price, menuProducts);
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
     }
@@ -50,12 +52,6 @@ public class Menu {
         }
 
         if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validatePriceIsNotNullOrNegative(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
     }
