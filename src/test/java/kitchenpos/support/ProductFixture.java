@@ -3,6 +3,7 @@ package kitchenpos.support;
 import java.math.BigDecimal;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductRequest;
+import kitchenpos.dto.response.ProductResponse;
 
 public abstract class ProductFixture {
 
@@ -52,18 +53,29 @@ public abstract class ProductFixture {
             return super.getPrice();
         }
 
+        public int intPrice() {
+            return super.getPrice().intValue();
+        }
+
         public double doublePrice() {
             return super.getPrice().doubleValue();
         }
     }
 
-    public static class WrapProduct extends Product {
+    public static class WrapProductResponse extends ProductResponse {
 
-        public WrapProduct() {
+        private int intPrice;
+
+        public WrapProductResponse() {
+            super();
         }
 
-        public WrapProduct(String name, BigDecimal price) {
+        public WrapProductResponse(String name, BigDecimal price) {
             super(name, price);
+        }
+
+        public void normalizePrice() {
+            this.intPrice = intPrice();
         }
 
         public Long id() {

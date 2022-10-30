@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.MenuGroupRequest;
 import kitchenpos.support.IntegrationServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -17,12 +18,12 @@ class MenuGroupServiceTest {
     @Nested
     class create_메서드는 extends IntegrationServiceTest {
 
-        private final MenuGroup menuGroup = new MenuGroup("두 마리 메뉴");
+        private final MenuGroupRequest menuGroupRequest = new MenuGroupRequest("두 마리 메뉴");
 
         @Test
         void 메뉴그룹을_저장하고_ID값을_포함한것을_반환한다() {
 
-            final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+            final MenuGroup savedMenuGroup = menuGroupService.create(menuGroupRequest);
 
             assertThat(savedMenuGroup.getId()).isNotNull();
         }

@@ -83,11 +83,9 @@ public class Menu {
 
     protected BigDecimal totalProductsPrice() {
 
-        BigDecimal sum = BigDecimal.ZERO;
-        for (MenuProduct menuProduct : menuProducts) {
-            sum = sum.add(menuProduct.priceSum());
-        }
-        return sum;
+        return menuProducts.stream()
+                .map(MenuProduct::priceSum)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public Long getId() {

@@ -9,11 +9,13 @@ import io.restassured.RestAssured;
 import io.restassured.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.support.DbTableCleaner;
+import kitchenpos.support.ProductFixture.WrapProductResponse;
 import org.assertj.core.api.ListAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.function.Executable;
@@ -132,6 +134,28 @@ public abstract class E2eTest {
         return () -> assertThat(actualDateTime).isCloseTo(now(), within(coefficient, unit));
     }
 
+    protected List<WrapProductResponse> extractListExactly(ExtractableResponse<Response> 응답) {
+        return 응답.body().as(new TypeRef<>() {
+        });
+    }
+
+    /**
+     * 응답값으로 scale: 2, precision: 7인 BigDecimal이 넘어오는데 이것을 정규화합니다.
+     */
+    private void normalizePrices(List<WrapProductResponse> responses) {
+        for (WrapProductResponse response : responses) {
+            response.normalizePrice();
+        }
+    }
+
+    protected List<WrapProductResponse> extractListExactlyAndNormalizePrices(ExtractableResponse<Response> 응답) {
+
+        final List<WrapProductResponse> responses = extractListExactly(응답);
+
+        normalizePrices(responses);
+
+        return responses;
+    }
 
     /**
      *
@@ -169,8 +193,8 @@ public abstract class E2eTest {
     /**
      * 슈퍼타입 토큰을 이용해서 한 단계 이상 깊이의 제네릭의 값을 추출합니다.
      */
-    protected  <T> List<T> extractHttpBody(ExtractableResponse<Response> 응답) {
-        return 응답.body().as(new TypeRef<List<T>>() {
+    protected <T> List<T> extractHttpBody(ExtractableResponse<Response> 응답) {
+        return 응답.body().as(new TypeRef<>() {
         });
     }
 
@@ -193,6 +217,40 @@ public abstract class E2eTest {
         public Executable toExecutable(ListAssert listAssert) {
 
             return () -> listAssert.extracting(fieldName).containsExactlyInAnyOrder(expected);
+        }
+    }
+
+    protected static class BigDecimalAssertionPair extends AssertionPair {
+
+        private BigDecimalAssertionPair(String fieldName, Object... expected) {
+            super(fieldName, expected);
+        }
+
+        /**
+         * BigDecimal 값을 검증하기 위함
+         */
+        public static BigDecimalAssertionPair rowBigDecimal(String key, int scale, BigDecimal... expected) {
+
+            final BigDecimal[] convert = convertBigDecimalToIntegers(scale, expected);
+
+            return new BigDecimalAssertionPair(key, convert);
+        }
+
+        public static BigDecimalAssertionPair rowBigDecimal(String key, BigDecimal... expected) {
+
+            return rowBigDecimal(key, 2, expected);
+        }
+
+        public Executable toExecutable(ListAssert listAssert) {
+
+            return () -> listAssert.extracting(super.fieldName).containsExactlyInAnyOrder(super.expected);
+        }
+
+        private static BigDecimal[] convertBigDecimalToIntegers(int scale, BigDecimal... expected) {
+
+            return stream(expected)
+                    .map(it -> it.setScale(2))
+                    .toArray(BigDecimal[]::new);
         }
     }
 }
