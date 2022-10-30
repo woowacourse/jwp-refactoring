@@ -29,6 +29,12 @@ public class OrderTable {
         }
     }
 
+    public void validateEmpty() {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Long getId() {
         return id;
     }

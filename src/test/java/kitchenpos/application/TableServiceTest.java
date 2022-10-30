@@ -83,7 +83,7 @@ class TableServiceTest {
         assertThat(actual).hasSize(3);
     }
 
-    @DisplayName("orderTable의 epmty를 변경한다.")
+    @DisplayName("orderTable의 empty를 변경한다.")
     @Test
     void changeOrderTableEmpty() {
         // 메뉴 설정

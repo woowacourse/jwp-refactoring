@@ -25,6 +25,18 @@ public class Order {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
+    public static Order from(Long orderTableId, List<OrderLineItem> orderLineItems, long menuSize) {
+        Order order = new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+        order.validateSize(menuSize);
+        return order;
+    }
+
+    private void validateSize(final long menuSize) {
+        if (orderLineItems.size() != menuSize) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -45,7 +57,10 @@ public class Order {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void changeOrderStatus(final String orderStatus) {
+        if (this.orderStatus.equals(orderStatus)) {
+            throw new IllegalArgumentException();
+        }
         this.orderStatus = orderStatus;
     }
 
