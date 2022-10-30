@@ -39,18 +39,20 @@ public class MenuService {
     @Transactional
     public Menu create(final MenuRequest request) {
         validateMenuGroupExists(request.getMenuGroupId());
-        Menu menu = menuDao.save(request.toEntity());
+        Menu menu = request.toEntity();
 
-        menu.setIdToMenuProducts();
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
         List<Product> products = getProducts(menuProducts);
         menu.validatePriceUnderProductsSum(products);
+
+        Menu savedMenu = menuDao.save(menu);
+        menu.setIdToMenuProducts();
 
         for (final MenuProduct menuProduct : menuProducts) {
             menuProductDao.save(menuProduct);
         }
 
-        return menu;
+        return savedMenu;
     }
 
     private void validateMenuGroupExists(final Long menuGroupId) {
