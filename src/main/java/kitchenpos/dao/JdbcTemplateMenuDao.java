@@ -8,7 +8,6 @@ import java.util.Optional;
 import javax.sql.DataSource;
 import kitchenpos.domain.Menu;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -16,7 +15,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class JdbcTemplateMenuDao implements MenuDao {
+public class JdbcTemplateMenuDao{
     private static final String TABLE_NAME = "menu";
     private static final String KEY_COLUMN_NAME = "id";
 
@@ -31,14 +30,15 @@ public class JdbcTemplateMenuDao implements MenuDao {
         ;
     }
 
-    @Override
     public Menu save(final Menu entity) {
-        final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("name", entity.getName())
+                .addValue("price", entity.getPrice())
+                .addValue("menu_group_id", entity.getMenuGroupId());
         final Number key = jdbcInsert.executeAndReturnKey(parameters);
         return select(key.longValue());
     }
 
-    @Override
     public Optional<Menu> findById(final Long id) {
         try {
             return Optional.of(select(id));
@@ -47,13 +47,11 @@ public class JdbcTemplateMenuDao implements MenuDao {
         }
     }
 
-    @Override
     public List<Menu> findAll() {
         final String sql = "SELECT id, name, price, menu_group_id FROM menu ";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    @Override
     public long countByIdIn(final List<Long> ids) {
         final String sql = "SELECT COUNT(*) FROM menu WHERE id IN (:ids)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
