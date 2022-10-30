@@ -16,9 +16,11 @@ import kitchenpos.application.dto.request.ProductRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderTableRepository;
 
 @Component
 @Transactional
@@ -27,16 +29,14 @@ public class TestFixture {
     private final ProductService productService;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuService menuService;
-    private final TableGroupService tableGroupService;
-    private final OrderLineItemRepository orderLineItemRepository;
+    private final OrderTableRepository orderTableRepository;
 
     public TestFixture(ProductService productService, MenuGroupRepository menuGroupRepository, MenuService menuService,
-                       TableGroupService tableGroupService, OrderLineItemRepository orderLineItemRepository) {
+                       OrderTableRepository orderTableRepository) {
         this.productService = productService;
         this.menuGroupRepository = menuGroupRepository;
         this.menuService = menuService;
-        this.tableGroupService = tableGroupService;
-        this.orderLineItemRepository = orderLineItemRepository;
+        this.orderTableRepository = orderTableRepository;
     }
 
     public Product 상품을_생성한다(String menuName, Long price) {
@@ -65,5 +65,9 @@ public class TestFixture {
 
     public Menu 메뉴를_각_상품당_한개씩_넣어서_생성한다(String menuName, BigDecimal menuPrice, List<Product> products, Long menuGroupId) {
         return 메뉴를_각_상품당_여러개씩_넣어서_생성한다(menuName, menuPrice, products, menuGroupId, 1L);
+    }
+
+    public OrderTable 주문_테이블을_생성한다(int numberOfGuests, boolean empty) {
+        return orderTableRepository.save(new OrderTable(numberOfGuests, empty));
     }
 }

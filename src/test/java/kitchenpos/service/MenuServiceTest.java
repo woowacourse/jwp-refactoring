@@ -52,39 +52,44 @@ public class MenuServiceTest {
     @DisplayName("메뉴의 가격이 존재하지 않는다면 예외가 발생한다.")
     @Test
     public void menuWithNullPrice() {
-        Product 항정살 = testFixture.상품을_생성한다("항정살", 1000L);
+        MenuRequest request = new MenuRequest("밥류", null, 고기_분류.getId(), List.of(
+                toMenuProductRequest(삼겹살.getId(), 1L)
+        ));
 
-        assertThatThrownBy(() -> testFixture.메뉴를_각_상품당_한개씩_넣어서_생성한다(
-                "밥류", null, List.of(항정살), 고기_분류.getId()))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴의 가격이 음수라면 예외가 발생한다.")
     @Test
     public void menuWithNegativePrice() {
-        Product 항정살 = testFixture.상품을_생성한다("항정살", 1000L);
+        MenuRequest request = new MenuRequest("밥류", BigDecimal.valueOf(-1L), 고기_분류.getId(), List.of(
+                toMenuProductRequest(삼겹살.getId(), 1L)
+        ));
 
-        assertThatThrownBy(() -> testFixture.메뉴를_각_상품당_한개씩_넣어서_생성한다(
-                    "고기류", BigDecimal.valueOf(-1L), List.of(항정살), 고기_분류.getId()))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴 그룹이 존재하지 않다면 예외가 발생한다.")
     @Test
     public void menuGroupNotSaved() {
+        MenuRequest request = new MenuRequest("밥류", BigDecimal.valueOf(1000L), null, List.of(
+                toMenuProductRequest(삼겹살.getId(), 1L)
+        ));
 
-        assertThatThrownBy(() -> testFixture.메뉴를_각_상품당_한개씩_넣어서_생성한다(
-                "고기류", BigDecimal.valueOf(-1L), List.of(삼겹살), null))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("상품의 가격 합보다 메뉴의 가격이 비싸다면 예외가 발생한다.")
     @Test
     public void menuProductPriceDoesNotExceedTotalSum() {
-        Product 항정살 = testFixture.상품을_생성한다("항정살", 1000L);
+        MenuRequest request = new MenuRequest("밥류", BigDecimal.valueOf(1500L), 고기_분류.getId(), List.of(
+                toMenuProductRequest(삼겹살.getId(), 1L)
+        ));
 
-        assertThatThrownBy(() -> testFixture.메뉴를_각_상품당_한개씩_넣어서_생성한다(
-                "고기류", BigDecimal.valueOf(1500L), List.of(항정살), 고기_분류.getId()))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -92,10 +97,13 @@ public class MenuServiceTest {
     @Test
     public void menulist() {
         Product 항정살 = testFixture.상품을_생성한다("항정살", 1000L);
-
         testFixture.메뉴를_각_상품당_한개씩_넣어서_생성한다("고기류", BigDecimal.valueOf(1000L), List.of(항정살), 고기_분류.getId());
         testFixture.메뉴를_각_상품당_한개씩_넣어서_생성한다("고기류", BigDecimal.valueOf(1000L), List.of(삼겹살), 고기_분류.getId());
 
         assertThat(menuService.list()).hasSize(2);
+    }
+
+    private MenuProductRequest toMenuProductRequest(Long productId, Long quantity) {
+        return new MenuProductRequest(productId, quantity);
     }
 }
