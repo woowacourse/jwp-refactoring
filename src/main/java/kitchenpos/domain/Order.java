@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -49,43 +50,35 @@ public class Order {
         }
     }
 
-    public Long getId() {
-        return id;
+    public void changeOrderStatus(final String orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+            throw new IllegalArgumentException();
+        }
+
+        this.orderStatus = orderStatus;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        this.orderLineItems = orderLineItems;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public Long getOrderTableId() {
         return orderTableId;
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
-    }
-
     public String getOrderStatus() {
         return orderStatus;
-    }
-
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 }
