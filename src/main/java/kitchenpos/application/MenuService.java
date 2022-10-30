@@ -32,6 +32,7 @@ public class MenuService {
 
     @Transactional
     public Menu create(final MenuRequest menuRequest) {
+        validateMenuGroupIsNotNull(menuRequest);
         MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                         .orElseThrow(IllegalArgumentException::new);
 
@@ -42,6 +43,12 @@ public class MenuService {
         return menuRepository.save(
                 new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup, savedMenuProducts)
         );
+    }
+
+    private void validateMenuGroupIsNotNull(MenuRequest menuRequest) {
+        if (menuRequest.getMenuGroupId() == null) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private MenuProduct toMenuProduct(MenuProductRequest menuProductRequest) {

@@ -3,6 +3,7 @@ package kitchenpos.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,9 +23,11 @@ import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderStatusRequest;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.repository.OrderTableRepository;
 
 @SpringBootTest
@@ -51,7 +54,9 @@ public class OrderServiceTest {
     @BeforeEach
     void setUp() {
         orderTable = orderTableRepository.save(new OrderTable(100, false));
-        menu = testFixture.삼겹살_메뉴();
+        Product 삼겹살 = testFixture.상품을_생성한다("삼겹살", 1000L);
+        MenuGroup 고기류 = testFixture.메뉴_분류를_생성한다("고기류");
+        menu = testFixture.메뉴를_각_상품당_한개씩_넣어서_생성한다("고기 메뉴", BigDecimal.valueOf(1000L), List.of(삼겹살), 고기류.getId());
     }
 
     @DisplayName("주문 내에 메뉴가 비어있다면 예외가 발생한다.")

@@ -2,6 +2,7 @@ package kitchenpos;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,28 +39,31 @@ public class TestFixture {
         this.orderLineItemRepository = orderLineItemRepository;
     }
 
-    public Product 삼겹살() {
+    public Product 상품을_생성한다(String menuName, Long price) {
         return productService.create(
-                new ProductRequest("삼겹살", BigDecimal.valueOf(1000L)));
+                new ProductRequest(menuName, BigDecimal.valueOf(price)));
     }
 
-    public MenuGroup 삼겹살_종류() {
-        return menuGroupRepository.save(new MenuGroup("삼겹살 종류"));
+    public MenuGroup 메뉴_분류를_생성한다(String menuGroupName) {
+        return menuGroupRepository.save(new MenuGroup(menuGroupName));
     }
 
-    public Menu 삼겹살_메뉴() {
-        Product product = 삼겹살();
-        MenuGroup menuGroup = menuGroupRepository.save(삼겹살_종류());
-        MenuProduct savedMenuProduct = new MenuProduct(product, 1L);
+    public Menu 메뉴를_각_상품당_여러개씩_넣어서_생성한다(String menuName, BigDecimal menuPrice, List<Product> products, Long menuGroupId, Long quantity) {
+        List<MenuProductRequest> productRequests = products.stream()
+                .map(product -> new MenuProductRequest(product.getId(), quantity))
+                .collect(Collectors.toList());
 
         return menuService.create(
                 new MenuRequest(
-                        "메뉴",
-                        BigDecimal.valueOf(1000L),
-                        menuGroup.getId(),
-                        List.of(new MenuProductRequest(savedMenuProduct.getProduct().getId(),
-                                savedMenuProduct.getQuantity()))
+                        menuName,
+                        menuPrice,
+                        menuGroupId,
+                        productRequests
                 )
         );
+    }
+
+    public Menu 메뉴를_각_상품당_한개씩_넣어서_생성한다(String menuName, BigDecimal menuPrice, List<Product> products, Long menuGroupId) {
+        return 메뉴를_각_상품당_여러개씩_넣어서_생성한다(menuName, menuPrice, products, menuGroupId, 1L);
     }
 }
