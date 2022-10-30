@@ -21,6 +21,10 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
+    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
+        this(id, name, price,menuGroupId, null);
+    }
+
     private void validatePrice(BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("메뉴 가격은 0 이상이어야 한다.");

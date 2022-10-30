@@ -52,14 +52,8 @@ public class Fixtures {
         return new ProductRequest("후라이드", BigDecimal.valueOf(16000));
     }
 
-    public static MenuRequest 메뉴요청_후라이드치킨() {
-        return new MenuRequest(1L, "후라이드치킨", BigDecimal.valueOf(16000),
-                1L,
-                List.of(메뉴상품요청_후라이드()));
-    }
-
     public static MenuProductRequest 메뉴상품요청_후라이드() {
-        return new MenuProductRequest(1L, 1L, 1L, 1);
+        return new MenuProductRequest(1L, 1);
     }
 
     public static MenuProduct 메뉴상품_후라이드() {
@@ -73,8 +67,19 @@ public class Fixtures {
                 List.of(메뉴상품_후라이드()));
     }
 
+    public static MenuRequest 메뉴요청_후라이드치킨() {
+        return new MenuRequest("후라이드치킨", BigDecimal.valueOf(16000), 1L,
+                List.of(메뉴상품요청_후라이드()));
+    }
+
     public static Menu 메뉴_치킨그룹(MenuProduct... menuProducts) {
         return new Menu(1L, "후라이드치킨", BigDecimal.valueOf(16000),
+                1L,
+                Arrays.asList(menuProducts));
+    }
+
+    public static MenuRequest 메뉴요청_치킨그룹(MenuProductRequest... menuProducts) {
+        return new MenuRequest("후라이드치킨", BigDecimal.valueOf(16000),
                 1L,
                 Arrays.asList(menuProducts));
     }
