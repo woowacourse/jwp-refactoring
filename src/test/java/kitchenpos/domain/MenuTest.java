@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import static kitchenpos.Fixtures.메뉴상품_후라이드;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
@@ -17,7 +16,7 @@ class MenuTest {
         BigDecimal 음수_가격 = BigDecimal.valueOf(-10000);
 
         assertThatThrownBy(() -> new Menu(1L, "후라이드", 음수_가격,
-                1L, List.of(메뉴상품_후라이드())))
+                1L, List.of(new MenuProduct(1L, 1L, 1L, 1))))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("메뉴 가격은 0 이상이어야 한다.");
     }
