@@ -25,7 +25,7 @@ import org.assertj.core.api.ListAssert;
 public class Fixtures {
 
     public static MenuGroup 메뉴그룹_한마리메뉴() {
-        return new MenuGroup(null, "한마리메뉴");
+        return new MenuGroup("한마리메뉴");
     }
 
     public static Product 상품_후라이드() {
