@@ -13,12 +13,8 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public MenuProduct(Long productId, long quantity) {
-        this(null, null, productId, quantity);
-    }
-
-    public MenuProduct(Long menuId, MenuProduct menuProduct) {
-        this(null, menuId, menuProduct.productId, menuProduct.quantity);
+    public MenuProduct(Long menuId, Long productId, long quantity) {
+        this(null, menuId, productId, quantity);
     }
 
     public Long getSeq() {

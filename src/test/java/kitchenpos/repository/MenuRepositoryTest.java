@@ -4,7 +4,6 @@ import static kitchenpos.fixture.DomainFixture.createMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
-import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +22,7 @@ class MenuRepositoryTest extends RepositoryTest {
     void 메뉴를_저장한다() {
         Menu menu = new Menu("", BigDecimal.valueOf(0L), menuGroup.getId());
 
-        Menu savedMenu = menuRepository.save(menu, List.of());
+        Menu savedMenu = menuRepository.save(menu);
 
         assertThat(menuDao.findById(savedMenu.getId())).isPresent();
     }

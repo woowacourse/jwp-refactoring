@@ -3,14 +3,10 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
 import kitchenpos.exception.MenuPriceException;
-import kitchenpos.exception.NotFoundMenuGroupException;
-import kitchenpos.exception.NotFoundProductException;
+import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.ui.dto.MenuProductDto;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
@@ -20,52 +16,38 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MenuService {
     private final MenuRepository menuRepository;
-    private final MenuGroupDao menuGroupDao;
-    private final ProductDao productDao;
+    private final MenuProductRepository menuProductRepository;
 
-    public MenuService(MenuRepository menuRepository, MenuGroupDao menuGroupDao, ProductDao productDao) {
+    public MenuService(MenuRepository menuRepository, MenuProductRepository menuProductRepository) {
         this.menuRepository = menuRepository;
-        this.menuGroupDao = menuGroupDao;
-        this.productDao = productDao;
+        this.menuProductRepository = menuProductRepository;
     }
 
     @Transactional
-    public Menu create(MenuCreateRequest menuCreateRequest) {
-        validateMenuGroupId(menuCreateRequest.getMenuGroupId());
-        List<MenuProduct> menuProducts = getMenuProducts(menuCreateRequest.getMenuProducts());
-        validatePrice(menuProducts, menuCreateRequest.getPrice());
-        Menu menu = new Menu(
-                menuCreateRequest.getName(),
-                menuCreateRequest.getPrice(),
-                menuCreateRequest.getMenuGroupId());
+    public Menu create(MenuCreateRequest request) {
+        menuRepository.validateMenuGroupId(request.getMenuGroupId());
+        BigDecimal menuProductsPrice = menuProductRepository.getMenuProductsPrice(request.getMenuProducts());
+        validatePrice(menuProductsPrice, request.getPrice());
 
-        return menuRepository.save(menu, menuProducts);
+        Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId());
+        Menu savedMenu = menuRepository.save(menu);
+        List<MenuProduct> menuProducts = getMenuProducts(menu.getId(), request.getMenuProducts());
+        List<MenuProduct> savedMenuProducts = menuProductRepository.save(menuProducts);
+
+        return new Menu(savedMenu, savedMenuProducts);
     }
 
-    private void validateMenuGroupId(Long menuGroupId) {
-        if (!menuGroupDao.existsById(menuGroupId)) {
-            throw new NotFoundMenuGroupException();
-        }
-    }
-
-    private List<MenuProduct> getMenuProducts(List<MenuProductDto> menuProductDtos) {
-        return menuProductDtos.stream()
-                .map(menuProductDto -> new MenuProduct(menuProductDto.getProductId(), menuProductDto.getQuantity()))
-                .collect(Collectors.toList());
-    }
-
-    private void validatePrice(List<MenuProduct> menuProducts, BigDecimal price) {
-        BigDecimal sum = BigDecimal.ZERO;
-
-        for (MenuProduct menuProduct : menuProducts) {
-            Product product = productDao.findById(menuProduct.getProductId())
-                    .orElseThrow(NotFoundProductException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        if (price.compareTo(sum) > 0) {
+    private void validatePrice(BigDecimal menuProductsPrice, BigDecimal price) {
+        if (price.compareTo(menuProductsPrice) > 0) {
             throw new MenuPriceException();
         }
+    }
+
+    private List<MenuProduct> getMenuProducts(Long menuId, List<MenuProductDto> menuProductDtos) {
+        return menuProductDtos.stream()
+                .map(menuProductDto -> new MenuProduct(menuId, menuProductDto.getProductId(),
+                        menuProductDto.getQuantity()))
+                .collect(Collectors.toList());
     }
 
     public List<Menu> list() {
