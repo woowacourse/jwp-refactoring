@@ -2,9 +2,6 @@ package kitchenpos.application;
 
 import static java.util.stream.Collectors.*;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -16,23 +13,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
+@Transactional(readOnly = true)
 public class OrderService {
-    private final MenuDao menuDao;
-    private final OrderDao orderDao;
-    private final OrderLineItemDao orderLineItemDao;
+
     private final OrderRepository orderRepository;
 
-    public OrderService(
-            final MenuDao menuDao,
-            final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
-            final OrderRepository orderRepository) {
-        this.menuDao = menuDao;
-        this.orderDao = orderDao;
-        this.orderLineItemDao = orderLineItemDao;
+    public OrderService(final OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
@@ -50,13 +38,8 @@ public class OrderService {
     }
 
     public List<OrderResponse> list() {
-        final List<Order> orders = orderDao.findAll();
-
-        for (final Order order : orders) {
-            order.addOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
-        }
-
-        return orders.stream()
+        return orderRepository.findAll()
+                .stream()
                 .map(OrderResponse::new)
                 .collect(toList());
     }
@@ -67,8 +50,6 @@ public class OrderService {
 
         final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
         savedOrder.changeOrderStatus(orderStatus.name());
-
-        savedOrder.addOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
 
         return new OrderResponse(savedOrder);
     }

@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.toList;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -14,19 +13,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional(readOnly = true)
 public class OrderRepository {
 
     private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
-    private final OrderLineItemDao orderLineItemDao;
 
-    public OrderRepository(final MenuDao menuDao, final OrderDao orderDao, final OrderTableDao orderTableDao,
-                           final OrderLineItemDao orderLineItemDao) {
+    public OrderRepository(final MenuDao menuDao,
+                           final OrderDao orderDao,
+                           final OrderTableDao orderTableDao) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
-        this.orderLineItemDao = orderLineItemDao;
     }
 
     @Transactional
@@ -36,12 +35,7 @@ public class OrderRepository {
         OrderTable orderTable = orderTableDao.getById(entity.getOrderTableId());
         validateEmptyOrderTable(orderTable);
 
-        Order savedOrder = orderDao.save(new Order(orderTable.getId(), entity.getOrderLineItems()));
-        List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(savedOrder);
-
-        savedOrder.addOrderLineItems(savedOrderLineItems);
-
-        return savedOrder;
+        return orderDao.save(new Order(orderTable.getId(), entity.getOrderLineItems()));
     }
 
     private void validateEmptyOrderTable(final OrderTable orderTable) {
@@ -62,16 +56,12 @@ public class OrderRepository {
         }
     }
 
-    private List<OrderLineItem> saveOrderLineItems(final Order order) {
-        return order.getOrderLineItems()
-                .stream()
-                .map(it -> new OrderLineItem(order.getId(), it.getMenuId(), it.getQuantity()))
-                .map(orderLineItemDao::save)
-                .collect(toList());
-    }
-
     public Order getById(final Long id) {
         return orderDao.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
+    }
+
+    public List<Order> findAll() {
+        return orderDao.findAll();
     }
 }
