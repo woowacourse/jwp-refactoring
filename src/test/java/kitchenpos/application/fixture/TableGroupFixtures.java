@@ -39,8 +39,9 @@ public class TableGroupFixtures {
             orderTablesField.setAccessible(true);
             orderTablesField.set(tableGroup, orderTables);
 
-            return new TableGroup(orderTables);
+            return tableGroup;
         } catch (final Exception e) {
+            e.printStackTrace();
             throw new RuntimeException();
         }
     }

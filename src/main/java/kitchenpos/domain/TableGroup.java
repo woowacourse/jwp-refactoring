@@ -26,8 +26,16 @@ public class TableGroup {
     }
 
     public TableGroup(final List<OrderTable> orderTables) {
+        validateOrderTables(orderTables);
+
         this.createdDate = LocalDateTime.now();
         this.orderTables = orderTables;
+    }
+
+    private void validateOrderTables(final List<OrderTable> orderTables) {
+        if (orderTables.isEmpty() || orderTables.size() < 2) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -50,7 +58,7 @@ public class TableGroup {
         return orderTables;
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
+    public void addOrderTables(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
     }
 }
