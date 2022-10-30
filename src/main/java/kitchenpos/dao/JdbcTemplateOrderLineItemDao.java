@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
+public class JdbcTemplateOrderLineItemDao {
     private static final String TABLE_NAME = "order_line_item";
     private static final String KEY_COLUMN_NAME = "seq";
 
@@ -30,14 +30,12 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
         ;
     }
 
-    @Override
     public OrderLineItem save(final OrderLineItem entity) {
         final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
         final Number key = jdbcInsert.executeAndReturnKey(parameters);
         return select(key.longValue());
     }
 
-    @Override
     public Optional<OrderLineItem> findById(final Long id) {
         try {
             return Optional.of(select(id));
@@ -46,13 +44,11 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
         }
     }
 
-    @Override
     public List<OrderLineItem> findAll() {
         final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    @Override
     public List<OrderLineItem> findAllByOrderId(final Long orderId) {
         final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE order_id = (:orderId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()

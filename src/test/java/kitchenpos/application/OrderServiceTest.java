@@ -39,7 +39,8 @@ class OrderServiceTest extends ServiceTest {
         init();
         OrderResponse 주문 = orderService.create(주문요청_테이블1());
 
-        검증_필드비교_값포함(assertThat(orderService.list()), 주문);
+        List<OrderResponse> list = orderService.list();
+        검증_필드비교_값포함(assertThat(list), 주문);
     }
 
     @DisplayName("주문들을 추가하면 주문 목록에 추가된다.")
@@ -106,9 +107,9 @@ class OrderServiceTest extends ServiceTest {
         OrderResponse 주문 = orderService.create(주문요청_테이블1());
         OrderResponse 변경된_주문 = 주문_상태를_변경했다(주문.getId(), MEAL);
 
-        OrderResponse 주문_목록 = orderService.list().get(0);
+        OrderResponse 저장된_주문 = orderService.list().get(0);
 
-        assertThat(주문_목록)
+        assertThat(저장된_주문)
                 .usingRecursiveComparison()
                 .isEqualTo(변경된_주문);
     }
@@ -119,7 +120,7 @@ class OrderServiceTest extends ServiceTest {
         init();
         long 존재하지않는_주문_ID = 100L;
         assertThatThrownBy(() -> 주문_상태를_변경했다(존재하지않는_주문_ID, MEAL))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(InvalidDataAccessApiUsageException.class)
                 .hasMessage("해당 아이디의 주문은 존재하지 않는다.");
     }
 
