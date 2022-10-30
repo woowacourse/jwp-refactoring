@@ -77,9 +77,8 @@ public class OrderService {
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusRequest request) {
         final Order savedOrder = orderRepository.getById(orderId);
-        savedOrder.changeOrderStatus(request.getOrderStatus());
-        orderRepository.save(savedOrder);
+        final Order changeOrder = savedOrder.changeOrderStatus(request.getOrderStatus());
 
-        return OrderResponse.of(savedOrder);
+        return OrderResponse.of(orderRepository.save(changeOrder));
     }
 }

@@ -10,7 +10,7 @@ public class Order {
 
     private final Long id;
     private final Long orderTableId;
-    private OrderStatus orderStatus;
+    private final OrderStatus orderStatus;
     private final LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
@@ -49,12 +49,12 @@ public class Order {
         return new Order(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), items);
     }
 
-    public void changeOrderStatus(final OrderStatus orderStatus) {
+    public Order changeOrderStatus(final OrderStatus orderStatus) {
         if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
             throw new IllegalArgumentException();
         }
 
-        this.orderStatus = orderStatus;
+        return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
     public int getItemSize() {
