@@ -57,8 +57,7 @@ public class OrderService {
             throw new IllegalArgumentException("주문한 메뉴들은 모두 DB에 등록되어야 한다.");
         }
 
-        final OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId())
-                .orElseThrow(() -> new IllegalArgumentException("주문 테이블은 DB에 등록되어야 한다."));
+        final OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId());
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("주문 테이블은 손님이 존재해야 한다.");

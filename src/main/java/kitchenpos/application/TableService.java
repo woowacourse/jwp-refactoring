@@ -50,8 +50,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 아이디의 테이블은 존재하지 않는다."));
+        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId);
 
         if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
             throw new IllegalArgumentException("테이블은 단체지정이 없어야 한다.");
@@ -75,8 +74,7 @@ public class TableService {
             throw new IllegalArgumentException("테이블 고객 수는 0 이상이어야 한다.");
         }
 
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 아이디의 테이블은 존재하지 않는다."));
+        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId);
 
         if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException("테이블은 차있어야 한다.");

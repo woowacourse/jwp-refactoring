@@ -34,8 +34,7 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
         final List<OrderTable> orderTables = tableGroupRequest.getOrderTables().stream()
-                .map(orderTableRequest -> orderTableDao.findById(orderTableRequest.getId())
-                        .orElseThrow(() -> new IllegalArgumentException("등록되는 모든 테이블들은 존재해야 한다.")))
+                .map(orderTableRequest -> orderTableDao.findById(orderTableRequest.getId()))
                 .collect(Collectors.toList());
 
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {

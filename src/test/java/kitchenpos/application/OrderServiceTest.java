@@ -20,6 +20,7 @@ import kitchenpos.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.dto.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 @SuppressWarnings("NonAsciiCharacters")
 class OrderServiceTest extends ServiceTest {
@@ -83,8 +84,8 @@ class OrderServiceTest extends ServiceTest {
         OrderRequest 주문 = new OrderRequest(잘못된_테이블_ID, List.of(주문아이템요청_후라이드()));
 
         assertThatThrownBy(() -> orderService.create(주문))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 테이블은 DB에 등록되어야 한다.");
+                .isInstanceOf(InvalidDataAccessApiUsageException.class)
+                .hasMessage("테이블은 존재해야 한다.");
     }
 
     @DisplayName("주문 테이블은 손님이 존재해야 한다.")
