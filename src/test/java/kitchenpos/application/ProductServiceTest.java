@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.common.constants.Constants.데시멀_야채곱창_가격;
+import static kitchenpos.common.constants.Constants.야채곱창_가격;
 import static kitchenpos.common.constants.Constants.야채곱창_이름;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -21,20 +21,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 class ProductServiceTest extends ServiceTest {
 
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
+    private final ProductRepository productRepository;
 
     @Autowired
-    private ProductRepository productRepository;
+    ProductServiceTest(final ProductService productService,
+                       final ProductRepository productRepository) {
+        this.productService = productService;
+        this.productRepository = productRepository;
+    }
 
     @DisplayName("상품을 등록한다.")
     @Test
     void 상품을_등록한다() {
         // given
-        ProductCreateRequest productCreateRequest = new ProductCreateRequest(야채곱창_이름, 데시멀_야채곱창_가격);
+        ProductCreateRequest 상품_생성_요청 = new ProductCreateRequest(야채곱창_이름, 야채곱창_가격);
 
         // when
-        ProductResponse actual = productService.create(productCreateRequest);
+        ProductResponse actual = productService.create(상품_생성_요청);
 
         // then
         assertAll(
@@ -48,10 +52,10 @@ class ProductServiceTest extends ServiceTest {
     @ValueSource(ints = {-1, -2, -100})
     void 상품을_등록할_때_가격이_0원_보다_작으면_예외가_발생한다(int 잘못된_가격) {
         // given
-        ProductCreateRequest productCreateRequest = new ProductCreateRequest(야채곱창_이름, BigDecimal.valueOf(잘못된_가격));
+        ProductCreateRequest 상품_생성_요청 = new ProductCreateRequest(야채곱창_이름, BigDecimal.valueOf(잘못된_가격));
 
         // when & then
-        assertThatThrownBy(() -> productService.create(productCreateRequest))
+        assertThatThrownBy(() -> productService.create(상품_생성_요청))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -59,10 +63,10 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void 상품을_등록할_때_가격이_null_이면_예외가_발생한다() {
         // given
-        ProductCreateRequest productCreateRequest = new ProductCreateRequest(야채곱창_이름, null);
+        ProductCreateRequest 상품_생성_요청 = new ProductCreateRequest(야채곱창_이름, null);
 
         // when & then
-        assertThatThrownBy(() -> productService.create(productCreateRequest))
+        assertThatThrownBy(() -> productService.create(상품_생성_요청))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -70,7 +74,10 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void 상품_목록을_조회한다() {
         // given
-        Product 야채곱창 = 상품_생성(야채곱창_이름, 데시멀_야채곱창_가격);
+        Product 야채곱창 = new ProductBuilder()
+                .name(야채곱창_이름)
+                .price(야채곱창_가격)
+                .build();
         productRepository.save(야채곱창);
 
         // when
@@ -78,12 +85,5 @@ class ProductServiceTest extends ServiceTest {
 
         // then
         assertThat(상품들.getProductResponses()).hasSize(1);
-    }
-
-    private Product 상품_생성(final String name, final BigDecimal price) {
-        return new ProductBuilder()
-                .name(name)
-                .price(price)
-                .build();
     }
 }

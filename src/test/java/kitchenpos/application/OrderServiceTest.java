@@ -211,11 +211,11 @@ class OrderServiceTest extends ServiceTest {
                 .build();
     }
 
-    private Menu 메뉴_생성(final String name, final int price, final MenuGroup menuGroup,
+    private Menu 메뉴_생성(final String name, final BigDecimal price, final MenuGroup menuGroup,
                        final MenuProduct menuProduct) {
         return new MenuBuilder()
                 .name(name)
-                .price(BigDecimal.valueOf(price))
+                .price(price)
                 .menuGroupId(menuGroup.getId())
                 .menuProducts(List.of(menuProduct))
                 .build();
@@ -234,10 +234,10 @@ class OrderServiceTest extends ServiceTest {
                 .build();
     }
 
-    private Product 상품_생성(final String name, final int price) {
+    private Product 상품_생성(final String name, final BigDecimal price) {
         return new ProductBuilder()
                 .name(name)
-                .price(BigDecimal.valueOf(price))
+                .price(price)
                 .build();
     }
 }

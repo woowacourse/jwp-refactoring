@@ -13,6 +13,7 @@ import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 class MenuGroupServiceTest extends ServiceTest {
 
@@ -21,6 +22,7 @@ class MenuGroupServiceTest extends ServiceTest {
 
     private MenuGroup 루나세트;
 
+    @Autowired
     MenuGroupServiceTest(final MenuGroupService menuGroupService,
                          final MenuGroupRepository menuGroupRepository) {
         this.menuGroupService = menuGroupService;

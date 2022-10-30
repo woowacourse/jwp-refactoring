@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.common.constants.Constants.데시멀_야채곱창_가격;
 import static kitchenpos.common.constants.Constants.루나세트_이름;
 import static kitchenpos.common.constants.Constants.야채곱창_가격;
 import static kitchenpos.common.constants.Constants.야채곱창_수량;
@@ -32,43 +31,46 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 public class MenuServiceTest extends ServiceTest {
 
-    @Autowired
-    private MenuService menuService;
-
-    @Autowired
-    private MenuRepository menuRepository;
-
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private MenuGroupRepository menuGroupRepository;
+    private final MenuService menuService;
+    private final MenuRepository menuRepository;
+    private final ProductRepository productRepository;
+    private final MenuGroupRepository menuGroupRepository;
 
     private Product 야채곱창;
     private MenuGroup 루나세트;
     private MenuProduct 루나_야채곱창;
 
+    @Autowired
+    public MenuServiceTest(final MenuService menuService,
+                           final MenuRepository menuRepository,
+                           final ProductRepository productRepository,
+                           final MenuGroupRepository menuGroupRepository) {
+        this.menuService = menuService;
+        this.menuRepository = menuRepository;
+        this.productRepository = productRepository;
+        this.menuGroupRepository = menuGroupRepository;
+    }
+
     @BeforeEach
     void setUp() {
         야채곱창 = new ProductBuilder()
                 .name(야채곱창_이름)
-                .price(BigDecimal.valueOf(야채곱창_가격))
+                .price(야채곱창_가격)
                 .build();
         야채곱창 = productRepository.save(야채곱창);
-
-        루나_야채곱창 = new MenuProductBuilder()
-                .product(야채곱창)
-                .quantity(1)
-                .build();
 
         루나세트 = new MenuGroupBuilder()
                 .name(루나세트_이름)
                 .build();
         루나세트 = menuGroupRepository.save(루나세트);
+
+        루나_야채곱창 = new MenuProductBuilder()
+                .product(야채곱창)
+                .quantity(1)
+                .build();
     }
 
     @DisplayName("메뉴를 등록한다.")
@@ -76,8 +78,7 @@ public class MenuServiceTest extends ServiceTest {
     void 메뉴를_등록한다() {
         // given
         MenuProductCreateRequest 메뉴_상품_등록_요청 = new MenuProductCreateRequest(야채곱창.getId(), 야채곱창_수량);
-        MenuCreateRequest 야채곱창_메뉴_생성_요청 = new MenuCreateRequest(야채곱창_이름, 데시멀_야채곱창_가격, 루나세트.getId(),
-                List.of(메뉴_상품_등록_요청));
+        MenuCreateRequest 야채곱창_메뉴_생성_요청 = new MenuCreateRequest(야채곱창_이름, 야채곱창_가격, 루나세트.getId(), List.of(메뉴_상품_등록_요청));
 
         // when
         MenuResponse actual = menuService.create(야채곱창_메뉴_생성_요청);
@@ -121,8 +122,7 @@ public class MenuServiceTest extends ServiceTest {
         // given
         Long 잘못된_메뉴그룹_아이디 = -1L;
         MenuProductCreateRequest 메뉴_상품_등록_요청 = new MenuProductCreateRequest(야채곱창.getId(), 야채곱창_수량);
-        MenuCreateRequest 야채곱창_메뉴_생성_요청 = new MenuCreateRequest(야채곱창_이름, 데시멀_야채곱창_가격, 잘못된_메뉴그룹_아이디,
-                List.of(메뉴_상품_등록_요청));
+        MenuCreateRequest 야채곱창_메뉴_생성_요청 = new MenuCreateRequest(야채곱창_이름, 야채곱창_가격, 잘못된_메뉴그룹_아이디, List.of(메뉴_상품_등록_요청));
 
         // when & then
         assertThatThrownBy(() -> menuService.create(야채곱창_메뉴_생성_요청))
@@ -135,8 +135,7 @@ public class MenuServiceTest extends ServiceTest {
         // given
         Long 등록되지_않은_상품_아이디 = 999L;
         MenuProductCreateRequest 메뉴_상품_등록_요청 = new MenuProductCreateRequest(등록되지_않은_상품_아이디, 야채곱창_수량);
-        MenuCreateRequest 야채곱창_메뉴_생성_요청 = new MenuCreateRequest(야채곱창_이름, 데시멀_야채곱창_가격, 루나세트.getId(),
-                List.of(메뉴_상품_등록_요청));
+        MenuCreateRequest 야채곱창_메뉴_생성_요청 = new MenuCreateRequest(야채곱창_이름, 야채곱창_가격, 루나세트.getId(), List.of(메뉴_상품_등록_요청));
 
         // when & then
         assertThatThrownBy(() -> menuService.create(야채곱창_메뉴_생성_요청))
@@ -160,7 +159,12 @@ public class MenuServiceTest extends ServiceTest {
     @Test
     void 메뉴_목록을_조회한다() {
         // given
-        Menu 야채곱창_메뉴 = 메뉴_생성(야채곱창_이름, 야채곱창_가격, 루나세트.getId(), List.of(루나_야채곱창));
+        Menu 야채곱창_메뉴 = new MenuBuilder()
+                .name(야채곱창_이름)
+                .price(야채곱창_가격)
+                .menuGroupId(루나세트.getId())
+                .menuProducts(List.of(루나_야채곱창))
+                .build();
         menuRepository.save(야채곱창_메뉴);
 
         // when
@@ -168,22 +172,5 @@ public class MenuServiceTest extends ServiceTest {
 
         // then
         assertThat(메뉴들.getMenuResponses()).hasSize(1);
-    }
-
-    private Menu 메뉴_생성(final String name, final int price, final Long menuGroupId,
-                       final List<MenuProduct> products) {
-        return new MenuBuilder()
-                .name(name)
-                .price(BigDecimal.valueOf(price))
-                .menuGroupId(menuGroupId)
-                .menuProducts(products)
-                .build();
-    }
-
-    private MenuProduct 메뉴상품_생성(final Product product, final long quantity) {
-        return new MenuProductBuilder()
-                .product(product)
-                .quantity(quantity)
-                .build();
     }
 }
