@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,22 +35,22 @@ public class MenuService {
         MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                         .orElseThrow(IllegalArgumentException::new);
 
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProductRequest menuProductRequest : menuRequest.getMenuProducts()) {
-            Product product = productRepository.findById(menuProductRequest.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            MenuProduct menuProduct = new MenuProduct(product, menuProductRequest.getQuantity());
-            savedMenuProducts.add(menuProduct);
-        }
+        final List<MenuProduct> savedMenuProducts = menuRequest.getMenuProducts().stream()
+                .map(this::toMenuProduct)
+                .collect(Collectors.toList());
 
         return menuRepository.save(
                 new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup, savedMenuProducts)
         );
     }
 
-    public List<Menu> list() {
-        final List<Menu> menus = menuRepository.findAll();
+    private MenuProduct toMenuProduct(MenuProductRequest menuProductRequest) {
+        Product product = productRepository.findById(menuProductRequest.getProductId())
+                .orElseThrow(IllegalArgumentException::new);
+        return new MenuProduct(product, menuProductRequest.getQuantity());
+    }
 
-        return menus;
+    public List<Menu> list() {
+        return menuRepository.findAll();
     }
 }
