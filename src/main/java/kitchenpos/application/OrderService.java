@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.convertor.OrderConvertor;
 import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderChangeRequest;
@@ -47,18 +46,20 @@ public class OrderService {
         validateOrderLineItemIsExist(order);
 
         final Order savedOrder = orderRepository.save(order);
-        return OrderConvertor.toOrderResponse(savedOrder);
+        return new OrderResponse(savedOrder);
     }
 
     public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
-        return OrderConvertor.toOrderResponses(orders);
+        return orders.stream()
+            .map(OrderResponse::new)
+            .collect(Collectors.toUnmodifiableList());
     }
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderChangeRequest request) {
         final Order changedOrder = changeStatus(orderId, OrderStatus.valueOf(request.getOrderStatus()));
-        return OrderConvertor.toOrderResponse(changedOrder);
+        return new OrderResponse(changedOrder);
     }
 
     private void validateOrderTableIsNotEmpty(final OrderTable orderTable) {

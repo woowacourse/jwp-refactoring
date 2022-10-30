@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.convertor.TableConvertor;
 import kitchenpos.application.dto.request.OrderTableRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
@@ -13,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class TableService {
@@ -26,32 +26,40 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse create(final OrderTableRequest request) {
-        final OrderTable orderTable = TableConvertor.toOrderTable(request);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        return TableConvertor.toOrderTableResponse(savedOrderTable);
+        final OrderTable savedOrderTable = orderTableDao.save(createOrderTable(request));
+        return new OrderTableResponse(savedOrderTable);
     }
 
     public List<OrderTableResponse> list() {
         final List<OrderTable> orderTables = orderTableDao.findAll();
-        return TableConvertor.toOrderTableResponses(orderTables);
+        return orderTables.stream()
+            .map(OrderTableResponse::new)
+            .collect(Collectors.toUnmodifiableList());
     }
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest request) {
-        final OrderTable orderTable = TableConvertor.toOrderTable(request);
+        final OrderTable orderTable = createOrderTable(request);
         final OrderTable changedOrderTable = changeEmptyOfTable(orderTableId, orderTable);
-        return TableConvertor.toOrderTableResponse(changedOrderTable);
+        return new OrderTableResponse(changedOrderTable);
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest request) {
-        final OrderTable orderTable = TableConvertor.toOrderTable(request);
+        final OrderTable orderTable = createOrderTable(request);
         final OrderTable savedOrderTable = findOrderTableById(orderTableId);
 
         savedOrderTable.changeNumberOfGuests(orderTable.getNumberOfGuests());
 
         final OrderTable changedOrderTable = orderTableDao.save(savedOrderTable);
-        return TableConvertor.toOrderTableResponse(changedOrderTable);
+        return new OrderTableResponse(changedOrderTable);
+    }
+
+    private OrderTable createOrderTable(final OrderTableRequest request) {
+        return new OrderTable(
+            request.getNumberOfGuests(),
+            request.isEmpty()
+        );
     }
 
     private OrderTable changeEmptyOfTable(final Long orderTableId, final OrderTable orderTable) {

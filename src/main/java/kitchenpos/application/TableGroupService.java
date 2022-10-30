@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.convertor.TableGroupConvertor;
+import kitchenpos.application.dto.request.OrderTableChangeRequest;
 import kitchenpos.application.dto.request.TableGroupRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
@@ -31,9 +31,9 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest request) {
-        final TableGroup tableGroup = TableGroupConvertor.toTableGroup(request);
+        final TableGroup tableGroup = createTableGroup(request);
         final TableGroup savedTableGroup = saveTableGroup(tableGroup);
-        return TableGroupConvertor.toOrderTableResponse(savedTableGroup);
+        return new TableGroupResponse(savedTableGroup);
     }
 
     @Transactional
@@ -43,6 +43,20 @@ public class TableGroupService {
 
         validateOrderStatusIsCompletion(orderTableIds);
         ungroupOrderTables(orderTables);
+    }
+
+    private TableGroup createTableGroup(final TableGroupRequest request) {
+        return new TableGroup(createOrderTables(request.getOrderTables()));
+    }
+
+    private List<OrderTable> createOrderTables(final List<OrderTableChangeRequest> requests) {
+        return requests.stream()
+            .map(orderTable -> new OrderTable(
+                orderTable.getId(),
+                orderTable.getNumberOfGuests(),
+                orderTable.isEmpty()
+            ))
+            .collect(Collectors.toUnmodifiableList());
     }
 
     private TableGroup saveTableGroup(final TableGroup tableGroup) {

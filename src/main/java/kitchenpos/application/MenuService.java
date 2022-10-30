@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.convertor.MenuConvertor;
 import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.application.dto.request.MenuRequest;
 import kitchenpos.application.dto.response.MenuResponse;
@@ -40,12 +39,14 @@ public class MenuService {
             throw new IllegalArgumentException(String.format("존재하지 않는 메뉴 그룹입니다. [%s]", request.getMenuGroupId()));
         }
         final Menu savedMenu = menuRepository.save(toMenu(request));
-        return MenuConvertor.toMenuResponse(savedMenu);
+        return new MenuResponse(savedMenu);
     }
 
     public List<MenuResponse> list() {
         final List<Menu> menus = menuRepository.findAll();
-        return MenuConvertor.toMenuResponses(menus);
+        return menus.stream()
+            .map(MenuResponse::new)
+            .collect(Collectors.toUnmodifiableList());
     }
 
     private Menu toMenu(final MenuRequest request) {
