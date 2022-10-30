@@ -1,12 +1,10 @@
 package kitchenpos.menu.domain;
 
-import java.math.BigDecimal;
-
 public class MenuProduct {
     private Long seq;
     private Long menuId;
     private Long productId;
-    private long quantity;
+    private Long quantity;
 
     public MenuProduct() {
     }

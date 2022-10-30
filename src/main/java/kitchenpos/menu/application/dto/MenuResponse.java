@@ -11,7 +11,7 @@ public class MenuResponse {
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-    private List<MenuProductDto> menuProducts;
+    private List<MenuProductResponse> menuProducts;
 
     public MenuResponse(final Menu menu,
                         final List<MenuProduct> menuProducts) {
@@ -22,9 +22,9 @@ public class MenuResponse {
         this.menuProducts = convertToMenuProductDtos(menuProducts);
     }
 
-    private List<MenuProductDto> convertToMenuProductDtos(List<MenuProduct> menuProducts) {
+    private List<MenuProductResponse> convertToMenuProductDtos(List<MenuProduct> menuProducts) {
         return menuProducts.stream()
-                .map(it -> new MenuProductDto(it.getSeq(), it.getMenuId(), it.getProductId(), it.getQuantity()))
+                .map(it -> new MenuProductResponse(it.getSeq(), it.getMenuId(), it.getProductId(), it.getQuantity()))
                 .collect(Collectors.toList());
     }
 
@@ -45,7 +45,7 @@ public class MenuResponse {
         return menuGroupId;
     }
 
-    public List<MenuProductDto> getMenuProducts() {
+    public List<MenuProductResponse> getMenuProducts() {
         return menuProducts;
     }
 }

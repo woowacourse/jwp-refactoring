@@ -43,7 +43,7 @@ public class MenuRequest {
 
     public MenuRequestDto toServiceDto(){
         final List<MenuProductDto> menuProductDtos = menuProducts.stream()
-                .map(it -> new MenuProductDto(null, null, it.getProductId(), it.getQuantity()))
+                .map(it -> new MenuProductDto(it.getProductId(), it.getQuantity()))
                 .collect(Collectors.toList());
         return new MenuRequestDto(name, price, menuGroupId, menuProductDtos);
     }

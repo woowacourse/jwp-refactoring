@@ -21,7 +21,7 @@ public class MenuFixture {
 
     private static List<MenuProductDto> makeMenuProducts(final Product[] products) {
         return Arrays.stream(products)
-                .map(it -> new MenuProductDto(null, null, it.getId(), QUANTITY))
+                .map(it -> new MenuProductDto(it.getId(), QUANTITY))
                 .collect(Collectors.toList());
     }
 
