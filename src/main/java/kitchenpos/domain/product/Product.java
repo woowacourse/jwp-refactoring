@@ -3,9 +3,13 @@ package kitchenpos.domain.product;
 import java.math.BigDecimal;
 
 public class Product {
+
     private Long id;
     private String name;
     private BigDecimal price;
+
+    private Product() {
+    }
 
     public Product(final Long id, final String name, final BigDecimal price) {
         this.id = id;

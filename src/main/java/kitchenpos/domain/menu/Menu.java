@@ -10,11 +10,15 @@ import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 
 public class Menu {
+
     private Long id;
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
     private List<MenuProduct> menuProducts = new ArrayList<>();
+
+    private Menu() {
+    }
 
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
         this.id = id;
@@ -46,7 +50,7 @@ public class Menu {
         final Optional<MenuProduct> menuProduct = findProduct(productId);
         menuProduct.ifPresentOrElse(
                 findMenuProduct -> findMenuProduct.addQuantity(quantity),
-                () -> menuProducts.add(new MenuProduct(productId, 1))
+                () -> menuProducts.add(new MenuProduct(this.id, productId, 1))
         );
     }
 
@@ -76,9 +80,5 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public void bringMenuProducts(final List<MenuProduct> savedMenuProducts) {
-        this.menuProducts = savedMenuProducts;
     }
 }

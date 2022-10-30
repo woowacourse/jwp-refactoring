@@ -6,9 +6,13 @@ import java.util.Collections;
 import java.util.List;
 
 public class TableGroup {
+
     private Long id;
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables = new ArrayList<>();
+
+    private TableGroup() {
+    }
 
     public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this.id = id;

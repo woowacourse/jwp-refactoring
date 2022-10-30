@@ -1,10 +1,14 @@
 package kitchenpos.domain.menu;
 
 public class MenuProduct {
+
     private Long seq;
     private Long menuId;
     private Long productId;
     private long quantity;
+
+    private MenuProduct() {
+    }
 
     public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity) {
         this.seq = seq;
@@ -13,8 +17,12 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
+    public MenuProduct(final Long menuId, final Long productId, final long quantity) {
+        this(null, menuId, productId, quantity);
+    }
+
     public MenuProduct(final Long productId, final long quantity) {
-        this(null, null, productId, quantity);
+        this(null, productId, quantity);
     }
 
     public boolean isSameProduct(final Long productId) {
