@@ -92,21 +92,15 @@ public class DataSupport {
     }
 
     public Order saveOrder(final Long orderTableId, final String orderStatus, final OrderLineItem... orderLineItems) {
-        final Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(LocalDateTime.now());
-        final Order savedOrder = orderDao.save(order);
+        final Order order =
+                new Order(null, orderTableId, orderStatus, LocalDateTime.now(), Arrays.asList(orderLineItems));
+        orderDao.save(order);
 
-        final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = Arrays.stream(orderLineItems)
-                .map(orderLineItem -> {
-                    orderLineItem.order(orderId);
-                    return orderLineItemDao.save(orderLineItem);
-                })
-                .collect(Collectors.toList());
-        savedOrder.setOrderLineItems(savedOrderLineItems);
-        return savedOrder;
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.order(order);
+            orderLineItemDao.save(orderLineItem);
+        }
+        return order;
     }
 
     public OrderTable findOrderTable(final Long id) {
