@@ -72,7 +72,7 @@ class OrderServiceTest {
 
         final MenuProduct menuProduct = 상품_하나(savedProduct.getId());
         final Menu menu = 후라이드_치킨_세트의_가격과_메뉴_상품_리스트는(
-            savedMenuGroup.getId(), new BigDecimal(30_000), List.of(menuProduct)
+            savedMenuGroup.getId(), new BigDecimal(15_000), List.of(menuProduct)
         );
 
         저장된_후라이드_치킨_세트_메뉴 = menuDao.save(menu);

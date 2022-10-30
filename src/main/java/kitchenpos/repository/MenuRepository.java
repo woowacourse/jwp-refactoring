@@ -25,8 +25,13 @@ public class MenuRepository {
     public Menu save(final Menu menu) {
         final Menu savedMenu = menuDao.save(menu);
         final List<MenuProduct> savedMenuProducts = saveMenuProducts(savedMenu.getId(), menu.getMenuProducts());
-        savedMenu.setMenuProducts(savedMenuProducts);
-        return savedMenu;
+        return new Menu(
+            savedMenu.getId(),
+            savedMenu.getName(),
+            savedMenu.getPrice(),
+            savedMenu.getMenuGroupId(),
+            savedMenuProducts
+        );
     }
 
     public Optional<Menu> findById(final Long id) {
@@ -35,10 +40,15 @@ public class MenuRepository {
 
     public List<Menu> findAll() {
         final List<Menu> menus = menuDao.findAll();
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
-        return menus;
+        return menus.stream()
+            .map(menu -> new Menu(
+                menu.getId(),
+                menu.getName(),
+                menu.getPrice(),
+                menu.getMenuGroupId(),
+                menuProductDao.findAllByMenuId(menu.getId())
+            ))
+            .collect(Collectors.toUnmodifiableList());
     }
 
     public long countByIdIn(final List<Long> ids) {

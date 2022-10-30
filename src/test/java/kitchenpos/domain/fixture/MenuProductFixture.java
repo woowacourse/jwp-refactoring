@@ -20,6 +20,7 @@ public class MenuProductFixture {
     public static MenuProduct 상품_하나(final Long productId) {
         return 메뉴_그룹()
             .상품_아이디(productId)
+            .가격(new BigDecimal(15_000))
             .수량(1)
             .build();
     }
