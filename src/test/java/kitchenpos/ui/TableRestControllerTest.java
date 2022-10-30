@@ -7,84 +7,83 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
+import java.util.List;
 import kitchenpos.ControllerTest;
 import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.application.dto.request.OrderTableChangeNumberOfGuestsRequest;
+import kitchenpos.application.dto.request.OrderTableChangeStatusRequest;
+import kitchenpos.application.dto.request.OrderTableCreateRequest;
+import kitchenpos.application.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(TableRestController.class)
 class TableRestControllerTest extends ControllerTest {
 
-    @MockBean
+    private static final String TABLE_URL = "/api/tables";
+
+    private final OrderTableResponse orderTableResponse = new OrderTableResponse(1L, 1L, 3, true);
+
+    @Autowired
     private TableService tableService;
 
     @Test
     void table을_생성할_수_있다() throws Exception {
         // given
-        String url = "/api/tables";
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        when(tableService.create(any(OrderTable.class))).thenReturn(orderTable);
+        when(tableService.create(any(OrderTableCreateRequest.class))).thenReturn(orderTableResponse);
 
         // when
-        ResultActions response = postRequestWithJson(url, orderTable);
+        ResultActions response = postRequestWithJson(TABLE_URL, new OrderTableCreateRequest());
 
         // then
         response.andExpect(status().isCreated())
-                .andExpect(header().string("Location", url + "/" + 1))
-                .andExpect(content().string(objectMapper.writeValueAsString(orderTable)));
+                .andExpect(header().string("Location", TABLE_URL + "/" + 1))
+                .andExpect(content().string(objectMapper.writeValueAsString(orderTableResponse)));
     }
 
     @Test
     void table_목록을_조회할_수_있다() throws Exception {
         // given
-        String url = "/api/tables";
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        when(tableService.list()).thenReturn(Arrays.asList(orderTable));
+        List<OrderTableResponse> orderTableResponses = Arrays.asList(orderTableResponse);
+        when(tableService.list()).thenReturn(orderTableResponses);
 
         // when
-        ResultActions response = getRequest(url);
+        ResultActions response = getRequest(TABLE_URL);
 
         // then
         response.andExpect(status().isOk())
-                .andExpect(content().string(objectMapper.writeValueAsString(Arrays.asList(orderTable))));
+                .andExpect(content().string(objectMapper.writeValueAsString(orderTableResponses)));
     }
 
     @Test
     void table을_비울_수_있다() throws Exception {
         // given
-        String url = "/api/tables/1/empty";
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setEmpty(true);
-        when(tableService.changeEmpty(any(Long.class), any(OrderTable.class))).thenReturn(orderTable);
+        String url = TABLE_URL + "/1/empty";
+        when(tableService.changeEmpty(any(Long.class), any(OrderTableChangeStatusRequest.class))).thenReturn(
+                orderTableResponse);
 
         // when
-        ResultActions response = putRequestWithJson(url, orderTable);
+        ResultActions response = putRequestWithJson(url, new OrderTableChangeStatusRequest());
 
         // then
         response.andExpect(status().isOk())
-                .andExpect(content().string(objectMapper.writeValueAsString(orderTable)));
+                .andExpect(content().string(objectMapper.writeValueAsString(orderTableResponse)));
     }
 
     @Test
     void table_손님의_수를_변경할_수_있다() throws Exception {
         // given
-        String url = "/api/tables/1/number-of-guests";
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setNumberOfGuests(3);
-        when(tableService.changeNumberOfGuests(any(Long.class), any(OrderTable.class))).thenReturn(orderTable);
+        String url = TABLE_URL + "/1/number-of-guests";
+        when(tableService.changeNumberOfGuests(any(Long.class),
+                any(OrderTableChangeNumberOfGuestsRequest.class))).thenReturn(orderTableResponse);
 
         // when
-        ResultActions response = putRequestWithJson(url, orderTable);
+        ResultActions response = putRequestWithJson(url, new OrderTableChangeNumberOfGuestsRequest(3));
 
         // then
         response.andExpect(status().isOk())
-                .andExpect(content().string(objectMapper.writeValueAsString(orderTable)));
+                .andExpect(content().string(objectMapper.writeValueAsString(orderTableResponse)));
     }
 }

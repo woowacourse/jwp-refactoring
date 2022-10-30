@@ -2,71 +2,71 @@ package kitchenpos.ui;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import kitchenpos.ControllerTest;
 import kitchenpos.application.OrderService;
-import kitchenpos.domain.Order;
+import kitchenpos.application.dto.request.OrderChangeRequest;
+import kitchenpos.application.dto.request.OrderCreateRequest;
+import kitchenpos.application.dto.response.OrderResponse;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(OrderRestController.class)
 class OrderRestControllerTest extends ControllerTest {
 
-    @MockBean
+    private static final String ORDER_URL = "/api/orders";
+
+    private final OrderResponse orderResponse = new OrderResponse(1L, 11L, "COOKING", LocalDateTime.now(),
+            new ArrayList<>());
+
+    @Autowired
     private OrderService orderService;
 
     @Test
     void 주문을_생성할_수_있다() throws Exception {
         // given
-        Order order = new Order();
-        when(orderService.create(any(Order.class))).thenReturn(order);
+        when(orderService.create(any(OrderCreateRequest.class))).thenReturn(orderResponse);
 
         // when
-        ResultActions response = mockMvc.perform(post("/api/orders")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(order)));
+        ResultActions response = postRequestWithJson(ORDER_URL, new OrderCreateRequest());
 
         // then
         response.andExpect(status().isCreated())
-                .andExpect(content().string(objectMapper.writeValueAsString(order)));
+                .andExpect(content().string(objectMapper.writeValueAsString(orderResponse)));
     }
 
     @Test
     void 주문_목록을_조회할_수_있다() throws Exception {
         // given
-        Order order = new Order();
-        when(orderService.list()).thenReturn(Arrays.asList(order));
+        List<OrderResponse> orderResponses = Arrays.asList(orderResponse);
+        when(orderService.list()).thenReturn(orderResponses);
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/orders"));
+        ResultActions response = getRequest(ORDER_URL);
 
         // then
         response.andExpect(status().isOk())
-                .andExpect(content().string(objectMapper.writeValueAsString(Arrays.asList(order))));
+                .andExpect(content().string(objectMapper.writeValueAsString(orderResponses)));
     }
 
     @Test
     void 주문_상태를_변경할_수_있다() throws Exception {
         // given
-        Order order = new Order();
-        when(orderService.changeOrderStatus(any(Long.class), any(Order.class))).thenReturn(order);
+        when(orderService.changeOrderStatus(any(Long.class), any(OrderChangeRequest.class))).thenReturn(orderResponse);
 
         // when
-        ResultActions response = mockMvc.perform(put("/api/orders/1/order-status")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(order)));
+        ResultActions response = putRequestWithJson(ORDER_URL + "/1/order-status", new OrderChangeRequest());
 
         // then
         response.andExpect(status().isOk())
-                .andExpect(content().string(objectMapper.writeValueAsString(order)));
+                .andExpect(content().string(objectMapper.writeValueAsString(orderResponse)));
     }
 }

@@ -6,46 +6,44 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import kitchenpos.ControllerTest;
 import kitchenpos.application.TableGroupService;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.application.dto.request.TableGroupCreateRequest;
+import kitchenpos.application.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(TableGroupRestController.class)
 class TableGroupRestControllerTest extends ControllerTest {
 
-    @MockBean
+    private static final String TABLE_GROUP_URL = "/api/table-groups";
+
+    private final TableGroupResponse tableGroupResponse = new TableGroupResponse(1L, LocalDateTime.now(),
+            new ArrayList<>());
+    @Autowired
     private TableGroupService tableGroupService;
 
     @Test
     void table_group을_생성할_수_있다() throws Exception {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(1L);
-        when(tableGroupService.create(any(TableGroup.class))).thenReturn(tableGroup);
-        String url = "/api/table-groups";
+        when(tableGroupService.create(any(TableGroupCreateRequest.class))).thenReturn(tableGroupResponse);
 
         // when
-        ResultActions response = postRequestWithJson(url, tableGroup);
+        ResultActions response = postRequestWithJson(TABLE_GROUP_URL, new TableGroupCreateRequest());
 
         // then
         response.andExpect(status().isCreated())
-                .andExpect(header().string("location", url + "/" + tableGroup.getId()))
-                .andExpect(content().string(objectMapper.writeValueAsString(tableGroup)));
+                .andExpect(header().string("location", TABLE_GROUP_URL + "/" + tableGroupResponse.getId()))
+                .andExpect(content().string(objectMapper.writeValueAsString(tableGroupResponse)));
     }
 
     @Test
     void table_group을_취소할_수_있다() throws Exception {
-        // given
-        String url = "/api/table-groups/1";
-
-        // when
-        ResultActions response = deleteRequest(url);
-
-        // then
+        ResultActions response = deleteRequest(TABLE_GROUP_URL + "/1");
         response.andExpect(status().isNoContent());
     }
 }
