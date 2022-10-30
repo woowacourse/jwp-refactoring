@@ -4,12 +4,14 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Menu {
@@ -27,7 +29,8 @@ public class Menu {
     @Column(name = "menu_group_id")
     private Long menuGroupId;
 
-    @Transient
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "menu_id", nullable = false)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
@@ -39,7 +42,6 @@ public class Menu {
                 final List<MenuProduct> menuProducts) {
         validatePrice(price);
         validateMenuTotalPrice(price, menuProducts);
-
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
@@ -60,10 +62,6 @@ public class Menu {
         if (price.compareTo(menuTotalPrice) > 0) {
             throw new IllegalArgumentException();
         }
-    }
-
-    public void changeMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
     }
 
     public Long getId() {
