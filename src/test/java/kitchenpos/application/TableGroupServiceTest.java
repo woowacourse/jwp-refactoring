@@ -12,9 +12,11 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -32,6 +34,9 @@ public class TableGroupServiceTest {
 
     @Autowired
     private OrderDao orderDao;
+
+    @Autowired
+    private OrderTableDao orderTableDao;
 
     @DisplayName("단체 지정을 할 때 주문 테이블이 2개 미만이면 예외가 발생한다.")
     @Test
@@ -97,7 +102,11 @@ public class TableGroupServiceTest {
         final TableGroup savedTableGroup = tableGroupService.create(tableGroupRequest);
 
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 3);
-        final Order order = new Order(null, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(),
+        final OrderTable orderTable = new OrderTable(2, true);
+        orderTable.setTableGroupId(savedTableGroup.getId());
+
+        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final Order order = new Order(null, savedOrderTable, OrderStatus.COOKING.name(), LocalDateTime.now(),
                 Arrays.asList(orderLineItem));
         final Order savedOrder = orderDao.save(order);
 

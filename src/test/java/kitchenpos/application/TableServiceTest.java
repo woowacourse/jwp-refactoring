@@ -101,15 +101,22 @@ public class TableServiceTest {
     @Test
     void changeEmpty_orderStatusCookingOrMeal_throwsException() {
         // given
+        final OrderTable orderTable = orderTableDao.save(new OrderTable(2, false));
+
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Arrays.asList(orderTable));
+        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        orderTable.setTableGroupId(savedTableGroup.getId());
+        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 3);
-        final Order order = new Order(null, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(),
+        final Order order = new Order(null, savedOrderTable, OrderStatus.COOKING.name(), LocalDateTime.now(),
                 Arrays.asList(orderLineItem));
         final Order savedOrder = orderDao.save(order);
 
         final OrderTableRequest orderTableRequest = new OrderTableRequest(true);
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTableRequest))
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

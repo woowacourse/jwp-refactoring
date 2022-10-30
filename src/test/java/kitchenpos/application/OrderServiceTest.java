@@ -108,7 +108,7 @@ public class OrderServiceTest {
         // given
         final OrderTable orderTable = orderTableDao.save(ORDER_TABLE_NOT_EMPTY.createWithIdNull());
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 3);
-        final Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), Arrays.asList(orderLineItem));
+        final Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
         final OrderRequest request = new OrderRequest(OrderStatus.COOKING.name());
 
         // when, then
@@ -122,7 +122,7 @@ public class OrderServiceTest {
         // given
         final OrderTable orderTable = orderTableDao.save(ORDER_TABLE_NOT_EMPTY.createWithIdNull());
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 3);
-        final Order order = new Order(null, orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(),
+        final Order order = new Order(null, orderTable, OrderStatus.COMPLETION.name(), LocalDateTime.now(),
                 Arrays.asList(orderLineItem));
         final Order savedOrder = orderDao.save(order);
 
@@ -139,7 +139,7 @@ public class OrderServiceTest {
         // given
         final OrderTable orderTable = orderTableDao.save(ORDER_TABLE_NOT_EMPTY.createWithIdNull());
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 3);
-        final Order order = new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
+        final Order order = new Order(null, orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(),
                 Arrays.asList(orderLineItem));
         final Order savedOrder = orderDao.save(order);
         final OrderRequest request = new OrderRequest(OrderStatus.MEAL.name());
