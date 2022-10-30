@@ -43,29 +43,14 @@ public class OrderService {
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
-        validateOrderLineItemNotEmpty(orderLineItems);
         validateOrderLineItemNotDuplicatedAndExist(orderRequest.getOrderLineItems(), orderLineItems);
-        validateOrderTableNotEmpty(orderTable);
 
         Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
         return orderRepository.save(order);
     }
 
-    private void validateOrderTableNotEmpty(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateOrderLineItemNotEmpty(List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     private void validateOrderLineItemNotDuplicatedAndExist(
             List<OrderLineItemRequest> orderLineItemRequests, List<OrderLineItem> orderLineItems) {
-
         if (orderLineItems.size() != orderLineItemRequests.size()) {
             throw new IllegalArgumentException();
         }
@@ -94,11 +79,15 @@ public class OrderService {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (savedOrder.isCompletion()) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderIsNotComplete(savedOrder);
 
         savedOrder.changeOrderStatus(OrderStatus.valueOf(orderStatusRequest.getOrderStatus()));
         return savedOrder;
+    }
+
+    private void validateOrderIsNotComplete(Order savedOrder) {
+        if (savedOrder.isCompletion()) {
+            throw new IllegalArgumentException();
+        }
     }
 }
