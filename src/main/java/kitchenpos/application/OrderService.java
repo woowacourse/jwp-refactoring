@@ -89,8 +89,8 @@ public class OrderService {
     }
 
     private List<OrderLineItem> toOrderLineItems(OrderRequest orderRequest) {
-        return orderRequest.getOrderLineItems().stream().map(itemRequest -> new OrderLineItem(
-                        itemRequest.getSeq(), itemRequest.getOrderId(), itemRequest.getMenuId(), itemRequest.getQuantity()))
+        return orderRequest.getOrderLineItems().stream()
+                .map(itemRequest -> new OrderLineItem(null, null, itemRequest.getMenuId(), itemRequest.getQuantity()))
                 .collect(
                         Collectors.toList());
     }

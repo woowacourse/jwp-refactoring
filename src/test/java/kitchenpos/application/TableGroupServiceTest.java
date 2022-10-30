@@ -127,7 +127,7 @@ class TableGroupServiceTest extends ServiceTest {
         ))).getId();
 
         테이블의_그룹변경(테이블그룹Id, 테이블_1());
-        orderService.create(주문요청_변환(주문_테이블1()));
+        orderService.create(주문요청_테이블1());
 
         assertThatThrownBy(() -> tableGroupService.ungroup(테이블그룹Id))
                 .isInstanceOf(IllegalArgumentException.class)

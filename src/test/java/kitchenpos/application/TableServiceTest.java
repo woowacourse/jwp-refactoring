@@ -80,7 +80,7 @@ class TableServiceTest extends ServiceTest {
         productDao.save(상품_후라이드());
         menuDao.save(메뉴_후라이드치킨());
         OrderTable 테이블_1 = orderTableDao.save(테이블());
-        orderService.create(주문요청_변환(주문_테이블1()));
+        orderService.create(주문요청_테이블1());
 
         assertThatThrownBy(() -> 테이블_빈_여부_변경(테이블_1.getId(), true))
                 .isInstanceOf(IllegalArgumentException.class)
