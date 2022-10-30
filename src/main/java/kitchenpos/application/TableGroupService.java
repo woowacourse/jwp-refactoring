@@ -51,9 +51,11 @@ public class TableGroupService {
         validateOrderTableIsEmptyAndNotGrouped(savedOrderTables);
 
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-
-        saveOrderTables(savedOrderTables, savedTableGroup);
-        return savedTableGroup;
+        return new TableGroup(
+            savedTableGroup.getId(),
+            savedTableGroup.getCreatedDate(),
+            saveOrderTables(savedOrderTables, savedTableGroup)
+        );
     }
 
     private List<OrderTable> findAllOrderTablesByIdIn(final List<OrderTable> orderTables) {
@@ -82,12 +84,13 @@ public class TableGroupService {
         }
     }
 
-    private void saveOrderTables(final List<OrderTable> savedOrderTables, final TableGroup savedTableGroup) {
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.group(savedTableGroup.getId());
-            orderTableDao.save(savedOrderTable);
-        }
-        savedTableGroup.setOrderTables(savedOrderTables);
+    private List<OrderTable> saveOrderTables(final List<OrderTable> savedOrderTables, final TableGroup savedTableGroup) {
+        return savedOrderTables.stream()
+            .map(orderTable -> {
+                orderTable.group(savedTableGroup.getId());
+                return orderTableDao.save(orderTable);
+            })
+            .collect(Collectors.toUnmodifiableList());
     }
 
     private void validateOrderStatusIsCompletion(final List<Long> orderTableIds) {
