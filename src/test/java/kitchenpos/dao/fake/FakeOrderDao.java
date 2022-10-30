@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
 
 public class FakeOrderDao implements OrderDao {
 
@@ -20,7 +21,7 @@ public class FakeOrderDao implements OrderDao {
             return entity;
         }
         final Order savedOrder = new Order(
-            ++id, entity.getOrderTableId(), entity.getOrderStatus(), entity.getOrderedTime()
+            ++id, entity.getOrderTableId(), OrderStatus.valueOf(entity.getOrderStatus()), entity.getOrderedTime()
         );
         orders.put(savedOrder.getId(), savedOrder);
         return savedOrder;

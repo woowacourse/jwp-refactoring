@@ -20,9 +20,9 @@ class OrderTest {
     @Test
     void changeStatusOrderIsCompletion() {
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 1);
-        final Order order = new Order( 1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(), List.of(orderLineItem));
+        final Order order = new Order( 1L, OrderStatus.COMPLETION, LocalDateTime.now(), List.of(orderLineItem));
 
-        assertThatThrownBy(() -> order.changeStatus(OrderStatus.MEAL.name()))
+        assertThatThrownBy(() -> order.changeStatus(OrderStatus.MEAL))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("주문이 완료된 상태입니다.");
     }

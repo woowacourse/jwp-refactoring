@@ -4,13 +4,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Repository;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
 
 @Repository
 public class OrderRepository {
@@ -28,7 +28,7 @@ public class OrderRepository {
         return new Order(
             savedOrder.getId(),
             savedOrder.getOrderTableId(),
-            savedOrder.getOrderStatus(),
+            OrderStatus.valueOf(savedOrder.getOrderStatus()),
             savedOrder.getOrderedTime(),
             saveOrderLineItems(savedOrder.getId(), order.getOrderLineItems())
         );
@@ -70,7 +70,7 @@ public class OrderRepository {
         return new Order(
             order.getId(),
             order.getOrderTableId(),
-            order.getOrderStatus(),
+            OrderStatus.valueOf(order.getOrderStatus()),
             order.getOrderedTime(),
             orderLineItemDao.findAllByOrderId(order.getId())
         );

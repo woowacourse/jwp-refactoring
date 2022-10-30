@@ -12,7 +12,7 @@ public class OrderFixture {
 
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
@@ -23,6 +23,7 @@ public class OrderFixture {
         return 주문()
             .주문_테이블_아이디(orderTableId)
             .주문_항목들(orderLineItems)
+            .주문_상태(OrderStatus.COOKING)
             .build();
     }
 
@@ -30,7 +31,7 @@ public class OrderFixture {
         return 주문()
             .주문_테이블_아이디(orderTableId)
             .주문한_시간(LocalDateTime.now())
-            .주문_상태(OrderStatus.COOKING.name())
+            .주문_상태(OrderStatus.COOKING)
             .build();
     }
 
@@ -38,7 +39,7 @@ public class OrderFixture {
         return 주문()
             .주문_테이블_아이디(orderTableId)
             .주문한_시간(LocalDateTime.now())
-            .주문_상태(OrderStatus.COMPLETION.name())
+            .주문_상태(OrderStatus.COMPLETION)
             .build();
     }
 
@@ -51,7 +52,7 @@ public class OrderFixture {
         return this;
     }
 
-    private OrderFixture 주문_상태(final String orderStatus) {
+    private OrderFixture 주문_상태(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
         return this;
     }

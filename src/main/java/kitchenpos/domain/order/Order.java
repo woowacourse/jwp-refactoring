@@ -9,21 +9,21 @@ public class Order {
 
     private final Long id;
     private final Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private final LocalDateTime orderedTime;
     private final OrderLineItems orderLineItems;
 
     /**
      * DB 에 저장되지 않은 객체
      */
-    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
+    public Order(final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
     /**
      * DB 에 저장된 객체
      */
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
+    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -31,7 +31,7 @@ public class Order {
         this.orderLineItems = null;
     }
 
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
+    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -39,8 +39,8 @@ public class Order {
         this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
-    public void changeStatus(final String orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+    public void changeStatus(final OrderStatus orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
             throw new IllegalArgumentException("주문이 완료된 상태입니다.");
         }
         this.orderStatus = orderStatus;
@@ -55,7 +55,7 @@ public class Order {
     }
 
     public String getOrderStatus() {
-        return orderStatus;
+        return orderStatus.name();
     }
 
     public LocalDateTime getOrderedTime() {
