@@ -80,7 +80,7 @@ class MenuServiceTest extends ServiceTest {
     }
 
     void init() {
-        menuGroupDao.save(new MenuGroup(null, "한마리메뉴"));
+        menuGroupDao.save(new MenuGroup("한마리메뉴"));
         productDao.save(new Product(null, "후라이드", new Price(16000)));
     }
 }

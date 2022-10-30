@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("NonAsciiCharacters")
 class OrderServiceTest extends ServiceTest {
     private void init() {
-        menuGroupDao.save(new MenuGroup(null, "한마리메뉴"));
+        menuGroupDao.save(new MenuGroup("한마리메뉴"));
         productDao.save(new Product(null, "후라이드", new Price(16000)));
         menuDao.save(메뉴_후라이드치킨());
         orderTableDao.save(new OrderTable(null, null, 0, false));
