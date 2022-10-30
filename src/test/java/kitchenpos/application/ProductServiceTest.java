@@ -26,11 +26,11 @@ class ProductServiceTest extends ServiceTest {
 
             private final String name = "햄버거";
             private final BigDecimal price = BigDecimal.valueOf(5000);
-            private final ProductCreateRequest productCreateRequest = new ProductCreateRequest(name, price);
+            private final ProductCreateRequest request = new ProductCreateRequest(name, price);
 
             @Test
             void 상품을_추가한다() {
-                ProductResponse actual = productService.create(productCreateRequest);
+                ProductResponse actual = productService.create(request);
 
                 assertAll(() -> {
                     assertThat(actual.getId()).isNotNull();
@@ -45,11 +45,11 @@ class ProductServiceTest extends ServiceTest {
 
             private final String name = "햄버거";
             private final BigDecimal price = null;
-            private final ProductCreateRequest productCreateRequest = new ProductCreateRequest(name, price);
+            private final ProductCreateRequest request = new ProductCreateRequest(name, price);
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> productService.create(productCreateRequest))
+                assertThatThrownBy(() -> productService.create(request))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("가격은 null 이거나 0원 미만일 수 없습니다.");
             }
@@ -60,11 +60,11 @@ class ProductServiceTest extends ServiceTest {
 
             private final String name = "햄버거";
             private final BigDecimal price = BigDecimal.valueOf(-1);
-            private final ProductCreateRequest productCreateRequest = new ProductCreateRequest(name, price);
+            private final ProductCreateRequest request = new ProductCreateRequest(name, price);
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> productService.create(productCreateRequest))
+                assertThatThrownBy(() -> productService.create(request))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("가격은 null 이거나 0원 미만일 수 없습니다.");
             }
