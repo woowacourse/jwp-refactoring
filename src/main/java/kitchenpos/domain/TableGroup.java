@@ -34,7 +34,7 @@ public class TableGroup {
     }
 
     public void ungrouping() {
-        orderTables.ugroupTables();
+        orderTables.ugrouping();
     }
 
     public Long getId() {

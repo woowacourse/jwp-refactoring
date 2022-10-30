@@ -35,7 +35,7 @@ public class OrderTable {
     }
 
     public void changeToUse() {
-        if (!this.empty) {
+        if (!this.empty || this.tableGroup != null) {
             throw new IllegalArgumentException();
         }
         this.empty = false;

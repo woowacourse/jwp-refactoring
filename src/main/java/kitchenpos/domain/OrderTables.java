@@ -22,7 +22,7 @@ public class OrderTables {
         this.orderTables.forEach(OrderTable::changeToUse);
     }
 
-    public void ugroupTables() {
+    public void ugrouping() {
         this.orderTables.forEach(OrderTable::changeToEmpty);
     }
 
