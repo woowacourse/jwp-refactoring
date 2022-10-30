@@ -28,24 +28,14 @@ import kitchenpos.application.dto.request.MenuRequest;
 import kitchenpos.application.dto.response.MenuProductResponse;
 import kitchenpos.application.dto.response.MenuResponse;
 
-@ApiTest
 @DisplayName("Menu API 테스트")
-class MenuRestControllerTest {
+class MenuRestControllerTest extends RestControllerTest {
 
     private static final String MENU_NAME = "후라이드 치킨 세트";
     private static final BigDecimal PRICE = new BigDecimal(15_000);
     private static final Long MENU_GROUP_ID = null;
     private static final List<MenuProductRequest> MENU_PRODUCT_REQUESTS = null;
     private static final List<MenuProductResponse> MENU_PRODUCT_RESPONSES = null;
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
-    private MenuService menuService;
 
     @DisplayName("메뉴를 생성한다")
     @Test

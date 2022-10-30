@@ -27,18 +27,8 @@ import kitchenpos.application.TableService;
 import kitchenpos.application.dto.request.OrderTableRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
 
-@ApiTest
 @DisplayName("Table API 테스트")
-class TableRestControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
-    private TableService tableService;
+class TableRestControllerTest extends RestControllerTest {
 
     @DisplayName("테이블을 생성한다")
     @Test

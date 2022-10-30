@@ -32,18 +32,8 @@ import kitchenpos.application.dto.request.OrderChangeRequest;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.domain.order.OrderStatus;
 
-@ApiTest
 @DisplayName("Order API 테스트")
-class OrderRestControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
-    private OrderService orderService;
+class OrderRestControllerTest extends RestControllerTest {
 
     @DisplayName("주문을 생성한다")
     @Test

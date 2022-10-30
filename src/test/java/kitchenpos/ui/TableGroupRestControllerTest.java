@@ -25,18 +25,8 @@ import kitchenpos.application.dto.request.TableGroupRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.application.dto.response.TableGroupResponse;
 
-@ApiTest
 @DisplayName("TableGroup API 테스트")
-class TableGroupRestControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
-    private TableGroupService tableGroupService;
+class TableGroupRestControllerTest extends RestControllerTest {
 
     @DisplayName("테이블 그룹을 생성한다")
     @Test

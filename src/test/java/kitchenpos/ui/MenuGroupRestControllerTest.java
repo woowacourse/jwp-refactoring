@@ -25,18 +25,8 @@ import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.dto.request.MenuGroupRequest;
 import kitchenpos.application.dto.response.MenuGroupResponse;
 
-@ApiTest
 @DisplayName("MenuGroup API 테스트")
-class MenuGroupRestControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
-    private MenuGroupService menuGroupService;
+class MenuGroupRestControllerTest extends RestControllerTest {
 
     @DisplayName("메뉴 그룹을 등록한다")
     @Test
