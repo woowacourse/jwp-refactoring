@@ -33,7 +33,7 @@ public class MenuRepository {
         }
 
         Menu savedMenu = menuDao.save(entity);
-        savedMenu.addMenuProducts(saveMenuProducts(entity, savedMenu));
+        savedMenu.changeMenuProducts(saveMenuProducts(entity, savedMenu));
 
         return savedMenu;
     }
@@ -59,7 +59,7 @@ public class MenuRepository {
         List<Menu> menus = menuDao.findAll();
 
         for (final Menu menu : menus) {
-            menu.addMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+            menu.changeMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
         }
 
         return menus;

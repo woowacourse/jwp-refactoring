@@ -46,6 +46,12 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
+    private void validatePrice(final BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     private void validateMenuTotalPrice(final BigDecimal price, final List<MenuProduct> menuProducts) {
         BigDecimal menuTotalPrice = menuProducts.stream()
                 .map(MenuProduct::getAmount)
@@ -56,13 +62,7 @@ public class Menu {
         }
     }
 
-    private void validatePrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    public void addMenuProducts(final List<MenuProduct> menuProducts) {
+    public void changeMenuProducts(final List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
     }
 
@@ -83,6 +83,6 @@ public class Menu {
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+        return new ArrayList<>(menuProducts);
     }
 }
