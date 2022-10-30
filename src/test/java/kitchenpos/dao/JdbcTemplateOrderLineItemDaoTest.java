@@ -39,7 +39,7 @@ class JdbcTemplateOrderLineItemDaoTest extends JdbcTemplateTest {
 
             OrderLineItem savedOrderLineItem = jdbcTemplateOrderLineItemDao.save(orderLineItem);
 
-            Long actual = savedOrderLineItem.getSeq();
+            Long actual = savedOrderLineItem.getId();
             assertThat(actual).isNotNull();
         }
     }
@@ -63,7 +63,7 @@ class JdbcTemplateOrderLineItemDaoTest extends JdbcTemplateTest {
         @Test
         @DisplayName("아이디로 주문 라인 아이템을 단일 조회한다.")
         void success() {
-            Long seq = orderLineItem.getSeq();
+            Long seq = orderLineItem.getId();
 
             OrderLineItem actual = jdbcTemplateOrderLineItemDao.findById(seq)
                 .orElseThrow();

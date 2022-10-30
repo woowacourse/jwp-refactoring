@@ -92,14 +92,14 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest{
         void setUp() {
             TableGroup tableGroup = jdbcTemplateTableGroupDao.save(getTableGroup());
             orderTable = jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
-            jdbcTemplateOrderDao.save(OrderFixture.COMPLETION.getOrder(orderTable.getId()));
+            jdbcTemplateOrderDao.save(OrderFixture.COOKING.getOrder(orderTable.getId()));
         }
 
         @Test
         @DisplayName("아이디 하나와 주문 상태 목록을 받아 일치하는 주문이 있으면 true를 반환한다.")
         void success_true() {
             Long orderTableId = orderTable.getId();
-            OrderStatus orderStatus = OrderStatus.COMPLETION;
+            OrderStatus orderStatus = OrderStatus.COOKING;
 
             Boolean actual = jdbcTemplateOrderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId,
                 List.of(orderStatus.name()));
@@ -111,7 +111,7 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest{
         @DisplayName("아이디 하나와 주문 상태 목록을 받아 일치하는 주문이 없으면 false를 반환한다.")
         void success_false() {
             Long orderTableId = orderTable.getId();
-            OrderStatus orderStatus = OrderStatus.COOKING;
+            OrderStatus orderStatus = OrderStatus.COMPLETION;
 
             Boolean actual = jdbcTemplateOrderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId,
                 List.of(orderStatus.name()));
@@ -132,15 +132,15 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateTest{
             TableGroup tableGroup = jdbcTemplateTableGroupDao.save(getTableGroup());
             orderTable1 = jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
             orderTable2 = jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
-            jdbcTemplateOrderDao.save(OrderFixture.COMPLETION.getOrder(orderTable1.getId()));
-            jdbcTemplateOrderDao.save(OrderFixture.COMPLETION.getOrder(orderTable1.getId()));
+            jdbcTemplateOrderDao.save(OrderFixture.COOKING.getOrder(orderTable1.getId()));
+            jdbcTemplateOrderDao.save(OrderFixture.COOKING.getOrder(orderTable1.getId()));
         }
 
         @Test
         @DisplayName("아이디 목록과 주문 상태 목록을 받아 일치하는 주문이 있으면 true를 반환한다.")
         void success_true() {
             List<Long> orderTableIds = List.of(orderTable1.getId(), orderTable2.getId());
-            OrderStatus orderStatus = OrderStatus.COMPLETION;
+            OrderStatus orderStatus = OrderStatus.COOKING;
 
             Boolean actual = jdbcTemplateOrderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds,
                 List.of(orderStatus.name()));

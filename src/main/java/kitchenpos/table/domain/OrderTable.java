@@ -2,6 +2,7 @@ package kitchenpos.table.domain;
 
 import java.util.Objects;
 import kitchenpos.table.exception.InvalidNumberOfGuestsException;
+import kitchenpos.table.exception.InvalidOrderCreateTableEmpty;
 import kitchenpos.table.exception.InvalidTableGroupJoinException;
 
 public class OrderTable {
@@ -59,6 +60,12 @@ public class OrderTable {
     private void validateNumberOfGuests(int numberOfGuests) {
         if (numberOfGuests < 0 || empty) {
             throw new InvalidNumberOfGuestsException();
+        }
+    }
+
+    public void validateNotEmpty() {
+        if (empty) {
+            throw new InvalidOrderCreateTableEmpty();
         }
     }
 
