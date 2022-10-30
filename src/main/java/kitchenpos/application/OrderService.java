@@ -1,9 +1,12 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.OrderCreateRequest;
-import kitchenpos.application.dto.OrderLineItemCreateRequest;
-import kitchenpos.application.dto.OrderResponse;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderStatusDto;
+import kitchenpos.application.dto.request.OrderCreateRequest;
+import kitchenpos.application.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -13,10 +16,6 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -56,7 +55,8 @@ public class OrderService {
         }
     }
 
-    private static Order createOrderRequest(final Long orderTableId, final List<OrderLineItemCreateRequest> orderLineItems) {
+    private static Order createOrderRequest(final Long orderTableId,
+                                            final List<OrderLineItemCreateRequest> orderLineItems) {
         return new Order(orderTableId,
                 OrderStatus.COOKING.name(),
                 LocalDateTime.now(),
@@ -65,7 +65,8 @@ public class OrderService {
                         .collect(Collectors.toList()));
     }
 
-    private void validateSameCountAsItemAndMenu(final List<OrderLineItemCreateRequest> orderLineItems, final Order order) {
+    private void validateSameCountAsItemAndMenu(final List<OrderLineItemCreateRequest> orderLineItems,
+                                                final Order order) {
         final int countOfMenuIds = getCountOfMenuIds(orderLineItems);
         if (!order.isValidMenuSize(countOfMenuIds)) {
             throw new IllegalArgumentException();

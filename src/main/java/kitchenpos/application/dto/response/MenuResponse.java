@@ -1,4 +1,4 @@
-package kitchenpos.application.dto;
+package kitchenpos.application.dto.response;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -14,7 +14,7 @@ public class MenuResponse {
     private final List<MenuProductResponse> menuProducts;
 
     private MenuResponse(final long id, final String name, final BigDecimal price, final long menuGroupId,
-                        final List<MenuProductResponse> menuProducts) {
+                         final List<MenuProductResponse> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
