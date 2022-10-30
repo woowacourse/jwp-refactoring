@@ -64,18 +64,6 @@ public class TableGroup {
         }
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
-    }
-
     public void deleteOrderTable(OrderTable orderTable) {
         this.orderTables.remove(orderTable);
         orderTable.deleteTableGroup();
@@ -85,5 +73,13 @@ public class TableGroup {
     public boolean hasOrderTableWhichStatusIsCookingOrMeal() {
         return orderTables.stream()
             .anyMatch(OrderTable::isCookingOrMeal);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public List<OrderTable> getOrderTables() {
+        return orderTables;
     }
 }

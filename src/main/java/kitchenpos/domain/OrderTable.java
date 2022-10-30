@@ -19,7 +19,7 @@ public class OrderTable {
     @ManyToOne
     private TableGroup tableGroup;
 
-    @OneToOne
+    @OneToOne(mappedBy="orderTable")
     private Order order;
 
     private int numberOfGuests;
@@ -35,26 +35,6 @@ public class OrderTable {
 
     public OrderTable(int numberOfGuests, boolean empty) {
         this(null, numberOfGuests, empty);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public boolean isEmpty() {
-        return empty;
     }
 
     public void empty() {
@@ -95,5 +75,25 @@ public class OrderTable {
 
     public boolean isCookingOrMeal() {
         return getOrder().isCooking() || getOrder().isMeal();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public TableGroup getTableGroup() {
+        return tableGroup;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 }

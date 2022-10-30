@@ -25,7 +25,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(mappedBy="order")
+    @OneToOne
     private OrderTable orderTable;
 
     @Enumerated(EnumType.STRING)
@@ -65,20 +65,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
-    }
-
     public OrderStatus getOrderStatus() {
         return orderStatus;
-    }
-
-    public LocalDateTime getOrderedTime() {
-        return orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {

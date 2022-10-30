@@ -41,9 +41,7 @@ public class TableService {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (orderTable.hasTableGroup()) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderTableHasTableGroup(orderTable);
 
         if (orderRepository.findByOrderTableIdInAndOrderStatusIn(
                 List.of(orderTableId), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL)).size() > 0) {
@@ -53,6 +51,12 @@ public class TableService {
         changeOrderTableEmpty(request, orderTable);
 
         return orderTable;
+    }
+
+    private void validateOrderTableHasTableGroup(OrderTable orderTable) {
+        if (orderTable.hasTableGroup()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private void changeOrderTableEmpty(OrderTableModifyRequest request, OrderTable orderTable) {

@@ -30,8 +30,8 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public Long getSeq() {
-        return seq;
+    public BigDecimal calculatePrice() {
+        return product.getPrice().multiply(BigDecimal.valueOf(getQuantity()));
     }
 
     public Product getProduct() {
@@ -40,9 +40,5 @@ public class MenuProduct {
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public BigDecimal calculatePrice() {
-        return product.getPrice().multiply(BigDecimal.valueOf(getQuantity()));
     }
 }

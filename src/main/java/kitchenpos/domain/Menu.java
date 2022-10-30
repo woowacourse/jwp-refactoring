@@ -67,16 +67,4 @@ public class Menu {
     public String getName() {
         return name;
     }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
 }
