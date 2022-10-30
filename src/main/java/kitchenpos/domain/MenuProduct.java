@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,9 +13,13 @@ public class MenuProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
+    @Column(name = "menu_id", insertable = false, updatable = false)
     private Long menuId;
+    @Column(name = "product_id", nullable = false)
     private Long productId;
+    @Column(name = "price", nullable = false)
     private BigDecimal price;
+    @Column(name = "quantity", nullable = false)
     private long quantity;
 
     protected MenuProduct() {

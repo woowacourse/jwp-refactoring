@@ -32,21 +32,25 @@ public class MenuService {
     }
 
     public MenuResponse create(final MenuCreateRequest request) {
-        if (request.getMenuGroupId() != null && !menuGroupRepository.existsById(request.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
+        validateMenuGroup(request);
 
-        Menu menu = menuRepository.save(new Menu(request.getName(), request.getPrice(), request.getMenuGroupId()));
-        menu.addMenuProducts(new MenuProducts(request.getMenuProducts()
+        final Menu menu = menuRepository.save(new Menu(
+            request.getName(), request.getPrice(), request.getMenuGroupId(), new MenuProducts(request.getMenuProducts()
             .stream()
             .map(this::createMenuProduct)
-            .collect(Collectors.toList())));
+            .collect(Collectors.toList()))));
 
         return MenuResponse.createResponse(menuRepository.save(menu));
     }
 
+    private void validateMenuGroup(final MenuCreateRequest request) {
+        if (request.getMenuGroupId() != null && !menuGroupRepository.existsById(request.getMenuGroupId())) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     private MenuProduct createMenuProduct(final MenuProductCreateRequest request) {
-        Product product = productRepository.findById(request.getProductId())
+        final Product product = productRepository.findById(request.getProductId())
             .orElseThrow(IllegalArgumentException::new);
         return new MenuProduct(product.getId(), product.getPrice(), request.getQuantity());
     }
