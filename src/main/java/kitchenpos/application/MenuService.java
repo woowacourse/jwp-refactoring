@@ -37,7 +37,7 @@ public class MenuService {
         final Menu menu = new Menu(menuCreationDto.getName(), menuCreationDto.getPrice(),
                 menuCreationDto.getMenuGroupId(), menuProducts);
         final Menu savedMenu = menuDao.save(menu);
-        final List<MenuProduct> savedMenuProducts = saveMenuProductsd(savedMenu.getId(), menuProducts);
+        final List<MenuProduct> savedMenuProducts = saveMenuProducts(savedMenu.getId(), menuProducts);
 
         return MenuDto.from(
                 new Menu(savedMenu.getId(),
@@ -58,7 +58,7 @@ public class MenuService {
     }
 
     @Transactional(readOnly = true)
-    private List<MenuProduct> saveMenuProductsd(final Long menuId, final List<MenuProduct> menuProducts) {
+    private List<MenuProduct> saveMenuProducts(final Long menuId, final List<MenuProduct> menuProducts) {
         return menuProducts.stream()
                 .map(menuProduct -> menuProductDao.save(
                         new MenuProduct(menuId, menuProduct.getProduct(), menuProduct.getQuantity())))
