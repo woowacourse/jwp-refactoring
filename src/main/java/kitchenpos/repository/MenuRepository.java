@@ -2,39 +2,31 @@ package kitchenpos.repository;
 
 import static java.util.stream.Collectors.*;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.MenuProductSaveRequest;
-import kitchenpos.dto.MenuResponse;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
+@Component
 public class MenuRepository {
 
     private final MenuDao menuDao;
-    private final ProductDao productDao;
     private final MenuGroupDao menuGroupDao;
     private final MenuProductDao menuProductDao;
 
     public MenuRepository(final MenuDao menuDao,
-                          final ProductDao productDao,
                           final MenuGroupDao menuGroupDao,
                           final MenuProductDao menuProductDao) {
         this.menuDao = menuDao;
-        this.productDao = productDao;
         this.menuGroupDao = menuGroupDao;
         this.menuProductDao = menuProductDao;
     }
 
+    @Transactional
     public Menu save(final Menu entity) {
         if (!menuGroupDao.existsById(entity.getMenuGroupId())) {
             throw new IllegalArgumentException();

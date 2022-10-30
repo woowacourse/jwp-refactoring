@@ -16,6 +16,7 @@ import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
@@ -45,6 +46,7 @@ class OrderServiceTest {
     private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
+    private final OrderLineItemDao orderLineItemDao;
     private final OrderService orderService;
 
     @Autowired
@@ -53,12 +55,14 @@ class OrderServiceTest {
                             final MenuDao menuDao,
                             final OrderDao orderDao,
                             final OrderTableDao orderTableDao,
+                            final OrderLineItemDao orderLineItemDao,
                             final OrderService orderService) {
         this.menuGroupDao = menuGroupDao;
         this.productDao = productDao;
         this.menuDao = menuDao;
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
+        this.orderLineItemDao = orderLineItemDao;
         this.orderService = orderService;
     }
 
