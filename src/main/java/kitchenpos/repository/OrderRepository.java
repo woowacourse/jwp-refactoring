@@ -69,4 +69,9 @@ public class OrderRepository {
                 .map(orderLineItemDao::save)
                 .collect(toList());
     }
+
+    public Order getById(final Long id) {
+        return orderDao.findById(id)
+                .orElseThrow(IllegalArgumentException::new);
+    }
 }

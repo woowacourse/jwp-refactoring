@@ -1,7 +1,7 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.OrderService;
-import kitchenpos.domain.Order;
+import kitchenpos.dto.OrderChangeOrderStatusRequest;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderSaveRequest;
 import org.springframework.http.ResponseEntity;
@@ -33,10 +33,8 @@ public class OrderRestController {
     }
 
     @PutMapping("/{orderId}/order-status")
-    public ResponseEntity<OrderResponse> changeOrderStatus(
-            @PathVariable final Long orderId,
-            @RequestBody final Order order
-    ) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, order));
+    public ResponseEntity<OrderResponse> changeOrderStatus(@PathVariable final Long orderId,
+                                                           @RequestBody final OrderChangeOrderStatusRequest request) {
+        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, request));
     }
 }

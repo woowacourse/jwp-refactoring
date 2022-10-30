@@ -5,12 +5,12 @@ import static java.util.stream.Collectors.*;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderSaveRequest;
+import kitchenpos.dto.OrderChangeOrderStatusRequest;
 import kitchenpos.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,19 +23,16 @@ public class OrderService {
     private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
     private final OrderRepository orderRepository;
 
     public OrderService(
             final MenuDao menuDao,
             final OrderDao orderDao,
             final OrderLineItemDao orderLineItemDao,
-            final OrderTableDao orderTableDao,
             final OrderRepository orderRepository) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
-        this.orderTableDao = orderTableDao;
         this.orderRepository = orderRepository;
     }
 
@@ -65,18 +62,11 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse changeOrderStatus(final Long orderId, final Order order) {
-        final Order savedOrder = orderDao.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderChangeOrderStatusRequest request) {
+        final Order savedOrder = orderRepository.getById(orderId);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
-
-        orderDao.save(savedOrder);
+        final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
+        savedOrder.changeOrderStatus(orderStatus.name());
 
         savedOrder.addOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
 

@@ -4,6 +4,7 @@ import static kitchenpos.application.fixture.MenuFixtures.generateMenu;
 import static kitchenpos.application.fixture.MenuGroupFixtures.generateMenuGroup;
 import static kitchenpos.application.fixture.MenuProductFixtures.generateMenuProduct;
 import static kitchenpos.application.fixture.OrderFixtures.generateOrder;
+import static kitchenpos.application.fixture.OrderFixtures.generateOrderChangeOrderStatusRequest;
 import static kitchenpos.application.fixture.OrderFixtures.generateOrderSaveRequest;
 import static kitchenpos.application.fixture.OrderLineItemFixtures.*;
 import static kitchenpos.application.fixture.OrderTableFixtures.generateOrderTable;
@@ -16,7 +17,6 @@ import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
@@ -27,6 +27,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.OrderChangeOrderStatusRequest;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderSaveRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -46,7 +47,6 @@ class OrderServiceTest {
     private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
-    private final OrderLineItemDao orderLineItemDao;
     private final OrderService orderService;
 
     @Autowired
@@ -55,14 +55,12 @@ class OrderServiceTest {
                             final MenuDao menuDao,
                             final OrderDao orderDao,
                             final OrderTableDao orderTableDao,
-                            final OrderLineItemDao orderLineItemDao,
                             final OrderService orderService) {
         this.menuGroupDao = menuGroupDao;
         this.productDao = productDao;
         this.menuDao = menuDao;
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
-        this.orderLineItemDao = orderLineItemDao;
         this.orderService = orderService;
     }
 
@@ -143,9 +141,9 @@ class OrderServiceTest {
     void order의_상태를_변경한다() {
         OrderTable orderTable = orderTableDao.save(generateOrderTable(0, true));
         Order order = orderDao.save(generateOrder(orderTable.getId(), OrderStatus.COOKING, List.of()));
-        Order changedOrder = generateOrder(orderTable.getId(), OrderStatus.MEAL, List.of());
+        OrderChangeOrderStatusRequest request = generateOrderChangeOrderStatusRequest(OrderStatus.MEAL);
 
-        OrderResponse actual = orderService.changeOrderStatus(order.getId(), changedOrder);
+        OrderResponse actual = orderService.changeOrderStatus(order.getId(), request);
 
         assertAll(() -> {
             assertThat(actual.getOrderTableId()).isEqualTo(orderTable.getId());
@@ -157,9 +155,9 @@ class OrderServiceTest {
     void order의_상태가_COMPLETION인_경우_예외를_던진다() {
         OrderTable orderTable = orderTableDao.save(generateOrderTable(0, true));
         Order order = orderDao.save(generateOrder(orderTable.getId(), OrderStatus.COMPLETION, List.of()));
-        Order changedOrder = generateOrder(orderTable.getId(), OrderStatus.MEAL, List.of());
+        OrderChangeOrderStatusRequest request = generateOrderChangeOrderStatusRequest(OrderStatus.MEAL);
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), changedOrder))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
