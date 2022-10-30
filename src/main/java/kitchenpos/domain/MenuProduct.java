@@ -15,6 +15,10 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
+    public MenuProduct(Long productId, long quantity) {
+        this(null, null, productId, quantity);
+    }
+
     public void updateMenuId(final Long menuId) {
         this.menuId = menuId;
     }
