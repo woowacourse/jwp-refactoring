@@ -3,6 +3,7 @@ package kitchenpos;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +35,7 @@ public class Fixtures {
 
     public static Menu 메뉴_후라이드치킨() {
         return new Menu(null, "후라이드치킨", BigDecimal.valueOf(16000),
-                1L, null);
+                1L, new ArrayList<>());
     }
 
     public static MenuGroupRequest 메뉴그룹요청_한마리메뉴() {

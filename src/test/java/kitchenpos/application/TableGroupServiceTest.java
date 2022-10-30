@@ -10,6 +10,7 @@ import kitchenpos.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.dto.TableGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 @SuppressWarnings("NonAsciiCharacters")
 class TableGroupServiceTest extends ServiceTest {
@@ -68,8 +69,8 @@ class TableGroupServiceTest extends ServiceTest {
         TableGroupRequest 테이블그룹 = 테이블그룹요청_id(존재하지_않는_테이블_id, 빈테이블_2_id);
 
         assertThatThrownBy(() -> tableGroupService.create(테이블그룹))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("등록되는 모든 테이블들은 존재해야 한다.");
+                .isInstanceOf(InvalidDataAccessApiUsageException.class)
+                .hasMessage("테이블은 존재해야 한다.");
     }
 
     @DisplayName("등록되는 모든 테이블들은 기존 단체 지정이 없어야 한다.")

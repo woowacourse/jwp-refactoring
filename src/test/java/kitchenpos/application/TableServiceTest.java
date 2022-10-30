@@ -10,6 +10,7 @@ import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.dto.TableGuestChangeRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 @SuppressWarnings("NonAsciiCharacters")
 class TableServiceTest extends ServiceTest {
@@ -52,8 +53,8 @@ class TableServiceTest extends ServiceTest {
         long 없는_테이블_ID = 100L;
 
         assertThatThrownBy(() -> 테이블_빈_여부_변경(없는_테이블_ID, false))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("해당 아이디의 테이블은 존재하지 않는다.");
+                .isInstanceOf(InvalidDataAccessApiUsageException.class)
+                .hasMessage("테이블은 존재해야 한다.");
     }
 
     @DisplayName("테이블은 단체지정이 없어야 한다.")
