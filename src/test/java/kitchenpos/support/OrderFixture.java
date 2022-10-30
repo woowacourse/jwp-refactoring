@@ -9,7 +9,7 @@ import kitchenpos.order.presentation.dto.OrderLineItemRequest;
 
 public class OrderFixture {
 
-    public static OrderRequestDto 주문_생성(final Long orderTableId, final MenuResponse menu, final String orderStatus) {
+    public static OrderRequestDto 주문_생성(final Long orderTableId, final MenuResponse menu) {
         return new OrderRequestDto(orderTableId,convertMenuProductToOrderLineItem(menu));
     }
 
