@@ -1,12 +1,14 @@
 package kitchenpos.domain;
 
 import static kitchenpos.application.exception.ExceptionType.INVALID_CHANGE_ORDER_STATUS_EXCEPTION;
+import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_ORDER_LINE_ITEM_EXCEPTION;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.application.exception.CustomIllegalArgumentException;
+import org.springframework.util.CollectionUtils;
 
 public class Order {
     private Long id;
@@ -34,6 +36,7 @@ public class Order {
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+        validEmpty();
     }
 
     public void changeOrderStatus(final String orderStatus) {
@@ -41,6 +44,12 @@ public class Order {
             throw new CustomIllegalArgumentException(INVALID_CHANGE_ORDER_STATUS_EXCEPTION);
         }
         this.orderStatus = orderStatus;
+    }
+
+    private void validEmpty() {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new CustomIllegalArgumentException(NOT_FOUND_ORDER_LINE_ITEM_EXCEPTION);
+        }
     }
 
 

@@ -1,6 +1,9 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_MENU_GROUP_EXCEPTION;
+
 import java.util.List;
+import kitchenpos.application.exception.CustomIllegalArgumentException;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu;
@@ -28,7 +31,7 @@ public class MenuService {
 
     private void validMenuGroup(final Long menuGroupId) {
         if (!menuGroupDao.existsById(menuGroupId)) {
-            throw new IllegalArgumentException();
+            throw new CustomIllegalArgumentException(NOT_FOUND_MENU_GROUP_EXCEPTION);
         }
     }
 

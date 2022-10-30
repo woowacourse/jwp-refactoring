@@ -24,7 +24,6 @@ public class OrderLineItem {
         return seq;
     }
 
-
     public Long getOrderId() {
         return orderId;
     }
