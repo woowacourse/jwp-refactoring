@@ -14,8 +14,11 @@ public class OrderResponse {
     private LocalDateTime orderedTime;
     private List<OrderLineItemsResponse> orderLineItems;
 
-    public OrderResponse(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
-                         List<OrderLineItemsResponse> orderLineItems) {
+    public OrderResponse(final Long id,
+                         final Long orderTableId,
+                         final String orderStatus,
+                         final LocalDateTime orderedTime,
+                         final List<OrderLineItemsResponse> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -23,7 +26,8 @@ public class OrderResponse {
         this.orderLineItems = orderLineItems;
     }
 
-    public static OrderResponse of(Order order, List<OrderLineItem> orderLineItems) {
+    public static OrderResponse of(final Order order,
+                                   final List<OrderLineItem> orderLineItems) {
         return new OrderResponse(
                 order.getId(),
                 order.getOrderTableId(),
@@ -33,7 +37,7 @@ public class OrderResponse {
         );
     }
 
-    private static List<OrderLineItemsResponse> convertToOrderLineItemResponse(List<OrderLineItem> orderLineItems){
+    private static List<OrderLineItemsResponse> convertToOrderLineItemResponse(final List<OrderLineItem> orderLineItems){
         return orderLineItems.stream()
                 .map(it -> new OrderLineItemsResponse(it.getOrderId(), it.getMenuId(), it.getQuantity()))
                 .collect(Collectors.toList());

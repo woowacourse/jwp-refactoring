@@ -2,7 +2,6 @@ package kitchenpos.order.application;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.application.dto.OrderRequestDto;
@@ -45,7 +44,7 @@ public class OrderService {
         final List<Long> menuIds = getMenuIds(orderLineItems);
 
         validateOrderLineItemsCount(orderLineItems, menuIds);
-        validateOrderTableNotEmpty(orderRequestDto);
+        validateOrderTableNotEmpty(orderRequestDto.getOrderTableId());
 
         final Order savedOrder = orderRepository.save(
                 new Order(orderRequestDto.getOrderTableId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems)
@@ -54,26 +53,25 @@ public class OrderService {
         return OrderResponse.of(savedOrder, orderLineItems);
     }
 
-    private List<OrderLineItem> convertToOrderLineItems(List<OrderLineItemRequest> orderLineItemRequests) {
+    private List<OrderLineItem> convertToOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests) {
         return orderLineItemRequests.stream()
                 .map(it -> new OrderLineItem(it.getMenuId(), it.getQuantity()))
                 .collect(Collectors.toList());
     }
 
-    private List<Long> getMenuIds(List<OrderLineItem> orderLineItems) {
-        final List<Long> menuIds = orderLineItems.stream()
+    private List<Long> getMenuIds(final List<OrderLineItem> orderLineItems) {
+        return orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
-        return menuIds;
     }
 
-    private void validateOrderTableNotEmpty(OrderRequestDto orderRequestDto) {
-        final OrderTable orderTable = orderTableRepository.findById(orderRequestDto.getOrderTableId())
+    private void validateOrderTableNotEmpty(final Long orderTableId) {
+        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         orderTable.validateNotEmptyTable();
     }
 
-    private void validateOrderLineItemsCount(List<OrderLineItem> orderLineItemRequests, List<Long> menuIds) {
+    private void validateOrderLineItemsCount(final List<OrderLineItem> orderLineItemRequests, final List<Long> menuIds) {
         if (orderLineItemRequests.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
@@ -97,7 +95,7 @@ public class OrderService {
         return OrderResponse.of(changedOrder, orderLineItems);
     }
 
-    private void validateOrderStatus(Order savedOrder) {
+    private void validateOrderStatus(final Order savedOrder) {
         if (savedOrder.isCompletion()) {
             throw new IllegalArgumentException();
         }

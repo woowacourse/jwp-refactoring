@@ -6,7 +6,10 @@ public class MenuProductDto {
     private Long productId;
     private Long quantity;
 
-    public MenuProductDto(Long seq, Long menuId, Long productId, Long quantity) {
+    public MenuProductDto(final Long seq,
+                          final Long menuId,
+                          final Long productId,
+                          final Long quantity) {
         this.seq = seq;
         this.menuId = menuId;
         this.productId = productId;

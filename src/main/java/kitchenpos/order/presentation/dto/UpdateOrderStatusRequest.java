@@ -5,7 +5,7 @@ import kitchenpos.order.application.dto.UpdateOrderStatusRequestDto;
 public class UpdateOrderStatusRequest {
     private String orderStatus;
 
-    public UpdateOrderStatusRequest(String orderStatus) {
+    public UpdateOrderStatusRequest(final String orderStatus) {
         this.orderStatus = orderStatus;
     }
 

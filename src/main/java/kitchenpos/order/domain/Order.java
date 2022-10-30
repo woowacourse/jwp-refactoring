@@ -12,7 +12,10 @@ public class Order {
 
     public Order(){}
 
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    public Order(final Long orderTableId,
+                 final String orderStatus,
+                 final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;

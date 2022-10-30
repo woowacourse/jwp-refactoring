@@ -10,7 +10,7 @@ import kitchenpos.product.domain.Product;
 
 public class MenuFixture {
 
-    private static final int QUANTITY = 1;
+    private static final Long QUANTITY = 1L;
 
     public static MenuRequestDto 메뉴_생성(final String name,
                                        final BigDecimal price,

@@ -50,19 +50,19 @@ public class MenuService {
         return new MenuResponse(savedMenu, setMenuProductToMenu(menuProducts,savedMenu.getId()));
     }
 
-    private List<BigDecimal> findProducts(List<MenuProduct> menuProducts) {
+    private List<BigDecimal> findProducts(final List<MenuProduct> menuProducts) {
         return menuProducts.stream()
                         .map(menuProduct -> findProduct(menuProduct.getProductId()).getPrice())
                         .collect(Collectors.toList());
     }
 
-    private List<Long> getQuantities(List<MenuProduct> menuProducts) {
+    private List<Long> getQuantities(final List<MenuProduct> menuProducts) {
         return menuProducts.stream()
                         .map(MenuProduct::getQuantity)
                         .collect(Collectors.toList());
     }
 
-    private List<MenuProduct> setMenuProductToMenu(List<MenuProduct> menuProducts, Long menuId) {
+    private List<MenuProduct> setMenuProductToMenu(final List<MenuProduct> menuProducts, Long menuId) {
         return menuProducts.stream()
                 .map(menuProduct -> new MenuProduct(menuId, menuProduct.getProductId(), menuProduct.getQuantity()))
                 .map(menuProductRepository::save)

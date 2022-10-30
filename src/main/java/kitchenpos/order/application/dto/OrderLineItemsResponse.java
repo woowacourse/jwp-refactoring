@@ -6,7 +6,9 @@ public class OrderLineItemsResponse {
     private Long menuId;
     private Long quantity;
 
-    public OrderLineItemsResponse(Long orderId, Long menuId, Long quantity) {
+    public OrderLineItemsResponse(final Long orderId,
+                                  final Long menuId,
+                                  final Long quantity) {
         this.orderId = orderId;
         this.menuId = menuId;
         this.quantity = quantity;

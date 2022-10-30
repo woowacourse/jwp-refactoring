@@ -4,7 +4,7 @@ public class UpdateOrderStatusRequestDto {
 
     private String orderStatus;
 
-    public UpdateOrderStatusRequestDto(String orderStatus) {
+    public UpdateOrderStatusRequestDto(final String orderStatus) {
         this.orderStatus = orderStatus;
     }
 
