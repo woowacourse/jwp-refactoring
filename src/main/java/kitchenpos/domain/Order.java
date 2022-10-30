@@ -52,12 +52,10 @@ public class Order {
         validateOrderLineItems();
     }
 
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
-        this(id, orderTableId, orderStatus, orderedTime, Collections.emptyList());
-    }
-
-    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+    public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
+        this(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+        orderTable.addOrder(this);
+        setIdToOrderLineItems();
     }
 
     private void validateOrderLineItems() {
@@ -73,10 +71,14 @@ public class Order {
     }
 
     public void changeStatus(final String orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+        if (OrderStatus.COMPLETION.name().equals(this.orderStatus)) {
             throw new IllegalArgumentException();
         }
         this.orderStatus = orderStatus;
+    }
+
+    public boolean isCompletion() {
+        return !OrderStatus.COMPLETION.name().equals(this.orderStatus);
     }
 
     public Long getId() {

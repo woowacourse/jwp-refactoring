@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
+import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.domain.OrderTable;
 
 public class TableAcceptanceTest extends AcceptanceTest {
@@ -36,23 +37,23 @@ public class TableAcceptanceTest extends AcceptanceTest {
     @DisplayName("테이블을 빈 테이블로 변경한다.")
     void changeEmpty() {
         // given
-        OrderTable orderTable = new OrderTable(1, false);
-        long tableId = _테이블생성_Id반환(orderTable);
+        OrderTableRequest request = createRequest();
+        long tableId = _테이블생성_Id반환(request);
 
         // when, then
-        _테이블_빈테이블_변경검증(orderTable, tableId);
+        _테이블_빈테이블_변경검증(request, tableId);
     }
 
     @Test
     @DisplayName("테이블의 방문한 손님 수를 변경한다.")
     void changeNumberOfGuests() {
         // given
-        OrderTable orderTable = new OrderTable(1, false);
-        long tableId = _테이블생성_Id반환(orderTable);
+        OrderTableRequest request = createRequest();
+        long tableId = _테이블생성_Id반환(request);
 
         // when, then
-        OrderTable orderTableToChange = new OrderTable(2, false);
-        _테이블_손님수_변경검증(tableId, orderTableToChange);
+        OrderTableRequest changeRequest = createChangeRequest(tableId, 2);
+        _테이블_손님수_변경검증(tableId, changeRequest);
     }
 
     private void _테이블생성검증(final OrderTable orderTable) {
@@ -65,13 +66,21 @@ public class TableAcceptanceTest extends AcceptanceTest {
             .statusCode(HttpStatus.OK.value());
     }
 
-    private void _테이블_빈테이블_변경검증(final OrderTable orderTable, final long tableId) {
-        put("/api/tables/" + tableId + "/empty", orderTable).assertThat()
+    private void _테이블_빈테이블_변경검증(final OrderTableRequest request, final long tableId) {
+        put("/api/tables/" + tableId + "/empty", request).assertThat()
             .statusCode(HttpStatus.OK.value());
     }
 
-    private void _테이블_손님수_변경검증(final long tableId, final OrderTable orderTableToChange) {
-        put("/api/tables/" + tableId + "/number-of-guests", orderTableToChange).assertThat()
+    private void _테이블_손님수_변경검증(final long tableId, final OrderTableRequest changeRequest) {
+        put("/api/tables/" + tableId + "/number-of-guests", changeRequest).assertThat()
             .statusCode(HttpStatus.OK.value());
+    }
+
+    private OrderTableRequest createRequest() {
+        return new OrderTableRequest(NO_ID, NO_ID, 1, false);
+    }
+
+    private OrderTableRequest createChangeRequest(final Long tableId, final int numberOfGuests) {
+        return new OrderTableRequest(tableId, NO_ID, numberOfGuests, false);
     }
 }

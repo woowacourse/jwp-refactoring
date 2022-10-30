@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,10 +43,6 @@ public class TableGroup {
         groupOrderTables();
     }
 
-    public TableGroup(final Long id, final LocalDateTime createdDate) {
-        this(id, createdDate, null);
-    }
-
     public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this(null, createdDate, orderTables);
     }
@@ -69,9 +64,7 @@ public class TableGroup {
 
     private void validateOrderTablesCanGroup() {
         for (final OrderTable orderTable : orderTables) {
-            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
-            }
+            orderTable.validateCanBeGrouped();
         }
     }
 

@@ -9,6 +9,10 @@ import org.springframework.test.context.jdbc.Sql;
 
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
+import kitchenpos.application.request.MenuGroupRequest;
+import kitchenpos.application.request.MenuRequest;
+import kitchenpos.application.request.OrderRequest;
+import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.application.request.ProductCreateRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -59,8 +63,8 @@ public class AcceptanceTest {
             .then().log().all();
     }
 
-    protected long _메뉴등록_Id반환(final Menu menu) {
-        return post("/api/menus", menu).assertThat()
+    protected long _메뉴등록_Id반환(final MenuRequest request) {
+        return post("/api/menus", request).assertThat()
             .statusCode(HttpStatus.CREATED.value())
             .extract()
             .body()
@@ -68,8 +72,8 @@ public class AcceptanceTest {
             .getLong("id");
     }
 
-    protected long _메뉴그룹등록_Id반환(final MenuGroup menuGroup) {
-        return post("/api/menu-groups", menuGroup).assertThat()
+    protected long _메뉴그룹등록_Id반환(final MenuGroupRequest request) {
+        return post("/api/menu-groups", request).assertThat()
             .statusCode(HttpStatus.CREATED.value())
             .extract()
             .body()
@@ -86,8 +90,8 @@ public class AcceptanceTest {
             .getLong("id");
     }
 
-    protected long _테이블생성_Id반환(final OrderTable orderTable) {
-        return post("/api/tables", orderTable).assertThat()
+    protected long _테이블생성_Id반환(final OrderTableRequest request) {
+        return post("/api/tables", request).assertThat()
             .statusCode(HttpStatus.CREATED.value())
             .extract()
             .body()
@@ -95,8 +99,8 @@ public class AcceptanceTest {
             .getLong("id");
     }
 
-    protected long _주문생성_Id반환(final Order order) {
-        return post("/api/orders", order).assertThat()
+    protected long _주문생성_Id반환(final OrderRequest request) {
+        return post("/api/orders", request).assertThat()
             .statusCode(HttpStatus.CREATED.value())
             .extract()
             .body()

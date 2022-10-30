@@ -1,10 +1,8 @@
 package kitchenpos.application.request;
 
-import java.io.Serializable;
-
 import kitchenpos.domain.OrderLineItem;
 
-public class OrderLineItemRequest implements Serializable {
+public class OrderLineItemRequest {
 
     private Long seq;
     private Long orderId;

@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.application.request.OrderTableCreateRequest;
-import kitchenpos.application.request.TableGroupCreateRequest;
+import kitchenpos.application.request.OrderTableRequest;
+import kitchenpos.application.request.TableGroupRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -32,7 +32,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupCreateRequest request) {
+    public TableGroup create(final TableGroupRequest request) {
         List<Long> orderTableIds = getOrderTableIds(request);
         List<OrderTable> orderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
@@ -48,9 +48,9 @@ public class TableGroupService {
         tableGroup.ungroupOrderTables();
     }
 
-    private List<Long> getOrderTableIds(final TableGroupCreateRequest request) {
+    private List<Long> getOrderTableIds(final TableGroupRequest request) {
         return request.getOrderTables().stream()
-            .map(OrderTableCreateRequest::getId)
+            .map(OrderTableRequest::getId)
             .collect(Collectors.toUnmodifiableList());
     }
 

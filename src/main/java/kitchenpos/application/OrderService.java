@@ -31,10 +31,7 @@ public class OrderService {
         final OrderTable orderTable = orderTableDao.getById(request.getOrderTableId());
         validateOrderTableNotEmpty(orderTable);
 
-        final Order savedOrder = orderDao.save(new Order(orderTable.getId(), request.getOrderLineItems()));
-        savedOrder.setIdToOrderLineItems();
-
-        return savedOrder;
+        return orderDao.save(new Order(orderTable, request.getOrderLineItems()));
     }
 
     private void validateOrderTableNotEmpty(final OrderTable orderTable) {

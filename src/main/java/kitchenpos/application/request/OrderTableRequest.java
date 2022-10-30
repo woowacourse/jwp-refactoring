@@ -19,10 +19,6 @@ public class OrderTableRequest {
         this.empty = empty;
     }
 
-    public OrderTableRequest(final int numberOfGuests, final boolean empty) {
-        this(null, null, numberOfGuests, empty);
-    }
-
     public Long getId() {
         return id;
     }

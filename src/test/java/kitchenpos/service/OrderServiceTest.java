@@ -57,7 +57,7 @@ public class OrderServiceTest extends ServiceTest {
     void changeOrderStatus_meal(String orderStatus) {
         // given
         Order order = orderService.create(createOrderRequest());
-        OrderRequest changeRequest = new OrderRequest(orderStatus);
+        OrderRequest changeRequest = new OrderRequest(NO_ID, NO_ID, orderStatus, null);
 
         // when
         orderService.changeOrderStatus(order.getId(), changeRequest);
@@ -78,7 +78,7 @@ public class OrderServiceTest extends ServiceTest {
             List.of(new MenuProductRequest(NO_ID, NO_ID, productId, 3)));
         long menuId = menuService.create(menu).getId();
 
-        OrderTableRequest orderTable = new OrderTableRequest(1, false);
+        OrderTableRequest orderTable = new OrderTableRequest(NO_ID, NO_ID, 1, false);
         long tableId = tableService.create(orderTable).getId();
 
         OrderLineItemRequest orderLineItem = new OrderLineItemRequest(1L, NO_ID, menuId, 1);

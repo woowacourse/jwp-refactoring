@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,7 +42,7 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = List.copyOf(menuProducts);
+        this.menuProducts = new ArrayList<>(menuProducts);
         validatePrice(price);
     }
 
@@ -51,7 +50,18 @@ public class Menu {
     }
 
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
-        this(id, name, price, menuGroupId, Collections.emptyList());
+        this(id, name, price, menuGroupId, new ArrayList<>());
+    }
+
+    public Menu(final String name, final BigDecimal price, final Long menuGroupId) {
+        this(null, name, price, menuGroupId);
+    }
+
+    public void addMenuProducts(final List<MenuProduct> menuProducts) {
+        for (final MenuProduct menuProduct : menuProducts) {
+            menuProduct.setMenuId(id);
+            this.menuProducts.add(menuProduct);
+        }
     }
 
     private void validatePrice(final BigDecimal price) {
@@ -63,12 +73,6 @@ public class Menu {
     public void validatePriceUnderProductsSum(final List<Product> products) {
         if (price.compareTo(calculateProductsSum(products)) > 0) {
             throw new IllegalArgumentException("price must be equal to or less than the sum of product prices");
-        }
-    }
-
-    public void setIdToMenuProducts() {
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(id);
         }
     }
 

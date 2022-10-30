@@ -6,9 +6,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-import kitchenpos.application.request.OrderTableCreateRequest;
-import kitchenpos.application.request.TableGroupCreateRequest;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.application.request.OrderTableRequest;
+import kitchenpos.application.request.TableGroupRequest;
 
 public class TableGroupAcceptanceTest extends AcceptanceTest {
 
@@ -16,7 +15,7 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
     @DisplayName("테이블 그룹을 생성한다.")
     void create() {
         // given
-        TableGroupCreateRequest request = createTableGroup();
+        TableGroupRequest request = createTableGroup();
 
         // when, then
         _테이블그룹생성_Id반환(request);
@@ -26,7 +25,7 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
     @DisplayName("테이블 그룹에 속한 OrderTable 을 삭제한다.")
     void ungroup() {
         // given
-        TableGroupCreateRequest request = createTableGroup();
+        TableGroupRequest request = createTableGroup();
         long tableGroupId = _테이블그룹생성_Id반환(request);
 
         // when, then
@@ -34,7 +33,7 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
             .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
-    private long _테이블그룹생성_Id반환(final TableGroupCreateRequest request) {
+    private long _테이블그룹생성_Id반환(final TableGroupRequest request) {
         return post("api/table-groups", request).assertThat()
             .statusCode(HttpStatus.CREATED.value())
             .extract()
@@ -43,14 +42,14 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
             .getLong("id");
     }
 
-    private TableGroupCreateRequest createTableGroup() {
-        OrderTable orderTable1 = new OrderTable(1, true);
-        OrderTable orderTable2 = new OrderTable(2, true);
+    private TableGroupRequest createTableGroup() {
+        OrderTableRequest orderTable1 = new OrderTableRequest(NO_ID, NO_ID, 1, true);
+        OrderTableRequest orderTable2 = new OrderTableRequest(NO_ID, NO_ID, 2, true);
         long tableId1 = _테이블생성_Id반환(orderTable1);
         long tableId2 = _테이블생성_Id반환(orderTable2);
 
-        OrderTableCreateRequest orderTableCreateRequest1 = new OrderTableCreateRequest(tableId1);
-        OrderTableCreateRequest orderTableCreateRequest2 = new OrderTableCreateRequest(tableId2);
-        return new TableGroupCreateRequest(List.of(orderTableCreateRequest1, orderTableCreateRequest2));
+        OrderTableRequest orderTableRequest1 = new OrderTableRequest(tableId1, NO_ID, 1, true);
+        OrderTableRequest orderTableRequest2 = new OrderTableRequest(tableId2, NO_ID, 2, true);
+        return new TableGroupRequest(List.of(orderTableRequest1, orderTableRequest2));
     }
 }

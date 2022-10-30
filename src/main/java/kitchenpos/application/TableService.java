@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -9,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 
 @Service
@@ -36,17 +34,9 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTableRequest request) {
         final OrderTable orderTable = orderTableDao.getById(orderTableId);
-        validateOrderTableCanChangeEmpty(orderTableId);
         orderTable.changeEmpty(request.getEmpty());
 
         return orderTable;
-    }
-
-    private void validateOrderTableCanChangeEmpty(final Long orderTableId) {
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-            orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
     }
 
     @Transactional

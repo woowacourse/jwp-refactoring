@@ -23,10 +23,6 @@ public class OrderRequest {
         this.orderLineItems = orderLineItems;
     }
 
-    public OrderRequest(final String orderStatus) {
-        this(null, null, orderStatus, null);
-    }
-
     public Long getId() {
         return id;
     }

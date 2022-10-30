@@ -7,9 +7,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
+import kitchenpos.application.request.MenuGroupRequest;
 import kitchenpos.application.request.ProductCreateRequest;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 
 public class MenuAcceptanceTest extends AcceptanceTest {
@@ -49,7 +49,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
     }
 
     private Menu createMenuFixture() {
-        MenuGroup menuGroup = new MenuGroup("세마리메뉴");
+        MenuGroupRequest menuGroup = new MenuGroupRequest(NO_ID, "세마리메뉴");
         long menuGroupId = _메뉴그룹등록_Id반환(menuGroup);
 
         ProductCreateRequest product = new ProductCreateRequest("후라이드", BigDecimal.valueOf(16000));

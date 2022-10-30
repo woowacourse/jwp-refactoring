@@ -16,14 +16,14 @@ public class TableServiceTest extends ServiceTest {
     @DisplayName("테이블을 등록한다.")
     void create() {
         // given
-        OrderTableRequest request = new OrderTableRequest(1, false);
+        OrderTableRequest request = new OrderTableRequest(NO_ID, NO_ID, 1, false);
 
         // when
         OrderTable savedOrderTable = tableService.create(request);
 
         // then
         assertThat(savedOrderTable).usingRecursiveComparison()
-            .ignoringFields("id")
+            .ignoringFields("id", "orders")
             .isEqualTo(request);
     }
 
@@ -31,7 +31,7 @@ public class TableServiceTest extends ServiceTest {
     @DisplayName("전체 테이블을 조회한다.")
     void list() {
         // given
-        OrderTableRequest request = new OrderTableRequest(1, false);
+        OrderTableRequest request = new OrderTableRequest(NO_ID, NO_ID, 1, false);
         OrderTable savedOrderTable = tableService.create(request);
 
         // when

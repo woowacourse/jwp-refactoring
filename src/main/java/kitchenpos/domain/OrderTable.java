@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -7,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -31,6 +34,9 @@ public class OrderTable {
     @Column(name = "empty")
     private boolean empty;
 
+    @OneToMany(mappedBy = "orderTableId")
+    List<Order> orders = new ArrayList<>();
+
     protected OrderTable() {
     }
 
@@ -52,6 +58,10 @@ public class OrderTable {
         }
     }
 
+    public void addOrder(final Order order) {
+        orders.add(order);
+    }
+
     public void group(final Long tableGroupId) {
         changeEmpty(false);
         this.tableGroupId = tableGroupId;
@@ -62,14 +72,38 @@ public class OrderTable {
         changeEmpty(false);
     }
 
+    public void validateCanBeGrouped() {
+        if (!empty || tableGroupId != null) {
+            throw new IllegalArgumentException("table can not be grouped");
+        }
+    }
+
     public void changeEmpty(final boolean empty) {
-        if (Objects.nonNull(tableGroupId)) {
+        validateCanChangeEmpty();
+        if (tableGroupId != null) {
             throw new IllegalArgumentException("could not change empty, table is now grouped");
         }
         this.empty = empty;
     }
 
+    private void validateCanChangeEmpty() {
+        for (final Order order : orders) {
+            validateOrderCompletion(order);
+        }
+    }
+
+    private void validateOrderCompletion(final Order order) {
+        if (order.isCompletion()) {
+            throw new IllegalArgumentException("can not change to empty, status is not completion");
+        }
+    }
+
+    public boolean isEmpty() {
+        return empty;
+    }
+
     public void changeNumberOfGuests(final int numberOfGuests) {
+        validateNumberOfGuests(numberOfGuests);
         if (empty) {
             throw new IllegalArgumentException();
         }
@@ -86,10 +120,6 @@ public class OrderTable {
 
     public int getNumberOfGuests() {
         return numberOfGuests;
-    }
-
-    public boolean isEmpty() {
-        return empty;
     }
 
     @Override

@@ -24,8 +24,11 @@ public class OrderTest {
     @Test
     @DisplayName("OrderLineItem 이 empty 인 경우 예외를 반환한다.")
     void validateOrderLineItems() {
+        // given
+        OrderTable orderTable = new OrderTable(1, false);
+
         // when, then
-        assertThatThrownBy(() -> new Order(noId, List.of()))
+        assertThatThrownBy(() -> new Order(orderTable, List.of()))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -44,7 +47,8 @@ public class OrderTest {
     }
 
     private Order createOrder() {
+        OrderTable orderTable = new OrderTable(1, false);
         OrderLineItem orderLineItem = new OrderLineItem(noId, noId, noId, 1);
-        return new Order(noId, List.of(orderLineItem));
+        return new Order(orderTable, List.of(orderLineItem));
     }
 }
