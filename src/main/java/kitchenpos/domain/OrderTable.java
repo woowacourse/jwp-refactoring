@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
-import javax.persistence.CascadeType;
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -96,4 +97,20 @@ public class OrderTable {
             throw new IllegalArgumentException("비어있지 않은 테이블입니다.");
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || !(o instanceof OrderTable))
+            return false;
+        OrderTable orderTable = (OrderTable)o;
+        return Objects.equals(id, orderTable.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
 }

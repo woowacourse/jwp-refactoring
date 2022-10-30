@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -61,6 +62,21 @@ public class Product {
         if (price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("상품은 0원 미만일 수 없습니다.");
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || !(o instanceof Product))
+            return false;
+        Product product = (Product)o;
+        return Objects.equals(id, product.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
 }

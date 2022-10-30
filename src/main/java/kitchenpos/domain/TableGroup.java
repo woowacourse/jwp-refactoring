@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -57,4 +58,20 @@ public class TableGroup {
             throw new IllegalArgumentException("2개 이상의 테이블을 그룹으로 추가할 수 있습니다.");
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || !(o instanceof TableGroup))
+            return false;
+        TableGroup tableGroup = (TableGroup)o;
+        return Objects.equals(id, tableGroup.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
 }

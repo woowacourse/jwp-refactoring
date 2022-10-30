@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -56,6 +58,21 @@ public class MenuProduct {
         if (quantity <= 0) {
             throw new IllegalArgumentException("메뉴 수량은 1이상이어야 합니다.");
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || !(o instanceof MenuProduct))
+            return false;
+        MenuProduct menuProduct = (MenuProduct)o;
+        return Objects.equals(seq, menuProduct.getSeq());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(seq);
     }
 
 }
