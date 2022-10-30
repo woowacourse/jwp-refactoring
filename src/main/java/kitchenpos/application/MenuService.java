@@ -13,8 +13,6 @@ import kitchenpos.domain.Product;
 import kitchenpos.exception.MenuPriceException;
 import kitchenpos.exception.NotFoundMenuGroupException;
 import kitchenpos.exception.NotFoundProductException;
-import kitchenpos.repository.MenuProductRepository;
-import kitchenpos.repository.MenuRepository;
 import kitchenpos.ui.dto.MenuProductDto;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
 import org.springframework.stereotype.Service;
@@ -40,12 +38,8 @@ public class MenuService {
         validateMenuGroupId(request.getMenuGroupId());
         validatePrice(request.getMenuProducts(), request.getPrice());
 
-        Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId());
-        Menu savedMenu = menuDao.save(menu);
-        List<MenuProduct> menuProducts = getMenuProducts(menu.getId(), request.getMenuProducts());
-        List<MenuProduct> savedMenuProducts = menuProducts.stream()
-                .map(menuProductDao::save)
-                .collect(Collectors.toList());
+        Menu savedMenu = saveMenu(request);
+        List<MenuProduct> savedMenuProducts = saveMenuProducts(request.getMenuProducts(), savedMenu.getId());
 
         return new Menu(savedMenu, savedMenuProducts);
     }
@@ -75,17 +69,29 @@ public class MenuService {
         return sum;
     }
 
+    private Menu saveMenu(MenuCreateRequest request) {
+        return menuDao.save(new Menu(
+                request.getName(),
+                request.getPrice(),
+                request.getMenuGroupId()
+        ));
+    }
+
+    private List<MenuProduct> saveMenuProducts(List<MenuProductDto> menuProductDtos, Long menuId) {
+        return getMenuProducts(menuId, menuProductDtos).stream()
+                .map(menuProductDao::save)
+                .collect(Collectors.toList());
+    }
+
     private List<MenuProduct> getMenuProducts(Long menuId, List<MenuProductDto> menuProductDtos) {
         return menuProductDtos.stream()
-                .map(menuProductDto -> new MenuProduct(menuId, menuProductDto.getProductId(),
-                        menuProductDto.getQuantity()))
+                .map(menuProductDto ->
+                        new MenuProduct(menuId, menuProductDto.getProductId(), menuProductDto.getQuantity()))
                 .collect(Collectors.toList());
     }
 
     public List<Menu> list() {
-        List<Menu> menus = menuDao.findAll();
-
-        return menus.stream()
+        return menuDao.findAll().stream()
                 .map(menu -> new Menu(menu, menuProductDao.findAllByMenuId(menu.getId())))
                 .collect(Collectors.toList());
     }

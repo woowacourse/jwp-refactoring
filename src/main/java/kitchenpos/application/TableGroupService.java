@@ -13,7 +13,6 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.exception.OrderTableGroupingSizeException;
 import kitchenpos.exception.OrderTableUnableUngroupingStatusException;
-import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.ui.dto.OrderTableIdDto;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
 import org.springframework.stereotype.Service;
@@ -38,12 +37,10 @@ public class TableGroupService {
         List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
         validateOrderTablesSize(orderTableIds, savedOrderTables);
 
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
-        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
+        List<OrderTable> orderTables = updateOrderTables(savedOrderTables, savedTableGroup.getId());
 
-        updateOrderTable(savedOrderTables, savedTableGroup.getId());
-
-        return savedTableGroup;
+        return new TableGroup(savedTableGroup, orderTables);
     }
 
     private List<Long> getOrderTableIds(TableGroupCreateRequest tableGroupCreateRequest) {
@@ -66,9 +63,9 @@ public class TableGroupService {
         List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
 
         List<Long> orderTableIds = getOrderTableIds(orderTables);
-
         validateOrderTablesStatus(orderTableIds);
-        updateOrderTable(orderTables, null);
+
+        updateOrderTables(orderTables, null);
     }
 
     private List<Long> getOrderTableIds(List<OrderTable> orderTables) {
@@ -77,18 +74,16 @@ public class TableGroupService {
                 .collect(Collectors.toList());
     }
 
-    private void updateOrderTable(List<OrderTable> savedOrderTables, Long tableGroupId) {
-        for (OrderTable savedOrderTable : savedOrderTables) {
-            OrderTable orderTable = new OrderTable(savedOrderTable.getId(), tableGroupId,
-                    savedOrderTable.getNumberOfGuests(), false);
-            orderTableDao.save(orderTable);
-        }
-    }
-
     private void validateOrderTablesStatus(List<Long> orderTableIds) {
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new OrderTableUnableUngroupingStatusException();
         }
+    }
+
+    private List<OrderTable> updateOrderTables(List<OrderTable> orderTables, Long tableGroupId) {
+        return orderTables.stream()
+                .map(orderTable -> orderTableDao.save(new OrderTable(orderTable, tableGroupId)))
+                .collect(Collectors.toList());
     }
 }

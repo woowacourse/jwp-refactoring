@@ -2,38 +2,28 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.exception.AlreadyGroupedException;
 
 public class TableGroup {
     private final Long id;
     private final LocalDateTime createdDate;
     private final List<OrderTable> orderTables;
 
-    public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+    private TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
-        validateOrderTables(orderTables);
         this.orderTables = orderTables;
+    }
+
+    public TableGroup(LocalDateTime createdDate) {
+        this(null, createdDate, List.of());
     }
 
     public TableGroup(Long id, LocalDateTime createdDate) {
         this(id, createdDate, List.of());
     }
 
-    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
-        this(null, createdDate, orderTables);
-    }
-
-    private void validateOrderTables(List<OrderTable> orderTables) {
-        for (OrderTable orderTable : orderTables) {
-            validateOrderTable(orderTable);
-        }
-    }
-
-    private void validateOrderTable(OrderTable orderTable) {
-        if (orderTable.isNotPossibleTableGrouping()) {
-            throw new AlreadyGroupedException();
-        }
+    public TableGroup(TableGroup tableGroup, List<OrderTable> orderTables) {
+        this(tableGroup.getId(), tableGroup.getCreatedDate(), orderTables);
     }
 
     public Long getId() {

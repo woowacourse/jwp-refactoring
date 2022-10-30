@@ -1,9 +1,7 @@
 package kitchenpos.application;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -13,7 +11,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.exception.NotConvertableStatusException;
 import kitchenpos.exception.NotFoundMenuException;
 import kitchenpos.exception.NotFoundOrderException;
 import kitchenpos.exception.NotFoundOrderTableException;
@@ -47,19 +44,24 @@ public class OrderService {
 
     @Transactional
     public Order create(OrderCreateRequest orderCreateRequest) {
-        List<Long> menuIds = getMenuIds(orderCreateRequest.getOrderLineItems());
-        validateOrderLineItems(menuIds);
+        validateOrderLineItems(orderCreateRequest.getOrderLineItems());
         validateOrderTable(orderCreateRequest.getOrderTableId());
 
-        Order order = new Order(orderCreateRequest.getOrderTableId(), OrderStatus.COOKING, LocalDateTime.now());
-        Order savedOrder = orderDao.save(order);
+        Order savedOrder = saveOrder(orderCreateRequest);
+        List<OrderLineItem> savedOrderLineItems =
+                getOrderLineItems(orderCreateRequest.getOrderLineItems(), savedOrder.getId());
 
-        Long orderId = savedOrder.getId();
-        List<OrderLineItem> savedOrderLineItems = getOrderLineItems(orderCreateRequest.getOrderLineItems(), orderId);
+        return new Order(savedOrder, savedOrderLineItems);
+    }
 
-        return new Order(savedOrder.getId(), savedOrder.getOrderTableId(),
-                OrderStatus.valueOf(savedOrder.getOrderStatus()),
-                savedOrder.getOrderedTime(), savedOrderLineItems);
+    private void validateOrderLineItems(List<OrderLineItemDto> orderLineItemDtos) {
+        List<Long> menuIds = getMenuIds(orderLineItemDtos);
+        if (CollectionUtils.isEmpty(menuIds)) {
+            throw new OrderMenusCountException();
+        }
+        if (menuIds.size() != menuDao.countByIdIn(menuIds)) {
+            throw new NotFoundMenuException();
+        }
     }
 
     private List<Long> getMenuIds(List<OrderLineItemDto> orderLineItemDtos) {
@@ -76,49 +78,34 @@ public class OrderService {
         }
     }
 
-    private void validateOrderLineItems(List<Long> menuIds) {
-        if (CollectionUtils.isEmpty(menuIds)) {
-            throw new OrderMenusCountException();
-        }
-        if (menuIds.size() != menuDao.countByIdIn(menuIds)) {
-            throw new NotFoundMenuException();
-        }
+    private Order saveOrder(OrderCreateRequest orderCreateRequest) {
+        return orderDao.save(new Order(
+                orderCreateRequest.getOrderTableId(),
+                OrderStatus.COOKING,
+                LocalDateTime.now()
+        ));
     }
 
     private List<OrderLineItem> getOrderLineItems(List<OrderLineItemDto> orderLineItemDtos, Long orderId) {
-        List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (OrderLineItemDto orderLineItemDto : orderLineItemDtos) {
-            OrderLineItem orderLineItem = new OrderLineItem(orderId, orderLineItemDto.getMenuId(),
-                    orderLineItemDto.getQuantity());
-            savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
-        }
-        return savedOrderLineItems;
+        return orderLineItemDtos.stream()
+                .map(orderLineItemDto -> orderLineItemDao.save(new OrderLineItem(
+                        orderId,
+                        orderLineItemDto.getMenuId(),
+                        orderLineItemDto.getQuantity()
+                )))
+                .collect(Collectors.toList());
     }
 
     public List<Order> list() {
-        List<Order> orders = orderDao.findAll();
-        List<Order> newOrders = new ArrayList<>();
-
-        for (Order order : orders) {
-            List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(order.getId());
-            newOrders.add(new Order(order.getId(), order.getOrderTableId(), OrderStatus.valueOf(order.getOrderStatus()),
-                    order.getOrderedTime(), orderLineItems));
-        }
-
-        return newOrders;
+        return orderDao.findAll().stream()
+                .map(order -> new Order(order, orderLineItemDao.findAllByOrderId(order.getId())))
+                .collect(Collectors.toList());
     }
 
     @Transactional
     public Order changeOrderStatus(Long orderId, ChangeOrderStatusRequest changeOrderStatusRequest) {
-        Order savedOrder = findOrder(orderId);
-        validateOrderStatus(savedOrder);
-
-        Order order = new Order(
-                savedOrder.getId(),
-                savedOrder.getOrderTableId(),
-                OrderStatus.valueOf(changeOrderStatusRequest.getOrderStatus()),
-                savedOrder.getOrderedTime(),
-                orderLineItemDao.findAllByOrderId(orderId));
+        Order order = findOrder(orderId);
+        order.changeOrderStatus(OrderStatus.valueOf(changeOrderStatusRequest.getOrderStatus()));
 
         return orderDao.save(order);
     }
@@ -126,11 +113,5 @@ public class OrderService {
     private Order findOrder(Long orderId) {
         return orderDao.findById(orderId)
                 .orElseThrow(NotFoundOrderException::new);
-    }
-
-    private void validateOrderStatus(Order savedOrder) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new NotConvertableStatusException();
-        }
     }
 }

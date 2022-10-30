@@ -6,7 +6,7 @@ import kitchenpos.exception.TableGroupNotNullException;
 
 public class OrderTable {
     private final Long id;
-    private Long tableGroupId;
+    private final Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
@@ -15,6 +15,10 @@ public class OrderTable {
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
+        this(null, tableGroupId, numberOfGuests, empty);
     }
 
     public OrderTable(int numberOfGuests, boolean empty) {
@@ -37,10 +41,6 @@ public class OrderTable {
             throw new GuestSizeException();
         }
         this.numberOfGuests = numberOfGuests;
-    }
-
-    public void ungroup() {
-        this.tableGroupId = null;
     }
 
     public boolean isNotPossibleTableGrouping() {

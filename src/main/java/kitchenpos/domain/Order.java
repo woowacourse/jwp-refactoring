@@ -12,8 +12,8 @@ public class Order {
     private final LocalDateTime orderedTime;
     private final List<OrderLineItem> orderLineItems;
 
-    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
-                 List<OrderLineItem> orderLineItems) {
+    private Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
+                  List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -22,11 +22,11 @@ public class Order {
     }
 
     public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
-        this(id, orderTableId, orderStatus, orderedTime, null);
+        this(id, orderTableId, orderStatus, orderedTime, List.of());
     }
 
     public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
-        this(null, orderTableId, orderStatus, orderedTime, null);
+        this(null, orderTableId, orderStatus, orderedTime, List.of());
     }
 
     public Order(Order order, List<OrderLineItem> orderLineItems) {

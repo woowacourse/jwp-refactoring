@@ -20,8 +20,8 @@ public class DomainFixture {
         return new OrderTable(0, false);
     }
 
-    public static OrderTable createOrderTable(boolean empty) {
-        return new OrderTable(0, empty);
+    public static OrderTable createOrderTable(Long tableGroupId, boolean empty) {
+        return new OrderTable(tableGroupId, 0, empty);
     }
 
     public static Menu createMenu(Long menuGroupId) {

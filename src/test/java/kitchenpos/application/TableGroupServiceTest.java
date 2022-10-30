@@ -23,8 +23,8 @@ class TableGroupServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        saved1 = orderTableDao.save(createOrderTable(true));
-        saved2 = orderTableDao.save(createOrderTable(true));
+        saved1 = orderTableDao.save(createOrderTable(null, true));
+        saved2 = orderTableDao.save(createOrderTable(null, true));
     }
 
     @Test
@@ -62,10 +62,13 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Test
     void 그룹을_해제한다() {
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Arrays.asList(saved1, saved2));
-        tableGroupDao.save(tableGroup);
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
-        tableGroupService.ungroup(tableGroup.getId());
+        saved1 = orderTableDao.save(createOrderTable(savedTableGroup.getId(), true));
+        saved2 = orderTableDao.save(createOrderTable(savedTableGroup.getId(), true));
+
+        tableGroupService.ungroup(savedTableGroup.getId());
 
         assertThat(orderTableDao.findById(saved1.getId()).get().getTableGroupId()).isNull();
     }

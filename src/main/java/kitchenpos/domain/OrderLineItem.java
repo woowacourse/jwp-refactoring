@@ -17,14 +17,6 @@ public class OrderLineItem {
         this(null, orderId, menuId, quantity);
     }
 
-    public OrderLineItem(Long menuId, long quantity) {
-        this(null, null, menuId, quantity);
-    }
-
-    public OrderLineItem(Long orderId, OrderLineItem orderLineItem) {
-        this(null, orderId, orderLineItem.menuId, orderLineItem.quantity);
-    }
-
     public Long getSeq() {
         return seq;
     }
