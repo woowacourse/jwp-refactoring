@@ -2,8 +2,8 @@ package kitchenpos.dao.repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.dao.jdbctemplate.JdbcTemplateOrderDao;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.jdbctemplate.JdbcTemplateOrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -34,9 +34,17 @@ public class OrderRepository implements OrderDao {
         List<OrderLineItem> items = new ArrayList<>();
         for (OrderLineItem item : entity.getOrderLineItems()) {
             item.updateOrderId(save.getId());
-            items.add(itemRepository.save(item));
+            saveItem(items, item);
         }
         save.updateOrderLineItems(items);
+    }
+
+    private void saveItem(List<OrderLineItem> items, OrderLineItem item) {
+        if (item.getSeq() == null) {
+            items.add(itemRepository.save(item));
+            return;
+        }
+        items.add(itemRepository.findById(item.getSeq()));
     }
 
     @Override
