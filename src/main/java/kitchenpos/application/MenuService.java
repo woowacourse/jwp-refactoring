@@ -38,7 +38,7 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
         validateMenuGroup(menuRequest.getMenuGroupId());
-        final List<MenuProduct> menuProducts = toMenuProducts(null, menuRequest.getMenuProducts());
+        final List<MenuProduct> menuProducts = toMenuProducts(menuRequest.getMenuProducts());
         validateDiscount(menuRequest.getPrice(), menuProducts);
 
         final Menu savedMenu = menuDao.save(toMenu(menuRequest));
@@ -51,8 +51,7 @@ public class MenuService {
         }
         savedMenu.updateMenuProducts(savedMenuProducts);
 
-        List<MenuProductResponse> menuProductResponses = toMenuProductResponses(savedMenuProducts);
-        return toMenuResponse(savedMenu, menuProductResponses);
+        return toMenuResponse(savedMenu, toMenuProductResponses(menuId, savedMenuProducts));
     }
 
     private void validateDiscount(BigDecimal price, List<MenuProduct> menuProducts) {
@@ -83,20 +82,19 @@ public class MenuService {
                 menuRequest.getMenuGroupId());
     }
 
-    private List<MenuProduct> toMenuProducts(Long menuId, List<MenuProductRequest> savedMenuProducts) {
+    private List<MenuProduct> toMenuProducts(List<MenuProductRequest> savedMenuProducts) {
         return savedMenuProducts.stream()
-                .map(menuProductRequest -> toMenuProduct(menuId, menuProductRequest))
+                .map(this::toMenuProduct)
                 .collect(Collectors.toList());
     }
 
-    private MenuProduct toMenuProduct(Long menuId, MenuProductRequest mp) {
-        Long productId = mp.getProductId();
-        return new MenuProduct(null, menuId, productId, mp.getQuantity());
+    private MenuProduct toMenuProduct(MenuProductRequest mp) {
+        return new MenuProduct(mp.getProductId(), mp.getQuantity());
     }
 
-    private List<MenuProductResponse> toMenuProductResponses(List<MenuProduct> savedMenuProducts) {
+    private List<MenuProductResponse> toMenuProductResponses(Long menuId, List<MenuProduct> savedMenuProducts) {
         return savedMenuProducts.stream()
-                .map(mp -> new MenuProductResponse(mp.getSeq(), mp.getMenuId(), mp.getProductId(), mp.getQuantity()))
+                .map(mp -> new MenuProductResponse(mp.getSeq(), menuId, mp.getProductId(), mp.getQuantity()))
                 .collect(Collectors.toList());
     }
 
@@ -113,7 +111,7 @@ public class MenuService {
         }
 
         return menus.stream()
-                .map(menu -> toMenuResponse(menu, toMenuProductResponses(menu.getMenuProducts())))
+                .map(menu -> toMenuResponse(menu, toMenuProductResponses(menu.getId(), menu.getMenuProducts())))
                 .collect(Collectors.toList());
     }
 }

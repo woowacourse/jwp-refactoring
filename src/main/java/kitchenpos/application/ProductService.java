@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
@@ -33,6 +34,6 @@ public class ProductService {
     }
 
     private Product toProduct(ProductRequest product) {
-        return new Product(product.getName(), product.getPrice());
+        return new Product(product.getName(), new Price(product.getPrice()));
     }
 }

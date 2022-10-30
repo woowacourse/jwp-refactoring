@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuProductRequest;
@@ -28,7 +29,7 @@ public class Fixtures {
     }
 
     public static Product 상품_후라이드() {
-        return new Product(null, "후라이드", BigDecimal.valueOf(16000));
+        return new Product(null, "후라이드", new Price(16000));
     }
 
     public static Menu 메뉴_후라이드치킨() {

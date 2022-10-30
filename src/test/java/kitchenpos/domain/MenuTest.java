@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("NonAsciiCharacters")
 class MenuTest {
 
-    @DisplayName("메뉴 가격은 0 이상이어야 한다.")
+    @DisplayName("가격은 0 이상이어야 한다.")
     @Test
     void createAndList_invalidPrice() {
         BigDecimal 음수_가격 = BigDecimal.valueOf(-10000);
@@ -18,6 +18,6 @@ class MenuTest {
         assertThatThrownBy(() -> new Menu(1L, "후라이드", 음수_가격,
                 1L, List.of(new MenuProduct(1L, 1L, 1L, 1))))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("메뉴 가격은 0 이상이어야 한다.");
+                .hasMessage("가격은 0 이상이어야 한다.");
     }
 }

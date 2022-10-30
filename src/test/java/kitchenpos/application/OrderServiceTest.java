@@ -4,13 +4,13 @@ import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ChangeOrderStatusRequest;
 import kitchenpos.dto.OrderLineItemRequest;
@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 class OrderServiceTest extends ServiceTest {
     private void init() {
         menuGroupDao.save(new MenuGroup(null, "한마리메뉴"));
-        productDao.save(new Product(null, "후라이드", BigDecimal.valueOf(16000)));
+        productDao.save(new Product(null, "후라이드", new Price(16000)));
         menuDao.save(메뉴_후라이드치킨());
         orderTableDao.save(new OrderTable(null, null, 0, false));
         menuProductDao.save(new MenuProduct(null, 1L, 1L, 1));
