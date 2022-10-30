@@ -37,19 +37,19 @@ public class Fixtures {
     }
 
     public static MenuGroupRequest 메뉴그룹요청_한마리메뉴() {
-        return new MenuGroupRequest( "한마리메뉴");
+        return new MenuGroupRequest("한마리메뉴");
     }
 
     public static MenuGroupRequest 메뉴그룹요청_두마리메뉴() {
-        return new MenuGroupRequest( "두마리메뉴");
+        return new MenuGroupRequest("두마리메뉴");
     }
 
     public static Product 상품_후라이드() {
-        return new Product(1L, "후라이드", BigDecimal.valueOf(16000));
+        return new Product(null, "후라이드", BigDecimal.valueOf(16000));
     }
 
-    public static ProductRequest 상품_요청_변환(Product product) {
-        return new ProductRequest(product.getName(),product.getPrice());
+    public static ProductRequest 상품요청_후라이드() {
+        return new ProductRequest("후라이드", BigDecimal.valueOf(16000));
     }
 
     public static MenuRequest 메뉴요청_후라이드치킨() {
@@ -59,11 +59,11 @@ public class Fixtures {
     }
 
     public static MenuProductRequest 메뉴상품요청_후라이드() {
-        return new MenuProductRequest(1L, 1L, 상품_후라이드().getId(), 1);
+        return new MenuProductRequest(1L, 1L, 1L, 1);
     }
 
     public static MenuProduct 메뉴상품_후라이드() {
-        return new MenuProduct(1L, 1L, 상품_후라이드().getId(), 1);
+        return new MenuProduct(1L, 1L, 1L, 1);
     }
 
 
@@ -123,6 +123,7 @@ public class Fixtures {
     public static TableGroupRequest 테이블그룹요청2(List<OrderTableRequest> tables) {
         return new TableGroupRequest(2L, LocalDateTime.now(), tables);
     }
+
     public static TableGroup 테이블그룹(List<OrderTable> tables) {
         return new TableGroup(1L, LocalDateTime.now(), tables);
     }
@@ -136,7 +137,7 @@ public class Fixtures {
     }
 
     public static OrderLineItem 주문아이템_후라이드() {
-        return new OrderLineItem(1L, 1L, 상품_후라이드().getId(), 1L);
+        return new OrderLineItem(1L, 1L, 1L, 1L);
     }
 
     public static Order 주문_테이블1() {
