@@ -41,16 +41,11 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        TableGroup tableGroup = getTableGroup(tableGroupId);
+        TableGroup tableGroup = tableGroupDao.getById(tableGroupId);
         List<Long> orderTableIds = getOrderTableIds(tableGroup);
         validateOrdersNotCompletion(orderTableIds);
 
         tableGroup.ungroupOrderTables();
-    }
-
-    private TableGroup getTableGroup(final Long tableGroupId) {
-        return tableGroupDao.findById(tableGroupId)
-            .orElseThrow(() -> new IllegalArgumentException("table group not found"));
     }
 
     private List<Long> getOrderTableIds(final TableGroupCreateRequest request) {

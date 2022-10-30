@@ -31,6 +31,11 @@ public class JpaProductDao implements ProductDao {
     }
 
     @Override
+    public Product getById(final Long id) {
+        return findById(id).orElseThrow(() -> new IllegalArgumentException("product not found"));
+    }
+
+    @Override
     public List<Product> findAll() {
         return productRepository.findAll();
     }

@@ -31,6 +31,11 @@ public class JpaOrderDao implements OrderDao {
     }
 
     @Override
+    public Order getById(final Long id) {
+        return findById(id).orElseThrow(() -> new IllegalArgumentException("order not found"));
+    }
+
+    @Override
     public List<Order> findAll() {
         return orderRepository.findAll();
     }

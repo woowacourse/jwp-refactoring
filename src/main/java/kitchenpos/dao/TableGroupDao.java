@@ -11,5 +11,7 @@ public interface TableGroupDao {
 
     Optional<TableGroup> findById(Long id);
 
+    TableGroup getById(Long id);
+
     List<TableGroup> findAll();
 }

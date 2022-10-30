@@ -63,8 +63,7 @@ public class MenuService {
 
     private List<Product> getProducts(final List<MenuProduct> menuProducts) {
         return menuProducts.stream()
-            .map(menuProduct -> productDao.findById(menuProduct.getProductId())
-                .orElseThrow(IllegalArgumentException::new))
+            .map(menuProduct -> productDao.getById(menuProduct.getProductId()))
             .collect(Collectors.toUnmodifiableList());
     }
 

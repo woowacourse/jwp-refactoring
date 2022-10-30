@@ -31,6 +31,11 @@ public class JpaTableGroupDao implements TableGroupDao {
     }
 
     @Override
+    public TableGroup getById(final Long id) {
+        return findById(id).orElseThrow(() -> new IllegalArgumentException("table group not found"));
+    }
+
+    @Override
     public List<TableGroup> findAll() {
         return tableGroupRepository.findAll();
     }

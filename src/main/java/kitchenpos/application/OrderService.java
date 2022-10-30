@@ -28,18 +28,13 @@ public class OrderService {
 
     @Transactional
     public Order create(final OrderRequest request) {
-        final OrderTable orderTable = getOrderTable(request);
+        final OrderTable orderTable = orderTableDao.getById(request.getOrderTableId());
         validateOrderTableNotEmpty(orderTable);
 
         final Order savedOrder = orderDao.save(new Order(orderTable.getId(), request.getOrderLineItems()));
         savedOrder.setIdToOrderLineItems();
 
         return savedOrder;
-    }
-
-    private OrderTable getOrderTable(final OrderRequest request) {
-        return orderTableDao.findById(request.getOrderTableId())
-            .orElseThrow(IllegalArgumentException::new);
     }
 
     private void validateOrderTableNotEmpty(final OrderTable orderTable) {
@@ -54,14 +49,9 @@ public class OrderService {
 
     @Transactional
     public Order changeOrderStatus(final Long orderId, final OrderRequest request) {
-        final Order savedOrder = getOrder(orderId);
+        final Order savedOrder = orderDao.getById(orderId);
         savedOrder.changeStatus(request.getOrderStatus());
 
         return savedOrder;
-    }
-
-    private Order getOrder(final Long orderId) {
-        return orderDao.findById(orderId)
-            .orElseThrow(IllegalArgumentException::new);
     }
 }
