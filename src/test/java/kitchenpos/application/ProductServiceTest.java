@@ -13,7 +13,7 @@ class ProductServiceTest extends ServiceTest {
     @DisplayName("특정 메뉴 상품을 추가할 시 메뉴 상품 목록에 추가된다.")
     @Test
     void createAndList() {
-        ProductResponse 상품_후라이드 = productService.create(상품_요청_변환(상품_후라이드()));
+        ProductResponse 상품_후라이드 = productService.create(상품요청_후라이드());
 
         List<ProductResponse> 상품들 = productService.list();
 
@@ -23,8 +23,8 @@ class ProductServiceTest extends ServiceTest {
     @DisplayName("특정 메뉴 상품들을 추가할 시 메뉴 상품 목록에 추가된다.")
     @Test
     void createAndList_multi() {
-        ProductResponse 상품_후라이드 = productService.create(상품_요청_변환(상품_후라이드()));
-        ProductResponse 상품_후라이드2 = productService.create(상품_요청_변환(상품_후라이드()));
+        ProductResponse 상품_후라이드 = productService.create(상품요청_후라이드());
+        ProductResponse 상품_후라이드2 = productService.create(상품요청_후라이드());
 
         List<ProductResponse> 상품들 = productService.list();
 
