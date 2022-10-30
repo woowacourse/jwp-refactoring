@@ -4,6 +4,7 @@ import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.ProductRequest;
+import kitchenpos.ui.dto.ProductResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,7 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<Product> list() {
+    public List<ProductResponse> list() {
         return productDao.findAll();
     }
 }

@@ -5,7 +5,10 @@ import java.util.Objects;
 
 public class Price {
 
-    private final BigDecimal value;
+    private BigDecimal value;
+
+    public Price() {
+    }
 
     public Price(final BigDecimal value) {
         validate(value);
