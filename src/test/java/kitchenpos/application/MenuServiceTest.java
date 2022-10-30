@@ -5,10 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +20,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void createAndList() {
         init();
-        MenuResponse 메뉴_후라이드치킨 = menuService.create(변환(메뉴_후라이드치킨(), MenuRequest.class));
+        MenuResponse 메뉴_후라이드치킨 = menuService.create(메뉴요청_후라이드치킨());
 
         List<MenuResponse> 메뉴_목록 = menuService.list();
 
@@ -32,9 +31,8 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void createAndList_multi() {
         init();
-        MenuRequest 변환 = 변환(메뉴_후라이드치킨(), MenuRequest.class);
-        MenuResponse 메뉴_후라이드치킨 = menuService.create(변환);
-        MenuResponse 메뉴_후라이드치킨2 = menuService.create(변환);
+        MenuResponse 메뉴_후라이드치킨 = menuService.create(메뉴요청_후라이드치킨());
+        MenuResponse 메뉴_후라이드치킨2 = menuService.create(메뉴요청_후라이드치킨());
 
         List<MenuResponse> 메뉴_목록 = menuService.list();
 
@@ -46,10 +44,10 @@ class MenuServiceTest extends ServiceTest {
     void createAndList_invalidMenuGroup() {
         init();
         long 잘못된_메뉴그룹_ID = 100L;
-        Menu 메뉴_후라이드치킨 = new Menu(1L, "후라이드", BigDecimal.valueOf(10000),
-                잘못된_메뉴그룹_ID, List.of(메뉴상품_후라이드()));
+        MenuRequest 메뉴_후라이드치킨 = new MenuRequest("후라이드", BigDecimal.valueOf(10000),
+                잘못된_메뉴그룹_ID, List.of(메뉴상품요청_후라이드()));
 
-        assertThatThrownBy(() -> menuService.create(변환(메뉴_후라이드치킨, MenuRequest.class)))
+        assertThatThrownBy(() -> menuService.create(메뉴_후라이드치킨))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("메뉴 그룹은 DB에 등록되어야 한다.");
     }
@@ -60,7 +58,7 @@ class MenuServiceTest extends ServiceTest {
     void createAndList_invalidProduct() {
         init();
         long 잘못된_상품_id = 100L;
-        MenuRequest 메뉴_치킨그룹 = 변환(메뉴_치킨그룹(new MenuProduct(1L, 1L, 잘못된_상품_id, 10)), MenuRequest.class);
+        MenuRequest 메뉴_치킨그룹 = 메뉴요청_치킨그룹(new MenuProductRequest( 잘못된_상품_id, 10));
 
         assertThatThrownBy(() -> menuService.create(메뉴_치킨그룹))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -72,10 +70,10 @@ class MenuServiceTest extends ServiceTest {
     void createAndList_invalidDiscount() {
         init();
         BigDecimal 너무비싼_가격 = BigDecimal.valueOf(100000);
-        Menu 메뉴_후라이드치킨 = new Menu(1L, "후라이드", 너무비싼_가격,
-                1L, List.of(메뉴상품_후라이드()));
+        MenuRequest 메뉴요청_후라이드치킨 = new MenuRequest("후라이드", 너무비싼_가격,
+                1L, List.of(메뉴상품요청_후라이드()));
 
-        assertThatThrownBy(() -> menuService.create(변환(메뉴_후라이드치킨, MenuRequest.class)))
+        assertThatThrownBy(() -> menuService.create(메뉴요청_후라이드치킨))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("메뉴 가격은 내부 모든 상품가격보다 낮아야 한다.");
     }
