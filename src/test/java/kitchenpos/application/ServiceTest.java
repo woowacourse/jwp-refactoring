@@ -1,16 +1,15 @@
 package kitchenpos.application;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.repository.TableGroupRepository;
 
 @SpringBootTest
 public class ServiceTest {
@@ -29,16 +28,18 @@ public class ServiceTest {
     protected OrderService orderService;
 
     @Autowired
-    protected MenuGroupDao menuGroupDao;
+    protected MenuGroupRepository menuGroupRepository;
     @Autowired
-    protected ProductDao productDao;
+    protected ProductRepository productRepository;
     @Autowired
-    protected OrderDao orderDao;
+    protected OrderRepository orderRepository;
     @Autowired
-    protected OrderTableDao orderTableDao;
+    protected OrderLineItemRepository orderLineItemRepository;
     @Autowired
-    protected TableGroupDao tableGroupDao;
+    protected OrderTableRepository orderTableRepository;
     @Autowired
-    protected MenuDao menuDao;
+    protected TableGroupRepository tableGroupRepository;
+    @Autowired
+    protected MenuRepository menuRepository;
 
 }

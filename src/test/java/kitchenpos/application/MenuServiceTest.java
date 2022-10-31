@@ -12,8 +12,9 @@ import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.menu.CreateMenuProductRequest;
+import kitchenpos.dto.request.menu.CreateMenuRequest;
 
 class MenuServiceTest extends ServiceTest {
 
@@ -26,46 +27,15 @@ class MenuServiceTest extends ServiceTest {
         void create() {
             // given
             Product product = createAndSaveProduct();
-            MenuProduct menuProduct = createMenuProduct(product.getId(), 10L);
             MenuGroup menuGroup = createAndSaveMenuGroup();
 
-            Menu menu = createMenu(new BigDecimal(1000), menuGroup.getId(), menuProduct);
+            CreateMenuRequest request = createMenuCreateRequest(menuGroup.getId(), product.getId());
 
             // when
-            Menu savedMenu = menuService.create(menu);
+            Menu savedMenu = menuService.create(request);
 
             // then
             assertThat(savedMenu.getId()).isNotNull();
-        }
-
-        @Test
-        @DisplayName("가격이 빈값일 경우 예외가 발생한다.")
-        void nullPrice() {
-            // given
-            Product product = createAndSaveProduct();
-            MenuProduct menuProduct = createMenuProduct(product.getId(), 10L);
-            MenuGroup menuGroup = createAndSaveMenuGroup();
-
-            Menu menu = createMenu(null, menuGroup.getId(), menuProduct);
-
-            // when, then
-            assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("가격이 0 미만일 경우 예외가 발생한다.")
-        void negativePrice() {
-            // given
-            Product product = createAndSaveProduct();
-            MenuProduct menuProduct = createMenuProduct(product.getId(), 10L);
-            MenuGroup menuGroup = createAndSaveMenuGroup();
-
-            Menu menu = createMenu(new BigDecimal(-1), menuGroup.getId(), menuProduct);
-
-            // when, then
-            assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -73,42 +43,27 @@ class MenuServiceTest extends ServiceTest {
         void invalidMenuGroupId() {
             // given
             Product product = createAndSaveProduct();
-            MenuProduct menuProduct = createMenuProduct(product.getId(), 10L);
 
-            Menu menu = createMenu(new BigDecimal(1000), 0L, menuProduct);
+            CreateMenuRequest request = createMenuCreateRequest(0L, product.getId());
 
             // when, then
-            assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("존재하지 않는 메뉴그룹입니다.");
         }
 
         @Test
         @DisplayName("존재하지 않는 menu product id인 경우 예외가 발생한다.")
         void invalidMenuProductId() {
             // given
-            MenuProduct menuProduct = createMenuProduct(0L, 10L);
             MenuGroup menuGroup = createAndSaveMenuGroup();
 
-            Menu menu = createMenu(new BigDecimal(1000), menuGroup.getId(), menuProduct);
+            CreateMenuRequest request = createMenuCreateRequest(menuGroup.getId(), 0L);
 
             // when, then
-            assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("각 상품의 합보다 가격이 큰 값일 경우 예외가 발생한다.")
-        void biggerThanProductPriceSum() {
-            // given
-            Product product = createAndSaveProduct();
-            MenuProduct menuProduct = createMenuProduct(product.getId(), 1L);
-            MenuGroup menuGroup = createAndSaveMenuGroup();
-
-            Menu menu = createMenu(new BigDecimal(2000), menuGroup.getId(), menuProduct);
-
-            // when, then
-            assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("존재하지 않는 제품입니다.");
         }
 
     }
@@ -127,37 +82,21 @@ class MenuServiceTest extends ServiceTest {
     }
 
     private Product createAndSaveProduct() {
-        Product product = new Product();
-        product.setName("product");
-        product.setPrice(new BigDecimal(1000));
-
-        return productDao.save(product);
-    }
-
-    private MenuProduct createMenuProduct(long productId, long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-
-        return menuProduct;
+        Product product = new Product("product", new BigDecimal(1000));
+        return productRepository.save(product);
     }
 
     private MenuGroup createAndSaveMenuGroup() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("menuGroup");
-
-        return menuGroupDao.save(menuGroup);
+        MenuGroup menuGroup = new MenuGroup("menuGroup");
+        return menuGroupRepository.save(menuGroup);
     }
 
-    private Menu createMenu(BigDecimal price, long menuGroupId, MenuProduct menuProduct) {
-        Menu menu = new Menu();
-        menu.setName("menu");
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(new ArrayList<MenuProduct>() {{
-            add(menuProduct);
-        }});
-
-        return menu;
+    private CreateMenuRequest createMenuCreateRequest(long menuGroupId, long productId) {
+        return new CreateMenuRequest("name", new BigDecimal(1000),
+            menuGroupId,
+            new ArrayList<CreateMenuProductRequest>() {{
+                add(new CreateMenuProductRequest(productId, 1L));
+            }}
+        );
     }
 }

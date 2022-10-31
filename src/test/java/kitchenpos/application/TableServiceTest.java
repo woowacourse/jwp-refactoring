@@ -2,7 +2,8 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -11,9 +12,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.Product;
+import kitchenpos.dto.request.table.ChangeOrderTableEmptyRequest;
+import kitchenpos.dto.request.table.ChangeOrderTableNumberOfGuestRequest;
+import kitchenpos.dto.request.table.CreateOrderTableRequest;
 
 class TableServiceTest extends ServiceTest {
 
@@ -25,10 +31,10 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("예외사항이 존재하지 않는 경우 새로운 테이블을 생성한다.")
         void create() {
             // given
-            OrderTable orderTable = createOrderTable(null);
+            CreateOrderTableRequest request = new CreateOrderTableRequest(10, true);
 
             // when
-            OrderTable savedOrderTable = tableService.create(orderTable);
+            OrderTable savedOrderTable = tableService.create(request);
 
             // then
             assertThat(savedOrderTable.getId()).isNotNull();
@@ -57,42 +63,26 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("예외사항이 존재하지 않는 경우 상태를 변경한다.")
         void changeEmpty() {
             // given
-            OrderTable savedOrderTable = createAndSaveOrderTable(null);
-
-            OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
+            OrderTable savedOrderTable = createAndSaveOrderTable(true);
+            ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(false);
 
             // when
-            OrderTable changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), orderTable);
+            OrderTable changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), request);
 
             // then
-            assertThat(changedOrderTable.isEmpty()).isTrue();
+            assertThat(changedOrderTable.isEmpty()).isFalse();
         }
 
         @Test
         @DisplayName("존재하지 않는 테이블 id인 경우 예외가 발생한다.")
         void invalidOrderTableId() {
             // given
-            OrderTable orderTable = createOrderTable(null);
+            ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(false);
 
             // when, then
-            assertThatThrownBy(() -> tableService.changeEmpty(0L, orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("table group id가 null이 아닌 경우 예외가 발생한다.")
-        void notNullTableGroupId() {
-            // given
-            TableGroup tableGroup = createAndSaveTableGroup();
-            OrderTable savedOrderTable = createAndSaveOrderTable(tableGroup.getId());
-
-            OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
-
-            // when, then
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableService.changeEmpty(0L, request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("존재하지 않은 테이블입니다.");
         }
 
         @ParameterizedTest
@@ -100,15 +90,17 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("COOKING 혹은 MEAL 상태인 경우 예외가 발생한다.")
         void invalidStatus(String status) {
             // given
-            OrderTable savedOrderTable = createAndSaveOrderTable(null);
-            createAndSaveOrder(savedOrderTable.getId(), status);
+            OrderTable savedOrderTable = createAndSaveOrderTable(true);
+            Order order = createOrder(savedOrderTable);
+            order.changeStatus(status);
+            orderRepository.save(order);
 
-            OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
+            ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(false);
 
             // when, then
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("변경할 수 있는 상태가 아닙니다.");
         }
 
     }
@@ -121,13 +113,11 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("예외사항이 존재하지 않는 경우 방문자 수를 변경한다.")
         void changeNumberOfGuests() {
             // given
-            OrderTable savedOrderTable = createAndSaveOrderTable(null);
-
-            OrderTable orderTable = new OrderTable();
-            orderTable.setNumberOfGuests(20);
+            OrderTable savedOrderTable = createAndSaveOrderTable(false);
+            ChangeOrderTableNumberOfGuestRequest request = new ChangeOrderTableNumberOfGuestRequest(20);
 
             // when
-            OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable);
+            OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(), request);
 
             // then
             assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(20);
@@ -137,59 +127,40 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("존재하지 않은 테이블 id의 경우 예외가 발생한다.")
         void invalidOrderTableId() {
             // given
-            OrderTable orderTable = new OrderTable();
-            orderTable.setNumberOfGuests(20);
+            ChangeOrderTableNumberOfGuestRequest request = new ChangeOrderTableNumberOfGuestRequest(20);
 
             // when, then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("0 미만의 수인 경우 예외가 발생한다.")
-        void lessThanZero() {
-            // given
-            OrderTable savedOrderTable = createAndSaveOrderTable(null);
-
-            OrderTable orderTable = new OrderTable();
-            orderTable.setNumberOfGuests(-1);
-
-            // when, then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("존재하지 않은 테이블입니다.");
         }
 
     }
 
-    private OrderTable createOrderTable(Long tableGroupId) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(10);
-        orderTable.setEmpty(false);
-
-        return orderTable;
+    private OrderTable createAndSaveOrderTable(boolean empty) {
+        OrderTable orderTable = new OrderTable(10, empty);
+        return orderTableRepository.save(orderTable);
     }
 
-    private OrderTable createAndSaveOrderTable(Long tableGroupId) {
-        OrderTable orderTable = createOrderTable(tableGroupId);
+    private Order createOrder(OrderTable orderTable) {
+        Product product = productRepository.save(new Product("product", new BigDecimal(5000)));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
 
-        return orderTableDao.save(orderTable);
-    }
+        Menu menu = menuRepository.save(new Menu(
+            "menu",
+            new BigDecimal(2000),
+            menuGroup,
+            new HashMap<Product, Long>() {{
+                put(product, 1L);
+            }}
+        ));
 
-    private TableGroup createAndSaveTableGroup() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
-        return tableGroupDao.save(tableGroup);
-    }
-
-    private Order createAndSaveOrder(long orderTableId, String status) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(status);
-
-        return orderDao.save(order);
+        return new Order(
+            orderTable,
+            new HashMap<Menu, Long>() {{
+                put(menu, 1L);
+            }}
+        );
     }
 
 }
