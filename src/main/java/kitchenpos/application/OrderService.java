@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuRepository;
@@ -45,7 +44,7 @@ public class OrderService {
         validateMenuCount(orderLineItemDtos);
         OrderTable orderTable = findOrderTable(orderRequest);
         validateOrderTableEmptiness(orderTable);
-        Order order = new Order(orderTable, OrderStatus.COOKING, new ArrayList<>());
+        Order order = Order.newOrder(orderTable);
         Order savedOrder = orderRepository.save(order);
         createOrderLineItem(orderLineItemDtos, savedOrder);
         return new OrderResponse(savedOrder);

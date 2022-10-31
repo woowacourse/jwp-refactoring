@@ -7,7 +7,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.Menu;
@@ -115,11 +114,12 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void changeOrderStatus_Exception_AlreadyCompletionOrder() {
         OrderTable orderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, false));
-        Order order = orderRepository.save(
-                new Order(orderTable, COMPLETION, new ArrayList<>()));
+        Order order = Order.newOrder(orderTable);
+        order.changeOrderStatus(COMPLETION);
+        Order savedOrder = orderRepository.save(order);
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(
-                order.getId(), new OrderRequest(orderTable.getId(), "MEAL", Collections.emptyList())))
+                savedOrder.getId(), new OrderRequest(orderTable.getId(), "MEAL", Collections.emptyList())))
                 .isInstanceOf(AlreadyCompletionOrderStatusException.class);
     }
 }

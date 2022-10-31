@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -119,7 +118,9 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable orderOrderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, true, null));
         TableGroupDto tableGroupDto = tableGroupService.create(
                 new TableGroupDto(List.of(orderTable1.getId(), orderOrderTable2.getId())));
-        orderRepository.save(new Order(orderOrderTable2, OrderStatus.from(orderStatus), Collections.emptyList()));
+        Order order = Order.newOrder(orderOrderTable2);
+        order.changeOrderStatus(OrderStatus.COOKING);
+        orderRepository.save(order);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupDto.getId()))
                 .isInstanceOf(NotCompleteTableUngroupException.class);

@@ -4,7 +4,6 @@ import static kitchenpos.Fixture.DomainFixture.GUEST_NUMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.Collections;
 import java.util.Optional;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -77,7 +76,9 @@ class TableServiceTest extends ServiceTest {
     @ValueSource(strings = {"MEAL", "COOKING"})
     void changeEmpty_Exception_NotCompleteOrderStatus(String orderStatus) {
         OrderTable orderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, false));
-        orderRepository.save(new Order(orderTable, OrderStatus.from(orderStatus), Collections.emptyList()));
+        Order order = Order.newOrder(orderTable);
+        order.changeOrderStatus(OrderStatus.from(orderStatus));
+        orderRepository.save(order);
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new TableDto(null, 3, true)))
                 .isInstanceOf(TableEmptyDisabledException.class)

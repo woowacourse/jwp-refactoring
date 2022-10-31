@@ -37,11 +37,14 @@ public class Order {
     protected Order() {
     }
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
+    public Order(OrderTable orderTable, OrderStatus orderStatus) {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = LocalDateTime.now();
-        this.orderLineItems = orderLineItems;
+    }
+
+    public static Order newOrder(OrderTable orderTable) {
+        return new Order(orderTable, OrderStatus.COOKING);
     }
 
     public Long getId() {
