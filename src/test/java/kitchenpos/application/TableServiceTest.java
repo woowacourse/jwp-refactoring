@@ -6,6 +6,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -26,7 +28,7 @@ class TableServiceTest extends ServiceTestBase {
         OrderTableCreateRequest request = new OrderTableCreateRequest(3, false);
 
         // when
-        OrderTable savedOrderTable = tableService.create(request);
+        OrderTableResponse savedOrderTable = tableService.create(request);
 
         // then
         Optional<OrderTable> actual = orderTableDao.findById(savedOrderTable.getId());
@@ -40,12 +42,12 @@ class TableServiceTest extends ServiceTestBase {
         List<OrderTable> expected = Collections.singletonList(orderTable);
 
         // when
-        List<OrderTable> orderTables = tableService.list();
+        List<OrderTableResponse> orderTables = tableService.list();
 
         // then
         assertThat(orderTables)
                 .usingRecursiveComparison()
-                .isEqualTo(expected);
+                .isEqualTo(toDtos(expected));
     }
 
     @Test
@@ -142,5 +144,11 @@ class TableServiceTest extends ServiceTestBase {
         assertThatThrownBy(
                 () -> tableService.changeNumberOfGuests(orderTable.getId(), new TableChangeNumberOfGuestsRequest(1)))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private List<OrderTableResponse> toDtos(final List<OrderTable> orderTables) {
+        return orderTables.stream()
+                .map(OrderTableResponse::of)
+                .collect(Collectors.toList());
     }
 }
