@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.time.LocalDateTime;
@@ -8,6 +9,7 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -25,7 +27,8 @@ public class Order {
     private Long orderTableId;
 
     @Column(nullable = false)
-    private String orderStatus;
+    @Enumerated(value = STRING)
+    private OrderStatus orderStatus;
 
     @Column(nullable = false)
     private LocalDateTime orderedTime;
@@ -36,7 +39,7 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
@@ -45,12 +48,12 @@ public class Order {
         this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
-    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+    public Order(final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public static Order of(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+    public static Order of(final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
                            final List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException("한 가지 이상의 주문 항목을 포함해야합니다.");
@@ -59,8 +62,8 @@ public class Order {
         return new Order(orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public void changeOrderStatus(String orderStatus) {
-        if (Objects.equals(this.orderStatus, OrderStatus.COMPLETION.name())) {
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        if (Objects.equals(this.orderStatus, OrderStatus.COMPLETION)) {
             throw new IllegalArgumentException("이미 계산 완료 상태이므로 주문 상태 변경이 불가합니다.");
         }
 
@@ -75,7 +78,7 @@ public class Order {
         return orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 

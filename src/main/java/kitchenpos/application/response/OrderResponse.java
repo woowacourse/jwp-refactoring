@@ -16,7 +16,7 @@ public class OrderResponse {
     private List<OrderLineItemResponse> orderLineItems;
 
     public OrderResponse(final Order order, final List<OrderLineItemResponse> orderLineItems) {
-        this(order.getId(), order.getOrderTableId(), order.getOrderStatus(), order.getOrderedTime(), orderLineItems);
+        this(order.getId(), order.getOrderTableId(), order.getOrderStatus().name(), order.getOrderedTime(), orderLineItems);
     }
 
     @JsonCreator

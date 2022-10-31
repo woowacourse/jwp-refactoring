@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
+import static kitchenpos.domain.OrderStatus.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,8 +83,7 @@ public class OrderTable {
 
     public boolean containsCookingOrMealOrder() {
         return orders.stream()
-                .anyMatch(it -> it.getOrderStatus().equals(OrderStatus.COOKING.name())
-                        || it.getOrderStatus().equals(OrderStatus.MEAL.name()));
+                .anyMatch(it -> it.getOrderStatus().equals(COOKING) || it.getOrderStatus().equals(MEAL));
     }
 
     public void ungroup() {

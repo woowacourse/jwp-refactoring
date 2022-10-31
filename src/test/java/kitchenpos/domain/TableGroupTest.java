@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import static kitchenpos.domain.OrderStatus.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
@@ -44,7 +45,7 @@ class TableGroupTest {
     @Test
     void canNotUngroupWhenCookOrMeal() {
         // given
-        final Order order = new Order(1L, "COOKING", LocalDateTime.now(), List.of());
+        final Order order = new Order(1L, COOKING, LocalDateTime.now(), List.of());
         final OrderTable orderTable1 = new OrderTable(1L, 1L, 1, false, List.of(order));
         final OrderTable orderTable2 = new OrderTable(2L, 1L, 1, false);
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));

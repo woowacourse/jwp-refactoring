@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import static kitchenpos.domain.OrderStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -98,7 +99,7 @@ class OrderTableTest {
     @Test
     void canNotChangeTableWhenCookingOrMeal() {
         // given
-        final Order order = new Order(ORDER_TABLE_ID, "COOKING", LocalDateTime.now(), List.of());
+        final Order order = new Order(ORDER_TABLE_ID, COOKING, LocalDateTime.now(), List.of());
         final OrderTable orderTable = new OrderTable(1L, TABLE_GROUP_ID, 1, false, List.of(order));
 
         // when & then
