@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -38,7 +39,7 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuRequest request) {
+    public MenuResponse create(final MenuRequest request) {
         validateInvalidPrice(request.getPrice());
         validateExistsMenuGroupId(request.getMenuGroupId());
 
@@ -52,7 +53,7 @@ public class MenuService {
         final Menu savedMenu = menuDao.save(menu);
         savedMenu.changeMenuIdInMenuProducts();
 
-        return savedMenu;
+        return MenuResponse.of(savedMenu);
     }
 
     private void validateInvalidPrice(final Long price) {
@@ -86,13 +87,15 @@ public class MenuService {
                 .collect(Collectors.toList());
     }
 
-    public List<Menu> list() {
+    public List<MenuResponse> list() {
         final List<Menu> menus = menuDao.findAll();
 
         for (final Menu menu : menus) {
             menu.addMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
         }
 
-        return menus;
+        return menus.stream()
+                .map(MenuResponse::of)
+                .collect(Collectors.toList());
     }
 }

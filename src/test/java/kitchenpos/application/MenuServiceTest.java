@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -31,10 +32,10 @@ class MenuServiceTest extends ServiceTestBase {
         MenuRequest menuRequest = 떡볶이.toRequest(menuGroup.getId(), menuProducts);
 
         // when
-        Menu savedMenu = menuService.create(menuRequest);
+        MenuResponse response = menuService.create(menuRequest);
 
         // then
-        Optional<Menu> actualMenu = menuDao.findById(savedMenu.getId());
+        Optional<Menu> actualMenu = menuDao.findById(response.getId());
         assertThat(actualMenu).isNotEmpty();
     }
 
@@ -108,10 +109,10 @@ class MenuServiceTest extends ServiceTestBase {
         menuDao.save(menu);
 
         // when
-        List<Menu> menus = menuService.list();
+        List<MenuResponse> menus = menuService.list();
 
         // then
-        Menu actual = menus.get(0);
+        MenuResponse actual = menus.get(0);
         assertThat(actual.getId()).isNotNull();
     }
 }
