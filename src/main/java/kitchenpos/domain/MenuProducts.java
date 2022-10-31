@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CollectionTable;
@@ -23,5 +24,17 @@ public class MenuProducts {
 
     public List<RelatedProduct> getRelatedProducts() {
         return relatedProducts;
+    }
+
+    public BigDecimal getProductsSumPrice() {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (RelatedProduct relatedProduct : relatedProducts) {
+            final BigDecimal price = relatedProduct.getProduct().getPrice();
+            final BigDecimal quantity = BigDecimal.valueOf(relatedProduct.getQuantity());
+
+            sum = sum.add(price.multiply(quantity));
+        }
+
+        return sum;
     }
 }

@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -15,6 +14,7 @@ import javax.persistence.Id;
 public class Menu {
 
     private static final int ZERO_PRICE = 0;
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -47,7 +47,7 @@ public class Menu {
             throw new IllegalArgumentException("올바르지 않은 메뉴의 가격입니다.");
         }
 
-        BigDecimal productSumPrice = calculateProductSum(menuProducts);
+        final BigDecimal productSumPrice = calculateProductSum(menuProducts);
         if (price.compareTo(productSumPrice) > ZERO_PRICE) {
             throw new IllegalArgumentException("메뉴의 가격이 상품(product)의 금액 총합보다 크면 안됩니다.");
         }
@@ -56,12 +56,7 @@ public class Menu {
     }
 
     private static BigDecimal calculateProductSum(final MenuProducts menuProducts) {
-        BigDecimal sum = BigDecimal.ZERO;
-        final List<RelatedProduct> relatedProducts = menuProducts.getRelatedProducts();
-        for (RelatedProduct relatedProduct : relatedProducts) {
-            sum = sum.add(relatedProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(relatedProduct.getQuantity())));
-        }
-        return sum;
+        return menuProducts.getProductsSumPrice();
     }
 
     public Long getId() {
