@@ -2,10 +2,25 @@ package kitchenpos.domain.table;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
+@Table(name = "table_group")
+@Entity
 public class TableGroup {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private LocalDateTime createdDate;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
 
     public TableGroup() {

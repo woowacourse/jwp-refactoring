@@ -50,7 +50,7 @@ public class TableGroupService {
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
+            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
                 throw new IllegalArgumentException();
             }
         }
@@ -61,7 +61,9 @@ public class TableGroupService {
 
         final Long tableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
+            TableGroup foundTableGroup = tableGroupRepository.findById(tableGroupId)
+                    .orElseThrow(IllegalArgumentException::new);
+            savedOrderTable.setTableGroup(foundTableGroup);
             savedOrderTable.setEmpty(false);
             orderTableRepository.save(savedOrderTable);
         }
@@ -84,7 +86,7 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
+            orderTable.setTableGroup(null);
             orderTable.setEmpty(false);
             orderTableRepository.save(orderTable);
         }

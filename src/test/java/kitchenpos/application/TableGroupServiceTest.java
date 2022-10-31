@@ -153,7 +153,7 @@ class TableGroupServiceTest extends ServiceTest {
             assertAll(() -> {
                 assertThat(tableGroupRepository.findById(tableGroup.getId())).isNotEmpty();
                 assertThat(orderTableRepository.findAll())
-                        .allMatch(orderTable -> Objects.isNull(orderTable.getTableGroupId()))
+                        .allMatch(orderTable -> Objects.isNull(orderTable.getTableGroup()))
                         .allMatch(orderTable -> !orderTable.isEmpty());
             });
         }

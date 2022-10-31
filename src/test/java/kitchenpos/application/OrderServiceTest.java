@@ -11,7 +11,6 @@ import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.table.OrderTable;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderStatusUpdateRequest;
@@ -35,7 +34,7 @@ class OrderServiceTest extends ServiceTest {
     @Autowired
     private OrderRepository orderRepository;
 
-    private OrderTable savedOrderTable;
+    private OrderTableResponse savedOrderTable;
     private MenuGroup savedMenuGroup;
     private Product savedProduct;
     private MenuResponse savedMenu;
@@ -44,7 +43,7 @@ class OrderServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        savedOrderTable = saveOrderTable(10, false).toEntity();
+        savedOrderTable = saveOrderTable(10, false);
         savedMenuGroup = saveMenuGroup("메뉴 그룹").toEntity();
         savedProduct = saveProduct("상품", 5_000).toEntity();
         savedMenu = saveMenu("메뉴", 10_000, savedMenuGroup, List.of(

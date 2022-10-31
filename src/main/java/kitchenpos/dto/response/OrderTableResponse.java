@@ -10,26 +10,19 @@ public class OrderTableResponse {
     private boolean empty;
 
     public OrderTableResponse(final OrderTable orderTable) {
-        this(orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(), orderTable.isEmpty());
-    }
+        Long tableGroupId = null;
+        if (orderTable.getTableGroup() != null) {
+            tableGroupId = orderTable.getTableGroup().getId();
+        }
 
-    public OrderTableResponse(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        this.id = id;
+        this.id = orderTable.getId();
         this.tableGroupId = tableGroupId;
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
-    }
-
-    public OrderTable toEntity() {
-        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
+        this.numberOfGuests = orderTable.getNumberOfGuests();
+        this.empty = orderTable.isEmpty();
     }
 
     public Long getId() {
         return id;
-    }
-
-    public Long getTableGroupId() {
-        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
