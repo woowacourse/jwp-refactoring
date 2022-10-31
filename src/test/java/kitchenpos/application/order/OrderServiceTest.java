@@ -7,12 +7,12 @@ import kitchenpos.application.order.dto.request.order.OrderRequest;
 import kitchenpos.application.order.dto.response.OrderResponse;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.menu.Price;
 import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.menu.repository.MenuRepository;
 import kitchenpos.domain.menu.repository.ProductRepository;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.*;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.order.repository.OrderRepository;
 import kitchenpos.domain.order.repository.OrderTableRepository;
 import org.junit.jupiter.api.*;
@@ -20,9 +20,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
 import java.util.List;
 
+import static kitchenpos.Fixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -192,30 +192,5 @@ class OrderServiceTest {
     private Order saveOrder() {
         final var order = new Order(1L, makeSingleOrderLineItems());
         return orderRepository.save(order);
-    }
-
-    private List<OrderLineItem> makeSingleOrderLineItems() {
-        return List.of(new OrderLineItem(1L, 10));
-    }
-
-    private OrderTable makeEmptyOrderTable() {
-        return new OrderTable(new GuestCount(0), true);
-    }
-
-    private OrderTable makeNonEmptyOrderTable(final int numberOfGuests) {
-        return new OrderTable(new GuestCount(numberOfGuests), false);
-    }
-
-    private OrderRequest makeOrderRequest(final Long orderTableId, final OrderLineItemRequest... orderLineItems) {
-        return new OrderRequest(orderTableId, List.of(orderLineItems));
-    }
-
-    private Menu makeMenu(final String name, final long price, final long menuGroupId,
-                          final List<MenuProduct> menuProducts) {
-        return new Menu(name, new Price(BigDecimal.valueOf(price)), menuGroupId, menuProducts);
-    }
-
-    private Product makeProduct(final String name, final long price) {
-        return new Product(name, new Price(BigDecimal.valueOf(price)));
     }
 }

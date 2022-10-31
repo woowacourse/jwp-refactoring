@@ -5,7 +5,10 @@ import kitchenpos.application.order.dto.request.table.ChangeEmptyRequest;
 import kitchenpos.application.order.dto.request.table.ChangeNumberOfGuestsRequest;
 import kitchenpos.application.order.dto.request.table.OrderTableRequest;
 import kitchenpos.application.order.dto.response.OrderTableResponse;
-import kitchenpos.domain.order.*;
+import kitchenpos.domain.order.GuestCount;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.TableGroup;
 import kitchenpos.domain.order.repository.OrderRepository;
 import kitchenpos.domain.order.repository.OrderTableRepository;
 import kitchenpos.domain.order.repository.TableGroupRepository;
@@ -18,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+import static kitchenpos.Fixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -187,20 +191,8 @@ class TableServiceTest {
         return orderTableRepository.save(makeNonEmptyOrderTable(numberOfGuests));
     }
 
-    private OrderTable makeEmptyOrderTable() {
-        return new OrderTable(new GuestCount(0), true);
-    }
-
-    private OrderTable makeNonEmptyOrderTable(final int numberOfGuests) {
-        return new OrderTable(new GuestCount(numberOfGuests), false);
-    }
-
     private Order saveOrder(final Long orderTableId) {
         final var order = new Order(orderTableId, makeSingleOrderLineItems());
         return orderRepository.save(order);
-    }
-
-    private List<OrderLineItem> makeSingleOrderLineItems() {
-        return List.of(new OrderLineItem(1L, 10));
     }
 }

@@ -1,7 +1,6 @@
 package kitchenpos.application.menu;
 
 import kitchenpos.application.ServiceTest;
-import kitchenpos.application.menu.dto.request.product.ProductRequest;
 import kitchenpos.domain.menu.Price;
 import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.menu.repository.ProductRepository;
@@ -14,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 
+import static kitchenpos.Fixture.makeProductRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -75,9 +75,5 @@ class ProductServiceTest {
             final var product = new Product("메뉴", new Price(BigDecimal.valueOf(4500)));
             productRepository.save(product);
         }
-    }
-
-    private ProductRequest makeProductRequest(final String name, final long price) {
-        return new ProductRequest(name, BigDecimal.valueOf(price));
     }
 }

@@ -4,7 +4,8 @@ import kitchenpos.application.ServiceTest;
 import kitchenpos.application.order.dto.request.tablegroup.OrderTableIdRequest;
 import kitchenpos.application.order.dto.request.tablegroup.TableGroupRequest;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.*;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.TableGroup;
 import kitchenpos.domain.order.repository.OrderRepository;
 import kitchenpos.domain.order.repository.OrderTableRepository;
 import kitchenpos.domain.order.repository.TableGroupRepository;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static kitchenpos.Fixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -153,20 +155,8 @@ class TableGroupServiceTest {
         }
     }
 
-    private OrderTable makeEmptyOrderTable() {
-        return new OrderTable(new GuestCount(0), true);
-    }
-
-    private OrderTable makeNonEmptyOrderTable(final int numberOfGuests) {
-        return new OrderTable(new GuestCount(numberOfGuests), false);
-    }
-
     private void saveOrder(final Long orderTableId) {
         final var order = new Order(orderTableId, makeSingleOrderLineItems());
         orderRepository.save(order);
-    }
-
-    private List<OrderLineItem> makeSingleOrderLineItems() {
-        return List.of(new OrderLineItem(1L, 10));
     }
 }

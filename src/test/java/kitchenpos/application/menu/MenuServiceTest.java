@@ -2,9 +2,9 @@ package kitchenpos.application.menu;
 
 import kitchenpos.application.ServiceTest;
 import kitchenpos.application.menu.dto.request.menu.MenuProductRequest;
-import kitchenpos.application.menu.dto.request.menu.MenuRequest;
 import kitchenpos.application.menu.dto.response.MenuResponse;
-import kitchenpos.domain.menu.*;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.menu.repository.MenuGroupRepository;
 import kitchenpos.domain.menu.repository.MenuRepository;
 import kitchenpos.domain.menu.repository.ProductRepository;
@@ -13,10 +13,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static kitchenpos.Fixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -132,24 +132,5 @@ class MenuServiceTest {
             final var menu = makeMenu("메뉴", 23000L, 1L, new ArrayList<>());
             menuRepository.save(menu);
         }
-    }
-
-    private MenuRequest makeMenuRequest(final Price price, final long menuGroupId,
-                                        final MenuProductRequest... menuProductRequests) {
-        return new MenuRequest("메뉴", price.getValue(), menuGroupId, List.of(menuProductRequests));
-    }
-
-    private MenuRequest makeMenuRequest(final long price, final long menuGroupId,
-                                        final MenuProductRequest... menuProductRequests) {
-        return new MenuRequest("메뉴", BigDecimal.valueOf(price), menuGroupId, List.of(menuProductRequests));
-    }
-
-    private Menu makeMenu(final String name, final long price, final long menuGroupId,
-                          final List<MenuProduct> menuProducts) {
-        return new Menu(name, new Price(BigDecimal.valueOf(price)), menuGroupId, menuProducts);
-    }
-
-    private Product makeProduct(final String name, final long price) {
-        return new Product(name, new Price(BigDecimal.valueOf(price)));
     }
 }
