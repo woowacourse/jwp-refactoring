@@ -29,7 +29,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderRequest request) {
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
+        OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
         List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
@@ -48,7 +48,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusRequest request) {
-        final Order savedOrder = orderRepository.findById(orderId)
+        Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
         savedOrder.changeOrderStatus(request.getOrderStatus());

@@ -31,10 +31,10 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest request) {
-        final List<Long> orderTableIds = request.getOrderTables().stream()
+        List<Long> orderTableIds = request.getOrderTables().stream()
                 .map(OrderTableIdRequest::getId)
                 .collect(Collectors.toList());
-        final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
         TableGroup tableGroup = new TableGroup(orderTables);
         return new TableGroupResponse(tableGroupRepository.save(tableGroup));
@@ -45,7 +45,7 @@ public class TableGroupService {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        final List<Long> orderTableIds = tableGroup.getOrderTables().stream()
+        List<Long> orderTableIds = tableGroup.getOrderTables().stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 

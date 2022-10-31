@@ -45,8 +45,7 @@ public class TableGroup {
         if (orderTables.size() < 2) {
             throw new IllegalArgumentException("그룹으로 지정할 테이블은 2개 이상이어야 합니다.");
         }
-
-        for (final OrderTable orderTable : orderTables) {
+        for (OrderTable orderTable : orderTables) {
             validateOrderTable(orderTable);
         }
     }

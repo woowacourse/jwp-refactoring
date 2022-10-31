@@ -55,7 +55,7 @@ public class Menu {
 
     private void validateSumOfProducts(final BigDecimal price, final List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
+        for (MenuProduct menuProduct : menuProducts) {
             sum = sum.add(menuProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 

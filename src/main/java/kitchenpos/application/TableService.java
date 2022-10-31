@@ -37,7 +37,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest request) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+        OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
@@ -51,7 +51,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest request) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+        OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
