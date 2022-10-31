@@ -8,7 +8,9 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -33,18 +35,22 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(TableGroupCreateRequest tableGroupCreateRequest) {
+    public TableGroupResponse create(TableGroupCreateRequest tableGroupCreateRequest) {
 
         OrderTables orderTables = generateOrderTables(tableGroupCreateRequest);
         TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
 
         final Long tableGroupId = savedTableGroup.getId();
         List<OrderTable> lastOrderTables = orderTables.changeTableGroupId(tableGroupId).getOrderTables();
-        lastOrderTables.forEach(orderTableDao::save);
+        lastOrderTables = lastOrderTables.stream()
+                .map(orderTableDao::save)
+                .collect(Collectors.toUnmodifiableList());
 
         savedTableGroup = savedTableGroup.changeOrderTables(lastOrderTables);
-
-        return savedTableGroup;
+        List<OrderTableResponse> tableResponses = savedTableGroup.getOrderTables().stream()
+                .map(each -> new OrderTableResponse(each.getId(), each.getTableGroupId(), each.getNumberOfGuests(), each.isEmpty()))
+                .collect(Collectors.toUnmodifiableList());
+        return new TableGroupResponse(savedTableGroup.getId(), savedTableGroup.getCreatedDate(), tableResponses);
     }
 
     private OrderTables generateOrderTables(TableGroupCreateRequest tableGroupCreateRequest) {

@@ -39,7 +39,7 @@ PUT {{host}}/api/tables/2/empty
 Content-Type: application/json
 
 {
-  "empty": false
+  "empty": true
 }
 
 ###
