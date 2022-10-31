@@ -5,10 +5,12 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.application.request.MenuGroupRequest;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 
 @Service
+@Transactional(readOnly = true)
 public class MenuGroupService {
 
     private final MenuGroupDao menuGroupDao;
@@ -18,8 +20,8 @@ public class MenuGroupService {
     }
 
     @Transactional
-    public MenuGroup create(final MenuGroup menuGroup) {
-        return menuGroupDao.save(menuGroup);
+    public MenuGroup create(final MenuGroupRequest request) {
+        return menuGroupDao.save(request.toEntity());
     }
 
     public List<MenuGroup> list() {

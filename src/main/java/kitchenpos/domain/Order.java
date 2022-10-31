@@ -1,71 +1,104 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import org.springframework.util.CollectionUtils;
 
 /**
  * 매장에서 발생하는 주문
  */
+@Entity
+@Table(name = "orders")
 public class Order {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long orderTableId;
-    private String orderStatus;
-    private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
 
-    public Order() {
+    @Column(name = "order_table_id")
+    private Long orderTableId;
+
+    @Column(name = "order_status")
+    private String orderStatus;
+
+    @Column(name = "ordered_time")
+    private LocalDateTime orderedTime;
+
+    @OneToMany(mappedBy = "orderId")
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+
+    protected Order() {
     }
 
-    public Order(final Long orderTableId, final String orderStatus, final List<OrderLineItem> orderLineItems) {
+    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+        final List<OrderLineItem> orderLineItems) {
+        this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
-        this.orderLineItems = orderLineItems;
+        this.orderedTime = orderedTime;
+        this.orderLineItems = List.copyOf(orderLineItems);
+        validateOrderLineItems();
     }
 
-    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        this(orderTableId, OrderStatus.COOKING.name(), orderLineItems);
+    public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
+        this(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+        orderTable.addOrder(this);
+        setIdToOrderLineItems();
+    }
+
+    private void validateOrderLineItems() {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void setIdToOrderLineItems() {
+        for (final OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.setOrderId(id);
+        }
+    }
+
+    public void changeStatus(final String orderStatus) {
+        if (OrderStatus.COMPLETION.name().equals(this.orderStatus)) {
+            throw new IllegalArgumentException();
+        }
+        this.orderStatus = orderStatus;
+    }
+
+    public boolean isCompletion() {
+        return !OrderStatus.COMPLETION.name().equals(this.orderStatus);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Long getOrderTableId() {
         return orderTableId;
-    }
-
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
     }
 
     public String getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+        return List.copyOf(orderLineItems);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package kitchenpos.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -11,11 +12,14 @@ import kitchenpos.application.ProductService;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 
 @SpringBootTest
 @Sql("classpath:truncate.sql")
 public class ServiceTest {
+
+    protected static Long NO_ID = null;
 
     @Autowired
     protected MenuService menuService;
@@ -40,4 +44,7 @@ public class ServiceTest {
 
     @Autowired
     protected TableGroupDao tableGroupDao;
+
+    @Autowired
+    protected OrderTableDao orderTableDao;
 }

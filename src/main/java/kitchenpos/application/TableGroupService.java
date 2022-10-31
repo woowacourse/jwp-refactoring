@@ -1,15 +1,14 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
+import kitchenpos.application.request.OrderTableRequest;
+import kitchenpos.application.request.TableGroupRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -18,6 +17,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 @Service
+@Transactional(readOnly = true)
 public class TableGroupService {
 
     private final OrderDao orderDao;
@@ -32,61 +32,38 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+    public TableGroup create(final TableGroupRequest request) {
+        List<Long> orderTableIds = getOrderTableIds(request);
+        List<OrderTable> orderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<Long> orderTableIds = orderTables.stream()
-            .map(OrderTable::getId)
-            .collect(Collectors.toList());
-
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-
-        if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
-            }
-        }
-
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-
-        final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
-            savedOrderTable.setEmpty(false);
-            orderTableDao.save(savedOrderTable);
-        }
-        savedTableGroup.setOrderTables(savedOrderTables);
-
-        return savedTableGroup;
+        return tableGroupDao.save(new TableGroup(orderTables));
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
+        TableGroup tableGroup = tableGroupDao.getById(tableGroupId);
+        List<Long> orderTableIds = getOrderTableIds(tableGroup);
+        validateOrdersNotCompletion(orderTableIds);
 
-        final List<Long> orderTableIds = orderTables.stream()
+        tableGroup.ungroupOrderTables();
+    }
+
+    private List<Long> getOrderTableIds(final TableGroupRequest request) {
+        return request.getOrderTables().stream()
+            .map(OrderTableRequest::getId)
+            .collect(Collectors.toUnmodifiableList());
+    }
+
+    private List<Long> getOrderTableIds(final TableGroup tableGroup) {
+        return tableGroup.getOrderTables().stream()
             .map(OrderTable::getId)
-            .collect(Collectors.toList());
+            .collect(Collectors.toUnmodifiableList());
+    }
 
+    private void validateOrdersNotCompletion(final List<Long> orderTableIds) {
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds,
             Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
-            orderTableDao.save(orderTable);
         }
     }
 }

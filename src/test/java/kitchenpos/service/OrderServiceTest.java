@@ -10,13 +10,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.application.request.MenuGroupRequest;
+import kitchenpos.application.request.MenuProductRequest;
+import kitchenpos.application.request.MenuRequest;
+import kitchenpos.application.request.OrderLineItemRequest;
+import kitchenpos.application.request.OrderRequest;
+import kitchenpos.application.request.OrderTableRequest;
+import kitchenpos.application.request.ProductCreateRequest;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.OrderStatus;
 
 public class OrderServiceTest extends ServiceTest {
 
@@ -24,22 +26,22 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문을 생성한다.")
     void create() {
         // given
-        Order order = createOrderFixture();
+        OrderRequest request = createOrderRequest();
 
         // when
-        Order savedOrder = orderService.create(order);
+        Order savedOrder = orderService.create(request);
 
         // then
-        assertThat(savedOrder).usingRecursiveComparison()
-            .ignoringFields("id", "orderedTime")
-            .isEqualTo(order);
+        assertThat(savedOrder.getId()).isNotNull();
+        assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        assertThat(savedOrder.getOrderLineItems()).isNotNull();
     }
 
     @Test
     @DisplayName("전체 주문을 조회한다.")
     void list() {
         // given
-        Order savedOrder = orderService.create(createOrderFixture());
+        Order savedOrder = orderService.create(createOrderRequest());
 
         // when
         List<Order> result = orderService.list();
@@ -54,32 +56,32 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 상태를 변경한다.")
     void changeOrderStatus_meal(String orderStatus) {
         // given
-        Order order = orderService.create(createOrderFixture());
-        order.setOrderStatus(orderStatus);
+        Order order = orderService.create(createOrderRequest());
+        OrderRequest changeRequest = new OrderRequest(NO_ID, NO_ID, orderStatus, null);
 
         // when
-        orderService.changeOrderStatus(order.getId(), order);
+        orderService.changeOrderStatus(order.getId(), changeRequest);
         Order changedOrder = orderDao.findById(order.getId()).orElseThrow();
 
         // then
         assertThat(changedOrder.getOrderStatus()).isEqualTo(orderStatus);
     }
 
-    private Order createOrderFixture() {
-        MenuGroup menuGroup = new MenuGroup("세마리메뉴");
+    private OrderRequest createOrderRequest() {
+        MenuGroupRequest menuGroup = new MenuGroupRequest(NO_ID, "세마리메뉴");
         long menuGroupId = menuGroupService.create(menuGroup).getId();
 
-        Product product = new Product("후라이드", BigDecimal.valueOf(16000));
+        ProductCreateRequest product = new ProductCreateRequest("후라이드", BigDecimal.valueOf(16000));
         long productId = productService.create(product).getId();
 
-        Menu menu = new Menu("후라이드+후라이드+후라이드", new BigDecimal(48000), menuGroupId,
-            List.of(new MenuProduct(productId, 3)));
+        MenuRequest menu = new MenuRequest(NO_ID, "후라이드+후라이드+후라이드", new BigDecimal(48000), menuGroupId,
+            List.of(new MenuProductRequest(NO_ID, NO_ID, productId, 3)));
         long menuId = menuService.create(menu).getId();
 
-        OrderTable orderTable = new OrderTable(1, false);
+        OrderTableRequest orderTable = new OrderTableRequest(NO_ID, NO_ID, 1, false);
         long tableId = tableService.create(orderTable).getId();
 
-        OrderLineItem orderLineItem = new OrderLineItem(1L, menuId, 1);
-        return new Order(tableId, List.of(orderLineItem));
+        OrderLineItemRequest orderLineItem = new OrderLineItemRequest(1L, NO_ID, menuId, 1);
+        return new OrderRequest(NO_ID, tableId, OrderStatus.COOKING.name(), List.of(orderLineItem));
     }
 }

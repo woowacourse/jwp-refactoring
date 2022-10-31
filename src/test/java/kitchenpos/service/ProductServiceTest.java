@@ -1,7 +1,6 @@
 package kitchenpos.service;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.assertj.core.data.Percentage.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -11,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.application.ProductService;
+import kitchenpos.application.request.ProductCreateRequest;
 import kitchenpos.domain.Product;
 
 public class ProductServiceTest extends ServiceTest {
@@ -22,40 +22,32 @@ public class ProductServiceTest extends ServiceTest {
     @DisplayName("상품을 등록한다.")
     void create() {
         // given
-        Product product = new Product("후라이드", BigDecimal.valueOf(16000));
+        ProductCreateRequest request = new ProductCreateRequest("후라이드", BigDecimal.valueOf(16000));
 
         // when
-        Product savedProduct = productService.create(product);
+        Product savedProduct = productService.create(request);
 
         // then
-        assertThat(savedProduct.getPrice()).isCloseTo(product.getPrice(), withPercentage(0.0001));
-        assertThat(savedProduct).usingRecursiveComparison()
-            .ignoringFields("id", "price")
-            .isEqualTo(product);
-    }
-
-    @Test
-    @DisplayName("가격이 음수면 예외를 반환한다.")
-    void create_price_negative() {
-        // given
-        Product product = new Product("후라이드", BigDecimal.valueOf(-1));
-
-        // when, then
-        assertThatThrownBy(() -> productService.create(product))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThat(savedProduct.getId()).isNotNull();
+        assertThat(savedProduct.getName()).isEqualTo(request.getName());
+        assertPriceEqualTo(request.getPrice(), savedProduct.getPrice());
     }
 
     @Test
     @DisplayName("전체 상품을 조회한다.")
     void list() {
         // given
-        Product product = new Product("후라이드", BigDecimal.valueOf(16000));
-        Product savedProduct = productService.create(product);
+        ProductCreateRequest request = new ProductCreateRequest("후라이드", BigDecimal.valueOf(16000));
+        Product savedProduct = productService.create(request);
 
         // when
         List<Product> result = productService.list();
 
         // then
         assertThat(result).contains(savedProduct);
+    }
+
+    private void assertPriceEqualTo(final BigDecimal actual, final BigDecimal expected) {
+        assertThat(actual.compareTo(expected)).isEqualTo(0);
     }
 }

@@ -11,6 +11,8 @@ public interface OrderTableDao {
 
     Optional<OrderTable> findById(Long id);
 
+    OrderTable getById(Long id);
+
     List<OrderTable> findAll();
 
     List<OrderTable> findAllByIdIn(List<Long> ids);

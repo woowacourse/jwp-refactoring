@@ -7,6 +7,7 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.domain.OrderTable;
 
 public class TableServiceTest extends ServiceTest {
@@ -15,23 +16,23 @@ public class TableServiceTest extends ServiceTest {
     @DisplayName("테이블을 등록한다.")
     void create() {
         // given
-        OrderTable orderTable = new OrderTable(1, false);
+        OrderTableRequest request = new OrderTableRequest(NO_ID, NO_ID, 1, false);
 
         // when
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTable savedOrderTable = tableService.create(request);
 
         // then
         assertThat(savedOrderTable).usingRecursiveComparison()
-            .ignoringFields("id")
-            .isEqualTo(orderTable);
+            .ignoringFields("id", "orders")
+            .isEqualTo(request);
     }
 
     @Test
     @DisplayName("전체 테이블을 조회한다.")
     void list() {
         // given
-        OrderTable orderTable = new OrderTable(1, false);
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTableRequest request = new OrderTableRequest(NO_ID, NO_ID, 1, false);
+        OrderTable savedOrderTable = tableService.create(request);
 
         // when
         List<OrderTable> result = tableService.list();
