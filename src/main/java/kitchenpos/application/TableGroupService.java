@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,16 +36,10 @@ public class TableGroupService {
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
         final List<OrderTable> orderTables = orderTableDao.findAllByIdIn(tableGroupRequest.getOrderTableIds());
         validateOrderTables(orderTables);
-
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
-
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-
-        for (final OrderTable savedOrderTable : orderTables) {
-            savedOrderTable.updateEmptyStatus(false);
-        }
-
-        return TableGroupResponse.from(savedTableGroup);
+        final TableGroup tableGroup = TableGroupRequest.from(orderTables);
+        tableGroupDao.save(tableGroup);
+        setOrderTablesEmpty(orderTables);
+        return TableGroupResponse.from(tableGroup);
     }
 
     private void validateOrderTables(final List<OrderTable> orderTables) {
@@ -60,15 +53,17 @@ public class TableGroupService {
         }
     }
 
+    private void setOrderTablesEmpty(final List<OrderTable> orderTables) {
+        for (final OrderTable savedOrderTable : orderTables) {
+            savedOrderTable.updateEmptyStatus(false);
+        }
+    }
+
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
         validateOrderStatusCompletion(orderTables);
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.removeTableGroup();
-            orderTable.updateEmptyStatus(false);
-        }
+        ungroupOrderTables(orderTables);
     }
 
     private void validateOrderStatusCompletion(final List<OrderTable> orderTables) {
@@ -77,6 +72,12 @@ public class TableGroupService {
                 .collect(Collectors.toList());
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, Arrays.asList(COOKING, MEAL))) {
             throw new OrderNotCompletionException();
+        }
+    }
+
+    private static void ungroupOrderTables(final List<OrderTable> orderTables) {
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.ungroup();
         }
     }
 }

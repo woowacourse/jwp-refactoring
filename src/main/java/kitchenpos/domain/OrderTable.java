@@ -43,12 +43,21 @@ public class OrderTable {
         return tableGroup != null && tableGroup.getId() != null;
     }
 
-    public Long getId() {
-        return id;
+    public void ungroup() {
+        removeTableGroup();
+        updateEmptyStatus(false);
     }
 
-    public void removeTableGroup() {
+    private void removeTableGroup() {
         this.tableGroup = null;
+    }
+
+    public void updateEmptyStatus(final boolean empty) {
+        this.empty = empty;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public void updateNumberOfGuests(final NumberOfGuests numberOfGuests) {
@@ -65,9 +74,5 @@ public class OrderTable {
 
     public int getNumberOfGuests() {
         return numberOfGuests.getValue();
-    }
-
-    public void updateEmptyStatus(final boolean empty) {
-        this.empty = empty;
     }
 }
