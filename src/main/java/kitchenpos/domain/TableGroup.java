@@ -44,7 +44,10 @@ public class TableGroup {
             validateOrderTableEmptyOrNotExist(orderTable);
         }
 
-        return new TableGroup(createdDate, orderTables);
+        final TableGroup tableGroup = new TableGroup(createdDate, orderTables);
+        tableGroup.mergeOrderTables();
+
+        return tableGroup;
     }
 
     public void ungroup() {

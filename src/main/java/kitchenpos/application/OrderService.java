@@ -38,13 +38,7 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderRequest request) {
         validateSavedMenuSize(request);
-
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("주문 테이블이 비어있으면 주문을 생성할 수 없다.");
-        }
+        validateOrderTableNotEmpty(request);
 
         final Order order = Order.of(request.getOrderTableId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
                 getOrderLineItems(request));
@@ -87,6 +81,15 @@ public class OrderService {
 
         if (request.getOrderLineItems().size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("주문한 메뉴 항목 개수와 실제 메뉴의 수가 일치하지 않습니다.");
+        }
+    }
+
+    private void validateOrderTableNotEmpty(final OrderRequest request) {
+        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
+                .orElseThrow(IllegalArgumentException::new);
+
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("주문 테이블이 비어있으면 주문을 생성할 수 없다.");
         }
     }
 

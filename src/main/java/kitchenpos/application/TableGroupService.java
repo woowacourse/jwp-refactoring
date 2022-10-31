@@ -36,7 +36,6 @@ public class TableGroupService {
         }
 
         final TableGroup tableGroup = TableGroup.of(LocalDateTime.now(), savedOrderTables);
-        tableGroup.mergeOrderTables();
 
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
         return TableGroupResponse.from(savedTableGroup);
