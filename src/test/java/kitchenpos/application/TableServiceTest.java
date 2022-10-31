@@ -2,10 +2,8 @@ package kitchenpos.application;
 
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
-import static kitchenpos.support.TestFixtureFactory.단체_지정을_생성한다;
 import static kitchenpos.support.TestFixtureFactory.메뉴_그룹을_생성한다;
 import static kitchenpos.support.TestFixtureFactory.메뉴를_생성한다;
-import static kitchenpos.support.TestFixtureFactory.주문_테이블을_생성한다;
 import static kitchenpos.support.TestFixtureFactory.주문_항목을_생성한다;
 import static kitchenpos.support.TestFixtureFactory.주문을_생성한다;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +14,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.TransactionalTest;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderRepository;
@@ -83,12 +80,17 @@ class TableServiceTest {
     }
 
     @Test
-    void 변경_대상_테이블이_단체_지정되어_있으면_예외를_반환한다() {
-        OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
-        OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 0, true));
-        tableGroupRepository.save(단체_지정을_생성한다(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
+    void 변경_대상_테이블의_주문_목록_중_조리_중인_주문이_있을_경우_예외를_반환한다() {
+        Long orderTableId = tableService.create(new OrderTableCreateRequest(1, false))
+                .getId();
+        Long menuGroupId = menuGroupRepository.save(메뉴_그룹을_생성한다("메뉴 그룹"))
+                .getId();
+        Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, List.of()))
+                .getId();
+        OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
+        orderRepository.save(주문을_생성한다(orderTableId, MEAL, LocalDateTime.now(), List.of(orderLineItem)));
 
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), false))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, true))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -108,21 +110,6 @@ class TableServiceTest {
     }
 
     @Test
-    void 변경_대상_테이블의_주문_목록_중_조리_중인_주문이_있을_경우_예외를_반환한다() {
-        Long orderTableId = tableService.create(new OrderTableCreateRequest(1, false))
-                .getId();
-        Long menuGroupId = menuGroupRepository.save(메뉴_그룹을_생성한다("메뉴 그룹"))
-                .getId();
-        Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, List.of()))
-                .getId();
-        OrderLineItem orderLineItem = 주문_항목을_생성한다(null, menuId, 1);
-        orderRepository.save(주문을_생성한다(orderTableId, MEAL, LocalDateTime.now(), List.of(orderLineItem)));
-
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, true))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     void 테이블의_방문한_손님_수를_변경할_수_있다() {
         Long orderTableId = tableService.create(new OrderTableCreateRequest(1, false))
                 .getId();
@@ -133,23 +120,8 @@ class TableServiceTest {
     }
 
     @Test
-    void 변경하려는_인원이_0명_미만이면_예외를_반환한다() {
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, -1))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     void 인원_변경_테이블이_존재하지_않으면_예외를_반환한다() {
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, 1))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 인원_변경_테이블이_빈_테이블이면_예외를_반환한다() {
-        Long orderTableId = tableService.create(new OrderTableCreateRequest(1, true))
-                .getId();
-
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, 1))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

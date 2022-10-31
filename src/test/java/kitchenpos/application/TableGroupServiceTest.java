@@ -58,41 +58,10 @@ class TableGroupServiceTest {
     }
 
     @Test
-    void 단체_지정하려는_테이블이_2개_미만이면_예외를_반환한다() {
-        OrderTable orderTable = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
-
-        TableGroupCreateRequest request = new TableGroupCreateRequest(orderTable.getId());
-
-        assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     void 단체_지정하려는_테이블이_존재하지_않으면_예외를_반환한다() {
         OrderTable orderTable = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
 
         TableGroupCreateRequest request = new TableGroupCreateRequest(orderTable.getId());
-
-        assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 단체_지정하려는_테이블이_빈_테이블이_아니면_예외를_반환한다() {
-        OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
-        OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 2, false));
-
-        TableGroupCreateRequest request = new TableGroupCreateRequest(orderTable1.getId(), orderTable2.getId());
-
-        assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 이미_지정된_테이블을_단체_지정할_수_없다() {
-        OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
-        OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 2, true));
-
-        TableGroupCreateRequest request = new TableGroupCreateRequest(orderTable1.getId(), orderTable2.getId());
-
-        tableGroupService.create(request);
 
         assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -111,7 +80,7 @@ class TableGroupServiceTest {
     }
 
     @Test
-    void 단체_지정하려는_테이블의_주문_목록_중_식사_중인_주문이_있을_경우_예외를_반환한다() {
+    void 단체_지정을_해제하려는_테이블의_주문_목록_중_식사_중인_주문이_있을_경우_예외를_반환한다() {
         OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true));
         OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 2, true));
 

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class TableGroupDtoMapperImpl implements TableGroupDtoMapper {
 
     @Override
-    public TableGroupResponse toTableGroupCreateResponse(final TableGroup tableGroup) {
+    public TableGroupResponse toTableGroupResponse(final TableGroup tableGroup) {
         if (tableGroup == null) {
             return null;
         }

@@ -42,7 +42,7 @@ public class TableGroupService {
         }
         TableGroup savedTableGroup =
                 tableGroupRepository.save(new TableGroup(null, LocalDateTime.now(), savedOrderTables));
-        return tableGroupDtoMapper.toTableGroupCreateResponse(savedTableGroup);
+        return tableGroupDtoMapper.toTableGroupResponse(savedTableGroup);
     }
 
     private List<Long> toOrderTableIds(final List<OrderTableIdRequest> orderTableIdRequests) {

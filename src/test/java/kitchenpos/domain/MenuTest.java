@@ -19,7 +19,7 @@ class MenuTest {
     }
 
     @Test
-    void 가격이_메뉴_가격의_총합보다_비싸면_예외를_반환한다() {
+    void 가격이_메뉴_상품_가격의_총합보다_비싸면_예외를_반환한다() {
         MenuProduct menuProduct = new MenuProduct(null, null, 1L, 1, new Price(BigDecimal.ZERO));
         assertThatThrownBy(() -> new Menu(null, "메뉴", new Price(BigDecimal.ONE), 1L, List.of(menuProduct)))
                 .isInstanceOf(IllegalArgumentException.class);

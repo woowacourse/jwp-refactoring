@@ -43,12 +43,16 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final boolean empty) {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
+        validateTableDoesNotHaveCookingOrMealOrder(orderTableId);
+        savedOrderTable.changeEmpty(empty);
+        return orderTableDtoMapper.toOrderTableResponse(savedOrderTable);
+    }
+
+    private void validateTableDoesNotHaveCookingOrMealOrder(final Long orderTableId) {
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
-        savedOrderTable.changeEmpty(empty);
-        return orderTableDtoMapper.toOrderTableResponse(savedOrderTable);
     }
 
     @Transactional

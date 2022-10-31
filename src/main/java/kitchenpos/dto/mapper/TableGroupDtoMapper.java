@@ -5,5 +5,5 @@ import kitchenpos.dto.response.TableGroupResponse;
 
 public interface TableGroupDtoMapper {
 
-    TableGroupResponse toTableGroupCreateResponse(TableGroup tableGroup);
+    TableGroupResponse toTableGroupResponse(TableGroup tableGroup);
 }
