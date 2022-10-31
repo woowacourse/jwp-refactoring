@@ -27,16 +27,16 @@ public class Order {
         this(id, orderTableId, orderStatus, orderedTime, new ArrayList<>());
     }
 
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
+    public Order(Long orderTableId, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, OrderStatus.COOKING.name(), orderedTime, orderLineItems);
     }
 
-    public static Order create(Long orderTableId, String orderStatus,
-                               List<OrderLineItem> orderLineItems, Long actualMenusSize) {
+    public static Order newCookingInstanceOf(Long orderTableId, List<OrderLineItem> orderLineItems,
+                                             Long actualMenusSize) {
         validateNotEmpty(orderLineItems);
         validateMenuExistence(orderLineItems, actualMenusSize);
 
-        return new Order(null, orderTableId, orderStatus, null, orderLineItems);
+        return new Order(null, orderTableId, OrderStatus.COOKING.name(), null, orderLineItems);
     }
 
     private static void validateNotEmpty(List<OrderLineItem> orderLineItems) {

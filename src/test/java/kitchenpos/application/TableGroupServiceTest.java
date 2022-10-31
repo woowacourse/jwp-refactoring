@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
@@ -137,8 +136,8 @@ class TableGroupServiceTest extends ServiceTest {
 
             OrderTable orderTableWithGuest = orderTableDao.save(new OrderTable(savedOrderTable1.getId(), 3, false));
             Order savedOrder = 주문을_저장한다(orderTableWithGuest);
-            Order orderWithCookingStatus = new Order(savedOrder.getOrderTableId(), OrderStatus.COOKING.name(),
-                    savedOrder.getOrderedTime(), savedOrder.getOrderLineItems());
+            Order orderWithCookingStatus = new Order(savedOrder.getOrderTableId(), savedOrder.getOrderedTime(),
+                    savedOrder.getOrderLineItems());
             orderDao.save(orderWithCookingStatus);
 
             // when & then

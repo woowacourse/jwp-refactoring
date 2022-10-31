@@ -22,7 +22,7 @@ public class OrderRepository {
 
 
     public Order save(Order order) {
-        Order orderWithLocalDateTime = new Order(order.getOrderTableId(), order.getOrderStatus(), LocalDateTime.now(),
+        Order orderWithLocalDateTime = new Order(order.getOrderTableId(), LocalDateTime.now(),
                 order.getOrderLineItems());
         Long orderId = orderDao.save(orderWithLocalDateTime).getId();
 

@@ -34,8 +34,8 @@ public class OrderCreateRequest {
                 .collect(Collectors.toList());
     }
 
-    public Order toEntity(String orderStatus, Long actualMenusSize) {
-        return Order.create(orderTableId, orderStatus, toOrderLineItemEntity(), actualMenusSize);
+    public Order toEntity(Long actualMenusSize) {
+        return Order.newCookingInstanceOf(orderTableId, toOrderLineItemEntity(), actualMenusSize);
     }
 
     private List<OrderLineItem> toOrderLineItemEntity() {

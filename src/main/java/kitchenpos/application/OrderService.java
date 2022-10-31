@@ -32,7 +32,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(OrderCreateRequest request) {
-        Order order = request.toEntity(OrderStatus.COOKING.name(), menuRepository.countByIdIn(request.toMenuIds()));
+        Order order = request.toEntity(menuRepository.countByIdIn(request.toMenuIds()));
 
         validateTableExistence(orderTableRepository.findById(order.getOrderTableId()));
 

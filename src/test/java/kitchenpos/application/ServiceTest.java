@@ -16,7 +16,6 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -129,8 +128,7 @@ public abstract class ServiceTest {
     protected Order 주문을_저장한다(OrderTable orderTable) {
         Menu menu = 메뉴를_저장한다("메뉴");
         OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3L);
-        Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
-                List.of(orderLineItem));
+        Order order = new Order(orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
 
         Order savedOrder = orderDao.save(order);
         orderLineItemDao.save(
