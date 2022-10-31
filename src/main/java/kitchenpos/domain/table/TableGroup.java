@@ -28,6 +28,10 @@ public class TableGroup {
     protected TableGroup() {
     }
 
+    public TableGroup(final List<OrderTable> orderTables) {
+        this(null, orderTables);
+    }
+
     public TableGroup(final Long id, final List<OrderTable> orderTables) {
         validateOrderTables(orderTables);
         setOrderTable(orderTables);
@@ -39,8 +43,8 @@ public class TableGroup {
 
     private void setOrderTable(final List<OrderTable> orderTables) {
         for (OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(this);
-            orderTable.setEmpty(false);
+            orderTable.changeTableGroup(this);
+            orderTable.changeEmpty(false);
         }
     }
 
@@ -66,9 +70,5 @@ public class TableGroup {
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 }

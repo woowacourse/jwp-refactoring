@@ -50,7 +50,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(request.isEmpty());
+        savedOrderTable.changeEmpty(request.isEmpty());
 
         return new OrderTableResponse(orderTableRepository.save(savedOrderTable));
     }

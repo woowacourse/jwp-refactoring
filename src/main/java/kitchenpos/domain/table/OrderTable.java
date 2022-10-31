@@ -53,7 +53,7 @@ public class OrderTable {
         return tableGroup;
     }
 
-    public void setTableGroup(final TableGroup tableGroup) {
+    public void changeTableGroup(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
     }
 
@@ -77,7 +77,7 @@ public class OrderTable {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void changeEmpty(final boolean empty) {
         this.empty = empty;
     }
 }

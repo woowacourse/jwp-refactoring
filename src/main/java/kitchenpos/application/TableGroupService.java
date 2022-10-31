@@ -35,9 +35,7 @@ public class TableGroupService {
                         .orElseThrow(IllegalArgumentException::new))
                 .collect(Collectors.toList());
 
-        TableGroup tableGroup = new TableGroup(null, savedOrderTables);
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-
+        final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(savedOrderTables));
         return new TableGroupResponse(savedTableGroup);
     }
 
@@ -55,8 +53,8 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(null);
-            orderTable.setEmpty(false);
+            orderTable.changeTableGroup(null);
+            orderTable.changeEmpty(false);
             orderTableRepository.save(orderTable);
         }
     }
