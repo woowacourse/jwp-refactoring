@@ -23,6 +23,10 @@ import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderStatusRequest;
 import kitchenpos.dto.response.OrderLineItemResponse;
 import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.exceptions.EntityNotExistException;
+import kitchenpos.exceptions.OrderAlreadyCompletionException;
+import kitchenpos.exceptions.OrderLineItemsEmptyException;
+import kitchenpos.exceptions.OrderTableEmptyException;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -53,7 +57,7 @@ class OrderServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> orderService.create(orderRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderLineItemsEmptyException.class);
     }
 
     @Test
@@ -66,7 +70,7 @@ class OrderServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> orderService.create(orderRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(EntityNotExistException.class);
     }
 
     @Test
@@ -82,7 +86,7 @@ class OrderServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> orderService.create(orderRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(EntityNotExistException.class);
     }
 
     @Test
@@ -97,7 +101,7 @@ class OrderServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> orderService.create(orderRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableEmptyException.class);
     }
 
     @Test
@@ -150,7 +154,7 @@ class OrderServiceTest extends ServiceTest {
         // when, then
         assertThatThrownBy(
                 () -> orderService.changeOrderStatus(notExistOrderId, new OrderStatusRequest(COMPLETION.name())))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(EntityNotExistException.class);
     }
 
     @Test
@@ -162,6 +166,6 @@ class OrderServiceTest extends ServiceTest {
         // when, then
         assertThatThrownBy(
                 () -> orderService.changeOrderStatus(savedOrder.getId(), new OrderStatusRequest(MEAL.name())))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderAlreadyCompletionException.class);
     }
 }

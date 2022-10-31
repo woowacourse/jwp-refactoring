@@ -14,6 +14,10 @@ import kitchenpos.dto.request.OrderTableEmptyRequest;
 import kitchenpos.dto.request.OrderTableNumberOfGuestsRequest;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.exceptions.EntityNotExistException;
+import kitchenpos.exceptions.OrderNotCompletionException;
+import kitchenpos.exceptions.OrderTableAlreadyHasTableGroupException;
+import kitchenpos.exceptions.OrderTableEmptyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,7 +51,7 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId,
                                           final OrderTableEmptyRequest orderTableEmptyRequest) {
         final OrderTable orderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(EntityNotExistException::new);
         validateEmptyOrderTable(orderTable);
         validateOrderStatusCompletion(orderTableId);
         orderTable.updateEmptyStatus(orderTableEmptyRequest.isEmpty());
@@ -57,13 +61,13 @@ public class TableService {
 
     private void validateEmptyOrderTable(final OrderTable orderTable) {
         if (orderTable.hasTableGroup()) {
-            throw new IllegalArgumentException();
+            throw new OrderTableAlreadyHasTableGroupException();
         }
     }
 
     private void validateOrderStatusCompletion(final Long orderTableId) {
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, Arrays.asList(COOKING, MEAL))) {
-            throw new IllegalArgumentException();
+            throw new OrderNotCompletionException();
         }
     }
 
@@ -80,9 +84,9 @@ public class TableService {
 
     private OrderTable validateEmptyOrderTable(final Long orderTableId) {
         final OrderTable orderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(EntityNotExistException::new);
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new OrderTableEmptyException();
         }
         return orderTable;
     }

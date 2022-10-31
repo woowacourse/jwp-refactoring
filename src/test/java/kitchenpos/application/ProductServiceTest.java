@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.exceptions.InvalidPriceException;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -30,7 +31,7 @@ class ProductServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> productService.create(productRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidPriceException.class);
     }
 
     @Test
@@ -40,6 +41,6 @@ class ProductServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> productService.create(productRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidPriceException.class);
     }
 }

@@ -13,6 +13,10 @@ import kitchenpos.dto.request.OrderMenuRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderStatusRequest;
 import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.exceptions.EntityNotExistException;
+import kitchenpos.exceptions.MenuNotExistException;
+import kitchenpos.exceptions.OrderAlreadyCompletionException;
+import kitchenpos.exceptions.OrderTableEmptyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,15 +56,15 @@ public class OrderService {
 
     private void validateMenusExist(final int menusSize, final Order order) {
         if (!order.isOrderLineItemsSizeEqualTo(menusSize)) {
-            throw new IllegalArgumentException();
+            throw new MenuNotExistException();
         }
     }
 
     private void validateOrderTableExistAndNotEmpty(final OrderRequest orderRequest) {
         final OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(EntityNotExistException::new);
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new OrderTableEmptyException();
         }
     }
 
@@ -76,7 +80,7 @@ public class OrderService {
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusRequest orderStatusRequest) {
         final Order savedOrder = orderDao.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(EntityNotExistException::new);
         validateOrderCompletion(savedOrder);
         savedOrder.updateOrderStatus(OrderStatus.valueOf(orderStatusRequest.getOrderStatus()));
         return OrderResponse.from(savedOrder);
@@ -84,7 +88,7 @@ public class OrderService {
 
     private void validateOrderCompletion(final Order savedOrder) {
         if (savedOrder.isCompletion()) {
-            throw new IllegalArgumentException();
+            throw new OrderAlreadyCompletionException();
         }
     }
 }

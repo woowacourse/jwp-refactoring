@@ -7,6 +7,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.exceptions.EntityNotExistException;
 
 public class OrderRequest {
 
@@ -40,6 +41,6 @@ public class OrderRequest {
         return menus.stream()
                 .filter(it -> it.getId().equals(menuId))
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(EntityNotExistException::new);
     }
 }

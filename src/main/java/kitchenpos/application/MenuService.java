@@ -11,6 +11,7 @@ import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.MenusResponse;
+import kitchenpos.exceptions.MenuGroupNotExistException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,7 +57,7 @@ public class MenuService {
 
     private void validateMenuGroupExist(final Long menuGroupId) {
         if (!menuGroupDao.existsById(menuGroupId)) {
-            throw new IllegalArgumentException();
+            throw new MenuGroupNotExistException();
         }
     }
 

@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import kitchenpos.exceptions.OrderLineItemsEmptyException;
 import org.springframework.util.CollectionUtils;
 
 @Entity
@@ -57,7 +58,7 @@ public class Order {
 
     private void validateOrderLineItemsNotEmpty() {
         if (CollectionUtils.isEmpty(this.orderLineItems)) {
-            throw new IllegalArgumentException();
+            throw new OrderLineItemsEmptyException();
         }
     }
 

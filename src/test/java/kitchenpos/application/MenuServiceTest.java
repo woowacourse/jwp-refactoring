@@ -20,6 +20,9 @@ import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuProductResponse;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.MenusResponse;
+import kitchenpos.exceptions.InvalidMenuPriceException;
+import kitchenpos.exceptions.InvalidPriceException;
+import kitchenpos.exceptions.MenuGroupNotExistException;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -48,7 +51,7 @@ class MenuServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidPriceException.class);
     }
 
     @Test
@@ -59,18 +62,21 @@ class MenuServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidPriceException.class);
     }
 
     @Test
     void 메뉴의_그룹이_존재하지_않으면_예외를_발생한다() {
         // given
         final long notExistMenuGroupId = Long.MAX_VALUE;
-        final MenuRequest menuRequest = new MenuRequest("메뉴", new BigDecimal(10_000), notExistMenuGroupId, List.of());
+        final Long productId = 제품을_저장한다(PRODUCT_PRICE_10000.생성()).getId();
+        final List<MenuProductRequest> menuProductRequests = List.of(new MenuProductRequest(productId, 1));
+        final MenuRequest menuRequest = new MenuRequest("메뉴", new BigDecimal(10_000), notExistMenuGroupId,
+                menuProductRequests);
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(MenuGroupNotExistException.class);
     }
 
     @Test
@@ -84,7 +90,7 @@ class MenuServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidMenuPriceException.class);
     }
 
     @Test
@@ -103,7 +109,7 @@ class MenuServiceTest extends ServiceTest {
 
         // then
         assertAll(
-                () ->  assertThat(menusResponse.getMenus()).usingRecursiveFieldByFieldElementComparator()
+                () -> assertThat(menusResponse.getMenus()).usingRecursiveFieldByFieldElementComparator()
                         .usingElementComparatorIgnoringFields("menuProductResponses")
                         .usingComparatorForType(Comparator.comparingInt(BigDecimal::intValue), BigDecimal.class)
                         .containsOnly(expectedMenuResponse),

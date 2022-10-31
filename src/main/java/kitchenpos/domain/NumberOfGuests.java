@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.util.Objects;
 import javax.persistence.Column;
+import kitchenpos.exceptions.InvalidNumberOfGuestException;
 
 public class NumberOfGuests {
 
@@ -18,7 +19,7 @@ public class NumberOfGuests {
 
     private void validate(final int value) {
         if (value < 0) {
-            throw new IllegalArgumentException();
+            throw new InvalidNumberOfGuestException();
         }
     }
 

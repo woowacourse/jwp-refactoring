@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
+import kitchenpos.exceptions.InvalidPriceException;
 
 public class Price {
 
@@ -19,7 +20,7 @@ public class Price {
 
     private void validatePrice(final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new InvalidPriceException();
         }
     }
 

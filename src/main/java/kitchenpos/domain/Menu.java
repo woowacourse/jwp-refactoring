@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import kitchenpos.exceptions.InvalidMenuPriceException;
 
 @Entity
 @Table(name = "menu")
@@ -55,7 +56,7 @@ public class Menu {
                 .map(MenuProduct::calculateProductTotalPrice)
                 .reduce(new Price(BigDecimal.ZERO), Price::add);
         if (price.isGreaterThan(menuProductsPrice)) {
-            throw new IllegalArgumentException();
+            throw new InvalidMenuPriceException();
         }
     }
 

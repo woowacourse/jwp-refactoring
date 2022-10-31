@@ -14,6 +14,11 @@ import kitchenpos.dto.request.OrderTableEmptyRequest;
 import kitchenpos.dto.request.OrderTableNumberOfGuestsRequest;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.exceptions.EntityNotExistException;
+import kitchenpos.exceptions.InvalidNumberOfGuestException;
+import kitchenpos.exceptions.OrderNotCompletionException;
+import kitchenpos.exceptions.OrderTableAlreadyHasTableGroupException;
+import kitchenpos.exceptions.OrderTableEmptyException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -59,7 +64,7 @@ class TableServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(notExistOrderTableId, orderTableEmptyRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(EntityNotExistException.class);
     }
 
     @Test
@@ -73,7 +78,7 @@ class TableServiceTest extends ServiceTest {
         final OrderTableEmptyRequest orderTableEmptyRequest = new OrderTableEmptyRequest(true);
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable1_hasTableGroup.getId(), orderTableEmptyRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableAlreadyHasTableGroupException.class);
     }
 
     @ParameterizedTest
@@ -87,7 +92,7 @@ class TableServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), orderTableEmptyRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderNotCompletionException.class);
     }
 
     @Test
@@ -114,7 +119,7 @@ class TableServiceTest extends ServiceTest {
         // when
         assertThatThrownBy(
                 () -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTableNumberOfGuestsRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidNumberOfGuestException.class);
     }
 
     @Test
@@ -126,7 +131,7 @@ class TableServiceTest extends ServiceTest {
         // when
         assertThatThrownBy(
                 () -> tableService.changeNumberOfGuests(notExistOrderTableId, orderTableNumberOfGuestsRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(EntityNotExistException.class);
     }
 
     @Test
@@ -138,6 +143,6 @@ class TableServiceTest extends ServiceTest {
         // when
         assertThatThrownBy(
                 () -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTableNumberOfGuestsRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableEmptyException.class);
     }
 }

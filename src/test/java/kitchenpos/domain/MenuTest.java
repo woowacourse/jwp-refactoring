@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.exceptions.InvalidMenuPriceException;
 import org.junit.jupiter.api.Test;
 
 class MenuTest {
@@ -15,6 +16,6 @@ class MenuTest {
 
         // when, then
         assertThatThrownBy(() -> new Menu("모둠만두", new Price(new BigDecimal(2_100)), 1L, List.of(menuProduct)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidMenuPriceException.class);
     }
 }

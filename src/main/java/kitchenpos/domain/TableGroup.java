@@ -10,11 +10,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import kitchenpos.exceptions.NotEnoughSizeOfOrderTableException;
 import org.springframework.util.CollectionUtils;
 
 @Entity
 @Table(name = "table_group")
 public class TableGroup {
+
+    private static final int MINIMUM_ORDER_TABLES_SIZE = 2;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,8 +40,8 @@ public class TableGroup {
     }
 
     private void validateOrderTables(final List<OrderTable> orderTables) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MINIMUM_ORDER_TABLES_SIZE) {
+            throw new NotEnoughSizeOfOrderTableException(MINIMUM_ORDER_TABLES_SIZE);
         }
     }
 

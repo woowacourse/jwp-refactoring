@@ -14,6 +14,9 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.exceptions.OrderNotCompletionException;
+import kitchenpos.exceptions.OrderTableAlreadyHasTableGroupException;
+import kitchenpos.exceptions.OrderTableNotEmptyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,8 +51,11 @@ public class TableGroupService {
 
     private void validateOrderTables(final List<OrderTable> orderTables) {
         for (final OrderTable orderTable : orderTables) {
-            if (!orderTable.isEmpty() || orderTable.hasTableGroup()) {
-                throw new IllegalArgumentException();
+            if (!orderTable.isEmpty()) {
+                throw new OrderTableNotEmptyException();
+            }
+            if (orderTable.hasTableGroup()) {
+                throw new OrderTableAlreadyHasTableGroupException();
             }
         }
     }
@@ -70,7 +76,7 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, Arrays.asList(COOKING, MEAL))) {
-            throw new IllegalArgumentException();
+            throw new OrderNotCompletionException();
         }
     }
 }

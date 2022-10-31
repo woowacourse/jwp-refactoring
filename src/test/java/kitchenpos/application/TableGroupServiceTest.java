@@ -15,6 +15,10 @@ import kitchenpos.dto.request.OrderTableIdRequest;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.exceptions.NotEnoughSizeOfOrderTableException;
+import kitchenpos.exceptions.OrderNotCompletionException;
+import kitchenpos.exceptions.OrderTableAlreadyHasTableGroupException;
+import kitchenpos.exceptions.OrderTableNotEmptyException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -47,11 +51,11 @@ class TableGroupServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NotEnoughSizeOfOrderTableException.class);
     }
 
     @Test
-    void 테이블그룹을_생성할_때_묶을_그룹테이블이_존재하지_않으면_예외를_발생한다() {
+    void 테이블그룹을_생성할_때_묶을_테이블이_존재하지_않으면_예외를_발생한다() {
         // given
         final Long notExistOrderTableId = Long.MAX_VALUE;
         final OrderTable secondSavedOrderTable = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성());
@@ -61,7 +65,7 @@ class TableGroupServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NotEnoughSizeOfOrderTableException.class);
     }
 
     @Test
@@ -75,7 +79,7 @@ class TableGroupServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableNotEmptyException.class);
     }
 
     @Test
@@ -92,7 +96,7 @@ class TableGroupServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableAlreadyHasTableGroupException.class);
     }
 
     @Test
@@ -131,6 +135,6 @@ class TableGroupServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderNotCompletionException.class);
     }
 }
