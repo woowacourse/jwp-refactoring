@@ -1,17 +1,14 @@
 package kitchenpos.table.application;
 
-import static kitchenpos.order.domain.OrderStatus.COOKING;
-import static kitchenpos.order.domain.OrderStatus.MEAL;
-
 import java.util.List;
 import kitchenpos.order.domain.dao.OrderDao;
 import kitchenpos.table.application.dto.TableGroupResponse;
+import kitchenpos.table.application.dto.TableGroupSaveRequest;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTables;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.dao.OrderTableDao;
 import kitchenpos.table.domain.dao.TableGroupDao;
-import kitchenpos.table.application.dto.TableGroupSaveRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,32 +39,17 @@ public class TableGroupService {
         return TableGroupResponse.toResponse(tableGroup, orderTables);
     }
 
+    @Transactional
+    public void ungroup(Long tableGroupId) {
+        OrderTables orderTables = findOrderTables(tableGroupId);
+        orderTables.ungroup(orderDao.findAll());
+       saveOrderTables(orderTables);
+    }
+
     private void saveOrderTables(OrderTables orderTables) {
         for (OrderTable orderTable : orderTables.getOrderTables()) {
             orderTableDao.save(orderTable);
         }
-    }
-
-    @Transactional
-    public void ungroup(Long tableGroupId) {
-        OrderTables orderTables = findOrderTables(tableGroupId);
-        validateUngroup(orderTables);
-        orderTables.ungroup();
-        for (OrderTable orderTable : orderTables.getOrderTables()) {
-            orderTableDao.save(orderTable);
-        }
-    }
-
-    // todo: order 도메인 검증 리팩터링 필요
-    private void validateUngroup(OrderTables orderTables) {
-        if (shouldNotUngroup(orderTables)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private boolean shouldNotUngroup(OrderTables orderTables) {
-        return orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTables.getOrderTableIds(),
-            List.of(COOKING.name(), MEAL.name()));
     }
 
     private OrderTables findOrderTables(List<Long> orderTableIds) {

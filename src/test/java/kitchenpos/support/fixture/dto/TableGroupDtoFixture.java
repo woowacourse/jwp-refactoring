@@ -11,8 +11,8 @@ import kitchenpos.table.application.dto.TableGroupSaveRequest;
 public class TableGroupDtoFixture {
 
     public static TableGroupSaveRequest 단체_지정_생성_요청(OrderTables orderTables) {
-        List<OrderTableIdDto> orderTableIds = orderTables.getOrderTableIds().stream()
-            .map(OrderTableIdDto::new)
+        List<OrderTableIdDto> orderTableIds = orderTables.getOrderTables().stream()
+            .map(it -> new OrderTableIdDto(it.getId()))
             .collect(Collectors.toList());
         return new TableGroupSaveRequest(orderTableIds);
     }

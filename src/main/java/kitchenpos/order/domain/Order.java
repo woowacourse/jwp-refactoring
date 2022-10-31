@@ -1,9 +1,13 @@
 package kitchenpos.order.domain;
 
 import static kitchenpos.order.domain.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.MEAL;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import kitchenpos.order.exception.OrderStatusChangeFailedException;
+import kitchenpos.order.exception.UngroupFailedException;
 
 public class Order {
 
@@ -37,6 +41,16 @@ public class Order {
         if (COMPLETION.equals(orderStatus)) {
             throw new OrderStatusChangeFailedException();
         }
+    }
+
+    public void validateUngroup(List<Long> orderTableIds) {
+        if (shouldNotUngroup(orderTableIds)) {
+            throw new UngroupFailedException();
+        }
+    }
+
+    private boolean shouldNotUngroup(List<Long> orderTableIds) {
+        return orderTableIds.contains(orderTableId) && (COOKING.equals(orderStatus) || MEAL.equals(orderStatus));
     }
 
     public Long getId() {
