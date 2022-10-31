@@ -26,8 +26,8 @@ public class OrderLineItems {
         this.orderLineItems.addAll(Arrays.asList(orderLineItems));
     }
 
-    public long getOrderLineItemCounts() {
-        return orderLineItems.size();
+    public boolean hasValidMenus(final long registeredMenuCounts) {
+        return orderLineItems.size() == registeredMenuCounts;
     }
 
     public List<OrderLineItem> getOrderLineItems() {

@@ -24,14 +24,6 @@ public class Order {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public boolean isOrderLineItemsEmpty() {
-        return orderLineItems.isEmpty();
-    }
-
-    public boolean hasValidMenus(final long registeredMenuCounts) {
-        return orderLineItems.getOrderLineItemCounts() == registeredMenuCounts;
-    }
-
     public void addOrderLineItem(final OrderLineItem... orderLineItems) {
         this.orderLineItems.addOrderLineItem(orderLineItems);
     }
@@ -76,7 +68,7 @@ public class Order {
         return orderLineItems;
     }
 
-    public List<OrderLineItem> getOrderLineItemsList() {
+    public List<OrderLineItem> getAllOrderLineItem() {
         return orderLineItems.getOrderLineItems();
     }
 }

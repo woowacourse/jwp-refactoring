@@ -15,6 +15,10 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderCreateResponse;
+import kitchenpos.dto.OrderFindResponse;
+import kitchenpos.dto.OrderStatusChangeResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +30,7 @@ class OrderServiceTest extends ServiceTest {
         final Menu menu = new Menu(1L, "치킨메뉴", BigDecimal.valueOf(20_000L), 1L, menuProducts);
         final MenuProduct menuProduct = saveAndGetMenuProduct(1L, 1L, 1L);
 
-        final Order actual = orderService.create(
+        final OrderCreateResponse actual = orderService.create(
                 generateCustomOrder(OrderStatus.COOKING.name(), menu, menu.getId(), menuProduct)
         );
 
@@ -57,7 +61,7 @@ class OrderServiceTest extends ServiceTest {
     void list() {
         saveAndGetOrder(1L, OrderStatus.COOKING.name());
 
-        final List<Order> actual = orderService.list();
+        final List<OrderFindResponse> actual = orderService.list();
 
         assertAll(
                 () -> assertThat(actual).hasSize(1),
@@ -72,7 +76,8 @@ class OrderServiceTest extends ServiceTest {
     void changeOrderStatus() {
         final Order order = saveAndGetOrder(1L, OrderStatus.COOKING.name());
 
-        final Order actual = orderService.changeOrderStatus(order.getId(), OrderStatus.MEAL.name());
+        final OrderStatusChangeResponse actual =
+                orderService.changeOrderStatus(order.getId(), OrderStatus.MEAL.name());
 
         assertThat(actual.getOrderStatus())
                 .isEqualTo(OrderStatus.MEAL.name());
@@ -88,9 +93,9 @@ class OrderServiceTest extends ServiceTest {
     }
 
 
-    private Order generateCustomOrder(final String orderStatus,
-                                      final Menu menu, final Long orderMenuId,
-                                      final MenuProduct... menuProducts) {
+    private OrderCreateRequest generateCustomOrder(final String orderStatus,
+                                                   final Menu menu, final Long orderMenuId,
+                                                   final MenuProduct... menuProducts) {
         saveAndGetMenuGroup(1L);
 
         menu.addMenuProduct(menuProducts);
@@ -100,6 +105,10 @@ class OrderServiceTest extends ServiceTest {
         final OrderLineItems orderLineItems = new OrderLineItems(new ArrayList<>());
         final Order order = new Order(1L, orderTable.getId(), orderStatus, LocalDateTime.now(), orderLineItems);
         order.addOrderLineItem(saveAndGetOrderLineItem(1L, orderMenuId, order.getId()));
-        return order;
+
+        return new OrderCreateRequest(
+                order.getOrderTableId(),
+                orderLineItems.getOrderLineItems()
+        );
     }
 }
